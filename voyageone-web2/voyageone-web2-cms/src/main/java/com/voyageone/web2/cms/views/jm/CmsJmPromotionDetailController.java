@@ -251,9 +251,13 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
     public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
-//        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
-//        return success(result);
-        return null;
+//        BatchSynchPriceParameter parameter=new BatchSynchPriceParameter();
+//        service3.batchSynchPrice(parameter);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("id", parameter.getPromotionId());
+//        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+//        CallResult result = new CallResult();
+       return success(null);
     }
 
     //jm2 begin

@@ -278,7 +278,7 @@
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status=0
+        WHERE    cms_bt_jm_promotion_id=#{promotionId}
     </update>
     <update id="batchCopyDeal">
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
@@ -290,7 +290,7 @@
     </update>
     <update id="copyDealAll">
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId}
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status=0
     </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product

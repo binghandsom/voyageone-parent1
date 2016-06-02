@@ -137,18 +137,7 @@ define([
                 })
             })
         };
-        $scope.updateJM = function (promotionProductId) {
-            jmPromotionDetailService.updateJM(promotionProductId).then(function (res) {
-                if (res.data.result) {
-                    alert("更新成功");
-                }
-                else {
-                    alert("更新失败");
-                }
-            }, function (res) {
-                alert("更新失败");
-            })
-        };
+
         $scope.updateDealPrice = function (data) {
             jmPromotionDetailService.updateDealPrice({id: data.id, dealPrice: data.dealPrice}).then(function () {
                 data.isSave = false;
@@ -246,6 +235,23 @@ define([
             }
             return listPromotionProductId;
         }
+        $scope.updateJM = function (promotionProductId) {
+            var listPromotionProductId =[promotionProductId];
+            var parameter={};
+            parameter.promotionId= $scope.vm.promotionId;
+            parameter.listPromotionProductId=listPromotionProductId;
+            jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('TXT_SUCCESS'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        };
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
             var parameter={};

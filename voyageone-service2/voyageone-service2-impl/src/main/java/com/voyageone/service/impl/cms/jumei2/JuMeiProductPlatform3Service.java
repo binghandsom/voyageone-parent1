@@ -150,6 +150,7 @@ public class JuMeiProductPlatform3Service {
         request.setUpdate_data(update_dealInfo);
         serviceJumeiHtDeal.update(shopBean, request);
     }
+    //更新价格
     private void  jmHtDealUpdateDealPriceBatch(CmsBtJmPromotionProductModel model, ShopBean shopBean, List<SkuPriceBean> listSkuPrice) throws Exception {
         HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
         HtDeal_UpdateDealPriceBatch_UpdateData updateData = null;
