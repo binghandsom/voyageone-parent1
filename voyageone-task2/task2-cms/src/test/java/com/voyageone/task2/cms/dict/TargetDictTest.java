@@ -107,7 +107,7 @@ public class TargetDictTest {
 					{
 						// imageTemplate
 						RuleExpression imageTemplate = new RuleExpression();
-						String htmlTemplate = "80";
+						String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x_PC?$bbbbbbbb790x500bbbbbbbb$&$product=%s&$text01=%s&$text02=%s&$text03=%s&$text04=%s&$text05=%s&$text06=%s&$text07=%s&$text08=%s";
 						imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
 						// 参数imageParams
@@ -159,7 +159,7 @@ public class TargetDictTest {
 					htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
 					RuleExpression imageTemplate = new RuleExpression();
-					imageTemplate.addRuleWord(new TextWord("79"));
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
 
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_自定义图片));
@@ -186,7 +186,7 @@ public class TargetDictTest {
 						htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
 						RuleExpression imageTemplate = new RuleExpression();
-						imageTemplate.addRuleWord(new TextWord("79"));
+						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
 
 						RuleExpression imageType = new RuleExpression();
 						imageType.addRuleWord(new TextWord(C_商品图片));
