@@ -300,6 +300,7 @@
         from voyageone_cms2.cms_bt_tag tag
         where tag.parent_tag_id = #{parentTagId}
         and tag.tag_type = #{tagType}
+        and tag.active=1
     </select>
 
     <!-- 检索同级别的其它Tag信息 -->

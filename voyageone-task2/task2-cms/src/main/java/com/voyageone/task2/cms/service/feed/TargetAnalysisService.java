@@ -383,6 +383,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);

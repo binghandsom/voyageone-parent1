@@ -120,10 +120,6 @@ public class CmsGroupDetailService extends BaseAppService {
     private String getSearchValue (Map<String, Object> params, CmsSessionBean cmsSessionBean) {
         StringBuilder result = new StringBuilder();
 
-        // 添加platform cart
-        result.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
-        result.append(",");
-
         // 添加platform id
         result.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
 

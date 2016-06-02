@@ -76,7 +76,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.images2;fields.images3;fields.images4;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.images2;fields.images3;fields.images4;fields.images5;fields.images6;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
@@ -213,6 +213,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if (isMiniMall) {
             masterData.put("channelList", Channels.getUsJoiChannelList());
         }
+
+        //获取店铺列表
+        masterData.put("cartList",TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
 
         return masterData;
     }
@@ -847,7 +850,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 result.append(",");
             }
         }
-
+        //获取tag查询条件
+        if (searchValue.getCidValue().size()>0) {
+            result.append(MongoUtils.splicingValue("sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
+            result.append(",");
+        }
         // 获取code list用于检索code,model,productName,longTitle
         if (searchValue.getCodeList() != null
                 && searchValue.getCodeList().length > 0) {

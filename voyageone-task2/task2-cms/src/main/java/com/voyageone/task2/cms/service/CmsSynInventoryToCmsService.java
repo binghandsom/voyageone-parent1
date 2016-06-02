@@ -82,14 +82,14 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
 
-            try{
+            try {
                 $info("channel_id=" + orderChannelID);
 
                 //获取本渠道所有code级别库存
                 List<InventoryForCmsBean> codeInventoryList = inventoryDao.selectInventoryCode(orderChannelID, this.getTaskName());
                 $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
 
-                if(codeInventoryList.size() == 0){
+                if (codeInventoryList.size() == 0) {
                     continue;
                 }
                 //批量更新code级库存 TODO
@@ -97,12 +97,18 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
 
                 //updateGroupQty(orderChannelID,"", codeInventoryList); group下的库存数据字段qty已删除
                 //usjoi的对应
-                // 如果这个channel是usjoi的子channel的场合 997的库存也更新
-                if(Channels.isUsJoi(orderChannelID)){
-                    bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
-                    //updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
-                }
-            }catch (Exception e){
+                // 如果这个channel是usjoi的子channel的场合 库存也更新
+                List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, orderChannelID,"cn");
+                typeChannelBeans.forEach(typeChannelBean -> {
+                    if(Channels.isUsJoi(typeChannelBean.getValue())){
+                        bulkUpdateCodeQty(typeChannelBean.getValue(), orderChannelID, codeInventoryList, getTaskName());
+                    }
+                });
+//                if (Channels.isUsJoi(orderChannelID)) {
+//                    bulkUpdateCodeQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList, getTaskName());
+//                    //updateGroupQty(ChannelConfigEnums.Channel.VOYAGEONE.getId(), orderChannelID, codeInventoryList);
+//                }
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
             }
@@ -170,7 +176,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                 updateMap.put("fields.quantity", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("fields.code", codeInventory.getCode());
-                if(!StringUtil.isEmpty(orgChannelId)){
+                if (!StringUtil.isEmpty(orgChannelId)) {
                     queryMap.put("orgChannelId", orgChannelId);
                 }
                 BulkUpdateModel model = new BulkUpdateModel();
@@ -201,7 +207,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
      * 计算该group下的库存
      *
      * @param codeInventory wms_bt_inventory_center_logic 里面的库存数据
-     * @param codes productCodes
+     * @param codes         productCodes
      * @return
      */
     private int getGroupInventory(List<InventoryForCmsBean> codeInventory, List<String> codes) {

@@ -55,10 +55,6 @@
                         elem.fadeOut();
                     }
 
-                    if (!scope.target)
-                        return;
-
-                    fieldName = scope.target.$name;
                     formName = formController.$name;
 
                     // 对指定 form 下字段的错误信息进行监视
@@ -66,6 +62,8 @@
                     scope.$watch('target.$error',
 
                         function ($error) {
+
+                            fieldName = scope.target.$name;
 
                             // 取所有错误的 angular 错误名称, 如 required
                             var errorKeys = Object.keys($error);
@@ -83,7 +81,7 @@
                             // 对长度类型检查, 补充参数
                             if (['maxlength', 'minlength', 'max', 'min'].indexOf(error) > -1) {
 
-                                var targetInput = $('form[name="'+ formName +'"] [name="'+ fieldName +'"]');
+                                var targetInput = $('form[name="' + formName + '"] [name="' + fieldName + '"]');
                                 translateParam.length = targetInput.attr(error);
                             }
 

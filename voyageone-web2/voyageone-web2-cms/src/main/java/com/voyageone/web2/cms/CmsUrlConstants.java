@@ -472,6 +472,11 @@ public interface CmsUrlConstants {
 
             String UPLOAD_IMAGE = "uploadImage";
         }
+        interface ADD_TO_CHANNEL_CATEGORY {
+            String ROOT = "/cms/pop/add_to_channel_category/";
+            String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
+            String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
+        }
     }
 
     // 产品编辑
@@ -609,6 +614,21 @@ public interface CmsUrlConstants {
                 String SAVE_DETAIL_SIZE_CHART="sizeChartDetailSave";
                 String SAVE_DETAIL_SIZE_MAP_CHART ="sizeChartDetailSizeMapSave";
             }
+        }
+
+        interface SELLER_CAT {
+
+            String ROOT = "/cms/channel/category";
+
+            String GET_SELLER_CAT = "getSellerCat";
+
+            String ADD_SELLER_CAT = "addSellerCat";
+
+            String REMOVE_SELLER_CAT = "removeSellerCat";
+
+            String UPDATE_SELLER_CAT = "updateSellerCat";
+
+            String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
         }
 
     }

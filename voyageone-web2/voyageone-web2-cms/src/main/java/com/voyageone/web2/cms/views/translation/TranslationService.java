@@ -57,7 +57,7 @@ public class TranslationService extends BaseAppService {
             "fields.originalDesCn",
             "fields.originalTitleCn",
             "fields.model",
-            "fields.images1", "fields.images2", "fields.images3", "fields.images4",
+            "fields.images1", "fields.images2", "fields.images3", "fields.images4", "fields.images5", "fields.images6",
             "fields.translator",
             "fields.translateStatus",
             "fields.clientProductUrl",
@@ -265,10 +265,14 @@ public class TranslationService extends BaseAppService {
             List<CmsBtProductModel_Field_Image> images2 = productModel.getFields().getImages2();
             List<CmsBtProductModel_Field_Image> images3 = productModel.getFields().getImages3();
             List<CmsBtProductModel_Field_Image> images4 = productModel.getFields().getImages4();
+            List<CmsBtProductModel_Field_Image> images5 = productModel.getFields().getImages5();
+            List<CmsBtProductModel_Field_Image> images6 = productModel.getFields().getImages6();
             List<String> images1Arr = new ArrayList<>(images1.size());
             List<String> images2Arr = new ArrayList<>(images2.size());
             List<String> images3Arr = new ArrayList<>(images3.size());
             List<String> images4Arr = new ArrayList<>(images4.size());
+            List<String> images5Arr = new ArrayList<>(images5.size());
+            List<String> images6Arr = new ArrayList<>(images6.size());
             for (CmsBtProductModel_Field_Image imageItem : images1) {
                 images1Arr.add(imageItem.getName());
             }
@@ -281,10 +285,18 @@ public class TranslationService extends BaseAppService {
             for (CmsBtProductModel_Field_Image imageItem : images4) {
                 images4Arr.add(imageItem.getName());
             }
+            for (CmsBtProductModel_Field_Image imageItem : images5) {
+                images5Arr.add(imageItem.getName());
+            }
+            for (CmsBtProductModel_Field_Image imageItem : images6) {
+                images6Arr.add(imageItem.getName());
+            }
             imageList.add(images1Arr);
             imageList.add(images2Arr);
             imageList.add(images3Arr);
             imageList.add(images4Arr);
+            imageList.add(images5Arr);
+            imageList.add(images6Arr);
             translationBean.setProdImageList(imageList);
 
             translationBean.setModifiedTime(productModel.getModified());
