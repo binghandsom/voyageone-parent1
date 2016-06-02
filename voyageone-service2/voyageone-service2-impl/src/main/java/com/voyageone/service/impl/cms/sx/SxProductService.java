@@ -1595,10 +1595,11 @@ public class SxProductService extends BaseService {
 
     public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType) {
         // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
+//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
         List<CmsBtProductModel_Field_Image> productImages;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
             productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
-            if (productImages == null || productImages.isEmpty()) {
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
                 productImages = product.getFields().getImages(imageType);
             }
         } else {
