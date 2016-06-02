@@ -55,7 +55,7 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
     private String body;
     private int successCount;//成功条数
 
-    private  List<JuMeiSkuError>  errorList;
+    private List<JuMeiSkuError> errorList;
 
     public List<JuMeiSkuError> getErrorList() {
         return errorList;
@@ -164,8 +164,7 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
         }
     }
 
-
-    public   class JuMeiSkuError {
+    public class JuMeiSkuError {
         public String getJumei_sku_no() {
             return jumei_sku_no;
         }
