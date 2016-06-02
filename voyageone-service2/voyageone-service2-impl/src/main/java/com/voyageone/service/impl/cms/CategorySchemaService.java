@@ -118,7 +118,7 @@ public class CategorySchemaService extends BaseService {
      * @return CmsMtCommonSchemaModel
      */
     private CmsMtCommonSchemaModel getComSchemaModel() {
-        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.selectComSchema();
 
         if (comSchemaModel == null){
 

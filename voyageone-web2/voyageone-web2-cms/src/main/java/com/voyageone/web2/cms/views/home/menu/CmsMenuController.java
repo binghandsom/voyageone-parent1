@@ -5,6 +5,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.model.cms.enums.CartType;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -46,6 +47,7 @@ public class CmsMenuController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         String cTypeId = getCmsSession().getPlatformType().get("cTypeId").toString();
+        int cartId =  Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
         String channelId = getUser().getSelChannelId();
 
         resultBean.put("platformType", getCmsSession().getPlatformType());
@@ -57,29 +59,27 @@ public class CmsMenuController extends CmsController {
         resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl(getUser().getSelChannelId()));
         resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
-        // 获取主数据类目CategoryTreeList
-        List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(CartType.MASTER.getShortName(), channelId);
-        CmsMtCategoryTreeModel masterData = new CmsMtCategoryTreeModel();
-        masterData.setChildren(categoryTreeList);
-        masterData.setIsParent(1);
-        masterData.setCatPath("master");
-        masterData.setCatName("主类目数据");
+        //主数据类目+Feed类目
+        if (cTypeId.equals(CartType.MASTER.getShortName())) {
+            // 获取主数据类目CategoryTreeList
+            List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(CartType.MASTER.getShortName(), channelId);
 
-        List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>(2);
-        allTreeList.add(masterData);
-
-        // 获取Feed类目CategoryTreeList
-        if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
-            List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
-            CmsMtCategoryTreeModel feedData = new CmsMtCategoryTreeModel();
-            feedData.setChildren(feedTreeList);
-            feedData.setIsParent(1);
-            feedData.setCatPath("feed");
-            feedData.setCatName("Feed类目数据");
-            allTreeList.add(feedData);
+            resultBean.put("categoryTreeList", categoryTreeList);
+        }else if (cTypeId.equals(CartType.FEED.getShortName())){
+            // 获取Feed类目CategoryTreeList
+            if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+                List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
+                resultBean.put("categoryTreeList", feedTreeList);
+            }
+        }
+        //店铺自定义类目
+        else
+        {
+            List<CmsBtSellerCatModel> cmsBtSellerCatList = menuService.getSellerCatTreeList(channelId, cartId);
+            resultBean.put("categoryTreeList", cmsBtSellerCatList);
         }
 
-        resultBean.put("categoryTreeList", allTreeList);
+
 
         // 判断是否是minimall用户
         boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());

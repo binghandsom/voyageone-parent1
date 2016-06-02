@@ -249,7 +249,7 @@ public class PromotionDetailService extends BaseService {
         parm.put("cartId", cmsBtPromotionCodesBean.getCartId());
         parm.put("code", cmsBtPromotionCodesBean.getProductCode());
         // 找出该code有没有参加其它的活动
-        List<CmsBtTaskTejiabaoModel> tasks = cmsPromotionTaskDao.getPromotionByCodeNotInAllPromotion(parm);
+        List<CmsBtTaskTejiabaoModel> tasks = cmsPromotionTaskDao.selectPromotionByCodeNotInAllPromotion(parm);
         return !(tasks != null && tasks.size() > 0);
     }
 

@@ -139,7 +139,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
      * @return
      */
     private CmsMtCommonSchemaModel getComSchemaModel() {
-        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.selectComSchema();
 
         if (comSchemaModel == null){
 

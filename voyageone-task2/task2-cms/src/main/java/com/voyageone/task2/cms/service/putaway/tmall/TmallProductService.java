@@ -8,7 +8,6 @@ import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
-import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -16,11 +15,8 @@ import com.taobao.top.schema.field.MultiCheckField;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -42,7 +38,6 @@ import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.enums.TmallWorkloadStatus;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.model.CustomPlatformPropMappingModel;
-import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
@@ -54,8 +49,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.ims.modelbean.DictWordBean;
-import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import org.slf4j.Logger;
@@ -253,7 +246,7 @@ public class TmallProductService {
         }
         tmallUploadRunState.setIs_darwin(isDarwin);
 
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
         workLoadBean.setCmsMtPlatformCategorySchemaModel(cmsMtPlatformCategorySchemaModel);
 
         ExpressionParser expressionParser = new ExpressionParser(channelId, cartId, mainSxProduct, workLoadBean.getProcessProducts());
@@ -1116,7 +1109,7 @@ public class TmallProductService {
         }
         tmallUploadRunState.setIs_darwin(isDarwin);
 
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
         workLoadBean.setCmsMtPlatformCategorySchemaModel(cmsMtPlatformCategorySchemaModel);
 
         ExpressionParser expressionParser = new ExpressionParser(channelId, cartId, mainSxProduct, workLoadBean.getProcessProducts());

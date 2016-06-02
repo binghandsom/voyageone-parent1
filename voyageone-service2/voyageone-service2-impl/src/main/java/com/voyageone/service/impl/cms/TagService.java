@@ -29,6 +29,7 @@ public class TagService extends BaseService {
 
     /**
      * Tag追加
+     *
      * @param request TagAddRequest
      * @return TagAddResponse
      */
@@ -59,6 +60,7 @@ public class TagService extends BaseService {
 
     /**
      * Tag追加，输入参数检查
+     *
      * @param request 请求参数
      */
     private void checkAddTagParam(CmsTagInfoBean request) {
@@ -87,6 +89,7 @@ public class TagService extends BaseService {
 
     /**
      * Tag追加
+     *
      * @param request TagAddRequest
      * @return 新追加TagID
      */
@@ -115,6 +118,7 @@ public class TagService extends BaseService {
 
     /**
      * 更新TagPath
+     *
      * @param cmsBtTagModel CmsBtTagModel
      * @return 更新结果
      */
@@ -146,8 +150,9 @@ public class TagService extends BaseService {
 
     /**
      * 追加TagPathName取得
+     *
      * @param parentTagId 父TagId
-     * @param tagName 新追加Tag名
+     * @param tagName     新追加Tag名
      * @return 追加TagPathName
      */
     private String getTagPathName(Integer parentTagId, String tagName) {
@@ -181,10 +186,11 @@ public class TagService extends BaseService {
     /**
      * 根据ChannelId 和 tagType 检索Tags
      */
-    public List<CmsBtTagBean>  getListByChannelIdAndTagType(String channelId,String tagType) {
+    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType) {
         return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId, tagType);
     }
-    public List<CmsBtTagModel>  getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
+
+    public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
         return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
     }
 
@@ -210,5 +216,20 @@ public class TagService extends BaseService {
         }
         //更新数据cms_bt_tag
         cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+    }
+
+    public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
+        return cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
+    }
+
+    public CmsBtTagModel getTagByTagId(int tagId) {
+        return cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
+    }
+
+    /**
+     * 查询同级别的tag信息
+     */
+    public List<CmsBtTagModel> getListBySameLevel(String channelId, int parentTagId, int tagId) {
+        return cmsBtTagDaoExt.selectListBySameLevel(channelId, parentTagId, tagId);
     }
 }

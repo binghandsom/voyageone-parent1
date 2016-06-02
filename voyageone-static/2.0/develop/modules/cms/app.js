@@ -137,9 +137,6 @@ define([
         }, true);
 
         $scope.$watch('$viewContentLoaded', function () {
-            $(window).load(function () {
-            });
-
             $(window).scroll(function () {
                 var scroll = $(window).scrollTop();
                 if (scroll > 56) {
@@ -149,7 +146,6 @@ define([
                     $(".app-header").removeClass("addShadow");
                 }
             });
-
         });
 
         // set de default language

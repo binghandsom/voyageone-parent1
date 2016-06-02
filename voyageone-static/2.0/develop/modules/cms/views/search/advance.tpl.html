@@ -193,6 +193,21 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME' | translate}}</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model="vm.searchInfo.cartId" ng-change="getCat()"
+										ng-options="cartType.value as cartType.name for cartType in vm.masterData.cartList">
+									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
+								</select>
+							</div>
+							<div class="col-sm-5">
+								<select multiple chosen class="form-control" ng-model="vm.searchInfo.cidValue"
+										ng-options="cat.catId as cat.catPath for cat in vm.masterData.catList">
+								</select>
+							</div>
+						</div>
 					</div><!-- .form-group -->
 				</div>
 				<div class="col-sm-4">
@@ -299,6 +314,20 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.catgoryList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;Tags&nbsp;<span class="caret"></span>
+					</button>
+					<!-----------------------------tags------------------------------>
+					<ul uib-dropdown-menu>
+						<li>
+							<a href="#/home/welcome">freeTag</a>
+						</li>
+						<li>
+							<a href="javascript:void(0)" ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">{{'CATEGORY_EDIT' | translate}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
 				<button class="btn btn-default" ng-click="openCustomColumn('lg',search)">
 					<i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}
 				</button>&nbsp;

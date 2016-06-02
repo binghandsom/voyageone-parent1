@@ -53,14 +53,11 @@ public class MenuService extends BaseAppService {
     }
     /**
      * 根据userId,applicationId和ChannelId获取Menu列表.
-     * @param userId
-     * @param channelId
-     * @return
      */
     public List<Map<String, Object>> getMenuTree(String userId,String channelId,String applicationId) {
 
-        List<Map<String, Object>> listModule = userRolePropertyDao.getListModuleByWhere(userId, channelId, applicationId);
-        List<Map<String, Object>> listControl = userRolePropertyDao.getListControllerByWhere(userId, channelId, applicationId);
+        List<Map<String, Object>> listModule = userRolePropertyDao.selectListModuleByWhere(userId, channelId, applicationId);
+        List<Map<String, Object>> listControl = userRolePropertyDao.selectListControllerByWhere(userId, channelId, applicationId);
         List<Map<String, Object>> children = null;
         for (Map<String, Object> map : listModule) {
             children = getControlListByParentId(listControl, map.get("id"));
@@ -79,9 +76,6 @@ public class MenuService extends BaseAppService {
     }
     /**
      * 根据userId和ChannelId获取Application列表.
-     * @param userId
-     * @param channelId
-     * @return
      */
     public List<Map<String, Object>> getApplicationList (Integer userId, String channelId) {
         Map<String, Object> data = new HashMap<>();
@@ -93,7 +87,6 @@ public class MenuService extends BaseAppService {
 
     /**
      * 获取language列表.
-     * @return
      */
     public List<TypeBean> getLanguageList() {
         return TypeConfigEnums.MastType.languageType.getList(Constants.LANGUAGE.EN);
@@ -101,8 +94,6 @@ public class MenuService extends BaseAppService {
 
     /**
      * 设定用户选择的语言
-     * @param session
-     * @param lang
      */
     public void setLanguage(HttpSession session, UserSessionBean userInfo, Object lang) {
 

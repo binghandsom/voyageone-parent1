@@ -22,11 +22,11 @@ public class PromotionTaskService extends BaseService {
     private CmsBtTaskTejiabaoDaoExt cmsPromotionTaskDao;
 
     public int getPromotionTaskPriceListCnt(Map<String,Object> params){
-        return cmsPromotionTaskDao.getPromotionTaskPriceListCnt(params);
+        return cmsPromotionTaskDao.selectPromotionTaskPriceListCnt(params);
     }
 
     public List<Map<String,Object>> getPromotionTaskPriceList(Map<String,Object> params){
-        return cmsPromotionTaskDao.getPromotionTaskPriceList(params);
+        return cmsPromotionTaskDao.selectPromotionTaskPriceList(params);
     }
 
     @VOTransactional

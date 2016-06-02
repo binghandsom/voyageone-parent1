@@ -26,11 +26,11 @@ public class UserDao extends ServiceBaseDao {
         return selectList("ct_user_selectPermissionChannel", userName);
     }
 
-    public List<PermissionBean> getRolePermissions(String channelId, String userName) {
+    public List<PermissionBean> selectRolePermissions(String channelId, String userName) {
         return selectList("ct_role_permission_getPermissionByRole", parameters("channelId", channelId, "userName", userName));
     }
 
-    public List<PermissionBean> getUserPermissions(String channelId, String userName) {
+    public List<PermissionBean> selectUserPermissions(String channelId, String userName) {
         return selectList("ct_user_permission_getPermissionByUser", parameters("channelId", channelId, "userName", userName));
     }
 }
