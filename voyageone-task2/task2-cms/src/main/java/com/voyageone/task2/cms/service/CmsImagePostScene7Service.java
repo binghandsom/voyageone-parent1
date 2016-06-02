@@ -88,7 +88,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es  = Executors.newFixedThreadPool(3);
+                ExecutorService es  = Executors.newFixedThreadPool(5);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
@@ -219,7 +219,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         int returnValue = 0;
         if (subSuccessImageUrlList.size() > 0) {
             try {
-                imageTemplate(orderChannelId,subSuccessImageUrlList);
+//                imageTemplate(orderChannelId,subSuccessImageUrlList);
                 subSuccessImageUrlList.forEach(CmsBtImagesModel -> {
                     CmsBtImagesModel.setUpdFlg(1);
                     CmsBtImagesModel.setModifier(getTaskName());
