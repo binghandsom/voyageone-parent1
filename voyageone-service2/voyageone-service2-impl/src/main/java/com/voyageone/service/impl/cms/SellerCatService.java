@@ -417,62 +417,64 @@ public class SellerCatService extends BaseService {
             List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(), channelId);
             String numIId = group.getNumIId();
 
+
             try {
+                if(numIId != null) {
+                    TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, Long.valueOf(numIId));
 
-                TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, Long.valueOf(numIId));
+                    List<Field> fields = schema.getFields();
 
-                List<Field> fields = schema.getFields();
+                    List<String> cIds = new ArrayList<>();
 
-                List<String> cIds = new ArrayList<>();
+                    for (Field field : fields) {
+                        if (field.getId().equals("seller_cids")) {
+                            List<String> values = ((MultiCheckField) field).getDefaultValues();
 
-                for (Field field : fields) {
-                    if (field.getId().equals("seller_cids")) {
-                        List<Option> options = ((MultiCheckField) field).getOptions();
-                        for (Option option : options) {
-                            String cId = option.getValue();
-                            cIds.add(cId);
-                        }
-                    }
-                }
-
-                for (CmsBtProductModel product : productList) {
-
-                    Set<String> catIds = new HashSet<>();
-                    Set<String> catNames = new HashSet<>();
-                    Set<String> fullCatNames = new HashSet<>();
-                    Set<String> fullIds = new HashSet<>();
-
-                    for (String cId : cIds) {
-                        CmsBtSellerCatModel leaf = sellerCatMap.get(cId);
-                        catIds.add(cId);
-                        catNames.add(leaf.getCatName());
-                        fullCatNames.add(leaf.getCatPath());
-                        fullIds.add(leaf.getFullCatId());
-
-                        if (!leaf.getParentCatId().equals("0")) {
-                            CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
-                            catIds.add(parent.getCatId());
-                            catNames.add(parent.getCatName());
-                            fullCatNames.add(parent.getCatPath());
-                            fullIds.add(parent.getFullCatId());
+                            for (String value : values) {
+                                String cId = value;
+                                cIds.add(cId);
+                            }
                         }
                     }
 
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("sellerCats.cIds", joinStr(catIds));
-                    updateMap.put("sellerCats.cNames", joinStr(catNames));
-                    updateMap.put("sellerCats.fullCIds", joinStr(fullIds));
-                    updateMap.put("sellerCats.fullCNames", joinStr(fullCatNames));
+                    for (CmsBtProductModel product : productList) {
+
+                        Set<String> catIds = new HashSet<>();
+                        Set<String> catNames = new HashSet<>();
+                        Set<String> fullCatNames = new HashSet<>();
+                        Set<String> fullIds = new HashSet<>();
+
+                        for (String cId : cIds) {
+                            CmsBtSellerCatModel leaf = sellerCatMap.get(cId);
+                            catIds.add(cId);
+                            catNames.add(leaf.getCatName());
+                            fullCatNames.add(leaf.getCatPath());
+                            fullIds.add(leaf.getFullCatId());
+
+                            if (!leaf.getParentCatId().equals("0")) {
+                                CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
+                                catIds.add(parent.getCatId());
+                                catNames.add(parent.getCatName());
+                                fullCatNames.add(parent.getCatPath());
+                                fullIds.add(parent.getFullCatId());
+                            }
+                        }
+
+                        HashMap<String, Object> updateMap = new HashMap<>();
+                        updateMap.put("sellerCats.cIds", catIds);
+                        updateMap.put("sellerCats.cNames", catNames);
+                        updateMap.put("sellerCats.fullCIds", fullIds);
+                        updateMap.put("sellerCats.fullCNames", fullCatNames);
 
 
-                    HashMap<String, Object> queryMap = new HashMap<>();
-                    queryMap.put("prodId", product.getProdId());
+                        HashMap<String, Object> queryMap = new HashMap<>();
+                        queryMap.put("prodId", product.getProdId());
 
-                    BulkUpdateModel model = new BulkUpdateModel();
-                    model.setUpdateMap(updateMap);
-                    model.setQueryMap(queryMap);
-                    bulkList.add(model);
-
+                        BulkUpdateModel model = new BulkUpdateModel();
+                        model.setUpdateMap(updateMap);
+                        model.setQueryMap(queryMap);
+                        bulkList.add(model);
+                    }
                 }
 
             }
@@ -487,27 +489,27 @@ public class SellerCatService extends BaseService {
     }
 
 
-    private String joinStr(Set<String> codes)
-    {
-        ArrayList<String> list = new ArrayList<>();
-        list.addAll(codes);
-
-        StringBuffer sb = new StringBuffer();
-        sb.append("[");
-
-        for (int i = 0 ; i < codes.size(); i++)
-        {
-            if (i == 0) {
-                sb.append("'").append(list.get(i)).append("'");
-            } else {
-                sb.append(", '").append(list.get(i)).append("'");
-            }
-
-        }
-        sb.append("]");
-
-        return sb.toString();
-    }
+//    private String joinStr(Set<String> codes)
+//    {
+//        ArrayList<String> list = new ArrayList<>();
+//        list.addAll(codes);
+//
+//        StringBuffer sb = new StringBuffer();
+//        sb.append("[");
+//
+//        for (int i = 0 ; i < codes.size(); i++)
+//        {
+//            if (i == 0) {
+//                sb.append("\"").append(list.get(i)).append("\"");
+//            } else {
+//                sb.append(", \"").append(list.get(i)).append("\"");
+//            }
+//
+//        }
+//        sb.append("]");
+//
+//        return sb.toString();
+//    }
 
 
     /**
