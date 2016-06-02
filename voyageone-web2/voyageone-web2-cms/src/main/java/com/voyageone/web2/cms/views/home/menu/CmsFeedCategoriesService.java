@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.home.menu;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
@@ -41,9 +40,6 @@ public final class CmsFeedCategoriesService extends BaseAppService {
 
         // 获取整个类目树
         List<CmsMtFeedCategoryTreeModel> feedCategorys = feedCategoryTreeService.getFeedAllCategoryTree(channelId);
-
-        if (feedCategorys.isEmpty())
-            throw new BusinessException("未找到类目");
 
         // 获取已经绑定的类目
         List<CmsBtFeedMappingModel> feedMappingModels = feedMappingService.getFeedMappings(channelId);

@@ -108,6 +108,22 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 根据Code
+     */
+    public CmsBtProductModel getProductSingleSku(String channelId, String code, String originalCode) {
+        String query = "{\"fields.code\":\"" + code + "\", \"fields.originalCode\":\"" + originalCode + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
+     * 获取商品 根据OriginalCode
+     */
+    public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
+        String query = "{\"fields.originalCode\":\"" + code + "\"}";
+        return cmsBtProductDao.select(query, channelId);
+    }
+
+    /**
      * 获取商品 根据query
      *
      * @param channelId

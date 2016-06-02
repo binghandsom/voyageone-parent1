@@ -108,6 +108,8 @@ public class CmsProductDetailService extends BaseAppService {
         productImages.put("image2", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
         productImages.put("image3", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
         productImages.put("image4", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
+        productImages.put("image5", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.MOBILE_CUSTOM_IMAGE));
+        productImages.put("image6", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE));
 
         // 获取feed方数据.
         Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
