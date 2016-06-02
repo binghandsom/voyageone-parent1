@@ -1,11 +1,13 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class CmsMenuService extends BaseAppService{
 
     @Autowired
     private CmsFeedCategoriesService cmsFeedCategoriesService;
+
+    @Autowired
+    private SellerCatService sellerCatService;
 
     /**
      * 获取该channel的category类型.
@@ -50,7 +55,6 @@ public class CmsMenuService extends BaseAppService{
                 categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
             } else {
                 // 取得各平台类目数据 (mongo:cms_mt_platform_category_tree)
-
             }
 
             return categoryTreeList;
@@ -59,4 +63,13 @@ public class CmsMenuService extends BaseAppService{
             throw new BusinessException("获取类目失败");
         }
     }
+
+    /**
+     * 根据userId和ChannelId获取Menu列表.
+     */
+    public List<CmsBtSellerCatModel> getSellerCatTreeList ( String channelId,  int cartId){
+        return sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+    }
+
+
 }
