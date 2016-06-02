@@ -25,15 +25,19 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiHtDealServiceTest {
+    String Client_id="110";
+    String Client_key="f06e250dd5d30ab9db3e24c362438c69";
+    String Sign="6dbc6df2c67634192e01c2311cab4372575eebeb";
+    String url="http://openapi.ext.jmrd.com:8823";
     @Autowired
     JumeiHtDealService htDealService;
     @Test
     public void update() throws Exception {
         ShopBean shopBean = new ShopBean();
-        shopBean.setAppKey("72");
-        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
-        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
-        shopBean.setApp_url("http://182.138.102.82:8868/");
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
         HtDealUpdateRequest request = new HtDealUpdateRequest();
         request.setJumei_hash_id("ht1454411913p2225506");
         HtDealUpdate_DealInfo dealInfo=new HtDealUpdate_DealInfo();
@@ -52,10 +56,7 @@ public class JumeiHtDealServiceTest {
 //        接口签名(Sign):
 //        6dbc6df2c67634192e01c2311cab4372575eebeb
 //                重置
-String Client_id="110";
-        String Client_key="f06e250dd5d30ab9db3e24c362438c69";
-        String Sign="6dbc6df2c67634192e01c2311cab4372575eebeb";
-       String url="http://openapi.ext.jmrd.com:8823";
+
       //  String url="http://182.138.102.82:8823";
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey(Client_id);
@@ -78,18 +79,18 @@ String Client_id="110";
 
         //以下为聚美测试环境的入口聚美测试环境URL：a.new.jumeiglobal.jmrd.com:82user：aimee2ps：123456abc@补充（需要变更Host）hosts：a.new.jumeiglobal.jmrd.com182.138.102.82端口：82
         ShopBean shopBean = new ShopBean();
-        shopBean.setAppKey("72");
-        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
-        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
-        shopBean.setApp_url("http://openapi.ext.jmrd.com:8823");
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
 
         HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list=new ArrayList<>();
         HtDeal_UpdateDealPriceBatch_UpdateData updateData=new HtDeal_UpdateDealPriceBatch_UpdateData();
-        updateData.setJumei_hash_id("ht1454411913p2225506");
-        updateData.setJumei_sku_no("ht1454411913p2225506");
-        updateData.setMarket_price(5);
-        updateData.setDeal_price(4);
+        updateData.setJumei_hash_id("ht1460725540p2225513");
+        updateData.setJumei_sku_no("701506471");
+        updateData.setMarket_price(20);
+        updateData.setDeal_price(16);
         list.add(updateData);
         request.setUpdate_data(list);
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
