@@ -48,7 +48,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
-    int batchSynchPrice(List<Long> listPromotionProductId);
+    int batchSynchPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int synchAllPrice(int promotionId);
 
@@ -57,7 +57,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     int copyDealAll(int promotionId);
 
     int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+
     int deleteAllProduct(int promotionId);
 
+    List<CmsBtJmPromotionProductModel> getJMCopyList(int promotionId);
     //jm2 end
 }

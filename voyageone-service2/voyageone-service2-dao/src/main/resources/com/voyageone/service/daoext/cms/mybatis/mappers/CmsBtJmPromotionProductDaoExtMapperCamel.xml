@@ -278,11 +278,11 @@
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId}
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status=0
     </update>
     <update id="batchCopyDeal">
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE    id in
+        WHERE   synch_status=0 and  id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
@@ -304,5 +304,11 @@
         delete from  cms_bt_jm_promotion_product
         where synch_status=0 and  cms_bt_jm_promotion_id=#{promotionId}
     </delete>
+
+    <select id="getJMCopyList" resultType="CmsBtJmPromotionProductModel">
+         SELECT  *
+        FROM `cms_bt_jm_promotion_product` a
+        WHERE a.`cms_bt_jm_promotion_id`= #{promotionId} and  (a.synch_status=1 or a.price_status=1 )
+    </select>
     <!--jm2 end-->
 </mapper>

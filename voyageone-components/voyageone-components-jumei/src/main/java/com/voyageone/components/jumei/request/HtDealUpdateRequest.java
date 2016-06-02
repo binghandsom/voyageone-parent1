@@ -49,8 +49,4 @@ public class HtDealUpdateRequest implements BaseJMRequest {
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
     }
-   public static Long getTime(Date d) throws Exception {
-        long l = d.getTime() / 1000 - 8 * 3600;
-        return l;
-    }
 }

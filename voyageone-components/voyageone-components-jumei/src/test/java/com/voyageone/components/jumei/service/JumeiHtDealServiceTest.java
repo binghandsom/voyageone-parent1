@@ -39,7 +39,7 @@ public class JumeiHtDealServiceTest {
         shopBean.setSessionKey(Client_key);
         shopBean.setApp_url(url);
         HtDealUpdateRequest request = new HtDealUpdateRequest();
-        request.setJumei_hash_id("ht1454411913p2225506");
+        request.setJumei_hash_id("ht1464857040p222551367");
         HtDealUpdate_DealInfo dealInfo=new HtDealUpdate_DealInfo();
         dealInfo.setUser_purchase_limit(10);
         request.setUpdate_data(dealInfo);
@@ -64,7 +64,7 @@ public class JumeiHtDealServiceTest {
         shopBean.setSessionKey(Client_key);
         shopBean.setApp_url(url);
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
-        request.setJumei_hash_id("ht1460725540p2225513");//ht1464850789p222551368
+        request.setJumei_hash_id("ht1460725488p2225513");//ht1464857040p222551367
 
         request.setStart_time(DateTimeUtil.addMinutes(new Date(),1));
         request.setEnd_time(DateTimeUtil.addMinutes(new Date(),2));
@@ -87,10 +87,10 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list=new ArrayList<>();
         HtDeal_UpdateDealPriceBatch_UpdateData updateData=new HtDeal_UpdateDealPriceBatch_UpdateData();
-        updateData.setJumei_hash_id("ht1460725540p2225513");
-        updateData.setJumei_sku_no("701506471");
-        updateData.setMarket_price(20);
-        updateData.setDeal_price(16);
+        updateData.setJumei_hash_id("ht1464857040p222551367");
+        updateData.setJumei_sku_no("701506470");
+        updateData.setMarket_price(21);
+        updateData.setDeal_price(18);
         list.add(updateData);
         request.setUpdate_data(list);
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
