@@ -24,7 +24,7 @@ public class CmsBtSxWorkloadDaoExtExtTest {
     public void testInsert() throws Exception {
         CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
         model.setChannelId("001");
-        model.setGroupId(123);
+        model.setGroupId(123L);
         model.setPublishStatus(0);
         model.setCreater("liang");
         model.setModifier("liang");

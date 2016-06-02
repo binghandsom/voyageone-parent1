@@ -6,7 +6,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.web2.base.BaseAppService;
@@ -14,15 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.imageio.ImageIO;
 import java.net.HttpURLConnection;
-import java.net.URL;;
-import java.util.Arrays;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +36,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
 
     private final int FILE_LIMIT_SIZE = 3145728;
 
-    private final String IMAGE_TYPE = "jpg";
+    private final String IMAGE_TYPE = "jpg,png";
 
     @Autowired
     private ImageGroupService imageGroupService;

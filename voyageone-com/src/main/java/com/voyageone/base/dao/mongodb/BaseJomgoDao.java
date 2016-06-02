@@ -10,7 +10,8 @@ import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -24,7 +25,7 @@ import java.util.Set;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseJomgoDao<T> {
+public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
 
     protected BaseJomgoTemplate mongoTemplate;
 
@@ -56,9 +57,9 @@ public abstract class BaseJomgoDao<T> {
         });
     }
 
-    @Autowired
-    public void setMongoTemplate(BaseJomgoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.mongoTemplate = applicationContext.getBean(BaseJomgoTemplate.class);
         if (this.collectionName == null) {
             this.entityClass = getEntityClass();
             this.collectionName = mongoTemplate.getCollectionName(entityClass);

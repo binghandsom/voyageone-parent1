@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init ="false"
-        xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
@@ -13,7 +13,8 @@
     <!-- aop task2 Service.onStartup() 日志输出配置 -->
     <aop:config>
         <!-- 日志在Service层 -->
-        <aop:pointcut id="taskServices" expression="execution(public * com.voyageone.task2.cms.service.*Service.onStartup(..))" />
+        <aop:pointcut id="taskServices"
+                      expression="execution(public * com.voyageone.task2.cms.service.*Service.onStartup(..))"/>
 
         <!-- 日志切入配置 -->
         <aop:aspect ref="voAopLoggable" id="logas" order="1">

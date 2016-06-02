@@ -32,16 +32,6 @@
     color: white;
 }
 
-.category_drag_list_qh li .indexSelected {
-    float: left;
-    display: block;
-    position: relative;
-    list-style-type: none;
-    padding: 2px;
-    background: #dcf3f9;
-    color: #333
-}
-
 .category_drag_list_qh .translated-row {
     margin: 8px 0;
 }
@@ -177,3 +167,160 @@
     top: 15px;
     left: 1px;
 }
+
+/**为店铺管理页面和标签管理页面提供样式 addedy by tony-piao*/
+.category_drag_list_dp {
+    margin: 0px;
+    padding: 4px 4px 0px 4px;
+    height: 200px;
+    overflow-y: auto;
+    overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    color: #3366cc;
+}
+
+.category_drag_list_dp ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list_dp li a:link {
+    float: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.category_drag_list_dp li a:hover {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    background: #dcf3f9;
+    color: #333;
+}
+
+.category_drag_list_dp li .indexSelected {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list_dp li input{
+    position: relative;
+    width: 20% ! important;
+    padding: 10px;
+    border: 1px solid #ededed;
+    border-radius: 4px;
+    opacity: 1;
+    height: 30px;
+}
+
+.category-drag-minWidth{
+    border: 2px solid #d5e4fa;
+    margin: 2px 4px;
+    border-radius: 7px;
+}
+
+.category-drag-minWidth input{
+    width:84% ! important;
+}
+
+@media screen and (max-width: 1580px) {
+    .category-drag-minWidth input{
+        width: 77% ! important;
+        display: inline;
+    }
+}
+.stat-boxes{
+    display: inline-block;
+    list-style: none outside none;
+    margin: 4px 0 0 -48px;
+    text-align: center;
+    min-height: 144px;
+}
+@media screen and (max-width: 1441px) {
+    .stat-boxes{
+        min-height: 216px;
+    }
+}
+.stat-boxes li{
+    background-color: #F6F6F6;
+    background-image: -webkit-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -moz-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -ms-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -o-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    border: 1px solid #d5d5d5;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 18px;
+    margin: 0 4px 4px;
+}
+.stat-boxes .right {
+    font-size: 12px;
+    padding: 9px 0px 8px 0;
+    text-align: center;
+    width: 110px;
+    color: #666666;
+    text-shadow: 0 1px 0 #ffffff;
+    float: left;
+}
+.stat-boxes .right strong {
+    font-size: 26px;
+    margin-bottom: 3px;
+    margin-top: 6px;
+    display: block;
+}
+.data-priority-0,.data-priority-1,.data-priority-2,.data-priority-3,.data-priority-4
+{
+    border-left:3px solid red;
+    /*transition:border-left 0.09s;*/
+    transition:border-left 218ms ease-in,opacity 218ms ease-in;
+    -moz-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Firefox 4 */
+    -webkit-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Safari and Chrome */
+    -o-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Opera */
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    cursor: pointer;
+}
+.data-priority-0{
+    border-left:3px solid #fff;
+}
+.data-priority-0:hover{
+    border-left:6px solid #b3b3b3;
+}
+.data-priority-1:hover{
+    border-left:6px solid red;
+}
+.data-priority-2{
+    border-left:3px solid #ff9800;
+}
+.data-priority-2:hover{
+    border-left:6px solid #ff9800;
+}
+.data-priority-3{
+    border-left:3px solid #5bc0de;
+}
+.data-priority-3:hover{
+    border-left:6px solid #5bc0de;
+}
+ .data-priority-4 {
+     border-left:3px solid #5cb85c;
+ }
+.data-priority-4:hover{
+    border-left:6px solid #5cb85c;
+}
+
+

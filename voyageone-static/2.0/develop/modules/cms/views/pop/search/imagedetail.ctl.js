@@ -16,6 +16,7 @@ define([
          */
         $scope.initialize = function () {
             var picObj = $scope.vm.picInfo;
+
             if (picObj == undefined) {
                 return;
             }

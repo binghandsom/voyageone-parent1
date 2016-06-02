@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.bean.search.index;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +68,16 @@ public class CmsSearchInfoBean {
     private Integer productPageNum = 0;
 
     private Integer productPageSize = 0;
+
+    private List<String>  cidValue;
+
+    public List<String> getCidValue() {
+        return cidValue;
+    }
+
+    public void setCidValue(List<String> cidValue) {
+        this.cidValue = cidValue;
+    }
 
     public String getOrgChaId() {
         return orgChaId;

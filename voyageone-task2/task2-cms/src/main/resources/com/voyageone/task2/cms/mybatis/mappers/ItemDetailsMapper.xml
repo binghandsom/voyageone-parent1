@@ -56,8 +56,8 @@
         ;
     </update>
 
-  <!-- 根据product id, 获取item details表的数据 -->
-  <select id="wms_bt_item_details_select_by_code"
+  <!-- 根据sku, 获取item details表的数据 -->
+  <select id="wms_bt_item_details_select_by_sku"
           parameterType="HashMap"
           resultType="com.voyageone.task2.cms.bean.ItemDetailsBean">
       select
@@ -72,7 +72,7 @@
         active
       from  Synship.wms_bt_item_details
       where order_channel_id = #{channelId}
-        and itemcode = #{code}
+        and sku = #{sku}
         ;
   </select>
 

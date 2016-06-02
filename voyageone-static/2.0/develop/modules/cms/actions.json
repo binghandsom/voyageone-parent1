@@ -325,6 +325,11 @@
       "$priceHistoryService": {
         "root": "/cms/pop/history_price",
         "getPriceHistory": "getPriceHistory"
+      },
+      "$addChannelCategoryService": {
+        "root": "/cms/pop/add_to_channel_category",
+        "init": "getChannelCategory",
+        "save": "saveChannelCategory"
       }
     },
     "translation": {
@@ -378,6 +383,16 @@
           "save": "saveTag",
           "del": "delTag",
           "getTagList": "getTagList"
+        }
+      },
+      "sellerCat": {
+        "sellerCatService": {
+          "root": "/cms/channel/category/",
+          "init": "getSellerCatConfig",
+          "getCat":"getSellerCat",
+          "addCat": "addSellerCat",
+          "delCat": "removeSellerCat",
+          "updateCat":"updateSellerCat"
         }
       },
       "imageTemplateService":{

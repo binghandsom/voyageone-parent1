@@ -23,7 +23,7 @@ define([
 
         $scope.page = {
             curr: 1, total: 0, fetch: function () {
-                $scope.search();
+                $scope.refreshPage();
             }
         };
         //页面model
@@ -45,6 +45,11 @@ define([
         };
 
         $scope.search = function () {
+            $scope.page.curr = 1;
+            $scope.refreshPage();
+        }
+
+        $scope.refreshPage = function () {
 
             cartService.search(_.extend($scope.page,$scope.vm.search)).then(function (resp) {
                 $scope.vm.data = resp.data.data;
@@ -68,7 +73,7 @@ define([
             popCtrl.openCartEdit({PLATFORM_DICT: $scope.vm.PLATFORM_DICT}).then(function (addedEl) {
                 if (addedEl) {
                     //$scope.vm.data.push(addedEl);
-                    $scope.page.curr = 1;
+                    //$scope.page.curr = 1;
                     $scope.search();
                 }
             });
@@ -78,7 +83,7 @@ define([
             confirm($translate.instant('TXT_MSG_DO_DELETE') + cart.name).result.then(function () {
                 cartService.delete({cart_id: cart.cart_id}).then(function () {
                     //$scope.vm.data.splice(index, 1);
-                    $scope.page.curr = 1;
+                    //$scope.page.curr = 1;
                     $scope.search();
                 });
             })

@@ -229,6 +229,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
             masterData.put("channelList", Channels.getUsJoiChannelList());
         }
 
+        //获取店铺列表
+        masterData.put("cartList",TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+
         return masterData;
     }
 
@@ -933,7 +936,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 result.append(",");
             }
         }
-
+        //获取tag查询条件
+        if (searchValue.getCidValue().size()>0) {
+            result.append(MongoUtils.splicingValue("sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
+            result.append(",");
+        }
         // 获取code list用于检索code,model,productName,longTitle
         if (searchValue.getCodeList() != null
                 && searchValue.getCodeList().length > 0) {

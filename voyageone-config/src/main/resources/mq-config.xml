@@ -1,52 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init ="false"
-        xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:rabbit="http://www.springframework.org/schema/rabbit"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/rabbit
         http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
 
     <!-- 连接配置 -->
     <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
-        <property name="host" value="10.0.0.59" />
-        <property name="port" value="5672" />
-        <property name="username" value="mqadmin" />
-        <property name="password" value="pile12rdis" />
-        <property name="connectionTimeout" value="5000" />
+        <property name="host" value="10.0.0.59"/>
+        <property name="port" value="5672"/>
+        <property name="username" value="mqadmin"/>
+        <property name="password" value="pile12rdis"/>
+        <property name="connectionTimeout" value="5000"/>
     </bean>
 
     <bean id="rabbitConnFactory" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
-        <constructor-arg ref="rabbitConnectionFactory" />
-        <property name="channelCacheSize" value="25" />
+        <constructor-arg ref="rabbitConnectionFactory"/>
+        <property name="channelCacheSize" value="25"/>
     </bean>
 
-    <rabbit:admin connection-factory="rabbitConnFactory" />
+    <rabbit:admin connection-factory="rabbitConnFactory"/>
 
     <!-- spring template声明-->
-    <rabbit:template id="amqpTemplate" connection-factory="rabbitConnFactory" />
+    <rabbit:template id="amqpTemplate" connection-factory="rabbitConnFactory"/>
 
     <!-- mq 监听器工厂 -->
-    <bean id="rabbitListenerContainerFactory" class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
-        <property name="connectionFactory" ref="rabbitConnFactory" />
-        <property name="missingQueuesFatal" value="false" />
-        <property name="errorHandler" ref="errorHandler" /><!-- error 处理 -->
-        <property name="autoStartup" value="false"/> <!-- 自动启动取消 -->
+    <bean id="rabbitListenerContainerFactory"
+          class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
+        <property name="connectionFactory" ref="rabbitConnFactory"/>
+        <property name="missingQueuesFatal" value="false"/>
+        <property name="errorHandler" ref="errorHandler"/>
+        <!-- error 处理 -->
+        <property name="autoStartup" value="false"/>
+        <!-- 自动启动取消 -->
     </bean>
 
     <bean id="voRabbitMqLocalConfig" class="com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig">
         <!-- 是否本地环境 -->
-        <property name="local" value="true" />
+        <property name="local" value="true"/>
     </bean>
 
     <!-- 异常处理器 -->
     <bean id="errorHandler" class="org.springframework.amqp.rabbit.listener.ConditionalRejectingErrorHandler">
-        <constructor-arg name="exceptionStrategy" ref="voExceptionStrategy" />
+        <constructor-arg name="exceptionStrategy" ref="voExceptionStrategy"/>
     </bean>
 
     <!-- 致命异常判定策略 -->
-    <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy" />
+    <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy"/>
 
     <!-- topic-exchange -->
     <rabbit:topic-exchange id="voTopicExchange" name="voTopicExchange"/>

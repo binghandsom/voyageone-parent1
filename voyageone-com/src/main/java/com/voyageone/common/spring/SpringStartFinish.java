@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Component()
 @Lazy(value = false)
 public class SpringStartFinish implements ApplicationListener<ContextRefreshedEvent> {
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         //root application context 没有parent，他就是老大.

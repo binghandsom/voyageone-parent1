@@ -243,6 +243,15 @@ public class CategoryTreeService extends BaseService {
     }
 
     /**
+     * 取得一级类目列表（所有主数据）
+     *
+     * @return CmsMtCategoryTreeModel
+     */
+    public List<CmsMtCategoryTreeModel> getMasterCategory() {
+        return cmsMtCategoryTreeDao.select(new JomgoQuery());
+    }
+
+    /**
      * 根据category从tree中找到节点
      */
     public CmsMtCategoryTreeModel findCategory(CmsMtCategoryTreeModel tree, String catPath) {
@@ -253,6 +262,30 @@ public class CategoryTreeService extends BaseService {
             if (CmsMtCategoryTreeModel.getChildren().size() > 0) {
                 CmsMtCategoryTreeModel category = findCategory(CmsMtCategoryTreeModel, catPath);
                 if (category != null) return category;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtCategoryTreeModel findCategorySingleSku(CmsMtCategoryTreeModel tree, String catPath, List result) {
+        for (CmsMtCategoryTreeModel CmsMtCategoryTreeModel : tree.getChildren()) {
+            if (CmsMtCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
+                if ("1".equals(CmsMtCategoryTreeModel.getSingleSku())) {
+                    result.add("1");
+                }
+                return CmsMtCategoryTreeModel;
+            }
+            if (CmsMtCategoryTreeModel.getChildren().size() > 0) {
+                CmsMtCategoryTreeModel category = findCategorySingleSku(CmsMtCategoryTreeModel, catPath, result);
+                if (category != null) {
+                    if ("1".equals(CmsMtCategoryTreeModel.getSingleSku())) {
+                        result.add("1");
+                    }
+                    return category;
+                }
             }
         }
         return null;

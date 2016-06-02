@@ -8,7 +8,7 @@ define([
     'modules/cms/service/search.advance.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -18,7 +18,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                promotionList: []
+                promotionList: [],
+                catgoryList: [],
+                cidValue: []
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -48,9 +50,11 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
+        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategory;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
+        $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         /**
@@ -68,6 +72,8 @@ define([
                 $scope.vm.masterData = res.data;
                 $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                 $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
+                $scope.vm.cartList = res.data.cartList;
+
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
@@ -90,9 +96,11 @@ define([
                 tags:[],
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
-                tagTypeSelectValue: '0'
+                tagTypeSelectValue: '0',
+                cidValue: []
             };
             $scope.vm.masterData.tagList = [];
+            $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{ inputVal: "", inputOpts: "" }];
         }
 
@@ -175,6 +183,17 @@ define([
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
                 searchAdvanceService.clearSelList();
+                getGroupList();
+                getProductList();
+            })
+        }
+
+        /**
+         * popup出添加到CategoryEdit的功能
+         * @param openCategoryEdit
+         */
+        function openAddChannelCategory (openAddChannelCategoryEdit) {
+            openAddChannelCategoryEdit(getSelProductList()).then(function () {
                 getGroupList();
                 getProductList();
             })
@@ -310,6 +329,20 @@ define([
         }
 
         /**
+         * 查询指定店铺cart类型下的所有类目(list形式)
+         */
+        function getCat () {
+            if ($scope.vm.searchInfo.cartId == '0' || $scope.vm.searchInfo.cartId == '' || $scope.vm.searchInfo.cartId == undefined) {
+                $scope.vm.masterData.catList = [];
+                return;
+            }
+            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
+                .then(function(resp){
+                    $scope.vm.masterData.catList = resp.data.catTree;
+                });
+        }
+
+        /**
          * 检查销量排序的设值
          */
         $scope.chkSalesTypeList = function() {
@@ -350,14 +383,15 @@ define([
             for(var attr in item.fields){
                 if(attr.indexOf("images") >= 0){
                     var image = _.map(item.fields[attr],function(entity){
-                        return entity.image1;
+                        var imageKeyName = "image" + attr.substring(6, 7);
+                        return entity[imageKeyName] != null ? entity[imageKeyName] : "";
                     });
                     picList.push(image);
                 }
             }
-            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            this.openImagedetail({'mainPic': picList[0][0], 'picList': picList,'search':'master'});
         }
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

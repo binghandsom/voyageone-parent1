@@ -29,6 +29,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
     private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
+    private CmsBtProductModel_SellerCats sellerCats = new CmsBtProductModel_SellerCats();
+    public CmsBtProductModel_SellerCats getSellerCats() {
+        return sellerCats;
+    }
+
+    public void setSellerCats(CmsBtProductModel_SellerCats sellerCats) {
+        this.sellerCats = sellerCats;
+    }
     private Map sales = new HashMap<>();
 
     public String getOrgChannelId() {
