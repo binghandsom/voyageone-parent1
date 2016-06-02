@@ -7,7 +7,6 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -37,8 +36,6 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     private SellerCatService sellerCatService;
     @Autowired
     ProductGroupService productGroupService;
-    @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
 
     /**
      * 数据页面初始化
