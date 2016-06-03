@@ -5,18 +5,14 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.job.CmsGetPlatformCategorySchemaJob;
-import javafx.application.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author james.li on 2016/4/7.
@@ -74,7 +71,7 @@ public class UploadToUSJoiServiceTest {
 
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform().get("p26");
         if(platformCart != null){
-            BaseMongoMap<String, Object> fieldsValue =  platformCart.getFields();
+            Map<String, Object> fieldsValue =  platformCart.getFields();
             FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             FieldUtil.getFieldsValueToMap(fields);
         }
