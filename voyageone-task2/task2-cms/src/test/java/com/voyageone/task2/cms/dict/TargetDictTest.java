@@ -176,7 +176,7 @@ public class TargetDictTest {
 					{
 						// 商品描述（假的）：
 						String html = "<div><img src=\"%s\"/></div>";
-						html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2w7FFpVXXXXXkXFXXXXXXXXXX_!!2854639042.jpg");
+						html = String.format(html, "https://img.alicdn.com/imgextra/i3/2854639042/TB2XKHVpVXXXXcsXpXXXXXXXXXX_!!2854639042.jpg");
 						TextWord word = new TextWord(html);
 						ruleRoot.addRuleWord(word);
 					}
@@ -198,21 +198,21 @@ public class TargetDictTest {
 					}
 				}
 
-				{
-					// 购物流程图
-					String html = "<div><img src=\"%s\" /></div>";
-					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2zCaipVXXXXaZXXXXXXXXXXXX_!!2854639042.jpg");
-					TextWord word = new TextWord(html);
-					ruleRoot.addRuleWord(word);
-				}
-
-				{
-					// 店铺介绍图
-					String html = "<div><img src=\"%s\" /></div>";
-					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2PpSdpVXXXXbcXXXXXXXXXXXX_!!2854639042.jpg");
-					TextWord word = new TextWord(html);
-					ruleRoot.addRuleWord(word);
-				}
+//				{
+//					// 购物流程图
+//					String html = "<div><img src=\"%s\" /></div>";
+//					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2zCaipVXXXXaZXXXXXXXXXXXX_!!2854639042.jpg");
+//					TextWord word = new TextWord(html);
+//					ruleRoot.addRuleWord(word);
+//				}
+//
+//				{
+//					// 店铺介绍图
+//					String html = "<div><img src=\"%s\" /></div>";
+//					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2PpSdpVXXXXbcXXXXXXXXXXXX_!!2854639042.jpg");
+//					TextWord word = new TextWord(html);
+//					ruleRoot.addRuleWord(word);
+//				}
 			}
 
 			{
