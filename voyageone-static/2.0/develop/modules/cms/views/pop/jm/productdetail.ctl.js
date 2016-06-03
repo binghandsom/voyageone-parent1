@@ -69,7 +69,6 @@ define([
                 parameter.promotionSkuId=skuInfo.id;
                 parameter.dealPrice=skuInfo.dealPrice;
                 self.jmPromotionDetailService.updateDealPrice(parameter).then(function (res) {
-                  //  self.skuList[index] = res.data;
                     self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 })
             },
