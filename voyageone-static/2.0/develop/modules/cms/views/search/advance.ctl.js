@@ -83,7 +83,7 @@ define([
                     $scope.vm.searchInfo.cartId = catObj.value;
                     getCat();
                 }
-                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                if ($routeParams.type != undefined) {
                     search();
                 }
             })
