@@ -23,6 +23,11 @@ public class JomgoQuery extends BaseCondition {
     private String query;
 
     /**
+     * query condition
+     */
+    private Object[] parameters = null;
+
+    /**
      * query key
      */
     private ObjectId objectId;
@@ -89,6 +94,21 @@ public class JomgoQuery extends BaseCondition {
     public JomgoQuery setQuery(String query) {
         this.query = query;
         return this;
+    }
+
+    public Object[] getParameters() {
+        return parameters;
+    }
+
+    /**
+     * 设置查询参数
+     * 使用该方法时，查询语句的写法必须参照 http://jongo.org/#querying 的Query templating一节
+     * 有输出项目过滤时，必须调用setProjection/setProjectionExt来设置，不能写在查询语句中
+     *
+     * @param parameters
+     */
+    public void setParameters(Object... parameters) {
+        this.parameters = parameters;
     }
 
     public String getSort() {

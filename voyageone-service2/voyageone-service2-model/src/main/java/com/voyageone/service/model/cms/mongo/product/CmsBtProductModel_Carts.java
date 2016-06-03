@@ -40,11 +40,11 @@ public class CmsBtProductModel_Carts extends BaseMongoMap<String, Object> {
     }
 
     public Integer getCartId() {
-        Integer cart = getAttribute("cartId");
+        Object cart = getAttribute("cartId");
         if (cart == null) {
             cart = 0;
         }
-        return cart;
+        return ((Number) cart).intValue();
     }
 
     public void setCartId(Integer cartId) {

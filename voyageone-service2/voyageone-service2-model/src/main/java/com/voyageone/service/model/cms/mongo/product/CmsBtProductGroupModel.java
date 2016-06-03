@@ -4,7 +4,9 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商品Model Group Channel
@@ -34,6 +36,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Double priceRetailEd;
     private Double priceSaleSt;
     private Double priceSaleEd;
+    private Map sales = new HashMap<>();
 
     public Long getGroupId() {
         return groupId;
@@ -187,4 +190,11 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         this.platformActive = platformActive.name();
     }
 
+    public Map getSales() {
+        return sales;
+    }
+
+    public void setSales(Map sales) {
+        this.sales = sales;
+    }
 }
