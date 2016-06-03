@@ -30,7 +30,6 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
@@ -104,8 +103,6 @@ public class SxProductService extends BaseService {
     @Autowired
     private ImsBtProductDao imsBtProductDao;
     @Autowired
-    private CmsBtSizeMapDao cmsBtSizeMapDao;
-    @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
@@ -145,7 +142,7 @@ public class SxProductService extends BaseService {
         // Map<size, sort> 为了将来可能会从DB取得设定，先做成Map
         Map<String, Integer> mapSort = new HashMap<>();
         for (SkuSort s : SkuSort.values()) {
-            mapSort.put(s.getSize(), Integer.valueOf(s.getSort()));
+            mapSort.put(s.getSize(), s.getSort());
         }
 
         skuSourceList.sort((a, b) -> {
@@ -566,7 +563,7 @@ public class SxProductService extends BaseService {
             }
 
             // 2016/06/02 Update by desmond Start  分平台对应
-            if (CartEnums.Cart.TM.getId().equals(cartId) || CartEnums.Cart.TB.getId().equals(cartId) ) {
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString()) || CartEnums.Cart.TB.getId().equals(cartId.toString()) ) {
                 // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
                 if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                     removeProductList.add(productModel);
@@ -574,7 +571,7 @@ public class SxProductService extends BaseService {
                 }
             } else {
                 // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
-                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform().get("P" + cartId);
+                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
                 if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
                     removeProductList.add(productModel);
                     continue;
@@ -599,7 +596,7 @@ public class SxProductService extends BaseService {
             }
         }
 
-        removeProductList.forEach(product -> productModelList.remove(product));
+        removeProductList.forEach(productModelList::remove);
 
         sxData.setProductList(productModelList);
         sxData.setSkuList(skuList);
@@ -651,9 +648,7 @@ public class SxProductService extends BaseService {
 
             Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
             if (!resolveField.isEmpty()) {
-                if (retMap == null) {
-                    retMap = new HashMap<>();
-                }
+                retMap = new HashMap<>();
                 retMap.putAll(resolveField);
             }
         }

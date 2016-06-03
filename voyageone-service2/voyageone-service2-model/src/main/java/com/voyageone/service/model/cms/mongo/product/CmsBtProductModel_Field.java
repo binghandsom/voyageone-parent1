@@ -18,11 +18,26 @@ import java.util.Map;
  */
 public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
+    //主类目ID
+    public String getCatId() {
+        return getAttribute("catId");
+    }
+    public void setCatId(String catId) {
+        setAttribute("catId", catId);
+    }
+
+    //主类目完整PATH
+    public String getCatPath() {
+        return getAttribute("catPath");
+    }
+    public void setCatPath(String catPath) {
+        setAttribute("catPath", catPath);
+    }
+
     //code 产品code
     public String getCode() {
         return getAttribute("code");
     }
-
     public void setCode(String code) {
         setAttribute("code", code);
     }
@@ -31,7 +46,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOriginalCode() {
         return getAttribute("originalCode");
     }
-
     public void setOriginalCode(String originalCode) {
         setAttribute("originalCode", originalCode);
     }
@@ -40,7 +54,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getBrand() {
         return getAttribute("brand");
     }
-
     public void setBrand(String brand) {
         setAttribute("brand", brand);
     }
@@ -49,7 +62,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getProductNameEn() {
         return getAttribute("productNameEn");
     }
-
     public void setProductNameEn(String productNameEn) {
         setAttribute("productNameEn", productNameEn);
     }
@@ -58,7 +70,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getProductNameCn() {
         return getAttribute("productNameCn");
     }
-
     public void setProductNameCn(String productNameCn) {
         setAttribute("productNameCn", productNameCn);
     }
@@ -67,7 +78,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOriginalTitleCn() {
         return getAttribute("originalTitleCn");
     }
-
     public void setOriginalTitleCn(String originalTitleCn) {
         setAttribute("originalTitleCn", originalTitleCn);
     }
@@ -76,7 +86,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getLongTitle() {
         return getAttribute("longTitle");
     }
-
     public void setLongTitle(String longTitle) {
         setAttribute("longTitle", longTitle);
     }
@@ -85,7 +94,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getMiddleTitle() {
         return getAttribute("middleTitle");
     }
-
     public void setMiddleTitle(String middleTitle) {
         setAttribute("middleTitle", middleTitle);
     }
@@ -94,7 +102,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getShortTitle() {
         return getAttribute("shortTitle");
     }
-
     public void setShortTitle(String shortTitle) {
         setAttribute("shortTitle", shortTitle);
     }
@@ -103,7 +110,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getModel() {
         return getAttribute("model");
     }
-
     public void setModel(String model) {
         setAttribute("model",model);
     }
@@ -112,7 +118,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getColor() {
         return getAttribute("color");
     }
-
     public void setColor(String color) {
         setAttribute("color", color);
     }
@@ -121,61 +126,94 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getOrigin() {
         return getAttribute("origin");
     }
-
     public void setOrigin(String origin) {
         setAttribute("origin", origin);
+    }
+
+    //适合人群
+    public String getSizeType() {
+        return getAttribute("sizeType");
+    }
+    public void setSizeType(String sizeType) {
+        setAttribute("sizeType", sizeType);
+    }
+
+    //产品分类
+    public String getProductType() {
+        return getAttribute("productType");
+    }
+    public void setProductType(String productType) {
+        setAttribute("productType", productType);
+    }
+
+    //产品库存
+    public Integer getQuantity() {
+        return getIntAttribute("quantity");
+    }
+    public void setQuantity(Integer quantity) {
+        setAttribute("quantity", quantity);
     }
 
     //originalDesCn 原始中文描述
     public String getOriginalDesCn() {
         return getAttribute("originalDesCn");
     }
-
     public void setOriginalDesCn(String originalDesCn) {
         setAttribute("originalDesCn", originalDesCn);
     }
 
-    //shortDesCn 简短描述中文
-    public String getShortDesCn() {
-        return getAttribute("shortDesCn");
-    }
-
-    public void setShortDesCn(String shortDesCn) {
-        setAttribute("shortDesCn", shortDesCn);
-    }
-
-    //longDesCn 详情描述中文
-    public String getLongDesCn() {
-        return getAttribute("longDesCn");
-    }
-
-    public void setLongDesCn(String longDesCn) {
-        setAttribute("longDesCn", longDesCn);
-    }
-
-    //shortDesEn 简短描述英语
+    //shortDesEn 简短描述(英语)
     public String getShortDesEn() {
         return getAttribute("shortDesEn");
     }
-
     public void setShortDesEn(String shortDesEn) {
         setAttribute("shortDesEn", shortDesEn);
     }
 
-    //longDesEn 详情描述英语
+    //shortDesCn 简短描述(中文)
+    public String getShortDesCn() {
+        return getAttribute("shortDesCn");
+    }
+    public void setShortDesCn(String shortDesCn) {
+        setAttribute("shortDesCn", shortDesCn);
+    }
+
+    //longDesEn 详情描述(英语)
     public String getLongDesEn() {
         return getAttribute("longDesEn");
     }
-
     public void setLongDesEn(String longDesEn) {
         setAttribute("longDesEn", longDesEn);
+    }
+
+    //longDesCn 详情描述(中文)
+    public String getLongDesCn() {
+        return getAttribute("longDesCn");
+    }
+    public void setLongDesCn(String longDesCn) {
+        setAttribute("longDesCn", longDesCn);
+    }
+
+    //materialEn
+    public String getMaterialEn() {
+        return getAttribute("materialEn");
+    }
+    public void setMaterialEn(String materialEn) {
+        setAttribute("materialEn", materialEn);
+    }
+
+    //materialCn
+    public String getMaterialCn() {
+        return getAttribute("materialCn");
+    }
+    public void setMaterialCn(String materialCn) {
+        setAttribute("materialCn", materialCn);
     }
 
     //hsCodeCrop 税号集货
     public String getHsCodeCrop() {
         return getAttribute("hsCodeCrop");
     }
-
     public void setHsCodeCrop(String hsCodeCrop) {
         setAttribute("hsCodeCrop", hsCodeCrop);
     }
@@ -184,7 +222,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getHsCodePrivate() {
         return getAttribute("hsCodePrivate");
     }
-
     public void setHsCodePrivate(String hsCodePrivate) {
         setAttribute("hsCodePrivate", hsCodePrivate);
     }
@@ -249,7 +286,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public Integer getPriceChange() {
         return getAttribute("priceChange");
     }
-
     public void setPriceChange(Integer priceChange) {
         setAttribute("priceChange", priceChange);
     }
@@ -258,7 +294,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public String getClientProductUrl() {
         return getAttribute("clientProductUrl");
     }
-
     public void setClientProductUrl(String clientProductUrl) {
         setAttribute("clientProductUrl", clientProductUrl);
     }
@@ -286,6 +321,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                 case CUSTOM_PRODUCT_IMAGE:
                     result = getImages6();
                     break;
+                case M_CUSTOM_PRODUCT_IMAGE:
+                    result = getImages7();
+                    break;
+                case HANG_TAG_IMAGE:
+                    result = getImages8();
+                    break;
             }
         }
         return result;
@@ -310,6 +351,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                     break;
                 case CUSTOM_PRODUCT_IMAGE:
                     setImages6(images);
+                    break;
+                case M_CUSTOM_PRODUCT_IMAGE:
+                    setImages7(images);
+                    break;
+                case HANG_TAG_IMAGE:
+                    setImages8(images);
                     break;
             }
         }
@@ -381,6 +428,28 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("images6", images6);
     }
 
+    //商品自定义M_CUSTOM_PRODUCT_IMAGE
+    public List<CmsBtProductModel_Field_Image> getImages7() {
+        if (!this.containsKey("images7") || getAttribute("images7") == null) {
+            setAttribute("images7", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images7");
+    }
+    public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
+        setAttribute("images7", images7);
+    }
+
+    //商品自定义HANG_TAG_IMAGE
+    public List<CmsBtProductModel_Field_Image> getImages8() {
+        if (!this.containsKey("images8") || getAttribute("images8") == null) {
+            setAttribute("images8", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images8");
+    }
+    public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
+        setAttribute("images8", images8);
+    }
+
     //lock商品
     public String getLock() {
         Object lock = getAttribute("lock");
@@ -412,29 +481,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("status", value);
     }
 
-    //translateStatus "0":未完成；"1":完成
-    public String getTranslateStatus() {
-        return getAttribute("translateStatus");
-    }
-    public void setTranslateStatus(String status) {
-        setAttribute("translateStatus", status);
-    }
-
-    public String getTranslator() {
-        return getAttribute("translator");
-    }
-    public void setTranslator(String translator) {
-        setAttribute("translator", translator);
-    }
-
-    public String getTranslateTime() {
-        return getAttribute("translateTime");
-    }
-    public void setTranslateTime(String translateTime) {
-        setAttribute("translateTime", translateTime);
-    }
-
-
     //editStatus "0":未完成；"1":完成
     public String getEditStatus() {
         return getAttribute("editStatus");
@@ -443,46 +489,86 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("editStatus", editStatus);
     }
 
-    //适合人群
-    public String getSizeType() {
-        return getAttribute("sizeType");
-    }
-    public void setSizeType(String sizeType) {
-        setAttribute("sizeType", sizeType);
-    }
 
-    //产品分类
-    public String getProductType() {
-        return getAttribute("productType");
+    // 主数据平台是否为主商品
+    public int getIsMasterMain() {
+        return getAttribute("isMasterMain");
     }
-    public void setProductType(String productType) {
-        setAttribute("productType", productType);
+    public void setIsMasterMain(int isMasterMain) {
+        setAttribute("isMasterMain", isMasterMain);
     }
 
-    //产品库存
-    public Integer getQuantity() {
-        Object value = getAttribute("quantity");
 
-        if (value == null)
-            return 0;
-
-        if (value instanceof String) {
-
-            String stringValue = (String) value;
-
-            if (StringUtils.isEmpty(stringValue))
-                return 0;
-            else
-                return Integer.valueOf(stringValue);
-        }
-
-        if (value instanceof Integer)
-            return (Integer) value;
-
-        throw new BusinessException("你跟我扯淡呢!!!类型都不对!!!");
+    //categoryStatus "0":未完成；"1":完成
+    public String getCategoryStatus() {
+        return getAttribute("categoryStatus");
     }
-    public void setQuantity(Integer quantity) {
-        setAttribute("quantity", quantity);
+    public void setCategoryStatus(String categoryStatus) {
+        setAttribute("categoryStatus", categoryStatus);
+    }
+
+    //categorySetter
+    public String getCategorySetter() {
+        return getAttribute("categorySetter");
+    }
+    public void setCategorySetter(String categorySetter) {
+        setAttribute("categorySetter", categorySetter);
+    }
+
+    // categorySetTime
+    public String getCategorySetTime() {
+        return getAttribute("categorySetTime");
+    }
+    public void setCategorySetTime(String categorySetTime) {
+        setAttribute("categorySetTime", categorySetTime);
+    }
+
+    //translateStatus "0":未完成；"1":完成
+    public String getTranslateStatus() {
+        return getAttribute("translateStatus");
+    }
+    public void setTranslateStatus(String status) {
+        setAttribute("translateStatus", status);
+    }
+
+    //translater
+    public String getTranslator() {
+        return getAttribute("translator");
+    }
+    public void setTranslator(String translator) {
+        setAttribute("translator", translator);
+    }
+
+    // translateTime
+    public String getTranslateTime() {
+        return getAttribute("translateTime");
+    }
+    public void setTranslateTime(String translateTime) {
+        setAttribute("translateTime", translateTime);
+    }
+
+    //hsCodeStatus "0":未完成；"1":完成
+    public String getHsCodeStatus() {
+        return getAttribute("hsCodeStatus");
+    }
+    public void setHsCodeStatus(String hsCodeStatus) {
+        setAttribute("hsCodeStatus", hsCodeStatus);
+    }
+
+    //hsCodeSetter
+    public String getHsCodeSetter() {
+        return getAttribute("hsCodeSetter");
+    }
+    public void setHsCodeSetter(String hsCodeSetter) {
+        setAttribute("hsCodeSetter", hsCodeSetter);
+    }
+
+    // translateTime
+    public String getHsCodeSetTime() {
+        return getAttribute("hsCodeSetTime");
+    }
+    public void setHsCodeSetTime(String hsCodeSetTime) {
+        setAttribute("hsCodeSetTime", hsCodeSetTime);
     }
 
     @Override
@@ -501,15 +587,6 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
             }
         }
         return super.put(key, value);
-    }
-
-    // 主数据平台是否为主商品
-    public int getIsMasterMain() {
-        return getAttribute("isMasterMain");
-    }
-
-    public void setIsMasterMain(int isMasterMain) {
-        setAttribute("isMasterMain", isMasterMain);
     }
 
     public int getMasterGroupQuantity() {
