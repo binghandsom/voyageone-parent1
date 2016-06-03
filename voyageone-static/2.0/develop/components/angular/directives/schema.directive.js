@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     /*
      * 已知的 rule 有如下:
@@ -25,9 +25,9 @@
      * 使用对象(引用类型)作为值, 用来方便后续判断。
      */
     var SYMBOLS = {
-        NOT_CONTAINS: { key: 'not contains' },
-        NOT_EQUALS: { key: '!=' },
-        EQUALS: { key: '==' }
+        NOT_CONTAINS: {key: 'not contains'},
+        NOT_EQUALS: {key: '!='},
+        EQUALS: {key: '=='}
     };
 
     // 使用 key 再次构建, 便于查找
@@ -161,113 +161,65 @@
         return rules;
     }
 
+    angular.module('voyageone.angular.directives')
+        .directive('schema', function () {
+            return {
+                restrict: 'E',
+                scope: {
+                    data: '='
+                },
+                controller: function($scope) {
+                    var self = this;
+                    var disposeDataWatcher = $scope.$watch('data', function(data) {
 
+                        if (!data)
+                            return;
 
+                        self.schema = data;
 
-    var schemaInput = {};
-
-
-    angular.module('voyageone.angular.directives').directive('schemaInput', function ($compile) {
-        return {
-            restrict: 'E',
-            scope: {
-                field: '='
-            },
-            link: function (scope, elem, attrs) {
-                // 页面初始化时, directive 接收到的 field 可能没有值
-                // 因为 ajax 还没有返回
-                // 所以需要 watch 监控
-                // 当拿到之后, 就不需要了。所以保留结果等待销毁
-                var disposeWatcher = scope.$watch('field', function (field) {
-                    if (!field)
-                        return;
-
-                    // 拿到 field 之后, 默认就不再变更了。所以这个 watcher 就可以再见了
-                    disposeWatcher();
-                    disposeWatcher = null;
-
-                    // 默认的, 根据 field 的 type 属性决定使用什么 schema 标签
-                    // 所以当你使用 schema-input 时, 我们默认认为 field 的 type 就是 INPUT
-                    // 这一点在未来可以进行报错处理
-
-                    // 现在要根据 rules 的 valueTypeRule 来决定使用什么类型的控件
-                    // 如果无法决定, 则默认使用 text
-                    var valueType = null;
-                    var inputType = null;
-
-                    if (field.rules) {
-
-                        var valueTypeRule = field.rules.find(rule => rule.name === 'valueTypeRule');
-
-                        if (valueTypeRule)
-                            valueType = valueTypeRule.value;
-                    }
-
-                    if (!valueType)
-                        valueType = 'text';
-
-                    switch (valueType) {
-                        case 'text':
-                        case 'html':
-                            inputType = 'text';
-                            break;
-                        case 'textarea':
-                            inputType = 'textarea';
-                            break;
-                        case 'integer':
-                        case 'long':
-                        case 'decimal':
-                            inputType = 'number';
-                            break;
-                        case 'date':
-                            inputType = 'date';
-                            break;
-                        case 'time':
-                            inputType = 'time';
-                            break;
-                        case 'url':
-                            inputType = 'url';
-                            break;
-                    }
-
-                    var input = $('<input>').attr({
-                        'ng-model': 'field.value',
-                        'class': 'form-control',
-                        'type': inputType
+                        disposeDataWatcher();
+                        disposeDataWatcher = null;
                     });
-
-                    elem.append($compile(input[0])(scope));
-                });
+                }
             }
-        }
-    });
+        })
+        .directive('schemaInput', function () {
+            return {
+                restrict: 'E',
+                require: '^schema',
+                scope: {
+                    field: '=',
+                    fieldId: '@'
+                },
+                link: function(scope, elem, attr) {
 
-    /*
-     .component('schemaInput', {
-     template: '<input ng-model="$ctrl.field.value" class="form-control" ng-type="$ctrl.type" ng-required="" ng-pattern="" ng-maxlength="" ng-minlength="" ng-maxvalue="" ng-minvalue="">',
-     bindings: {
+                    if (!attr.field) {
 
-     },
-     controller: class SchemaInputController {
-     private field;
+                        // 如果没有 field, 则尝试使用 code 字段来从外层 schema 查找
+                        var disposeFieldIdWatcher = scope.$watch('fieldId', function (fieldId) {
+                            if (!fieldId)
+                                return;
 
-     get type() {
-     // 尝试查找值类型规则
-     var valueTypeRule = this.field.rules.find(rule => rule.name === 'valueTypeRule');
+                            console.log(fieldId);
 
-     // 如果找不到, 默认就给 text。
-     if (!valueTypeRule)
-     return 'text';
+                            disposeFieldIdWatcher();
+                            disposeFieldIdWatcher = null;
+                        });
+                        
+                        return;
+                    }
 
-     // 如果有的话
-     switch (valueTypeRule.value) {
+                    // 如果配置了指定的 field 字段, 则使用指定的字段
+                    var disposeFieldWatcher = scope.$watch('field', function(field) {
+                        if (!field)
+                            return;
 
-     }
+                        console.log(field);
 
-     // 不能匹配的默认使用 text
-     return 'text';
-     }
-     }
-     }
-     */
+                        disposeFieldWatcher();
+                        disposeFieldWatcher = null;
+                    });
+                }
+            }
+        });
 })();
