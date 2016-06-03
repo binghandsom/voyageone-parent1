@@ -3,7 +3,9 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
@@ -35,11 +37,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public void setSellerCats(CmsBtProductModel_SellerCats sellerCats) {
         this.sellerCats = sellerCats;
     }
+    private Map sales = new HashMap<>();
 
     private CmsBtProductModel_Platform platform = new CmsBtProductModel_Platform();
 
     public String getOrgChannelId() {
-
         return orgChannelId == null ? this.channelId : orgChannelId;
     }
 
@@ -160,6 +162,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
         this.carts = productCarts;
+    }
+
+    public Map getSales() {
+        return sales;
+    }
+
+    public void setSales(Map sales) {
+        this.sales = sales;
     }
 
     public CmsBtProductModel_Platform getPlatform() {
