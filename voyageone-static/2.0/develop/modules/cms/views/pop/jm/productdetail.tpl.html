@@ -257,10 +257,10 @@
                                             {{sku.marketPrice}}
                                         </td>
                                         <td class="text-right">
-                                            <input class="form-control text-right" ng-model="sku.dealPrice">
+                                            <input class="form-control text-right" ng-change="sku.isSave=true;" ng-model="sku.dealPrice">
                                         </td>
                                         <td class="text-center">
-                                            <button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="ctrl.updateDealPrice(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                            <button title="{{'BTN_SAVE' | translate}}" ng-disabled="!sku.isSave" class="btn btn-vo btn-xs" ng-click="ctrl.updateDealPrice(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
                                         </td>
                                     </tr>
                                     </tbody>
