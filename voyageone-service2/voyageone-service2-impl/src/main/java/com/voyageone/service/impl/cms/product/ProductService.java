@@ -94,10 +94,6 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
-    public void update(CmsBtProductModel model) {
-        cmsBtProductDao.update(model);
-    }
-
     /**
      * 获取商品 根据Code
      */

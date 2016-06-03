@@ -47,6 +47,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
     //平台属性Map
     private Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+    //销售数据统计
+    private Map sales = new HashMap<>();
 
     public CmsBtProductModel() {
     }
@@ -208,6 +210,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartType.getId(), cart);
+    }
+
+    public Map getSales() {
+        return sales;
+    }
+
+    public void setSales(Map sales) {
+        this.sales = sales;
     }
 
     /**

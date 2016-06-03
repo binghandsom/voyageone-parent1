@@ -126,7 +126,11 @@ public class BaseJomgoPartTemplate {
 
         //condition
         if (!StringUtils.isEmpty(queryObject.getQuery())) {
-            find = getCollection(collectionName).findOne(queryObject.getQuery());
+            if (queryObject.getParameters() == null || queryObject.getParameters().length == 0) {
+                find = getCollection(collectionName).findOne(queryObject.getQuery());
+            } else {
+                find = getCollection(collectionName).findOne(queryObject.getQuery(), queryObject.getParameters());
+            }
         } else if (queryObject.getObjectId() != null) {
             find = getCollection(collectionName).findOne(queryObject.getObjectId());
         } else {
@@ -216,7 +220,11 @@ public class BaseJomgoPartTemplate {
         if (StringUtils.isEmpty(queryObject.getQuery())) {
             find = getCollection(collectionName).find();
         } else {
-            find = getCollection(collectionName).find(queryObject.getQuery());
+            if (queryObject.getParameters() == null || queryObject.getParameters().length == 0) {
+                find = getCollection(collectionName).find(queryObject.getQuery());
+            } else {
+                find = getCollection(collectionName).find(queryObject.getQuery(), queryObject.getParameters());
+            }
         }
 
         //column
@@ -294,7 +302,6 @@ public class BaseJomgoPartTemplate {
         if (updateObject.isUpsert()) {
             findAndModify = findAndModify.upsert();
         }
-
 
         //execute
         return findAndModify.as(entityClass);

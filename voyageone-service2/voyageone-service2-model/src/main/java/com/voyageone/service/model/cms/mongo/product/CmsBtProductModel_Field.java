@@ -428,7 +428,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("images6", images6);
     }
 
-    //商品自定义A
+    //商品自定义M_CUSTOM_PRODUCT_IMAGE
     public List<CmsBtProductModel_Field_Image> getImages7() {
         if (!this.containsKey("images7") || getAttribute("images7") == null) {
             setAttribute("images7", new ArrayList<CmsBtProductModel_Field_Image>());
@@ -439,7 +439,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("images7", images7);
     }
 
-    //商品自定义B
+    //商品自定义HANG_TAG_IMAGE
     public List<CmsBtProductModel_Field_Image> getImages8() {
         if (!this.containsKey("images8") || getAttribute("images8") == null) {
             setAttribute("images8", new ArrayList<CmsBtProductModel_Field_Image>());
@@ -573,4 +573,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return super.put(key, value);
     }
 
+    public int getMasterGroupQuantity() {
+        return getAttribute("masterGroupQuantity") != null ? Integer.parseInt(getAttribute("masterGroupQuantity").toString()) : 0;
+    }
+
+    public void setMasterGroupQuantity(int qty) {
+        setAttribute("masterGroupQuantity", qty);
+    }
 }

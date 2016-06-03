@@ -19,11 +19,15 @@ define([
             $searchAdvanceService.getCustColumnsInfo().then(function (res) {
                 $scope.cus.customProps = res.data.customProps;
                 $scope.cus.commonProps = res.data.commonProps;
+                $scope.cus.salesTypeList = res.data.salesTypeList;
                 _.forEach($scope.cus.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
                 });
                 _.forEach($scope.cus.commonProps, function (data) {
                     data.isChk = _.contains(res.data.commList, data.propId);
+                });
+                _.forEach($scope.cus.salesTypeList, function (data) {
+                    data.isChk = _.contains(res.data.selSalesTypeList, data.value);
                 });
             })
         };
@@ -44,9 +48,16 @@ define([
                     commonProps.push(data.propId);
                 }
             });
+            var selSalesTypeList = [];
+            _.forEach($scope.cus.salesTypeList, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    selSalesTypeList.push(data.value);
+                }
+            });
             var params = {};
             params.customProps = customProps;
             params.commonProps = commonProps;
+            params.selSalesTypeList = selSalesTypeList;
             $searchAdvanceService.saveCustColumnsInfo(params).then(function() {
                 $modalInstance.close('');
             });

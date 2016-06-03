@@ -486,7 +486,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 updateProductGroupStatus(sxData);
 
                 // 上新或更新成功后回写product表中的平台相关nummIId,pStatus等属性
-                updateProductInfo(sxData);
+                //updateProductInfo(sxData);  // TODO 目前回写还有问题
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -1600,10 +1600,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
 
         // 取得当前平台对应的特殊字段处理（目前mapSpAll为空，所以不会取到值）
-        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
-//        Map<String, Object> mapSp = new HashMap<>();
+//        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
+        Map<String, Object> mapSp = new HashMap<>();
 
-        // 特殊字段处理   天猫专用？
+        // 特殊字段处理   天猫专用吗
         // 先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
 //        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
 //        if (!mappingTypePropsMap.isEmpty()) {
@@ -1783,7 +1783,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
 
             // 更新ProductGroup表
-            productService.update(product);
+            //productService.update(product);
         }
     }
 
