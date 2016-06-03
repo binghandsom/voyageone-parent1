@@ -16,7 +16,6 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -159,7 +158,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         List<Map<String, Object>> rsList2 = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
         List<String> itemList = new ArrayList<>();
-        if (rsList2 != null || rsList2.size() > 0) {
+        if (!rsList2.isEmpty()) {
             String itemVal = org.apache.commons.lang3.StringUtils.trimToNull((String) rsList2.get(0).get("cfg_val2"));
             if (itemVal != null) {
                 Collections.addAll(itemList, itemVal.split(","));
@@ -182,7 +181,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
         // 获取label
-        Map param = new HashMap<>(2);
+        Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
         masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
@@ -241,11 +240,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
         if (prodList == null || prodList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         // 取得符合条件的产品code列表
-        List<String> codeList = new ArrayList<String>(prodList.size());
+        List<String> codeList = new ArrayList<>(prodList.size());
         for (CmsBtProductModel prodObj : prodList) {
             codeList.add(prodObj.getFields().getCode());
         }
@@ -269,8 +268,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if (plusStr == null) {
             plusStr = "";
         }
-        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat(plusStr).split(";")));
-        queryObject.setProjection(projStr.toString());
+        String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
+        queryObject.setProjection(projStr);
         queryObject.setSort(setSortValue(searchValue));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
@@ -625,20 +624,24 @@ public class CmsSearchAdvanceService extends BaseAppService {
         return commonPropService.getCustColumns();
     }
 
-    private List<Map> getSalesTypeList(String channelId, String language, List<String> filterList) {
+    private List<Map<String, String>> getSalesTypeList(String channelId, String language, List<String> filterList) {
+        List<Map<String, String>> salseSum7List = new ArrayList<>();
+        List<Map<String, String>> salseSum30List = new ArrayList<>();
+        List<Map<String, String>> salseSumAllList = new ArrayList<>();
+
         // 设置按销量排序的选择列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
-        List<Map> salseSum7List = new ArrayList<>();
-        List<Map> salseSum30List = new ArrayList<>();
-        List<Map> salseSumAllList = new ArrayList<>();
+        if (cartList == null) {
+            return salseSumAllList;
+        }
         for (TypeChannelBean cartObj : cartList) {
             int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
             if (cartId == 1 || cartId == -1) {
                 continue;
             }
-            Map keySum7Map = new HashMap<>();
-            Map keySum30Map = new HashMap<>();
-            Map keySumAllMap = new HashMap<>();
+            Map<String, String> keySum7Map = new HashMap<>();
+            Map<String, String> keySum30Map = new HashMap<>();
+            Map<String, String> keySumAllMap = new HashMap<>();
             if (cartId == 0) {
                 keySum7Map.put("name", "7Days总销量");
                 keySum7Map.put("value", "sales.code_sum_7.cartId_0");
@@ -662,8 +665,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
         salseSumAllList.addAll(salseSum7List);
 
         if (filterList != null) {
-            List<Map> sumAllList = new ArrayList<>();
-            for (Map sumObj : salseSumAllList) {
+            List<Map<String, String>> sumAllList = new ArrayList<>();
+            for (Map<String, String> sumObj : salseSumAllList) {
                 if (filterList.contains(sumObj.get("value"))) {
                     sumAllList.add(sumObj);
                 }
@@ -746,7 +749,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         cmsSessionBean.putAttribute("_adv_search_commonProps", commonProp2);
 
         List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userInfo.getUserId());
-        int rs = 0;
+        int rs;
         if (rsList == null || rsList.isEmpty()) {
             rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         } else {
@@ -757,7 +760,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
 
         rsList = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userInfo.getUserId());
-        String selStr = null;
+        String selStr;
         if (selSalesTypeList == null || selSalesTypeList.isEmpty()) {
             selStr = "";
         } else {

@@ -54,7 +54,7 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 continue;
             }
 
-            Map salesMap = new HashMap<>();
+            Map<String, Object> salesMap = new HashMap<>();
 
             // 7天销售group级数据
             Object[] params = new Object[]{begDate1, endDate, grpObj.getCartId(), channelId, codeList};
@@ -87,9 +87,9 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 salesMap.put("code_sum_all", qty);
             }
 
-            Map queryMap = new HashMap<>();
+            Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("groupId", grpObj.getGroupId());
-            Map updateMap = new HashMap<>();
+            Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("sales", salesMap);
             updateMap.put("modifier", taskName);
             updateMap.put("modified", DateTimeUtil.getNow());
@@ -125,7 +125,7 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 continue;
             }
 
-            Map salesMap = new HashMap<>();
+            Map<String, Object> salesMap = new HashMap<>();
 
             // 7天销售group级数据
             Object[] params = new Object[] { begDate1, endDate, channelId, codeList };
@@ -158,9 +158,9 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 salesMap.put("code_sum_all", qty);
             }
 
-            Map queryMap = new HashMap<>();
+            Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("groupId", grpObj.getGroupId());
-            Map updateMap = new HashMap<>();
+            Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("sales", salesMap);
             updateMap.put("modifier", taskName);
             updateMap.put("modified", DateTimeUtil.getNow());
