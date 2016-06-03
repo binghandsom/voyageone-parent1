@@ -450,6 +450,29 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("images8", images8);
     }
 
+    //lock商品
+    public String getLock() {
+        Object lock = getAttribute("lock");
+        if (lock == null) {
+            return "";
+        }
+        return getAttribute("images7");
+    }
+    public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
+        setAttribute("images7", images7);
+    }
+
+    //商品自定义HANG_TAG_IMAGE
+    public List<CmsBtProductModel_Field_Image> getImages8() {
+        if (!this.containsKey("images8") || getAttribute("images8") == null) {
+            setAttribute("images8", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images8");
+    }
+    public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
+        setAttribute("images8", images8);
+    }
+
     //状态 new/pending/ready/approved/deleted
     public String getStatus() {
         return getAttribute("status");

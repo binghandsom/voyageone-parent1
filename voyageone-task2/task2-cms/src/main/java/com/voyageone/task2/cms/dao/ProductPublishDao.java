@@ -32,6 +32,7 @@ public class ProductPublishDao extends BaseDao {
         update(Constants.DAO_NAME_SPACE_CMS + "ims_updateProductPublishMini", dataMap);
     }
 
+    // 统计前一天订单中的产品数量
     public List<Map> selectProductOrderCount(long oIdx, long oLimit) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("oIdx", oIdx);
