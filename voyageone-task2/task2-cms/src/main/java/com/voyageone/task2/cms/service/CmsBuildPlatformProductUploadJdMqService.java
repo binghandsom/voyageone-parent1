@@ -1425,7 +1425,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 如果是平台售价，则取个平台相应的售价(platform.P29.sku.priceSale)
                 if (PriceType_jdprice.equals(priceType)) {
                     CmsBtProductModel_Platform_Cart platformCart = cmsProduct.getPlatform().get("P" + cartId);
-                    List<BaseMongoMap<String, Object>> platformCartSkuList = platformCart.getSkus();
+                    List<Map<String, Object>> platformCartSkuList = platformCart.getSkus();
                     // 循环取得找到本skucode对应的平台售价
                     for(Map<String, Object> platformSkuMap : platformCartSkuList) {
                         // 找到skucode对应的平台售价，然后跳出循环

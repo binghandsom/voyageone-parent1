@@ -9,8 +9,6 @@ package com.voyageone.components.ftp.bean;
  */
 public class FtpDirectoryBean extends BaseFtpBean {
 
-
-
     /**
      * 本地文件路径
      */

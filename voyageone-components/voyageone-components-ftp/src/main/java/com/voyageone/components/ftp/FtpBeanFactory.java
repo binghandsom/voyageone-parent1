@@ -62,32 +62,34 @@ public class FtpBeanFactory {
     /**
      * VO_IMAGE_SERVER Config
      */
+    private final static String VO_IMAGE_SERVER = "VO_IMAGE_SERVER";
     private static BaseFtpBean getVOImageCmsFtpBean() {
         BaseFtpBean bean = new BaseFtpBean();
-        bean.setHostname(Codes.getCodeName("VO_IMAGE_SERVER", "DOMAIN"));
-        String strPort = Codes.getCodeName("VO_IMAGE_SERVER", "Port");
+        bean.setHostname(Codes.getCodeName(VO_IMAGE_SERVER, "DOMAIN"));
+        String strPort = Codes.getCodeName(VO_IMAGE_SERVER, "Port");
         if (!StringUtils.isEmpty(strPort)) {
             bean.setPort(Integer.parseInt(strPort));
         }
-        bean.setUsername(Codes.getCodeName("VO_IMAGE_SERVER", "UserName"));
-        bean.setPassword(Codes.getCodeName("VO_IMAGE_SERVER", "Password"));
+        bean.setUsername(Codes.getCodeName(VO_IMAGE_SERVER, "UserName"));
+        bean.setPassword(Codes.getCodeName(VO_IMAGE_SERVER, "Password"));
         return bean;
     }
 
     /**
      * Nexcess FTP Config
      */
+    private final static String NexcessFTP_CONFIG = "NexcessFTP_CONFIG";
     private static BaseFtpBean getNexcessFtpBean() {
         BaseFtpBean bean = new BaseFtpBean();
-        bean.setHostname(Codes.getCodeName("NexcessFTP_CONFIG", "Url"));
-        String strPort = Codes.getCodeName("NexcessFTP_CONFIG", "Port");
+        bean.setHostname(Codes.getCodeName(NexcessFTP_CONFIG, "Url"));
+        String strPort = Codes.getCodeName(NexcessFTP_CONFIG, "Port");
         if (!StringUtils.isEmpty(strPort)) {
             bean.setPort(Integer.parseInt(strPort));
         }
-        bean.setUsername(Codes.getCodeName("NexcessFTP_CONFIG", "UserName"));
-        bean.setPassword(Codes.getCodeName("NexcessFTP_CONFIG", "Password"));
+        bean.setUsername(Codes.getCodeName(NexcessFTP_CONFIG, "UserName"));
+        bean.setPassword(Codes.getCodeName(NexcessFTP_CONFIG, "Password"));
 
-        String strFileCoding = Codes.getCodeName("NexcessFTP_CONFIG", "FileCoding");
+        String strFileCoding = Codes.getCodeName(NexcessFTP_CONFIG, "FileCoding");
         if (!StringUtils.isEmpty(strFileCoding)) {
             bean.setCoding(strFileCoding);
         }
@@ -98,17 +100,18 @@ public class FtpBeanFactory {
     /**
      * Scene7 FTP Config
      */
+    private final static String S7FTP_CONFIG = "S7FTP_CONFIG";
     private static BaseFtpBean getScene7FtpBean() {
         BaseFtpBean bean = new BaseFtpBean();
-        bean.setHostname(Codes.getCodeName("S7FTP_CONFIG", "Url"));
-        String strPort = Codes.getCodeName("S7FTP_CONFIG", "Port");
+        bean.setHostname(Codes.getCodeName(S7FTP_CONFIG, "Url"));
+        String strPort = Codes.getCodeName(S7FTP_CONFIG, "Port");
         if (!StringUtils.isEmpty(strPort)) {
             bean.setPort(Integer.parseInt(strPort));
         }
-        bean.setUsername(Codes.getCodeName("S7FTP_CONFIG", "UserName"));
-        bean.setPassword(Codes.getCodeName("S7FTP_CONFIG", "Password"));
+        bean.setUsername(Codes.getCodeName(S7FTP_CONFIG, "UserName"));
+        bean.setPassword(Codes.getCodeName(S7FTP_CONFIG, "Password"));
 
-        String strFileCoding = Codes.getCodeName("S7FTP_CONFIG", "FileCoding");
+        String strFileCoding = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
         if (!StringUtils.isEmpty(strFileCoding)) {
             bean.setCoding(strFileCoding);
         }
