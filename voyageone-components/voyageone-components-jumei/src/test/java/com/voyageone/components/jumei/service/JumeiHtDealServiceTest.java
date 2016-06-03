@@ -39,11 +39,13 @@ public class JumeiHtDealServiceTest {
         shopBean.setSessionKey(Client_key);
         shopBean.setApp_url(url);
         HtDealUpdateRequest request = new HtDealUpdateRequest();
-        request.setJumei_hash_id("ht1464857040p222551367");
+        request.setJumei_hash_id("ht1464949112p222551364");
         HtDealUpdate_DealInfo dealInfo=new HtDealUpdate_DealInfo();
-        dealInfo.setUser_purchase_limit(10);
+        dealInfo.setUser_purchase_limit(100);
+        dealInfo.setShipping_system_id(2813);
         request.setUpdate_data(dealInfo);
         HtDealUpdateResponse response = htDealService.update(shopBean, request);
+        //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
     }
     @Test
     public void  copyDeal() throws Exception {
@@ -64,7 +66,7 @@ public class JumeiHtDealServiceTest {
         shopBean.setSessionKey(Client_key);
         shopBean.setApp_url(url);
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
-        request.setJumei_hash_id("ht1460725488p2225513");//ht1464857040p222551367
+        request.setJumei_hash_id("ht1460725421p2225513");//ht1464949112p222551364
 
         request.setStart_time(DateTimeUtil.addMinutes(new Date(),1));
         request.setEnd_time(DateTimeUtil.addMinutes(new Date(),2));
@@ -87,13 +89,14 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list=new ArrayList<>();
         HtDeal_UpdateDealPriceBatch_UpdateData updateData=new HtDeal_UpdateDealPriceBatch_UpdateData();
-        updateData.setJumei_hash_id("ht1464857040p222551367");
-        updateData.setJumei_sku_no("701506470");
-        updateData.setMarket_price(21);
-        updateData.setDeal_price(18);
+        updateData.setJumei_hash_id("ht1464949112p222551364");
+        updateData.setJumei_sku_no("701506467");
+        updateData.setMarket_price(400);
+        updateData.setDeal_price(200);
         list.add(updateData);
         request.setUpdate_data(list);
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
+     //   {"error_code":"302","reason":"error","response":{"successCount":0,"errorList":[{"jumei_sku_no":"701506467","error_code":505,"error_message":"hash_id: ht1464949112p222551364, sku_no:701506467的修改价格申请还在审核，不能重复提交申请!"}]}}
     }
 
 }

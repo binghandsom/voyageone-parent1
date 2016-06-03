@@ -3,21 +3,28 @@ package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
+import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +45,10 @@ public class CmsBtJmPromotionProductService {
     CmsMtJmConfigService serviceCmsMtJmConfig;
     @Autowired
     JMShopBeanService serviceJMShopBean;
+   @Autowired
+    CmsBtJmPromotionDao daoCmsBtJmPromotion;
+    @Autowired
+    CmsBtTagDao daoCmsBtTag;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -58,10 +69,10 @@ public class CmsBtJmPromotionProductService {
         return daoExt.getPageByWhere(map);
     }
 
-    public int getCountByWhere(Map<String, Object> map)
-    {
-        return  daoExt.getCountByWhere(map);
+    public int getCountByWhere(Map<String, Object> map) {
+        return daoExt.getCountByWhere(map);
     }
+
     public int delete(int id) {
         return dao.delete(id);
     }
@@ -96,26 +107,31 @@ public class CmsBtJmPromotionProductService {
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter) {
         return daoExt.jmNewByProductIdListInfo(parameter);
     }
+
     //所有未上心商品上新
     public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         return daoExt.updateDealEndTimeAll(parameter);
     }
+
     //部分商品上新
     public int updateDealEndTime(ParameterUpdateDealEndTime parameter) {
         return daoExt.updateDealEndTime(parameter);
     }
+
     // 根据条件检索出promoiton的product数据
     public CmsBtJmPromotionProductModel selectOne(Map<String, Object> param) {
         return dao.selectOne(param);
     }
+
     public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
         CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
         int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
         ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
         // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
-        CallResult     result=   serviceJuMeiProductPlatform.updateJm(model, shopBean, ShippingSystemId);
+        CallResult result = serviceJuMeiProductPlatform.updateJm(model, shopBean, ShippingSystemId);
         // }
         return result;
     }
+
 }
 

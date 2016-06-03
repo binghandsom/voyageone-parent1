@@ -11,7 +11,8 @@ define([
             "promotionId": $routeParams.parentId,
             modelList: [],
             cmsBtJmPromotionImportTaskList: [],
-            cmsBtJmPromotionExportTaskList: []
+            cmsBtJmPromotionExportTaskList: [],
+            tagList:[]
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
         $scope.parentModel = {};
