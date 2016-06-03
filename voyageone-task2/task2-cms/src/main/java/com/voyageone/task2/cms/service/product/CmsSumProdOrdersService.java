@@ -10,6 +10,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     Map<String, Object> skuSalesMap = new HashMap<>();
                     skuSalesMap.put("skuCode", groupKey.get("sku"));
                     skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                    skuSalesMap.put("code_sum_7", qty);
+                    skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, qty);
                     skuSum7List.add(skuSalesMap);
                 }
             }
@@ -105,7 +106,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     Map<String, Object> skuSalesMap = new HashMap<>();
                     skuSalesMap.put("skuCode", groupKey.get("sku"));
                     skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                    skuSalesMap.put("code_sum_30", qty);
+                    skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, qty);
                     skuSum30List.add(skuSalesMap);
                 }
             }
@@ -120,7 +121,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                         Map<String, Object> skuSalesMap = new HashMap<>();
                         skuSalesMap.put("skuCode", skuCode);
                         skuSalesMap.put("cartId", cartId);
-                        skuSalesMap.put("code_sum_all", 0);
+                        skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
                         skuSumAllList.add(skuSalesMap);
                     }
                 }
@@ -132,7 +133,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     Map<String, Object> skuSalesMap = new HashMap<>();
                     skuSalesMap.put("skuCode", groupKey.get("sku"));
                     skuSalesMap.put("cartId", groupKey.get("cart_id"));
-                    skuSalesMap.put("code_sum_all", qty);
+                    skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, qty);
                     skuSumAllList.add(skuSalesMap);
                 }
             }
@@ -141,12 +142,12 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             for (Map<String, Object> sumInfo : skuSumAllList) {
                 for (Map sum7Info : skuSum7List) {
                     if (sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId"))) {
-                        sumInfo.put("code_sum_7", sum7Info.get("code_sum_7"));
+                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7));
                     }
                 }
                 for (Map sum30Info : skuSum30List) {
                     if (sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId"))) {
-                        sumInfo.put("code_sum_30", sum30Info.get("code_sum_30"));
+                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30));
                     }
                 }
             }
@@ -155,14 +156,14 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             Map<String, String> skuCodeMap = new HashMap<>();
             for (Map<String, Object> sumInfo : skuSumAllList) {
                 skuCodeMap.put((String) sumInfo.get("skuCode"), "");
-                if (sumInfo.get("code_sum_7") == null) {
-                    sumInfo.put("code_sum_7", 0);
+                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7) == null) {
+                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, 0);
                 }
-                if (sumInfo.get("code_sum_30") == null) {
-                    sumInfo.put("code_sum_30", 0);
+                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30) == null) {
+                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, 0);
                 }
-                if (sumInfo.get("code_sum_all") == null) {
-                    sumInfo.put("code_sum_all", 0);
+                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL) == null) {
+                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
                 }
             }
 
@@ -180,7 +181,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     sum7Map.put("cartId_" + groupKey.get("cart_id"), qty);
                 }
                 sum7Map.put("cartId_0", sum7);
-                salesMap.put("code_sum_7", sum7Map);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Map);
             }
 
             // 30天销售code数据
@@ -196,7 +197,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     sum30Map.put("cartId_" + groupKey.get("cart_id"), qty);
                 }
                 sum30Map.put("cartId_0", sum30);
-                salesMap.put("code_sum_30", sum30Map);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Map);
             }
 
             // 所有销售code数据
@@ -208,7 +209,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     sumallMap.put("cartId_" + cartItem, 0);
                 }
                 sumallMap.put("cartId_0", 0);
-                salesMap.put("code_sum_all", sumallMap);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, sumallMap);
             } else {
                 Map<String, Object> sumallMap = new HashMap<>();
                 int sumall = 0;
@@ -219,7 +220,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     sumallMap.put("cartId_" + groupKey.get("cart_id"), qty);
                 }
                 sumallMap.put("cartId_0", sumall);
-                salesMap.put("code_sum_all", sumallMap);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, sumallMap);
             }
 
             // sku合计
@@ -229,30 +230,30 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 int skuSumAll = 0;
                 for (Map sumInfo : skuSumAllList) {
                     if (skuCode.equals(sumInfo.get("skuCode"))) {
-                        skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_7"));
-                        skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_30"));
-                        skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get("code_sum_all"));
+                        skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7));
+                        skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30));
+                        skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL));
                     }
                 }
                 Map<String, Object> skuMap = new HashMap<>();
                 skuMap.put("skuCode", skuCode);
                 skuMap.put("cartId", 0);
-                skuMap.put("code_sum_7", skuSum7);
-                skuMap.put("code_sum_30", skuSum30);
-                skuMap.put("code_sum_all", skuSumAll);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_7, skuSum7);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_30, skuSum30);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, skuSumAll);
                 skuCartSumList.add(skuMap);
             }
             skuSumAllList.addAll(skuCartSumList);
             salesMap.put("skus", skuSumAllList);
 
             // 没有的数据补零
-            Map<String, Object> sum7Map = (Map<String, Object>) salesMap.get("code_sum_7");
+            Map<String, Object> sum7Map = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_7);
             if (sum7Map == null) {
                 sum7Map = new HashMap<>();
                 for (Integer cartItem : cartList2) {
                     sum7Map.put("cartId_" + cartItem, 0);
                 }
-                salesMap.put("code_sum_7", sum7Map);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Map);
             } else {
                 for (Integer cartItem : cartList2) {
                     Integer qty = (Integer) sum7Map.get("cartId_" + cartItem);
@@ -265,13 +266,13 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             if (qty0 == null) {
                 sum7Map.put("cartId_0", 0);
             }
-            Map<String, Object> sum30Map = (Map<String, Object>) salesMap.get("code_sum_30");
+            Map<String, Object> sum30Map = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_30);
             if (sum30Map == null) {
                 sum30Map = new HashMap<>();
                 for (Integer cartItem : cartList2) {
                     sum30Map.put("cartId_" + cartItem, 0);
                 }
-                salesMap.put("code_sum_30", sum30Map);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Map);
             } else {
                 for (Integer cartItem : cartList2) {
                     Integer qty = (Integer) sum30Map.get("cartId_" + cartItem);
@@ -284,13 +285,13 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             if (qty0 == null) {
                 sum30Map.put("cartId_0", 0);
             }
-            Map<String, Object> sumAllMap = (Map<String, Object>) salesMap.get("code_sum_all");
+            Map<String, Object> sumAllMap = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_ALL);
             if (sumAllMap == null) {
                 sumAllMap = new HashMap<>();
                 for (Integer cartItem : cartList2) {
                     sumAllMap.put("cartId_" + cartItem, 0);
                 }
-                salesMap.put("code_sum_all", sumAllMap);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, sumAllMap);
             } else {
                 for (Integer cartItem : cartList2) {
                     Integer qty = (Integer) sumAllMap.get("cartId_" + cartItem);
