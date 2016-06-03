@@ -42,7 +42,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pCatStatus", pCatStatus);
     }
 
-    // 是否为主商品
+    // 鏄惁涓轰富鍟嗗搧
     public int getpIsMain() {
         return getAttribute("pIsMain");
     }
