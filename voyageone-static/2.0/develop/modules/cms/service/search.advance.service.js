@@ -262,6 +262,7 @@ define([
                     commArr.push({value: itemVal});
                 });
                 productInfo.commArr = commArr;
+
                 var custArr = [];
                 _.forEach(customProps, function (data) {
                     var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
@@ -273,6 +274,7 @@ define([
                     custArr.push({value: orgAttsitemVal});
                 });
                 productInfo.custArr = custArr;
+
                 var selSalesTyeArr = [];
                 _.forEach(selSalesTypes, function (data) {
                     var selValue = data.value;
@@ -291,6 +293,23 @@ define([
                     selSalesTyeArr.push({value: itemVal});
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
+
+                if (productInfo.carts) {
+                    _.forEach(productInfo.carts, function (data) {
+                        var cartInfo = Carts.valueOf(data.cartId);
+                        if (!_.isUndefined(cartInfo)) {
+                            if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
+                                data._purl = '';
+                            } else {
+                                data._purl = cartInfo.pUrl + data.numiid;
+                            }
+                            data._pname = cartInfo.name;
+                        } else {
+                            data._purl = '';
+                            data._pname = '';
+                        }
+                    });
+                }
 
                 // 初始化数据选中需要的数组
                 tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.fields["code"]});

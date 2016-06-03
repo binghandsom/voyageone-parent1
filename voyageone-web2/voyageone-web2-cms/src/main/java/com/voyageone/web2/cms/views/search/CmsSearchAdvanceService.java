@@ -474,6 +474,25 @@ public class CmsSearchAdvanceService extends BaseAppService {
                         freeTagsList.add(org.apache.commons.lang3.StringUtils.join(tagPathStrList, "<br>"));
                     }
                 }
+
+                // 查询商品在各平台状态
+                List<CmsBtProductModel_Carts> carts = groupObj.getCarts();
+                if (carts != null && carts.size() > 0) {
+                    for (CmsBtProductModel_Carts cartsObj : carts) {
+                        StringBuilder resultStr = new StringBuilder();
+                        resultStr.append(MongoUtils.splicingValue("cartId", cartsObj.getCartId()));
+                        resultStr.append(",");
+                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
+
+                        // 在group表中过滤platforms相关信息
+                        JomgoQuery qrpQuyObj = new JomgoQuery();
+                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
+                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
+                        if (grpItem != null) {
+                            cartsObj.setAttribute("numiid", grpItem.getNumIId());
+                        }
+                    }
+                }
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();
