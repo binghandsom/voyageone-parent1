@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
