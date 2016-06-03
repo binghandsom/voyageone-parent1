@@ -166,7 +166,8 @@
         "copyDealAll": "copyDealAll",
         "batchDeleteProduct": "batchDeleteProduct",
         "deleteAllProduct": "deleteAllProduct",
-        "getProductView": "getProductView"
+        "getProductView": "getProductView",
+        "updateDealPrice": "updateDealPrice"
       },
       "cmsBtJmPromotionImportTask": {
         "cmsBtJmPromotionImportTaskService": {

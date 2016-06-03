@@ -71,6 +71,7 @@ public interface CmsUrlConstants {
                 String BatchDeleteProduct="batchDeleteProduct";
                 String DeleteAllProduct="deleteAllProduct";
                 String GetProductView="getProductView";
+                String UpdateDealPrice="updateDealPrice";
             }
         }
     }

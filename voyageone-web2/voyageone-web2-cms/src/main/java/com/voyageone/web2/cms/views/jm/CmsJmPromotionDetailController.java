@@ -10,6 +10,7 @@ import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUp
 import com.voyageone.service.bean.cms.jumei2.*;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
@@ -60,6 +61,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     //begin 2
     @Autowired
     CmsBtJmPromotionProduct3Service service3;
+    @Autowired
+    CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
     //end 2
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
@@ -82,17 +85,17 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
-    public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
-        int id = Integer.parseInt((String) map.get("id"));
-        BigDecimal dealPrice = new BigDecimal(map.get("dealPrice").toString());
-        CmsBtJmPromotionProductModel model = serviceCmsBtJmPromotionProduct.select(id);
-        model.setDealPrice(dealPrice);
-        model.setModifier(getUser().getUserName());
-        serviceCmsBtJmPromotionProduct.update(model);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
+//    public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
+//        int id = Integer.parseInt((String) map.get("id"));
+//        BigDecimal dealPrice = new BigDecimal(map.get("dealPrice").toString());
+//        CmsBtJmPromotionProductModel model = serviceCmsBtJmPromotionProduct.select(id);
+//        model.setDealPrice(dealPrice);
+//        model.setModifier(getUser().getUserName());
+//        serviceCmsBtJmPromotionProduct.update(model);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
@@ -327,6 +330,13 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetProductView)
     public  AjaxResponse getProductView(@RequestBody int promotionProductId) {
         return success(service3.getProductView(promotionProductId));
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealPrice)
+    public AjaxResponse updateDealPrice(@RequestBody UpdateSkuDealPriceParameter parameter) {
+        String userName = getUser().getUserName();
+        service3CmsBtJmPromotionSku.updateDealPrice(parameter, userName);
+        CallResult result = new CallResult();
+        return success(result);
     }
     //jm2 end
 }

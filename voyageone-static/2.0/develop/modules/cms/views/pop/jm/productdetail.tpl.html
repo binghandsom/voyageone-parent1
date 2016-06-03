@@ -7,7 +7,7 @@
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
             <div class="row m-l-xs">
-                <div class="col-sm-8">
+                <div class="col-sm-15">
                  <tabset class="tab-container vo_nav-tabs">
                   <tab>
                     <tab-heading>Product 详情</tab-heading>
@@ -206,20 +206,20 @@
                         <div class="col-sm-12 panel vo_panel tab_panel">
                             <!-- .table-responsive -->
                             <div class="table-responsive">
-                                <table class="table table-hover-new vo_table dropdown_table_main" style="width:900px">
+                                <table  class="table table-hover-new vo_table dropdown_table_main" style="margin-bottom:0px;table-layout: fixed;">
                                     <thead>
                                     <tr>
                                         <th class="text-center mfb-xt">Seq.</th>
-                                        <th class="text-left mfb-xxx">聚美SKU</th>
-                                        <th class="text-lef mfb-xxx">UPC<br/>（子产品SPU）</th>
-                                        <th class="text-left mfb-xxx">规格<br/>（子产品SPU）</th>
-                                        <th class="text-left mfb-xxx">尺码<br/>（子产品SPU）</th>
-                                        <th class="text-left mfb-xxx">SKU<br/>（SKU信息）</th>
-                                        <th class="text-right mfb-xxst">海外官网价</th>
-                                        <th class="text-right mfb-xxst">中国官网售价</th>
-                                        <th class="text-right mfb-xxst">中国最终售价</th>
-                                        <th class="text-right mfb-xxst">市场价<br/>（子产品SPU）</th>
-                                        <th class="text-right mfb-xxst">团购价<br/>（SKU信息）</th>
+                                        <th class="text-left">聚美SKU</th>
+                                        <th class="text-lef ">UPC<br/>（子产品SPU）</th>
+                                        <th class="text-left ">规格<br/>（子产品SPU）</th>
+                                        <th class="text-left">尺码<br/>（子产品SPU）</th>
+                                        <th class="text-left">SKU<br/>（SKU信息）</th>
+                                        <th class="text-right ">海外官网价</th>
+                                        <th class="text-right">中国官网售价</th>
+                                        <th class="text-right ">中国最终售价</th>
+                                        <th class="text-right ">市场价<br/>（子产品SPU）</th>
+                                        <th class="text-right">团购价<br/>（SKU信息）</th>
                                         <th class="mfb-xxs text-center">Action</th>
                                     </tr>
                                     </thead>
@@ -259,9 +259,8 @@
                                         <td class="text-right">
                                             <input class="form-control text-right" ng-model="sku.dealPrice">
                                         </td>
-                                        <td class="text-left">其它</td>
                                         <td class="text-center">
-                                            <button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="ctrl.saveSku(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                            <button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="ctrl.updateDealPrice(sku, $index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
                                         </td>
                                     </tr>
                                     </tbody>

@@ -63,6 +63,16 @@ define([
                     self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 })
             },
+            updateDealPrice:function(skuInfo,index){
+                var self = this;
+                var parameter={};
+                parameter.promotionSkuId=skuInfo.id;
+                parameter.dealPrice=skuInfo.dealPrice;
+                self.jmPromotionDetailService.updateDealPrice(parameter).then(function (res) {
+                  //  self.skuList[index] = res.data;
+                    self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                })
+            },
             deleteSku: function (promotionSkuInfo, index) {
                 var self = this;
                 self.confirm(this.translate.instant('TXT_MSG_DELETE_ITEM')).result
