@@ -69,7 +69,7 @@ public class UploadToUSJoiServiceTest {
         productUpdateBean.setProductModel(cmsBtProductModel);
         productUpdateBean.setIsCheckModifed(false);
 
-        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel("1349", 26);
+        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1349", 26);
         List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
 
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform().get("p26");
