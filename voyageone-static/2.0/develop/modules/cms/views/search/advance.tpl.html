@@ -104,6 +104,18 @@
 								<!--</div>-->
 							<!--</div>-->
 						<!--</div>-->
+						<div class="form-group"><!-- 查询翻译状态 -->
+							<label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+							<div class="col-sm-8">
+								<div class="col-sm-5">
+									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										<option value="0">商品信息未翻译</option>
+										<option value="1">商品信息已翻译</option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -193,6 +205,21 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME' | translate}}</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model="vm.searchInfo.cartId" ng-change="getCat()"
+										ng-options="cartType.value as cartType.name for cartType in vm.masterData.cartList">
+									<option value="" translate="TXT_SELECT_NO_VALUE"></option>
+								</select>
+							</div>
+							<div class="col-sm-5">
+								<select multiple chosen class="form-control" ng-model="vm.searchInfo.cidValue"
+										ng-options="cat.catId as cat.catPath for cat in vm.masterData.catList">
+								</select>
+							</div>
+						</div>
 					</div><!-- .form-group -->
 				</div>
 				<div class="col-sm-4">
@@ -269,15 +296,23 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group" style="margin-left: -67px;"><!-- 查询翻译状态 -->
-							<label class="col-sm-4 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+						<div class="form-group" style="margin-left: -67px;">
+							<label class="col-sm-4 control-label">销量排序</label>
 							<div class="col-sm-8">
 								<div class="col-sm-5">
-									<select class="form-control" ng-model="vm.searchInfo.transStsFlg">
+									<select class="form-control" ng-model="vm.searchInfo.sortSalesType" ng-options="salesType.value as salesType.name for salesType in vm.masterData.salesTypeList" ng-change="chkSalesTypeList()">
 										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-										<option value="0">商品信息未翻译</option>
-										<option value="1">商品信息已翻译</option>
 									</select>
+								</div>
+								<div class="col-sm-3 text-right">
+									<label class="checkbox-inline c-radio">
+										<input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.sortSales"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
+								<div class="col-sm-4">
+									<label class="checkbox-inline c-radio">
+										<input name="sortSales" type="radio" value="-1" ng-model="vm.searchInfo.sortSales"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
 								</div>
 							</div>
 						</div>
@@ -299,6 +334,20 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.catgoryList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;Tags&nbsp;<span class="caret"></span>
+					</button>
+					<!-----------------------------tags------------------------------>
+					<ul uib-dropdown-menu>
+						<li>
+							<a href="#/home/welcome">freeTag</a>
+						</li>
+						<li>
+							<a href="javascript:void(0)" ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">{{'CATEGORY_EDIT' | translate}}</a>
+						</li>
+					</ul>
+				</div>&nbsp;
 				<button class="btn btn-default" ng-click="openCustomColumn('lg',search)">
 					<i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}
 				</button>&nbsp;
@@ -378,6 +427,7 @@
 							<th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
+							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
 							<th class="text-left" translate="TXT_TIME"style="display:inline-block;width:150px;padding-left:8px"></th>
 						</tr>
 						</thead>
@@ -441,7 +491,7 @@
 									<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 								</td>
 								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">{{prop2.value}}</td>
-
+								<td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px; overflow:hidden;">{{prop3.value}}</td>
 								<td class="text-left" style="display:inline-block;width:150px;">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groupBean.timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
@@ -485,6 +535,7 @@
 							<td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
 							<th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2}}</th>
+							<th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}</th>
 							<td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
 							<td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
 						</tr>
@@ -504,6 +555,12 @@
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
+										<span class="label m-l-sm" ng-if="productInfo.carts">
+											<span class="label m-t-xs m-r-sm" style="padding-left:10px" ng-repeat="cartsObj in productInfo.carts" ng-class="{'label-yellow-new': cartsObj.platformStatus == 'WaitingPublish','label-success-new': cartsObj.platformStatus == 'OnSale', 'label-info': cartsObj.platformStatus == 'InStock'}">
+												<span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" target="_blank" >{{cartsObj._pname}}</a></span>
+												<span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
+											</span>
+										</span>
 										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
 										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
@@ -518,7 +575,7 @@
 											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
-										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0">&nbsp;&nbsp;
+										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
 											<button ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
 													popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
 										</span>
@@ -548,6 +605,7 @@
 										<span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
 									</td>
 									<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}</td>
+									<td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}</td>
 									<td class="text-center" style="display:inline-block;width:165px;">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
 												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>

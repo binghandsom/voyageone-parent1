@@ -21,7 +21,7 @@ public class CommonSchemaService extends BaseService {
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
     public List getAll() {
-        return cmsMtCommonSchemaDao.findAllProps();
+        return cmsMtCommonSchemaDao.selectAllProps();
     }
 
     /**
@@ -29,7 +29,7 @@ public class CommonSchemaService extends BaseService {
      */
     public CmsMtCommonSchemaModel getComSchemaModel() {
 
-        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.selectComSchema();
 
         if (comSchemaModel == null) {
 

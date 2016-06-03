@@ -44,7 +44,7 @@ public class CmsSearchAdvanceController extends CmsController {
     public AjaxResponse init() throws Exception {
         CmsSessionBean cmsSession = getCmsSession();
         UserSessionBean userInfo = getUser();
-        searchIndexService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession);
+        searchIndexService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
         return success(searchIndexService.getMasterData(userInfo, cmsSession, getLang()));
     }
 
@@ -86,13 +86,14 @@ public class CmsSearchAdvanceController extends CmsController {
         if (endIdx > groupListTotal) {
             endIdx = groupListTotal;
         }
-        List<String> currGrpList = groupCodeList.subList(0, endIdx);
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
-        searchIndexService.checkProcStatus(grpInfoList, getLang());
-        resultBean.put("groupList", grpInfoList);
+
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> currGrpList = grpInfoList.subList(0, endIdx);
+        searchIndexService.checkProcStatus(currGrpList, getLang());
+        resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -103,6 +104,7 @@ public class CmsSearchAdvanceController extends CmsController {
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
         resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
+        resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
         // 返回用户信息
         return success(resultBean);
     }
@@ -129,13 +131,14 @@ public class CmsSearchAdvanceController extends CmsController {
         if (endIdx > groupListTotal) {
             endIdx = groupListTotal;
         }
-        List<String> currGrpList = groupCodeList.subList(staIdx, endIdx);
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(currGrpList, params, userInfo, cmsSession);
-        searchIndexService.checkProcStatus(grpInfoList, getLang());
-        resultBean.put("groupList", grpInfoList);
+
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> currGrpList = grpInfoList.subList(staIdx, endIdx);
+        searchIndexService.checkProcStatus(currGrpList, getLang());
+        resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        List[] infoArr = searchIndexService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -233,7 +236,7 @@ public class CmsSearchAdvanceController extends CmsController {
         resultBean.put("commonProps", searchIndexService.getCustColumns());
 
         // 获取该用户自定义显示列设置
-        Map<String, Object> colData = searchIndexService.getUserCustColumns(userInfo.getUserId());
+        Map<String, Object> colData = searchIndexService.getUserCustColumns(userInfo, getLang());
         if (colData != null) {
             resultBean.putAll(colData);
         }
@@ -270,9 +273,9 @@ public class CmsSearchAdvanceController extends CmsController {
     public AjaxResponse saveCustColumnsInfo(@RequestBody Map<String, Object> params) {
         List<String> customProps = (List<String>) params.get("customProps");
         List<String> commonProps = (List<String>) params.get("commonProps");
-        String[] arr1 = (String[]) customProps.toArray(new String[customProps.size()]);
-        String[] arr2 = (String[]) commonProps.toArray(new String[commonProps.size()]);
-        searchIndexService.saveCustColumnsInfo(getUser(), getCmsSession(), arr1, arr2);
+        List<String> selSalesTypeList = (List<String>) params.get("selSalesTypeList");
+
+        searchIndexService.saveCustColumnsInfo(getUser(), getCmsSession(), customProps, commonProps, getLang(), selSalesTypeList);
         return success(null);
     }
 

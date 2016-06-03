@@ -5,10 +5,11 @@ define([
     'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
-    'modules/cms/service/search.advance.service'
+    'modules/cms/service/search.advance.service',
+    'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -18,7 +19,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                promotionList: []
+                promotionList: [],
+                catgoryList: [],
+                cidValue: []
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -48,9 +51,11 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
+        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategory;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
+        $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         /**
@@ -68,6 +73,8 @@ define([
                 $scope.vm.masterData = res.data;
                 $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                 $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
+                $scope.vm.cartList = res.data.cartList;
+
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
@@ -90,9 +97,11 @@ define([
                 tags:[],
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
-                tagTypeSelectValue: '0'
+                tagTypeSelectValue: '0',
+                cidValue: []
             };
             $scope.vm.masterData.tagList = [];
+            $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{ inputVal: "", inputOpts: "" }];
         }
 
@@ -114,6 +123,8 @@ define([
                 });
                 $scope.vm.sumCustomProps=sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
+                $scope.vm.selSalesType = res.data.selSalesType;
+
                 $scope.vm.groupList = res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
@@ -125,8 +136,8 @@ define([
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
                 // 计算表格宽度
-                $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + 1150) + 'px';
+                $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1150) + 'px';
             })
         }
 
@@ -141,7 +152,7 @@ define([
          * 分页处理group数据
          */
         function getGroupList () {
-            searchAdvanceService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps)
+            searchAdvanceService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
             .then(function (res) {
                 $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -153,7 +164,7 @@ define([
          * 分页处理product数据
          */
         function getProductList () {
-            searchAdvanceService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps)
+            searchAdvanceService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
             .then(function (res) {
                 $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -173,6 +184,17 @@ define([
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
                 searchAdvanceService.clearSelList();
+                getGroupList();
+                getProductList();
+            })
+        }
+
+        /**
+         * popup出添加到CategoryEdit的功能
+         * @param openCategoryEdit
+         */
+        function openAddChannelCategory (openAddChannelCategoryEdit) {
+            openAddChannelCategoryEdit(getSelProductList()).then(function () {
                 getGroupList();
                 getProductList();
             })
@@ -308,6 +330,30 @@ define([
         }
 
         /**
+         * 查询指定店铺cart类型下的所有类目(list形式)
+         */
+        function getCat () {
+            if ($scope.vm.searchInfo.cartId == '0' || $scope.vm.searchInfo.cartId == '' || $scope.vm.searchInfo.cartId == undefined) {
+                $scope.vm.masterData.catList = [];
+                return;
+            }
+            sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
+                .then(function(resp){
+                    $scope.vm.masterData.catList = resp.data.catTree;
+                });
+        }
+
+        /**
+         * 检查销量排序的设值
+         */
+        $scope.chkSalesTypeList = function() {
+            if ($scope.vm.searchInfo.sortSalesType == '' || $scope.vm.searchInfo.sortSalesType == undefined) {
+                $scope.vm.searchInfo.sortSales = '';
+                return;
+            }
+        }
+
+        /**
          * 添加产品到指定自由标签
          */
         function addFreeTag (tagBean) {
@@ -347,6 +393,6 @@ define([
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList,'search':'master'});
         }
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert'];
+    //searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

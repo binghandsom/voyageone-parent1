@@ -40,4 +40,19 @@ public class CmsMtCommonPropDaoExt extends ServiceBaseDao {
     public int updateUserCustColumns(int userId, String userName, String param1, String param2) {
         return update("update_synship_ct_user_config_cust_cols", parameters("userId", userId, "userName", userName, "cfg_val1", param1, "cfg_val2", param2));
     }
+
+    // 取得用户自定义显示列设置
+    public List<Map<String, Object>> selectUserCustColumnsSalesType(int userId) {
+        return selectList("select_synship_ct_user_config_cust_cols_salestype", parameters("userId", userId));
+    }
+
+    // 增加用户自定义显示列设置
+    public int insertUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return insert("insert_synship_ct_user_config_cust_cols_salestype", parameters("userId", userId, "userName", userName, "cfg_val2", param1));
+    }
+
+    // 保存用户自定义显示列设置
+    public int updateUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return update("update_synship_ct_user_config_cust_cols_salestype", parameters("userId", userId, "userName", userName, "cfg_val2", param1));
+    }
 }

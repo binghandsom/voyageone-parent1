@@ -55,8 +55,8 @@ define(function(){
         "TXT_PRIMARY_PRODUCT": "主产品",
         "TXT_BASE_PROPERTY": "基础属性",
         "TXT_TIME": "时间",
-        "TXT_NUMBER_IID_WITH_COLON": "商品编号:",
-        "TXT_GROUP_NAME_WITH_COLON": "商品名称:",
+        "TXT_NUMBER_IID_WITH_COLON": "商品编号",
+        "TXT_GROUP_NAME_WITH_COLON": "商品名称",
         "TXT_CATEGORY_WITH_COLON": "类目:",
         "TXT_SIZE_TYPE": "尺码类型",
         "TXT_SKU_COUNT": "SKU数",
@@ -339,7 +339,7 @@ define(function(){
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
         "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
-
+        "TXT_CART_NAME": "店铺渠道名称",
 
         "TXT_CHANNEL_ID": "渠道ID",
         "TXT_CART_ID": "Cart ID",
@@ -424,6 +424,7 @@ define(function(){
         "TXT_MSG_TAG": "请正确选择和填写标签!",
         "TXT_MSG_TAG_EDITOR": "标签编辑页!",
         "TXT_MSG_TAG_PATH": "标签路径!",
+        "TXT_MSG_TAG_NAME": "标签名",
         "TXT_MSG_TAG_IMAGE": "标签名称小于50字节!",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功.",
         "TXT_ACTIVITY_NAME": "活动名称",
@@ -552,6 +553,25 @@ define(function(){
         "TXT_SIZE_CHART_NOTICE_NULL":"原始尺码或者平台尺码不能为空",
         "TXT_SIZE_CHART_NOTICE_third":"请检查导入格式，第三位数据为0或者1",
         "TXT_SIZE_CHART_NOTICE_PS":"请按照示例数据格式导入（分隔符是Tab符）",
-        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑"
+        "TXT_SIZE_CHART_COMMON_ADD":"普通尺码表编辑",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"店铺分类",
+        "TXT_STORE_CATEGORY_NAME":"店铺",
+        "MAX_SELLER_CAT_DEPTH":"最大层数",
+        "MAX_SELLER_CAT_CNT":"可设置最大标签数应小于",
+        "TXT_STORE_CATEGORY_SELECT":"请选择一个店铺",
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"当前店铺路径下操作无效",
+        "CATEGORY_EDIT":"分类类目编辑",
+
+        /**工具管理*/
+        "TXT_TOOLS_MANAGEMENT":"工具管理",
+        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"商品处理",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
+        "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
+        "TXT_HS_CODE_STATUS":"税号状态",
+        "TXT_MATERIAL":"材质",
+        "TXT_HSCODE_PRODUCT_NAME":"税号/品名"
+
     };
 });

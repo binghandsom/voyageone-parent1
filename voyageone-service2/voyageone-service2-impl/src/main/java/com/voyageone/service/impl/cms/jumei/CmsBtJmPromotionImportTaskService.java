@@ -447,7 +447,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         templateTypeList.add(1);//宝贝图
         templateTypeList.add(2);//详情图
         templateTypeList.add(7);//移动端宝贝图（竖图）
-        List<CmsMtTemplateImagesModel> listCmsMtTemplateImages = cmsMtTemplateImagesDaoExt.getListByPlatformChannelTemplateType(PlatformId, modelCmsBtJmPromotion.getChannelId(), templateTypeList);
+        List<CmsMtTemplateImagesModel> listCmsMtTemplateImages = cmsMtTemplateImagesDaoExt.selectListByPlatformChannelTemplateType(PlatformId, modelCmsBtJmPromotion.getChannelId(), templateTypeList);
         if(listCmsMtTemplateImages.size()==0)
         {
             throw new BusinessException("CmsMtTemplateImages请设置该channel的图片模板");

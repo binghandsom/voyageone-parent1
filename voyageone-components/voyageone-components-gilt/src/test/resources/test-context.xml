@@ -17,6 +17,6 @@
     <import resource="classpath*:redis-config.xml"/>
 
     <!-- 初始化处理 -->
-    <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
+    <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>
 
 </beans>

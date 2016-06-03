@@ -4,6 +4,11 @@
     "templateUrl": "views/home/welcome/index.tpl.html",
     "controllerUrl": "modules/cms/views/home/welcome/index.ctl"
   },
+  "dashboard":{
+    "hash": "/home/welcome",
+    "templateUrl": "views/home/welcome/datachart.tpl.html",
+    "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl"
+  },
   "promotion_index": {
     "hash": "/promotion/index",
     "templateUrl": "views/promotion/list/index.tpl.html",
@@ -165,6 +170,12 @@
     "templateUrl": "views/channel/taglist/index.tpl.html",
     "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
   },
+  "channel_category": {
+    "hash": "/channel/category",
+    "templateUrl": "views/channel/category/index.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/category/index.ctl",
+    "controller": "categoryController as ctrl"
+  },
   "channel_listing_sizechart": {
     "hash": "/channel/sizechart",
     "templateUrl": "views/channel/sizechart/index.tpl.html",
@@ -198,6 +209,11 @@
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
     "controllerUrl": "modules/cms/views/translation/index.ctl"
+  },
+  "tools_product":{
+    "hash": "/tools/product",
+    "templateUrl": "views/tools/product/hsCodeList.tpl.html",
+    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl"
   },
   "system_category_index": {
     "hash": "/system/category",

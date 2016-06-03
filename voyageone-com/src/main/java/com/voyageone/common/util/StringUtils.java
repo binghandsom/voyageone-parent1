@@ -486,4 +486,10 @@ public final class StringUtils {
         return val.trim().replaceAll("  "," ").replaceAll(" ", "-");
     }
 
+    public static int toIntValue(Integer val) {
+        if (val == null) {
+            return 0;
+        }
+        return val;
+    }
 }

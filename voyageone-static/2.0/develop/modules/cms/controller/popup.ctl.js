@@ -59,6 +59,11 @@ define([
                     "controller": 'popCategoryCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'lg'
+                },
+                "addChannelCategory": {
+                    "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
+                    "controller": 'popAddChannelCategoryCtrl as ctrl'
                 }
             },
             "category": {
@@ -68,6 +73,18 @@ define([
                     "controller": 'popCategorySchemaCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                }
+            },
+            "channel":{
+                "categorySetting": {
+                    "templateUrl": "views/pop/channel/categorySetting.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/channel/categorySetting.ctl",
+                    "controller": 'categorySettingCtl as ctrl'
+                },
+                "newCategory": {
+                    "templateUrl": "views/pop/channel/newCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/channel/newCategory.ctl",
+                    "controller": 'newCategoryCtl as ctrl'
                 }
             },
             "custom": {
@@ -1065,6 +1082,21 @@ define([
             return openModel(popActions.search.codeDetail, context);
         };
 
+        /**
+         * 新增advance查询页分类edit弹出
+         * */
+        $scope.openAddChannelCategoryEdit = function (selList) {
+            if (selList && selList.length) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.code);
+                });
+                return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds});
+            } else {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+            }
+        };
+
 
 
         /**
@@ -1249,6 +1281,14 @@ define([
                 })
             });
         }
+
+        $scope.openCategorySetting = function (context) {
+            return openModel(popActions.channel.categorySetting, context);
+        };
+
+        $scope.openNewCategory = function (context) {
+            return openModel(popActions.channel.newCategory, context);
+        };
 
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {
         //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);

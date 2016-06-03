@@ -34,11 +34,11 @@ public class CmsMtPlatformCategorySchemaDaoTest {
 
     @Test
     public void testGetAllSchemaKeys() throws Exception {
-        List<JSONObject> schemaKeyModels = schemaDao.getAllSchemaKeys(23);
+        List<JSONObject> schemaKeyModels = schemaDao.selectAllSchemaKeys(23);
         int count =0;
         for (JSONObject keyMap:schemaKeyModels){
           String id =  keyMap.get("_id").toString();
-            CmsMtPlatformCategorySchemaModel schemaModel = schemaDao.getPlatformCatSchemaModelById(id, 23);
+            CmsMtPlatformCategorySchemaModel schemaModel = schemaDao.selectPlatformCatSchemaModelById(id, 23);
             String itemSchema = schemaModel.getPropsItem();
             String productSchema = schemaModel.getPropsProduct();
             List<Field> itemFields =null;

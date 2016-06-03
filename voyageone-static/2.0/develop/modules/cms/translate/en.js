@@ -55,8 +55,8 @@ define(function() {
         "TXT_PRIMARY_PRODUCT": "Primary Product",
         "TXT_BASE_PROPERTY": "Base Property",
         "TXT_TIME": "Time",
-        "TXT_NUMBER_IID_WITH_COLON": "Number IId:",
-        "TXT_GROUP_NAME_WITH_COLON": "Group Name:",
+        "TXT_NUMBER_IID_WITH_COLON": "Number IId",
+        "TXT_GROUP_NAME_WITH_COLON": "Group Name",
         "TXT_CATEGORY_WITH_COLON": "Category:",
         "TXT_SIZE_TYPE": "Size Type",
         "TXT_SKU_COUNT": "SKU Count",
@@ -404,6 +404,7 @@ define(function() {
         "TXT_MSG_TAG": "Please select and fill in the label!",
         "TXT_MSG_TAG_EDITOR": "Tag Editor",
         "TXT_MSG_TAG_PATH": "Tag Path",
+        "TXT_MSG_TAG_NAME": "Tag Name",
         "TXT_MSG_TAG_IMAGE": "Tag name is less than 50 bytes!",
         "TXT_MSG_IMPORT_MODE": "Import Mode",
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
@@ -442,6 +443,7 @@ define(function() {
         "TXT_MSG_REFRESH_IMAGE_SUCCESS": "Refresh image success",
         "TXT_MSG_REFRESH_IMAGE_FAIL": "Refresh image fail",
         "TXT_IMAGE_UPLOAD_NOTICE": "Only support jpg image",
+        "TXT_CART_NAME": "Cart Name",
         "TXT_IMPORT_TEXT": "Import text",
         "TXT_FeedStatus_New": "New",
         "TXT_FeedStatus_WaitingForImport": "Waiting For Import",
@@ -549,6 +551,24 @@ define(function() {
         "TXT_SIZE_CHART_NOTICE_REPEAT":"OriginalSize can't repeat",
         "TXT_SIZE_CHART_NOTICE_NULL":"Origin Size or Platform Size is required",
         "TXT_SIZE_CHART_NOTICE_third":"Please check third data which is 0 or 1",
-        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character"
+        "TXT_SIZE_CHART_NOTICE_PS":"Please according to the sample data format, delimiter is the Tab character",
+
+        /**店铺分类*/
+        "TXT_STORE_CATEGORY":"Store Category",
+        "TXT_STORE_CATEGORY_NAME":"store",
+        "MAX_SELLER_CAT_DEPTH":"max level",
+        "MAX_SELLER_CAT_CNT":"max tag counts should be less than ",
+        "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in current cart directory",
+        "CATEGORY_EDIT":"Category edit",
+
+        /**工具管理*/
+        "TXT_TOOLS_MANAGEMENT":"Tools Management",
+        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"Product Processing",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"Hs Code Setting",
+        "TXT_NUMBER_OF_WAITED_FOR_SETTED":"The number Of the Hs code waited for setted",
+        "TXT_HS_CODE_STATUS":"Hs code's status",
+        "TXT_MATERIAL":"material",
+        "TXT_HSCODE_PRODUCT_NAME":"Hs Code/Product name"
     };
 });
