@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
@@ -12,7 +11,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
+import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.task2.cms.bean.tcb.TaskSignal;
+import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +106,12 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                         completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
                         logger.info("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
                     } catch (Exception e) {
-                        throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
+//                        throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
+                        throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(
+                                "[CustomWordModuleGetAllImages]取得原始图片url失败! " +
+                                        "channelId:" + systemParam.getOrderChannelId() +
+                                        ". groupId:" + systemParam.getMainSxProduct().getCmsBtProductModelGroupPlatform().getGroupId() +
+                                        ". productImageName:" + cmsBtProductModelFieldImage.getName()));
                     }
                     // end
                 } else {
