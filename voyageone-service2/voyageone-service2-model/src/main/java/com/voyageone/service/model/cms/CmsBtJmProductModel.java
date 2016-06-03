@@ -156,6 +156,31 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected BigDecimal salePrice;
 
+    /**
+     * 报关关税编号
+     */
+    protected String hsCode;
+
+    /**
+     * 报关商品类目
+     */
+    protected String hsName;
+
+    /**
+     * 报关商品单位
+     */
+    protected String hsUnit;
+
+    /**
+     * 英文材质
+     */
+    protected String materialEn;
+
+    /**
+     * 中文材质
+     */
+    protected String materialCn;
+
     public String getChannelId() {
         return channelId;
     }
@@ -386,5 +411,45 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getHsCode() {
+        return hsCode;
+    }
+
+    public void setHsCode(String hsCode) {
+        this.hsCode = hsCode == null ? null : hsCode.trim();
+    }
+
+    public String getHsName() {
+        return hsName;
+    }
+
+    public void setHsName(String hsName) {
+        this.hsName = hsName == null ? null : hsName.trim();
+    }
+
+    public String getHsUnit() {
+        return hsUnit;
+    }
+
+    public void setHsUnit(String hsUnit) {
+        this.hsUnit = hsUnit == null ? null : hsUnit.trim();
+    }
+
+    public String getMaterialEn() {
+        return materialEn;
+    }
+
+    public void setMaterialEn(String materialEn) {
+        this.materialEn = materialEn == null ? null : materialEn.trim();
+    }
+
+    public String getMaterialCn() {
+        return materialCn;
+    }
+
+    public void setMaterialCn(String materialCn) {
+        this.materialCn = materialCn == null ? null : materialCn.trim();
     }
 }

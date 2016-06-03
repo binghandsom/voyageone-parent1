@@ -41,8 +41,8 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateRequest request = new HtDealUpdateRequest();
         request.setJumei_hash_id("ht1464949112p222551364");
         HtDealUpdate_DealInfo dealInfo=new HtDealUpdate_DealInfo();
-        dealInfo.setUser_purchase_limit(100);
-        dealInfo.setShipping_system_id(2813);
+        dealInfo.setUser_purchase_limit(200);
+      // dealInfo.setShipping_system_id(2813);
         request.setUpdate_data(dealInfo);
         HtDealUpdateResponse response = htDealService.update(shopBean, request);
         //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}

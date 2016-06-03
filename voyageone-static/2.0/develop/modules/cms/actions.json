@@ -127,14 +127,15 @@
       }
     },
     "jmpromotion": {
-      "jmPromotionService": {
+      "jmPromotionService":{
         "root": "/cms/jmpromotion/index",
         "init": "init",
         "get": "get",
         "getListByWhere": "getListByWhere",
         "getEditModel": "getEditModel",
         "saveModel": "saveModel",
-        "delete": "delete"
+        "delete": "delete",
+        "getTagListByPromotionId": "getTagListByPromotionId"
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",

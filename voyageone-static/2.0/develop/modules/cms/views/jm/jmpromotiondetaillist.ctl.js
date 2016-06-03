@@ -23,6 +23,9 @@ define([
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                 $scope.parentModel = res.data;
             });
+            jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
+                $scope.vm.tagList = res.data;
+            });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
@@ -34,7 +37,7 @@ define([
         };
         $scope.search = function () {
             // console.log("searchInfo");
-            // console.log($scope.searchInfo);
+             console.log($scope.searchInfo);
             loadSearchInfo();
             var data = angular.copy($scope.searchInfo);
             goPage(1, 10)

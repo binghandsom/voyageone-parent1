@@ -34,6 +34,7 @@ public interface CmsUrlConstants {
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel="getEditModel";
+                String GetTagListByPromotionId="getTagListByPromotionId";
 
             }
 

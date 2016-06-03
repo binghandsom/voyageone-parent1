@@ -65,14 +65,14 @@ public class CmsBtJmPromotion3Service {
     }
 
     public List<CmsBtTagModel> getTagListByPromotionId(int promotionId) {
-//        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
-//        if (model.getRefTagId() != 0) {
-//            Map<String, Object> map = new HashMap<String, Object>();
-//            map.put("parentTagId", model.getRefTagId());
-//            map.put("active", 1);
-//            List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
-//            return tagList;
-//        }
+        CmsBtJmPromotionModel model = dao.select(promotionId);
+        if (model.getRefTagId() != 0) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("parentTagId", model.getRefTagId());
+            map.put("active", 1);
+            List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
+            return tagList;
+        }
         return new ArrayList<>();
     }
 }

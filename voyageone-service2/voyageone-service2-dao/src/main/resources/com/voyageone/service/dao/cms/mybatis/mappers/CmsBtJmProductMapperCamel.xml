@@ -9,7 +9,7 @@
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
         `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
         `product_short_name`, `search_meta_text_custom`, `msrp_usd`, `msrp_rmb`, `retail_price`, 
-        `sale_price`
+        `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -119,6 +119,21 @@
             </if>
             <if test="salePrice != null" >
                 `sale_price`,
+            </if>
+            <if test="hsCode != null" >
+                `hs_code`,
+            </if>
+            <if test="hsName != null" >
+                `hs_name`,
+            </if>
+            <if test="hsUnit != null" >
+                `hs_unit`,
+            </if>
+            <if test="materialEn != null" >
+                `material_en`,
+            </if>
+            <if test="materialCn != null" >
+                `material_cn`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -230,6 +245,21 @@
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DECIMAL},
             </if>
+            <if test="hsCode != null" >
+                #{hsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="hsName != null" >
+                #{hsName,jdbcType=VARCHAR},
+            </if>
+            <if test="hsUnit != null" >
+                #{hsUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="materialEn != null" >
+                #{materialEn,jdbcType=VARCHAR},
+            </if>
+            <if test="materialCn != null" >
+                #{materialCn,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -337,6 +367,21 @@
             </if>
             <if test="salePrice != null" >
                 `sale_price` = #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="hsCode != null" >
+                `hs_code` = #{hsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="hsName != null" >
+                `hs_name` = #{hsName,jdbcType=VARCHAR},
+            </if>
+            <if test="hsUnit != null" >
+                `hs_unit` = #{hsUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="materialEn != null" >
+                `material_en` = #{materialEn,jdbcType=VARCHAR},
+            </if>
+            <if test="materialCn != null" >
+                `material_cn` = #{materialCn,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -451,6 +496,21 @@
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
             </if>
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="hsName != null" >
+                and `hs_name` = #{hsName,jdbcType=VARCHAR}
+            </if>
+            <if test="hsUnit != null" >
+                and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
+            </if>
+            <if test="materialEn != null" >
+                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+            </if>
+            <if test="materialCn != null" >
+                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -557,6 +617,21 @@
             </if>
             <if test="salePrice != null" >
                 and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="hsName != null" >
+                and `hs_name` = #{hsName,jdbcType=VARCHAR}
+            </if>
+            <if test="hsUnit != null" >
+                and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
+            </if>
+            <if test="materialEn != null" >
+                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+            </if>
+            <if test="materialCn != null" >
+                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
