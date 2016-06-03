@@ -2,16 +2,15 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchDeleteProductParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
+import com.voyageone.service.bean.cms.jumei2.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,8 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmPromotionProductDao dao;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExt;
+    @Autowired
+    CmsBtJmProductDaoExt daoExtCmsBtJmProductDaoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
@@ -125,14 +126,24 @@ public class CmsBtJmPromotionProduct3Service {
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
-
     }
+
     @VOTransactional //删除全部product  已经再售的不删
     public void deleteAllProduct(int promotionId) {
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(promotionId);
         daoExt.deleteAllProduct(promotionId);
+    }
 
+    public ProductViewBean getProductView(int promotionProductId) {
+        ProductViewBean productViewBean = new ProductViewBean();
+        CmsBtJmPromotionProductModel modelPromotionProduct = dao.select(promotionProductId);
+        CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.getByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
+        productViewBean.setModelJmPromotionProduct(modelPromotionProduct);
+        productViewBean.setModelJmProduct(modelProduct);
+        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.getViewListByPromotionProductId(promotionProductId);
+        productViewBean.setSkuList(mapModelList);
+        return productViewBean;
     }
 }
 

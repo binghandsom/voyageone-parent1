@@ -37,5 +37,6 @@ public interface CmsBtJmPromotionSkuDaoExt {
     int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
+    List getViewListByPromotionProductId(int promotionProductId);
     //jm2 end
 }

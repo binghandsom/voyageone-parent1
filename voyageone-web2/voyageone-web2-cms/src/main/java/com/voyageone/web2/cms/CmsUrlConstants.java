@@ -70,6 +70,7 @@ public interface CmsUrlConstants {
                 String CopyDealAll="copyDealAll";
                 String BatchDeleteProduct="batchDeleteProduct";
                 String DeleteAllProduct="deleteAllProduct";
+                String GetProductView="getProductView";
             }
         }
     }

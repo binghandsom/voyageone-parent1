@@ -8,30 +8,31 @@ define([
     return cms.controller('popJmProductDetailController', (function () {
 
         function JmProductDetailController($translate, $modalInstance, jmPromotionDetailService, notify, confirm, alert, context) {
-
             this.translate = $translate;
             this.modalInstance = $modalInstance;
             this.jmPromotionDetailService = jmPromotionDetailService;
             this.notify = notify;
             this.confirm = confirm;
             this.alert = alert;
-
             this.context = context;
             this.masterData = {};
+            this.model={};
         }
-
         JmProductDetailController.prototype = {
             initialize: function () {
                 var self = this;
-                self.jmPromotionDetailService.getProductMasterData().then(function (res) {
-                    self.masterData = res.data;
-                    self.jmPromotionDetailService.getProductDetail(self.context).then(function (res) {
-                        self.productImage = res.data.productImage;
-                        self.productInfo = res.data.productInfo;
-                        self.productPromotionInfo = res.data.productPromotionInfo;
-                        self.skuList = res.data.skuList;
-                    })
-                })
+                self.jmPromotionDetailService.getProductView(self.context.promotionProductId).then(function(res){
+                    self.model=res.data;
+                });
+                //self.jmPromotionDetailService.getProductMasterData().then(function (res) {
+                //    self.masterData = res.data;
+                //    self.jmPromotionDetailService.getProductDetail(self.context).then(function (res) {
+                //        self.productImage = res.data.productImage;
+                //        self.productInfo = res.data.productInfo;
+                //        self.productPromotionInfo = res.data.productPromotionInfo;
+                //        self.skuList = res.data.skuList;
+                //    })
+                //})
             },
             saveProductInfo: function () {
                 var self = this;
@@ -76,7 +77,6 @@ define([
                 this.modalInstance.close('');
             }
         };
-
         return JmProductDetailController;
     })())
 });

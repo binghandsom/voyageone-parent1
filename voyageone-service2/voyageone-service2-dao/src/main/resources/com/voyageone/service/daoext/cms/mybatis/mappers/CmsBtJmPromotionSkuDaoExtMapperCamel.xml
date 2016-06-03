@@ -58,7 +58,6 @@
          JOIN `cms_bt_jm_sku`  AS b ON  a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
          WHERE a.`cms_bt_jm_promotion_product_id`=#{promotionProductId}
     </select>
-
     <delete id="batchDeleteSku">
         DELETE a FROM cms_bt_jm_promotion_sku AS a
         JOIN `cms_bt_jm_promotion_product` AS b ON a.`cms_bt_jm_promotion_product_id`=b.`id`
@@ -73,5 +72,11 @@
         JOIN `cms_bt_jm_promotion_product` AS b ON a.`cms_bt_jm_promotion_product_id`=b.`id`
         WHERE b.`synch_status`=0 and b.cms_bt_jm_promotion_id=#{promotionId}
     </delete>
+<select id="getViewListByPromotionProductId" resultType="MapModel">
+    SELECT a.`jm_sku_no`,a.`upc`,a.`format`,a.`cms_size`,a.`sku_code`,a.`msrp_usd`,a.`msrp_rmb`,a.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
+ FROM `cms_bt_jm_sku` AS a
+ JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
+ where b.cms_bt_jm_promotion_product_id=#{promotionProductId}
+</select>
     <!--jumei2  end-->
 </mapper>

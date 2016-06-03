@@ -7,10 +7,7 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotion
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.jumei2.BatchCopyDealParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchDeleteProductParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchSynchPriceParameter;
-import com.voyageone.service.bean.cms.jumei2.BatchUpdatePriceParameterBean;
+import com.voyageone.service.bean.cms.jumei2.*;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -257,7 +254,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 //        map.put("id", parameter.getPromotionId());
 //        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
 //        CallResult result = new CallResult();
-       return success(null);
+        return success(null);
     }
 
     //jm2 begin
@@ -325,6 +322,11 @@ public class CmsJmPromotionDetailController extends CmsController {
         service3.deleteAllProduct(promotionId);
         CallResult result = new CallResult();
         return success(result);
+    }
+
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetProductView)
+    public  AjaxResponse getProductView(int promotionProductId) {
+        return success(service3.getProductView(promotionProductId));
     }
     //jm2 end
 }
