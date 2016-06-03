@@ -441,10 +441,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 if (tagPathList != null && tagPathList.size() > 0) {
                     // 根据tag path查询tag path name
                     List<CmsBtTagBean> tagModelList = tagService.getTagPathNameByTagPath(channelId, tagPathList);
-                    if (tagModelList.isEmpty()) {
-                        freeTagsList.add("");
-                    } else {
-                    List<CmsBtTagBean> tagModelList = cmsBtTagDaoExt.getTagPathNameByTagPath(channelId, tagPathList);
                     if (!tagModelList.isEmpty()) {
                         tagModelList = cmsChannelTagService.convertToTree(tagModelList);
                         List<CmsBtTagModel> tagList = cmsChannelTagService.convertToList(tagModelList);
