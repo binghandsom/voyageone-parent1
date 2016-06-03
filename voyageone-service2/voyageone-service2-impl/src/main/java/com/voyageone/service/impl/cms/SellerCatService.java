@@ -4,7 +4,6 @@ import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.taobao.api.domain.SellerCat;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiCheckField;
-import com.taobao.top.schema.option.Option;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
@@ -280,7 +279,7 @@ public class SellerCatService extends BaseService {
         }
         else if (isTMPlatform(shopCartId))
         {
-            throw new BusinessException(shopBean.getShop_name(), "Unsupported Method.");
+            throw new BusinessException(shopBean.getShop_name() + ":阿里系没有删除店铺内分类的API");
         }
 
 
