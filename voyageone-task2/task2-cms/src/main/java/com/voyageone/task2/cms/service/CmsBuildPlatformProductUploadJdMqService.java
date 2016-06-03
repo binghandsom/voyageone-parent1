@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -487,7 +486,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 updateProductGroupStatus(sxData);
 
                 // 上新或更新成功后回写product表中的平台相关nummIId,pStatus等属性
-                updateProductInfo(sxData);
+                //updateProductInfo(sxData);  // TODO 目前回写还有问题
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -1425,7 +1424,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 如果是平台售价，则取个平台相应的售价(platform.P29.sku.priceSale)
                 if (PriceType_jdprice.equals(priceType)) {
                     CmsBtProductModel_Platform_Cart platformCart = cmsProduct.getPlatform().get("P" + cartId);
-                    List<BaseMongoMap<String, Object>> platformCartSkuList = platformCart.getSkus();
+                    List<Map<String, Object>> platformCartSkuList = platformCart.getSkus();
                     // 循环取得找到本skucode对应的平台售价
                     for(Map<String, Object> platformSkuMap : platformCartSkuList) {
                         // 找到skucode对应的平台售价，然后跳出循环
@@ -1603,10 +1602,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
 
         // 取得当前平台对应的特殊字段处理（目前mapSpAll为空，所以不会取到值）
-        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
-//        Map<String, Object> mapSp = new HashMap<>();
+//        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
+        Map<String, Object> mapSp = new HashMap<>();
 
-        // 特殊字段处理   天猫专用？
+        // 特殊字段处理   天猫专用吗
         // 先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
 //        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
 //        if (!mappingTypePropsMap.isEmpty()) {
@@ -1685,8 +1684,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 只支持MASTER类型Field,目前只发现SingleCheck(MultiCheck也是MASTER),没有发现Input(TextWordParser)类型
         if (!StringUtils.isEmpty(field.getId())) {
             String pCart = "P" + String.valueOf(sxData.getCartId());
-            objfieldItemValue = getPropValue((sxData.getMainProduct().getPlatform().get(pCart)).getFields(),
-                    field.getId());
+            objfieldItemValue = getPropValue(sxData.getMainProduct().getPlatform().get(pCart).getFields(), field.getId());
         }
 
         // 取得值为null不设置，空字符串的时候还是要设置（可能是更新时特意把某个属性的值改为空）
