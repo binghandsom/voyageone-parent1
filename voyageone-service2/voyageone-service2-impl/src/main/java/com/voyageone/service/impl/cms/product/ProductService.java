@@ -398,13 +398,11 @@ public class ProductService extends BaseService {
             updateMap.putAll(fieldObj);
         }
 
-
         /**
-         * platform
+         * platforms
          */
-        CmsBtProductModel_Platform platform = productModel.getPlatform();
-        updateMap.put("platform", platform);
-
+        Map<String, CmsBtProductModel_Platform_Cart> platforms = productModel.getPlatforms();
+        updateMap.put("platforms", platforms);
 
         /**
          * Feed
@@ -683,9 +681,7 @@ public class ProductService extends BaseService {
                 .stream()
                 .map(CmsBtFeedInfoModel::getCategory)
                 .distinct()
-                .forEach(path -> {
-                    feedMappingService.setMapping(path, categoryPath, Channel.valueOfId(channelId), false);
-                });
+                .forEach(path ->feedMappingService.setMapping(path, categoryPath, Channel.valueOfId(channelId), false));
 
         // </更新 feed mapping 信息>
 
@@ -1020,66 +1016,6 @@ public class ProductService extends BaseService {
         Map<String, Integer> result = new HashMap<>();
         for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
             result.put(inventory.getSku(), inventory.getQtyChina());
-        }
-        return result;
-    }
-
-    /**
-     * 批量更新上新结果 根据CodeList
-     */
-    // TODO: 16/4/23 如果这个方式是以前旧版本天猫上新调用的话,是否不需要了.
-    public BulkWriteResult bathUpdateWithSXResult(String channelId, int cartId,
-                                                  long groupId, List<String> codeList,
-                                                  String numIId, String productId,
-                                                  String publishTime, String onSalesTime, String inStockTime,
-                                                  CmsConstants.PlatformStatus status) {
-
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        // deleted by morse.lu 2016/04/25 start
-//        for (String code : codeList) {
-        // deleted by morse.lu 2016/04/25 end
-        HashMap<String, Object> queryMap = new HashMap<>();
-        // modified by morse.lu 2016/04/25 start
-//            queryMap.put("productCodes", code);
-//            queryMap.put("cartId", cartId);
-        queryMap.put("groupId", groupId);
-        // modified by morse.lu 2016/04/25 end
-
-        HashMap<String, Object> updateMap = new HashMap<>();
-        if (numIId != null) {
-            updateMap.put("numIId", numIId);
-        }
-        if (productId != null) {
-            updateMap.put("platformPid", productId);
-        }
-        if (publishTime != null) {
-            updateMap.put("publishTime", publishTime);
-        }
-        if (onSalesTime != null) {
-            updateMap.put("onSaleTime", onSalesTime);
-        }
-        if (inStockTime != null) {
-            updateMap.put("inStockTime", inStockTime);
-        }
-        if (status != null) {
-            updateMap.put("platformStatus", status.toString());
-        }
-
-        if (updateMap.size() > 0) {
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-        }
-//        }
-
-        BulkWriteResult result = null;
-        if (bulkList.size() > 0) {
-            // modified by morse.lu 2016/04/25 start
-            // group信息从product表剥离出来，更新cms_bt_product_group_cxx
-//            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-            result = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
-            // modified by morse.lu 2016/04/25 end
         }
         return result;
     }
