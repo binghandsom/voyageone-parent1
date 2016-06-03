@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -26,6 +27,9 @@ public class CmsProductDetailController extends CmsController {
     @Autowired
     CmsProductDetailService productPropsEditService;
 
+    @Autowired
+    FeedCustomPropService feedCustomPropService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params) {
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
@@ -39,6 +43,7 @@ public class CmsProductDetailController extends CmsController {
         result.put("inventoryList", inventoryList);
         result.put("productInfo", productInfo.get("productInfo"));
         result.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(getLang()));
+        result.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(channelId, "0"));
         productInfo.remove("productInfo");
         result.putAll(productInfo);
 

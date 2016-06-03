@@ -36,7 +36,8 @@ define([
 						if(res.data.productInfo.feedInfoModel) {
 							result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel
 									, feedKeys
-									, result.data.productInfo.customAttributes);
+									, result.data.productInfo.customAttributes
+									, result.data.customProps);
 
 						}
 
@@ -67,10 +68,23 @@ define([
 		 * @returns {*|Promise.<T>}
 		 */
 		function updateProductDetail (formData) {
+
+			var temp = {customIds: [], customIdsCn: []};
 			_.forEach(formData.feedInfoModel, function (feedInfo) {
-				if (feedInfo.selected)
-					formData.customAttributes.cnAtts[feedInfo.key] = feedInfo.cnValue;
+
+				if (feedInfo.selected) {
+					temp.customIds.push(feedInfo.enKey);
+					temp.customIdsCn.push(feedInfo.cnKey);
+				}
+
+				if(feedInfo.enKey) {
+					formData.customAttributes.cnAtts[feedInfo.enKey] = feedInfo.cnValue;
+					if (feedInfo.enKey == feedInfo.key)
+						formData.customAttributes.orgAtts[feedInfo.enKey] = feedInfo.value;
+				}
 			});
+			formData.customAttributes.customIds = temp.customIds;
+			formData.customAttributes.customIdsCn = temp.customIdsCn;
 
 			// 设定status
 			//var status = formData.productStatus.approveStatus;
@@ -122,10 +136,11 @@ define([
 		 * @param {key: value} data
 		 * @private
 		 */
-		function _returnNew (data, list, object) {
+		function _returnNew (data, list, object, customs) {
 			var result = [];
 			var cnData = object.cnAtts;
 			var cnDataShow = object.cnAttsShow;
+
 			for(var key in data) {
 				var cnValue = '';
 				var cnKey =  '';
@@ -134,12 +149,31 @@ define([
 					cnValue = _.isUndefined(cnDataShow[key]) ? cnData[key] : cnDataShow[key][1];
 				}
 
-				if (list != null)
-					result.push({key: key, value: data[key], selected: _.contains(list, key), cnKey: cnKey, cnValue: cnValue});
-				else
-					result.push({key: key, value: data[key], cnKey: cnKey, cnValue: cnValue});
+
+				var temp = {key: key, value: data[key], cnKey: cnKey, cnValue: cnValue, exists: false};
+
+				// 设置在custom中存在的数据
+				var customInfo = _.findWhere(customs, {feed_prop_original: key});
+				if (customInfo) {
+					temp = {key: key, value: data[key], selected: _.contains(list, key), cnKey: customInfo.feed_prop_translation, cnValue: cnValue, enKey: customInfo.feed_prop_original, exists: true};
+					customs.splice(_.indexOf(customs, customInfo), 1);
+				}
+				result.push(temp);
 			}
-			return $filter('orderBy')(result, "selected", true);
+
+			var newResult = $filter('orderBy')(result, "exists", true);
+			// 添加在custom中存在但是无法匹配到feed数据的字段
+			_.forEach(newResult, function (showInfo) {
+				if (!showInfo.exists && customs.length) {
+					showInfo.enKey = customs[0].feed_prop_original;
+					showInfo.cnKey = customs[0].feed_prop_translation;
+					showInfo.selected = _.contains(list, showInfo.enKey);
+					showInfo.cnValue = _.isUndefined(cnDataShow[showInfo.enKey]) ? cnData[showInfo.enKey] : cnDataShow[showInfo.enKey][1];
+					customs.splice(0,1);
+				}
+			});
+
+			return newResult;
 		}
 
 		///**

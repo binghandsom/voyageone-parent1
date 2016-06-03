@@ -14,6 +14,8 @@ public class CustomAttributesBean {
 
     private List<String> customIds;
 
+    private List<String> customIdsCn;
+
     private Map<String, String[]> cnAttsShow;
 
     public Map<String, Object> getOrgAtts() {
@@ -46,5 +48,13 @@ public class CustomAttributesBean {
 
     public void setCnAttsShow(Map<String, String[]> cnAttsShow) {
         this.cnAttsShow = cnAttsShow;
+    }
+
+    public List<String> getCustomIdsCn() {
+        return customIdsCn;
+    }
+
+    public void setCustomIdsCn(List<String> customIdsCn) {
+        this.customIdsCn = customIdsCn;
     }
 }

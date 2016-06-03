@@ -137,8 +137,8 @@ define([
         }, true);
 
         $scope.$watch('$viewContentLoaded', function () {
-            $(window).load(function () {
-            });
+            //$(window).load(function () {
+            //});
 
             $(window).scroll(function () {
                 var scroll = $(window).scrollTop();
@@ -443,7 +443,7 @@ define([
 
         /**
          * change your current platformType.
-         * @param cTypeId
+         * @param cType
          */
         function selectPlatformType(cType) {
             menuService.setPlatformType(cType).then(function (data) {
@@ -455,18 +455,22 @@ define([
 
         /**
          * 跳转到search页面
-         * @param catId
+         * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
+         * @param type: 1 || 3 = 到高级检索，2 = feed检索
+         *
          */
-        function goSearchPage(catId, vType) {
-            if (catId) {
-                var catPath = encodeURIComponent(catId);
-                if (vType == 'feed') {
+        function goSearchPage(catPath,catId) {
+            var catPath = encodeURIComponent(catPath);
+            switch($rootScope.platformType.cTypeId){
+                case "MT":
+                    $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
+                    break;
+                case "TH":
                     $location.path(cRoutes.search_feedsearch_param.url + "1/" + catPath);
-                } else if (vType == 'master') {
-                    $location.path(cRoutes.search_advance_param.url + "1/" + catPath);
-                } else {
-                    $location.path(cRoutes.search_advance_param.url + "3/" + catPath);
-                }
+                    break;
+                default:
+                    $location.path(cRoutes.search_advance_param.url + "3/" + catId + "/" + $rootScope.platformType.cTypeId);
+
             }
         }
     }
