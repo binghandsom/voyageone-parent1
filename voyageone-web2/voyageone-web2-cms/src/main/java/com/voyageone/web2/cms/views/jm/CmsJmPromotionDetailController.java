@@ -325,7 +325,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetProductView)
-    public  AjaxResponse getProductView(int promotionProductId) {
+    public  AjaxResponse getProductView(@RequestBody int promotionProductId) {
         return success(service3.getProductView(promotionProductId));
     }
     //jm2 end
