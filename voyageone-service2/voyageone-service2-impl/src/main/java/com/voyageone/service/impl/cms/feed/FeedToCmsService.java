@@ -92,11 +92,9 @@ public class FeedToCmsService extends BaseService {
         Set<String> sizeTypeList = new HashSet<>();
         Set<String> productTypeList = new HashSet<>();
 
-        boolean insertLog = false;
-
-
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         for (CmsBtFeedInfoModel product : products) {
+            boolean insertLog = false;
             try {
 
                 product.setModified(DateTimeUtil.getNow());

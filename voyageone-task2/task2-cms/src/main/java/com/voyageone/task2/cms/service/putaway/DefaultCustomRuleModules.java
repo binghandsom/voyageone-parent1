@@ -27,6 +27,7 @@ public class DefaultCustomRuleModules {
         customWordModules.add(ctx.getBean(CustomWordModuleConditionEq.class));
         customWordModules.add(ctx.getBean(CustomWordModuleConditionNeq.class));
         customWordModules.add(ctx.getBean(CustomWordModuleConditionLike.class));
+        customWordModules.add(ctx.getBean(CustomWordModuleGetCommonImages.class));
     }
 
     public Set<CustomWordModule> customWordModules;
