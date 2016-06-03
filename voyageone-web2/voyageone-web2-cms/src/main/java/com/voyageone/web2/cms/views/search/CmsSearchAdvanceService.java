@@ -87,7 +87,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 取得用户自定义显示列设置
-     *
      */
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
         List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userId);
@@ -169,7 +168,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
         // 获取label
-        Map param = new HashMap<>(2);
+        Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
         masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
@@ -209,7 +208,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         }
 
         //获取店铺列表
-        masterData.put("cartList",TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        masterData.put("cartList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
 
         return masterData;
     }
@@ -225,11 +224,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
         if (prodList == null || prodList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         // 取得符合条件的产品code列表
-        List<String> codeList = new ArrayList<String>(prodList.size());
+        List<String> codeList = new ArrayList<>(prodList.size());
         for (CmsBtProductModel prodObj : prodList) {
             codeList.add(prodObj.getFields().getCode());
         }
@@ -253,8 +252,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
         if (plusStr == null) {
             plusStr = "";
         }
-        StringBuilder projStr = new StringBuilder(queryObject.buildProjection(searchItems.concat(plusStr).split(";")));
-        queryObject.setProjection(projStr.toString());
+        String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
+        queryObject.setProjection(projStr);
         queryObject.setSort(setSortValue(searchValue));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
@@ -315,16 +314,16 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     fieldsObj.setEditStatus("");
                 }
 
-                stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(fieldsObj.getLock());
+                stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(prodObj.getLock());
                 if (stsFlg != null) {
                     String stsValueStr = lockStatusMap.get(stsFlg);
                     if (stsValueStr == null) {
-                        fieldsObj.setLock("");
+                        prodObj.setLock("");
                     } else {
-                        fieldsObj.setLock(stsValueStr);
+                        prodObj.setLock(stsValueStr);
                     }
                 } else {
-                    fieldsObj.setLock("");
+                    prodObj.setLock("");
                 }
             }
         }
@@ -494,17 +493,17 @@ public class CmsSearchAdvanceService extends BaseAppService {
         List<CmsBtProductGroupModel> grpList = productGroupService.getList(userInfo.getSelChannelId(), qrpQuy);
         if (grpList == null || grpList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList grpList");
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         // 将上面查询的结果放到一个临时map中,以过滤重复code
-        Map<String, String> codeList2 = new HashMap<String, String>();
+        Map<String, String> codeList2 = new HashMap<>();
         for (CmsBtProductGroupModel grpObj : grpList) {
             String pCd = grpObj.getMainProductCode();
             codeList2.put(pCd, pCd);
         }
 
-        List<String> grpCodeList = new ArrayList<String>(codeList2.size());
+        List<String> grpCodeList = new ArrayList<>(codeList2.size());
         codeList2.keySet().forEach(grpCodeList::add);
         return grpCodeList;
     }
@@ -535,7 +534,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         try (InputStream inputStream = new FileInputStream(templatePath);
              Workbook book = WorkbookFactory.create(inputStream)) {
-            writeHead(book,cmsSessionBean);
+            writeHead(book, cmsSessionBean);
             for (int i = 0; i < pageCount; i++) {
 
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
@@ -694,7 +693,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
 
             if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
-                resultPlatforms.append("\"publishTime\":{" );
+                resultPlatforms.append("\"publishTime\":{");
                 // 获取publishTime start
                 if (searchValue.getPublishTimeStart() != null) {
                     resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
@@ -800,7 +799,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
         }
         //获取tag查询条件
-        if (searchValue.getCidValue().size()>0) {
+        if (searchValue.getCidValue().size() > 0) {
             result.append(MongoUtils.splicingValue("sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
             result.append(",");
         }
@@ -911,8 +910,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 String inputOptsKey = map.get("inputOptsKey");//条件字段
                 String inputOpts = map.get("inputOpts");//操作符
                 String inputVal = map.get("inputVal");//值
-                String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
-                if(!StringUtil.isEmpty(optsWhere)) {
+                String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOpts, inputVal);
+                if (!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
                     result.append(",");
                 }
@@ -921,28 +920,28 @@ public class CmsSearchAdvanceService extends BaseAppService {
         return result.toString();
     }
 
-    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
-    {
+    public String getCustAttrOptsWhere(String inputOptsKey, String inputOpts, String inputVal) {
         //自定义查询  sunpt
-        if(StringUtil.isEmpty(inputOptsKey)) return "";
-        String result="";
+        if (StringUtil.isEmpty(inputOptsKey)) return "";
+        String result = "";
         switch (inputOpts) {
             case "=":
-                result=MongoUtils.splicingValue(inputOptsKey, inputVal);
+                result = MongoUtils.splicingValue(inputOptsKey, inputVal);
                 break;
             case "!=":
-                result="\""+inputOptsKey+"\": { $ne:\"" + inputVal + "\"}}";
+                result = "\"" + inputOptsKey + "\": { $ne:\"" + inputVal + "\"}}";
                 break;
             case "=null":
-                result="\""+inputOptsKey+"\":{$in:[null,\"\"],$exists:true}";
+                result = "\"" + inputOptsKey + "\":{$in:[null,\"\"],$exists:true}";
                 break;
             case "!=null":
-                result="$and:[{\""+inputOptsKey+"\": { $ne: null }},{\""+inputOptsKey +"\": { $ne: \"\" }}]";
+                result = "$and:[{\"" + inputOptsKey + "\": { $ne: null }},{\"" + inputOptsKey + "\": { $ne: \"\" }}]";
                 break;
         }
-        return  result;
+        return result;
     }
-    private void  writeHead (Workbook book,CmsSessionBean cmsSession){
+
+    private void writeHead(Workbook book, CmsSessionBean cmsSession) {
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
         Sheet sheet = book.getSheetAt(0);
@@ -951,19 +950,20 @@ public class CmsSearchAdvanceService extends BaseAppService {
         CellStyle style = row.getCell(0).getCellStyle();
 
         int index = 16;
-        if(commonProps != null){
-            for (Map<String,String>prop: commonProps){
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
             }
         }
 
-        if(customProps != null){
-            for (Map<String,String>prop: customProps){
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
-                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation"))+"(en)");
+                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")) + "(en)");
             }
         }
     }
+
     /**
      * Code单位，文件输出
      *
@@ -1048,20 +1048,20 @@ public class CmsSearchAdvanceService extends BaseAppService {
             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodePrivate()));
 
 
-            if(commonProps != null){
-                for (Map<String,String>prop: commonProps){
+            if (commonProps != null) {
+                for (Map<String, String> prop : commonProps) {
                     Object value = item.getFields().getAttribute(prop.get("propId"));
 
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                 }
             }
 
-            if(customProps != null){
-                for (Map<String,String>prop: customProps){
+            if (customProps != null) {
+                for (Map<String, String> prop : customProps) {
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                 }
             }
 
