@@ -8,7 +8,6 @@ import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
-import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -16,12 +15,17 @@ import com.taobao.top.schema.field.MultiCheckField;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
-import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
@@ -42,7 +46,6 @@ import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.enums.TmallWorkloadStatus;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.model.CustomPlatformPropMappingModel;
-import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
@@ -54,8 +57,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.ims.modelbean.DictWordBean;
-import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import org.slf4j.Logger;
@@ -66,6 +67,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Created by Leo on 2015/5/28.
  */
@@ -253,7 +255,7 @@ public class TmallProductService {
         }
         tmallUploadRunState.setIs_darwin(isDarwin);
 
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
         workLoadBean.setCmsMtPlatformCategorySchemaModel(cmsMtPlatformCategorySchemaModel);
 
         ExpressionParser expressionParser = new ExpressionParser(channelId, cartId, mainSxProduct, workLoadBean.getProcessProducts());
@@ -1116,7 +1118,7 @@ public class TmallProductService {
         }
         tmallUploadRunState.setIs_darwin(isDarwin);
 
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(tcb.getPlatformCId(), workLoadBean.getCart_id());
         workLoadBean.setCmsMtPlatformCategorySchemaModel(cmsMtPlatformCategorySchemaModel);
 
         ExpressionParser expressionParser = new ExpressionParser(channelId, cartId, mainSxProduct, workLoadBean.getProcessProducts());
@@ -1732,21 +1734,25 @@ public class TmallProductService {
                             ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 //                            ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
                             // modified by morse.lu 2016/05/15 end
-                            try {
-                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
-                                String strXml = response.getUpdateItemResult();
-                                // 读入的属性列表
-                                List<Field> fieldList = null;
-                                fieldList = SchemaReader.readXmlForList(strXml);
-                                List<String> defaultValues = null;
-                                for (Field field : fieldList) {
-                                    if (sellerCategoryPropId.equals(field.getId())) {
-                                        MultiCheckField multiCheckField = (MultiCheckField) field;
-                                        defaultValues = multiCheckField.getDefaultValues();
-                                        break;
-                                    }
-                                }
-                                if (defaultValues != null) {
+                            // modified by morse.lu 2016/06/03 start
+//                            try {
+//                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
+//                                String strXml = response.getUpdateItemResult();
+//                                // 读入的属性列表
+//                                List<Field> fieldList = null;
+//                                fieldList = SchemaReader.readXmlForList(strXml);
+//                                List<String> defaultValues = null;
+//                                for (Field field : fieldList) {
+//                                    if (sellerCategoryPropId.equals(field.getId())) {
+//                                        MultiCheckField multiCheckField = (MultiCheckField) field;
+//                                        defaultValues = multiCheckField.getDefaultValues();
+//                                        break;
+//                                    }
+//                                }
+                                // 改成从product表里取
+                                List<String> defaultValues = mainSxProduct.getCmsBtProductModel().getSellerCats().getFullCIds();
+                                // modified by morse.lu 2016/06/03 end
+                                if (defaultValues != null && !defaultValues.isEmpty()) {
                                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                     field.setId(sellerCategoryPropId);
                                     for (String defaultValue : defaultValues) {
@@ -1754,9 +1760,10 @@ public class TmallProductService {
                                     }
                                     contextBuildFields.addCustomField(field);
                                 }
-                            } catch (TopSchemaException | ApiException e) {
-                                logger.error(e.getMessage(), e);
-                            }
+//                            } catch (TopSchemaException | ApiException e) {
+//                                logger.error(e.getMessage(), e);
+//                            }
+                            // modified by morse.lu 2016/06/03 end
                         }
                     }
                     break;
@@ -1843,7 +1850,7 @@ public class TmallProductService {
         }
     }
 
-    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal{
+    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
         Set<String> imageSetEachProp = new HashSet<>();
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {

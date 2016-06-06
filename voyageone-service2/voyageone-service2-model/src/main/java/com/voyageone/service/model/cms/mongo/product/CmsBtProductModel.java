@@ -39,6 +39,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     private Map sales = new HashMap<>();
 
+    private CmsBtProductModel_Platform platform = new CmsBtProductModel_Platform();
+
     public String getOrgChannelId() {
         return orgChannelId == null ? this.channelId : orgChannelId;
     }
@@ -168,5 +170,13 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setSales(Map sales) {
         this.sales = sales;
+    }
+
+    public CmsBtProductModel_Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(CmsBtProductModel_Platform platform) {
+        this.platform = platform;
     }
 }

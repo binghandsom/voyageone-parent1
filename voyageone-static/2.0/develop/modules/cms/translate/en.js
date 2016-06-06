@@ -55,8 +55,8 @@ define(function() {
         "TXT_PRIMARY_PRODUCT": "Primary Product",
         "TXT_BASE_PROPERTY": "Base Property",
         "TXT_TIME": "Time",
-        "TXT_NUMBER_IID_WITH_COLON": "Number IId:",
-        "TXT_GROUP_NAME_WITH_COLON": "Group Name:",
+        "TXT_NUMBER_IID_WITH_COLON": "Number IId",
+        "TXT_GROUP_NAME_WITH_COLON": "Group Name",
         "TXT_CATEGORY_WITH_COLON": "Category:",
         "TXT_SIZE_TYPE": "Size Type",
         "TXT_SKU_COUNT": "SKU Count",
@@ -559,7 +559,16 @@ define(function() {
         "MAX_SELLER_CAT_DEPTH":"max level",
         "MAX_SELLER_CAT_CNT":"max tag counts should be less than ",
         "TXT_STORE_CATEGORY_SELECT":"Please select a tag",
-        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in cart directory",
-        "CATEGORY_EDIT":"Category edit"
+        "INVALID_OPERATION_IN_CURRENT_CART_PATH":"Invalid operation in current cart directory",
+        "CATEGORY_EDIT":"Category edit",
+
+        /**工具管理*/
+        "TXT_TOOLS_MANAGEMENT":"Tools Management",
+        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"Product Processing",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"Hs Code Setting",
+        "TXT_NUMBER_OF_WAITED_FOR_SETTED":"The number Of the Hs code waited for setted",
+        "TXT_HS_CODE_STATUS":"Hs code's status",
+        "TXT_MATERIAL":"material",
+        "TXT_HSCODE_PRODUCT_NAME":"Hs Code/Product name"
     };
 });

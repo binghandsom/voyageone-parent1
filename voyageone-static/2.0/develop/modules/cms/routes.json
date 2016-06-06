@@ -210,6 +210,11 @@
     "templateUrl": "views/translation/index.tpl.html",
     "controllerUrl": "modules/cms/views/translation/index.ctl"
   },
+  "tools_product":{
+    "hash": "/tools/product",
+    "templateUrl": "views/tools/product/hsCodeList.tpl.html",
+    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl"
+  },
   "system_category_index": {
     "hash": "/system/category",
     "templateUrl": "views/system/category/index.tpl.html",

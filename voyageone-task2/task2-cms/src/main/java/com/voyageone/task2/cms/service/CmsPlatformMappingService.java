@@ -147,7 +147,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
 
         List<MappingBean> props = new ArrayList<>();
-        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(categoryId, cartId);
         if (cmsMtPlatformCategorySchemaModel != null) {
             //PropsItem 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {

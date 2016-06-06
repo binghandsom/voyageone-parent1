@@ -119,7 +119,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         //删除原有数据
 //        cmsMtCategorySchemaDao.deleteAll();
 
-        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys(Integer.parseInt(cartId));
+        List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.selectAllSchemaKeys(Integer.parseInt(cartId));
 
         List<CommonPropActionDefBean> allDefModels = cmsMtCommonPropDaoExt.selectActionModelList();
 
@@ -162,7 +162,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         for (JSONObject schemaId:schemaIds) {
             String id = schemaId.get("_id").toString();
             CmsMtPlatformCategorySchemaModel schemaModel =
-                    cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModelById(
+                    cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModelById(
                             id,
                             Integer.parseInt(cartId));
             if (schemaModel != null){

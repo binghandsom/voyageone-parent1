@@ -7,6 +7,7 @@ import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -566,10 +567,22 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-                removeProductList.add(productModel);
-                continue;
+            // 2016/06/02 Update by desmond Start  分平台对应
+            if (CartEnums.Cart.TM.getId().equals(cartId) || CartEnums.Cart.TB.getId().equals(cartId) ) {
+                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
+                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
+            } else {
+                // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
+                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform().get("P" + cartId);
+                if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
             }
+            // 2016/06/02 Update by desmond end
 
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
             List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
@@ -795,7 +808,7 @@ public class SxProductService extends BaseService {
                 optionDisplayName = optionDisplayName.trim();
 
                 Double minPrice = Double.parseDouble(optionDisplayName);
-                if (Double.compare(minPrice, jdPrice) < 0) {
+                if (Double.compare(minPrice, jdPrice) > 0) {
                     // 不符合
                     continue;
                 }
@@ -1394,6 +1407,9 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());

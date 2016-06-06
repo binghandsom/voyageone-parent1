@@ -21,6 +21,7 @@ import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -70,7 +71,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     @Autowired
     private CmsChannelTagService cmsChannelTagService;
     @Autowired
-    private CmsBtTagDaoExt cmsBtTagDaoExt;
+    private TagService tagService;
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
     @Autowired
@@ -169,12 +170,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取检索页面初始化的master data数据
-     *
-     * @param userInfo
-     * @param cmsSession
-     * @param language
-     * @return
-     * @throws IOException
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException {
 
@@ -237,11 +232,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取当前页的product列表
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<String> getProductCodeList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -264,12 +254,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取当前页的product列表
-     *
-     * @param prodCodeList
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<CmsBtProductBean> getProductInfoList(List<String> prodCodeList
             , CmsSearchInfoBean searchValue
@@ -299,9 +283,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 检查翻译状态
-     *
-     * @param productList
-     * @param lang
      */
     public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
@@ -367,12 +348,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
-     *
-     * @param groupsList
-     * @param channelId
-     * @param cartId
-     * @param hasImgFlg
-     * @return
      */
     public List[] getGroupExtraInfo(List<CmsBtProductBean> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt;
@@ -465,7 +440,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 List<String> tagPathList = groupObj.getFreeTags();
                 if (tagPathList != null && tagPathList.size() > 0) {
                     // 根据tag path查询tag path name
-                    List<CmsBtTagBean> tagModelList = cmsBtTagDaoExt.getTagPathNameByTagPath(channelId, tagPathList);
+                    List<CmsBtTagBean> tagModelList = tagService.getTagPathNameByTagPath(channelId, tagPathList);
                     if (!tagModelList.isEmpty()) {
                         tagModelList = cmsChannelTagService.convertToTree(tagModelList);
                         List<CmsBtTagModel> tagList = cmsChannelTagService.convertToList(tagModelList);
@@ -533,11 +508,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 返回当前页的group列表
-     *
-     * @param codeList
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
      */
     public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         String[] codeArr = new String[codeList.size()];
@@ -551,6 +521,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         JomgoQuery qrpQuy = new JomgoQuery();
         qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
         qrpQuy.setProjection("{'_id':0,'mainProductCode':1}");
+
         List<CmsBtProductGroupModel> grpList = productGroupService.getList(userInfo.getSelChannelId(), qrpQuy);
         if (grpList == null || grpList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList grpList");
@@ -571,13 +542,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 获取数据文件内容
-     *
-     * @param searchValue
-     * @param userInfo
-     * @param cmsSessionBean
-     * @return
-     * @throws IOException
-     * @throws InvalidFormatException
      */
     public byte[] getCodeExcelFile(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean)
             throws IOException, InvalidFormatException {
@@ -649,10 +613,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 根据类目路径查询已翻译的属性信息
-     *
-     * @param channelId
-     * @param catPath
-     * @return
      */
     public List<Map<String, Object>> selectAttrs(String channelId, String catPath) {
         return feedCustomPropService.getFeedCustomPropAttrs(channelId, catPath);
@@ -660,8 +620,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 取得自定义显示列设置
-     *
-     * @return
      */
     public List<Map<String, Object>> getCustColumns() {
         return commonPropService.getCustColumns();
@@ -746,11 +704,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     /**
      * 保存用户自定义显示列设置
-     *
-     * @param userInfo
-     * @param cmsSessionBean
-     * @param param1
-     * @param param2
      */
     public void saveCustColumnsInfo(UserSessionBean userInfo, CmsSessionBean cmsSessionBean, List<String> param1, List<String> param2, String language, List<String> selSalesTypeList) {
         String customStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(param1, ","));
