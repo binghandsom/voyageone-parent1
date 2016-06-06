@@ -34,7 +34,7 @@ angular.module("voyageone.angular.directives")
         return {
             restrict: "E",
             template: '{{$message}}',
-            require: '^^form',
+            require: '^form',
             scope: {
                 'target': '='
             },
