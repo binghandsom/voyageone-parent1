@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author james.li on 2016/4/7.
@@ -59,16 +58,16 @@ public class UploadToUSJoiServiceTest {
         productUpdateBean.setProductModel(cmsBtProductModel);
         productUpdateBean.setIsCheckModifed(false);
 
-        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1349", 26);
-        List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
-
-        CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform(26);
-        if (platformCart != null) {
-            BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
-            FieldUtil.getFieldsValueToMap(fields);
-        }
-        productService.updateProduct("010", productUpdateBean);
+//        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1349", 26);
+//        List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
+//
+//        CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform(26);
+//        if (platformCart != null) {
+//            BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
+//            FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
+//            FieldUtil.getFieldsValueToMap(fields);
+//        }
+//        productService.updateProduct("010", productUpdateBean);
     }
 
     @Test
