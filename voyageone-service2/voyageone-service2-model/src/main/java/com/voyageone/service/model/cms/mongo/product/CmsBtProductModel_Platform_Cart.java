@@ -2,13 +2,18 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author james.li on 2016/6/1.
  * @version 2.0.0
  */
 public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>{
+
+    public final static String FIELDS = "fields";
+    public final static String SKUS = "skus";
 
     //cartId
     public String getCatrId() {
@@ -160,5 +165,46 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setTag(List<String> tag){
         setAttribute("tag",tag);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object put(String key, Object value) {
+        // fields
+        if (FIELDS.equals(key)) {
+            if (value != null) {
+                Map<String, Object> map = (Map<String, Object>) value;
+                BaseMongoMap<String, Object> fields;
+                if (map instanceof BaseMongoMap) {
+                    fields = (BaseMongoMap<String, Object>) map;
+                } else {
+                    fields = new BaseMongoMap<>();
+                    fields.putAll(map);
+                }
+                value = fields;
+            }
+        }
+
+        // skus
+        if (SKUS.equals(key)) {
+            if (value != null) {
+                List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
+                List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
+                for (Map<String, Object> map : imageMaps) {
+                    if (map != null) {
+                        BaseMongoMap<String, Object> sku;
+                        if (map instanceof BaseMongoMap) {
+                            sku = (BaseMongoMap<String, Object>) map;
+                        } else {
+                            sku = new BaseMongoMap<>();
+                            sku.putAll(map);
+                        }
+                        skus.add(sku);
+                    }
+                }
+                value = skus;
+            }
+        }
+        return super.put(key, value);
     }
 }
