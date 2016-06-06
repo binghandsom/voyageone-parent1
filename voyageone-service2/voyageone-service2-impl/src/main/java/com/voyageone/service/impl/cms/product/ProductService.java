@@ -1127,4 +1127,21 @@ public class ProductService extends BaseService {
         cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
     }
 
+    public void updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
+
+        String queryStr = null;
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryStr = String.format("{\"prodId\" : %d }", prodId);
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platforms.P"+platformModel.getCatrId(), platformModel);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+    }
 }

@@ -84,4 +84,13 @@ public class CmsProductPlatformDetailServiceTest {
         }
         productService.updateProduct("010", productUpdateBean);
     }
+
+    @Test
+    public void testUpdateProductPlatform() throws Exception {
+        Map<String, Object> platform = cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 26);
+        platform.put("schemaFields",JacksonUtil.jsonToMapList(JacksonUtil.bean2Json(platform.get("schemaFields"))));
+        List<Map<String,Object>> a =(List<Map<String,Object>>)platform.get("schemaFields");
+        a.get(0).put("8652","bbb");
+        cmsProductPlatformDetailService.updateProductPlatform("010", 5924L, platform);
+    }
 }
