@@ -64,6 +64,28 @@ public class ImageUploadService extends AbstractFileMonitoService {
     @Autowired
     private TaskDao taskDao;
 
+    public void run() {
+        try {
+            List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
+            // 循环处理批量图片给上传
+            for (TaskControlBean taskControl : taskControlList) {
+                if ("order_channel_id".equals(taskControl.getCfg_name())) {
+                    String finalPath = taskControl.getCfg_val2();
+                    String channelId = taskControl.getCfg_val1();
+
+                    for (File file : new File(finalPath).listFiles()) {
+                        if (!file.isDirectory()) return;
+                        onModify(file.getPath(), channelId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("文件监控服务线程中断异常", e);
+        }
+
+    }
+
+
     @Override
     protected void onModify(String filePath, String channelId) {
 
