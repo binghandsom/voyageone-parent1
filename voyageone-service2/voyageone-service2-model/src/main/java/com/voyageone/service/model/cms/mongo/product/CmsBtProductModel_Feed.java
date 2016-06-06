@@ -22,34 +22,34 @@ public class CmsBtProductModel_Feed  {
 
     private List<String> customIdsCn = new ArrayList<>();
 
+    //orgAtts
     public BaseMongoMap<String, Object> getOrgAtts() {
         return orgAtts;
     }
-
     public void setOrgAtts(BaseMongoMap<String, Object> orgAtts) {
         this.orgAtts = orgAtts;
     }
 
+    //cnAtts
     public BaseMongoMap<String, Object> getCnAtts() {
         return cnAtts;
     }
-
     public void setCnAtts(BaseMongoMap<String, Object> cnAtts) {
         this.cnAtts = cnAtts;
     }
 
+    //customIds
     public List<String> getCustomIds() {
         return customIds;
     }
-
     public void setCustomIds(List<String> customIds) {
         this.customIds = customIds;
     }
 
+    //customIdsCn
     public List<String> getCustomIdsCn() {
         return customIdsCn;
     }
-
     public void setCustomIdsCn(List<String> customIdsCn) {
         this.customIdsCn = customIdsCn;
     }
