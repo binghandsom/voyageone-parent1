@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.jumei2;
+package com.voyageone.service.bean.cms.jumei;
 
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;

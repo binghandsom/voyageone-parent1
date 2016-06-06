@@ -1,6 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.bean.cms.jumei2.SkuPriceBean;
+import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import org.apache.ibatis.annotations.Param;

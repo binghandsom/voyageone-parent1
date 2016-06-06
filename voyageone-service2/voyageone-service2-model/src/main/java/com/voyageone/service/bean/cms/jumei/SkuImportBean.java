@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.jumei2;
+package com.voyageone.service.bean.cms.jumei;
 
 /**
  * Created by dell on 2016/5/27.

@@ -1,14 +1,12 @@
 package com.voyageone.service.impl.cms.jumei2;
 
-import com.voyageone.service.bean.cms.jumei2.UpdateSkuDealPriceParameter;
+import com.voyageone.service.bean.cms.jumei.UpdateSkuDealPriceParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dell on 2016/3/18.

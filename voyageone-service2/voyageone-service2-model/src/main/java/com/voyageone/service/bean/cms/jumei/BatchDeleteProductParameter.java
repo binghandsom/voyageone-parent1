@@ -1,16 +1,13 @@
-package com.voyageone.service.bean.cms.jumei2;
+package com.voyageone.service.bean.cms.jumei;
 
 import java.util.List;
 
 /**
- * Created by dell on 2016/5/30.
+ * Created by dell on 2016/5/31.
  */
-public class BatchSynchPriceParameter {
-
+public class BatchDeleteProductParameter {
     List<Long> listPromotionProductId;
     int promotionId;
-
-
     public int getPromotionId() {
         return promotionId;
     }
@@ -25,5 +22,4 @@ public class BatchSynchPriceParameter {
     public void setListPromotionProductId(List<Long> listPromotionProductId) {
         this.listPromotionProductId = listPromotionProductId;
     }
-
 }

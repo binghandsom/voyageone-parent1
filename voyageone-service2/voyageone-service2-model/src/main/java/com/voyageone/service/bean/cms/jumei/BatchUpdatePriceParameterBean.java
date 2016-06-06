@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.jumei2;
+package com.voyageone.service.bean.cms.jumei;
 
 import java.util.List;
 
