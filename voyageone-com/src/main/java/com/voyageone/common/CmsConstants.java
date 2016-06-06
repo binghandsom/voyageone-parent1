@@ -88,6 +88,8 @@ public class CmsConstants {
         // 原始图片的判断存在依据
         String IMAGE_COMPARE_RULE = "IMAGE_COMPARE_RULE";
 
+        String IMAGE_UPLOAD_SERVICE = "IMAGE_UPLOAD_SERVICE";
+
         // 价格相关
         String PRICE = "PRICE";
         String PRICE_SX_PRICE = ".sx_price";

@@ -63,20 +63,20 @@ public class JuMeiProductUpdateService {
         info.setModelCmsBtJmPromotionProduct(promotionProductModel);
 
         //CmsBtJmProduct
-        CmsBtJmProductModel productModel = daoCmsBtJmProduct.select(promotionProductModel.getCmsBtJmProductId());
-        info.setModelCmsBtJmProduct(productModel);
+       // CmsBtJmProductModel productModel = daoCmsBtJmProduct.select(promotionProductModel.getCmsBtJmProductId());
+       // info.setModelCmsBtJmProduct(productModel);
 
         //CmsBtJmPromotionSku   list
         Map<String, Object> parameterPromotionSku = new HashMap<>();
         parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
-        parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+      //  parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
        // parameterPromotionSku.put("state", "0");
         List<CmsBtJmPromotionSkuModel> listPromotionSku = daoCmsBtJmPromotionSku.selectList(parameterPromotionSku);
         info.setListCmsBtJmPromotionSku(listPromotionSku);
 
         //CmsBtJmSku   list
         Map<String, Object> parameterSku = new HashMap<>();
-        parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+       // parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
        // parameterSku.put("state", "0");
         List<CmsBtJmSkuModel> listSkuModel = daoCmsBtJmSku.selectList(parameterSku);
         info.setListCmsBtJmSku(listSkuModel);
@@ -87,20 +87,20 @@ public class JuMeiProductUpdateService {
         info.setModelCmsBtJmPromotionProduct(promotionProductModel);
 
         //CmsBtJmProduct
-        CmsBtJmProductModel productModel = daoCmsBtJmProduct.select(promotionProductModel.getCmsBtJmProductId());
-        info.setModelCmsBtJmProduct(productModel);
+       // CmsBtJmProductModel productModel = daoCmsBtJmProduct.select(promotionProductModel.getCmsBtJmProductId());
+      //  info.setModelCmsBtJmProduct(productModel);
 
         //CmsBtJmPromotionSku   list
         Map<String, Object> parameterPromotionSku = new HashMap<>();
-        parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
-        parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+      //  parameterPromotionSku.put("cmsBtJmPromotionId", promotionProductModel.getCmsBtJmPromotionId());
+      //  parameterPromotionSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
         List<CmsBtJmPromotionSkuModel> listPromotionSku = daoCmsBtJmPromotionSku.selectList(parameterPromotionSku);
         info.setListCmsBtJmPromotionSku(listPromotionSku);
 
 
         //CmsBtJmSku   list
         Map<String, Object> parameterSku = new HashMap<>();
-        parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
+     //   parameterSku.put("cmsBtJmProductId", promotionProductModel.getCmsBtJmProductId());
         List<CmsBtJmSkuModel> listSkuModel = daoCmsBtJmSku.selectList(parameterSku);
         info.setListCmsBtJmSku(listSkuModel);
 
@@ -116,8 +116,8 @@ public class JuMeiProductUpdateService {
         Map<String, Object> parameterCmsMtMasterInfo = new HashMap<>();
         parameterCmsMtMasterInfo.put("platformId", 27);
         parameterCmsMtMasterInfo.put("channelId", promotionProductModel.getChannelId());
-        parameterCmsMtMasterInfo.put("brandName", productModel.getBrandName());
-        parameterCmsMtMasterInfo.put("productType", productModel.getProductType());
+       // parameterCmsMtMasterInfo.put("brandName", productModel.getBrandName());
+      //  parameterCmsMtMasterInfo.put("productType", productModel.getProductType());
         List<Integer> dataTypeList=new ArrayList<>();
         dataTypeList.add(4);
         dataTypeList.add(5);

@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -37,6 +38,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     @Autowired
     ProductGroupService productGroupService;
 
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
+    private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
+
     /**
      * 数据页面初始化
      */
@@ -47,10 +51,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //channelId
         String channelId = (String) params.get("channelId");
         //cartId
-        String cartId= (String) params.get("cartId");
+         String cartId= (String) params.get("cartId");
         //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", cartId);
-        data.put("cnt", cnt);
+        data.put("cnt", getSellerCatCnt(Integer.parseInt(cartId)));
         if(codeList.size()==1){
             //选择一条记录．根据code在cms_bt_product取得对应的属性记录
             for (String code : codeList) {
@@ -96,23 +99,23 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         String userName = (String) params.get("userName");
         //根据codeList取得相关联的code
         List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
-        //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("SELLER_CATS_FULL_CIDS", String.valueOf(cartId));
+        //同一店铺不同渠道的叶子类目插入形式不同
+        String cnt = getSellerCatCategoryCid(cartId);
         List<String> editFullCNamesList = new ArrayList<>();
-        if(cnt!=null){
+        if(cnt.equals(DEFAULT_SELLER_CATS_FULL_CIDS)){
+            editFullCNamesList=fullCatIdList;
+        }else{
             for(String fullCatId:fullCatIdList){
                 String fullCatIds[]=fullCatId.split("-");
                 editFullCNamesList.add(fullCatIds[fullCatIds.length-1]);
             }
-        }else{
-            editFullCNamesList=fullCatIdList;
         }
         //数据check
-        checkChannelCategory(fullCatIdList,cartId);
+        checkChannelCategory(fullCatIdList, cartId);
         //更新cms_bt_product表的SellerCat字段
         Map<String, Object> resultMap = productService.updateSellerCat(cIdsList, cNamesList, fullCNamesList, editFullCNamesList, allCodeList, cartId, userName, channelId);
         //取得approved的code插入
-        insertCmsBtSxWorkload(allCodeList, channelId, userName,cartId);
+        insertCmsBtSxWorkload(allCodeList, channelId, userName, cartId);
         return resultMap;
     }
 
@@ -157,7 +160,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         // 获取产品对应的group信息
         for(String allCode:codeList){
             //循环取得allCode
-            CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId,allCode, cartId);
+            CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, allCode, cartId);
             //循环取单条code
             for(String code:groupModel.getProductCodes()){
                 allCodeList.add(code);
@@ -170,13 +173,39 @@ public class CmsAddChannelCategoryService extends BaseAppService {
      */
     public void checkChannelCategory(List<String> fullCatIdList, int cartId){
         //取得类目达标下面的个数
-        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", String.valueOf(cartId));
-        if(cnt!=null){
-            //选择个数判断
-            if(fullCatIdList.size()>Integer.parseInt(cnt)){
-                // 类目选择check
-                throw new BusinessException("7000090",cnt);
-            }
+        String cnt = getSellerCatCnt(cartId);
+        //选择个数判断
+        if(fullCatIdList.size()>Integer.parseInt(cnt)){
+            // 类目选择check
+            throw new BusinessException("7000090",cnt);
         }
     };
+
+    /**
+     * 取得最大达标个数
+     * @param cartId
+     * @return cnt
+     */
+    public String getSellerCatCnt(int cartId){
+        String cartIdStr = String.valueOf(cartId);
+        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", cartIdStr);
+        if(StringUtils.isNullOrBlank2(cnt)){
+            cnt=DEFAULT_SELLER_CAT_CNT;
+        }
+        return cnt;
+    }
+
+    /**
+     * 同一店铺不同渠道的叶子类目插入形式不同
+     * @param cartId
+     * @return cnt
+     */
+    public String getSellerCatCategoryCid(int cartId){
+        String cartIdStr = String.valueOf(cartId);
+        String cnt = Codes.getCodeName("SELLER_CATS_FULL_CIDS", cartIdStr);
+        if(StringUtils.isNullOrBlank2(cnt)){
+            cnt=DEFAULT_SELLER_CATS_FULL_CIDS;
+        }
+        return cnt;
+    }
 }

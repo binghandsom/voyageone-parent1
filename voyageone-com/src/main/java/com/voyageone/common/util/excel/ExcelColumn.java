@@ -20,6 +20,17 @@ public class ExcelColumn<T> {
     {
 
     }
+    public ExcelColumn(String columnName,String tableName, String text)
+    {
+        this.columnName=columnName;
+        this.camelColumnName= CamelUtil.underlineToCamel(this.columnName);
+        this.tableName=tableName;
+        this.text=text;
+    }
+    public ExcelColumn(String columnName,String tableName, String text,boolean isNull) {
+        this(columnName, tableName, text);
+        this.isNull = isNull;
+    }
     public ExcelColumn(String columnName, int orderIndex, String tableName, String text)
     {
         this.columnName=columnName;

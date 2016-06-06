@@ -2,9 +2,6 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -12,8 +9,6 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,9 +20,6 @@ import java.util.*;
 public class CustomWordModuleImageWithParam extends CustomWordModule {
 
     public final static String moduleName = "ImageWithParam";
-
-    @Autowired
-    private ImageCreateService imageCreateService;
 
     public CustomWordModuleImageWithParam() {
         super(moduleName);
@@ -79,8 +71,9 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         }
 
         // 20160513 tom 图片服务器切换 START
-//        String parseResult = String.format(imageTemplate, imageParams.toArray());
-        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.get(0));
+        String parseResult = String.format(imageTemplate, imageParams.toArray());
+//        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.get(0));
+//        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.toArray(new String[imageParams.size()]));
         // 20160513 tom 图片服务器切换 END
 
 //        parseResult = sxProductService.encodeImageUrl(parseResult);

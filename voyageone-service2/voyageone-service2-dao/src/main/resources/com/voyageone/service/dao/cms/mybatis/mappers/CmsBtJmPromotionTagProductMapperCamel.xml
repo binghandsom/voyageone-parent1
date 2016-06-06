@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `cms_bt_jm_promotion_product_id`, `cms_bt_tag_id`, `tag_name`, 
+        `creater`, `created`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_tag_product
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_promotion_tag_product
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cmsBtJmPromotionProductId != null" >
+                `cms_bt_jm_promotion_product_id`,
+            </if>
+            <if test="cmsBtTagId != null" >
+                `cms_bt_tag_id`,
+            </if>
+            <if test="tagName != null" >
+                `tag_name`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cmsBtJmPromotionProductId != null" >
+                #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtTagId != null" >
+                #{cmsBtTagId,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null" >
+                #{tagName,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel" >
+        update cms_bt_jm_promotion_tag_product
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cmsBtJmPromotionProductId != null" >
+                `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER},
+            </if>
+            <if test="cmsBtTagId != null" >
+                `cms_bt_tag_id` = #{cmsBtTagId,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null" >
+                `tag_name` = #{tagName,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_promotion_tag_product
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_tag_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsBtJmPromotionProductId != null" >
+                and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtTagId != null" >
+                and `cms_bt_tag_id` = #{cmsBtTagId,jdbcType=INTEGER}
+            </if>
+            <if test="tagName != null" >
+                and `tag_name` = #{tagName,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_tag_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsBtJmPromotionProductId != null" >
+                and `cms_bt_jm_promotion_product_id` = #{cmsBtJmPromotionProductId,jdbcType=INTEGER}
+            </if>
+            <if test="cmsBtTagId != null" >
+                and `cms_bt_tag_id` = #{cmsBtTagId,jdbcType=INTEGER}
+            </if>
+            <if test="tagName != null" >
+                and `tag_name` = #{tagName,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

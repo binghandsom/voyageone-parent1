@@ -1,12 +1,16 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateProductWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.bean.cms.jumei2.*;
 import com.voyageone.service.impl.cms.jumei.*;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
@@ -54,15 +58,23 @@ public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     private MqSender sender;
 
+    //begin 2
+    @Autowired
+    CmsBtJmPromotionProduct3Service service3;
+    @Autowired
+    CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
+    //end 2
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
-        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoListByWhere(params));
+        return success(serviceCmsBtJmPromotionProduct.getPageByWhere(params));
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetPromotionProductInfoCountByWhere)
-    public AjaxResponse getPromotionProductInfoCountByWhere(@RequestBody Map<String, Object> map)
-    {
-        return success(serviceCmsBtJmPromotionProduct.getPromotionProductInfoCountByWhere(map));
+    public AjaxResponse getPromotionProductInfoCountByWhere(@RequestBody Map<String, Object> map) {
+        return success(serviceCmsBtJmPromotionProduct.getCountByWhere(map));
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATE)
     public AjaxResponse update(@RequestBody CmsBtJmPromotionProductModel params) {
         String channelId = getUser().getSelChannelId();
@@ -73,17 +85,17 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
-    public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
-        int id = Integer.parseInt((String) map.get("id"));
-        BigDecimal dealPrice = new BigDecimal(map.get("dealPrice").toString());
-        CmsBtJmPromotionProductModel model = serviceCmsBtJmPromotionProduct.select(id);
-        model.setDealPrice(dealPrice);
-        model.setModifier(getUser().getUserName());
-        serviceCmsBtJmPromotionProduct.update(model);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UPDATEDEAlPRICE)
+//    public AjaxResponse updateDealPrice(@RequestBody Map<String, Object> map) {
+//        int id = Integer.parseInt((String) map.get("id"));
+//        BigDecimal dealPrice = new BigDecimal(map.get("dealPrice").toString());
+//        CmsBtJmPromotionProductModel model = serviceCmsBtJmPromotionProduct.select(id);
+//        model.setDealPrice(dealPrice);
+//        model.setModifier(getUser().getUserName());
+//        serviceCmsBtJmPromotionProduct.update(model);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
@@ -109,27 +121,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    //所有未上新商品上新
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
-    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
-        serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", promotionId);
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        CallResult result = new CallResult();
-        return success(result);
-    }
-
-    //部分商品上新
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
-    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
-        serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        CallResult result = new CallResult();
-        return success(result);
-    }
 
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
@@ -159,7 +150,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         List<CmsBtJmSkuModel> skuList = cmsBtJmSkuService.selectList(map);
 
         Map<String, Object> promotionSkuParam = new HashMap<>();
-        promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
+        // promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
         List<CmsBtJmPromotionSkuModel> promotionSkuList = cmsBtJmPromotionSkuService.selectList(promotionSkuParam);
         result.put("skuList", cmsBtJmSkuService.selectSkuList(skuList, promotionSkuList));
 
@@ -189,6 +180,28 @@ public class CmsJmPromotionDetailController extends CmsController {
         result.put("updateProductResult", cmsBtJmProductService.update(request.getCmsBtJmProductModel()));
         result.put("updatePromotionProductResult", cmsBtJmPromotionProductService.update(request.getCmsBtJmPromotionProductModel()));
 
+        return success(result);
+    }
+
+    //所有未上新商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
+    public AjaxResponse jmNewUpdateAll(@RequestBody int promotionId) {
+        serviceCmsBtJmPromotionProduct.jmNewUpdateAll(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //部分商品上新
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewByProductIdListInfo)
+    public AjaxResponse jmNewByProductIdListInfo(@RequestBody ProductIdListInfo parameter) {
+        serviceCmsBtJmPromotionProduct.jmNewByProductIdListInfo(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
         return success(result);
     }
 
@@ -235,10 +248,95 @@ public class CmsJmPromotionDetailController extends CmsController {
         result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.JmMasterPlatCode.PRICE_UNIT));
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
     public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
-//        CallResult result = serviceCmsBtJmPromotionProduct.updateJM(promotionProductId);
-//        return success(result);
-        return null;
+//        BatchSynchPriceParameter parameter=new BatchSynchPriceParameter();
+//        service3.batchSynchPrice(parameter);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("id", parameter.getPromotionId());
+//        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+//        CallResult result = new CallResult();
+        return success(null);
     }
+
+    //jm2 begin
+    //批量更新价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateDealPrice)
+    public AjaxResponse batchUpdateDealPrice(@RequestBody BatchUpdatePriceParameterBean parameter) {
+        service3.batchUpdateDealPrice(parameter);
+        return success(null);
+    }
+
+    //批量同步价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
+    public AjaxResponse batchSynchPrice(@RequestBody BatchSynchPriceParameter parameter) {
+        service3.batchSynchPrice(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SynchAllPrice)
+    public AjaxResponse synchAllPrice(@RequestBody int promotionId) {
+        service3.synchAllPrice(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //批量再售
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchCopyDeal)
+    public AjaxResponse batchCopyDeal(@RequestBody BatchCopyDealParameter parameter) {
+        service3.batchCopyDeal(parameter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", parameter.getPromotionId());
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //全部再售
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
+    public AjaxResponse copyDealAll(@RequestBody int promotionId) {
+        service3.copyDealAll(promotionId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", promotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //批量删除 product  已经再售的不删
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchDeleteProduct)
+    public AjaxResponse batchDeleteProduct(@RequestBody BatchDeleteProductParameter parameter) {
+        service3.batchDeleteProduct(parameter);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    //删除全部product  已经再售的不删
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DeleteAllProduct)
+    public AjaxResponse deleteAllProduct(@RequestBody int promotionId) {
+        service3.deleteAllProduct(promotionId);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GetProductView)
+    public  AjaxResponse getProductView(@RequestBody int promotionProductId) {
+        return success(service3.getProductView(promotionProductId));
+    }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealPrice)
+    public AjaxResponse updateDealPrice(@RequestBody UpdateSkuDealPriceParameter parameter) {
+        String userName = getUser().getUserName();
+        service3CmsBtJmPromotionSku.updateDealPrice(parameter, userName);
+        CallResult result = new CallResult();
+        return success(result);
+    }
+    //jm2 end
 }

@@ -56,7 +56,8 @@ public class ReflectUtil {
             field.set(o, fieldValue);
         }
     }
-    public static List<Field>  getListField(Class<?> clazz) {
+
+    public static List<Field> getListField(Class<?> clazz) {
         Field[] selfFields = clazz.getDeclaredFields();
         List<Field> list = Arrays.asList(selfFields);
         Class<?> superClazz = clazz.getSuperclass();
@@ -68,8 +69,10 @@ public class ReflectUtil {
         }
         return list;
     }
+
     /**
      * 根据字段名获取字段
+     *
      * @param fieldName 字段名
      * @param clazz     包含该字段的类
      * @return 字段
@@ -91,14 +94,15 @@ public class ReflectUtil {
         //如果本类和父类都没有，则返回空
         return null;
     }
+
     /**
      * getFieldValueByNameSequence
+     *
      * @param fieldNameSequence 带路径的属性名或简单属性名
      * @param o                 对象
      * @return 属性值
-     * @throws Exception
-     * 根据带路径或不带路径的属性名获取属性值
-     * 即接受简单属性名，如userName等，又接受带路径的属性名，如student.department.name等
+     * @throws Exception 根据带路径或不带路径的属性名获取属性值
+     *                   即接受简单属性名，如userName等，又接受带路径的属性名，如student.department.name等
      */
     public static Object getFieldValueByNameSequence(String fieldNameSequence, Object o) throws Exception {
         Object value;
@@ -127,13 +131,15 @@ public class ReflectUtil {
     public static Object getFieldValueByName(String fieldName, Object o) throws Exception {
         Object value;
         Field field = getFieldByName(fieldName, o.getClass());
-
-        if (field != null) {
-            field.setAccessible(true);
-            value = field.get(o);
-        } else {
+        if (field == null) {
             throw new ExcelException(o.getClass().getSimpleName() + "类不存在字段名 " + fieldName);
         }
+        value = getValueByField(fieldName, o, field);
         return value;
+    }
+
+    private static Object getValueByField(String fieldName, Object o, Field field) throws IllegalAccessException, ExcelException {
+        field.setAccessible(true);
+        return field.get(o);
     }
 }

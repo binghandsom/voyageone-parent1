@@ -63,9 +63,9 @@ public class JMUpdateProductInfo {
         }
 
         mapSkuIdCmsBtJmPromotionSkuModel.clear();
-        for (CmsBtJmPromotionSkuModel model : listCmsBtJmPromotionSku) {
-            mapSkuIdCmsBtJmPromotionSkuModel.put(model.getCmsBtJmSkuId(), model);
-        }
+//        for (CmsBtJmPromotionSkuModel model : listCmsBtJmPromotionSku) {
+//            mapSkuIdCmsBtJmPromotionSkuModel.put(model.getCmsBtJmSkuId(), model);
+//        }
     }
 
     public CmsBtJmPromotionProductModel getModelCmsBtJmPromotionProduct() {

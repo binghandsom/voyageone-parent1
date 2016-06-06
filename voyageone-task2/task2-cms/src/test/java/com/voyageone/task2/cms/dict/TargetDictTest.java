@@ -55,8 +55,178 @@ public class TargetDictTest {
 		// 生成内容
 
 		{
-			// test
-			String html = "这段是测试用的商品描述信息.";
+			// div-000-start
+			String html = "<div style=\"margin-left: auto;margin-right: auto;width: 790px;\">";
+			TextWord word = new TextWord(html);
+			ruleRoot.addRuleWord(word);
+		}
+
+		{
+			{
+				// div-001-start
+				String html = "<div style=\"margin-bottom: 15px;\">";
+				TextWord word = new TextWord(html);
+				ruleRoot.addRuleWord(word);
+			}
+
+			{
+				{
+					// 品牌故事图
+					RuleExpression htmlTemplate = new RuleExpression();
+					htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+					RuleExpression imageType = new RuleExpression();
+					imageType.addRuleWord(new TextWord("3"));
+
+					RuleExpression viewType = new RuleExpression();
+					viewType.addRuleWord(new TextWord("1"));
+
+					RuleExpression useOriUrl = null;
+//					RuleExpression useOriUrl = new RuleExpression();
+//					useOriUrl.addRuleWord(new TextWord("1"));
+
+					CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+					ruleRoot.addRuleWord(new CustomWord(word));
+
+					// 测试用写死url start
+//					String html = "<div><img src=\"%s\" /></div>";
+//					html = String.format(html, "https://img.alicdn.com/imgextra/i4/2854639042/TB2_H8OpVXXXXa5XpXXXXXXXXXX_!!2854639042.jpg");
+//					TextWord word = new TextWord(html);
+//					ruleRoot.addRuleWord(word);
+					// 测试用写死url end
+				}
+
+				{
+					// 商品参数图
+					{
+						// 前缀
+						String html = "<div><img src=\"";
+						ruleRoot.addRuleWord(new TextWord(html));
+					}
+
+					{
+						// imageTemplate
+						RuleExpression imageTemplate = new RuleExpression();
+						String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x_PC?$bbbbbbbb790x500bbbbbbbb$&$product=%s&$text01=%s&$text02=%s&$text03=%s&$text04=%s&$text05=%s&$text06=%s&$text07=%s&$text08=%s";
+						imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+						// 参数imageParams
+						List<RuleExpression> imageParams = new ArrayList<>();
+
+						{
+							// 第一个参数是product_id(GetMainProductImages)
+							CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+							RuleExpression imageIndex = new RuleExpression();
+							imageIndex.addRuleWord(new TextWord("0"));
+							userParam.setImageIndex(imageIndex);
+							RuleExpression img_imageType = new RuleExpression();
+							img_imageType.addRuleWord(new TextWord(C_商品图片));
+							userParam.setImageType(img_imageType);
+
+							CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+							wordValueGetMainProductImages.setUserParam(userParam);
+
+							RuleExpression imgWord = new RuleExpression();
+							imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+							imageParams.add(imgWord);
+						}
+
+						{
+							// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
+							for (int index = 0; index < 8; index++) {
+								RuleExpression ruleExpression = new RuleExpression();
+								ruleExpression.addRuleWord(new FeedCnWord(true, index));
+								ruleExpression.addRuleWord(new TextWord("   "));
+								ruleExpression.addRuleWord(new FeedCnWord(false, index));
+								imageParams.add(ruleExpression);
+							}
+						}
+
+						CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
+						ruleRoot.addRuleWord(new CustomWord(word));
+					}
+
+					{
+						// 后缀
+						String html = "\"></div>";
+						ruleRoot.addRuleWord(new TextWord(html));
+					}
+				}
+
+				{
+					// 商品自定义图
+					RuleExpression htmlTemplate = new RuleExpression();
+					htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+					RuleExpression imageTemplate = new RuleExpression();
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
+
+					RuleExpression imageType = new RuleExpression();
+					imageType.addRuleWord(new TextWord(C_自定义图片));
+
+					RuleExpression useOriUrl = new RuleExpression();
+					useOriUrl.addRuleWord(new TextWord("1"));
+
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+					ruleRoot.addRuleWord(new CustomWord(word));
+				}
+
+				{
+					// 商品图片
+					{
+						// 商品描述（假的）：
+						String html = "<div><img src=\"%s\"/></div>";
+						html = String.format(html, "https://img.alicdn.com/imgextra/i3/2854639042/TB2XKHVpVXXXXcsXpXXXXXXXXXX_!!2854639042.jpg");
+						TextWord word = new TextWord(html);
+						ruleRoot.addRuleWord(word);
+					}
+
+					{
+						RuleExpression htmlTemplate = new RuleExpression();
+						htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+						RuleExpression imageTemplate = new RuleExpression();
+						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
+
+						RuleExpression imageType = new RuleExpression();
+						imageType.addRuleWord(new TextWord(C_商品图片));
+
+						RuleExpression useOriUrl = null;
+
+						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+						ruleRoot.addRuleWord(new CustomWord(word));
+					}
+				}
+
+//				{
+//					// 购物流程图
+//					String html = "<div><img src=\"%s\" /></div>";
+//					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2zCaipVXXXXaZXXXXXXXXXXXX_!!2854639042.jpg");
+//					TextWord word = new TextWord(html);
+//					ruleRoot.addRuleWord(word);
+//				}
+//
+//				{
+//					// 店铺介绍图
+//					String html = "<div><img src=\"%s\" /></div>";
+//					html = String.format(html, "https://img.alicdn.com/imgextra/i2/2854639042/TB2PpSdpVXXXXbcXXXXXXXXXXXX_!!2854639042.jpg");
+//					TextWord word = new TextWord(html);
+//					ruleRoot.addRuleWord(word);
+//				}
+			}
+
+			{
+				// div-001-end
+				String html = "</div>";
+				TextWord word = new TextWord(html);
+				ruleRoot.addRuleWord(word);
+			}
+
+		}
+
+		{
+			// div-000-end
+			String html = "</div>";
 			TextWord word = new TextWord(html);
 			ruleRoot.addRuleWord(word);
 		}

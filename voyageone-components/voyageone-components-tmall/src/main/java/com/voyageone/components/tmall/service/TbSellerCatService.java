@@ -1,8 +1,5 @@
 package com.voyageone.components.tmall.service;
 
-import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
-import com.jd.open.api.sdk.request.sellercat.SellerCatUpdateRequest;
-import com.jd.open.api.sdk.response.sellercat.SellerCatUpdateResponse;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.SellerCat;
 import com.taobao.api.request.SellercatsListAddRequest;
@@ -17,7 +14,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -103,12 +99,13 @@ public class TbSellerCatService extends TbBase {
         try {
             SellercatsListAddResponse response = reqTaobaoApi(shop, request);
             if (!StringUtils.isNullOrBlank2(response.getErrorCode())) {
+                logger.error("调用天猫API:更新该店铺自定义类目:" + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
+                logger.error("ERROR CODE:" + response.getErrorCode() + ",ERROR MSG:" + response.getMsg());
+                logger.error("RESPONSE BODY:" + response.getBody());
+                return "";
+            } else {
                 return "" + response.getSellerCat().getCid();
             }
-            logger.error("调用天猫API:更新该店铺自定义类目:" + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
-            logger.error("ERROR CODE:" + response.getErrorCode() + ",ERROR MSG:" + response.getMsg());
-            logger.error("RESPONSE BODY:" + response.getBody());
-            return "";
         }
         catch (ApiException e) {
             logger.error("调用天猫API添加前台展示的商家自定义店内分类信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
