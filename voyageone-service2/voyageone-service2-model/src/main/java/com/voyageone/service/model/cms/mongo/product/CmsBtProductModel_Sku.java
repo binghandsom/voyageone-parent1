@@ -169,14 +169,6 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         setAttribute("client_net_price", clientNetPrice);
     }
 
-    // isSale
-    public String getIsSale() {
-        return getAttribute("isSale");
-    }
-    public void setIsSale(String isSale) {
-        setAttribute("isSale", isSale);
-    }
-
     //priceChgFlg
     public String getPriceChgFlg () {
         return getStringAttribute("priceChgFlg");
