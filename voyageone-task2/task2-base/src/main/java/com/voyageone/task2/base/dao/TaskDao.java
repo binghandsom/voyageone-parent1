@@ -31,6 +31,15 @@ public class TaskDao extends BaseDao {
         return ret;
     }
 
+    /**
+     * 取得该job运行flg
+     * @param task_name
+     * @return
+     */
+    public String getTaskRunFlg (String task_name) {
+        return selectOne(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_selectRun", task_name);
+    }
+
     public int updateTaskControl(TaskControlBean bean) {
         return updateTemplate.update(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_update", bean);
     }
@@ -42,23 +51,23 @@ public class TaskDao extends BaseDao {
 
         return selectList(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_selectByName", task_name);
     }
-    
+
 
     /**
      * 取得指定后台任务最后结束的时间
      */
     public String getLastRunTime(String taskID) throws ParseException{
-    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	List<String> taskControlList = selectList(Constants.DAO_NAME_SPACE_CORE + "com_bt_task_history_getLastRunTime", taskID);
-    	if(taskControlList.size() >0)
-    	{	
-    		String time = df.format(DateTimeUtil.addHours(df.parse(taskControlList.get(0)),-1));
-    		return DateTimeUtil.getLocalTime(time,8);
-    	}else{
-    		Calendar calendar = DateTimeUtil.getCustomCalendar(8);
-			calendar.add(Calendar.DATE, -1);
-			return df.format(calendar.getTime());
-    	}
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<String> taskControlList = selectList(Constants.DAO_NAME_SPACE_CORE + "com_bt_task_history_getLastRunTime", taskID);
+        if(taskControlList.size() >0)
+        {
+            String time = df.format(DateTimeUtil.addHours(df.parse(taskControlList.get(0)),-1));
+            return DateTimeUtil.getLocalTime(time,8);
+        }else{
+            Calendar calendar = DateTimeUtil.getCustomCalendar(8);
+            calendar.add(Calendar.DATE, -1);
+            return df.format(calendar.getTime());
+        }
     }
 
 }
