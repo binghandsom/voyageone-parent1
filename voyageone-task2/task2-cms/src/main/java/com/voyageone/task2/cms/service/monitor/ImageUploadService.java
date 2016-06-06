@@ -14,6 +14,10 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.dao.TaskDao;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +51,20 @@ public class ImageUploadService extends AbstractFileMonitoService {
         LOG.info("监控到目录删除" + filePath);
     }
 
+    @Autowired
+    private TaskDao taskDao;
+
     @Override
     protected void onModify(String filePath, String channelId) {
+
+        List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
+        TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
+
+        if (!"1".equals(taskControlBean.getCfg_val1())) {
+            LOG.warn(TASK_NAME + ":的run_flg设置为0,不执行该job");
+            return;
+        }
+
         LOG.info("监控到目录更新" + filePath);
         String tempDir = buildDirPath(filePath, "temp");
 //        String channelId = Properties.readValue(getClass().getSimpleName() + "_monitor_home_path_channelId");
@@ -80,6 +96,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
             }
         });
+        taskControlBean.setEnd_time(DateTimeUtil.getNow());
+        taskDao.updateTaskControl(taskControlBean);
     }
 
     /**

@@ -1,15 +1,14 @@
 package com.voyageone.task2.cms.service.monitor;
 
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
@@ -26,7 +25,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class AbstractFileMonitoService {
+public abstract class AbstractFileMonitoService implements ApplicationListener {
 
     /* 日志 */
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -36,12 +35,11 @@ public abstract class AbstractFileMonitoService {
 
     protected final String MODIFIER = getClass().getSimpleName();
 
-    private final String TASK_NAME = "CmsBulkUploadImageToS7Job";
+    protected final String TASK_NAME = "CmsBulkUploadImageToS7Job";
 
     @Autowired
     private TaskDao taskDao;
 
-    @PostConstruct
     private void run() {
         try {
 //            final String finalPath = raisePath();
@@ -49,19 +47,15 @@ public abstract class AbstractFileMonitoService {
 //            String jobFunFlg = taskDao.getTaskRunFlg(TASK_NAME);
 
             List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
-            TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
 
-            // 判断是否启动图片批量更新job
-            if ("1".equals(taskControlBean.getCfg_val1())) {
-
-                // 循环处理批量图片给上传
-                for (TaskControlBean taskControl : taskControlList) {
-
+            // 循环处理批量图片给上传
+            for (TaskControlBean taskControl : taskControlList) {
+                if ("order_channel_id".equals(taskControl.getCfg_name())) {
                     String finalPath = taskControl.getCfg_val2();
                     String channelId = taskControl.getCfg_val1();
 
                     WatchService watchService = FileSystems.getDefault().newWatchService();
-            /* 注册监听“创建”、“删除”、“更新”事件 */
+                        /* 注册监听“创建”、“删除”、“更新”事件 */
                     Paths.get(finalPath).register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
                     while (true) {
                         WatchKey key = watchService.take();
@@ -75,10 +69,6 @@ public abstract class AbstractFileMonitoService {
                         if (!key.reset()) break;
                     }
                 }
-                taskControlBean.setEnd_time(DateTimeUtil.getNow());
-                taskDao.updateTaskControl(taskControlBean);
-            } else {
-                LOG.info("CmsBulkUploadImageToS7Job: 的run_flg未开启");
             }
         } catch (
                 IOException e
@@ -112,4 +102,10 @@ public abstract class AbstractFileMonitoService {
 
     protected abstract void onModify(String filePath, String channelId);
 
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        if (applicationEvent instanceof ContextRefreshedEvent) {
+            run();
+        }
+    }
 }
