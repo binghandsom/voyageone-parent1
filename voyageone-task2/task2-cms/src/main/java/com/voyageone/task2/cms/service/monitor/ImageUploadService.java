@@ -11,8 +11,9 @@ import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import org.apache.commons.io.FileUtils;
@@ -38,6 +39,14 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
     private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
+    private static final List<String> failedZipFileList=new ArrayList<>();
+
+    @Autowired
+    private BusinessLogService businessLogService;
+
+    @Autowired
+    private ProductService productService;
+
     @Override
     protected void onCreate(String filePath) {
         LOG.info("监控到目录创建" + filePath);
@@ -55,30 +64,47 @@ public class ImageUploadService extends AbstractFileMonitoService {
         String channelId = Properties.readValue(getClass().getSimpleName() + "_monitor_home_path_channelId");
         String modifyDirName = new File(filePath).getName();
         Arrays.asList(new File(filePath).listFiles((dir, name) -> name.endsWith(".zip"))).forEach(file -> {
-            try {
-                //解压缩到临时目录
-                deComparess(file, tempDir);
-                //依据临时目录内容上传ftp，之后更新Mongo数据
-                List<String> upFtpSuccessFiles = new ArrayList<String>();
-                ftpUpload(channelId, tempDir, buildDirPath(filePath, "error")).forEach((k, v) -> {
-                    if (v) upFtpSuccessFiles.add(k);
-                    else LOG.info(k + "Ftp上传失败");
-                });
-                //排序
-                Collections.sort(upFtpSuccessFiles);
-                upFtpSuccessFiles.forEach(k -> {
-                    CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
-                    if (model != null) {
-                        mongoOperator(model, modifyDirName, k);
-                        approvedOperator(model);
+            if(!failedZipFileList.contains(file.getName())){
+                int readImgCount=0;
+                int failedImgCount=0;
+                //异常信息
+                StringBuilder errorMsg=new StringBuilder();
+                try {
+                    //解压缩到临时目录
+                    deComparess(file, tempDir);
+                    //依据临时目录内容上传ftp，之后更新Mongo数据
+                    List<String> upFtpSuccessFiles = new ArrayList<>();
+                    Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
+                    readImgCount=ftpUploadResultMap.size();
+                    for(Map.Entry<String,Boolean> entry:ftpUploadResultMap.entrySet()){
+                        if(entry.getValue()){
+                            upFtpSuccessFiles.add(entry.getKey());
+                        } else{
+                            failedImgCount++;
+                            errorMsg.append(entry.getKey().split("-ftp-")[1]+"：图片上传到FTP服务器失败");
+                        }
                     }
-                });
-                //删除临时目录
-                FileUtils.deleteDirectory(new File(tempDir));
-                //移动文件到备份目录
-                FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
-            } catch (IOException e) {
-                LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
+                    //排序
+                    Collections.sort(upFtpSuccessFiles);
+                    upFtpSuccessFiles.forEach(k -> {
+                        CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
+                        if (model != null) {
+                            mongoOperator(model, modifyDirName, k);
+                            approvedOperator(model);
+                        }else{
+                            errorMsg.append(k.split("-ftp-")[1]+"：找不到指定商品");
+                        }
+                    });
+                    //删除临时目录
+                    FileUtils.deleteDirectory(new File(tempDir));
+                    //移动文件到备份目录
+                    FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
+                } catch (IOException e) {
+                    failedZipFileList.add(file.getName());
+                    errorMsg.append("其他异常："+e.getMessage());
+                    LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
+                }
+                logForUpload(file.getName(),readImgCount,readImgCount-failedImgCount,failedImgCount,errorMsg.toString());
             }
         });
     }
@@ -190,9 +216,6 @@ public class ImageUploadService extends AbstractFileMonitoService {
         }
     }
 
-    @Autowired
-    private ProductService productService;
-
     /**
      * 操作mongodb
      */
@@ -257,5 +280,25 @@ public class ImageUploadService extends AbstractFileMonitoService {
         queryMap.put("prodId", prodId);
 
         productService.updateProduct(channelId, queryMap, updateMap);
+    }
+
+    /**
+     * 上传日志
+     * @param zipName zip文件名称
+     * @param readSkuCount 读取sku个数
+     * @param processedSkuCount 处理sku个数
+     * @param failedSkuCount 失败sku个数
+     * @param errorMsg 错误信息
+     */
+    private void logForUpload(String zipName,int readSkuCount,int processedSkuCount,int failedSkuCount,String errorMsg){
+        StringBuilder stringBuilder=new StringBuilder("ImageUploadService处理压缩文件"+zipName+"操作日志");
+        stringBuilder.append("\n本次读入图片个数：").append(readSkuCount);
+        stringBuilder.append("\n正常处理图片个数：").append(processedSkuCount);
+        stringBuilder.append("\n异常处理图片个数：").append(failedSkuCount);
+        stringBuilder.append("\n错误说明：").append(errorMsg);
+        CmsBtBusinessLogModel logModel=new CmsBtBusinessLogModel();
+        logModel.setErrorMsg(stringBuilder.toString());
+        logModel.setErrorTypeId(1);
+        businessLogService.insertBusinessLog(logModel);
     }
 }
