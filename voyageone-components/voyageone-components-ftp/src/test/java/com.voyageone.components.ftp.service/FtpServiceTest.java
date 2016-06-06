@@ -1,18 +1,16 @@
 package com.voyageone.components.ftp.service;
 
-import com.voyageone.components.ftp.FtpBeanEnum;
-import com.voyageone.components.ftp.FtpBeanFactory;
-import com.voyageone.components.ftp.bean.FtpDirectoryBean;
-import com.voyageone.components.ftp.bean.FtpFilesBean;
-import com.voyageone.components.ftp.bean.FtpSubFileBean;
+import com.voyageone.components.ftp.FtpComponentFactory;
+import com.voyageone.components.ftp.FtpConstants;
+import com.voyageone.components.ftp.bean.FtpFileBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,47 +22,104 @@ import java.util.List;
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class FtpServiceTest {
 
-    @Autowired
-    private FtpService ftpService;
-
     @Test
     public void testStoreFiles() throws Exception {
-        FtpFilesBean ftpBean = FtpBeanFactory.getFtpFilesBean(FtpBeanEnum.NEXCESS_FTP);
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        ftpBean.addFileBean(new FtpSubFileBean("d:/", "testaacc-111.jpg", "/test/test1/test2"));
-        ftpBean.addFileBean(new FtpSubFileBean("d:/", "snusa-detail_20.png", "/test/test1/test2/"));
+        ftpComponent.openConnect();
 
-        ftpService.uploadFiles(ftpBean);
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "testaacc-111.jpg", "/test/test1/test2"));
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "snusa-detail_20.png", "/test/test1/test2/"));
+
+        ftpComponent.closeConnect();
+
+    }
+    @Test
+    public void testUploadFile1() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
+
+        ftpComponent.openConnect();
+
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "testaacc-111.jpg", "/test/", "testaacc-111.jpg"));
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "snusa-detail_20.png", "/test/", "snusa-detail_20.png"));
+
+        ftpComponent.closeConnect();
     }
 
     @Test
-    public void testStoreFilesStream() throws Exception {
-        FtpFilesBean ftpBean = FtpBeanFactory.getFtpFilesBean(FtpBeanEnum.NEXCESS_FTP);
+    public void testUploadFile2() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        ftpBean.addFileBean(new FtpSubFileBean(new FileInputStream(new File("d:/testaacc-111.jpg")), "/test", "testaacc-111.jpg"));
-        ftpBean.addFileBean(new FtpSubFileBean(new FileInputStream(new File("d:/snusa-detail_20.png")), "/test", "snusa-detail_20.png"));
+        ftpComponent.openConnect();
 
-        ftpService.uploadFiles(ftpBean);
+        ftpComponent.uploadFile(new FtpFileBean(new FileInputStream(new File("d:/testaacc-111.jpg")), "/test", "testaacc-111.jpg"));
+        ftpComponent.uploadFile(new FtpFileBean(new FileInputStream(new File("d:/snusa-detail_20.png")), "/test", "snusa-detail_20.png"));
+
+        ftpComponent.closeConnect();
     }
 
+    @Test
+    public void testUploadFile3() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
+
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "testaacc-111.jpg", "/test/", "testaacc-111.jpg"));
+        ftpComponent.uploadFile(new FtpFileBean("d:/", "snusa-detail_20.png", "/test/", "snusa-detail_20.png"));
+
+        ftpComponent.closeConnect();
+    }
 
     @Test
-    public void testDownloadFiles() throws Exception {
-        FtpFilesBean ftpBean = FtpBeanFactory.getFtpFilesBean(FtpBeanEnum.NEXCESS_FTP);
+    public void testUploadFile4() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        ftpBean.addFileBean(new FtpSubFileBean("d:/", "testaacc-112.jpg", "/test", "UPLOADLOG.TXT"));
-        ftpBean.addFileBean(new FtpSubFileBean("d:/", "snusa-detail_21.png", "/test", "snusa-detail_20.png"));
+        ftpComponent.openConnect();
 
-        ftpService.downloadFiles(ftpBean);
+        List<FtpFileBean> fileBeans = new ArrayList<>();
+        fileBeans.add(new FtpFileBean("d:/", "testaacc-111.jpg", "/test/", "testaacc-111.jpg"));
+        fileBeans.add(new FtpFileBean("d:/", "snusa-detail_20.png", "/test/", "snusa-detail_20.png"));
+
+        ftpComponent.uploadFiles(fileBeans);
+
+        ftpComponent.closeConnect();
+    }
+
+    @Test
+    public void testDownloadFile1() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
+
+        ftpComponent.openConnect();
+
+        ftpComponent.downloadFile(new FtpFileBean("d:/", "testaacc-112.jpg", "/test", "testaacc-111.jpg"));
+        ftpComponent.downloadFile(new FtpFileBean("d:/", "snusa-detail_21.png", "/test", "snusa-detail_20.png"));
+
+        ftpComponent.closeConnect();
+    }
+
+    @Test
+    public void testDownloadFile2() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
+
+        ftpComponent.openConnect();
+
+        List<FtpFileBean> fileBeans = new ArrayList<>();
+        fileBeans.add(new FtpFileBean("d:/", "testaacc-111.jpg", "/test/", "testaacc-111.jpg"));
+        fileBeans.add(new FtpFileBean("d:/", "snusa-detail_20.png", "/test/", "snusa-detail_20.png"));
+
+        ftpComponent.downloadFiles(fileBeans);
+
+        ftpComponent.closeConnect();
     }
 
     @Test
     public void testListFiles() throws Exception {
-        FtpDirectoryBean ftpBean = FtpBeanFactory.getFtpDirectoryBean(FtpBeanEnum.NEXCESS_FTP);
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        ftpBean.setRemotePath("/test");
+        ftpComponent.openConnect();
 
-        List<String> lst = ftpService.listFiles(ftpBean);
+        List<String> lst = ftpComponent.listFilePath("/test");
+
+        ftpComponent.closeConnect();
+
         for (String fileName : lst) {
             System.out.println(fileName);
         }
@@ -72,29 +127,46 @@ public class FtpServiceTest {
 
     @Test
     public void testDownloadFileDir() throws Exception {
-        FtpDirectoryBean ftpBean = FtpBeanFactory.getFtpDirectoryBean(FtpBeanEnum.NEXCESS_FTP);
-        ftpBean.setRemotePath("/test");
-        ftpBean.setLocalPath("d:/");
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        ftpService.downloadDirector(ftpBean);
+        ftpComponent.openConnect();
+
+        List<String> lst = ftpComponent.listFilePath("/test");
+
+        List<FtpFileBean> fileBeans = new ArrayList<>();
+        for (String fileName : lst) {
+            fileBeans.add(new FtpFileBean("d:/", fileName, "/test/", fileName));
+        }
+
+        ftpComponent.downloadFiles(fileBeans);
+
+        ftpComponent.closeConnect();
+    }
+
+    @Test
+    public void testDeleteFile() throws Exception {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
+
+        ftpComponent.openConnect();
+
+        ftpComponent.deleteFile(new FtpFileBean(null, null, "/test/", "testaacc-111.jpg"));
+
+        ftpComponent.closeConnect();
     }
 
     @Test
     public void testDeleteFiles() throws Exception {
-        FtpFilesBean ftpBean = FtpBeanFactory.getFtpFilesBean(FtpBeanEnum.NEXCESS_FTP);
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.NEXCESS_FTP);
 
-        FtpSubFileBean ftpFileBean = new FtpSubFileBean();
-        ftpFileBean.setRemotePath("/test");
-        ftpFileBean.setRemoteFilename("testaacc-111.jpg");
-        ftpBean.addFileBean(ftpFileBean);
+        ftpComponent.openConnect();
 
-        ftpFileBean = new FtpSubFileBean();
-        ftpFileBean.setRemotePath("/test");
-        ftpFileBean.setRemoteFilename("snusa-detail_20.png");
-        ftpBean.addFileBean(ftpFileBean);
+        List<FtpFileBean> fileBeans = new ArrayList<>();
+        fileBeans.add(new FtpFileBean(null, null, "/test/", "testaacc-111.jpg"));
+        fileBeans.add(new FtpFileBean(null, null, "/test/", "snusa-detail_20.png"));
 
-        ftpService.deleteFiles(ftpBean);
+        ftpComponent.deleteFiles(fileBeans);
+
+        ftpComponent.closeConnect();
     }
-
 
 }

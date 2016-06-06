@@ -2,16 +2,14 @@ package com.voyageone.components.ftp.bean;
 
 import com.voyageone.common.util.StringUtils;
 
-import java.io.InputStream;
-
 /**
- * BaseFtpBean
+ * FtpConnectBean
  *
  * @author chuanyu.liang 2016/5/10.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BaseFtpBean {
+public class FtpConnectBean {
     /**
      * FTP服务器hostname
      */
@@ -19,7 +17,7 @@ public class BaseFtpBean {
     /**
      * FTP服务器端口
      */
-    protected int port;
+    protected int port = 0;
     /**
      * FTP登录账号
      */
@@ -37,17 +35,6 @@ public class BaseFtpBean {
      * 文件名编码格式
      */
     private String coding = "iso-8859-1";
-
-    public BaseFtpBean() {
-    }
-
-    public BaseFtpBean(BaseFtpBean baseFtpBean) {
-        this.hostname = baseFtpBean.getHostname();
-        this.port = baseFtpBean.getPort();
-        this.username = baseFtpBean.getUsername();
-        this.password = baseFtpBean.getPassword();
-        this.timeout = baseFtpBean.getTimeout();
-    }
 
     public String getHostname() {
         return hostname;
@@ -88,7 +75,6 @@ public class BaseFtpBean {
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
-
 
     public String getCoding() {
         return coding;

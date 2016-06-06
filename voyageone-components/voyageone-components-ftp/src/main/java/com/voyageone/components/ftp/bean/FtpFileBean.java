@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.InputStream;
 
 /**
- * FtpSubFileBean
+ * FtpFileBean
  *
  * @author chuanyu.liang 2016/5/10.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class FtpSubFileBean {
+public class FtpFileBean {
     /**
      * 本地文件路径
      */
@@ -38,34 +38,34 @@ public class FtpSubFileBean {
     private String remoteFilename;
 
 
-    public FtpSubFileBean() {
+    public FtpFileBean() {
     }
 
-    public FtpSubFileBean(String localPath, String localFilename) {
+    public FtpFileBean(String localPath, String localFilename) {
         this.localPath = localPath;
         this.localFilename = localFilename;
     }
 
-    public FtpSubFileBean(String localPath, String localFilename, String remotePath) {
+    public FtpFileBean(String localPath, String localFilename, String remotePath) {
         this.localPath = localPath;
         this.localFilename = localFilename;
         this.remotePath = remotePath;
         this.remoteFilename = localFilename;
     }
 
-    public FtpSubFileBean(String localPath, String localFilename, String remotePath, String remoteFilename) {
+    public FtpFileBean(String localPath, String localFilename, String remotePath, String remoteFilename) {
         this.localPath = localPath;
         this.localFilename = localFilename;
         this.remotePath = remotePath;
         this.remoteFilename = remoteFilename;
     }
 
-    public FtpSubFileBean(InputStream localFileStream, String remoteFilename) {
+    public FtpFileBean(InputStream localFileStream, String remoteFilename) {
         this.localFileStream = localFileStream;
         this.remoteFilename = remoteFilename;
     }
 
-    public FtpSubFileBean(InputStream localFileStream, String remotePath, String remoteFilename) {
+    public FtpFileBean(InputStream localFileStream, String remotePath, String remoteFilename) {
         this.localFileStream = localFileStream;
         this.remotePath = remotePath;
         this.remoteFilename = remoteFilename;
@@ -109,13 +109,6 @@ public class FtpSubFileBean {
 
     public void setRemoteFilename(String remoteFilename) {
         this.remoteFilename = remoteFilename;
-    }
-
-
-    public void checkListParam() {
-        if (remotePath == null) {
-            throw new RuntimeException("remotePath not found.");
-        }
     }
 
     public void checkUploadParam() {
