@@ -131,6 +131,9 @@ public class TbCategoryService extends TbBase {
 
 
             String subMsg = response.getSubMsg();
+            if (subMsg == null) {
+                subMsg = "";
+            }
             switch(subMsg)
             {
                 case "参数无效;指定类目不需要发布产品;":
