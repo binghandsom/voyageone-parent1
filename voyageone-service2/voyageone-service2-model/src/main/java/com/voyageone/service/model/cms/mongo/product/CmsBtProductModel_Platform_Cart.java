@@ -178,7 +178,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
                 if (map instanceof BaseMongoMap) {
                     fields = (BaseMongoMap<String, Object>) map;
                 } else {
-                    fields = new BaseMongoMap<String, Object>();
+                    fields = new BaseMongoMap<>();
                     fields.putAll(map);
                 }
                 value = fields;
@@ -189,16 +189,17 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         if (SKUS.equals(key)) {
             if (value != null) {
                 List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
-                List<CmsBtProductModel_Sales_Sku> skus = new ArrayList<>();
+                List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
                 for (Map<String, Object> map : imageMaps) {
                     if (map != null) {
-                        CmsBtProductModel_Sales_Sku image;
-                        if (map instanceof CmsBtProductModel_Sales_Sku) {
-                            image = (CmsBtProductModel_Sales_Sku) map;
+                        BaseMongoMap<String, Object> sku;
+                        if (map instanceof BaseMongoMap) {
+                            sku = (BaseMongoMap<String, Object>) map;
                         } else {
-                            image = new CmsBtProductModel_Sales_Sku(map);
+                            sku = new BaseMongoMap<>();
+                            sku.putAll(map);
                         }
-                        skus.add(image);
+                        skus.add(sku);
                     }
                 }
                 value = skus;
