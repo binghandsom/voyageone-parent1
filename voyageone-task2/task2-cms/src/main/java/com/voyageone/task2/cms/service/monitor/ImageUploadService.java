@@ -298,7 +298,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
         stringBuilder.append("\n错误说明：").append(errorMsg);
         CmsBtBusinessLogModel logModel=new CmsBtBusinessLogModel();
         logModel.setErrorMsg(stringBuilder.toString());
-        logModel.setErrorTypeId(1);
+        logModel.setErrorTypeId(2);
         businessLogService.insertBusinessLog(logModel);
     }
 }

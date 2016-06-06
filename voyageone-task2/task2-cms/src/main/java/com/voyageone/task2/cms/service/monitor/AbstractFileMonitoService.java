@@ -3,6 +3,9 @@ package com.voyageone.task2.cms.service.monitor;
 import com.voyageone.common.configs.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -21,7 +24,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class AbstractFileMonitoService {
+public abstract class AbstractFileMonitoService implements ApplicationListener{
 
     /* 日志 */
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -31,7 +34,11 @@ public abstract class AbstractFileMonitoService {
 
     protected final String MODIFIER=getClass().getSimpleName();
 
-    @PostConstruct
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if(event instanceof ContextRefreshedEvent) run();
+    }
+
     private void run() {
         try {
             final String finalPath = raisePath();
