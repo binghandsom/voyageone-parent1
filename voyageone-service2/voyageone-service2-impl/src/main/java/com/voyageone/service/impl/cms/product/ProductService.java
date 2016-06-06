@@ -119,6 +119,14 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 Sku
+     */
+    public CmsBtProductModel getProductBySku(String channelId, String sku) {
+        String query = "{\"skus.skuCode\":\"" + sku + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * 获取商品 根据query
      */
     public CmsBtProductModel getProductByCondition(String channelId, JomgoQuery query) {
