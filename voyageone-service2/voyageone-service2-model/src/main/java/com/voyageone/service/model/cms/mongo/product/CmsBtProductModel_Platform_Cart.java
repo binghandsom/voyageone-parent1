@@ -13,6 +13,7 @@ import java.util.Map;
 public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>{
 
     public final static String FIELDS = "fields";
+    public final static String SKUS = "skus";
 
     //cartId
     public String getCatrId() {
@@ -169,6 +170,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {
+        // fields
         if (FIELDS.equals(key)) {
             if (value != null) {
                 Map<String, Object> map = (Map<String, Object>) value;
@@ -180,6 +182,26 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
                     fields.putAll(map);
                 }
                 value = fields;
+            }
+        }
+
+        // skus
+        if (SKUS.equals(key)) {
+            if (value != null) {
+                List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
+                List<CmsBtProductModel_Sales_Sku> skus = new ArrayList<>();
+                for (Map<String, Object> map : imageMaps) {
+                    if (map != null) {
+                        CmsBtProductModel_Sales_Sku image;
+                        if (map instanceof CmsBtProductModel_Sales_Sku) {
+                            image = (CmsBtProductModel_Sales_Sku) map;
+                        } else {
+                            image = new CmsBtProductModel_Sales_Sku(map);
+                        }
+                        skus.add(image);
+                    }
+                }
+                value = skus;
             }
         }
         return super.put(key, value);
