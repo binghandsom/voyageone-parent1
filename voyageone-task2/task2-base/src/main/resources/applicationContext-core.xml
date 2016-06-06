@@ -22,7 +22,7 @@
     <context:component-scan base-package="com.voyageone"/>
 
     <!-- 初始化处理 -->
-    <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
+    <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>
 
     <bean class="com.voyageone.task2.base.util.SetPriceUtils"/>
 
