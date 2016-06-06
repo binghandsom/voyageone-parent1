@@ -7,10 +7,8 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -42,9 +40,11 @@ public abstract class AbstractFileMonitoService implements ApplicationListener{
     private void run() {
         try {
             final String finalPath = raisePath();
-            WatchService watchService = FileSystems.getDefault().newWatchService();
+            final Path watchPath= Paths.get(finalPath);
+            WatchService watchService = watchPath.getFileSystem().newWatchService();
+            LOG.info("文件监听程序：操作系统"+watchPath.getFileSystem());
             /* 注册监听“创建”、“删除”、“更新”事件 */
-            Paths.get(finalPath).register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+            watchPath.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             while (true) {
                 WatchKey key = watchService.take();
                 key.pollEvents().forEach(e -> {
