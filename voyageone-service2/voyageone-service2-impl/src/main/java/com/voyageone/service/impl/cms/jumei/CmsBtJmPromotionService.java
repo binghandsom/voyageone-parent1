@@ -2,12 +2,21 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
@@ -42,24 +51,163 @@ public class CmsBtJmPromotionService {
     CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     @Autowired
     CmsBtJmPromotionDaoExt daoExt;
-
+    @Autowired
+    CmsBtTagDao daoCmsBtTag;
+    @Autowired
+    CmsBtPromotionDao daoCmsBtPromotion;
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
-
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
-
+    @VOTransactional
+   public void delete(int id) {
+       CmsBtJmPromotionModel model = dao.select(id);
+       model.setActive(0);
+       dao.update(model);
+       saveCmsBtPromotion(model);
+   }
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
     }
 
     public int insert(CmsBtJmPromotionModel entity) {
         return dao.insert(entity);
+    }
+
+    public CmsBtJmPromotionSaveBean getEditModel(int id) {
+        CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
+        CmsBtJmPromotionModel model = dao.select(id);
+        info.setModel(model);
+        if (model.getRefTagId() != 0) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("parentTagId", model.getRefTagId());
+            map.put("active", 1);
+            List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
+            info.setTagList(tagList);
+        }
+        return info;
+    }
+    @VOTransactional
+    public int saveModel(CmsBtJmPromotionSaveBean parameter,String userName, String channelId) {
+        parameter.getModel().setChannelId(channelId);
+        if (parameter.getModel().getId()!=null&&parameter.getModel().getId() > 0) {//更新
+            parameter.getModel().setModifier(userName);
+             updateModel(parameter);
+            saveCmsBtPromotion(parameter.getModel());
+        } else {//新增
+            parameter.getModel().setModifier(userName);
+            parameter.getModel().setCreater(userName);
+             insertModel(parameter);
+            saveCmsBtPromotion(parameter.getModel());
+        }
+        return 1;
+    }
+    public void  saveCmsBtPromotion(CmsBtJmPromotionModel model) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("promotionId", model.getId());
+        map.put("cartId", CartEnums.Cart.JM.getValue());
+        CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
+        if (promotion == null) {
+            promotion = new CmsBtPromotionModel();
+        }
+        promotion.setPromotionId(model.getId());
+        promotion.setRefTagId(model.getRefTagId());
+        promotion.setChannelId(model.getChannelId());
+        promotion.setModifier(model.getModifier());
+        promotion.setCreater(model.getCreater());
+        promotion.setActive(model.getActive());
+        promotion.setActivityStart(DateTimeUtil.getDateTime(model.getActivityStart(), "yyyy-MM-dd HH:mm:ss"));
+        promotion.setActivityEnd(DateTimeUtil.getDateTime(model.getActivityEnd(), "yyyy-MM-dd HH:mm:ss"));
+        promotion.setCartId(CartEnums.Cart.JM.getValue());
+        promotion.setPromotionName(model.getName());
+        promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
+        promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
+        promotion.setPromotionStatus(0);
+        promotion.setTejiabaoId("");
+        promotion.setIsAllPromotion(0);
+        promotion.setActive(model.getActive());
+        if (promotion.getId() == null || promotion.getId() == 0) {
+            daoCmsBtPromotion.insert(promotion);
+        } else {
+            daoCmsBtPromotion.update(promotion);
+        }
+    }
+    /*更新
+    * */
+    private int updateModel(CmsBtJmPromotionSaveBean parameter) {
+        int result;
+        CmsBtJmPromotionModel model = parameter.getModel();
+        if (model.getRefTagId() == 0) {
+            int refTagId = addTag(model);
+            model.setRefTagId(refTagId);
+        }
+        result = dao.update(parameter.getModel());
+        parameter.getTagList().forEach(cmsBtTagModel -> {
+            cmsBtTagModel.setModifier(parameter.getModel().getModifier());
+            if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
+                daoCmsBtTag.update(cmsBtTagModel);
+            } else {
+                cmsBtTagModel.setChannelId(model.getChannelId());
+                cmsBtTagModel.setParentTagId(model.getRefTagId());
+                cmsBtTagModel.setTagType(2);
+                cmsBtTagModel.setTagStatus(0);
+                cmsBtTagModel.setTagPathName(String.format("-%s-%s-", model.getName(), cmsBtTagModel.getTagName()));
+                cmsBtTagModel.setTagPath("");
+                cmsBtTagModel.setCreater(model.getModifier());
+                cmsBtTagModel.setModifier(model.getModifier());
+                daoCmsBtTag.insert(cmsBtTagModel);
+                cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
+                daoCmsBtTag.update(cmsBtTagModel);
+            }
+        });
+        return result;
+    }
+    /**
+     * 新增
+     */
+    private int insertModel(CmsBtJmPromotionSaveBean parameter) {
+        CmsBtJmPromotionModel model = parameter.getModel();
+        if(StringUtil.isEmpty(model.getCategory()))
+        {
+            model.setCategory("");
+        }
+        int refTagId = addTag(model);
+        model.setRefTagId(refTagId);
+        // 子TAG追加
+        parameter.getTagList().forEach(cmsBtTagModel -> {
+            cmsBtTagModel.setChannelId(model.getChannelId());
+            cmsBtTagModel.setParentTagId(refTagId);
+            cmsBtTagModel.setTagType(2);
+            cmsBtTagModel.setTagStatus(0);
+            cmsBtTagModel.setTagPathName(String.format("-%s-%s-", model.getName(), cmsBtTagModel.getTagName()));
+            cmsBtTagModel.setTagPath("");
+            cmsBtTagModel.setCreater(model.getCreater());
+            cmsBtTagModel.setModifier(model.getCreater());
+            daoCmsBtTag.insert(cmsBtTagModel);
+            cmsBtTagModel.setTagPath(String.format("-%s-%s-", refTagId, cmsBtTagModel.getId()));
+            daoCmsBtTag.update(cmsBtTagModel);
+        });
+        return dao.insert(model);
+    }
+    private int addTag(CmsBtJmPromotionModel model) {
+        CmsBtTagModel modelTag = new CmsBtTagModel();
+        modelTag.setChannelId(model.getChannelId());
+        modelTag.setTagName(model.getName());
+        modelTag.setTagType(2);
+        modelTag.setTagStatus(0);
+        modelTag.setParentTagId(0);
+        modelTag.setSortOrder(0);
+        modelTag.setTagPath("");
+        modelTag.setTagPathName("");
+        modelTag.setModifier(model.getModifier());
+        //Tag追加  活动名称
+         daoCmsBtTag.insert(modelTag);
+        return modelTag.getId();
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
@@ -144,24 +292,24 @@ public class CmsBtJmPromotionService {
         if (fields != null) {
             bean.setChannelId(model.getChannelId());
             bean.setProductCode(fields.getCode());
-            bean.setProductNameCn(fields.getProductNameCn());
-            bean.setProductLongName(fields.getLongTitle());
-            bean.setProductMediumName(fields.getMiddleTitle());
-            bean.setProductShortName(fields.getShortTitle());
-            bean.setBrandName(fields.getBrand());
-            bean.setProductType(fields.getProductType());
-            bean.setSizeType(fields.getSizeType());
-            bean.setColorEn(fields.getColor());
-            bean.setProductDesCn(fields.getLongDesCn());
-            bean.setProductDesEn(fields.getLongDesEn());
+            //bean.setProductNameCn(fields.getProductNameCn());
+//            bean.setProductLongName(fields.getLongTitle());
+//            bean.setProductMediumName(fields.getMiddleTitle());
+//            bean.setProductShortName(fields.getShortTitle());
+            //bean.setBrandName(fields.getBrand());
+           // bean.setProductType(fields.getProductType());
+           // bean.setSizeType(fields.getSizeType());
+           // bean.setColorEn(fields.getColor());
+           // bean.setProductDesCn(fields.getLongDesCn());
+           // bean.setProductDesEn(fields.getLongDesEn());
 
             if (fields.getHsCodePrivate() != null) {  //海关编号,名称,和单位
                 String value = synshipComMtValueChannelDao.selectName(fields.getHsCodePrivate(), 43, "en",model.getChannelId());
                 if (StringUtils.isNotBlank(value)) {
                     List<String> props = Splitter.on(",").splitToList(value);
-                    bean.setHsCode(props.size() > 0 ? props.get(0) : null);
-                    bean.setHsName(props.size() > 1 ? props.get(1) : null);
-                    bean.setHsUnit(props.size() > 2 ? props.get(2) : null);
+//                    bean.setHsCode(props.size() > 0 ? props.get(0) : null);
+//                    bean.setHsName(props.size() > 1 ? props.get(1) : null);
+//                    bean.setHsUnit(props.size() > 2 ? props.get(2) : null);
                 }
             }
         }

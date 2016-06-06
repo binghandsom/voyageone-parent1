@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public enum EnumJMProductImportColumn   {
+public enum EnumJMProductImportColumn {
     ProductCode("product_code","cms_bt_jm_product","产品编号",EnumExcelColumnType.ColumnType_String,false),//Acms_bt_jm_product
     AppId("app_id","cms_bt_jm_promotion_product","APP端模块ID"),//APP端模块ID
     PcId("pc_id","cms_bt_jm_promotion_product","PC端模块ID"),//Acms_bt_jm_product
@@ -59,7 +59,7 @@ public enum EnumJMProductImportColumn   {
         
         this.excelColumn = new ExcelColumn(columnName, EnumCount.ProductColumnIndex++, tableName, text);
     }
-    private EnumJMProductImportColumn(String columnName, String tableName, String text,EnumExcelColumnType columnType,boolean isNull)
+    private EnumJMProductImportColumn(String columnName, String tableName, String text, EnumExcelColumnType columnType, boolean isNull)
     {
         this.excelColumn = new ExcelColumn(columnName, EnumCount.ProductColumnIndex++, tableName, text,columnType,isNull);
     }

@@ -37,7 +37,7 @@ public class HttpUtils {
         HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
     }
 
-    public static String post(String url, String param) {
+    public static String post(String url, String param) throws IOException {
 
         HttpURLConnection connection = null;
         try {
@@ -48,12 +48,13 @@ public class HttpUtils {
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
+            throw  e;
         } finally {
             if (connection != null)
                 connection.disconnect();
         }
 
-        return null;
+        //return null;
     }
 
     public static String post(String url, String param, int connectTimeout, int readTimeout) {
