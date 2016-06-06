@@ -208,11 +208,16 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param dirFile  目录文件
      * @param fileList 文件list
      */
-    private static void filterImgFile(File dirFile, List<File> fileList) {
+    private void filterImgFile(File dirFile, List<File> fileList) {
         for (File file : dirFile.listFiles()) {
             if (file.isDirectory()) {
                 filterImgFile(file, fileList);
-            } else fileList.add(file);
+            } else if(file.getName().endsWith(".jpg")||file.getName().endsWith(".png")||file.getName().endsWith(".gif")
+                    ||file.getName().endsWith(".jpeg")){
+                fileList.add(file);
+            }else{
+                LOG.warn("不支持上传的的文件类型");
+            }
         }
     }
 
