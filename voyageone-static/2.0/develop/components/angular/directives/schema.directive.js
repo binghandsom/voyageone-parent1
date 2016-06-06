@@ -186,39 +186,62 @@
         .directive('schemaInput', function () {
             return {
                 restrict: 'E',
-                require: '^schema',
+                require: '?^schema',
                 scope: {
                     field: '=',
                     fieldId: '@'
                 },
-                link: function(scope, elem, attr) {
+                link: function($scope, elem, attr, schemaController) {
 
-                    if (!attr.field) {
-
-                        // 如果没有 field, 则尝试使用 code 字段来从外层 schema 查找
-                        var disposeFieldIdWatcher = scope.$watch('fieldId', function (fieldId) {
-                            if (!fieldId)
+                    var disposeWatcher = null;
+                    
+                    // 如果为 field 设置了什么, 就尝试获取 field 上的内容
+                    if (attr.field) {
+                        disposeWatcher = $scope.$watch('field', function(field){
+                            if (!field)
                                 return;
-
-                            console.log(fieldId);
-
-                            disposeFieldIdWatcher();
-                            disposeFieldIdWatcher = null;
+                            
+                            console.log(field); // TODO
+                            
+                            disposeWatcher();
+                            disposeWatcher = null;
                         });
-                        
                         return;
                     }
-
-                    // 如果配置了指定的 field 字段, 则使用指定的字段
-                    var disposeFieldWatcher = scope.$watch('field', function(field) {
-                        if (!field)
+                    
+                    // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
+                    if (attr.fieldId) {
+                        
+                        // 但是没有外层 schema 的话。就只能...
+                        if (!schemaController) {
+                            elem.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
                             return;
-
-                        console.log(field);
-
-                        disposeFieldWatcher();
-                        disposeFieldWatcher = null;
-                    });
+                        }
+                        
+                        disposeWatcher = $scope.$watch(function(){
+                            return schemaController.schema
+                        }, function(schema) {
+                            
+                            if (!schema)
+                                return;
+                            
+                            var field = find(schema, function(field) {
+                                return field.id === $scope.fieldId;
+                            });
+                            
+                            if (!field)
+                                elem.text('在 schema 上没有找到目标属性。');
+                            
+                            console.log(field); // TODO
+                            
+                            disposeWatcher();
+                            disposeWatcher = null;
+                        });
+                        return;
+                    }
+                    
+                    // 如果两个都没设置, 或者没有外层 schema 那就....
+                    elem.text('请提供 field 或者 field-id 属性。');
                 }
             }
         });
