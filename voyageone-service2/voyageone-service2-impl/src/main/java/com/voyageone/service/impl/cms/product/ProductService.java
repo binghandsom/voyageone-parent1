@@ -94,10 +94,6 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
-    public void update(CmsBtProductModel model) {
-        cmsBtProductDao.update(model);
-    }
-
     /**
      * 获取商品 根据Code
      */
@@ -123,11 +119,15 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 Sku
+     */
+    public CmsBtProductModel getProductBySku(String channelId, String sku) {
+        String query = "{\"skus.skuCode\":\"" + sku + "\"}";
+        return cmsBtProductDao.selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * 获取商品 根据query
-     *
-     * @param channelId
-     * @param query
-     * @return
      */
     public CmsBtProductModel getProductByCondition(String channelId, JomgoQuery query) {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
