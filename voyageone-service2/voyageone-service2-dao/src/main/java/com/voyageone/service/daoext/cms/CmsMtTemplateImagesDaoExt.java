@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CmsMtTemplateImagesDaoExt {
-    public List<CmsMtTemplateImagesModel> getListByPlatformChannelTemplateType(@Param("platformId") int platformId,@Param("channelId") String channelId,@Param("templateTypeList") List<Integer> templateTypeList);
+    public List<CmsMtTemplateImagesModel> selectListByPlatformChannelTemplateType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("templateTypeList") List<Integer> templateTypeList);
 }

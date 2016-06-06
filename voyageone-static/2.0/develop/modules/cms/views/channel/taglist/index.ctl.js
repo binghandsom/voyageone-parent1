@@ -104,6 +104,7 @@ define([
                     if (err.message != null) {
                         savedata.vm.errMsg=err.message;
                     }
+                    $scope.search(0);
                 })
         }
 

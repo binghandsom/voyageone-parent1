@@ -24,6 +24,10 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         }
     }
 
+    public int getIntAttribute(K key) {
+        return convertToInt(getAttribute(key));
+    }
+
     public double getDoubleAttribute(K key) {
         return convertToDoubel(getAttribute(key));
     }
@@ -68,6 +72,21 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         for (Object o : this.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             result.append(preStr + entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+    private int convertToInt(Object input) {
+        int result = 0;
+        if (input == null) {
+            return result;
+        }
+        if (input instanceof Integer) {
+            result = (Integer)input;
+        } else {
+            if(!StringUtil.isEmpty(input.toString())){
+                result = Integer.parseInt(input.toString());
+            }
         }
         return result;
     }

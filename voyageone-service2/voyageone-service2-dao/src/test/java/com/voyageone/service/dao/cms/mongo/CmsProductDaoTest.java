@@ -338,7 +338,6 @@ public class CmsProductDaoTest {
         long start = System.currentTimeMillis();
 
         CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.setLock("1");
 
         List<String> codeList = new ArrayList<>();
         codeList.add("100001");
@@ -357,10 +356,8 @@ public class CmsProductDaoTest {
 
         Map<String, CmsBtProductModel_Field> codeFieldMap = new LinkedHashMap<>();
         CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.setLock("1");
         codeFieldMap.put("100001", field);
         field = new CmsBtProductModel_Field();
-        field.setLock("1");
         field.setColor("BBB");
         codeFieldMap.put("100002", field);
 

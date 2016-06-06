@@ -18,7 +18,6 @@ import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.views.home.menu.CmsMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,39 +27,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by gjl on 2016/5/23.
+ * @author gjl 2016/5/23.
+ * @version 2.0.0
  */
 @Service
 public class CmsAddChannelCategoryService extends BaseAppService {
-    /**
-     *
-     * @param params
-     * @return
-     */
+
     @Autowired
     private ProductService productService;
     @Autowired
     private SellerCatService sellerCatService;
     @Autowired
-    private CmsMenuService menuService;
-    @Autowired
     ProductGroupService productGroupService;
-    @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
     private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
 
     /**
      * 数据页面初始化
-     * @param params
-     * @param lang
-     * @return data
      */
     public Map getChannelCategory(Map<String, Object> params,String lang) {
-        Map data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
         //产品code
         List<String> codeList = (List) params.get("code");
         //channelId
@@ -71,19 +58,20 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         data.put("cnt", getSellerCatCnt(Integer.parseInt(cartId)));
         if(codeList.size()==1){
             //选择一条记录．根据code在cms_bt_product取得对应的属性记录
-            for(String code:codeList){
+            for (String code : codeList) {
+                //取得商品code
                 //根据商品code取得对应的类目达标属性
                 CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
                 //取得叶子类目的catId
                 List isSelectCidList = (List) cmsBtProductModel.getSellerCats().get("cIds");
-                Map isSelectCidMap = new HashMap<>();
-                if(isSelectCidList!=null){
-                    for(int j=0;j<isSelectCidList.size();j++){
+                Map<String, Object> isSelectCidMap = new HashMap<>();
+                if (isSelectCidList != null) {
+                    for (Object anIsSelectCidList : isSelectCidList) {
                         //取得选择的cid
-                        isSelectCidMap.put(isSelectCidList.get(j).toString(),true);
+                        isSelectCidMap.put(anIsSelectCidList.toString(), true);
                     }
                 }
-                data.put("isSelectCid",isSelectCidMap);
+                data.put("isSelectCid", isSelectCidMap);
             }
         }
         //取得店铺渠道
@@ -97,7 +85,6 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 保存数据到cms_bt_product
-     * @param params
      */
     public Map<String, Object> saveChannelCategory(Map<String, Object> params){
         //
@@ -136,22 +123,16 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 取得approved的code插入
-     * @param allCodeList
-     * @param channelId
-     * @param userName
-     * @param cartId
      */
     private void insertCmsBtSxWorkload(List<String> allCodeList, String channelId, String userName, int cartId) {
         //根据allCodeList在cms_bt_product取得已经approved的code
         String[] codeArr = new String[allCodeList.size()];
         codeArr = allCodeList.toArray(codeArr);
+
         JomgoQuery queryObject = new JomgoQuery();
-        StringBuilder sbQuery = new StringBuilder();
-        sbQuery.append(MongoUtils.splicingValue("fields.code", codeArr, "$in"));
-        sbQuery.append(",");
-        sbQuery.append(MongoUtils.splicingValue("fields.status","Approved"));
-        queryObject.setQuery("{" + sbQuery.toString() + "}");
-        List<CmsBtProductModel> rst = cmsBtProductDao.select(queryObject, channelId);
+        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "," + MongoUtils.splicingValue("fields.status", "Approved") + "}");
+        List<CmsBtProductModel> rst = productService.getList(channelId, queryObject);
+
         //根据rst的code在cms_bt_product_group获取所有的可上新的平台group信息
         List<CmsBtSxWorkloadModel> models = new ArrayList<>();
         for(CmsBtProductModel cmsBtProductModel:rst){
@@ -167,15 +148,14 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             model.setCreater(userName);
             models.add(model);
         }
+
         if (models.size() > 0) {
-            cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
+            productService.addtSxWorkloadModels(models);
         }
     }
 
     /**
      * 根据codeList取得cms_bt_product_group相关的code
-     * @param codeList
-     * @return
      */
     public List<String> getAllCodeList(List<String> codeList,String channelId,int cartId){
         List<String> allCodeList = new ArrayList<>();
@@ -192,8 +172,6 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     }
     /**
      * 数据check
-     * @param fullCatIdList
-     * @param cartId
      */
     public void checkChannelCategory(List<String> fullCatIdList, int cartId){
         //取得类目达标下面的个数

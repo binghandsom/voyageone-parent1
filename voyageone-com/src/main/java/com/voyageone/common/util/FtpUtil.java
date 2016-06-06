@@ -38,19 +38,21 @@ public class FtpUtil {
         boolean result = false;
 
         // 转移工作目录至指定目录下
-        boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
+        createDir(ftpBean.getUpload_path(), null, ftpClient);
         // 设置PassiveMode传输
         ftpClient.enterLocalPassiveMode();
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-        if (change) {
-            File f = new File(ftpBean.getUpload_localpath() + "/" + ftpBean.getUpload_filename());
-            try (InputStream in = new FileInputStream(f);) {
-                result = ftpClient.storeFile(ftpBean.getUpload_filename(), in);
-            }
+        String fileName = ftpBean.getUpload_localfilename();
+        if (StringUtils.isEmpty(fileName)) {
+            fileName = ftpBean.getUpload_filename();
+        }
+        File f = new File(ftpBean.getUpload_localpath() + "/" + fileName);
+        try (InputStream in = new FileInputStream(f);) {
+            result = ftpClient.storeFile(ftpBean.getUpload_filename(), in);
+        }
 
-            if (result) {
-                logger.info("上传成功!");
-            }
+        if (result) {
+            logger.info("上传成功!");
         }
 
         logger.info(ftpBean.getUpload_filename()  + " Ftp 上传文件结束");
@@ -118,6 +120,40 @@ public class FtpUtil {
             logger.info("Ftp 断开成功");
         }
         logger.info("Ftp 断开结束");
+    }
+
+    /**
+     * create Directory
+     */
+    private void createDir(String filepath, String basCoding, FTPClient ftpClient) throws IOException {
+        if (!changeFolder(filepath, basCoding, ftpClient)) {
+            String[] folders = filepath.split("/");
+            for (String folder : folders) {
+                if (!StringUtils.isEmpty(folder)) {
+                    if (!changeFolder(filepath, basCoding, ftpClient)) {
+                        ftpClient.makeDirectory(folder);
+                        ftpClient.changeWorkingDirectory(folder);
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * 定位FTP目录夹
+     */
+    private boolean changeFolder(String remotePath, String coding, FTPClient ftpClient) {
+        // 转移到FTP服务器目录至指定的目录下
+        // 文件编码格式没有指定的情况，转换为iso-8859-1格式
+        try {
+            if (StringUtils.isNullOrBlank2(coding)) {
+                return ftpClient.changeWorkingDirectory(new String(remotePath.getBytes(encoding), basCoding));
+            } else {
+                // 文件编码格式有指定的情况，转换为指定格式
+                return ftpClient.changeWorkingDirectory(new String(remotePath.getBytes(encoding), coding));
+            }
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**

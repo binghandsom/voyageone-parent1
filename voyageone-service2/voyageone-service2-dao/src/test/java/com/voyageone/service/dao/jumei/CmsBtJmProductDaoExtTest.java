@@ -15,8 +15,7 @@ public class CmsBtJmProductDaoExtTest {
     private CmsBtJmProductDaoExt daoExt;
 
     @Test
-    public void  getByProductCodeChannelIdTest()
-    {
-        CmsBtJmProductModel model= daoExt.getByProductCodeChannelId("012","12137BMA-001");
+    public void getByProductCodeChannelIdTest() {
+        CmsBtJmProductModel model = daoExt.getByProductCodeChannelId("012", "12137BMA-001");
     }
 }

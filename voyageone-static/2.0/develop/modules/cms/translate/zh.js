@@ -55,8 +55,8 @@ define(function(){
         "TXT_PRIMARY_PRODUCT": "主产品",
         "TXT_BASE_PROPERTY": "基础属性",
         "TXT_TIME": "时间",
-        "TXT_NUMBER_IID_WITH_COLON": "商品编号:",
-        "TXT_GROUP_NAME_WITH_COLON": "商品名称:",
+        "TXT_NUMBER_IID_WITH_COLON": "商品编号",
+        "TXT_GROUP_NAME_WITH_COLON": "商品名称",
         "TXT_CATEGORY_WITH_COLON": "类目:",
         "TXT_SIZE_TYPE": "尺码类型",
         "TXT_SKU_COUNT": "SKU数",
@@ -562,6 +562,16 @@ define(function(){
         "MAX_SELLER_CAT_CNT":"可设置最大标签数应小于",
         "TXT_STORE_CATEGORY_SELECT":"请选择一个店铺",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH":"当前店铺路径下操作无效",
-        "CATEGORY_EDIT":"分类类目编辑"
+        "CATEGORY_EDIT":"分类类目编辑",
+
+        /**工具管理*/
+        "TXT_TOOLS_MANAGEMENT":"工具管理",
+        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"商品处理",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
+        "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
+        "TXT_HS_CODE_STATUS":"税号状态",
+        "TXT_MATERIAL":"材质",
+        "TXT_HSCODE_PRODUCT_NAME":"税号/品名"
+
     };
 });

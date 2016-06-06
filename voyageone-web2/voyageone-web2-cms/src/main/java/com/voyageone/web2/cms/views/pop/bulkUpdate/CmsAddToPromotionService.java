@@ -5,7 +5,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
-import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
@@ -34,22 +33,18 @@ public class CmsAddToPromotionService extends BaseAppService {
 
     @Autowired
     private TagService tagService;
-
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
     private ProductService productService;
     @Autowired
     private ProductTagService productTagService;
-
     @Autowired
     private PromotionDetailService promotionDetailService;
-    @Autowired
-    private CmsBtTagDaoExt cmsBtTagDaoExt;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
-//        System.out.println(params.get("refTagId"));
-        int tag_id = (int) Integer.parseInt(String.valueOf(params.get("refTagId"))); //fix error by holysky
+        //fix error by holysky
+        int tag_id = (int) Integer.parseInt(String.valueOf(params.get("refTagId")));
         return this.selectListByParentTagId(tag_id);
     }
 
@@ -68,8 +63,8 @@ public class CmsAddToPromotionService extends BaseAppService {
     public Map<String, Object> checkPromotionTags(String channelId, Map<String, Object> params) {
         int tagId = (Integer) params.get("tagId");
         List<Long> productIds = CommonUtil.changeListType((List<Integer>) params.get("productIds"));
-        CmsBtTagModel tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
-        List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagId);
+        CmsBtTagModel tagBean = tagService.getTagByTagId(tagId);
+        List<CmsBtTagModel> modelList = tagService.getListBySameLevel(channelId, tagBean.getParentTagId(), tagId);
 
         Map<String, Object> result = new HashMap<>();
         List<String> tagList = new ArrayList<>();
@@ -82,9 +77,9 @@ public class CmsAddToPromotionService extends BaseAppService {
         JomgoQuery queryObject = new JomgoQuery();
         StringBuilder queryStr = new StringBuilder();
         queryStr.append("{");
-        queryStr.append( MongoUtils.splicingValue("prodId", productIds.toArray(), "$in"));
+        queryStr.append(MongoUtils.splicingValue("prodId", productIds.toArray(), "$in"));
         queryStr.append(",");
-        queryStr.append(MongoUtils.splicingValue("tags", (String[]) tagList.toArray(new String[tagList.size()]), "$in"));
+        queryStr.append(MongoUtils.splicingValue("tags", tagList.toArray(new String[tagList.size()]), "$in"));
         queryStr.append("}");
         queryObject.setQuery(queryStr.toString());
         queryObject.setProjection("{'fields.code':1,'_id':0}");
@@ -131,7 +126,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         // 给产品数据添加活动标签
         productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, "tags", modifier);
         products.forEach(item -> {
-            PromotionDetailAddBean request=new PromotionDetailAddBean();
+            PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);
             request.setChannelId(promotion.getChannelId());
             request.setOrgChannelId(channelId);
@@ -148,12 +143,12 @@ public class CmsAddToPromotionService extends BaseAppService {
 
     /**
      * 检测选中的tag是否存在
-     * @param tags List<CmsBtTagModel>
+     *
+     * @param tags    List<CmsBtTagModel>
      * @param tagName Integer
      * @return CmsBtTagModel
      */
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, Integer tagName) {
-
         for (CmsBtTagModel tag : tags) {
             if (tag.getId() == tagName.intValue()) {
                 return tag;

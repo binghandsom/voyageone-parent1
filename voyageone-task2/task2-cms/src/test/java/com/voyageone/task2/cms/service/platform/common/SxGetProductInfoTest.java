@@ -128,7 +128,7 @@ public class SxGetProductInfoTest {
 //            SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
 //            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
 //            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
-//            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(cmsMtPlatformMappingModel.getPlatformCategoryId(), sxData.getCartId());
+//            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(cmsMtPlatformMappingModel.getPlatformCategoryId(), sxData.getCartId());
 //            ShopBean shopBean = new ShopBean();
 //            shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 //            String numIId = cmsBuildPlatformProductUploadTmItemService.uploadItem(exp, "ppid001", cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopBean, "morse");

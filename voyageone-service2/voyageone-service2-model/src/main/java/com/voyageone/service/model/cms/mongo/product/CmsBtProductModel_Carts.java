@@ -7,8 +7,9 @@ import com.voyageone.common.CmsConstants;
 import java.util.Map;
 
 /**
- * 的商品Model Field>Image
- * @author chuanyu.liang, 12/11/15
+ * CmsBtProductModel_Carts
+ *
+ * @author jiangjusheng, 2016/04/22
  * @version 2.0.0
  * @since 2.0.0
  */
@@ -40,11 +41,7 @@ public class CmsBtProductModel_Carts extends BaseMongoMap<String, Object> {
     }
 
     public Integer getCartId() {
-        Integer cart = getAttribute("cartId");
-        if (cart == null) {
-            cart = 0;
-        }
-        return cart;
+        return getIntAttribute("cartId");
     }
 
     public void setCartId(Integer cartId) {

@@ -112,9 +112,9 @@ public class UserService extends BaseAppService {
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
 
-        List<PermissionBean> rolePermissions = userDao.getRolePermissions(channelId, userSessionBean.getUserName());
+        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
 
-        List<PermissionBean> userPermissions = userDao.getUserPermissions(channelId, userSessionBean.getUserName());
+        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
 
         return Stream.concat(rolePermissions.stream(), userPermissions.stream())
                 .filter(PermissionBean::isEnabled)
