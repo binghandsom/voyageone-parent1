@@ -496,6 +496,12 @@ public interface CmsUrlConstants {
 
             String CHANGE_CATEGORY = "changeCategory";
 
+            String GET_PRODUCT_PLATFORM ="getProductPlatform";
+
+            String UPDATE_PRODUCT_PLATFORM ="updateProductPlatform";
+
+            String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
+
         }
 
     }
