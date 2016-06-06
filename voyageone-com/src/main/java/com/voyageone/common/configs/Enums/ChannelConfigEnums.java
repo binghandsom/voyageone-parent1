@@ -553,6 +553,11 @@ public class ChannelConfigEnums {
         BHFO_MINIMALL("021"),
 
         /**
+         * DFO
+         */
+        DFO("023"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
@@ -616,6 +621,7 @@ public class ChannelConfigEnums {
                 case "019": return SUMMERGURU;
                 case "020": return EDCSKINCARE;
                 case "021": return BHFO_MINIMALL;
+                case "023": return DFO;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
