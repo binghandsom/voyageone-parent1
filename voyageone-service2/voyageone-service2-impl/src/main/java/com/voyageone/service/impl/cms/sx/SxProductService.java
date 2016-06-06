@@ -563,8 +563,10 @@ public class SxProductService extends BaseService {
             }
 
             // 2016/06/02 Update by desmond Start  分平台对应
-            if (CartEnums.Cart.TM.getId().equals(cartId.toString()) || CartEnums.Cart.TB.getId().equals(cartId.toString()) ) {
-                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+                // 天猫（包含淘宝和天猫）国际平台的时候，从外面的Fields那里取得status判断是否已经Approved
                 if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                     removeProductList.add(productModel);
                     continue;
