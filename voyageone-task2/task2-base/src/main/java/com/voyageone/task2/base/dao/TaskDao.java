@@ -31,6 +31,15 @@ public class TaskDao extends BaseDao {
         return ret;
     }
 
+    /**
+     * 取得该job运行flg
+     * @param task_name
+     * @return
+     */
+    public String getTaskRunFlg (String task_name) {
+        return selectOne(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_selectRun", task_name);
+    }
+
     public int updateTaskControl(TaskControlBean bean) {
         return updateTemplate.update(Constants.DAO_NAME_SPACE_CORE + "tm_task_control_update", bean);
     }

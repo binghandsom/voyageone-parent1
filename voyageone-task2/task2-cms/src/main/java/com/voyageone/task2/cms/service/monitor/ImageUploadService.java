@@ -11,7 +11,6 @@ import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -49,10 +48,10 @@ public class ImageUploadService extends AbstractFileMonitoService {
     }
 
     @Override
-    protected void onModify(String filePath) {
+    protected void onModify(String filePath, String channelId) {
         LOG.info("监控到目录更新" + filePath);
         String tempDir = buildDirPath(filePath, "temp");
-        String channelId = Properties.readValue(getClass().getSimpleName() + "_monitor_home_path_channelId");
+//        String channelId = Properties.readValue(getClass().getSimpleName() + "_monitor_home_path_channelId");
         String modifyDirName = new File(filePath).getName();
         Arrays.asList(new File(filePath).listFiles((dir, name) -> name.endsWith(".zip"))).forEach(file -> {
             try {
