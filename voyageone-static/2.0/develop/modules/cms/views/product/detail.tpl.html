@@ -337,7 +337,7 @@
                                         </div>
                                         <div class="col-sm-1">
                                             <label class="i-checks-sm m-b-none"><input type="checkbox"
-                                                                                       ng-model="feedAttr.selected"
+                                                                                       ng-model="feedAttr.exists"
                                                                                        disabled></label>
                                         </div>
                                     </div>
@@ -348,12 +348,17 @@
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label" ng-bind="feedAttr.cnKey"></label>
 
-                                        <div class="col-sm-7" ng-show="feedAttr.selected">
+                                        <div class="col-sm-6" ng-show="feedAttr.cnKey">
                                             <input type="text" class="form-control" ng-model="feedAttr.cnValue"
                                                    ng-if="feedAttr.value.length < 50">
                                             <textarea rows="3" class="form-control no-resize"
                                                       ng-model="feedAttr.cnValue"
                                                       ng-if="feedAttr.value.length >= 50"></textarea>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label class="i-checks-sm m-b-none">
+                                                <input type="checkbox" ng-model="feedAttr.selected" ng-if="feedAttr.cnKey">
+                                            </label>
                                         </div>
                                         <!--<div class="col-sm-1">-->
                                         <!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->

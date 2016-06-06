@@ -17,8 +17,10 @@ define([
 
         }
 $scope.upload = function(){
-    uploader.queue[0].formData = [{"promotionId":data}];
-    uploader.queue[0].upload();
+    if(uploader.queue.length != 0) {
+        uploader.queue[uploader.queue.length-1].formData = [{"promotionId":data}];
+        uploader.queue[uploader.queue.length-1].upload();
+    }
     $scope.vm.messager ="读入中";
 }
 

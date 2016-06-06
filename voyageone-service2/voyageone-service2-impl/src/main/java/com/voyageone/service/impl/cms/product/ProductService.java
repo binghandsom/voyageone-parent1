@@ -424,6 +424,9 @@ public class ProductService extends BaseService {
             if (feed.getCustomIds() != null && feed.getCustomIds().size() > 0) {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
+            if (feed.getCustomIdsCn() != null && feed.getCustomIdsCn().size() > 0) {
+                updateMap.put("feed.customIdsCn", feed.getCustomIdsCn());
+            }
         }
 
 

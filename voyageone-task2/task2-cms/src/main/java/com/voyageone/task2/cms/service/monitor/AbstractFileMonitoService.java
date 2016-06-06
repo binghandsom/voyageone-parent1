@@ -5,13 +5,13 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
-import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.List;
 
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -23,7 +23,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class AbstractFileMonitoService {
+public abstract class AbstractFileMonitoService implements ApplicationListener {
 
     /* 日志 */
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
@@ -31,51 +31,63 @@ public abstract class AbstractFileMonitoService {
     /* 监控路径 */
 //    private final String MONITOR_HOME_PATH = getClass().getSimpleName() + "_monitor_home_path";
 
-    protected final String MODIFIER=getClass().getSimpleName();
+    protected final String MODIFIER = getClass().getSimpleName();
 
-    private final String TASK_NAME = "CmsBulkUploadImageToS7Job";
+    protected final String TASK_NAME = "CmsBulkUploadImageToS7Job";
 
     @Autowired
     private TaskDao taskDao;
 
-    @PostConstruct
     private void run() {
-        try {
 //            final String finalPath = raisePath();
-            // 追加逻辑,如果flag没有开启,则不执行
-            String jobFunFlg = taskDao.getTaskRunFlg(TASK_NAME);
-            if ("1".equals(jobFunFlg)) {
+        // 追加逻辑,如果flag没有开启,则不执行
+//            String jobFunFlg = taskDao.getTaskRunFlg(TASK_NAME);
 
-                List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
+        List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
 
-                for (TaskControlBean taskControl : taskControlList) {
+        // 循环处理批量图片给上传
+        for (TaskControlBean taskControl : taskControlList) {
+            if ("order_channel_id".equals(taskControl.getCfg_name())) {
+                String finalPath = taskControl.getCfg_val2();
+                String channelId = taskControl.getCfg_val1();
 
-                    String finalPath = taskControl.getCfg_val2();
-                    String channelId = taskControl.getCfg_val1();
+                for (File childFile : new File(finalPath).listFiles()) {
+                    new Thread(() -> {
+                        try {
+                            final Path watchPath = Paths.get(childFile.getPath());
+                            WatchService watchService = watchPath.getFileSystem().newWatchService();
+                            /* 注册监听“创建”、“删除”、“更新”事件 */
+                            watchPath.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+                            while (true) {
+                                WatchKey key = watchService.take();
+                                key.pollEvents().forEach(e -> {
+                                    if (e.kind().equals(ENTRY_CREATE)) onCreate(childFile.getPath(), channelId);
+                                    else if (e.kind().equals(ENTRY_DELETE)) onDelete(childFile.getPath());
+                                    else if (e.kind().equals(ENTRY_MODIFY)) onModify(childFile.getPath(), channelId);
+                                    else LOG.warn("文件监控服务监控到未处理的事件：" + childFile.getPath() + "\t" + e.kind());
+                                });
+                                if (!key.reset()) break;
+                            }
+                        } catch (
+                                IOException e
+                                )
 
-                    WatchService watchService = FileSystems.getDefault().newWatchService();
-            /* 注册监听“创建”、“删除”、“更新”事件 */
-                    Paths.get(finalPath).register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-                    while (true) {
-                        WatchKey key = watchService.take();
-                        key.pollEvents().forEach(e -> {
-                            String absPath= finalPath + "/"+e.context().toString();
-                            if (e.kind().equals(ENTRY_CREATE)) onCreate(absPath);
-                            else if (e.kind().equals(ENTRY_DELETE)) onDelete(absPath);
-                            else if (e.kind().equals(ENTRY_MODIFY)) onModify(absPath, channelId);
-                            else LOG.warn("文件监控服务监控到未处理的事件：" + absPath + "\t" + e.kind());
-                        });
-                        if (!key.reset()) break;
-                    }
+                        {
+                            LOG.error("文件监控服务启动严重异常", e);
+                        } catch (
+                                InterruptedException e
+                                )
+
+                        {
+                            LOG.error("文件监控服务线程中断异常", e);
+                        }
+                    }).start();
                 }
-            } else {
-                LOG.info("CmsBulkUploadImageToS7Job: 的run_flg未开启");
+
+//                    WatchService watchService = FileSystems.getDefault().newWatchService();
             }
-        } catch (IOException e) {
-            LOG.error("文件监控服务启动严重异常", e);
-        } catch (InterruptedException e) {
-            LOG.error("文件监控服务线程中断异常", e);
         }
+
     }
 
 //    private String raisePath() throws IOException {
@@ -88,10 +100,16 @@ public abstract class AbstractFileMonitoService {
 //        return Properties.readValue(MONITOR_HOME_PATH);
 //    }
 
-    protected abstract void onCreate(String filePath);
+    protected abstract void onCreate(String filePath, String channelId);
 
     protected abstract void onDelete(String filePath);
 
-    protected abstract void onModify(String filePath,String channelId);
+    protected abstract void onModify(String filePath, String channelId);
 
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        if (applicationEvent instanceof ContextRefreshedEvent) {
+            run();
+        }
+    }
 }
