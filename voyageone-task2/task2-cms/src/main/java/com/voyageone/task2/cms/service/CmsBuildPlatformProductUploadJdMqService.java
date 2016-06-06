@@ -185,6 +185,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
         }
+        $info("获取店铺信息成功![ChannelId:%s] [CartId:%s]", channelId, cartId);
 
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
         List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdCartId(
@@ -1556,8 +1557,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      */
     private void updateProductGroupStatus(SxData sxData) {
         // 上新成功后回写product group表中的platformStatus
-        String pCart = "P" + sxData.getCartId();
-         // 设置产品的
         // 设置PublishTime
         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
         // platformActive平台上新状态类型(ToOnSale/ToInStock)
@@ -1581,7 +1580,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @param fields List<Field> 直接把值set进这个fields对象
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
-     * @return 设好值得FieldId和Field
+     * @return 设好值的FieldId和Field
      * @throws Exception
      */
     public Map<String, Field> constructPlatformProps(List<Field> fields, ShopBean shopBean,
