@@ -74,14 +74,17 @@ define([
                 $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                 $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
                 $scope.vm.cartList = res.data.cartList;
-
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
                 $scope.vm.tblWidth = '100%'; // group tab的原始宽度
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
-                if ($routeParams.type == "1"
-                    || $routeParams.type == "2") {
+                if($routeParams.type == "3"){
+                    var catObj = _.find($scope.vm.masterData.cartList, function(item){ return item.add_name2 == $routeParams.catType;});
+                    $scope.vm.searchInfo.cartId = catObj.value;
+                    getCat();
+                }
+                if ($routeParams.type == "1" || $routeParams.type == "2") {
                     search();
                 }
             })
@@ -194,7 +197,13 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategory (openAddChannelCategoryEdit) {
-            openAddChannelCategoryEdit(getSelProductList()).then(function () {
+            var selList = [];
+            if ($scope.vm.currTab === 'group') {
+                selList = $scope.vm.groupSelList.selList;
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            openAddChannelCategoryEdit(selList).then(function () {
                 getGroupList();
                 getProductList();
             })
@@ -340,7 +349,10 @@ define([
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
-                });
+                }).then(function(){
+                if($routeParams.type == 3)
+                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
+            });
         }
 
         /**
