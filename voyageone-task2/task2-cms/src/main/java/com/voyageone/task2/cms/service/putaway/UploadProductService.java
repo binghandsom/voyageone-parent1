@@ -7,8 +7,10 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
@@ -58,6 +60,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
     private Set<WorkLoadBean> workLoadBeans;
+
+    @Autowired
+    private FeedCustomPropService customPropService;
 
     public UploadProductService() {}
 
@@ -109,7 +114,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
                 String prodCode = cmsBtProductModel.getFields().getCode();
                 // tom 获取feed info的数据 START
-                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, prodCode);
+                String orgChannelId = cmsBtProductModel.getOrgChannelId(); // feed信息要从org里获取
+                String prodOrgCode = cmsBtProductModel.getFields().getOriginalCode(); // 有可能会有原始code
+                if (prodOrgCode == null) prodOrgCode = prodCode;
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
                 // tom 获取feed info的数据 END
                 SxProductBean sxProductBean = new SxProductBean(cmsBtProductModel, productPlatform, feedInfo);
                 if (filtProductsByPlatform(sxProductBean)) {
@@ -131,6 +139,45 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
             }
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
+
+            // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
+            if (mainSxProduct != null && mainSxProduct.getCmsBtProductModel() != null) {
+                List<String> customIdsOld = mainSxProduct.getCmsBtProductModel().getFeed().getCustomIds();
+                List<String> customIdsCnOld = mainSxProduct.getCmsBtProductModel().getFeed().getCustomIdsCn();
+
+                if (customIdsOld != null && customIdsOld.size() > 0 && customIdsCnOld != null && customIdsCnOld.size() > 0) {
+                    // 获取排序顺序
+                    customPropService.doInit(sxWorkloadModel.getChannelId());
+                    String feedCatPath = mainSxProduct.getCmsBtFeedInfoModel().getCategory();
+                    if (feedCatPath == null) feedCatPath = "";
+                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(sxWorkloadModel.getChannelId(), feedCatPath);
+
+                    // 重新排序
+                    List<String> customIdsNew = new ArrayList<>();
+                    List<String> customIdsCnNew = new ArrayList<>();
+                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
+                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
+
+                        for (int i = 0; i < customIdsOld.size(); i++) {
+                            if (customIdsSort.equals(customIdsOld.get(i))) {
+                                // 设置到新的里
+                                customIdsNew.add(customIdsOld.get(i));
+                                customIdsCnNew.add(customIdsCnOld.get(i));
+
+                                // 删掉一下, 用来小小地提升下速度
+                                customIdsOld.remove(i);
+                                customIdsCnOld.remove(i);
+                                break;
+                            }
+                        }
+                    }
+
+                    // 设置回去
+                    mainSxProduct.getCmsBtProductModel().getFeed().setCustomIds(customIdsNew);
+                    mainSxProduct.getCmsBtProductModel().getFeed().setCustomIdsCn(customIdsCnNew);
+                }
+            }
+            // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
             workload.setMainProduct(mainSxProduct);
 

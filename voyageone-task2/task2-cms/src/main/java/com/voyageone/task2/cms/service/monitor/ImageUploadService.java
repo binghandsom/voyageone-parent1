@@ -11,6 +11,7 @@ import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -52,8 +53,9 @@ public class ImageUploadService extends AbstractFileMonitoService {
     private ProductService productService;
 
     @Override
-    protected void onCreate(String filePath) {
+    protected void onCreate(String filePath, String channelId) {
         LOG.info("监控到目录创建" + filePath);
+        onModify(filePath, channelId);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
     @Autowired
     private TaskDao taskDao;
+
 
     @Override
     protected void onModify(String filePath, String channelId) {
@@ -122,7 +125,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
                     errorMsg.append("其他异常：" + e.getMessage());
                     LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
                 }
-                logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString());
+                logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
             }
         });
         taskControlBean.setEnd_time(DateTimeUtil.getNow());
@@ -251,8 +254,17 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
             /* change fileds.images */
             List<Map<String, Object>> images = new CopyOnWriteArrayList<>();
-            if (!ObjectUtils.isEmpty(fields.get(modifyDirName)))
+            if (!ObjectUtils.isEmpty(fields.get(modifyDirName))) {
                 images = new CopyOnWriteArrayList<>(JacksonUtil.jsonToMapList(fields.get(modifyDirName).toString()));
+
+                // 只有一张图片,并且该图片的值为空的时候,删除其对应的图片信息
+                if (images.size() == 1)
+                    for(Map<String, Object> image : images) {
+                        StringUtils.isEmpty(String.valueOf(image.get(modifyDirName.replace("s", ""))));
+                        images.remove(image);
+                    }
+
+            }
             for (Map<String, Object> img : images) {
                 if (uploadFileName.equals(img.get(modifyDirName)))
                     return;
@@ -269,7 +281,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 if ("1".equals(cmsChannelConfigBean.getConfigValue1()))
                     images.addAll(0, JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
                 if ("2".equals(cmsChannelConfigBean.getConfigValue1()))
-                    images.addAll(images.size(), JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
+                    images.addAll(JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
             }
 
             Set<Map<String, Object>> sets = new HashSet<>();
@@ -316,15 +328,17 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param failedSkuCount    失败sku个数
      * @param errorMsg          错误信息
      */
-    private void logForUpload(String zipName, int readSkuCount, int processedSkuCount, int failedSkuCount, String errorMsg) {
+    private void logForUpload(String zipName, int readSkuCount, int processedSkuCount, int failedSkuCount, String errorMsg, String channelId) {
         StringBuilder stringBuilder = new StringBuilder("ImageUploadService处理压缩文件" + zipName + "操作日志");
         stringBuilder.append("\n本次读入图片个数：").append(readSkuCount);
         stringBuilder.append("\n正常处理图片个数：").append(processedSkuCount);
         stringBuilder.append("\n异常处理图片个数：").append(failedSkuCount);
         stringBuilder.append("\n错误说明：").append(errorMsg);
         CmsBtBusinessLogModel logModel = new CmsBtBusinessLogModel();
+        logModel.setChannelId(channelId);
         logModel.setErrorMsg(stringBuilder.toString());
         logModel.setErrorTypeId(2);
+        logModel.setCreater(TASK_NAME);
         businessLogService.insertBusinessLog(logModel);
     }
 }
