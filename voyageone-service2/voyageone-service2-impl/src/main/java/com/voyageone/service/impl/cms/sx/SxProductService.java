@@ -55,10 +55,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.BeanUtils;
@@ -1410,6 +1407,9 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
