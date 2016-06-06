@@ -11,7 +11,7 @@ import java.util.List;
 public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>{
 
     //cartId
-    public String getCatrId() {
+    public String getCartId() {
         return getAttribute("cartId");
     }
     public void setCartId(String cartId) {
