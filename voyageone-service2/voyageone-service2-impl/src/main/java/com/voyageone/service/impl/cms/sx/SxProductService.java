@@ -103,8 +103,6 @@ public class SxProductService extends BaseService {
     @Autowired
     private ImsBtProductDao imsBtProductDao;
     @Autowired
-    private CmsBtSizeMapDao cmsBtSizeMapDao;
-    @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
