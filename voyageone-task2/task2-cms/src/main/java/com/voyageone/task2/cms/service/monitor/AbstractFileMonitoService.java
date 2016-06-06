@@ -9,11 +9,9 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
+import java.nio.file.*;
 import java.util.List;
 
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -41,52 +39,53 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
     private TaskDao taskDao;
 
     private void run() {
-        try {
 //            final String finalPath = raisePath();
-            // 追加逻辑,如果flag没有开启,则不执行
+        // 追加逻辑,如果flag没有开启,则不执行
 //            String jobFunFlg = taskDao.getTaskRunFlg(TASK_NAME);
 
-            List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
+        List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
 
-            // 循环处理批量图片给上传
-            for (TaskControlBean taskControl : taskControlList) {
-                if ("order_channel_id".equals(taskControl.getCfg_name())) {
-                    String finalPath = taskControl.getCfg_val2();
-                    String channelId = taskControl.getCfg_val1();
+        // 循环处理批量图片给上传
+        for (TaskControlBean taskControl : taskControlList) {
+            if ("order_channel_id".equals(taskControl.getCfg_name())) {
+                String finalPath = taskControl.getCfg_val2();
+                String channelId = taskControl.getCfg_val1();
 
-                    final Path watchPath= Paths.get(finalPath);
-                    WatchService watchService = watchPath.getFileSystem().newWatchService();
-                    LOG.info("文件监听程序：操作系统"+watchPath.getFileSystem());
+                for (File childFile : new File(finalPath).listFiles()) {
+                    new Thread(() -> {
+                        try {
+                            final Path watchPath = Paths.get(childFile.getPath());
+                            WatchService watchService = watchPath.getFileSystem().newWatchService();
+                            /* 注册监听“创建”、“删除”、“更新”事件 */
+                            watchPath.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+                            while (true) {
+                                WatchKey key = watchService.take();
+                                key.pollEvents().forEach(e -> {
+                                    if (e.kind().equals(ENTRY_CREATE)) onCreate(childFile.getPath(), channelId);
+                                    else if (e.kind().equals(ENTRY_DELETE)) onDelete(childFile.getPath());
+                                    else if (e.kind().equals(ENTRY_MODIFY)) onModify(childFile.getPath(), channelId);
+                                    else LOG.warn("文件监控服务监控到未处理的事件：" + childFile.getPath() + "\t" + e.kind());
+                                });
+                                if (!key.reset()) break;
+                            }
+                        } catch (
+                                IOException e
+                                )
+
+                        {
+                            LOG.error("文件监控服务启动严重异常", e);
+                        } catch (
+                                InterruptedException e
+                                )
+
+                        {
+                            LOG.error("文件监控服务线程中断异常", e);
+                        }
+                    }).start();
+                }
 
 //                    WatchService watchService = FileSystems.getDefault().newWatchService();
-                        /* 注册监听“创建”、“删除”、“更新”事件 */
-                    watchPath.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-//                    Paths.get(finalPath).register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-                    while (true) {
-                        WatchKey key = watchService.take();
-                        key.pollEvents().forEach(e -> {
-                            String absPath = finalPath + "/" + e.context().toString();
-                            if (e.kind().equals(ENTRY_CREATE)) onCreate(absPath);
-                            else if (e.kind().equals(ENTRY_DELETE)) onDelete(absPath);
-                            else if (e.kind().equals(ENTRY_MODIFY)) onModify(absPath, channelId);
-                            else LOG.warn("文件监控服务监控到未处理的事件：" + absPath + "\t" + e.kind());
-                        });
-                        if (!key.reset()) break;
-                    }
-                }
             }
-        } catch (
-                IOException e
-                )
-
-        {
-            LOG.error("文件监控服务启动严重异常", e);
-        } catch (
-                InterruptedException e
-                )
-
-        {
-            LOG.error("文件监控服务线程中断异常", e);
         }
 
     }
@@ -101,7 +100,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
 //        return Properties.readValue(MONITOR_HOME_PATH);
 //    }
 
-    protected abstract void onCreate(String filePath);
+    protected abstract void onCreate(String filePath, String channelId);
 
     protected abstract void onDelete(String filePath);
 
@@ -110,7 +109,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
-            //run();
+            run();
         }
     }
 }
