@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -1425,7 +1424,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 如果是平台售价，则取个平台相应的售价(platform.P29.sku.priceSale)
                 if (PriceType_jdprice.equals(priceType)) {
                     CmsBtProductModel_Platform_Cart platformCart = cmsProduct.getPlatform().get("P" + cartId);
-                    List<BaseMongoMap<String, Object>> platformCartSkuList = platformCart.getSkus();
+                    List<Map<String, Object>> platformCartSkuList = platformCart.getSkus();
                     // 循环取得找到本skucode对应的平台售价
                     for(Map<String, Object> platformSkuMap : platformCartSkuList) {
                         // 找到skucode对应的平台售价，然后跳出循环
@@ -1789,7 +1788,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
 
             // 更新ProductGroup表
-            productService.update(product);
+//            productService.update(product);
         }
     }
 
