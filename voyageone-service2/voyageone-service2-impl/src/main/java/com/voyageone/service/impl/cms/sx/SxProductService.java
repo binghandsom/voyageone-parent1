@@ -34,6 +34,7 @@ import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
@@ -50,11 +51,10 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.BeanUtils;
@@ -102,6 +102,10 @@ public class SxProductService extends BaseService {
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
+    @Autowired
+    private CmsBtSizeMapDao cmsBtSizeMapDao;
+    @Autowired
+    private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
@@ -563,7 +567,10 @@ public class SxProductService extends BaseService {
             }
 
             // 2016/06/02 Update by desmond Start  分平台对应
-            if (CartEnums.Cart.TM.getId().equals(cartId.toString()) || CartEnums.Cart.TB.getId().equals(cartId.toString()) ) {
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())
+                    ) {
                 // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
                 if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                     removeProductList.add(productModel);
@@ -1400,6 +1407,9 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
@@ -1448,14 +1458,146 @@ public class SxProductService extends BaseService {
         return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
 
+    /**
+     *
+     * 优先顺：Brand>ProductType>SizeType
+     *   具体场景
+     *    1）Product：Asics Shoe Men
+     *    尺码组表：
+     *    No	Brand	ProductType	SizeType
+     *    1	    All  	All     	All
+     *    结果：找到默认设置1
+     *
+     *    2）Product：Asics Shoe Men
+     *    尺码组表：
+     *    No	Brand	    ProductType	  SizeType
+     *    1	    Asics       All           All
+     *    2	    Asics	    Shoe          All
+     *    3	    Asics	    Shoe     	  Men
+     *    4	    Asics,nike	Shoe	      Men
+     *    结果：找到两条符合的记录->认为找不到，报错，要求运营修改设定
+     *
+     *   3）Product：Asics Shoe Men
+     *   尺码组表：
+     *    No	Brand	    ProductType	  SizeType
+     *    1	    Asics       All           All
+     *    2	    Asics	    Shoe          All
+     *    3	    Asics,nike	Shoe	      Men
+     *   结果：第3条符合的条件最多->找到3
+     *
+     *   4）Product：Asics Shoe Men
+     *   尺码组表：
+     *   No	Brand	ProductType	SizeType
+     *   1	Asics   All         All
+     *   2	Asics	Shoe        All
+     *   结果：第2条符合的条件最多->找到2
+     *
+     *   5）Product：Asics Shoe Men
+     *   尺码组表：
+     *   No	Brand	ProductType	SizeType
+     *   1	Asics	All      	Men
+     *   2	Asics	Shoe        All
+     *   结果：根据优先顺序，选择2号规则
+     */
+    public List<String> getImageUrls(String channelId, int cartId, int imageType, int viewType, String brandName, String productType, String sizeType, boolean getOriUrl) throws Exception {
+        List<String> listUrls = new ArrayList<>();
+        Map<Integer, List<CmsBtImageGroupModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
+        for (int index = 0; index < 1 << 3; index++) {
+            // 初期化
+            // 这一版的key是3个：brandName, productType, sizeType
+            matchMap.put(index, new ArrayList<>());
+        }
+        List<Integer> sortKey = new ArrayList<>(); // key的sort
+        {
+            // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            sortKey.add(7); // 111
+            sortKey.add(6); // 110
+            sortKey.add(5); // 101
+            sortKey.add(3); // 011
+            sortKey.add(4); // 100
+            sortKey.add(2); // 010
+            sortKey.add(1); // 001
+            sortKey.add(0); // 000
+        }
+
+        String paramBrandName = brandName;
+        String paramProductType = productType;
+        String paramSizeType = sizeType;
+        if (StringUtils.isEmpty(brandName)) {
+            paramBrandName = CmsBtImageGroupDao.VALUE_ALL;
+        }
+        if (StringUtils.isEmpty(productType)) {
+            paramProductType = CmsBtImageGroupDao.VALUE_ALL;
+        }
+        if (StringUtils.isEmpty(sizeType)) {
+            paramSizeType = CmsBtImageGroupDao.VALUE_ALL;
+        }
+
+        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
+        for (CmsBtImageGroupModel model : modelsAll) {
+            String matchVal = "";
+            if (model.getBrandName().contains(paramBrandName)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getProductType().contains(paramProductType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getSizeType().contains(paramSizeType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
+        }
+
+        for (Integer key : sortKey) {
+            List<CmsBtImageGroupModel> matchModels =  matchMap.get(key);
+            if (matchModels.size() > 1) {
+                throw new BusinessException("找到两条以上符合的记录,请修正设定!" +
+                        "channelId= " + channelId +
+                        ",cartId= " + cartId +
+                        ",imageType= " + imageType +
+                        ",viewType= "+ viewType +
+                        ",paramBrandName= " + paramBrandName +
+                        ",paramProductType= " + paramProductType +
+                        ",paramSizeType=" + paramSizeType);
+            }
+            if (matchModels.size() == 1) {
+                $info("找到image_group记录!");
+                for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
+                    if (getOriUrl) {
+                        // 取原始图url
+                        String url = imageInfo.getOriginUrl();
+                        if (!StringUtils.isEmpty(url)) {
+                            listUrls.add(url);
+                        }
+                    } else {
+                        // 取平台图片url
+                        String url = imageInfo.getPlatformUrl();
+                        if (!StringUtils.isEmpty(url)) {
+                            listUrls.add(url);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        return listUrls;
+    }
+
     // 20160513 tom 图片服务器切换 START
-    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) throws Exception {
+    public String getImageByTemplateId(String channelId, String imageTemplate, String... imageName) throws Exception {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(channelId);
         request.setTemplateId(Integer.parseInt(imageTemplate));
         request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-        String[] vPara = {imageName};
+        String[] vPara = imageName;
         request.setVParam(vPara);
         ImageCreateGetResponse response = null;
         try {
@@ -1466,6 +1608,21 @@ public class SxProductService extends BaseService {
         }
     }
     // 20160513 tom 图片服务器切换 END
+
+    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType) {
+        // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
+//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
+        List<CmsBtProductModel_Field_Image> productImages;
+        if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
+            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
+                productImages = product.getFields().getImages(imageType);
+            }
+        } else {
+            productImages = product.getFields().getImages(imageType);
+        }
+        return productImages;
+    }
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列

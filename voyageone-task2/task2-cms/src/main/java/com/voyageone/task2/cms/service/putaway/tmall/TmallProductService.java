@@ -15,9 +15,17 @@ import com.taobao.top.schema.field.MultiCheckField;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
@@ -59,6 +67,7 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Created by Leo on 2015/5/28.
  */
@@ -1725,21 +1734,25 @@ public class TmallProductService {
                             ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 //                            ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
                             // modified by morse.lu 2016/05/15 end
-                            try {
-                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
-                                String strXml = response.getUpdateItemResult();
-                                // 读入的属性列表
-                                List<Field> fieldList = null;
-                                fieldList = SchemaReader.readXmlForList(strXml);
-                                List<String> defaultValues = null;
-                                for (Field field : fieldList) {
-                                    if (sellerCategoryPropId.equals(field.getId())) {
-                                        MultiCheckField multiCheckField = (MultiCheckField) field;
-                                        defaultValues = multiCheckField.getDefaultValues();
-                                        break;
-                                    }
-                                }
-                                if (defaultValues != null) {
+                            // modified by morse.lu 2016/06/03 start
+//                            try {
+//                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
+//                                String strXml = response.getUpdateItemResult();
+//                                // 读入的属性列表
+//                                List<Field> fieldList = null;
+//                                fieldList = SchemaReader.readXmlForList(strXml);
+//                                List<String> defaultValues = null;
+//                                for (Field field : fieldList) {
+//                                    if (sellerCategoryPropId.equals(field.getId())) {
+//                                        MultiCheckField multiCheckField = (MultiCheckField) field;
+//                                        defaultValues = multiCheckField.getDefaultValues();
+//                                        break;
+//                                    }
+//                                }
+                                // 改成从product表里取
+                                List<String> defaultValues = mainSxProduct.getCmsBtProductModel().getSellerCats().getFullCIds();
+                                // modified by morse.lu 2016/06/03 end
+                                if (defaultValues != null && !defaultValues.isEmpty()) {
                                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                     field.setId(sellerCategoryPropId);
                                     for (String defaultValue : defaultValues) {
@@ -1747,9 +1760,10 @@ public class TmallProductService {
                                     }
                                     contextBuildFields.addCustomField(field);
                                 }
-                            } catch (TopSchemaException | ApiException e) {
-                                logger.error(e.getMessage(), e);
-                            }
+//                            } catch (TopSchemaException | ApiException e) {
+//                                logger.error(e.getMessage(), e);
+//                            }
+                            // modified by morse.lu 2016/06/03 end
                         }
                     }
                     break;
@@ -1836,7 +1850,7 @@ public class TmallProductService {
         }
     }
 
-    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal{
+    public Field resolveMapping(CmsBtProductModel cmsMainProduct, MappingBean mappingBean, Field field, Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
         Set<String> imageSetEachProp = new HashSet<>();
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {

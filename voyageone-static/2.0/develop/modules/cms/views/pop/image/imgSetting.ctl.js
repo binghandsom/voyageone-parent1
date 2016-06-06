@@ -21,8 +21,13 @@ define([
 
 		}
 		$scope.upload = function(){
-			uploader.queue[0].formData = [{"productId":context.product.productId,"imageType":context.imageType}];
-			uploader.queue[0].upload();
+			if(uploader.queue.length != 0) {
+				uploader.queue[uploader.queue.length - 1].formData = [{
+					"productId": context.product.productId,
+					"imageType": context.imageType
+				}];
+				uploader.queue[uploader.queue.length - 1].upload();
+			}
 			$scope.vm.messager ="上传中";
 		}
 
