@@ -53,7 +53,7 @@
             #{item}
         </foreach>
     </update>
-    <select id="getJmSkuPriceInfoListByPromotionProductId" resultType="SkuPriceBean">
+    <select id="getJmSkuPriceInfoListByPromotionProductId" resultType="com.voyageone.service.bean.cms.jumei.SkuPriceBean">
          SELECT a.`deal_price`,a.`market_price`,b.`jm_sku_no`  FROM  `cms_bt_jm_promotion_sku` AS a
          JOIN `cms_bt_jm_sku`  AS b ON  a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
          WHERE a.`cms_bt_jm_promotion_product_id`=#{promotionProductId}
