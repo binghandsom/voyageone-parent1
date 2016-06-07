@@ -1,15 +1,15 @@
 package com.voyageone.service.impl.cms;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.SFtpUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.ftp.FtpComponentFactory;
+import com.voyageone.components.ftp.FtpConstants;
+import com.voyageone.components.ftp.bean.FtpFileBean;
+import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * ImageGroup Service
@@ -29,14 +31,11 @@ import java.util.*;
 @Service
 public class ImageGroupService extends BaseService {
 
-    private final String URL_PREFIX = "http://image.voyageone.com.cn/cms";
-    private final String DIRECTORY_SIZE_CHART_IMAGE = "/size/";
-    private final String DIRECTORY_BRAND_STORY_IMAGE = "/brand/";
-    private final String DIRECTORY_SHIPPING_DESCRIPTION_IMAGE = "/shipping/";
-    private final String DIRECTORY_STORE_DESCRIPTION_IMAGE = "/store/";
-
-    // 图片SFTP设置
-    private static final String SFTP_CONFIG = "SFTP_CONFIG";
+    private final static String URL_PREFIX = "http://image.voyageone.com.cn/cms";
+    private final static String DIRECTORY_SIZE_CHART_IMAGE = "/size/";
+    private final static String DIRECTORY_BRAND_STORY_IMAGE = "/brand/";
+    private final static String DIRECTORY_SHIPPING_DESCRIPTION_IMAGE = "/shipping/";
+    private final static String DIRECTORY_STORE_DESCRIPTION_IMAGE = "/store/";
 
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
@@ -69,21 +68,21 @@ public class ImageGroupService extends BaseService {
         model.setViewType(Integer.parseInt(viewType));
         // 什么都不选的情况下，要设置成"All"
         if (brandNameList.size() == 0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setBrandName(lst);
         } else {
             model.setBrandName(brandNameList);
         }
         if (productTypeList.size() == 0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setProductType(lst);
         } else {
             model.setProductType(productTypeList);
         }
         if (sizeTypeList.size() == 0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setSizeType(lst);
         } else {
@@ -139,21 +138,21 @@ public class ImageGroupService extends BaseService {
             model.setImageType(Integer.parseInt(imageType));
             model.setViewType(Integer.parseInt(viewType));
             if (brandNameList.size() == 0) {
-                List lst = new ArrayList<String>();
+                List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setBrandName(lst);
             } else {
                 model.setBrandName(brandNameList);
             }
             if (productTypeList.size() == 0) {
-                List lst = new ArrayList<String>();
+                List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setProductType(lst);
             } else {
                 model.setProductType(productTypeList);
             }
             if (sizeTypeList.size() == 0) {
-                List lst = new ArrayList<String>();
+                List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setSizeType(lst);
             } else {
@@ -247,7 +246,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList 相关尺码列表
      */
     private String getSearchQuery(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
-                                  String endModified, List brandNameList, List productTypeList, List sizeTypeList) {
+                                  String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         StringBuilder result = new StringBuilder();
 
         // 获取Platform
@@ -440,54 +439,33 @@ public class ImageGroupService extends BaseService {
      */
     public String uploadFile(String channelId, String imageType, String suffix, InputStream inputStream) {
 
-        FtpBean ftpBean = formatFtpBean();
-        ftpBean.setUpload_filename(DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix);
+        String remoteFileName = DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_2) + "." + suffix;
+        String remotePath = "/";
         if (CmsConstants.ImageType.SIZE_CHART_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_SIZE_CHART_IMAGE + channelId);
+            remotePath = DIRECTORY_SIZE_CHART_IMAGE + channelId;
         } else if (CmsConstants.ImageType.BRAND_STORY_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_BRAND_STORY_IMAGE  + channelId);
+            remotePath = DIRECTORY_BRAND_STORY_IMAGE  + channelId;
         } else if (CmsConstants.ImageType.SHIPPING_DESCRIPTION_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId);
+            remotePath = DIRECTORY_SHIPPING_DESCRIPTION_IMAGE + channelId;
         } else if (CmsConstants.ImageType.STORE_DESCRIPTION_IMAGE.equals(imageType)) {
-            ftpBean.setUpload_path(DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId);
+            remotePath = DIRECTORY_STORE_DESCRIPTION_IMAGE + channelId;
         }
 
-        ftpBean.setUpload_input(inputStream);
+        FtpFileBean ftpFileBean = new FtpFileBean(inputStream, remotePath, remoteFileName);
 
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getSFtpComponent(FtpConstants.FtpConnectEnum.VO_IMAGE_CMS);
         try {
-            SFtpUtil ftpUtil = new SFtpUtil();
             //建立连接
-            ChannelSftp ftpClient = ftpUtil.linkFtp(ftpBean);
-            boolean isSuccess = ftpUtil.uploadFile(ftpBean, ftpClient);
-            if (!isSuccess) {
-                // FTP上传失败
-                throw new BusinessException("7000089");
-            }
+            ftpComponent.openConnect();
+
+            ftpComponent.uploadFile(ftpFileBean);
+
         } catch (Exception e) {
             // FTP上传失败
             throw new BusinessException("7000089");
+        } finally {
+            ftpComponent.closeConnect();
         }
-        return URL_PREFIX + ftpBean.getUpload_path() + "/" + ftpBean.getUpload_filename();
-    }
-
-    private FtpBean formatFtpBean(){
-        // sftp连接url
-        String url = Codes.getCodeName(SFTP_CONFIG, "Url");
-        // sftp连接port
-        String port = Codes.getCodeName(SFTP_CONFIG, "Port");
-        // sftp连接username
-        String userName = Codes.getCodeName(SFTP_CONFIG, "UserName");
-        // sftp连接password
-        String password = Codes.getCodeName(SFTP_CONFIG, "Password");
-        // sftp连接上传文件编码
-        String fileEncode = Codes.getCodeName(SFTP_CONFIG, "FileCoding");
-
-        FtpBean ftpBean = new FtpBean();
-        ftpBean.setPort(port);
-        ftpBean.setUrl(url);
-        ftpBean.setUsername(userName);
-        ftpBean.setPassword(password);
-        ftpBean.setFile_coding(fileEncode);
-        return ftpBean;
+        return URL_PREFIX + ftpFileBean.getRemotePath() + "/" + ftpFileBean.getRemoteFilename();
     }
 }
