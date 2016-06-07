@@ -61,7 +61,8 @@ import java.util.concurrent.Executors;
  * Product表中产品不存在就向京东平台新增商品，否则就更新商品
  *
  * @author desmond on 2016/4/12.
- * @version 2.0.0
+ * @version 2.1.0
+ * @since 2.0.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
@@ -108,8 +109,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     // 商品主图颜色值Id(0000000000)
     private final static String ColorId_MinPic = "0000000000";
 
-    @Autowired
-    private PlatformMappingService platformMappingService;
     @Autowired
     private DictService dictService;
     @Autowired
@@ -248,7 +247,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
-            List<CmsBtProductModel> productList = sxData.getProductList();
+            //List<CmsBtProductModel> productList = sxData.getProductList();
             List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
             // 主产品取得结果判断
             if (mainProduct == null) {
@@ -261,8 +260,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 构造该产品所有SKUCODE的字符串列表
             List<String> strSkuCodeList = new ArrayList<>();
             skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
-            // 取得每个SKU的逻辑库存信息
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             if (strSkuCodeList.isEmpty()) {
@@ -273,9 +270,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
 
-            String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
+            //String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
 
             // 属性值准备
             // 2016/06/01 Delete by desmond start   京东不需要mapping表了
@@ -312,8 +309,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
 
             // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
-            List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = new ArrayList<>();
-            cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
+            List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
             if (cmsMtPlatformSkusList == null || cmsMtPlatformSkusList.size() == 0) {
                 String errMsg = String.format("获取颜色和尺寸信息失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [Active:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
                 $error(errMsg);
@@ -341,12 +337,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
 
             // 编辑京东共通属性
-            JdProductBean jdProductBean = new JdProductBean();
-            jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
+            JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
                     cmsMtPlatformCategorySchemaModel, skuLogicQtyMap);
 
             // 产品和颜色值的Mapping关系表(设置SKU属性时填入值，上传SKU图片时也会用到)
-            Map<String, Object> productColorMap = new HashMap<String, Object>();
+            Map<String, Object> productColorMap = new HashMap<>();
 
             // 返回结果是否成功状态
             boolean retStatus = false;
@@ -391,15 +386,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
                 // 京东要求图片必须是5张，商品主图的第一张已经在前面的共通属性里面设置了，这里最多只需要设置4张非主图
                 for (String picName : mainPicNameList) {
-                    String picUrl = "";
                     try {
                         // 取得图片URL
-                        picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                        String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                         // 上传主产品的其余4张非主图片
                         jdWareService.addWarePropimg(shopProp, String.valueOf(jdWareId), ColorId_MinPic, picUrl, picName, false);
                     } catch (Exception ex) {
                         $error("京东上传主商品非主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", jdWareId, ColorId_MinPic, picName);
-                        ex.printStackTrace();
+                        $error(ex);
                         // 继续上传下一张图片
                     }
                 }
@@ -414,7 +408,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
-                String modified = "";
+                String modified;
                 try {
                     modified = jdWareService.updateProduct(shopProp, updateProductBean);
                 } catch (Exception ex) {
@@ -461,9 +455,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         cmsBtSizeMapModelList, shopProp, productColorMap, skuLogicQtyMap);
 
                 // 京东商品更新API返回的更新时间
-                String retModified = "";
                 // 调用京东商品更新API
-                retModified = jdWareService.updateProduct(shopProp, jdProductBean);
+                String retModified = jdWareService.updateProduct(shopProp, jdProductBean);
 
                 // 更新商品是否成功
                 if (!StringUtils.isEmpty(retModified)) {
@@ -485,9 +478,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData);
-
-                // 上新或更新成功后回写product表中的平台相关nummIId,pStatus等属性
-                //updateProductInfo(sxData);  // TODO 目前回写还有问题
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -530,10 +520,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             if (sxData != null && StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
             }
-            // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
+            // 回写workload表   (失败2)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             throw ex;
         }
 
@@ -567,7 +557,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                                                  Map<String, Integer> skuLogicQtyMap) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<CmsBtProductModel> productList = sxData.getProductList();
-        List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+        //List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
         // 渠道id
         String channelId = shopProp.getOrder_channel_id();
@@ -590,8 +580,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         } catch (Exception ex) {
             String errMsg = String.format("京东取得自定义店内分类失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     channelId, cartId, groupId, platformCategoryId);
-            $error(errMsg);
-            ex.printStackTrace();
+            $error(errMsg, ex);
         }
         // 商品标题(必须)
         jdProductBean.setTitle(mainProduct.getFields().getLongTitle());
@@ -632,15 +621,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         // 描述（最多支持3万个英文字符(必须)
-        String strNotes = "详情页描述";
+        String strNotes = "";
         try {
             // 取得描述
             strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, getTaskName(), null);
         } catch (Exception ex) {
             String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     channelId, cartId, groupId, platformCategoryId);
-            $error(errMsg);
-            ex.printStackTrace();
+            $error(errMsg, ex);
         }
         jdProductBean.setNotes(strNotes);
 
@@ -656,10 +644,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 循环取得5张图片的url并分别上传到京东
         for (String picName : mainPicNameList) {
-            String picUrl = "";
             try {
                 // 取得图片url
-                picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
                 bytes = IOUtils.toByteArray(inputStream);
@@ -668,8 +655,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             } catch (Exception ex) {
                 String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
                         channelId, cartId, groupId, platformCategoryId, picName);
-                $error(errMsg);
-                ex.printStackTrace();
+                $error(errMsg, ex);
                 sxData.setErrorMessage(errMsg);
                 // 继续取下一张图片
             }
@@ -735,7 +721,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * 取得京东商品属性值
      *
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
-     * @return Map(包含商品属性列表，用户自行输入的类目属性ID，用户自行输入的类目属性值)
+     * @return Map(包含商品属性列表 用户自行输入的类目属性ID 用户自行输入的类目属性值)
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
                                            ShopBean shopBean, ExpressionParser expressionParser) {
@@ -759,8 +745,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
-            $error(errMsg);
-            ex.printStackTrace();
+            $error(errMsg, ex);
         }
 
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1（需要从类目服务接口获取）
@@ -773,8 +758,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         StringBuilder sbInputStrs = new StringBuilder();
 
         // 如果list为空说明没有mappingg过，不用设置
-        if (attrMap != null && attrMap.size() > 0) {
-
+        if (attrMap != null && attrMap.size() > 0 && itemFieldList != null) {
             // 遍历fieldList
             for (Field field : itemFieldList) {
                 // 属性值id(field_id)
@@ -881,9 +865,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData, List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList,
                                               List<CmsBtSizeMapModel> cmsBtSizeMapModelList, ShopBean shop, Map<String, Object> productColorMap,
                                               Map<String, Integer> skuLogicQtyMap) throws BusinessException {
-        CmsBtProductModel mainProduct = sxData.getMainProduct();
+        //CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<CmsBtProductModel> productList = sxData.getProductList();
-        List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+        //List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
         // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
         List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -904,7 +888,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // 产品和颜色的Mapping表(因为后面上传SKU图片的时候也要用到，所以从外面传进来)
         // SKU尺寸和尺寸值的Mapping表
-        Map<String, Object> skuSizeMap = new HashMap<String, Object>();
+        Map<String, Object> skuSizeMap = new HashMap<>();
 
         // 根据product列表取得要上新的产品颜色和尺寸Mapping关系
         for (CmsBtProductModel product : productList) {
@@ -920,7 +904,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 取得当前商品中每个SKU的size对应的sizeValue
             List<CmsBtProductModel_Sku> productSkuList = product.getSkus();
-            for (CmsBtProductModel_Sku sku:productSkuList) {
+            for (CmsBtProductModel_Sku sku : productSkuList) {
                 // SKU和尺寸的Mapping表中不存在的话，追加进去(已存在不要再追加)
                 if (!skuSizeMap.containsKey(sku.getSize())) {
                     // 取得尺寸列表中的第一个尺寸值
@@ -1041,7 +1025,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      *
      * @param wareId long 商品id
      * @param sxData SxData 产品对象
-     * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表
+     * @param productColorMap Map<String Object> 产品和颜色值Mapping关系表
      * @param updateFlg boolean 是否更新商品标志
      * @return boolean 上传指定商品SKU图片是否成功
      */
@@ -1049,9 +1033,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                                            Map<String, Object> productColorMap, boolean updateFlg) {
         boolean retUploadPics = true;
 
-        CmsBtProductModel mainProduct = sxData.getMainProduct();
+        //CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<CmsBtProductModel> productList = sxData.getProductList();
-        List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+        //List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
@@ -1076,7 +1060,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 根据商品Id，检索商品图片列表
             // 检索 调用API【根据商品Id，检索商品图片】
             // 检索指定商品Id对应的商品图片列表（包含颜色值Id为0000000000）
-            List<Image> wareIdPics = new ArrayList<>();
+            List<Image> wareIdPics;
             try {
                 // 调用京东API根据商品Id，检索商品图片
                 wareIdPics = jdWareService.getImagesByWareId(shopProp, wareId);
@@ -1113,7 +1097,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 循环作成要删除图片的颜色ID和图片index列表（每种颜色留一张图片）
             for (Map.Entry<String, List<String>> entry : colorIndexesMap.entrySet()) {
                 // 颜色Id
-                String colorId = entry.getKey();
+                //String colorId = entry.getKey();
                 // 图片位置列表
                 List<String> idxList = entry.getValue();
 
@@ -1131,11 +1115,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                     // 颜色id
                     sbDelColorIds.append(entry.getKey());
-                    sbDelColorIds.append(",");   // ","
+                    sbDelColorIds.append(",");
 
                     // 图片index
                     sbDelImgIndexes.append(idxList.get(i));
-                    sbDelImgIndexes.append(",");   // ","
+                    sbDelImgIndexes.append(",");
                 }
             }
             // 移除颜色id值数组最后的"，"
@@ -1183,14 +1167,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 循环取得5张图片的url并分别上传到京东
             for (String picName : productPicNameList) {
-                String picUrl = "";
                 try {
-                    boolean skuPicResult = false;
                     // 取得图片URL
-                    picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
+                    String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
 
                     // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
-                    skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
+                    boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
 
                     // 5张图片只有曾经有一张上传成功就认为SKU图片上传成功
                     uploadProductPicResult = uploadProductPicResult || skuPicResult;
@@ -1201,7 +1183,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     } else {
                         $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
                     }
-                    ex.printStackTrace();
+                    $error(ex);
                     // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
                 }
             }
@@ -1253,8 +1235,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
 
             // 调用API【删除商品图片】批量删除该商品全部SKU的残留的最后一张图片
-            boolean delSkuLastPicResult = false;
-            delSkuLastPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelLastColorIds.toString(), sbDelLastImgIndexes.toString());
+            boolean delSkuLastPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelLastColorIds.toString(), sbDelLastImgIndexes.toString());
 
             // 删除商品修改前的最后一张图片失败
             retUploadPics = retUploadPics && delSkuLastPicResult;
@@ -1303,8 +1284,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         } else {
             // 获取京东平台前台展示的商家自定义店内分类
             List<ShopCategory> shopCategoryList = jdShopService.getShopCategoryList(shop);
-            if (shopCategoryList != null && shopCategoryList.size() > 0) {
-                for (ShopCategory shopCategory:shopCategoryList) {
+            if (shopCategoryList != null && !shopCategoryList.isEmpty()) {
+                for (ShopCategory shopCategory : shopCategoryList) {
                     // 如果不是父类目的话，加到店内分类里，用分号分隔
                     if (!shopCategory.getParent()) {
                         // 转换成“parent_id-cid"格式，同时设置多个以分号（;）分隔
@@ -1375,7 +1356,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @return String 前台操作类型（offsale或onsale）
      */
     private String getOptionType(CmsBtProductGroupModel productGroup, long groupId) {
-        String retOptionType = "";
+        String retOptionType;
         CmsConstants.PlatformActive platformActive = productGroup.getPlatformActive();
 
         if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
@@ -1475,11 +1456,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
         }
 
-        Double resultPrice = 0.00d;
         // 取得该SKU的价格
-        resultPrice = cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
-
-        return resultPrice;
+        return cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
     }
 
     /**
@@ -1515,8 +1493,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         } catch (Exception ex) {
             String errMsg = String.format("取得京东运费模板id失败！[ChannelId:%s] [CartId:%s] [Prop_TransportId:%s]",
                     shop.getOrder_channel_id(), shop.getCart_id(), Prop_TransportId);
-            $info(errMsg);
-            ex.printStackTrace();
+            $info(errMsg, ex);
         }
 
         // 调用京东API设置运费模板
@@ -1542,8 +1519,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         } catch (Exception ex) {
             String errMsg = String.format("取得京东关联板式id失败！[ChannelId:%s] [CartId:%s] [Prop_CommonHtmlId:%s]",
                     shop.getOrder_channel_id(), shop.getCart_id(), Prop_CommonHtmlId);
-            $info(errMsg);
-            ex.printStackTrace();
+            $info(errMsg, ex);
         }
 
         // 调用京东API设置关联板式（取消商品关联版式时，请将commonHtml_Id值设置为空）
@@ -1596,43 +1572,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
-        Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
+        //Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
 
         // 取得当前平台对应的特殊字段处理（目前mapSpAll为空，所以不会取到值）
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
-
-        // 特殊字段处理   天猫专用吗
-        // 先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
-//        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
-//        if (!mappingTypePropsMap.isEmpty()) {
-//            // 所有sku取得
-//            List<String> skus = new ArrayList<>();
-//            for (CmsBtProductModel productModel : sxData.getProductList()) {
-//                skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-//            }
-            // wms逻辑库存取得
-//            List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
-//            Map<String, Integer> skuInventoryMap = new HashMap<>();
-//            for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-//                skuInventoryMap.put(model.getSku(), model.getQtyChina());
-//            }
-
-//            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
-//            if (!resolveField.isEmpty()) {
-//                if (retMap == null) {
-//                    retMap = new HashMap<>();
-//                }
-//                retMap.putAll(resolveField);
-//            }
-//        }
-
-        // platformMapping表数据处理   京东不要
-//        Map<String, MappingBean> mapProp = new HashMap<>();
-//        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
-//        for (MappingBean mappingBean : propMapings) {
-//            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
-//        }
 
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
@@ -1736,7 +1680,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      *
      * @param evaluationContext Map<String, Object>  Product里面的PXX平台下面的fields
      * @param propName true：商品 false：产品
-     * @return Map<field_id, mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，
+     * @return Map （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，
      *                                       只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      */
     public Object getPropValue(Map<String, Object> evaluationContext, String propName) {
@@ -1752,38 +1696,4 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         String leftPropName = propName.substring(separatorPos + 1);
         return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
     }
-
-    /**
-     * 回写产品Product表里的分平台的一些属性
-     * (platform.P29.field属性如numIId，pStatus)
-     *
-     * @param sxData SxData 上新数据
-     */
-    private void updateProductInfo(SxData sxData) {
-        // 上新成功后回写product表中的各平台的numIId，pStatus等属性
-
-        List<CmsBtProductModel> productList = sxData.getProductList();
-        for (CmsBtProductModel product : productList) {
-            // numIId
-            String numIId = sxData.getPlatform().getNumIId();
-            // pStatus(OnSale/InStock)
-            String pStatus = sxData.getPlatform().getPlatformStatus().name();
-
-            if (product.getPlatform(sxData.getCartId()) != null) {
-                if (!StringUtils.isEmpty(numIId)) {
-                    // 设置每个产品的平台numIId
-                    product.getPlatform(sxData.getCartId()).setpNumIid(numIId);
-                }
-
-                if (!StringUtils.isEmpty(pStatus)) {
-                    // 设置每个产品的平台pStatus(OnSale/InStock)
-                    product.getPlatform(sxData.getCartId()).setpStatus(pStatus);
-                }
-            }
-
-            // 更新ProductGroup表
-            //productService.update(product);
-        }
-    }
-
 }

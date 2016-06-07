@@ -51,7 +51,7 @@
     * categorySetter
     * categorySetTime
     * translateStatus
-    * translater
+    * translator
     * translateTime
     * hsCodeStatus
     * hsCodeSetter
@@ -73,11 +73,11 @@
     * status
     * pCatId
     * pCatPath
-    * pCategoryStatus
+    * pCatStatus
     * pIsMain   ->是否是该平台主商品
     * pNumIId
     * pStatus
-    * pPubishError  ->表示平台上新是否失败，用于高级检索
+    * pPublishError  ->表示平台上新是否失败，用于高级检索
     * pBrandId      ->平台品牌Id
     * pBrandName    ->平台品牌名称
     * pPublishTime
@@ -99,8 +99,49 @@
       * cNames
   * P26  ->京东国际
   * P27  ->聚美
-  .
-  .
+	  * cartId
+	  * pCatId
+	  * pCatPath
+	  * pCatStatus
+	  * status
+	  * pIsMain
+	  * pNumIId
+	  * pStatus
+	  * pPublishError
+	  * pBrandId
+	  * pBrandName
+	  * pPublishTime
+	  * pAttributeStatus
+	  * pAttributeSetter
+	  * pAttributeSetTime
+	  * fields
+		  * originJmHashId
+		  * productNameCn
+		  * productNameEn
+		  * normalImage
+		  * productLongName
+		  * productMediumName
+		  * productShortName
+		  * productDesEn
+		  * productDesCn
+		  * beforeDate
+		  * suitPeople
+		  * specialExplain
+		  * searchMetaTextCustom
+	  * skus[]
+		  * skuCode
+		  * priceSale
+		  * priceChgFlg ->价格变更状态（U/D/XU/XD）
+		  * jmSpuNo
+		  * jmSkuNo
+		  * property
+		  * attribute
+		  * size
+	  * sellerCats[]
+		  * cId
+		  * cIds
+		  * cName
+		  * cNames
 * batchField ->暂时保留(用于原来的fields和skus重新生成)
   * switchCategory ->是否切换了主类目
 * feed    ->品牌方数据
