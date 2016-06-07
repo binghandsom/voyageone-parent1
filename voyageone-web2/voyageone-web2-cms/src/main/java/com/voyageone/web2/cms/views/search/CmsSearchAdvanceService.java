@@ -158,7 +158,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
         List<Map<String, Object>> rsList2 = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
         List<String> itemList = new ArrayList<>();
-        if (rsList2 != null || rsList2.size() > 0) {
+        if (!rsList2.isEmpty()) {
             String itemVal = org.apache.commons.lang3.StringUtils.trimToNull((String) rsList2.get(0).get("cfg_val2"));
             if (itemVal != null) {
                 Collections.addAll(itemList, itemVal.split(","));
