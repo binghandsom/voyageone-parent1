@@ -91,10 +91,10 @@
                         <div class="row wrapper">
                             <div class="container-fluid">
                                 <div class="col-sm-7">
-                                    <schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field"
+<!--                                    <schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field"
                                                    ng-if="field.isDisplay != 0">
                                         <schema-item data="field"></schema-item>
-                                    </schema-header>
+                                    </schema-header>-->
                                 </div>
                                 <div class="col-sm-5" style="width: 380px;margin-left: -38px;">
                                     <!-- product detail panel starts here -->
@@ -401,6 +401,12 @@
                 <!--</div>-->
                 <!--</div>-->
                 <!--</form>&lt;!&ndash; .form &ndash;&gt;-->
+            </uib-tab>
+
+            <!---------------------------------------------------京东产品详情页面------------------------------------------------->
+            <uib-tab>
+                <tab-heading>京东产品详情</tab-heading>
+                <jd-schema product-id="ctrl.routeParams.productId"></jd-schema>
             </uib-tab>
 
         </uib-tabset>

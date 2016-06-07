@@ -115,15 +115,11 @@
 	  * pAttributeSetter
 	  * pAttributeSetTime
 	  * fields
-		  * originJmHashId
 		  * productNameCn
 		  * productNameEn
-		  * normalImage
 		  * productLongName
 		  * productMediumName
 		  * productShortName
-		  * productDesEn
-		  * productDesCn
 		  * beforeDate
 		  * suitPeople
 		  * specialExplain

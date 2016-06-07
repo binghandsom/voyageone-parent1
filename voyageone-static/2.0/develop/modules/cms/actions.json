@@ -55,7 +55,10 @@
         "updateProductSkuInfo": "updateProductSkuInfo",
         "updateProductAllInfo": "updateProductAllInfo",
         "changeCategory": "changeCategory",
-        "revertCategory": "revertCategory"
+        "revertCategory": "revertCategory",
+        "getProductPlatform":"getProductPlatform",
+        "changePlatformCategory":"changePlatformCategory",
+        "updateProductPlatform":"updateProductPlatform"
       }
     },
     "mapping": {
@@ -447,6 +450,16 @@
             "detailSave": "sizeChartDetailSave",
             "detailSizeMapSave": "sizeChartDetailSizeMapSave"
           }
+        }
+      },
+      "hsCodeInfo":{
+        "hsCodeInfoService": {
+          "root": "/cms/tools/product",
+          "init": "initHsCodeInfo",
+          "search": "searchHsCodeInfo",
+          "get": "getHsCodeInfo",
+          "save": "saveHsCodeInfo",
+          "cancel": "cancelHsCodeInfo"
         }
       }
     }
