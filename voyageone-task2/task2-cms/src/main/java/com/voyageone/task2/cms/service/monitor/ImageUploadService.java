@@ -149,9 +149,13 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @return 目录path
      */
     private String buildDirPath(String filePath, String dirName) {
-        File dir = new File(filePath + "/" + dirName);
+        String filePathTmp = filePath;
+        if (!(filePathTmp.endsWith("/") || filePathTmp.endsWith("\\"))) {
+            filePathTmp = filePathTmp + "/";
+        }
+        File dir = new File(filePathTmp + dirName);
         if (!dir.exists()) dir.mkdirs();
-        return filePath + "/" + dirName + "/";
+        return filePathTmp + dirName + "/";
     }
 
     /**
