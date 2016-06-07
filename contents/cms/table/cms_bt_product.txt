@@ -98,7 +98,7 @@
       * cName
       * cNames
   * P26  ->京东国际
-  * P27->
+  * P27  ->聚美
 	  * cartId
 	  * pCatId
 	  * pCatPath
