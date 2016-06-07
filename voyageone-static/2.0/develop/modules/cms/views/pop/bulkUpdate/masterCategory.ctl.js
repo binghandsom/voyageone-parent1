@@ -49,8 +49,15 @@ define(['cms'], function (cms) {
                     this.divType = this.context.divType;
                 }
 
+
+
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
+
+                //测试默认选中
+                console.log(this.context.from.split(">"));
+
+
             },
             /**
              * 打开一个类目(选定一个类目)

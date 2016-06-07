@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -55,7 +56,13 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
             platformCart.setCartId(cartId);
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+            // JM的场合schema就一条
+            if(cartId == Integer.parseInt(CartEnums.Cart.JM.getId())){
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+            }else{
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
+            }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
             if(fieldsValue != null){
@@ -112,6 +119,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         mastData.put("productName", StringUtil.isEmpty(cmsBtProduct.getFields().getProductNameCn()) ? cmsBtProduct.getFields().getProductNameEn() : cmsBtProduct.getFields().getProductNameCn());
         mastData.put("model",cmsBtProduct.getFields().getModel());
         mastData.put("groupId",cmsBtProductGroup.getGroupId());
+        mastData.put("skus",cmsBtProduct.getSkus());
         if(cmsBtProduct.getCommon().getFields() != null){
             mastData.put("translateStatus",cmsBtProduct.getCommon().getFields().getTranslateStatus());
             mastData.put("hsCodeStatus",cmsBtProduct.getCommon().getFields().getHsCodeStatus());
