@@ -27,18 +27,14 @@ public interface CmsUrlConstants {
     interface JMPROMOTION {
         interface LIST {
             interface INDEX {
-
                 String ROOT = "/cms/jmpromotion/index";
-
                 String INIT = "init";
-
                 String GET_LIST_BY_WHERE = "getListByWhere";
-
-                String INSERT = "insert";
-
-                String UPDATE = "update";
+                String SaveModel = "saveModel";
                 String DELETE = "delete";
                 String GET = "get";
+                String GetEditModel="getEditModel";
+                String GetTagListByPromotionId="getTagListByPromotionId";
 
             }
 
@@ -68,6 +64,15 @@ public interface CmsUrlConstants {
                 String DELETE_PROMOTION_SKU = "deletePromotionSku";
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
                 String UpdateJM = "updateJM";
+                String BatchUpdateDealPrice="batchUpdateDealPrice";
+                String BatchSynchPrice="batchSynchPrice";
+                String SynchAllPrice="synchAllPrice";
+                String BatchCopyDeal="batchCopyDeal";
+                String CopyDealAll="copyDealAll";
+                String BatchDeleteProduct="batchDeleteProduct";
+                String DeleteAllProduct="deleteAllProduct";
+                String GetProductView="getProductView";
+                String UpdateDealPrice="updateDealPrice";
             }
         }
     }

@@ -46,6 +46,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private int updFlg;
     private String clientProductURL = "";
     private Integer qty = 0;
+    private String isFeedReImport;
 
     private String productType;
 
@@ -305,4 +306,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public void setQty(Integer qty) {
         this.qty = qty;
     }
+
+    public String getIsFeedReImport() { return isFeedReImport; }
+
+    public void setIsFeedReImport(String isFeedReImport) { this.isFeedReImport = isFeedReImport; }
 }

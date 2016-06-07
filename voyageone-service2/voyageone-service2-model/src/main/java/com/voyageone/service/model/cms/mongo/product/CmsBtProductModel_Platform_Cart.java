@@ -15,8 +15,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
 
+    public CmsBtProductModel_Platform_Cart(){
+
+    }
+
+    public CmsBtProductModel_Platform_Cart(Map<String,Object> map){
+        this.putAll(map);
+    }
     //cartId
-    public String getCatrId() {
+    public String getCartId() {
         return getAttribute("cartId");
     }
     public void setCartId(String cartId) {

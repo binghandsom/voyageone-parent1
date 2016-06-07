@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class CmsBtProductModel_Feed  {
 
+    private String catId;
+
+    private String catPath;
+
     private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
 
     private BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
@@ -21,6 +25,22 @@ public class CmsBtProductModel_Feed  {
     private List<String> customIds = new ArrayList<>();
 
     private List<String> customIdsCn = new ArrayList<>();
+
+    //catId
+    public String getCatPath() {
+        return catPath;
+    }
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
+    }
+
+    //catPath
+    public String getCatId() {
+        return catId;
+    }
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
 
     //orgAtts
     public BaseMongoMap<String, Object> getOrgAtts() {

@@ -23,6 +23,15 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
     private boolean is_Success;
     private String errorMsg;
     private String body;
+    String response;
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
 
     public String getErrorMsg() {
         return errorMsg;
@@ -79,9 +88,15 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                 this.setReason(map.get("reason").toString());
             }
             if (map.containsKey("response")) {
-                Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
-                if (mapSesponse.containsKey("jumei_hash_id")) {
-                    this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
+                if( map.get("response") instanceof Map) {
+                    Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
+                    if (mapSesponse.containsKey("jumei_hash_id")) {
+                        this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
+                    }
+                }
+                else
+                {
+                    this.setResponse(map.get("response").toString());
                 }
             }
             if ("0".equals(this.error_code)) {

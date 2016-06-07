@@ -1,10 +1,14 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
@@ -53,6 +57,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
 
         if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
+            platformCart.setCartId(cartId+"");
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
@@ -102,7 +107,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getFields().getImages1().get(0).get("image"));
+                image.put("imageName", product.getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 images.add(image);
             }
@@ -111,6 +116,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         mastData.put("productCode", cmsBtProduct.getFields().getCode());
         mastData.put("productName", StringUtil.isEmpty(cmsBtProduct.getFields().getProductNameCn()) ? cmsBtProduct.getFields().getProductNameEn() : cmsBtProduct.getFields().getProductNameCn());
         mastData.put("model",cmsBtProduct.getFields().getModel());
+        mastData.put("groupId",cmsBtProductGroup.getGroupId());
         if(cmsBtProduct.getCommon().getFields() != null){
             mastData.put("translateStatus",cmsBtProduct.getCommon().getFields().getTranslateStatus());
             mastData.put("hsCodeStatus",cmsBtProduct.getCommon().getFields().getHsCodeStatus());
@@ -155,5 +161,91 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
 
         return platformCart;
+    }
+
+    public Map<String,Object>updateProductPlatform( String channelId,Long prodId,Map<String,Object> platform){
+
+        List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
+
+        platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        platform.remove("schemaFields");
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
+        productService.updateProductPlatform(channelId,prodId,platformModel);
+        return null;
+    }
+
+    /**
+     * 构建masterFields.
+     */
+    private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
+
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
+
+        // setComplexValue
+        for (Field field : masterFields) {
+
+            if (field instanceof ComplexField) {
+                ComplexField complexField = (ComplexField) field;
+                List<Field> complexFields = complexField.getFields();
+                ComplexValue complexValue = complexField.getComplexValue();
+                setComplexValue(complexFields, complexValue);
+            }
+
+        }
+
+        return masterFields;
+    }
+
+    /**
+     * set complex value.
+     */
+    private void setComplexValue(List<Field> fields, ComplexValue complexValue) {
+
+        for (Field fieldItem : fields) {
+
+            complexValue.put(fieldItem);
+
+            FieldTypeEnum fieldType = fieldItem.getType();
+
+            switch (fieldType) {
+                case INPUT:
+                    InputField inputField = (InputField) fieldItem;
+                    String inputValue = inputField.getValue();
+                    complexValue.setInputFieldValue(inputField.getId(), inputValue);
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField) fieldItem;
+                    Value checkValue = singleCheckField.getValue();
+                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(), checkValue);
+                    break;
+                case MULTICHECK:
+                    MultiCheckField multiCheckField = (MultiCheckField) fieldItem;
+                    List<Value> checkValues = multiCheckField.getValues();
+                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(), checkValues);
+                    break;
+                case MULTIINPUT:
+                    MultiInputField multiInputField = (MultiInputField) fieldItem;
+                    List<String> inputValues = multiInputField.getStringValues();
+                    complexValue.setMultiInputFieldValues(multiInputField.getId(), inputValues);
+                    break;
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField) fieldItem;
+                    List<Field> subFields = complexField.getFields();
+                    ComplexValue subComplexValue = complexField.getComplexValue();
+                    setComplexValue(subFields, subComplexValue);
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField) fieldItem;
+                    List<ComplexValue> complexValueList = multiComplexField.getComplexValues();
+                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(), complexValueList);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
     }
 }

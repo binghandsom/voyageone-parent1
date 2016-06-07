@@ -428,8 +428,8 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                         $warn("图片模板url未设置");
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), null);
                     } else {
-//                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
-                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
+                        String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
+//                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
                         complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 

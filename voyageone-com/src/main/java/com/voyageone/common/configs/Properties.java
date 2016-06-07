@@ -64,6 +64,11 @@ public class Properties {
      * 读取配置值
      */
     public static String readValue(String key) {
+        if(keyValueMap == null) try {
+            init();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return keyValueMap.get(key);
     }
 }

@@ -20,6 +20,7 @@ public class DefaultCustomRuleModules {
         customWordModules.add(new CustomWordModuleConditionEq());
         customWordModules.add(new CustomWordModuleConditionNeq());
         customWordModules.add(new CustomWordModuleConditionLike());
+        customWordModules.add(new CustomWordModuleGetCommonImages());
     }
 
     public Set<CustomWordModule> customWordModules;

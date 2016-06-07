@@ -32,6 +32,10 @@ public class FtpBean {
      * 上传到FTP服务器上的文件路径
      */
     private String upload_localpath;
+    /**
+     * 上传到FTP服务器上的文件路径
+     */
+    private String upload_localfilename;
 
     /**
      * 上传到FTP服务器上的备份文件路径
@@ -181,6 +185,14 @@ public class FtpBean {
 
     public void setUpload_localpath(String upload_localpath) {
         this.upload_localpath = upload_localpath;
+    }
+
+    public String getUpload_localfilename() {
+        return upload_localfilename;
+    }
+
+    public void setUpload_localfilename(String upload_localfilename) {
+        this.upload_localfilename = upload_localfilename;
     }
 
     public String getUpload_local_bak_path() {

@@ -57,32 +57,18 @@ public class CmsMenuController extends CmsController {
 //        List<Map<String, Object>> categoryList = menuService.getCategoryList(cTypeId, channelId);
         resultBean.put("categoryList", categoryList);
         resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl(getUser().getSelChannelId()));
-        resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()).replace("%s.jpg", ""));
+        resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
         //主数据类目+Feed类目
         if (cTypeId.equals(CartType.MASTER.getShortName())) {
             // 获取主数据类目CategoryTreeList
             List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(CartType.MASTER.getShortName(), channelId);
-//            CmsMtCategoryTreeModel masterData = new CmsMtCategoryTreeModel();
-//            masterData.setChildren(categoryTreeList);
-//            masterData.setIsParent(1);
-//            masterData.setCatPath("master");
-//            masterData.setCatName("主类目数据");
 
-//            List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>();
-//            allTreeList.add(masterData);
             resultBean.put("categoryTreeList", categoryTreeList);
         }else if (cTypeId.equals(CartType.FEED.getShortName())){
             // 获取Feed类目CategoryTreeList
             if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
                 List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
-//                CmsMtCategoryTreeModel feedData = new CmsMtCategoryTreeModel();
-//                feedData.setChildren(feedTreeList);
-//                feedData.setIsParent(1);
-//                feedData.setCatPath("feed");
-//                feedData.setCatName("Feed类目数据");
-//                List<CmsMtCategoryTreeModel> allTreeList = new ArrayList<>();
-//                allTreeList.add(feedData);
                 resultBean.put("categoryTreeList", feedTreeList);
             }
         }
