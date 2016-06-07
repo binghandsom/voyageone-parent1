@@ -54,7 +54,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
 
         if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
-            platformCart.setCartId(cartId + "");
+            platformCart.setCartId(cartId);
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
