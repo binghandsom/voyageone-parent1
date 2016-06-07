@@ -3,23 +3,18 @@ package com.voyageone.task2.cms.service.putaway.tmall;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
-import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
-import com.taobao.top.schema.field.ComplexField;
-import com.taobao.top.schema.field.Field;
-import com.taobao.top.schema.field.InputField;
-import com.taobao.top.schema.field.MultiCheckField;
-import com.taobao.top.schema.field.MultiComplexField;
-import com.taobao.top.schema.field.SingleCheckField;
+import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -50,15 +45,6 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.components.tmall.service.TbProductService;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1756,7 +1742,13 @@ public class TmallProductService {
                                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                     field.setId(sellerCategoryPropId);
                                     for (String defaultValue : defaultValues) {
-                                        field.addValue(defaultValue);
+                                        // modified by morse.lu 2016/06/03 start
+//                                        field.addValue(defaultValue);
+                                        // 数据库里存放的内容是： 父节点-子节点  或者 父子节点（只有一层）
+                                        // 所以， 要根据-来分割， 取"-"后面的内容，没有"-"直接用它就可以了
+                                        String[] sp = defaultValue.split("-");
+                                        field.addValue(sp[sp.length - 1]);
+                                        // modified by morse.lu 2016/06/03 end
                                     }
                                     contextBuildFields.addCustomField(field);
                                 }
