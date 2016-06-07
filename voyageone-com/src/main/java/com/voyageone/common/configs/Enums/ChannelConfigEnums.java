@@ -555,7 +555,7 @@ public class ChannelConfigEnums {
         /**
          * DFO
          */
-        DFO("023"),
+        DFO("022"),
 
         /**
          * US匠心界
