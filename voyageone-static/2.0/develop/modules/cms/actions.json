@@ -448,6 +448,16 @@
             "detailSizeMapSave": "sizeChartDetailSizeMapSave"
           }
         }
+      },
+      "hsCodeInfo":{
+        "hsCodeInfoService": {
+          "root": "/cms/tools/product",
+          "init": "initHsCodeInfo",
+          "search": "searchHsCodeInfo",
+          "get": "getHsCodeInfo",
+          "save": "saveHsCodeInfo",
+          "cancel": "cancelHsCodeInfo"
+        }
       }
     }
   }

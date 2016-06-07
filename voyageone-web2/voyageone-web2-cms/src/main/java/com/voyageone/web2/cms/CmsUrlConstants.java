@@ -652,4 +652,21 @@ public interface CmsUrlConstants {
         String DownloadExcel = "downloadExcel";
         String DownloadImportErrorExcel = "downloadImportErrorExcel";
     }
+    // hsCode编辑
+    interface TOOLS{
+        interface PRODUCT {
+
+            String ROOT = "/cms/tools/product";
+
+            String INIT_HS_CODE_INFO = "initHsCodeInfo";
+
+            String SEARCH_HS_CODE_INFO = "searchHsCodeInfo";
+
+            String GET_HS_CODE_INFO = "getHsCodeInfo";
+
+            String SAVE_HS_CODE_INFO = "saveHsCodeInfo";
+
+            String CANCEL_HS_CODE_INFO = "cancelHsCodeInfo";
+        }
+    }
 }
