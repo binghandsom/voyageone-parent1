@@ -131,7 +131,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     public Map<String,Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId){
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
-        if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
+        if(platformCart != null){
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
@@ -152,6 +152,23 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
+        }else{
+            platformCart =new CmsBtProductModel_Platform_Cart();
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
+            platformCart.put("schemaFields",fields);
+            Map<String,Object> parm = new HashMap<>();
+            parm.put("channelId",channelId);
+            parm.put("cartId",cartId);
+            parm.put("cmsBrand",cmsBtProduct.getFields().getBrand());
+            parm.put("active", 1);
+            CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
+            if(cmsMtBrandsMappingModel != null){
+                platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+            }
+            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
+            platformCart.setpCatId(catId);
         }
         return platformCart;
     }
