@@ -323,4 +323,84 @@
     border-left:6px solid #5cb85c;
 }
 
+/**平台schema*/
+.product-shema-detail .nav span{
+    display: inline-block;
+    width: 85px;
+    height: 27px;
+    background: #23ad44;
+    color: white;
+    text-align: center;
+    line-height: 24px;
+}
 
+.product-shema-detail button span{
+    font-size: 12px;
+}
+
+.product-shema-detail .nav span.tagFlag{
+    background: #ee3939;
+}
+
+.product-shema-detail hr{
+    border-bottom: 2px solid #e67e22;
+}
+
+.product-shema-detail .thumbnail.active{
+    border: 1px solid #337ab7;
+    box-shadow: 0px 0px 4px 0px #337ab7 inset;
+}
+
+.product-shema-detail h4{
+    font-size: 12px;
+    word-break: break-all;
+}
+
+@media screen and (max-width: 1500px) {
+    .product-shema-detail .bs-docs-sidebar{
+        display: none;
+    }
+}
+
+.product-shema-detail .bs-docs-sidebar{
+    float: right;
+    color: white;
+    margin-top: 80px;
+    border: 1px solid #ADCAE2;
+}
+
+.product-shema-detail .bs-docs-sidebar h3{
+    background: #ADCAE2;
+    text-align: center;
+    font-size: 15px;
+    margin: 0px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav>li>a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #767676;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav>li>a:focus, .bs-docs-sidebar .nav>li>a:hover {
+    padding-left: 19px;
+    color: #ADCAE2;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid #ADCAE2;
+}
+
+@media screen and (max-width: 1441px) {
+    .bs-docs-sidebar{
+        min-height: 216px;
+    }
+}

@@ -55,7 +55,10 @@
         "updateProductSkuInfo": "updateProductSkuInfo",
         "updateProductAllInfo": "updateProductAllInfo",
         "changeCategory": "changeCategory",
-        "revertCategory": "revertCategory"
+        "revertCategory": "revertCategory",
+        "getProductPlatform":"getProductPlatform",
+        "changePlatformCategory":"changePlatformCategory",
+        "updateProductPlatform":"updateProductPlatform"
       }
     },
     "mapping": {
