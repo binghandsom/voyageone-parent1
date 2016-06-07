@@ -81,7 +81,7 @@ public class JdShopService extends JdBase {
 
         request.setName(cName);
         request.setParentId(parentCId);
-        request.setOpen(true);
+        request.setOpen(false);
         request.setHomeShow(false);
 
         try {
