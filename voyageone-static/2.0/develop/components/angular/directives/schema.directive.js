@@ -267,6 +267,7 @@
 
                     var disposeWatcher = null;
                     var schemaController = controllers[0];
+                    var formController = controllers[1];
 
                     // 如果为 field 设置了什么, 就尝试获取 field 上的内容
                     if (attr.field) {
@@ -274,10 +275,28 @@
                             if (!field)
                                 return;
 
-                            console.log(field); // TODO
-
+                            // 拿到字段后, 就可以销毁字段检查的 watcher 了
                             disposeWatcher();
-                            disposeWatcher = null;
+                            
+                            if (schemaController) {
+                                // 外面提供了 schema。那么就要等待 schema 的数据
+                                disposeWatcher = $scope.$watch(function () {
+                                    return schemaController.schema
+                                }, function (schema) {
+
+                                    $scope.field = field;
+                                    compile(field, schema);
+
+                                    disposeWatcher();
+                                    disposeWatcher = null;
+                                });
+                            } else {
+                                // 如果外面没有, 意思就是不要提供依赖验证支持。那就不用在折腾了
+                                $scope.field = field;
+                                compile(field);
+
+                                disposeWatcher = null;
+                            }
                         });
                         return;
                     }
@@ -345,7 +364,7 @@
                         // var maxTargetSizeRule = rules.maxTargetSizeRule;
 
                         var type = 'text';
-                        var innerElem, voMessage, fieldElemName,
+                        var innerElem, voMessage, form, formName, fieldElemName,
                             hasValidate = Object.keys(rules).filter(function (ruleName) { return ruleName.indexOf('tip') < 0; });
 
                         /**
@@ -453,13 +472,33 @@
                             innerElem.attr('title', tipRule);
                         }
 
-                        // 如果无验证的话, 就不需要信息显示了
                         if (hasValidate) {
-                            voMessage = angular.element('<vo-message target="' + schemaController.formName + '.' + fieldElemName + '"></vo-message>');
+                            // 如果有需要验证的信息, 则追加信息显示
+
+                            // 判断是否外层有 form 支持
+                            if (formController) {
+                                formName = formController.$name;
+                            } else if (schemaController) {
+                                formName = schemaController.formName;
+                            } else {
+                                // 如果完全没有 form 提供支持
+                                // 那么需要自己开
+                                formName = 'field_form_' + random();
+                                form = angular.element('<ng-form name="' + formName + '"></ng-form>');
+                                elem.append(form);
+                                $compile(form)($scope);
+
+                                elem = form;
+                            }
+
+                            voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElemName + '"></vo-message>');
+
                             elem.append(innerElem, voMessage);
+
                             $compile(innerElem)($scope);
                             $compile(voMessage)($scope);
                         } else {
+                            // 如果无验证的话, 就不需要信息显示了
                             elem.append(innerElem);
                             $compile(innerElem)($scope);
                         }
