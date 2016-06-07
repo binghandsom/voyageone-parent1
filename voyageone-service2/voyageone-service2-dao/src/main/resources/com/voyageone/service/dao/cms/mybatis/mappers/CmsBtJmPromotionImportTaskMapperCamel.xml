@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionImportTaskDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel" />
+    <sql id="Base_Column_List" >
+        `id`, `cms_bt_jm_promotion_id`, `is_import`, `file_name`, `error_msg`, `success_rows`, 
+        `failures_rows`, `failures_file_Name`, `error_code`, `begin_time`, `end_time`, `creater`, 
+        `created`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_import_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_promotion_import_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="cmsBtJmPromotionId != null" >
+                `cms_bt_jm_promotion_id`,
+            </if>
+            <if test="isImport != null" >
+                `is_import`,
+            </if>
+            <if test="fileName != null" >
+                `file_name`,
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg`,
+            </if>
+            <if test="successRows != null" >
+                `success_rows`,
+            </if>
+            <if test="failuresRows != null" >
+                `failures_rows`,
+            </if>
+            <if test="failuresFileName != null" >
+                `failures_file_Name`,
+            </if>
+            <if test="errorCode != null" >
+                `error_code`,
+            </if>
+            <if test="beginTime != null" >
+                `begin_time`,
+            </if>
+            <if test="endTime != null" >
+                `end_time`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="cmsBtJmPromotionId != null" >
+                #{cmsBtJmPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="isImport != null" >
+                #{isImport,jdbcType=BIT},
+            </if>
+            <if test="fileName != null" >
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="successRows != null" >
+                #{successRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresRows != null" >
+                #{failuresRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresFileName != null" >
+                #{failuresFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorCode != null" >
+                #{errorCode,jdbcType=INTEGER},
+            </if>
+            <if test="beginTime != null" >
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel" >
+        update cms_bt_jm_promotion_import_task
+        <set >
+            <if test="cmsBtJmPromotionId != null" >
+                `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="isImport != null" >
+                `is_import` = #{isImport,jdbcType=BIT},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="successRows != null" >
+                `success_rows` = #{successRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresRows != null" >
+                `failures_rows` = #{failuresRows,jdbcType=INTEGER},
+            </if>
+            <if test="failuresFileName != null" >
+                `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorCode != null" >
+                `error_code` = #{errorCode,jdbcType=INTEGER},
+            </if>
+            <if test="beginTime != null" >
+                `begin_time` = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                `end_time` = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_promotion_import_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_import_task
+        <where >
+            <if test="cmsBtJmPromotionId != null" >
+                and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="isImport != null" >
+                and `is_import` = #{isImport,jdbcType=BIT}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="successRows != null" >
+                and `success_rows` = #{successRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresRows != null" >
+                and `failures_rows` = #{failuresRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresFileName != null" >
+                and `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=INTEGER}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_import_task
+        <where >
+            <if test="cmsBtJmPromotionId != null" >
+                and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="isImport != null" >
+                and `is_import` = #{isImport,jdbcType=BIT}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="successRows != null" >
+                and `success_rows` = #{successRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresRows != null" >
+                and `failures_rows` = #{failuresRows,jdbcType=INTEGER}
+            </if>
+            <if test="failuresFileName != null" >
+                and `failures_file_Name` = #{failuresFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=INTEGER}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+</mapper>

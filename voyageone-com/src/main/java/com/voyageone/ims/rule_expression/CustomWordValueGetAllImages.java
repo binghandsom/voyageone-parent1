@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Created by Leo on 15-7-7.
  */
-public class CustomWordValueGetAllImages extends CustomWordValue{
+public class CustomWordValueGetAllImages extends CustomWordValue {
     private CustomModuleUserParamGetAllImages userParam;
     @JsonIgnore
     public final static String moduleName = "GetAllImages";
@@ -13,8 +13,8 @@ public class CustomWordValueGetAllImages extends CustomWordValue{
     public CustomWordValueGetAllImages() {
     }
 
-    public CustomWordValueGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType) {
-        this.userParam = new CustomModuleUserParamGetAllImages(htmlTemplate, imageTemplate, imageType);
+    public CustomWordValueGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl) {
+        this.userParam = new CustomModuleUserParamGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
     }
 
     public CustomModuleUserParamGetAllImages getUserParam() {

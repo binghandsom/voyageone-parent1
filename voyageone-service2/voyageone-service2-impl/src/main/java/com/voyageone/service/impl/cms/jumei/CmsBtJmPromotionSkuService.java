@@ -17,7 +17,7 @@ public class CmsBtJmPromotionSkuService {
     @Autowired
     CmsBtJmPromotionSkuDao dao;
 
-    public CmsBtJmPromotionSkuModel select(long id) {
+    public CmsBtJmPromotionSkuModel select(int id) {
         return dao.select(id);
     }
 
@@ -42,7 +42,7 @@ public class CmsBtJmPromotionSkuService {
         return dao.insert(entity);
     }
 
-    public int delete(long id) {
+    public int delete(int id) {
         return dao.delete(id);
     }
 

@@ -14,6 +14,10 @@ public class ChannelConfigEnums {
      */
     public enum Name {
         /**
+         * 图片上传
+         */
+        ImageUploadService,
+        /**
          * 电商类型，1为跨境，2为国内
          */
         sale_type,

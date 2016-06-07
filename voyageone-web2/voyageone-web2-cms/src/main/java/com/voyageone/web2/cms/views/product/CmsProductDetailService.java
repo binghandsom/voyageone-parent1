@@ -161,6 +161,7 @@ public class CmsProductDetailService extends BaseAppService {
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
         customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
+        customAttributes.setCustomIdsCn(productValueModel.getFeed().getCustomIdsCn());
         customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
 
         productInfo.setMasterFields(masterSchemaFields);
@@ -705,6 +706,12 @@ public class CmsProductDetailService extends BaseAppService {
             cnAtts.put(cnAtt.getKey().toString(), cnAtt.getValue());
         }
 
+        List<String> customIds = (List<String>) customAttributesValue.get("customIds");
+
+        List<String> customIdsCn = (List<String>) customAttributesValue.get("customIdsCn");
+
+        feedModel.setCustomIds(customIds);
+        feedModel.setCustomIdsCn(customIdsCn);
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
         return feedModel;

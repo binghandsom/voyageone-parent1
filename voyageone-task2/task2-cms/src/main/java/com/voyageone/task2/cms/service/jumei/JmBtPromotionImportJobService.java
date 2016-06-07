@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.jumei;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -23,11 +24,11 @@ import java.util.Map;
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask)
 public class JmBtPromotionImportJobService extends BaseMQCmsService {
-
-    @Autowired
-    private CmsBtJmPromotionImportTaskService service;
-
-    @Override
+//    @Autowired
+//    private CmsBtJmPromotionImportTaskService service;
+     @Autowired
+     CmsBtJmPromotionImportTask3Service service;
+     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         $debug("JmBtPromotionImportJobService收到消息：" + JacksonUtil.bean2Json(messageMap));
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.import.path");

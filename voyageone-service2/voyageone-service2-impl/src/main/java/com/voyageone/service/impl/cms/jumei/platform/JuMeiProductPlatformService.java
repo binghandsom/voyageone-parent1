@@ -51,22 +51,22 @@ public class JuMeiProductPlatformService {
     public CallResult updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean, int shippingSystemId) throws Exception {
         CallResult result=new CallResult();
         try {
-            if (model.getState() == 0) {//上新
-                result = serviceJuMeiProductAddPlatform.addProductAndDeal(shippingSystemId, model, shopBean);//上新
-                if (!result.isResult()) {
-                    model.setErrorMsg(result.getMsg());
-                    model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
-                    daoCmsBtJmPromotionProduct.update(model);
-                }
-            } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
-            {
-                serviceJuMeiProductUpdatePlatform.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
-            } else { //只更新商品
-                serviceJuMeiProductUpdatePlatform.updateJMProductInfo(shippingSystemId, model, shopBean);
-            }
+//            if (model.getState() == 0) {//上新
+//                result = serviceJuMeiProductAddPlatform.addProductAndDeal(shippingSystemId, model, shopBean);//上新
+//                if (!result.isResult()) {
+//                    model.setErrorMsg(result.getMsg());
+//                    model.setState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
+//                    daoCmsBtJmPromotionProduct.update(model);
+//                }
+//            } else if (model.getSynchState() == 0 || model.getSynchState() == 1) //更新 copyDeal
+//            {
+//                serviceJuMeiProductUpdatePlatform.updateProductAddDeal(shippingSystemId, model, shopBean);////更新 copyDeal
+//            } else { //只更新商品
+//                serviceJuMeiProductUpdatePlatform.updateJMProductInfo(shippingSystemId, model, shopBean);
+//            }
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
-            model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
+           // model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
             LOG.error("addProductAndDealByPromotionId", ex);
             try {
                 if (model.getErrorMsg().length() > 600) {

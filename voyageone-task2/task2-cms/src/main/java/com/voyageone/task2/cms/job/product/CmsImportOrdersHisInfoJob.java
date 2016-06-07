@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by jason.jiang on 2016/05/24
  */
-@Component
+@Component("CmsImportOrdersHisInfoJob")
 public class CmsImportOrdersHisInfoJob extends BaseTaskJob {
 	@Autowired
 	private CmsImportOrdersHisInfoService cmsImportOrdersHisInfoService;
