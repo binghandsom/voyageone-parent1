@@ -10,6 +10,7 @@
 
         <!-- mq resume task 每5分钟运行一次 -->
         <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
+        <!--<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>-->
 
         <!-- cms2 batch add    -->
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
@@ -83,6 +84,10 @@
 
         <!-- 图片上传到平台batch -->
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
+
 
     </task:scheduled-tasks>
 

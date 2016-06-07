@@ -7,6 +7,7 @@ import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -29,11 +30,11 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
@@ -50,10 +51,10 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.BeanUtils;
@@ -102,7 +103,7 @@ public class SxProductService extends BaseService {
     @Autowired
     private ImsBtProductDao imsBtProductDao;
     @Autowired
-    private CmsBtSizeMapDao cmsBtSizeMapDao;
+    private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
@@ -143,7 +144,7 @@ public class SxProductService extends BaseService {
         // Map<size, sort> 为了将来可能会从DB取得设定，先做成Map
         Map<String, Integer> mapSort = new HashMap<>();
         for (SkuSort s : SkuSort.values()) {
-            mapSort.put(s.getSize(), Integer.valueOf(s.getSort()));
+            mapSort.put(s.getSize(), s.getSort());
         }
 
         skuSourceList.sort((a, b) -> {
@@ -563,10 +564,24 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-                removeProductList.add(productModel);
-                continue;
+            // 2016/06/02 Update by desmond Start  分平台对应
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+                // 天猫（包含淘宝和天猫）国际平台的时候，从外面的Fields那里取得status判断是否已经Approved
+                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
+            } else {
+                // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
+                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
+                if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                    removeProductList.add(productModel);
+                    continue;
+                }
             }
+            // 2016/06/02 Update by desmond end
 
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
             List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
@@ -585,7 +600,7 @@ public class SxProductService extends BaseService {
             }
         }
 
-        removeProductList.forEach(product -> productModelList.remove(product));
+        removeProductList.forEach(productModelList::remove);
 
         sxData.setProductList(productModelList);
         sxData.setSkuList(skuList);
@@ -637,9 +652,7 @@ public class SxProductService extends BaseService {
 
             Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
             if (!resolveField.isEmpty()) {
-                if (retMap == null) {
-                    retMap = new HashMap<>();
-                }
+                retMap = new HashMap<>();
                 retMap.putAll(resolveField);
             }
         }
@@ -654,15 +667,6 @@ public class SxProductService extends BaseService {
             if (mapSp.containsKey(field.getId())) {
                 // 特殊字段
 
-            } else if (resolveJdPriceSection_before(shopBean, field)) {
-                // 设置京东属性 - [价格][价位]
-                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
-                if (resolveField != null) {
-                    if (retMap == null) {
-                        retMap = new HashMap<>();
-                    }
-                    retMap.putAll(resolveField);
-                }
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
@@ -792,7 +796,7 @@ public class SxProductService extends BaseService {
                 optionDisplayName = optionDisplayName.trim();
 
                 Double minPrice = Double.parseDouble(optionDisplayName);
-                if (Double.compare(minPrice, jdPrice) < 0) {
+                if (Double.compare(minPrice, jdPrice) > 0) {
                     // 不符合
                     continue;
                 }
@@ -806,6 +810,51 @@ public class SxProductService extends BaseService {
                 // 按理说没有其他的场合了, 如果有的话就有问题了, 这个在预处理里就应该判断掉
             }
         }
+
+        return retMap;
+    }
+
+    /**
+     * [ 预判断 ] 设置京东属性 - [品牌]
+     * 注意: 通过这里统一设置品牌属性，这样运营就不用再设置品牌信息了
+     * @param shopBean ShopBean 店铺信息
+     * @param field Field 字段的内容
+     * @return 是否是品牌属性
+     */
+    public boolean resolveJdBrandSection_before(ShopBean shopBean, Field field) {
+
+        // 如果不是京东京东国际的话, 返回false
+        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+            return false;
+        }
+
+        // 属性名字必须是指定内容
+        if (!"品牌".equals(field.getName())) {
+            return false;
+        }
+
+        // 判断类型
+        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 设置京东属性 - [品牌]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @param sxData 商品信息之类的
+     * @return 返回的字段
+     */
+    public Map<String, Field> resolveJdBrandSection(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        // 取得上新数据中设置的品牌code直接设置
+        singleCheckField.setValue(sxData.getBrandCode());
+        retMap.put(field.getId(), singleCheckField);
 
         return retMap;
     }
@@ -1391,6 +1440,9 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
+            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                continue;
+            }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
@@ -1439,14 +1491,146 @@ public class SxProductService extends BaseService {
         return paddingImageDaoExt.selectByCriteria(channelId, cartId, paddingPropName, imageIndex);
     }
 
+    /**
+     *
+     * 优先顺：Brand>ProductType>SizeType
+     *   具体场景
+     *    1）Product：Asics Shoe Men
+     *    尺码组表：
+     *    No	Brand	ProductType	SizeType
+     *    1	    All  	All     	All
+     *    结果：找到默认设置1
+     *
+     *    2）Product：Asics Shoe Men
+     *    尺码组表：
+     *    No	Brand	    ProductType	  SizeType
+     *    1	    Asics       All           All
+     *    2	    Asics	    Shoe          All
+     *    3	    Asics	    Shoe     	  Men
+     *    4	    Asics,nike	Shoe	      Men
+     *    结果：找到两条符合的记录->认为找不到，报错，要求运营修改设定
+     *
+     *   3）Product：Asics Shoe Men
+     *   尺码组表：
+     *    No	Brand	    ProductType	  SizeType
+     *    1	    Asics       All           All
+     *    2	    Asics	    Shoe          All
+     *    3	    Asics,nike	Shoe	      Men
+     *   结果：第3条符合的条件最多->找到3
+     *
+     *   4）Product：Asics Shoe Men
+     *   尺码组表：
+     *   No	Brand	ProductType	SizeType
+     *   1	Asics   All         All
+     *   2	Asics	Shoe        All
+     *   结果：第2条符合的条件最多->找到2
+     *
+     *   5）Product：Asics Shoe Men
+     *   尺码组表：
+     *   No	Brand	ProductType	SizeType
+     *   1	Asics	All      	Men
+     *   2	Asics	Shoe        All
+     *   结果：根据优先顺序，选择2号规则
+     */
+    public List<String> getImageUrls(String channelId, int cartId, int imageType, int viewType, String brandName, String productType, String sizeType, boolean getOriUrl) throws Exception {
+        List<String> listUrls = new ArrayList<>();
+        Map<Integer, List<CmsBtImageGroupModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
+        for (int index = 0; index < 1 << 3; index++) {
+            // 初期化
+            // 这一版的key是3个：brandName, productType, sizeType
+            matchMap.put(index, new ArrayList<>());
+        }
+        List<Integer> sortKey = new ArrayList<>(); // key的sort
+        {
+            // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            sortKey.add(7); // 111
+            sortKey.add(6); // 110
+            sortKey.add(5); // 101
+            sortKey.add(3); // 011
+            sortKey.add(4); // 100
+            sortKey.add(2); // 010
+            sortKey.add(1); // 001
+            sortKey.add(0); // 000
+        }
+
+        String paramBrandName = brandName;
+        String paramProductType = productType;
+        String paramSizeType = sizeType;
+        if (StringUtils.isEmpty(brandName)) {
+            paramBrandName = CmsBtImageGroupDao.VALUE_ALL;
+        }
+        if (StringUtils.isEmpty(productType)) {
+            paramProductType = CmsBtImageGroupDao.VALUE_ALL;
+        }
+        if (StringUtils.isEmpty(sizeType)) {
+            paramSizeType = CmsBtImageGroupDao.VALUE_ALL;
+        }
+
+        List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
+        for (CmsBtImageGroupModel model : modelsAll) {
+            String matchVal = "";
+            if (model.getBrandName().contains(paramBrandName)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getProductType().contains(paramProductType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getSizeType().contains(paramSizeType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
+        }
+
+        for (Integer key : sortKey) {
+            List<CmsBtImageGroupModel> matchModels =  matchMap.get(key);
+            if (matchModels.size() > 1) {
+                throw new BusinessException("找到两条以上符合的记录,请修正设定!" +
+                        "channelId= " + channelId +
+                        ",cartId= " + cartId +
+                        ",imageType= " + imageType +
+                        ",viewType= "+ viewType +
+                        ",paramBrandName= " + paramBrandName +
+                        ",paramProductType= " + paramProductType +
+                        ",paramSizeType=" + paramSizeType);
+            }
+            if (matchModels.size() == 1) {
+                $info("找到image_group记录!");
+                for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
+                    if (getOriUrl) {
+                        // 取原始图url
+                        String url = imageInfo.getOriginUrl();
+                        if (!StringUtils.isEmpty(url)) {
+                            listUrls.add(url);
+                        }
+                    } else {
+                        // 取平台图片url
+                        String url = imageInfo.getPlatformUrl();
+                        if (!StringUtils.isEmpty(url)) {
+                            listUrls.add(url);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        return listUrls;
+    }
+
     // 20160513 tom 图片服务器切换 START
-    public String getImageByTemplateId(String channelId, String imageTemplate, String imageName) throws Exception {
+    public String getImageByTemplateId(String channelId, String imageTemplate, String... imageName) throws Exception {
 
         ImageCreateGetRequest request = new ImageCreateGetRequest();
         request.setChannelId(channelId);
         request.setTemplateId(Integer.parseInt(imageTemplate));
         request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-        String[] vPara = {imageName};
+        String[] vPara = imageName;
         request.setVParam(vPara);
         ImageCreateGetResponse response = null;
         try {
@@ -1457,6 +1641,21 @@ public class SxProductService extends BaseService {
         }
     }
     // 20160513 tom 图片服务器切换 END
+
+    public List<CmsBtProductModel_Field_Image> getProductImages(CmsBtProductModel product, CmsBtProductConstants.FieldImageType imageType) {
+        // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
+//        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
+        List<CmsBtProductModel_Field_Image> productImages;
+        if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
+            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
+                productImages = product.getFields().getImages(imageType);
+            }
+        } else {
+            productImages = product.getFields().getImages(imageType);
+        }
+        return productImages;
+    }
 
     private enum SkuSort {
         DIGIT("digit", 1), // 纯数字系列
@@ -1496,6 +1695,163 @@ public class SxProductService extends BaseService {
         private int getSort() {
             return this.sort;
         }
+    }
+
+    /**
+     * 设置天猫之外的平台Schema中该类目的各个Field里具体属性的值
+     * 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
+     *
+     * @param fields List<Field> 直接把值set进这个fields对象
+     * @param shopBean ShopBean
+     * @param expressionParser ExpressionParser
+     * @return 设好值的FieldId和Field
+     * @throws Exception
+     */
+    public Map<String, Field> constructPlatformProps(List<Field> fields, ShopBean shopBean,
+                                                     ExpressionParser expressionParser) throws Exception {
+        // 返回用Map<field_id, Field>
+        Map<String, Field> retMap = null;
+        SxData sxData = expressionParser.getSxData();
+
+        Map<String, Field> fieldsMap = new HashMap<>();
+        for (Field field : fields) {
+            fieldsMap.put(field.getId(), field);
+        }
+
+        // TODO:特殊字段处理
+        // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
+        //Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
+
+        // 取得当前平台对应的特殊字段处理（目前mapSpAll为空，所以不会取到值）
+//        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
+        Map<String, Object> mapSp = new HashMap<>();
+
+        for(Field field : fields) {
+            if (mapSp.containsKey(field.getId())) {
+                // 特殊字段
+
+            } else if (resolveJdPriceSection_before(shopBean, field)) {
+                // 设置京东属性 - [价格][价位]
+                // mainProduct中不用设置价格价位Field的值，它是在这里根据maxJdPrice自动计算属性哪个价格区间，并把区间值设置到Field中
+                Map<String, Field> resolveField = resolveJdPriceSection(field, sxData);
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
+            } else if (resolveJdBrandSection_before(shopBean, field)) {
+                // 设置京东属性 - [品牌]（运营不用再设置这个属性了）
+                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
+            } else {
+                // 除了价格价位之外，其余的FieldId对应的值都在这里设定
+                // 根据FieldId取得mainProduct中对应的属性值,设置到返回的Field中
+                Map<String, Field> resolveField = resolveFieldMapping(field, sxData);
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
+                }
+            }
+        }
+
+        return retMap;
+    }
+
+    /**
+     * 天猫以外的平台取得Product中FieldId对应的属性值(参考SxProductService.java的resolveMapping()方法)
+     * 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
+     *
+     * @param field Field    平台schema表中的propsItem里面的Field
+     * @param sxData SxData  上新数据
+     * @return 设好值的FieldId和Field
+     */
+    public Map<String, Field> resolveFieldMapping(Field field, SxData sxData) throws Exception {
+        Map<String, Field> retMap = new HashMap<>();
+
+        // MASTER文法解析子（解析并取得主产品的属性值）
+        Object objfieldItemValue = null;
+        String strfieldItemValue = "";
+        // 只支持MASTER类型Field,目前只发现SingleCheck(MultiCheck也是MASTER),没有发现Input(TextWordParser)类型
+        if (!StringUtils.isEmpty(field.getId())) {
+            objfieldItemValue = getPropValue(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields(), field.getId());
+        }
+
+        // 取得值为null不设置，空字符串的时候还是要设置（可能是更新时特意把某个属性的值改为空）
+        if (null == objfieldItemValue) {
+            return null;
+        }
+
+        if (objfieldItemValue instanceof String) {
+            strfieldItemValue = String.valueOf(objfieldItemValue);
+        }
+
+        switch (field.getType()) {
+            case INPUT: {
+                InputField inputField = (InputField) field;
+                inputField.setValue(strfieldItemValue);
+                retMap.put(field.getId(), inputField);
+                break;
+            }
+            case SINGLECHECK: {
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+                singleCheckField.setValue(strfieldItemValue);
+                retMap.put(field.getId(), singleCheckField);
+                break;
+            }
+            case MULTIINPUT:
+                break;
+            case MULTICHECK: {
+                String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue);
+
+                MultiCheckField multiCheckField = (MultiCheckField)field;
+                for (String val : valueArrays) {
+                    multiCheckField.addValue(val);
+                }
+                retMap.put(field.getId(), multiCheckField);
+                break;
+            }
+            case COMPLEX:
+                break;
+            case MULTICOMPLEX:
+                break;
+            case LABEL:
+                break;
+            default:
+                $error("复杂类型的属性:" + field.getType() + "不能使用MAPPING_SINGLE来作为匹配类型");
+                return null;
+        }
+
+        return retMap;
+    }
+
+    /**
+     * 取得Product中FieldId对应的属性值(Copy from MasterWordParser.java)
+     *
+     * @param evaluationContext Map<String, Object>  Product里面的PXX平台下面的fields
+     * @param propName true：商品 false：产品
+     * @return Map （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，
+     *                                       只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
+     */
+    public Object getPropValue(Map<String, Object> evaluationContext, String propName) {
+        char separator = '.';
+        if (evaluationContext == null) {
+            return null;
+        }
+        int separatorPos = propName.indexOf(separator);
+        if (separatorPos == -1) {
+            return evaluationContext.get(propName);
+        }
+        String firstPropName = propName.substring(0, separatorPos);
+        String leftPropName = propName.substring(separatorPos + 1);
+        return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
     }
 
 }

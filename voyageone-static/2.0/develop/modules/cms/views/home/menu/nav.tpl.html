@@ -26,7 +26,7 @@
                     <i class="fa fa-plus icon-small text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
-                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, _catPath)">
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId)">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
@@ -204,7 +204,13 @@
                     <span translate="TXT_TAG_MANAGEMENT"></span>
                 </a>
             </li>
-
+            <!-- 店铺分类 -->
+            <li ui-sref-active="active">
+                <a href="#/channel/category/">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_STORE_CATEGORY"></span>
+                </a>
+            </li>
             <li ui-sref-active="active">
                 <a class="auto">
             <span class="pull-right text-muted">
@@ -367,6 +373,44 @@
             </li>
         </ul>
     </li>
+
+    <!-- 工具管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-briefcase fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-briefcase icon text-vo"></i>
+            <span translate="TXT_TOOLS_MANAGEMENT"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href="javascript:void(0)">
+                    <span translate="TXT_TOOLS_MANAGEMENT"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="javascript:void(0)">
+                    <i class="fa fa-plus icon text-vo"></i>
+                    <span translate="TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING"></span>
+                </a>
+                <ul class="nav nav-sub dk">
+                    <li class="nav-sub-header">
+                        <a href="javascript:void(0)">
+                            <span translate="TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING"></span>
+                        </a>
+                    </li>
+                    <li class="m-l-sm" ui-sref-active="active">
+                        <a href="#/tools/product">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span translate="TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>
 <!--end-->
 
@@ -380,7 +424,7 @@
             <i class="fa fa-plus icon-small text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,_catPath)">
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId)">
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>

@@ -6,6 +6,7 @@ import com.voyageone.task2.cms.bean.ProductPublishBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -29,5 +30,13 @@ public class ProductPublishDao extends BaseDao {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("p", productPublishBean);
         update(Constants.DAO_NAME_SPACE_CMS + "ims_updateProductPublishMini", dataMap);
+    }
+
+    // 统计前一天订单中的产品数量
+    public List<Map> selectProductOrderCount(long oIdx, long oLimit) {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("oIdx", oIdx);
+        dataMap.put("oLimit", oLimit);
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCount", dataMap);
     }
 }

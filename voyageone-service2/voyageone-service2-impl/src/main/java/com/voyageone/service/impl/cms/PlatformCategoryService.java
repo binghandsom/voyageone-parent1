@@ -39,7 +39,7 @@ public class PlatformCategoryService extends BaseService {
     }
 
     public CmsMtPlatformCategorySchemaModel getPlatformCatSchema(String catId, int cartId) {
-        return platformCategorySchemaDao.getPlatformCatSchemaModel(catId, cartId);
+        return platformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
     }
 
     /**

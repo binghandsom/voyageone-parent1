@@ -29,7 +29,7 @@ public class JuMeiDealService {
         parameterPromotionProduct.put("promotionId", promotionId);
         parameterPromotionProduct.put("dealEndTimeState", 1);
         List<CmsBtJmPromotionProductModel> listPromotionProduct = daoCmsBtJmPromotionProduct.selectList(parameterPromotionProduct);
-        if(listPromotionProduct.size()==0) return;;
+        if(listPromotionProduct.size()==0) return;
         ShopBean shopBean = serviceJMShopBean.getShopBean(listPromotionProduct.get(0).getChannelId());
         for (CmsBtJmPromotionProductModel model : listPromotionProduct) {
             updateDealEndTime((ShopBean) shopBean, (CmsBtJmPromotionProductModel) model);
@@ -43,24 +43,23 @@ public class JuMeiDealService {
     public void updateDealEndTime(ShopBean shopBean, CmsBtJmPromotionProductModel model) {
         try {
             HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
-            request.setEnd_time(getTime(model.getDealEndTime()));
+           // request.setEnd_time(getTime(model.getDealEndTime()));
             request.setJumei_hash_id(model.getJmHashId());
             HtDealUpdateDealEndTimeResponse response = serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
-            if (response.is_Success()) {
-                model.setDealEndTimeState(2);
-                model.setActivityEnd(model.getDealEndTime());
-            } else {
-                model.setDealEndTimeState(3);
-                model.setErrorMsg("延迟Deal结束时间失败" + response.getBody());
-            }
+//            if (response.is_Success()) {
+//                model.setDealEndTimeState(2);
+//                model.setActivityEnd(model.getDealEndTime());
+//            } else {
+//                model.setDealEndTimeState(3);
+//                model.setErrorMsg("延迟Deal结束时间失败" + response.getBody());
+//            }
         } catch (Exception ex) {
-            model.setDealEndTimeState(3);
+           // model.setDealEndTimeState(3);
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
         }
     }
 
     public static Long getTime(Date d) throws Exception {
-        long l = d.getTime() / 1000 - 8 * 3600;
-        return l;
+        return d.getTime() / 1000 - 8 * 3600;
     }
 }

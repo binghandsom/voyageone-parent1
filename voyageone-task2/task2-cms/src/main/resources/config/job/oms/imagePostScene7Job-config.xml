@@ -1,120 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-	<!-- =====================向scene7上传产品图片定时任务 start ===================== -->
-	<bean id="imagePostScene7Job"
-		class="com.voyageone.task2.cms.job.ImagePostScene7Job">
-	</bean>
+    <!-- =====================向scene7上传产品图片定时任务 start ===================== -->
+    <bean id="imagePostScene7Job"
+          class="com.voyageone.task2.cms.job.ImagePostScene7Job">
+    </bean>
 
-	<bean id="jewelyImagePostScene7Task"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="imagePostScene7Job" />
-		</property>
-		<property name="targetMethod">
-			<value>run</value>
-		</property>
-		<property name="arguments">
-			<value>010</value>
-		</property>
-		<property name="concurrent">
-			<value>false</value>
-		</property>
-	</bean>
-	<bean id="jewelyImagePostScene7TaskContri"
-		name="jewelyImagePostScene7TaskContri"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="jewelyImagePostScene7Task" />
-		</property>
-		<property name="cronExpression">
-			<value>${quartz.image.scene7.jewely.post}</value>
-		</property>
-	</bean>
+    <bean id="jewelyImagePostScene7Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref local="imagePostScene7Job"/>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+        <property name="arguments">
+            <value>010</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    <bean id="jewelyImagePostScene7TaskContri"
+          name="jewelyImagePostScene7TaskContri"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="jewelyImagePostScene7Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>${quartz.image.scene7.jewely.post}</value>
+        </property>
+    </bean>
 
-	<bean id="bcbgImagePostScene7Task"
-		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="imagePostScene7Job" />
-		</property>
-		<property name="targetMethod">
-			<value>run</value>
-		</property>
-		<property name="arguments">
-			<value>012</value>
-		</property>
-		<property name="concurrent">
-			<value>false</value>
-		</property>
-	</bean>
-	<bean id="bcbgImagePostScene7TaskContri"
-		  name="bcbgImagePostScene7TaskContri"
-		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="bcbgImagePostScene7Task" />
-		</property>
-		<property name="cronExpression">
-			<value>${quartz.image.scene7.bcbg.post}</value>
-		</property>
-	</bean>
+    <bean id="bcbgImagePostScene7Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref local="imagePostScene7Job"/>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+        <property name="arguments">
+            <value>012</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    <bean id="bcbgImagePostScene7TaskContri"
+          name="bcbgImagePostScene7TaskContri"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="bcbgImagePostScene7Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>${quartz.image.scene7.bcbg.post}</value>
+        </property>
+    </bean>
 
-	<bean id="searsImagePostScene7Task"
-		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="imagePostScene7Job" />
-		</property>
-		<property name="targetMethod">
-			<value>run</value>
-		</property>
-		<property name="arguments">
-			<value>013</value>
-		</property>
-		<property name="concurrent">
-			<value>false</value>
-		</property>
-	</bean>
-	<bean id="searsImagePostScene7TaskContri"
-		  name="searsImagePostScene7TaskContri"
-		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="searsImagePostScene7Task" />
-		</property>
-		<property name="cronExpression">
-			<value>${quartz.image.scene7.sears.post}</value>
-		</property>
-	</bean>
+    <bean id="searsImagePostScene7Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref local="imagePostScene7Job"/>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+        <property name="arguments">
+            <value>013</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    <bean id="searsImagePostScene7TaskContri"
+          name="searsImagePostScene7TaskContri"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="searsImagePostScene7Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>${quartz.image.scene7.sears.post}</value>
+        </property>
+    </bean>
 
 
-	<bean id="giltImagePostScene7Task"
-		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="imagePostScene7Job" />
-		</property>
-		<property name="targetMethod">
-			<value>run</value>
-		</property>
-		<property name="arguments">
-			<value>015</value>
-		</property>
-		<property name="concurrent">
-			<value>false</value>
-		</property>
-	</bean>
-	<bean id="giltImagePostScene7TaskContri"
-		  name="giltImagePostScene7TaskContri"
-		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="giltImagePostScene7Task" />
-		</property>
-		<property name="cronExpression">
-			<value>${quartz.image.scene7.guit.post}</value>
-		</property>
-	</bean>
-	<!-- ===================== 向scene7上传产品图片定时任务 end ===================== -->
-	
+    <bean id="giltImagePostScene7Task"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref local="imagePostScene7Job"/>
+        </property>
+        <property name="targetMethod">
+            <value>run</value>
+        </property>
+        <property name="arguments">
+            <value>015</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+    <bean id="giltImagePostScene7TaskContri"
+          name="giltImagePostScene7TaskContri"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="giltImagePostScene7Task"/>
+        </property>
+        <property name="cronExpression">
+            <value>${quartz.image.scene7.guit.post}</value>
+        </property>
+    </bean>
+    <!-- ===================== 向scene7上传产品图片定时任务 end ===================== -->
+
 </beans>

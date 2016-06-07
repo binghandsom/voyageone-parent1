@@ -19,7 +19,7 @@ define([
         // init
         $scope.initialize = function () {
             var self = this;
-            self.refreshTable();
+            self.search();
         }
 
         $scope.clear = function () {
@@ -28,7 +28,7 @@ define([
             self.channelName = null;
             self.allowMinimallOption = '-1';
             self.active = "1";
-            self.refreshTable();
+            // self.refreshTable();
         };
         $scope.save = function (model) {
             var self = this;
@@ -39,6 +39,11 @@ define([
                     model.is_usjoi = 0;
                 });
         };
+        $scope.search = function () { //检索列表
+            $scope.page.curr = 1;
+            $scope.refreshTable();
+        }
+
         $scope.refreshTable = function () { //检索列表
             var self = this;
             var param = {
@@ -68,8 +73,8 @@ define([
                 el.active = 0; //删除 FIXME 是否需要改成对应的active
                 self.service.update(el).then(function () {
                     //self.tableSource.splice(index, 1);
-                    $scope.page.curr = 1;
-                    $scope.refreshTable();
+                    //$scope.page.curr = 1;
+                    $scope.search();
                 });
             })
         };

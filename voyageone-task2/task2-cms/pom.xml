@@ -17,6 +17,11 @@
             <artifactId>task2-base</artifactId>
             <version>${voyageone.task2.base.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-ftp</artifactId>
+            <version>${voyageone.components.ftp.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.quartz-scheduler</groupId>

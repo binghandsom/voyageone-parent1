@@ -7,7 +7,7 @@
     <select id="getListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
           <where>
-              is_delete=0
+              active=1
               <if test="id != null">
                  AND id =  #{id}
               </if>
@@ -46,11 +46,12 @@
               )
               </if>
           </where>
+
+        order by id desc
     </select>
     <select id="getActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
-        where is_delete=0 and channel_id=#{channelId}
+        where channel_id=#{channelId}
         and activity_start &lt; now() and activity_end &gt; now()
-
     </select>
 </mapper>

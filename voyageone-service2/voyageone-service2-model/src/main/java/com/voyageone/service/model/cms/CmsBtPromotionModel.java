@@ -67,6 +67,11 @@ public class CmsBtPromotionModel extends BaseModel {
      */
     protected Integer isAllPromotion;
 
+    /**
+     * promotionId(jm,tm,jd等)
+     */
+    protected Integer promotionId;
+
     public String getChannelId() {
         return channelId;
     }
@@ -185,5 +190,13 @@ public class CmsBtPromotionModel extends BaseModel {
 
     public void setIsAllPromotion(Integer isAllPromotion) {
         this.isAllPromotion = isAllPromotion;
+    }
+
+    public Integer getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(Integer promotionId) {
+        this.promotionId = promotionId;
     }
 }

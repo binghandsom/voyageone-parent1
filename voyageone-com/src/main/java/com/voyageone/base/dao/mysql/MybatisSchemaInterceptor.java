@@ -53,6 +53,9 @@ public class MybatisSchemaInterceptor implements Interceptor, Serializable {
      * @param queryArgs Executor.query params.
      */
     private void processIntercept(final Object[] queryArgs) {
+//        for(Object o:queryArgs) {
+//            System.out.println(o);
+//        }
         final Statement ms = (Statement) queryArgs[STATEMENT_INDEX];
         Connection connection = null;
         Statement stmt = null;

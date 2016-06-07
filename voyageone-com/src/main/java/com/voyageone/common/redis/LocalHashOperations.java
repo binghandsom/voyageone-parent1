@@ -42,10 +42,9 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     @Override
     public HV get(K key, Object hashKey) {
-        Map<HK, HV> map = getCache(key);;
-        if(map==null) return null;
-       return map.get(hashKey);
-       // return localCache.get(key).get(hashKey);
+        Map<HK, HV> map = getCache(key);
+        if (map == null) return null;
+        return map.get(hashKey);
     }
 
     @Override
@@ -74,9 +73,9 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
     public void put(K key, HK hashKey, HV value) {
         Map<HK, HV> map = getCache(key);
         map.put(hashKey, value);
-       // localCache.get(key).put(hashKey,value);
     }
-    Map<HK, HV>   getCache(K key) {
+
+    Map<HK, HV> getCache(K key) {
         Map<HK, HV> map = localCache.get(key);
         if (map == null) {
             createCache(key);
@@ -84,7 +83,8 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
         }
         return map;
     }
-    synchronized  void createCache(K key) {
+
+    synchronized void createCache(K key) {
         if (!localCache.containsKey(key)) {
             Map<HK, HV> map = new HashedMap();
             localCache.put(key, map);
@@ -100,7 +100,7 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     @Override
     public List<HV> values(K key) {
-        List<HV> values=Lists.newCopyOnWriteArrayList();
+        List<HV> values = Lists.newCopyOnWriteArrayList();
         values.addAll(localCache.get(key).values());
         return values;
     }

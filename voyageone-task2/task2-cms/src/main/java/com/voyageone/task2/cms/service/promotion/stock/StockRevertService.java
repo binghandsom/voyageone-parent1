@@ -240,7 +240,7 @@ public class StockRevertService extends BaseTaskService {
                                             sku,
                                             qty,
                                             stockInfoService.SYN_TYPE_ALL,
-                                            (Integer) data.get("seq"),
+                                            (Integer) data.get("id"),
                                             stockInfoService.STATUS_REVERTING,
                                             getTaskName()));
                         }

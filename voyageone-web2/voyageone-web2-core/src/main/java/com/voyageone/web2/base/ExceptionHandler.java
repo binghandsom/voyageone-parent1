@@ -98,12 +98,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         ajaxResponse.setDisplayType(DisplayType.ALERT);
         ajaxResponse.setMessage(exception.getMessage());
 
-        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
-        ModelAndView mav = new ModelAndView(jsonView);
-
-        mav.addObject(ajaxResponse);
-
-        return mav;
+        return jsonView(ajaxResponse);
     }
 
     /**

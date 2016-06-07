@@ -16,6 +16,7 @@ define([
          */
         $scope.initialize = function () {
             var picObj = $scope.vm.picInfo;
+
             if (picObj == undefined) {
                 return;
             }
@@ -23,6 +24,9 @@ define([
                 // 直接使用传入的图片url
             } else {
                 // 传入的是图片名，必须拼接图片服务器的url
+                if ($rootScope.imageUrl == null || $rootScope.imageUrl == undefined) {
+                    $rootScope.imageUrl = '';
+                }
                 picObj.mainPic =  $rootScope.imageUrl.replace("%s", picObj.mainPic) + ".jpg";//"http://image.sneakerhead.com/is/image/sneakerhead/" + ;
                 var picList = picObj.picList;
 

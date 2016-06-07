@@ -60,9 +60,9 @@ public class JMNewProductInfo {
             mapCmsBtJmSkuModel.put(model.getId(), model);
             mapCodeCmsBtJmSkuModel.put(model.getSkuCode(), model);
         }
-        for (CmsBtJmPromotionSkuModel model : listCmsBtJmPromotionSku) {
-            mapSkuIdCmsBtJmPromotionSkuModel.put(model.getCmsBtJmSkuId(), model);
-        }
+//        for (CmsBtJmPromotionSkuModel model : listCmsBtJmPromotionSku) {
+//            mapSkuIdCmsBtJmPromotionSkuModel.put(model.getCmsBtJmSkuId(), model);
+//        }
     }
     public CmsBtJmPromotionProductModel getModelCmsBtJmPromotionProduct() {
         return modelCmsBtJmPromotionProduct;

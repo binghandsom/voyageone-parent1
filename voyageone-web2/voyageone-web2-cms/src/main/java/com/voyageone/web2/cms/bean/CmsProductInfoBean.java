@@ -158,8 +158,8 @@ public class CmsProductInfoBean {
         //是否翻译完成.
         private Boolean translateStatus;
 
-        //是否编辑完成.
-        private Boolean editStatus;
+        //是否Approved.
+        private Boolean isApproved;
 
         public String getApproveStatus() {
             return approveStatus;
@@ -177,12 +177,12 @@ public class CmsProductInfoBean {
             this.translateStatus = translateStatus;
         }
 
-        public Boolean getEditStatus() {
-            return editStatus;
+        public Boolean getIsApproved() {
+            return isApproved;
         }
 
-        public void setEditStatus(Boolean editStatus) {
-            this.editStatus = editStatus;
+        public void setIsApproved(Boolean isApproved) {
+            this.isApproved = isApproved;
         }
     }
 

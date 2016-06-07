@@ -343,7 +343,7 @@ public class CmsStockSeparateService extends BaseTaskService {
                             Integer separateQty = (Integer) data.get("separate_qty");
                             separateQtyAll += separateQty;
                             cartSeparateQtyOld.put(cartId, separateQty);
-                            cartSeq.put(cartId, (Integer) data.get("seq"));
+                            cartSeq.put(cartId, (Integer) data.get("id"));
                         }
 
                         // 各平台最终显示库存（包含隔离平台，共享平台（-1），不包含动态平台）

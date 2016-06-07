@@ -4,6 +4,7 @@ angular.module("voyageone.angular",[
 "voyageone.angular.directives.dateModelFormat",
 "voyageone.angular.directives.enterClick",
 "voyageone.angular.directives.fileStyle",
+"voyageone.angular.directives.goTop",
 "voyageone.angular.directives.ifNoRows",
 "voyageone.angular.directives.image",
 "voyageone.angular.directives.message",

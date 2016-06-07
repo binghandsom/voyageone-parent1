@@ -74,7 +74,7 @@
 
         <!-- voyageone.web2 version -->
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
-        <voyageone.web2.cms.version>2.0.0-SNAPSHOT</voyageone.web2.cms.version>
+        <voyageone.web2.cms.version>2.1.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.web2.openapi.version>2.0.0-SNAPSHOT</voyageone.web2.openapi.version>
         <!-- voyageone.web2.sdk version -->
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
@@ -102,8 +102,7 @@
         <voyageone.components.liquifire.version>0.0.1-SNAPSHOT</voyageone.components.liquifire.version>
         <voyageone.components.uscdn.version>0.0.1-SNAPSHOT</voyageone.components.uscdn.version>
         <voyageone.components.imagecreate.version>0.0.1-SNAPSHOT</voyageone.components.imagecreate.version>
-
-
+        <voyageone.components.ftp.version>0.0.1-SNAPSHOT</voyageone.components.ftp.version>
     </properties>
 
     <dependencyManagement>
@@ -503,7 +502,7 @@
             <dependency>
                 <groupId>org.jongo</groupId>
                 <artifactId>jongo</artifactId>
-                <version>1.2</version>
+                <version>1.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>

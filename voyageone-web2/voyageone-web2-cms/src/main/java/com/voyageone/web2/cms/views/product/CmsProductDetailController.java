@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -25,22 +27,27 @@ public class CmsProductDetailController extends CmsController {
     @Autowired
     CmsProductDetailService productPropsEditService;
 
+    @Autowired
+    FeedCustomPropService feedCustomPropService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params) {
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
         String channelId = getUser().getSelChannelId();
         int cartId = (int) getCmsSession().getPlatformType().get("cartId");
-        Map<String, Object> categoryInfo = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
 
         Map<String, Object> productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
         List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(channelId, productId);
-        categoryInfo.put("inventoryList", inventoryList);
-        categoryInfo.put("productInfo", productInfo.get("productInfo"));
+        result.put("inventoryList", inventoryList);
+        result.put("productInfo", productInfo.get("productInfo"));
+        result.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(getLang()));
+        result.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(channelId, "0"));
         productInfo.remove("productInfo");
-        categoryInfo.putAll(productInfo);
+        result.putAll(productInfo);
 
-        return success(categoryInfo);
+        return success(result);
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_MASTER_INFO)
@@ -74,13 +81,13 @@ public class CmsProductDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
 
-        String updateTime = productPropsEditService.updateProductAllInfo(channelId, userName, requestMap);
+//        String updateTime = productPropsEditService.updateProductAllInfo(channelId, userName, requestMap);
+//
+//        Map<String, Object> updateInfo = new HashMap<>();
+//
+//        updateInfo.put("modified", updateTime);
 
-        Map<String, Object> updateInfo = new HashMap<>();
-
-        updateInfo.put("modified", updateTime);
-
-        return success(updateInfo);
+        return success(productPropsEditService.updateProductAllInfo(channelId, userName, requestMap));
 
     }
 

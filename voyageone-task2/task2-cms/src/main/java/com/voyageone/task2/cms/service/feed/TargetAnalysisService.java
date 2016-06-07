@@ -383,6 +383,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);
@@ -486,7 +488,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
                 return convertWeight.toString();
             }else if("lb".equalsIgnoreCase(temp[1])){
-                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));;
+                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
                 return convertWeight.toString();
             }else{
                 throw new BusinessException("重量转换失败：" + weight);

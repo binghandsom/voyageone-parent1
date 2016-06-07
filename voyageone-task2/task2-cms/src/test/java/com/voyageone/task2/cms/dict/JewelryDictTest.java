@@ -1,7 +1,5 @@
 package com.voyageone.task2.cms.dict;
 
-import com.voyageone.common.masterdate.schema.rule.Rule;
-import com.voyageone.ims.enums.CmsFieldEnum;
 import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
 
@@ -125,26 +123,26 @@ public class JewelryDictTest {
 
 					// 商品属性图
 					RuleExpression imageTemplate = new RuleExpression();
-//					String htmlTemplate =
-//							"http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$" +
-//									"&$product=%s" + // 图片
-//									"&$title01=%s" + // 标题1
-//									"&$text01=%s" + // 文本1
-//									"&$title02=%s" + // 2
-//									"&$text02=%s" + // 2
-//									"&$title03=%s" +
-//									"&$text03=%s" +
-//									"&$title04=%s" +
-//									"&$text04=%s" +
-//									"&$title05=%s" +
-//									"&$text05=%s" +
-//									"&$title06=%s" +
-//									"&$text06=%s" +
-//									"&$title07=%s" +
-//									"&$text07=%s" +
-//									"&$title08=%s" +
-//									"&$text08=%s";
-					String htmlTemplate = "42";
+					String htmlTemplate =
+							"http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$" +
+									"&$product=%s" + // 图片
+									"&$title01=%s" + // 标题1
+									"&$text01=%s" + // 文本1
+									"&$title02=%s" + // 2
+									"&$text02=%s" + // 2
+									"&$title03=%s" +
+									"&$text03=%s" +
+									"&$title04=%s" +
+									"&$text04=%s" +
+									"&$title05=%s" +
+									"&$text05=%s" +
+									"&$title06=%s" +
+									"&$text06=%s" +
+									"&$title07=%s" +
+									"&$text07=%s" +
+									"&$title08=%s" +
+									"&$text08=%s";
+//					String htmlTemplate = "42";
 					imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
 					List<RuleExpression> imageParams = new ArrayList<>();
@@ -356,13 +354,13 @@ public class JewelryDictTest {
 					htmlTemplate.addRuleWord(new TextWord("<div style=\"margin:15px\" ><img src=\"%s\" style=\"display:block; width:760px;\" /></div>"));
 
 					RuleExpression imageTemplate = new RuleExpression();
-//					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%%5F20150819%%5Fx760%%5F760x?$760x760$&$JEWERLY%%2D760%%2D760$&$proudct=%s"));
-					imageTemplate.addRuleWord(new TextWord("47"));
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%%5F20150819%%5Fx760%%5F760x?$760x760$&$JEWERLY%%2D760%%2D760$&$proudct=%s"));
+//					imageTemplate.addRuleWord(new TextWord("47"));
 
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_商品图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -372,13 +370,13 @@ public class JewelryDictTest {
 					htmlTemplate.addRuleWord(new TextWord("<div style=\"margin:15px\" ><img src=\"%s\" style=\"display:block; width:760px;\" /></div>"));
 
 					RuleExpression imageTemplate = new RuleExpression();
-//					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/JW_20160506_x790_526x?$790x526$&$product=%s"));
-					imageTemplate.addRuleWord(new TextWord("49"));
+					imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/JW_20160506_x790_526x?$790x526$&$product=%s"));
+//					imageTemplate.addRuleWord(new TextWord("49"));
 
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_自定义图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -471,7 +469,7 @@ public class JewelryDictTest {
 		}
 
 		{
-			// 尺寸参考, 关于我们, 巴菲特
+			// 尺寸参考, 关于我们, 巴菲特图
 //			String html = "<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB246e8gpXXXXaSXpXXXXXXXXXX_!!2183719539.jpg\">"; // PA
 			String html = "<img src=\"https://img.alicdn.com/imgextra/i4/2641101981/TB2k3RyfpXXXXbbXpXXXXXXXXXX_!!2641101981.jpg\">"; // jewelry
 			TextWord word = new TextWord(html);
@@ -479,7 +477,7 @@ public class JewelryDictTest {
 		}
 
 		{
-			// 珠宝知识
+			// 珠宝知识图
 			String html =
 					"<a href=\"http://jewelry.tmall.com/p/rd294659.htm\">" +
 //							"<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB279TdgpXXXXXgXpXXXXXXXXXX_!!2183719539.jpg\">" + // PA
@@ -490,7 +488,7 @@ public class JewelryDictTest {
 		}
 
 		{
-			// 购买须知, 购买流程, 商品包装, 退货政策
+			// 购买须知, 购买流程, 商品包装, 退货政策图
 //			String html = "<img src=\"https://img.alicdn.com/imgextra/i2/2183719539/TB20izkgpXXXXbfXXXXXXXXXXXX_!!2183719539.jpg\">"; // PA
 			String html = "<img src=\"https://img.alicdn.com/imgextra/i1/2641101981/TB2KYhQfpXXXXbYXXXXXXXXXXXX_!!2641101981.jpg\">"; // jewelry
 			TextWord word = new TextWord(html);
