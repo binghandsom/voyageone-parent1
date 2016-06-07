@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.system.error;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -61,13 +62,18 @@ class CmsErrorListService extends BaseAppService {
      * @param params 搜索参数
      * @return 包含错误信息的 Map, 使用了 key: [ errorList, errorCnt ]
      */
-    public Map<String, Object> search(Map params, String channelId,int timeZone) throws ParseException {
+    public Map<String, Object> search(Map params, String channelId,int timeZone){
         Map<String, Object> resultBean = new HashMap<>();
         params.put("channelId", channelId);
         List<CmsBtBusinessLogModel> cmsBtBusinessLogModelList=businessLogService.getList(params);
         for(CmsBtBusinessLogModel model:cmsBtBusinessLogModelList){
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = sdf.parse(DateTimeUtil.getLocalTime(model.getCreated(), timeZone));
+            Date date = null;
+            try {
+                date = sdf.parse(DateTimeUtil.getLocalTime(model.getCreated(), timeZone));
+            } catch (ParseException e) {
+                throw new BusinessException("1000003");
+            }
             model.setCreated(date);
         }
         resultBean.put("errorList", cmsBtBusinessLogModelList);
