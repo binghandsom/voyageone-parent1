@@ -43,6 +43,10 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, shopBean, user, extParameter);
             if (imageParam == null) {
+                // added by morse.lu 2016/06/07 start
+                // bug吧，应该要加进list，不然参数总数不对了
+                imageParams.add(imageParam);
+                // added by morse.lu 2016/06/07 end
                 continue;
             }
             try {
