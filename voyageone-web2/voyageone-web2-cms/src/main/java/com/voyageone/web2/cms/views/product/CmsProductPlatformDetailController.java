@@ -27,7 +27,7 @@ import java.util.Map;
 public class CmsProductPlatformDetailController extends CmsController {
 
     @Autowired
-    CmsProductPlatformDetailService cmsProductPlatformDetailService;
+    private CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
@@ -49,10 +49,10 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
         int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        String catId = String.valueOf(params.get("catId"));
         Map<String, Object> result = new HashMap<>();
 
-        result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
-        result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId));
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId,prodId,cartId,catId));
 
         return success(result);
     }

@@ -531,7 +531,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("translateStatus", status);
     }
 
-    //translater
+    //translator
     public String getTranslator() {
         return getAttribute("translator");
     }

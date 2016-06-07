@@ -47,7 +47,7 @@ public class UploadToUSJoiServiceTest {
     public void testProduct() {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010", "16189");
         CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = new CmsBtProductModel_Platform_Cart();
-        cmsBtProductModel_platform_cart.setpNumIid("1111");
+        cmsBtProductModel_platform_cart.setpNumIId("1111");
         cmsBtProductModel_platform_cart.setpCatId("2222");
 
         cmsBtProductModel_platform_cart.setFields(new BaseMongoMap<>());
