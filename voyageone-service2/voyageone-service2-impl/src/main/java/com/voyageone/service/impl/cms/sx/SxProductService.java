@@ -29,6 +29,7 @@ import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSizeMapDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
@@ -45,6 +46,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
@@ -127,6 +129,8 @@ public class SxProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private FeedCustomPropService customPropService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -554,7 +558,13 @@ public class SxProductService extends BaseService {
             if (mainProductCode.equals(productModel.getFields().getCode())) {
                 // 主商品
                 sxData.setMainProduct(productModel);
-                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
+                // modified by morse.lu 2016/06/07 start
+//                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
+                String orgChannelId = productModel.getOrgChannelId(); // feed信息要从org里获取
+                String prodOrgCode = productModel.getFields().getOriginalCode(); // 有可能会有原始code
+                if (prodOrgCode == null) prodOrgCode = productModel.getFields().getCode();
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
+                // modified by morse.lu 2016/06/07 end
                 sxData.setCmsBtFeedInfoModel(feedInfo);
 
                 Map<String, Object> searchParam = new HashMap<>();
@@ -567,8 +577,50 @@ public class SxProductService extends BaseService {
                 }
             }
 
+            // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
+            CmsBtProductModel mainProductModel = sxData.getMainProduct();
+            if (mainProductModel != null) {
+                List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
+                List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
+
+                if (customIdsOld != null && customIdsOld.size() > 0 && customIdsCnOld != null && customIdsCnOld.size() > 0) {
+                    // 获取排序顺序
+                    String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
+                    if (feedCatPath == null) feedCatPath = "";
+                    List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
+
+                    // 重新排序
+                    List<String> customIdsNew = new ArrayList<>();
+                    List<String> customIdsCnNew = new ArrayList<>();
+                    for (FeedCustomPropWithValueBean feedCustomPropWithValueBean : feedCustomPropList) {
+                        String customIdsSort = feedCustomPropWithValueBean.getFeed_prop_original();
+
+                        for (int i = 0; i < customIdsOld.size(); i++) {
+                            if (customIdsSort.equals(customIdsOld.get(i))) {
+                                // 设置到新的里
+                                customIdsNew.add(customIdsOld.get(i));
+                                customIdsCnNew.add(customIdsCnOld.get(i));
+
+                                // 删掉一下, 用来小小地提升下速度
+                                customIdsOld.remove(i);
+                                customIdsCnOld.remove(i);
+                                break;
+                            }
+                        }
+                    }
+
+                    // 设置回去
+                    mainProductModel.getFeed().setCustomIds(customIdsNew);
+                    mainProductModel.getFeed().setCustomIdsCn(customIdsCnNew);
+                }
+            }
+            // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
+
             // 2016/06/02 Update by desmond Start  分平台对应
-            if (CartEnums.Cart.TM.getId().equals(cartId) || CartEnums.Cart.TB.getId().equals(cartId) ) {
+//            if (CartEnums.Cart.TM.getId().equals(cartId) || CartEnums.Cart.TB.getId().equals(cartId) ) {
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
                 // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
                 if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                     removeProductList.add(productModel);
