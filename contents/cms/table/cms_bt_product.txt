@@ -120,8 +120,6 @@
 		  * productLongName
 		  * productMediumName
 		  * productShortName
-		  * productDesEn
-		  * productDesCn
 		  * beforeDate
 		  * suitPeople
 		  * specialExplain
