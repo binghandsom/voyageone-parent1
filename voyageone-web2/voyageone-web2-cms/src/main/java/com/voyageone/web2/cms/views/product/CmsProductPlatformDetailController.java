@@ -56,4 +56,19 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         return success(result);
     }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM)
+    public AjaxResponse doUpdateProductPlatform(@RequestBody Map params) {
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String,Object> platform = (Map<String, Object>) params.get("platform");
+
+        result.put("platform", cmsProductPlatformDetailService.updateProductPlatform(channelId,prodId,platform));
+
+        return success(result);
+    }
 }
+
