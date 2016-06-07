@@ -78,7 +78,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
                 if(cmsMtBrandsMappingModel != null){
-                    platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
@@ -156,7 +156,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
                 if(cmsMtBrandsMappingModel != null){
-                    platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
@@ -172,7 +172,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             parm.put("active", 1);
             CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
             if(cmsMtBrandsMappingModel != null){
-                platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                 platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
             }
             platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());

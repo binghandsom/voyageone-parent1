@@ -98,7 +98,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandId() {
         return getAttribute("pBrandId");
     }
-    public void setpBrandIds(String pBrandId) {
+    public void setpBrandId(String pBrandId) {
         setAttribute("pBrandId", pBrandId);
     }
 
