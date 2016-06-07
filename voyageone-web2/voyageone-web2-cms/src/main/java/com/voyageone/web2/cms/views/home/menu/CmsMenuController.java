@@ -56,7 +56,7 @@ public class CmsMenuController extends CmsController {
         List<Map<String, Object>> categoryList = new ArrayList<>();
 //        List<Map<String, Object>> categoryList = menuService.getCategoryList(cTypeId, channelId);
         resultBean.put("categoryList", categoryList);
-        resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl(getUser().getSelChannelId()));
+        resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl());
         resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
         //主数据类目+Feed类目

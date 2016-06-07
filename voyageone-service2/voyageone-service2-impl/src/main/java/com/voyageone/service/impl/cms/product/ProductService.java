@@ -785,7 +785,7 @@ public class ProductService extends BaseService {
             String imagePath = "";
             if (product.getFields().getImages1().size() > 0) {
                 if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                    imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
+                    imagePath = imageTemplateService.getImageUrl(product.getFields().getImages1().get(0).getName());
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getFields().getLongTitle());
@@ -886,7 +886,7 @@ public class ProductService extends BaseService {
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                        imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
+                        imagePath = imageTemplateService.getImageUrl(product.getFields().getImages1().get(0).getName());
                 }
                 bean.setImgPath(imagePath);
 

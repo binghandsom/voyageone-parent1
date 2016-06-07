@@ -14,7 +14,7 @@
             },
             link: function(scope, element) {
                 if (scope.image != null && scope.image != "" && scope.$root.imageUrl != undefined)
-                    element[0].src = scope.$root.imageUrl.replace('%s', scope.image) + ".jpg";
+                    element[0].src = scope.$root.imageUrl.replace('%s', scope.image);
             }
         };
     });
