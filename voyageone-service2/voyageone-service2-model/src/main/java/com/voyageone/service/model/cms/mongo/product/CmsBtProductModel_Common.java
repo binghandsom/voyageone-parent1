@@ -18,6 +18,9 @@ import java.util.Map;
  */
 public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
+    public final static String FIELDS = "fields";
+    public final static String SKUS = "skus";
+
     public CmsBtProductModel_Field getFields() {
         return getAttribute("fields");
     }
@@ -32,5 +35,46 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
     public void setSkus(List<CmsBtProductModel_Sku> skus) {
         setAttribute("skus", skus);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object put(String key, Object value) {
+        // fields
+        if (FIELDS.equals(key)) {
+            if (value != null) {
+                Map<String, Object> map = (Map<String, Object>) value;
+                CmsBtProductModel_Field fields;
+                if (map instanceof CmsBtProductModel_Field) {
+                    fields = (CmsBtProductModel_Field) map;
+                } else {
+                    fields = new CmsBtProductModel_Field();
+                    fields.putAll(map);
+                }
+                value = fields;
+            }
+        }
+
+        // skus
+        if (SKUS.equals(key)) {
+            if (value != null) {
+                List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
+                List<CmsBtProductModel_Sku> skus = new ArrayList<>();
+                for (Map<String, Object> map : imageMaps) {
+                    if (map != null) {
+                        CmsBtProductModel_Sku sku;
+                        if (map instanceof CmsBtProductModel_Sku) {
+                            sku = (CmsBtProductModel_Sku) map;
+                        } else {
+                            sku = new CmsBtProductModel_Sku();
+                            sku.putAll(map);
+                        }
+                        skus.add(sku);
+                    }
+                }
+                value = skus;
+            }
+        }
+        return super.put(key, value);
     }
 }

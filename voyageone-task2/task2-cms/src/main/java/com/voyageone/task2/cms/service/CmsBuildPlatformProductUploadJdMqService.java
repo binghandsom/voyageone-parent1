@@ -61,7 +61,8 @@ import java.util.concurrent.Executors;
  * Product表中产品不存在就向京东平台新增商品，否则就更新商品
  *
  * @author desmond on 2016/4/12.
- * @version 2.0.0
+ * @version 2.1.0
+ * @since 2.0.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
@@ -478,9 +479,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
                 updateProductGroupStatus(sxData);
 
-                // 上新或更新成功后回写product表中的平台相关nummIId,pStatus等属性
-                //updateProductInfo(sxData);  // TODO 目前回写还有问题
-
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
                 updateJdWareTransportId(shopProp, sxData, jdWareId);
@@ -522,10 +520,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             if (sxData != null && StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
             }
-            // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
+            // 回写workload表   (失败2)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
             throw ex;
         }
 
@@ -623,7 +621,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         // 描述（最多支持3万个英文字符(必须)
-        String strNotes = "详情页描述";
+        String strNotes = "";
         try {
             // 取得描述
             strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, getTaskName(), null);
@@ -1580,38 +1578,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
-        // 特殊字段处理   天猫专用吗
-        // 先从cms_mt_platform_prop_mapping从查找，该属性是否在范围，如果在，那么采用特殊处理
-//        Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
-//        if (!mappingTypePropsMap.isEmpty()) {
-//            // 所有sku取得
-//            List<String> skus = new ArrayList<>();
-//            for (CmsBtProductModel productModel : sxData.getProductList()) {
-//                skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-//            }
-            // wms逻辑库存取得
-//            List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
-//            Map<String, Integer> skuInventoryMap = new HashMap<>();
-//            for (WmsBtInventoryCenterLogicModel model : skuInventoryList) {
-//                skuInventoryMap.put(model.getSku(), model.getQtyChina());
-//            }
-
-//            Map<String, Field> resolveField = constructCustomPlatformProps(mappingTypePropsMap, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
-//            if (!resolveField.isEmpty()) {
-//                if (retMap == null) {
-//                    retMap = new HashMap<>();
-//                }
-//                retMap.putAll(resolveField);
-//            }
-//        }
-
-        // platformMapping表数据处理   京东不要
-//        Map<String, MappingBean> mapProp = new HashMap<>();
-//        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
-//        for (MappingBean mappingBean : propMapings) {
-//            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
-//        }
-
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
                 // 特殊字段
@@ -1730,38 +1696,4 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         String leftPropName = propName.substring(separatorPos + 1);
         return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
     }
-
-    /**
-     * 回写产品Product表里的分平台的一些属性
-     * (platform.P29.field属性如numIId，pStatus)
-     *
-     * @param sxData SxData 上新数据
-     */
-    private void updateProductInfo(SxData sxData) {
-        // 上新成功后回写product表中的各平台的numIId，pStatus等属性
-
-        List<CmsBtProductModel> productList = sxData.getProductList();
-        for (CmsBtProductModel product : productList) {
-            // numIId
-            String numIId = sxData.getPlatform().getNumIId();
-            // pStatus(OnSale/InStock)
-            String pStatus = sxData.getPlatform().getPlatformStatus().name();
-
-            if (product.getPlatform(sxData.getCartId()) != null) {
-                if (!StringUtils.isEmpty(numIId)) {
-                    // 设置每个产品的平台numIId
-                    product.getPlatform(sxData.getCartId()).setpNumIId(numIId);
-                }
-
-                if (!StringUtils.isEmpty(pStatus)) {
-                    // 设置每个产品的平台pStatus(OnSale/InStock)
-                    product.getPlatform(sxData.getCartId()).setpStatus(pStatus);
-                }
-            }
-
-            // 更新ProductGroup表
-            //productService.update(product);
-        }
-    }
-
 }
