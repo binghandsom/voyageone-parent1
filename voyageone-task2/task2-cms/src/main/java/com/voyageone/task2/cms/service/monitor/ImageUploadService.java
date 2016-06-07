@@ -29,6 +29,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipEntry;
@@ -112,10 +113,13 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 Collections.sort(upFtpSuccessFiles);
                 Set<String> skuApprovedSet = new HashSet<>();
                 upFtpSuccessFiles.forEach(k -> {
-                    CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
+                    LOG.info("原始图片文件的名字:" + k + "及lastIndex值-:" + k.lastIndexOf("-"));
+                    String sku = k.substring(8, k.lastIndexOf("-"));
+                    LOG.info("处理的Sku的值为:" + sku);
+                    CmsBtProductModel model = productService.getProductBySku(channelId, sku);
                     if (model != null) {
                         mongoOperator(model, modifyDirName, k);
-                        if (skuApprovedSet.add(k.split("-")[2]))
+                        if (skuApprovedSet.add(sku))
                             approvedOperator(model);
                     } else {
                         errorMsg.append(k.split("-ftp-")[1]).append("：找不到指定商品");
@@ -160,13 +164,28 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @throws IOException
      */
     private void deComparess(File zfile, String tempDir) throws IOException {
-        ZipFile zf = new ZipFile(zfile);
+        Charset CP866 = Charset.forName("iso-8859-1");
+        ZipFile zf = new ZipFile(zfile, CP866);
         Enumeration entries = zf.entries();
+
+        LOG.info("文件正在解压:" + zf.getName());
         while (entries.hasMoreElements()) {
-            ZipEntry entry = ((ZipEntry) entries.nextElement());
-            File cf = new File(tempDir + entry.getName());
-            if (zf.getInputStream(entry).available() > 0) FileUtils.copyInputStreamToFile(zf.getInputStream(entry), cf);
+            try {
+                ZipEntry entry = ((ZipEntry) entries.nextElement());
+                File cf = new File(tempDir + entry.getName());
+                String oldFileName = cf.getName();
+                if (cf.getName().indexOf("－") > 0) {
+                    String newFileName = oldFileName.replaceAll("－", "-");
+                    com.voyageone.common.util.FileUtils.moveFile(cf.getPath(), cf.getParent() + "/" + newFileName);
+                    cf = new File(cf.getParent() + "/" + newFileName);
+                }
+                if (zf.getInputStream(entry).available() > 0) FileUtils.copyInputStreamToFile(zf.getInputStream(entry), cf);
+            } catch (Exception e) {
+                LOG.error("未知异常:" , e);
+            }
         }
+
+        LOG.info("文件解压完成:" + zf.getName());
         zf.close();
     }
 
@@ -208,8 +227,10 @@ public class ImageUploadService extends AbstractFileMonitoService {
         List<File> fileList = new ArrayList<>();
         filterImgFile(new File(tempDir), fileList);
         final FTPClient finalFtpClient = ftpClient;
-        LOG.info("S7的FTP服务器连接成功");
+        LOG.info("S7的FTP服务器连接成功,开始上传图片数量:" + fileList.size());
+
         fileList.forEach(imgfile -> {
+
             try {
                 String uploadFileName = channelId + "-ftp-" + imgfile.getName();
                 //ftpBean.setUpload_path(uploadHome + imgfile.getParent().substring(tempDir.length()).replace("\\", "/"));
@@ -281,8 +302,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 // 只有一张图片,并且该图片的值为空的时候,删除其对应的图片信息
                 if (images.size() == 1)
                     for (Map<String, Object> image : images) {
-                        StringUtils.isEmpty(String.valueOf(image.get(modifyDirName.replace("s", ""))));
-                        images.remove(image);
+                        if (StringUtils.isEmpty(String.valueOf(image.get(modifyDirName.replace("s", "")))))
+                            images.remove(image);
                     }
 
             }
@@ -306,7 +327,9 @@ public class ImageUploadService extends AbstractFileMonitoService {
             }
 
             Set<Map<String, Object>> sets = new HashSet<>();
+            LOG.info("原始图片列表:", images);
             for (Map<String, Object> map : images) if (!sets.add(map)) images.remove(map);
+            LOG.info("更新图片列表:", images);
 
             updateProductModel(model.getChannelId(), model.getProdId(), modifyDirName, images);
 

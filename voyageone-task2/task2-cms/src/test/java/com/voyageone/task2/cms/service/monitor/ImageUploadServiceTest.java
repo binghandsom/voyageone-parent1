@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author aooer 2016/6/2.
  * @version 2.0.0
@@ -22,6 +20,7 @@ public class ImageUploadServiceTest {
 
     @Test
     public void testOnModify() throws Exception {
-        TimeUnit.DAYS.sleep(1);
+//        TimeUnit.DAYS.sleep(1);
+        imageUploadService.onModify("/Users/linanbin/.m2/repository/com/voyageone/task2-cms/2.0.0-SNAPSHOT/ImageUpload/images4/", "20160606.zip", "018");
     }
 }
