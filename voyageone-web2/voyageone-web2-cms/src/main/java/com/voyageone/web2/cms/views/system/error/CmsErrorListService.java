@@ -3,15 +3,21 @@ package com.voyageone.web2.cms.views.system.error;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,10 +61,16 @@ class CmsErrorListService extends BaseAppService {
      * @param params 搜索参数
      * @return 包含错误信息的 Map, 使用了 key: [ errorList, errorCnt ]
      */
-    public Map<String, Object> search(Map params, String channelId) {
+    public Map<String, Object> search(Map params, String channelId,int timeZone) throws ParseException {
         Map<String, Object> resultBean = new HashMap<>();
         params.put("channelId", channelId);
-        resultBean.put("errorList", businessLogService.getList(params));
+        List<CmsBtBusinessLogModel> cmsBtBusinessLogModelList=businessLogService.getList(params);
+        for(CmsBtBusinessLogModel model:cmsBtBusinessLogModelList){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = sdf.parse(DateTimeUtil.getLocalTime(model.getCreated(), timeZone));
+            model.setCreated(date);
+        }
+        resultBean.put("errorList", cmsBtBusinessLogModelList);
         resultBean.put("errorCnt", businessLogService.getCount(params));
         return resultBean;
     }
