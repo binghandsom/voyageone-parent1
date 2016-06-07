@@ -127,7 +127,7 @@ public class DfoAnalysisService extends BaseAnalysisService  {
         } catch (Exception ex) {
             ex.printStackTrace();
             $info("DFO产品文件读入失败");
-            logIssue("cms 数据导入处理", "SummerGuru产品文件读入失败 " + ex.getMessage());
+            logIssue("cms 数据导入处理", "DFO产品文件读入失败 " + ex.getMessage());
         }
         return cnt;
     }
