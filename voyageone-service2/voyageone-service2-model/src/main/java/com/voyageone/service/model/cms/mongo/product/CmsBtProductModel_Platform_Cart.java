@@ -23,10 +23,10 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         this.putAll(map);
     }
     //cartId
-    public String getCartId() {
-        return getAttribute("cartId");
+    public int getCartId() {
+        return getIntAttribute("cartId");
     }
-    public void setCartId(String cartId) {
+    public void setCartId(int cartId) {
         setAttribute("cartId", cartId);
     }
 
@@ -98,7 +98,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public String getpBrandId() {
         return getAttribute("pBrandId");
     }
-    public void setpBrandIds(String pBrandId) {
+    public void setpBrandId(String pBrandId) {
         setAttribute("pBrandId", pBrandId);
     }
 

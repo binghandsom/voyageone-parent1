@@ -11,7 +11,8 @@ define([
     'modules/cms/enums/Status',
     'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
-    'modules/cms/service/product.detail.service'
+    'modules/cms/service/product.detail.service',
+    './jd.component.ctl'
 ], function (cms, _, Status, FieldTypes) {
 
     /**
