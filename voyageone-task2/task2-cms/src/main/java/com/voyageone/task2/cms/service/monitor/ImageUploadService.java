@@ -35,6 +35,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
+ * ImageUploadService
+ *
  * @author aooer 2016/6/2.
  * @version 2.0.0
  * @since 2.0.0
@@ -53,14 +55,14 @@ public class ImageUploadService extends AbstractFileMonitoService {
     private ProductService productService;
 
     @Override
-    protected void onCreate(String filePath, String channelId) {
+    protected void onCreate(String filePath, String fileName, String channelId) {
         LOG.info("监控到目录创建" + filePath);
-        onModify(filePath, channelId);
+        onModify(filePath, fileName, channelId);
     }
 
     @Override
-    protected void onDelete(String filePath) {
-        LOG.info("监控到目录删除" + filePath);
+    protected void onDelete(String filePath, String fileName) {
+        LOG.info("监控到目录删除" + filePath + fileName);
     }
 
     @Autowired
@@ -68,8 +70,10 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
 
     @Override
-    protected void onModify(String filePath, String channelId) {
-
+    protected void onModify(String filePath, String fileName, String channelId) {
+        if (!fileName.endsWith(".zip")) {
+            return;
+        }
         List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
         TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
 
@@ -80,54 +84,57 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
         LOG.info("监控到目录更新" + filePath);
         String tempDir = buildDirPath(filePath, "temp");
-//        String channelId = Properties.readValue(getClass().getSimpleName() + "_monitor_home_path_channelId");
         String modifyDirName = new File(filePath).getName();
-        Arrays.asList(new File(filePath).listFiles((dir, name) -> name.endsWith(".zip"))).forEach(file -> {
-            if (!failedZipFileList.contains(file.getName())) {
-                int readImgCount = 0;
-                int failedImgCount = 0;
-                //异常信息
-                StringBuilder errorMsg = new StringBuilder();
-                try {
-                    //解压缩到临时目录
-                    deComparess(file, tempDir);
-                    //依据临时目录内容上传ftp，之后更新Mongo数据
-                    List<String> upFtpSuccessFiles = new ArrayList<>();
-                    Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
-                    readImgCount = ftpUploadResultMap.size();
-                    for (Map.Entry<String, Boolean> entry : ftpUploadResultMap.entrySet()) {
-                        if (entry.getValue()) {
-                            upFtpSuccessFiles.add(entry.getKey());
-                        } else {
-                            failedImgCount++;
-                            errorMsg.append(entry.getKey().split("-ftp-")[1] + "：图片上传到FTP服务器失败");
-                        }
+        File file = new File(filePath + fileName);
+        if (!failedZipFileList.contains(file.getName())) {
+            int readImgCount = 0;
+            int failedImgCount = 0;
+            //异常信息
+            StringBuilder errorMsg = new StringBuilder();
+            try {
+                //解压缩到临时目录
+                deComparess(file, tempDir);
+                //依据临时目录内容上传ftp，之后更新Mongo数据
+                LOG.info("文件压缩完成.");
+                List<String> upFtpSuccessFiles = new ArrayList<>();
+                Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
+                readImgCount = ftpUploadResultMap.size();
+                for (Map.Entry<String, Boolean> entry : ftpUploadResultMap.entrySet()) {
+                    if (entry.getValue()) {
+                        upFtpSuccessFiles.add(entry.getKey());
+                    } else {
+                        failedImgCount++;
+                        errorMsg.append(entry.getKey().split("-ftp-")[1]).append("：图片上传到FTP服务器失败");
                     }
-                    //排序
-                    Collections.sort(upFtpSuccessFiles);
-                    Set<String> skuApprovedSet = new HashSet<>();
-                    upFtpSuccessFiles.forEach(k -> {
-                        CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
-                        if (model != null) {
-                            mongoOperator(model, modifyDirName, k);
-                            if (skuApprovedSet.add(k.split("-")[2]))
-                                approvedOperator(model);
-                        } else {
-                            errorMsg.append(k.split("-ftp-")[1] + "：找不到指定商品");
-                        }
-                    });
-                    //删除临时目录
-                    FileUtils.deleteDirectory(new File(tempDir));
-                    //移动文件到备份目录
-                    FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
-                } catch (IOException e) {
-                    failedZipFileList.add(file.getName());
-                    errorMsg.append("其他异常：" + e.getMessage());
-                    LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
                 }
-                logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
+                //排序
+                LOG.info("图片上传成功!图片总数:" + readImgCount + "上传成功图片数量:" +upFtpSuccessFiles.size());
+                Collections.sort(upFtpSuccessFiles);
+                Set<String> skuApprovedSet = new HashSet<>();
+                upFtpSuccessFiles.forEach(k -> {
+                    CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
+                    if (model != null) {
+                        mongoOperator(model, modifyDirName, k);
+                        if (skuApprovedSet.add(k.split("-")[2]))
+                            approvedOperator(model);
+                    } else {
+                        errorMsg.append(k.split("-ftp-")[1]).append("：找不到指定商品");
+                    }
+                });
+                LOG.info("图片更新到product表中成功");
+                //删除临时目录
+                FileUtils.deleteDirectory(new File(tempDir));
+                LOG.info("删除临时文件夹成功:" + tempDir);
+                //移动文件到备份目录
+                FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
+                LOG.info("移动到备份文件夹成功:" + buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis());
+            } catch (IOException e) {
+                failedZipFileList.add(file.getName());
+                errorMsg.append("其他异常：").append(e.getMessage());
+                LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
             }
-        });
+            logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
+        }
         taskControlBean.setEnd_time(DateTimeUtil.getNow());
         taskDao.updateTaskControl(taskControlBean);
     }
@@ -170,6 +177,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @return 结果集 key 图片路径，value 上传结果
      */
     private Map<String, Boolean> ftpUpload(String channelId, String tempDir, String errorDir) throws IOException {
+
+        LOG.info("开始上传图片到S7的FTP服务器");
         String uploadHome = Properties.readValue(getClass().getSimpleName() + "_ftpupload_destdir_path") + "/";
 
         FtpBean ftpBean = new FtpBean();
@@ -199,6 +208,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
         List<File> fileList = new ArrayList<>();
         filterImgFile(new File(tempDir), fileList);
         final FTPClient finalFtpClient = ftpClient;
+        LOG.info("S7的FTP服务器连接成功");
         fileList.forEach(imgfile -> {
             try {
                 String uploadFileName = channelId + "-ftp-" + imgfile.getName();
@@ -207,17 +217,22 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 ftpBean.setUpload_localfilename(imgfile.getName());
                 ftpBean.setUpload_filename(uploadFileName);
                 uploadResultMap.put(uploadFileName, ftpUtil.uploadFile(ftpBean, finalFtpClient));
+                LOG.info("S7的FTP文件上传成功:" + uploadFileName);
             } catch (IOException e) {
                 try {
+                    LOG.info("S7的FTP文件上传异常:" + imgfile);
                     FileUtils.copyFileToDirectory(imgfile, new File(errorDir + imgfile.getPath().split(tempDir)[1]), true);
                 } catch (IOException e1) {
                     LOG.error("移动上传错误图片到error目录异常", e);
                 }
+            } catch (Exception e) {
+                LOG.error("图片上传到S7服务器异常:" + e);
             }
         });
         if (ftpClient != null) {
             try {
                 ftpUtil.disconnectFtp(ftpClient);
+                LOG.info("S7的FTP服务器关闭成功");
             } catch (IOException e) {
                 LOG.error("关闭ftp连接异常", e);
             }
@@ -232,7 +247,11 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param fileList 文件list
      */
     private void filterImgFile(File dirFile, List<File> fileList) {
-        for (File file : dirFile.listFiles()) {
+        File[] files = dirFile.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
             if (file.isDirectory()) {
                 filterImgFile(file, fileList);
             } else if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png") || file.getName().endsWith(".gif")
@@ -252,6 +271,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
             /* fields */
             CmsBtProductModel_Field fields = model.getFields();
 
+            LOG.info("正在处理产品:" + fields.getCode());
+
             /* change fileds.images */
             List<Map<String, Object>> images = new CopyOnWriteArrayList<>();
             if (!ObjectUtils.isEmpty(fields.get(modifyDirName))) {
@@ -259,7 +280,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
                 // 只有一张图片,并且该图片的值为空的时候,删除其对应的图片信息
                 if (images.size() == 1)
-                    for(Map<String, Object> image : images) {
+                    for (Map<String, Object> image : images) {
                         StringUtils.isEmpty(String.valueOf(image.get(modifyDirName.replace("s", ""))));
                         images.remove(image);
                     }
@@ -288,6 +309,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
             for (Map<String, Object> map : images) if (!sets.add(map)) images.remove(map);
 
             updateProductModel(model.getChannelId(), model.getProdId(), modifyDirName, images);
+
+            LOG.info("产品处理成功:" + fields.getCode());
         } catch (IOException e) {
             LOG.info("JacksonUtil解析异常", e);
         }
@@ -334,6 +357,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
         stringBuilder.append("\n正常处理图片个数：").append(processedSkuCount);
         stringBuilder.append("\n异常处理图片个数：").append(failedSkuCount);
         stringBuilder.append("\n错误说明：").append(errorMsg);
+
         CmsBtBusinessLogModel logModel = new CmsBtBusinessLogModel();
         logModel.setChannelId(channelId);
         logModel.setErrorMsg(stringBuilder.toString());
