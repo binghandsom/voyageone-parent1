@@ -1,8 +1,10 @@
 package com.voyageone.task2.cms.service.monitor;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 抽象文件监控服务，文件监控服务的父类
@@ -70,7 +74,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                     new Thread(() -> {
                         try {
                             LOG.info(String.format("AbstractFileMonitoService.run channelId=%s;path=%s", channelId, childFile.getPath()));
-                            executeCmd(channelId, childFile.getPath());
+                            executeCmd(channelId, childFile.getPath(), taskControlList, 1);
                         } catch (IOException e) {
                             LOG.error("文件监控服务启动严重异常", e);
                         }
@@ -96,7 +100,22 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
         }
     }
 
-    private void executeCmd(String channelId, String watchPath) throws IOException {
+    private void executeCmd(String channelId, String watchPath, List<TaskControlBean> taskControlList, int defaultThreadCount) throws IOException {
+
+        String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        int intThreadCount = defaultThreadCount;
+
+        if (!StringUtils.isNullOrBlank2(threadCount)) {
+            intThreadCount = Integer.valueOf(threadCount);
+        }
+
+        // 如果最终计算获得线程数量无效，则提示错误
+        if (intThreadCount < 1) {
+            throw new IllegalArgumentException("thread count error.");
+        }
+
+        ExecutorService pool = Executors.newFixedThreadPool(intThreadCount);
+
         File workFolder = new File(System.getProperty("user.dir"));
 
         String cmd = buildCmd(watchPath);
@@ -114,12 +133,12 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                 if (result.length != 3) {
                     continue;
                 }
-                LOG.info(result[0] + "->" + result[1] + "->" + result[2]);
+                //LOG.info(result[0] + "->" + result[1] + "->" + result[2]);
 
                 String strPath = result[0];
                 String strFileName = result[1];
                 try {
-                    onModify(strPath, strFileName, channelId);
+                    pool.execute(() -> onModify(strPath, strFileName, channelId));
                 } catch (Exception e) {
                     LOG.error("AbstractFileMonitoService.executeCmd", e);
                 }
