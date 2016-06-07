@@ -667,15 +667,6 @@ public class SxProductService extends BaseService {
             if (mapSp.containsKey(field.getId())) {
                 // 特殊字段
 
-            } else if (resolveJdPriceSection_before(shopBean, field)) {
-                // 设置京东属性 - [价格][价位]
-                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
-                if (resolveField != null) {
-                    if (retMap == null) {
-                        retMap = new HashMap<>();
-                    }
-                    retMap.putAll(resolveField);
-                }
             } else {
                 MappingBean mappingBean = mapProp.get(field.getId());
                 if (mappingBean == null) {
@@ -819,6 +810,51 @@ public class SxProductService extends BaseService {
                 // 按理说没有其他的场合了, 如果有的话就有问题了, 这个在预处理里就应该判断掉
             }
         }
+
+        return retMap;
+    }
+
+    /**
+     * [ 预判断 ] 设置京东属性 - [品牌]
+     * 注意: 通过这里统一设置品牌属性，这样运营就不用再设置品牌信息了
+     * @param shopBean ShopBean 店铺信息
+     * @param field Field 字段的内容
+     * @return 是否是品牌属性
+     */
+    public boolean resolveJdBrandSection_before(ShopBean shopBean, Field field) {
+
+        // 如果不是京东京东国际的话, 返回false
+        if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+            return false;
+        }
+
+        // 属性名字必须是指定内容
+        if (!"品牌".equals(field.getName())) {
+            return false;
+        }
+
+        // 判断类型
+        if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 设置京东属性 - [品牌]
+     * 注意: 这里不是设置真正的价格, 而是设置价格区间用的
+     * @param field 字段的内容
+     * @param sxData 商品信息之类的
+     * @return 返回的字段
+     */
+    public Map<String, Field> resolveJdBrandSection(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        SingleCheckField singleCheckField = (SingleCheckField) field;
+        // 取得上新数据中设置的品牌code直接设置
+        singleCheckField.setValue(sxData.getBrandCode());
+        retMap.put(field.getId(), singleCheckField);
 
         return retMap;
     }
