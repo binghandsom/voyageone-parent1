@@ -118,7 +118,11 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
 
                 String strPath = result[0];
                 String strFileName = result[1];
-                onModify(strPath, strFileName, channelId);
+                try {
+                    onModify(strPath, strFileName, channelId);
+                } catch (Exception e) {
+                    LOG.error("AbstractFileMonitoService.executeCmd", e);
+                }
             }
         } finally {
             if (null != reader)

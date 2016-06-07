@@ -3,15 +3,15 @@ package com.voyageone.task2.cms.service.monitor;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.ftp.FtpComponentFactory;
+import com.voyageone.components.ftp.FtpConstants;
+import com.voyageone.components.ftp.bean.FtpFileBean;
+import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -22,7 +22,6 @@ import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -43,10 +42,6 @@ import java.util.zip.ZipFile;
  */
 @Service
 public class ImageUploadService extends AbstractFileMonitoService {
-
-    private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
-
-    private static final List<String> failedZipFileList = new ArrayList<>();
 
     @Autowired
     private BusinessLogService businessLogService;
@@ -86,50 +81,49 @@ public class ImageUploadService extends AbstractFileMonitoService {
         String tempDir = buildDirPath(filePath, "temp");
         String modifyDirName = new File(filePath).getName();
         File file = new File(filePath + fileName);
-        if (!failedZipFileList.contains(file.getName())) {
-            int readImgCount = 0;
-            int failedImgCount = 0;
-            //异常信息
-            StringBuilder errorMsg = new StringBuilder();
-            try {
-                //解压缩到临时目录
-                deComparess(file, tempDir);
-                //依据临时目录内容上传ftp，之后更新Mongo数据
-                List<String> upFtpSuccessFiles = new ArrayList<>();
-                Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
-                readImgCount = ftpUploadResultMap.size();
-                for (Map.Entry<String, Boolean> entry : ftpUploadResultMap.entrySet()) {
-                    if (entry.getValue()) {
-                        upFtpSuccessFiles.add(entry.getKey());
-                    } else {
-                        failedImgCount++;
-                        errorMsg.append(entry.getKey().split("-ftp-")[1]).append("：图片上传到FTP服务器失败");
-                    }
+
+        int readImgCount = 0;
+        int failedImgCount = 0;
+        //异常信息
+        StringBuilder errorMsg = new StringBuilder();
+        try {
+            //解压缩到临时目录
+            deComparess(file, tempDir);
+            //依据临时目录内容上传ftp，之后更新Mongo数据
+            List<String> upFtpSuccessFiles = new ArrayList<>();
+            Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
+            readImgCount = ftpUploadResultMap.size();
+            for (Map.Entry<String, Boolean> entry : ftpUploadResultMap.entrySet()) {
+                if (entry.getValue()) {
+                    upFtpSuccessFiles.add(entry.getKey());
+                } else {
+                    failedImgCount++;
+                    errorMsg.append(entry.getKey().split("-ftp-")[1]).append("：图片上传到FTP服务器失败");
                 }
-                //排序
-                Collections.sort(upFtpSuccessFiles);
-                Set<String> skuApprovedSet = new HashSet<>();
-                upFtpSuccessFiles.forEach(k -> {
-                    CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
-                    if (model != null) {
-                        mongoOperator(model, modifyDirName, k);
-                        if (skuApprovedSet.add(k.split("-")[2]))
-                            approvedOperator(model);
-                    } else {
-                        errorMsg.append(k.split("-ftp-")[1]).append("：找不到指定商品");
-                    }
-                });
-                //删除临时目录
-                FileUtils.deleteDirectory(new File(tempDir));
-                //移动文件到备份目录
-                FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
-            } catch (IOException e) {
-                failedZipFileList.add(file.getName());
-                errorMsg.append("其他异常：").append(e.getMessage());
-                LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
             }
-            logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
+            //排序
+            Collections.sort(upFtpSuccessFiles);
+            Set<String> skuApprovedSet = new HashSet<>();
+            upFtpSuccessFiles.forEach(k -> {
+                CmsBtProductModel model = productService.getProductBySku(channelId, k.split("-")[2]);
+                if (model != null) {
+                    mongoOperator(model, modifyDirName, k);
+                    if (skuApprovedSet.add(k.split("-")[2]))
+                        approvedOperator(model);
+                } else {
+                    errorMsg.append(k.split("-ftp-")[1]).append("：找不到指定商品");
+                }
+            });
+            //删除临时目录
+            FileUtils.deleteDirectory(new File(tempDir));
+            //移动文件到备份目录
+            FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
+        } catch (IOException e) {
+            errorMsg.append("其他异常：").append(e.getMessage());
+            LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
         }
+        logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
+
         taskControlBean.setEnd_time(DateTimeUtil.getNow());
         taskDao.updateTaskControl(taskControlBean);
     }
@@ -171,45 +165,33 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param tempDir dir
      * @return 结果集 key 图片路径，value 上传结果
      */
-    private Map<String, Boolean> ftpUpload(String channelId, String tempDir, String errorDir) throws IOException {
-        String uploadHome = Properties.readValue(getClass().getSimpleName() + "_ftpupload_destdir_path") + "/";
+    private Map<String, Boolean> ftpUpload(String channelId, String tempDir, String errorDir) {
+        // FtpBean初期化
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
 
-        FtpBean ftpBean = new FtpBean();
-        // ftp连接port
-        String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
-        ftpBean.setPort(port);
-        // ftp连接url
-        String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
-        ftpBean.setUrl(url);
-        // ftp连接usernmae
-        String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
-        ftpBean.setUsername(userName);
-        // ftp连接password
-        String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
-        ftpBean.setPassword(password);
-        // ftp连接上传文件编码
-        String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
-        ftpBean.setFile_coding(fileEncode);
-        //FTP服务器保存目录设定
-//        ftpBean.setUpload_path(uploadHome);
         String uploadPath = ChannelConfigs.getVal1(channelId, ChannelConfigEnums.Name.scene7_image_folder);
-        ftpBean.setUpload_path(uploadPath);
+        if (StringUtils.isEmpty(uploadPath)) {
+            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", channelId);
+            LOG.error(err);
+            throw new RuntimeException(err);
+        }
 
-        FtpUtil ftpUtil = new FtpUtil();
         Map<String, Boolean> uploadResultMap = new HashMap<>();
-        FTPClient ftpClient = ftpUtil.linkFtp(ftpBean);
+
+        //取得图片文件
         List<File> fileList = new ArrayList<>();
         filterImgFile(new File(tempDir), fileList);
-        final FTPClient finalFtpClient = ftpClient;
+
+        //建立连接
+        ftpComponent.openConnect();
         fileList.forEach(imgfile -> {
+            String uploadFileName = channelId + "-ftp-" + imgfile.getName();
+            FtpFileBean ftpFileBean = new FtpFileBean(imgfile.getParent(), imgfile.getName(), uploadPath, uploadFileName);
             try {
-                String uploadFileName = channelId + "-ftp-" + imgfile.getName();
-                //ftpBean.setUpload_path(uploadHome + imgfile.getParent().substring(tempDir.length()).replace("\\", "/"));
-                ftpBean.setUpload_localpath(imgfile.getParent());
-                ftpBean.setUpload_localfilename(imgfile.getName());
-                ftpBean.setUpload_filename(uploadFileName);
-                uploadResultMap.put(uploadFileName, ftpUtil.uploadFile(ftpBean, finalFtpClient));
-            } catch (IOException e) {
+                ftpComponent.uploadFile(ftpFileBean);
+                uploadResultMap.put(uploadFileName, true);
+            } catch (Exception e) {
+                uploadResultMap.put(uploadFileName, false);
                 try {
                     FileUtils.copyFileToDirectory(imgfile, new File(errorDir + imgfile.getPath().split(tempDir)[1]), true);
                 } catch (IOException e1) {
@@ -217,13 +199,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 }
             }
         });
-        if (ftpClient != null) {
-            try {
-                ftpUtil.disconnectFtp(ftpClient);
-            } catch (IOException e) {
-                LOG.error("关闭ftp连接异常", e);
-            }
-        }
+
+        ftpComponent.closeConnect();
         return uploadResultMap;
     }
 
