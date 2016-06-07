@@ -1773,7 +1773,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             if (product.getPlatform(sxData.getCartId()) != null) {
                 if (!StringUtils.isEmpty(numIId)) {
                     // 设置每个产品的平台numIId
-                    product.getPlatform(sxData.getCartId()).setpNumIid(numIId);
+                    product.getPlatform(sxData.getCartId()).setpNumIId(numIId);
                 }
 
                 if (!StringUtils.isEmpty(pStatus)) {

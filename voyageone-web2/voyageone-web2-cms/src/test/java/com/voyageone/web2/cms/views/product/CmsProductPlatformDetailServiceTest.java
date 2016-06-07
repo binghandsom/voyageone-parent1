@@ -61,7 +61,7 @@ public class CmsProductPlatformDetailServiceTest {
     public void testProduct() {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010", "51A0HC13E1-00LCNB0");
         CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = new CmsBtProductModel_Platform_Cart();
-        cmsBtProductModel_platform_cart.setpNumIid("1111");
+        cmsBtProductModel_platform_cart.setpNumIId("1111");
         cmsBtProductModel_platform_cart.setpCatId("1349");
         cmsBtProductModel_platform_cart.setpCatPath("服饰内衣>男装>T恤");
 

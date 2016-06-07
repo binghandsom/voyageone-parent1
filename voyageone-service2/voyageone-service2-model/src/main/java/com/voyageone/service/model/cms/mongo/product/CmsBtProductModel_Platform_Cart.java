@@ -55,12 +55,12 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pIsMain", pIsMain);
     }
 
-    //pNumIid
-    public String getpNumIid() {
-        return getAttribute("pNumIid");
+    //pNumIId
+    public String getpNumIId() {
+        return getAttribute("pNumIId");
     }
-    public void setpNumIid(String pNumIid) {
-        setAttribute("pNumIid", pNumIid);
+    public void setpNumIId(String pNumIId) {
+        setAttribute("pNumIId", pNumIId);
     }
 
     //status
@@ -79,12 +79,12 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pStatus", pStatus);
     }
 
-    //pPubishError
-    public String getpPubishError() {
-        return getAttribute("pPubishError");
+    //pPublishError
+    public String getpPublishError() {
+        return getAttribute("pPublishError");
     }
-    public void setpPubishError(String pPubishError) {
-        setAttribute("pPubishError", pPubishError);
+    public void setpPublishError(String pPublishError) {
+        setAttribute("pPublishError", pPublishError);
     }
 
     //pBrandId
