@@ -73,7 +73,7 @@
     * status
     * pCatId
     * pCatPath
-    * pCategoryStatus
+    * pCatStatus
     * pIsMain   ->是否是该平台主商品
     * pNumIId
     * pStatus
