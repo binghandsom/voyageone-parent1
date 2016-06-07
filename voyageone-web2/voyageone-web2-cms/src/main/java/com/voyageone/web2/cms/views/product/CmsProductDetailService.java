@@ -202,10 +202,10 @@ public class CmsProductDetailService extends BaseAppService {
         infoMap.put("isMain", isMain ? 1 : 0);
 
         // 设置默认第一张图片
-        String defaultImageUrl = imageTemplateService.getDefaultImageUrl(channelId);
+        String defaultImageUrl = imageTemplateService.getDefaultImageUrl();
         Map<String, Object> defaultImage = productValueModel.getFields().getImages1().get(0);
         if (defaultImage.size() > 0)
-            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))) + ".jpg");
+            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))));
 
         return infoMap;
     }

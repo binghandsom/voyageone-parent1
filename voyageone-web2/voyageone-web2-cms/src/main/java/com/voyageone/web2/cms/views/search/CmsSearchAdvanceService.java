@@ -16,7 +16,6 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -79,7 +78,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;sales;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.images2;fields.images3;fields.images4;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.images2;fields.images3;fields.images4;fields.images5;fields.images6;fields.quantity;fields.productType;fields.sizeType;fields.isMasterMain;" +
             "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
