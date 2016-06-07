@@ -54,8 +54,11 @@ public class ImagePostScene7Service {
 	 * 根据图片url上传scene7图片文件
 	 *
 	 */
-	public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
-								   List<Map<String, String>> urlErrorList, int threadNo) {
+	public boolean getAndSendImage(String orderChannelId,
+								   List<Map<String, String>> imageUrlList,
+								   List<String> successImageUrlList,
+								   List<Map<String, String>> urlErrorList,
+								   int threadNo) {
 		boolean isSuccess = true;
 
 		if (imageUrlList != null && imageUrlList.size() > 0) {

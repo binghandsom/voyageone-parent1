@@ -244,8 +244,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 System.lineSeparator() + "图片URL错误个数：" + urlErrorList.size();
     }
 
-    public boolean getAndSendImage(String orderChannelId, List<CmsBtImagesModel> imageUrlList, List<CmsBtImagesModel> successImageUrlList,
-                                   List<CmsBtImagesModel> urlErrorList, long threadNo) {
+    public boolean getAndSendImage(String orderChannelId,
+                                   List<CmsBtImagesModel> imageUrlList,
+                                   List<CmsBtImagesModel> successImageUrlList,
+                                   List<CmsBtImagesModel> urlErrorList,
+                                   long threadNo) {
         boolean isSuccess = true;
 
         if (imageUrlList != null && imageUrlList.size() > 0) {
@@ -261,7 +264,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             // FtpBean初期化
             BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
 
-            InputStream inputStream = null;
+            InputStream inputStream;
             String imageUrl = null;
             try {
                 //建立连接
