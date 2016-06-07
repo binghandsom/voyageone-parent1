@@ -72,7 +72,7 @@ class CmsErrorListService extends BaseAppService {
             try {
                 date = sdf.parse(DateTimeUtil.getLocalTime(model.getCreated(), timeZone));
             } catch (ParseException e) {
-                throw new BusinessException("1000003");
+                throw new BusinessException("7000010");
             }
             model.setCreated(date);
         }
