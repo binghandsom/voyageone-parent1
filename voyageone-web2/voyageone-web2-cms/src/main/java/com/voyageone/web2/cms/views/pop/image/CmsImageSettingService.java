@@ -3,12 +3,13 @@ package com.voyageone.web2.cms.views.pop.image;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.ftp.FtpComponentFactory;
+import com.voyageone.components.ftp.FtpConstants;
+import com.voyageone.components.ftp.bean.FtpFileBean;
+import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.ImageTemplateService;
@@ -22,8 +23,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,13 +41,8 @@ import java.util.stream.Collectors;
 @Service
 public class CmsImageSettingService extends BaseAppService {
 
-    // Scene7FTP设置
-    private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
-
     @Autowired
     private ProductService productService;
-    @Autowired
-    private ImageTemplateService imageTemplateService;
     @Autowired
     ProductGroupService productGroupService;
     @Autowired
@@ -64,23 +58,6 @@ public class CmsImageSettingService extends BaseAppService {
 
         String orderChannelId = user.getSelChannelId();
 
-        FtpBean ftpBean = new FtpBean();
-        // ftp连接port
-        String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
-        ftpBean.setPort(port);
-        // ftp连接url
-        String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
-        ftpBean.setUrl(url);
-        // ftp连接usernmae
-        String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
-        ftpBean.setUsername(userName);
-        // ftp连接password
-        String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
-        ftpBean.setPassword(password);
-        // ftp连接上传文件编码
-        String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
-        ftpBean.setFile_coding(fileEncode);
-
         //FTP服务器保存目录设定
         String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
         if (StringUtils.isEmpty(uploadPath)) {
@@ -88,15 +65,20 @@ public class CmsImageSettingService extends BaseAppService {
             $error(orderChannelId);
             throw new BusinessException(err);
         }
-        ftpBean.setUpload_path(uploadPath);
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
 
         // 获取图片名字
         String imageName = getImageName(cmsBtProductModel, imageType, user);
 
+        // FtpBean初期化
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+
+        // ftp连接usernmae
+        String userName = ftpComponent.getFtpConnectBean().getUsername();
+
         // 上传图片到Ftp
-        if (uplodFtp(ftpBean, file.getInputStream(), imageName)) {
+        if (uploadFtp(ftpComponent, uploadPath, file.getInputStream(), imageName + imageExtend)) {
 
             // 插入图片表
             CmsBtImagesModel newModel = new CmsBtImagesModel();
@@ -134,7 +116,7 @@ public class CmsImageSettingService extends BaseAppService {
 
         images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName = "";
+        String imageName;
         int size = images.size();
         while (true){
             size++;
@@ -153,38 +135,23 @@ public class CmsImageSettingService extends BaseAppService {
 
     }
 
-    private boolean uplodFtp(FtpBean ftpBean, InputStream imageStream, String imageName) throws IOException {
-        FtpUtil ftpUtil = new FtpUtil();
-        FTPClient ftpClient = new FTPClient();
+    private boolean uploadFtp(BaseFtpComponent ftpComponent, String uploadPath, InputStream imageStream, String imageName) throws IOException {
         boolean isSuccess = true;
 
         try {
             //建立连接
-            ftpClient = ftpUtil.linkFtp(ftpBean);
-            if (ftpClient != null) {
+            ftpComponent.openConnect();
+            ftpComponent.enterLocalPassiveMode();
 
-                boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
-                if (change) {
-                    ftpClient.enterLocalPassiveMode();
-                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                    ftpClient.setConnectTimeout(120000);
-                    boolean result = ftpClient.storeFile(imageName, imageStream);
-
-                    if (!result) {
-                        isSuccess = false;
-                    }
-                }
-            }
+            FtpFileBean ftpFileBean = new FtpFileBean(imageStream, uploadPath, imageName);
+            ftpComponent.uploadFile(ftpFileBean);
 
         } catch (Exception ex) {
             $error(ex.getMessage(), ex);
             isSuccess = false;
-
         } finally {
             //断开连接
-            if (ftpClient != null) {
-                ftpUtil.disconnectFtp(ftpClient);
-            }
+            ftpComponent.closeConnect();
         }
 
         return isSuccess;
