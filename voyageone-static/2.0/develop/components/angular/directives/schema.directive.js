@@ -230,9 +230,14 @@
             return {
                 restrict: 'E',
                 transclude: true,
-                template: '<ng-form name="{{$ctrl.formName}}" ng-transclude></ng-form>',
+                template: '<ng-form name="{{$ctrl.formName}}"></ng-form>',
                 scope: true,
                 controllerAs: '$ctrl',
+                link: function($scope, $element, $attrs, ctrl, transclude) {
+                    transclude($scope, function(clone) {
+                        $element.find('ng-form').append(clone);
+                    });
+                },
                 controller: function ($scope, $attrs) {
 
                     var self = this;
@@ -340,7 +345,8 @@
                         // var maxTargetSizeRule = rules.maxTargetSizeRule;
 
                         var type = 'text';
-                        var innerElem, voMessage, fieldElemName;
+                        var innerElem, voMessage, fieldElemName,
+                            hasValidate = Object.keys(rules).filter(function (ruleName) { return ruleName.indexOf('tip') < 0; });
 
                         /**
                          * 为 maxlength 和 minlength 规则提供支持
@@ -413,6 +419,7 @@
 
                         fieldElemName = 'field_name_' + random();
                         innerElem.attr('name', fieldElemName);
+                        innerElem.attr('ng-model', 'field.value');
 
                         bindBoolRule(requiredRule, 'requiredRule', 'required');
                         bindBoolRule(readOnlyRule, 'readOnlyRule', 'readonly');
@@ -446,11 +453,16 @@
                             innerElem.attr('title', tipRule);
                         }
 
-                        innerElem = $compile(innerElem)($scope);
-                        // 追加信息显示
-                        voMessage = $compile('<vo-message target="' + schemaController.formName + '.' + fieldElemName + '"></vo-message>')($scope);
-
-                        elem.append(innerElem, voMessage);
+                        // 如果无验证的话, 就不需要信息显示了
+                        if (hasValidate) {
+                            voMessage = angular.element('<vo-message target="' + schemaController.formName + '.' + fieldElemName + '"></vo-message>');
+                            elem.append(innerElem, voMessage);
+                            $compile(innerElem)($scope);
+                            $compile(voMessage)($scope);
+                        } else {
+                            elem.append(innerElem);
+                            $compile(innerElem)($scope);
+                        }
                     }
                 }
             }
