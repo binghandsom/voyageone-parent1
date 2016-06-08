@@ -7,7 +7,6 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -49,6 +48,15 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String isFeedReImport;
 
     private String productType;
+    private String material;
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
     public String getCategory() {
         return category;
@@ -280,6 +288,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setUpdFlg(0);
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
         cmsBtFeedInfoModel.setProductType(this.productType);
+        cmsBtFeedInfoModel.setMaterial(this.material);
         return cmsBtFeedInfoModel;
     }
 

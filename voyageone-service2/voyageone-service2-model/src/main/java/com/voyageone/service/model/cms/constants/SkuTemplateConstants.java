@@ -81,5 +81,11 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_CUSTOM_SIZE_3 = 67;
     public final static int EXTENDSIZE_CUSTOM_SIZE_4 = 68;
 
+    // 既没有颜色也没有尺码
+    public final static int SKU_MASTER = 69;
+    public final static int EXTENDMASTER = 70;
+    public final static int EXTENDMASTER_MASTER = 71;
+    public final static int EXTENDMASTER_ALIASNAME = 72;
+
     public final static int UNKOWN = 99999;
 }
