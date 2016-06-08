@@ -7,7 +7,7 @@ define([
     cms.controller('HsCodeController', (function () {
         function HsCodeController(hsCodeInfoService) {
             this.hsCodeInfoService = hsCodeInfoService;
-            this.prodPageOption = {curr: 1, total: 0, fetch: search};
+            this.prodPageOption = {curr: 1, total: 0, fetch: this.search};
             this.searchInfo = {};
             this.totalHsCodeCnt = 0;
             this.hsCodeTaskCnt = "";
@@ -34,7 +34,7 @@ define([
             },
             search: function (page) {
                 var self = this;
-                self.prodPageOption.curr=!page ? self.prodPageOption.curr : page;
+                self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
                 self.searchInfo.pageNum = self.prodPageOption.curr;
                 self.searchInfo.pageSize = self.prodPageOption.size;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
