@@ -1,24 +1,37 @@
-<div class="product-shema-detail" ng-controller="popupCtrl">
+<div class="product-shema-detail" ng-controller="popupCtrl" xmlns:>
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="row wrapper">
                 <div class="container-fluid">
                     <div class="col-md-8 form-group">
-
+                            <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills col-md-8">
-                                <li class="active"><span>翻译&emsp;<i class="fa fa-check"></i></span></li>
-                                <li class="active"><span>税号&emsp;<i class="fa fa-check"></i></span></li>
-                                <li class="active"><span>平台类目&emsp;<i class="fa fa-check"></i></span></li>
-                                <li class="active"><span class="tagFlag">属性&emsp;<i class="fa fa-times"></i></span></li>
+                                <li>
+                                    <span ng-class = "{tagFlag:vm.checkFlag.translate != 1}">翻译&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.translate == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.translate != 1"></i>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-class = "{tagFlag:vm.checkFlag.tax != 1}">税号&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-class = "{tagFlag:vm.checkFlag.category != 1}">平台类目&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.category == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-class = "{tagFlag:vm.checkFlag.attribute != 1}">属性&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.attribute == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.attribute != 1"></i>
+                                    </span>
+                                </li>
                             </ul>
                             <div class="col-md-4">
-                                <label class="m-t-xs col-sm-2 text-right ng-scope" >Approved</label>
-                                <label class="checkbox-inline c-radio ng-binding ng-scope">
-                                    <input  name="priceType" type="radio" ng-value="productStatus.value" class="ng-pristine ng-untouched ng-valid ng-not-empty" value="Approved"><span class="fa fa-check"></span> yes
-                                </label>
-                                <label class="checkbox-inline c-radio ng-binding ng-scope">
-                                    <input  name="priceType" type="radio" ng-value="productStatus.value" class="ng-pristine ng-untouched ng-valid ng-not-empty" value="Approved" checked><span class="fa fa-check"></span> no
-                                </label>
                             </div>
 
                     </div>
@@ -133,6 +146,36 @@
                         </schema-header>
                     </div>
                 </div>
+
+                <hr>
+                <!------------------------------------------------以下为产品schema------------------------------------------------------->
+                <div class="container-fluid">
+                    <div class="table-responsive">
+                        <table class="table text-left">
+                            <thead>
+                            <tr>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">skuCode</th>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">条形码</th>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">size</th>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">retail price</th>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">容量/尺码</th>
+                                <th class="text-left ng-binding ng-scope vo_reqfield">sale price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
+                                <td class="text-left ng-scope">{{entity.skuCode}}</td>
+                                <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].priceRetail}}</td>
+                                <td class="text-left ng-scope"></td>
+                                <td class="text-left ng-scope">{{entity.priceSale}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </form>

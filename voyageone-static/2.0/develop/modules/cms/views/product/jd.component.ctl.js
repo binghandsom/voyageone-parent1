@@ -19,7 +19,9 @@ define([
                     productDetails:null,
                     productCode:"",
                     mastData:null,
-                    platform:null
+                    platform:null,
+                    skuTemp:{},
+                    checkFlag:{translate:0, tax:0, category:0, attribute:0}
                 };
 
                 initialize();
@@ -33,6 +35,16 @@ define([
                     productDetailService.getProductPlatform({cartId:"26",prodId:scope.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
+
+                        _.each(scope.vm.mastData.skus,function(mSku){
+                                scope.vm.skuTemp[mSku.skuCode] = mSku;
+                        });
+
+                        //设置check状态 categoryStatus     hsCodeStatus
+                        scope.vm.checkFlag.translate =  scope.vm.mastData.translateStatus;
+                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus;
+                        scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null?0:1;
+
                     });
                     productDetailService.getProductInfo({productId: scope.productId})
                         .then(function (res) {
@@ -49,7 +61,7 @@ define([
                                 return null;
                             }
                             return popupNewCategory({
-                                from:scope.vm.platform.pCatPath,
+                                from:"",
                                 categories: res.data
                             });
                         }).then(function (context) {
@@ -62,15 +74,22 @@ define([
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selList = [{"id": scope.productId, "code": scope.vm.productDetails.productCode}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
-                        console.log("context",context);
+
                     })
                 }
 
                 function saveProduct(){
-                    scope.vm.platform.cartId = "26";
+                    validSchema()
+/*                    scope.vm.platform.cartId = "26";
                     productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
-                        console.log(resp);
-                     });
+
+                     });*/
+                }
+
+                function validSchema(){
+                    scope.vm.platform.schemaFields.some(function(schema){
+                        console.log(schema);
+                    });
                 }
             }
         };
