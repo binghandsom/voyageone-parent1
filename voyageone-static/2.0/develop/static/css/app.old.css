@@ -5424,6 +5424,7 @@ a.text-black:hover {
 }
 .wrapper-md {
     padding: 8px 8px 8px 8px;
+    margin-bottom:30px;
 }
 .wrapper-lg {
     padding: 30px;
