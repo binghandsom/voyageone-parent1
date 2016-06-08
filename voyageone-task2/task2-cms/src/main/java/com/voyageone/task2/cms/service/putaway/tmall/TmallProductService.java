@@ -3,23 +3,18 @@ package com.voyageone.task2.cms.service.putaway.tmall;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
-import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
-import com.taobao.top.schema.field.ComplexField;
-import com.taobao.top.schema.field.Field;
-import com.taobao.top.schema.field.InputField;
-import com.taobao.top.schema.field.MultiCheckField;
-import com.taobao.top.schema.field.MultiComplexField;
-import com.taobao.top.schema.field.SingleCheckField;
+import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -50,15 +45,6 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.components.tmall.service.TbProductService;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1145,6 +1131,52 @@ public class TmallProductService {
         ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 //        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         // modified by morse.lu 2016/05/15 end
+
+		// 20160607 可能现在天猫改规则了, 要更新产品试试看 START
+        String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
+        if (!StringUtils.isEmpty(productCode)) {
+            // 获取更新产品的规则的schema
+            String updateProductSchema;
+            try {
+                updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean);
+            } catch (ApiException e) {
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+            }
+
+            // 填充内容
+            List<Field> updateFields;
+            {
+                Map<String, Field> fieldMap;
+                try {
+                    fieldMap = schemaToIdPropMap(updateProductSchema);
+                } catch (TopSchemaException e) {
+                    logger.error(e.getMessage(), e);
+                    throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
+                }
+                ExpressionParser expressionParser = tcb.getExpressionParser();
+                constructCustomPlatformProps(tcb, fieldMap, expressionParser, null, false);
+                CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+                constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
+                updateFields = resolveMappingProps(tmallUploadRunState, null);
+                // added by morse.lu 2016/06/08 start
+                // 清一下，开始进行商品上新
+                tmallUploadRunState.getContextBuildFields().clearContext();
+                // added by morse.lu 2016/06/08 end
+            }
+
+            // 更新产品
+            try {
+                String schema = SchemaWriter.writeParamXmlString(updateFields);
+                String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean);
+                System.out.println(result);
+            } catch (TopSchemaException | ApiException e) {
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+            }
+        }
+		// 20160607 可能现在天猫改规则了, 要更新产品试试看 END
+
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
@@ -1550,7 +1582,7 @@ public class TmallProductService {
                     }
                     SingleCheckField priceField = (SingleCheckField) processFields.get(0);
                     List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getPriceSaleSt();
+                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroupBean().getPriceSaleSt();
 
                     String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
                     priceField.setValue(priceSectionValue);
@@ -1756,7 +1788,13 @@ public class TmallProductService {
                                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                     field.setId(sellerCategoryPropId);
                                     for (String defaultValue : defaultValues) {
-                                        field.addValue(defaultValue);
+                                        // modified by morse.lu 2016/06/03 start
+//                                        field.addValue(defaultValue);
+                                        // 数据库里存放的内容是： 父节点-子节点  或者 父子节点（只有一层）
+                                        // 所以， 要根据-来分割， 取"-"后面的内容，没有"-"直接用它就可以了
+                                        String[] sp = defaultValue.split("-");
+                                        field.addValue(sp[sp.length - 1]);
+                                        // modified by morse.lu 2016/06/03 end
                                     }
                                     contextBuildFields.addCustomField(field);
                                 }

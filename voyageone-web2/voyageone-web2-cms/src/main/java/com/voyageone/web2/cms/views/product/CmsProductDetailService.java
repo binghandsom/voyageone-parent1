@@ -21,6 +21,7 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
@@ -193,19 +194,21 @@ public class CmsProductDetailService extends BaseAppService {
 
         // 判断是否主商品
         boolean isMain = false;
-        CmsBtProductGroupModel gpList = productValueModel.getGroups();
-        if (gpList != null) {
-            if (productValueModel.getFields().getCode().equals(gpList.getMainProductCode())) {
+
+        // 根据产品code找到group
+        CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, "{'cartId':" + cartId + ",'productCodes':'" + productValueModel.getFields().getCode() + "'}");
+        if (grpObj != null) {
+            if (productValueModel.getFields().getCode().equals(grpObj.getMainProductCode())) {
                 isMain = true;
             }
         }
         infoMap.put("isMain", isMain ? 1 : 0);
 
         // 设置默认第一张图片
-        String defaultImageUrl = imageTemplateService.getDefaultImageUrl(channelId);
+        String defaultImageUrl = imageTemplateService.getDefaultImageUrl();
         Map<String, Object> defaultImage = productValueModel.getFields().getImages1().get(0);
         if (defaultImage.size() > 0)
-            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))) + ".jpg");
+            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))));
 
         return infoMap;
     }
@@ -430,19 +433,19 @@ public class CmsProductDetailService extends BaseAppService {
 
         // 取得products对应的所有的groupIds
         String[] projections = {"feed.orgAtts.modelCode", "groups"};
-        List<CmsBtProductModel> products = productService.getList(userSession.getSelChannelId(), productIds, projections);
+        List<CmsBtProductBean> products = productService.getList(userSession.getSelChannelId(), productIds, projections);
 
         // 获取groupId的数据
         List<String> models = new ArrayList<>();
         Map<String, List<String>> numIids = new HashMap<>();
-        for (CmsBtProductModel product : products) {
+        for (CmsBtProductBean product : products) {
 
             // 获取所有model
             String model = product.getFeed().getOrgAtts().get("modelCode").toString();
             if (!models.contains(model)) {
                 models.add(model);
             }
-            CmsBtProductGroupModel platform = product.getGroups();
+            CmsBtProductGroupModel platform = product.getGroupBean();
             // 获取已经上新的产品数据
             String numIid = platform.getNumIId();
             if (!StringUtils.isEmpty(numIid)) {
@@ -617,10 +620,6 @@ public class CmsProductDetailService extends BaseAppService {
             $error(errMsg);
             throw new BusinessException(errMsg);
         }
-
-        // 根据产品code找到group
-        CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, "{'cartId':" + cartId + ",'productCodes':'" + productValueModel.getFields().getCode() + "'}");
-        productValueModel.setGroups(grpObj);
         return productValueModel;
     }
 

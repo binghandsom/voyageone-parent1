@@ -1,8 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -519,6 +517,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, jdWareId);
             $error(errMsg);
+            ex.printStackTrace();
             // 如果上新数据中的errorMessage为空
             if (sxData != null && StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
@@ -653,7 +652,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
                 bytes = IOUtils.toByteArray(inputStream);
-                // 取得图片就推出循环
+                // 取得图片就退出循环
                 break;
             } catch (Exception ex) {
                 String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
@@ -1133,8 +1132,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sbDelImgIndexes.deleteCharAt(sbDelImgIndexes.length() - 1);
             }
 
-            // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）每种颜色留一张图片
-            retUploadPics = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
+            // 如果京东平台上该商品只剩一张主图，则要删除的颜色id和index也会为空，不调用京东API删除图片
+            if (!StringUtils.isEmpty(sbDelColorIds.toString()) &&
+                    !StringUtils.isEmpty(sbDelImgIndexes.toString()) ) {
+                // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）每种颜色留一张图片
+                retUploadPics = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
+            }
 
             // 删除商品图片失败
             if (!retUploadPics) {
@@ -1283,21 +1286,34 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     sbbuilder.append(Separtor_Semicolon);   // 用分号(";")分隔
                 }
             }
-        } else {
+        }
+
+        if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类
-            List<ShopCategory> shopCategoryList = jdShopService.getShopCategoryList(shop);
-            if (shopCategoryList != null && !shopCategoryList.isEmpty()) {
-                for (ShopCategory shopCategory : shopCategoryList) {
-                    // 如果不是父类目的话，加到店内分类里，用分号分隔
-                    if (!shopCategory.getParent()) {
-                        // 转换成“parent_id-cid"格式，同时设置多个以分号（;）分隔
-                        sbbuilder.append(String.valueOf(shopCategory.getParentId()));
-                        sbbuilder.append(Separtor_Hyphen);       // 用连字符("-")连接
-                        sbbuilder.append(String.valueOf(shopCategory.getCid()));
-                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
-                    }
+            // 2016/06/17暂时用外面的部分平台的SellerCats，以后改成分平台里面的sellerCats
+            if (sxData.getCartId().equals(sxData.getMainProduct().getSellerCats().getCartId())) {
+                // 取得
+                List<String> sellerCatList = sxData.getMainProduct().getSellerCats().getFullCIds();
+                for (String sellerCat : sellerCatList ) {
+                    // 里面的数据是“1233797770-1233809821”样式的
+                    sbbuilder.append(sellerCat);
+                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
                 }
             }
+            // 直接从Product中取得店铺内分类，不用从京东去取了
+//            List<ShopCategory> shopCategoryList = jdShopService.getShopCategoryList(shop);
+//            if (shopCategoryList != null && !shopCategoryList.isEmpty()) {
+//                for (ShopCategory shopCategory : shopCategoryList) {
+//                    // 如果不是父类目的话，加到店内分类里，用分号分隔
+//                    if (!shopCategory.getParent()) {
+//                        // 转换成“parent_id-cid"格式，同时设置多个以分号（;）分隔
+//                        sbbuilder.append(String.valueOf(shopCategory.getParentId()));
+//                        sbbuilder.append(Separtor_Hyphen);       // 用连字符("-")连接
+//                        sbbuilder.append(String.valueOf(shopCategory.getCid()));
+//                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+//                    }
+//                }
+//            }
         }
         // 移除最后的分号
         if (sbbuilder.length() > 0) {
@@ -1404,22 +1420,22 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             for (CmsBtProductModel_Sku cmsBtProductModelSku : cmsProduct.getSkus()) {
                 double skuPrice = 0.00;
                 // 如果是平台售价，则取个平台相应的售价(platform.P29.sku.priceSale)
-                if (PriceType_jdprice.equals(priceType)) {
-                    CmsBtProductModel_Platform_Cart platformCart = cmsProduct.getPlatform(Integer.parseInt(cartId));
-                    List<BaseMongoMap<String, Object>> platformCartSkuList = platformCart.getSkus();
-                    // 循环取得找到本skucode对应的平台售价
-                    for(BaseMongoMap<String, Object> platformSkuMap : platformCartSkuList) {
-                        // 找到skucode对应的平台售价，然后跳出循环
-                        if (cmsBtProductModelSku.getSkuCode().equals(platformSkuMap.get("skuCode"))) {
-                            if(!StringUtil.isEmpty(platformSkuMap.get("priceSale").toString())) {
-                                skuPrice = Double.parseDouble(platformSkuMap.get("priceSale").toString());
-                                break;
-                            }
-                        }
-                    }
-                } else {
+//                if (PriceType_jdprice.equals(priceType)) {  // TODO 2016/06/17版本暂时还是从以前外面的sku里面取得京东价格
+//                    CmsBtProductModel_Platform_Cart platformCart = cmsProduct.getPlatform(Integer.parseInt(cartId));
+//                    List<BaseMongoMap<String, Object>> platformCartSkuList = platformCart.getSkus();
+//                    // 循环取得找到本skucode对应的平台售价
+//                    for(BaseMongoMap<String, Object> platformSkuMap : platformCartSkuList) {
+//                        // 找到skucode对应的平台售价，然后跳出循环
+//                        if (cmsBtProductModelSku.getSkuCode().equals(platformSkuMap.get("skuCode"))) {
+//                            if(!StringUtil.isEmpty(platformSkuMap.get("priceSale").toString())) {
+//                                skuPrice = Double.parseDouble(platformSkuMap.get("priceSale").toString());
+//                                break;
+//                            }
+//                        }
+//                    }
+//                } else {
                     skuPrice = cmsBtProductModelSku.getDoubleAttribute(sxPricePropName);
-                }
+//                }
                 skuPriceList.add(skuPrice);
             }
         }

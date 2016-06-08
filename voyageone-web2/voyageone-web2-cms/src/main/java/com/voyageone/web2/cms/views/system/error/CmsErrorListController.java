@@ -32,8 +32,8 @@ public class CmsErrorListController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.SEARCH)
-    public AjaxResponse search(@RequestBody Map params) {
-        return success(cmsSystemErrorConService.search(params, getUser().getSelChannelId()));
+    public AjaxResponse search(@RequestBody Map params){
+        return success(cmsSystemErrorConService.search(params, getUser().getSelChannelId(),getUser().getTimeZone()));
     }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.UPDATE_FINISH_STATUS)

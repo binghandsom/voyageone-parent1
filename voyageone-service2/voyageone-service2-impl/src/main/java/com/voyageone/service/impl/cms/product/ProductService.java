@@ -141,7 +141,7 @@ public class ProductService extends BaseService {
      * @param flag:     true:检索主商品以外的商品,false:检索所有的商品
      * @return List<CmsBtProductModel>
      */
-    public List<CmsBtProductModel> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
+    public List<CmsBtProductBean> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(String.format("{ \"groupId\":%d}", groupId));
         CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, channelId);
@@ -165,8 +165,8 @@ public class ProductService extends BaseService {
         codeArr = codeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
 
-        List<CmsBtProductModel> rst = cmsBtProductDao.select(queryObject, channelId);
-        rst.forEach(prodObj -> prodObj.setGroups(grpObj));
+        List<CmsBtProductBean> rst = cmsBtProductDao.selectBean(queryObject, channelId);
+        rst.forEach(prodObj -> prodObj.setGroupBean(grpObj));
         return rst;
     }
 
@@ -188,12 +188,12 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductModel> getList(String channelId, Set<Long> pids, String[] projections) {
+    public List<CmsBtProductBean> getList(String channelId, Set<Long> pids, String[] projections) {
         JomgoQuery queryObject = new JomgoQuery();
         String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
         queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
         queryObject.setProjectionExt(projections);
-        return getList(channelId, queryObject);
+        return getBeanList(channelId, queryObject);
     }
 
     /**
@@ -245,7 +245,6 @@ public class ProductService extends BaseService {
                 platformModel.setQty(groupModelMap.getQty());
                 platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
                 platformModel.setPlatformActive(groupModelMap.getPlatformActive());
-                prodObj.setGroups(platformModel);
                 prodObj.setGroupBean(platformModel);
             }
         }
@@ -315,15 +314,12 @@ public class ProductService extends BaseService {
         }
 
         //update channel and modifier
-        CmsBtProductGroupModel grp = product.getGroups();
-        product.setGroups(null);
         product.setChannelId(channelId);
         product.setCreater(modifier);
         product.setModifier(modifier);
 
         //save
         cmsBtProductDao.insert(product);
-        product.setGroups(grp);
     }
 
     public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
@@ -514,7 +510,7 @@ public class ProductService extends BaseService {
             queryObj.put("fields.code", productModel.getFields().getCode());
 
             BasicDBObject cartsObj = new BasicDBObject().append("carts", productModel.getCarts());
-            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", cartsObj);
+            BasicDBObject pushObj = new BasicDBObject().append("$set", cartsObj);
             cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
         }
 
@@ -785,7 +781,7 @@ public class ProductService extends BaseService {
             String imagePath = "";
             if (product.getFields().getImages1().size() > 0) {
                 if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                    imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
+                    imagePath = imageTemplateService.getImageUrl(product.getFields().getImages1().get(0).getName());
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getFields().getLongTitle());
@@ -886,7 +882,7 @@ public class ProductService extends BaseService {
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-                        imagePath = imageTemplateService.getImageFullUrl(channelId, product.getFields().getImages1().get(0).getName());
+                        imagePath = imageTemplateService.getImageUrl(product.getFields().getImages1().get(0).getName());
                 }
                 bean.setImgPath(imagePath);
 
@@ -1070,6 +1066,8 @@ public class ProductService extends BaseService {
                 .map(this::toProductModelCart)
                 .collect(Collectors.toList());
 
+        newCarts.addAll(carts);
+
         return newCarts;
     }
 
@@ -1140,9 +1138,7 @@ public class ProductService extends BaseService {
 
     public void updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
 
-        String queryStr = null;
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryStr = String.format("{\"prodId\" : %d }", prodId);
         queryMap.put("prodId", prodId);
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -1154,5 +1150,85 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
+    }
+
+    public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", cmsProduct.getProdId());
+        queryMap.put("modified", cmsProduct.getModified());
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        if (cmsProduct.getCatId() != null) {
+            updateMap.put("catId", cmsProduct.getCatId());
+        }
+        if (cmsProduct.getCatPath() != null) {
+            updateMap.put("catPath", cmsProduct.getCatPath());
+        }
+
+        /**
+         * fields
+         */
+        if (cmsProduct.getFields() != null) {
+            updateMap.put("fields", cmsProduct.getFields());
+        }
+
+        /**
+         * skus
+         */
+        if (cmsProduct.getSkus() != null) {
+            updateMap.put("skus", cmsProduct.getSkus());
+        }
+
+        /**
+         * common
+         */
+        if (cmsProduct.getCommon() != null) {
+            updateMap.put("common", cmsProduct.getCommon());
+        }
+
+        /**
+         * platforms
+         */
+        if (cmsProduct.getPlatforms() != null) {
+            updateMap.put("platforms", cmsProduct.getPlatforms());
+        }
+
+        /**
+         * feed
+         */
+        CmsBtProductModel_Feed feed = cmsProduct.getFeed();
+        if (feed != null) {
+            if (feed.getCatId() != null) {
+                updateMap.put("feed.catId", feed.getCatId());
+            }
+
+            if (feed.getCatId() != null) {
+                updateMap.put("feed.catPath", feed.getCatPath());
+            }
+
+            if (feed.getOrgAtts() != null && feed.getOrgAtts().size() > 0) {
+                BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
+                updateMap.putAll(orgAttsObj);
+            }
+            if (feed.getCnAtts() != null && feed.getCnAtts().size() > 0) {
+                BasicDBObject cnAttsObj = feed.getCnAtts().toUpdateBasicDBObject("feed.cnAtts.");
+                updateMap.putAll(cnAttsObj);
+            }
+            if (feed.getCustomIds() != null && feed.getCustomIds().size() > 0) {
+                updateMap.put("feed.customIds", feed.getCustomIds());
+            }
+            if (feed.getCustomIdsCn() != null && feed.getCustomIdsCn().size() > 0) {
+                updateMap.put("feed.customIdsCn", feed.getCustomIdsCn());
+            }
+        }
+
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        return result.getModifiedCount();
     }
 }

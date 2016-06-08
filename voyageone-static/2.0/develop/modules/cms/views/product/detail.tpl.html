@@ -81,8 +81,15 @@
     </div>
 
     <div ng-if="ctrl.showInfoFlag">
-        <!---------------------------------------------------Product Detail------------------------------------------------------>
+
         <uib-tabset class="tab-container vo_nav-tabs">
+
+            <!---------------------------------------------------京东产品详情页面------------------------------------------------->
+            <uib-tab>
+                <tab-heading>京东产品详情</tab-heading>
+                <jd-schema product-id="ctrl.routeParams.productId"></jd-schema>
+            </uib-tab>
+
             <uib-tab>
                 <tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
                 <!-- Products table and controls -->
@@ -91,10 +98,10 @@
                         <div class="row wrapper">
                             <div class="container-fluid">
                                 <div class="col-sm-7">
-<!--                                    <schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field"
+                                    <schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field"
                                                    ng-if="field.isDisplay != 0">
                                         <schema-item data="field"></schema-item>
-                                    </schema-header>-->
+                                    </schema-header>
                                 </div>
                                 <div class="col-sm-5" style="width: 380px;margin-left: -38px;">
                                     <!-- product detail panel starts here -->
@@ -119,9 +126,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image1 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image1) + '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image1) + '.jpg)'}">
-
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image1)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image1) + ')'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image1 | limitTo: 10"
                                                                           class="thumbnail">
@@ -143,8 +149,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image6 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image6}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image6) + '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6) + '.jpg)'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image6)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6)+ ')'}">
 
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image6 | limitTo: 10"
@@ -167,8 +173,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image2 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image2}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image2) + '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image2) + '.jpg)'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image2)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image2)+ ')'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image2 | limitTo: 10"
                                                                           class="thumbnail">
@@ -190,8 +196,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image3 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image3}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image3)+ '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image3) + '.jpg)'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image3)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image3)+ ')'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image3 | limitTo: 10"
                                                                           class="thumbnail">
@@ -213,8 +219,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image4}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image4)+ '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image4) + '.jpg)'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image4)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image4)+ ')'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image4 | limitTo: 10"
                                                                           class="thumbnail">
@@ -236,8 +242,8 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image5 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image5}"
-                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image5)+ '.jpg'"
-                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image5) + '.jpg)'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image5)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image5)+ ')'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image5 | limitTo: 10"
                                                                           class="thumbnail">
@@ -403,11 +409,7 @@
                 <!--</form>&lt;!&ndash; .form &ndash;&gt;-->
             </uib-tab>
 
-            <!---------------------------------------------------京东产品详情页面------------------------------------------------->
-            <uib-tab>
-                <tab-heading>京东产品详情</tab-heading>
-                <jd-schema product-id="ctrl.routeParams.productId"></jd-schema>
-            </uib-tab>
+
 
         </uib-tabset>
     </div>

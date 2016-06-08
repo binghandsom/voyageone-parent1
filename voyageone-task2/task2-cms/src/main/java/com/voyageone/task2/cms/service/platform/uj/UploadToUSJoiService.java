@@ -5,12 +5,11 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
@@ -83,10 +82,10 @@ public class UploadToUSJoiService extends BaseTaskService{
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
-            List<CmsBtProductModel> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
+            List<CmsBtProductBean> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
             $info("productModels"+productModels.size());
             //从group中过滤出需要上的usjoi的产品
-            productModels = getUSjoiProductModel(productModels,sxWorkLoadBean.getCartId());
+            productModels = getUSjoiProductModel(productModels, sxWorkLoadBean.getCartId());
             if(productModels.size() == 0){
                 throw new BusinessException("没有找到需要上新的SKU");
             }else{
@@ -109,8 +108,8 @@ public class UploadToUSJoiService extends BaseTaskService{
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+                    productModel.setCarts(new ArrayList<>());
                     creatGroup(productModel, usJoiChannelId);
-
 
                     List<ProductPriceBean> productPrices = new ArrayList<>();
                     List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
@@ -242,9 +241,9 @@ public class UploadToUSJoiService extends BaseTaskService{
      * @param productModels 产品列表
      * @return 产品列表
      */
-    private List<CmsBtProductModel> getUSjoiProductModel(List<CmsBtProductModel> productModels,Integer cartId) {
+    private List<CmsBtProductBean> getUSjoiProductModel(List<CmsBtProductBean> productModels, Integer cartId) {
 
-        List<CmsBtProductModel> usJoiProductModes = new ArrayList<>();
+        List<CmsBtProductBean> usJoiProductModes = new ArrayList<>();
 
         // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
         productModels.stream().filter(productModel -> "Approved".equalsIgnoreCase(productModel.getFields().getStatus())).forEach(productModel -> {

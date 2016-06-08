@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.job;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -44,7 +45,7 @@ public class SxPrepareData {
     }
 
     public static CmsBtProductModel createProduct(CmsMtCategorySchemaDao cmsMtCategorySchemaDao, String channelId, long groupId, long productId, String brand, String catId, boolean isMain) {
-        CmsBtProductModel product = new CmsBtProductModel(channelId);
+        CmsBtProductBean product = new CmsBtProductBean(channelId);
         product.setProdId(productId);
 
         product.setCatId(catId);
@@ -79,7 +80,7 @@ public class SxPrepareData {
         fields.setPriceSaleSt(500.00);
         fields.setPriceSaleEd(800.00);
 
-        CmsBtProductGroupModel groups = product.getGroups();
+        CmsBtProductGroupModel groups = product.getGroupBean();
         groups.setGroupId(groupId);
         groups.setCartId(23);
         groups.setPlatformActive(CmsConstants.PlatformActive.ToInStock);

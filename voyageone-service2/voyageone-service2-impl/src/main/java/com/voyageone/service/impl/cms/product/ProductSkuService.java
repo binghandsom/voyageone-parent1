@@ -4,7 +4,9 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
@@ -13,10 +15,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +41,8 @@ public class ProductSkuService extends BaseService {
 
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private ProductService productService;
 
     /**
      * save Skus
@@ -182,6 +183,78 @@ public class ProductSkuService extends BaseService {
     }
 
     /**
+     * update Prices
+     */
+    public void updatePricesNew(String channelId, CmsBtProductModel cmsProduct, String modifier) {
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", cmsProduct.getProdId());
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        // 更新commonSkus的Msrp和RetailPrice
+        if (cmsProduct.getCommon().getSkus() != null) {
+            updateMap.put("common.skus", cmsProduct.getCommon().getSkus());
+        }
+
+        // 更新platforms的SalePrice
+        if (cmsProduct.getPlatforms() != null) {
+            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+                updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
+            }
+        }
+
+        // 更新commonField的Msrp和RetailPrice的价格区间
+        if (cmsProduct.getCommon().getFields() != null) {
+            if (cmsProduct.getCommon().getSkus() != null) {
+                Map<String, Double> result = getPriceScope(cmsProduct.getCommon().getSkus());
+                cmsProduct.getCommon().getFields().setPriceMsrpSt(result.get("priceMsrpSt"));
+                cmsProduct.getCommon().getFields().setPriceMsrpEd(result.get("priceMsrpEd"));
+                cmsProduct.getCommon().getFields().setPriceRetailSt(result.get("priceRetailSt"));
+                cmsProduct.getCommon().getFields().setPriceRetailEd(result.get("priceRetailEd"));
+
+                updateMap.put("common.fields.priceMsrpSt", cmsProduct.getCommon().getFields().getPriceMsrpSt());
+                updateMap.put("common.fields.priceMsrpEd", cmsProduct.getCommon().getFields().getPriceMsrpEd());
+                updateMap.put("common.fields.priceRetailSt", cmsProduct.getCommon().getFields().getPriceRetailSt());
+                updateMap.put("common.fields.priceRetailEd", cmsProduct.getCommon().getFields().getPriceRetailEd());
+            }
+        }
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        updateNewGroupPrice(channelId, cmsProduct.getProdId());
+
+    }
+
+    /**
+     *  更新group里的价格
+     */
+    private void updateNewGroupPrice(String channelId, Long ProdId) {
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        // 先根据产品id找到产品code
+        CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{'prodId':" + ProdId + "}", channelId);
+        // 再根据产品code从group表中找出其所在group的信息
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{'productCodes':'" + findModel.getCommon().getFields().getCode() + "'},{'productCodes':1,'groupId':1}", channelId);
+        grpList.forEach(grpObj -> {
+            // 其所在group下的所有产品code
+            List<String> codeList = grpObj.getProductCodes();
+            if (codeList != null && codeList.size() > 0) {
+                // 再找到所有产品fields信息
+                String[] codeArr = new String[codeList.size()];
+                codeArr = codeList.toArray(codeArr);
+                List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{'common.fields':1,'platform':1}", channelId);
+                bulkList.add(calculateNewPriceRange(prodList, grpObj));
+            }
+        });
+        if (bulkList.size() > 0) {
+            cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
+        }
+    }
+
+    /**
      *  更新group里的价格
      */
     private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices) {
@@ -252,6 +325,79 @@ public class ProductSkuService extends BaseService {
         bulk.setUpdateMap(updateMap);
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("groupId", groupId);
+        bulk.setQueryMap(queryMap);
+
+        return bulk;
+    }
+
+    // 计算价格区间
+    private BulkUpdateModel calculateNewPriceRange(List<CmsBtProductModel> products, CmsBtProductGroupModel group) {
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+
+        for (CmsBtProductModel product : products) {
+            // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
+            if (group.getCartId() != 23) {
+                for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+                    if (group.getCartId() == entry.getValue().getCartId()) {
+                        for (BaseMongoMap<String, Object> sku : entry.getValue().getSkus()) {
+                            if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
+                                priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                            }
+                            if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
+                                priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                            }
+                        }
+                    }
+                }
+            } else{
+                for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
+                        priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                    }
+                    if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
+                        priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                    }
+                }
+            }
+
+            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt) {
+                priceRetailSt = product.getFields().getPriceRetailSt();
+            }
+            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd) {
+                priceRetailEd = product.getFields().getPriceRetailEd();
+            }
+
+            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt) {
+                priceMsrpSt = product.getFields().getPriceMsrpSt();
+            }
+            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd) {
+                priceMsrpEd = product.getFields().getPriceMsrpEd();
+            }
+
+        }
+
+        Map<String, Object> updateMap = new HashMap<>();
+        if (group.getCartId() == 0 || group.getCartId() == 1) {
+            updateMap.put("priceSaleSt", 0);
+            updateMap.put("priceSaleEd", 0);
+        } else {
+            updateMap.put("priceSaleSt", priceSaleSt);
+            updateMap.put("priceSaleEd", priceSaleEd);
+        }
+        updateMap.put("priceRetailSt", priceRetailSt);
+        updateMap.put("priceRetailEd", priceRetailEd);
+        updateMap.put("priceMsrpSt", priceMsrpSt);
+        updateMap.put("priceMsrpEd", priceMsrpEd);
+
+        BulkUpdateModel bulk = new BulkUpdateModel();
+        bulk.setUpdateMap(updateMap);
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("groupId", group.getGroupId());
         bulk.setQueryMap(queryMap);
 
         return bulk;
@@ -586,6 +732,48 @@ public class ProductSkuService extends BaseService {
         result.put("start", start);
         result.put("end", end);
         result.put("isChanged", isChanged);
+        return result;
+    }
+
+    /**
+     * 取得Sku区间
+     */
+    private Map<String, Double> getPriceScope(List<CmsBtProductModel_Sku> commonSkus) {
+
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+
+        Map<String, Double> result = new HashMap<>();
+        for (CmsBtProductModel_Sku commonSku : commonSkus) {
+            if (priceMsrpSt == null) {
+                priceMsrpSt = commonSku.getPriceMsrp();
+            } else if (priceMsrpSt < commonSku.getPriceMsrp()) {
+                priceMsrpSt = commonSku.getPriceMsrp();
+            }
+            if (priceMsrpEd == null) {
+                priceMsrpEd = commonSku.getPriceMsrp();
+            } else if (priceMsrpEd > commonSku.getPriceMsrp()) {
+                priceMsrpEd = commonSku.getPriceMsrp();
+            }
+            if (priceRetailSt == null) {
+                priceRetailSt = commonSku.getPriceRetail();
+            } else if (priceRetailSt < commonSku.getPriceRetail()) {
+                priceRetailSt = commonSku.getPriceRetail();
+            }
+            if (priceRetailEd == null) {
+                priceRetailEd = commonSku.getPriceRetail();
+            } else if (priceRetailEd > commonSku.getPriceRetail()) {
+                priceRetailEd = commonSku.getPriceRetail();
+            }
+        }
+
+        result.put("priceMsrpSt", priceMsrpSt);
+        result.put("priceMsrpEd", priceMsrpEd);
+        result.put("priceRetailSt", priceRetailSt);
+        result.put("priceRetailEd", priceRetailEd);
+
         return result;
     }
 }

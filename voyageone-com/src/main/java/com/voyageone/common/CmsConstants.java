@@ -90,6 +90,10 @@ public class CmsConstants {
 
         String IMAGE_UPLOAD_SERVICE = "IMAGE_UPLOAD_SERVICE";
 
+        // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
+        String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
+
+
         // 价格相关
         String PRICE = "PRICE";
         String PRICE_SX_PRICE = ".sx_price";
