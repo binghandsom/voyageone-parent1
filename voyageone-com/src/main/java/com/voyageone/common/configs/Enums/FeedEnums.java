@@ -143,6 +143,7 @@ public class FeedEnums {
         priceWithDuty,
         priceWithoutDuty,
         blackList,
-        quantity
+        quantity,
+        material
     }
 }

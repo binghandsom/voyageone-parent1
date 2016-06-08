@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.DfoFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    <id column="SKU" property="sku" jdbcType="VARCHAR" />
+    <result column="CLASSIFICATION" property="classification" jdbcType="VARCHAR" />
+    <result column="MODEL" property="model" jdbcType="VARCHAR" />
+    <result column="MANUFACTURER_COLOR" property="manufacturerColor" jdbcType="VARCHAR" />
+    <result column="GENERAL_COLOR" property="generalColor" jdbcType="VARCHAR" />
+    <result column="SIZE" property="size" jdbcType="VARCHAR" />
+    <result column="LENS_SIZE" property="lensSize" jdbcType="VARCHAR" />
+    <result column="BRIDGE_SIZE" property="bridgeSize" jdbcType="VARCHAR" />
+    <result column="TEMPLE_SIZE" property="templeSize" jdbcType="VARCHAR" />
+    <result column="VERTICAL_SIZE" property="verticalSize" jdbcType="VARCHAR" />
+    <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+    <result column="VOYAGEONE_PRICE" property="voyageonePrice" jdbcType="VARCHAR" />
+    <result column="RETAIL_PRICE" property="retailPrice" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+    <result column="BRAND" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="UPC" property="upc" jdbcType="LONGVARCHAR" />
+    <result column="MATERIAL" property="material" jdbcType="LONGVARCHAR" />
+    <result column="COUNTRY_OF_ORIGIN" property="countryOfOrigin" jdbcType="LONGVARCHAR" />
+    <result column="LENS_COLOR" property="lensColor" jdbcType="LONGVARCHAR" />
+    <result column="LENS_TECHNOLOGY" property="lensTechnology" jdbcType="LONGVARCHAR" />
+    <result column="FRAME_TYPE" property="frameType" jdbcType="LONGVARCHAR" />
+    <result column="STYLE" property="style" jdbcType="LONGVARCHAR" />
+    <result column="URL1" property="url1" jdbcType="LONGVARCHAR" />
+    <result column="URL2" property="url2" jdbcType="LONGVARCHAR" />
+    <result column="URL3" property="url3" jdbcType="LONGVARCHAR" />
+    <result column="URL4" property="url4" jdbcType="LONGVARCHAR" />
+    <result column="URL5" property="url5" jdbcType="LONGVARCHAR" />
+    <result column="URL6" property="url6" jdbcType="LONGVARCHAR" />
+    <result column="URL7" property="url7" jdbcType="LONGVARCHAR" />
+    <result column="URL8" property="url8" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "SKU", "CLASSIFICATION", "MODEL", "MANUFACTURER_COLOR", "GENERAL_COLOR", "SIZE",
+    "LENS_SIZE", "BRIDGE_SIZE", "TEMPLE_SIZE", "VERTICAL_SIZE", "GENDER", "VOYAGEONE_PRICE",
+    "RETAIL_PRICE", "QTY", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "BRAND", "UPC", "MATERIAL", "COUNTRY_OF_ORIGIN", "LENS_COLOR", "LENS_TECHNOLOGY",
+    "FRAME_TYPE", "STYLE", "URL1", "URL2", "URL3", "URL4", "URL5", "URL6", "URL7", "URL8"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_dfo_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_dfo_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    insert into cms_zz_feed_dfo_product_temp ("SKU", "CLASSIFICATION", "MODEL",
+    "MANUFACTURER_COLOR", "GENERAL_COLOR", "SIZE",
+    "LENS_SIZE", "BRIDGE_SIZE", "TEMPLE_SIZE",
+    "VERTICAL_SIZE", "GENDER", "VOYAGEONE_PRICE",
+    "RETAIL_PRICE", "QTY", "md5",
+    "updateFlag", "BRAND", "UPC",
+    "MATERIAL", "COUNTRY_OF_ORIGIN", "LENS_COLOR",
+    "LENS_TECHNOLOGY", "FRAME_TYPE", "STYLE",
+    "URL1", "URL2", "URL3",
+    "URL4", "URL5", "URL6",
+    "URL7", "URL8")
+    values (#{sku,jdbcType=VARCHAR}, #{classification,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR},
+    #{manufacturerColor,jdbcType=VARCHAR}, #{generalColor,jdbcType=VARCHAR}, #{size,jdbcType=VARCHAR},
+    #{lensSize,jdbcType=VARCHAR}, #{bridgeSize,jdbcType=VARCHAR}, #{templeSize,jdbcType=VARCHAR},
+    #{verticalSize,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{voyageonePrice,jdbcType=VARCHAR},
+    #{retailPrice,jdbcType=VARCHAR}, #{qty,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
+    #{updateflag,jdbcType=INTEGER}, #{brand,jdbcType=LONGVARCHAR}, #{upc,jdbcType=LONGVARCHAR},
+    #{material,jdbcType=LONGVARCHAR}, #{countryOfOrigin,jdbcType=LONGVARCHAR}, #{lensColor,jdbcType=LONGVARCHAR},
+    #{lensTechnology,jdbcType=LONGVARCHAR}, #{frameType,jdbcType=LONGVARCHAR}, #{style,jdbcType=LONGVARCHAR},
+    #{url1,jdbcType=LONGVARCHAR}, #{url2,jdbcType=LONGVARCHAR}, #{url3,jdbcType=LONGVARCHAR},
+    #{url4,jdbcType=LONGVARCHAR}, #{url5,jdbcType=LONGVARCHAR}, #{url6,jdbcType=LONGVARCHAR},
+    #{url7,jdbcType=LONGVARCHAR}, #{url8,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    insert into voyageone_cms2.cms_zz_feed_dfo_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        SKU,
+      </if>
+      <if test="classification != null" >
+        CLASSIFICATION,
+      </if>
+      <if test="model != null" >
+        MODEL,
+      </if>
+      <if test="manufacturerColor != null" >
+        MANUFACTURER_COLOR,
+      </if>
+      <if test="generalColor != null" >
+        GENERAL_COLOR,
+      </if>
+      <if test="size != null" >
+        SIZE,
+      </if>
+      <if test="lensSize != null" >
+        LENS_SIZE,
+      </if>
+      <if test="bridgeSize != null" >
+        BRIDGE_SIZE,
+      </if>
+      <if test="templeSize != null" >
+        TEMPLE_SIZE,
+      </if>
+      <if test="verticalSize != null" >
+        VERTICAL_SIZE,
+      </if>
+      <if test="gender != null" >
+        GENDER,
+      </if>
+      <if test="voyageonePrice != null" >
+        VOYAGEONE_PRICE,
+      </if>
+      <if test="retailPrice != null" >
+        RETAIL_PRICE,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="brand != null" >
+        BRAND,
+      </if>
+      <if test="upc != null" >
+        UPC,
+      </if>
+      <if test="material != null" >
+        MATERIAL,
+      </if>
+      <if test="countryOfOrigin != null" >
+        COUNTRY_OF_ORIGIN,
+      </if>
+      <if test="lensColor != null" >
+        LENS_COLOR,
+      </if>
+      <if test="lensTechnology != null" >
+        LENS_TECHNOLOGY,
+      </if>
+      <if test="frameType != null" >
+        FRAME_TYPE,
+      </if>
+      <if test="style != null" >
+        STYLE,
+      </if>
+      <if test="url1 != null" >
+        URL1,
+      </if>
+      <if test="url2 != null" >
+        URL2,
+      </if>
+      <if test="url3 != null" >
+        URL3,
+      </if>
+      <if test="url4 != null" >
+        URL4,
+      </if>
+      <if test="url5 != null" >
+        URL5,
+      </if>
+      <if test="url6 != null" >
+        URL6,
+      </if>
+      <if test="url7 != null" >
+        URL7,
+      </if>
+      <if test="url8 != null" >
+        URL8,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="classification != null" >
+        #{classification,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerColor != null" >
+        #{manufacturerColor,jdbcType=VARCHAR},
+      </if>
+      <if test="generalColor != null" >
+        #{generalColor,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="lensSize != null" >
+        #{lensSize,jdbcType=VARCHAR},
+      </if>
+      <if test="bridgeSize != null" >
+        #{bridgeSize,jdbcType=VARCHAR},
+      </if>
+      <if test="templeSize != null" >
+        #{templeSize,jdbcType=VARCHAR},
+      </if>
+      <if test="verticalSize != null" >
+        #{verticalSize,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageonePrice != null" >
+        #{voyageonePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        #{retailPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin != null" >
+        #{countryOfOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensColor != null" >
+        #{lensColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensTechnology != null" >
+        #{lensTechnology,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameType != null" >
+        #{frameType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="style != null" >
+        #{style,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url1 != null" >
+        #{url1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url2 != null" >
+        #{url2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url3 != null" >
+        #{url3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url4 != null" >
+        #{url4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url5 != null" >
+        #{url5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url6 != null" >
+        #{url6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url7 != null" >
+        #{url7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url8 != null" >
+        #{url8,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    update cms_zz_feed_dfo_product_temp
+    <set >
+      <if test="classification != null" >
+        "CLASSIFICATION" = #{classification,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        "MODEL" = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerColor != null" >
+        "MANUFACTURER_COLOR" = #{manufacturerColor,jdbcType=VARCHAR},
+      </if>
+      <if test="generalColor != null" >
+        "GENERAL_COLOR" = #{generalColor,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        "SIZE" = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="lensSize != null" >
+        "LENS_SIZE" = #{lensSize,jdbcType=VARCHAR},
+      </if>
+      <if test="bridgeSize != null" >
+        "BRIDGE_SIZE" = #{bridgeSize,jdbcType=VARCHAR},
+      </if>
+      <if test="templeSize != null" >
+        "TEMPLE_SIZE" = #{templeSize,jdbcType=VARCHAR},
+      </if>
+      <if test="verticalSize != null" >
+        "VERTICAL_SIZE" = #{verticalSize,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        "GENDER" = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageonePrice != null" >
+        "VOYAGEONE_PRICE" = #{voyageonePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        "RETAIL_PRICE" = #{retailPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        "QTY" = #{qty,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="brand != null" >
+        "BRAND" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        "UPC" = #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        "MATERIAL" = #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOrigin != null" >
+        "COUNTRY_OF_ORIGIN" = #{countryOfOrigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensColor != null" >
+        "LENS_COLOR" = #{lensColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lensTechnology != null" >
+        "LENS_TECHNOLOGY" = #{lensTechnology,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="frameType != null" >
+        "FRAME_TYPE" = #{frameType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="style != null" >
+        "STYLE" = #{style,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url1 != null" >
+        "URL1" = #{url1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url2 != null" >
+        "URL2" = #{url2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url3 != null" >
+        "URL3" = #{url3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url4 != null" >
+        "URL4" = #{url4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url5 != null" >
+        "URL5" = #{url5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url6 != null" >
+        "URL6" = #{url6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url7 != null" >
+        "URL7" = #{url7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="url8 != null" >
+        "URL8" = #{url8,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    update cms_zz_feed_dfo_product_temp
+    set "CLASSIFICATION" = #{classification,jdbcType=VARCHAR},
+    "MODEL" = #{model,jdbcType=VARCHAR},
+    "MANUFACTURER_COLOR" = #{manufacturerColor,jdbcType=VARCHAR},
+    "GENERAL_COLOR" = #{generalColor,jdbcType=VARCHAR},
+    "SIZE" = #{size,jdbcType=VARCHAR},
+    "LENS_SIZE" = #{lensSize,jdbcType=VARCHAR},
+    "BRIDGE_SIZE" = #{bridgeSize,jdbcType=VARCHAR},
+    "TEMPLE_SIZE" = #{templeSize,jdbcType=VARCHAR},
+    "VERTICAL_SIZE" = #{verticalSize,jdbcType=VARCHAR},
+    "GENDER" = #{gender,jdbcType=VARCHAR},
+    "VOYAGEONE_PRICE" = #{voyageonePrice,jdbcType=VARCHAR},
+    "RETAIL_PRICE" = #{retailPrice,jdbcType=VARCHAR},
+    "QTY" = #{qty,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "BRAND" = #{brand,jdbcType=LONGVARCHAR},
+    "UPC" = #{upc,jdbcType=LONGVARCHAR},
+    "MATERIAL" = #{material,jdbcType=LONGVARCHAR},
+    "COUNTRY_OF_ORIGIN" = #{countryOfOrigin,jdbcType=LONGVARCHAR},
+    "LENS_COLOR" = #{lensColor,jdbcType=LONGVARCHAR},
+    "LENS_TECHNOLOGY" = #{lensTechnology,jdbcType=LONGVARCHAR},
+    "FRAME_TYPE" = #{frameType,jdbcType=LONGVARCHAR},
+    "STYLE" = #{style,jdbcType=LONGVARCHAR},
+    "URL1" = #{url1,jdbcType=LONGVARCHAR},
+    "URL2" = #{url2,jdbcType=LONGVARCHAR},
+    "URL3" = #{url3,jdbcType=LONGVARCHAR},
+    "URL4" = #{url4,jdbcType=LONGVARCHAR},
+    "URL5" = #{url5,jdbcType=LONGVARCHAR},
+    "URL6" = #{url6,jdbcType=LONGVARCHAR},
+    "URL7" = #{url7,jdbcType=LONGVARCHAR},
+    "URL8" = #{url8,jdbcType=LONGVARCHAR}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedDfoBean" >
+    update cms_zz_feed_dfo_product_temp
+    set "CLASSIFICATION" = #{classification,jdbcType=VARCHAR},
+    "MODEL" = #{model,jdbcType=VARCHAR},
+    "MANUFACTURER_COLOR" = #{manufacturerColor,jdbcType=VARCHAR},
+    "GENERAL_COLOR" = #{generalColor,jdbcType=VARCHAR},
+    "SIZE" = #{size,jdbcType=VARCHAR},
+    "LENS_SIZE" = #{lensSize,jdbcType=VARCHAR},
+    "BRIDGE_SIZE" = #{bridgeSize,jdbcType=VARCHAR},
+    "TEMPLE_SIZE" = #{templeSize,jdbcType=VARCHAR},
+    "VERTICAL_SIZE" = #{verticalSize,jdbcType=VARCHAR},
+    "GENDER" = #{gender,jdbcType=VARCHAR},
+    "VOYAGEONE_PRICE" = #{voyageonePrice,jdbcType=VARCHAR},
+    "RETAIL_PRICE" = #{retailPrice,jdbcType=VARCHAR},
+    "QTY" = #{qty,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_dfo_product_temp
+  </delete>
+
+
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoDfoModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_dfo_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_dfo_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_dfo_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_dfo_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>
