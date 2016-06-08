@@ -155,6 +155,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             }
             platformCart.put("schemaFields", fields);
+            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
+            platformCart.setpCatId(platformCategorySchemaModel.getCatId());
             // platform 品牌名
             if (StringUtil.isEmpty(platformCart.getpBrandId())) {
                 Map<String, Object> parm = new HashMap<>();
