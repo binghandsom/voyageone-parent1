@@ -390,7 +390,6 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 groupObj.setGroupBean(new CmsBtProductGroupModel());
             } else {
                 groupModelMap = grpList.get(0);
-                groupObj.setGroups(groupModelMap);
                 groupObj.setGroupBean(groupModelMap);
             }
 

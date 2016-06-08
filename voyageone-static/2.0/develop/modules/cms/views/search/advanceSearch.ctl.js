@@ -8,11 +8,11 @@ define([
     'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
-    'modules/cms/service/search.advance.service',
+    'modules/cms/service/search.advance2.service',
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -24,6 +24,7 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
+                cidValue: [],
                 catsss: "玩具/童车/益智/积木/模型>游泳池"
 
             },
@@ -75,7 +76,7 @@ define([
             } else if ($routeParams.type == "2") {
                 $scope.vm.searchInfo.codeList = $routeParams.value;
             }
-            searchAdvanceService.init().then(function (res) {
+            searchAdvanceService2.init().then(function (res) {
                     $scope.vm.masterData = res.data;
                     $scope.vm.promotionList =  _.where(res.data.promotionList, {isAllPromotion: 0});
                     $scope.vm.custAttrList.push({inputVal: "", inputOpts: "",inputOptsKey:""});
@@ -123,7 +124,7 @@ define([
             $scope.vm.productPageOption.curr = 1;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
-            searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
+            searchAdvanceService2.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps,function(data){
@@ -154,14 +155,14 @@ define([
          * 数据导出
          */
         function exportFile () {
-            searchAdvanceService.exportFile($scope.vm.searchInfo);
+            searchAdvanceService2.exportFile($scope.vm.searchInfo);
         }
 
         /**
          * 分页处理group数据
          */
         function getGroupList () {
-            searchAdvanceService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
+            searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -173,7 +174,7 @@ define([
          * 分页处理product数据
          */
         function getProductList () {
-            searchAdvanceService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
+            searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -192,7 +193,7 @@ define([
          */
         function openAddPromotion (promotion, openAddToPromotion) {
             openAddToPromotion(promotion, getSelProductList()).then(function () {
-                searchAdvanceService.clearSelList();
+                searchAdvanceService2.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -222,7 +223,7 @@ define([
          */
         function openJMActivity (promotion, openJMActivity) {
             openJMActivity(promotion, getSelProductList()).then(function () {
-                searchAdvanceService.clearSelList();
+                searchAdvanceService2.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -234,7 +235,7 @@ define([
          */
         function openBulkUpdate (openFieldEdit) {
             openFieldEdit(getSelProductList()).then(function () {
-                searchAdvanceService.clearSelList();
+                searchAdvanceService2.clearSelList();
                 getGroupList();
                 getProductList();
             })
@@ -289,19 +290,13 @@ define([
          * 添加新search选项
          */
         function addCustAttribute () {
-
             if ($scope.vm.custAttrList.length < 5) {
                 $scope.vm.custAttrList.push({ inputOptsKey: "",inputOpts: "",inputVal: ""});
             } else {
                 alert("最多只能添加5项")
             }
         }
-        // ng-readonly="true
-        $scope.vm.isCustAttrReadonly=function(m)
-        {
-            if(m==null) return false;
-            return m.inputOpts.lastIndexOf("null") > 0;
-        };
+
         function delCustAttribute (idx) {
             if ($scope.vm.custAttrList.length > 1) {
                 $scope.vm.custAttrList.splice(idx, 1);
@@ -309,6 +304,55 @@ define([
                 alert("最少保留一项")
             }
         }
+
+        // 当选择搜索时设置输入框
+        $scope.setSelValue = function(option, custAtts) {
+            option.inputType = custAtts.valType;
+            if (option.inputType == undefined) {
+                option.inputType = 'string';
+            }
+            option.inputOptsKey = custAtts.configCode;
+            if (option.inputType.indexOf('list') == 0) {
+                option.display = 0;
+                // 从服务器取回下拉列表的值(先从本地缓存取，没有再从服务器取)
+                option._inputOptsList = [];
+                if ($scope.vm._inputOptsListMap == undefined) {
+                    $scope.vm._inputOptsListMap = {};
+                }
+                var localOptsList = $scope.vm._inputOptsListMap[option.inputOptsKey];
+                if (localOptsList == undefined) {
+                    // 本地缓存中没有该列表
+                    searchAdvanceService2.getCustSearchList(option.inputOptsKey, option.inputType).then(function (res) {
+                        option._inputOptsList.push({"name": '未设值', "value": ''});
+                        if (res && res.data) {
+                            option._inputOptsList = option._inputOptsList.concat(res.data);
+                        }
+                        $scope.vm._inputOptsListMap[option.inputOptsKey] = option._inputOptsList;
+                    });
+                } else {
+                    option._inputOptsList = option._inputOptsList.concat(localOptsList);
+                }
+            } else {
+                option.display = 1;
+                // 设置比较操作符
+                if ('string' == option.inputType) {
+                    // 对应类型是字符串
+                    option._inputOptsList = [];
+                    option._inputOptsList.push({"name": '未设值', "value": 4});
+                    option._inputOptsList.push({"name": '已设值', "value": 5});
+                    option._inputOptsList.push({"name": '包含', "value": 6});
+                    option._inputOptsList.push({"name": '不包含', "value": 7});
+
+                } else if ('number' == option.inputType) {
+                    // 对应类型是数值
+                    option._inputOptsList = [];
+                    option._inputOptsList.push({"name": '未设值', "value": 4});
+                    option._inputOptsList.push({"name": '>', "value": 1});
+                    option._inputOptsList.push({"name": '=', "value": 2});
+                    option._inputOptsList.push({"name": '<', "value": 3});
+                }
+            }
+        };
 
         /**
          * 返回选中的数据,如果选中的是groups则返回的group下面所有的product,如果选择的是product,则只返回选中的product
@@ -383,9 +427,9 @@ define([
 
                 confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
                     .then(function () {
-                        searchAdvanceService.addFreeTag(tagBean.tagPath, productIds).then(function () {
+                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds).then(function () {
                             notify.success ($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            searchAdvanceService.clearSelList();
+                            searchAdvanceService2.clearSelList();
                             getGroupList();
                             getProductList();
                         })
@@ -398,9 +442,9 @@ define([
 
         function openAdvanceImagedetail(item){
             var picList = [];
-            for(var attr in item.fields){
+            for(var attr in item.commom.fields){
                 if(attr.indexOf("images") >= 0){
-                    var image = _.map(item.fields[attr],function(entity){
+                    var image = _.map(item.common.fields[attr],function(entity){
                         var imageKeyName = "image" + attr.substring(6, 7);
                         return entity[imageKeyName] != null ? entity[imageKeyName] : "";
                     });
@@ -413,12 +457,12 @@ define([
         function openApproval() {
             alert($translate.instant('TXT_BULK_APPROVAL'));
         }
-        function clearCartCategory(){
 
+        function clearCartCategory() {
             $scope.vm.searchInfo.catsss = null;
         }
 
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

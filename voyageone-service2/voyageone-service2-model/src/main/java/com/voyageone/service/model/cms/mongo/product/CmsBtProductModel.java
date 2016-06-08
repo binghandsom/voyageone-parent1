@@ -41,8 +41,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
     //店铺内类目
     private CmsBtProductModel_SellerCats sellerCats = new CmsBtProductModel_SellerCats();
-    //groups
-    private CmsBtProductGroupModel groups = new CmsBtProductGroupModel();
     //共通属性
     private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
     //平台属性Map
@@ -220,19 +218,4 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.sales = sales;
     }
 
-    /**
-     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
-     */
-    @Deprecated
-    public CmsBtProductGroupModel getGroups() {
-        return groups;
-    }
-
-    /**
-     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
-     */
-    @Deprecated
-    public void setGroups(CmsBtProductGroupModel groups) {
-        this.groups = groups;
-    }
 }

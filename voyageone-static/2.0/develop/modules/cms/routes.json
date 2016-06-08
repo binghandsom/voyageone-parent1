@@ -75,6 +75,7 @@
     "templateUrl": "views/search/advanceSearch.tpl.html",
     "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
   },
+
   "search_feedsearch": {
     "url": "/search/feedsearch/",
     "hash": "/search/feedsearch",

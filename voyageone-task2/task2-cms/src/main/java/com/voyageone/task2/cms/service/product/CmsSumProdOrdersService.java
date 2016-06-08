@@ -319,7 +319,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 批量更新
             if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
-                BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set", false);
+                BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set", false);
                 $debug(String.format("更新product 店铺%s 执行数 %d, 执行结果 %s", channelId, bulkList.size(), rs.toString()));
                 bulkList = new ArrayList<>();
             }

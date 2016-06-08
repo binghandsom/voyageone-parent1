@@ -22,7 +22,11 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
     public final static String SKUS = "skus";
 
     public CmsBtProductModel_Field getFields() {
-        return getAttribute("fields");
+        CmsBtProductModel_Field field = getAttribute("fields");
+        if (field == null) {
+            field = new CmsBtProductModel_Field();
+        }
+        return field;
     }
 
     public void setFields(CmsBtProductModel_Field fields) {
