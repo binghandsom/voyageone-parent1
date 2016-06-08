@@ -179,14 +179,14 @@
                                             <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'
                                                 | translate}}</label>
                                             <div class="col-sm-7">
-                                                <select class="form-control" ng-model="vm.searchInfo.cartId"
-                                                        ng-change="getCat()"
-                                                        ng-options="cartType.value as cartType.name for cartType in vm.masterData.cartList">
+                                                <select class="form-control" ng-model="_cartType_"
+                                                        ng-change="getCat(_cartType_)"
+                                                        ng-options="cartType as cartType.name for cartType in vm.masterData.cartList">
                                                     <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"
                                                    translate="TXT_PRODUCT_STATUS"></label>
                                             <div class="col-sm-8">
@@ -198,7 +198,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"
                                                    translate="TXT_PLATFORM_STATUS"></label>
                                             <div class="col-sm-8">
@@ -210,16 +210,16 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"
                                                    translate="TXT_LIST_ERROR"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" ><span class="fa fa-check"></span> {{'Error'|translate}}
+                                                    <input type="checkbox" ng-model="vm.searchInfo.errorListStatus"><span class="fa fa-check"></span> {{'Error'|translate}}
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group"><!--销量排序-->
+                                        <div class="form-group" ng-if="vm._cart_display"><!--销量排序-->
                                             <label class="col-sm-3 control-label">{{'TXT_SALES_SORT'|translate}}</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio">
@@ -233,7 +233,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
                                                 <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
@@ -253,7 +253,7 @@
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
                                     <div class="form-horizontal">
-                                        <div class="form-group"><!--主类目-->
+                                        <div class="form-group"  ng-if="vm._cart_display"><!--主类目-->
                                             <div class="col-sm-4 text-right">
                                                 <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
                                                     <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
@@ -263,7 +263,7 @@
                                                 <input type="text" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="form-group"><!--内部分类-->
+                                        <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
                                                 <button class="btn btn-default"
                                                         ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">
@@ -280,7 +280,7 @@
                                                 <textarea class="form-control inherited" ng-model="vm.searchInfo.catsss" rows="3" readonly></textarea>
                                             </div>
                                         </div>
-                                        <div class="form-group"><!--promotion tag-->
+                                        <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="btn-group" uib-dropdown>
                                                     <button type="button" class="btn btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
@@ -297,7 +297,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-7 col-sm-offset-4">
                                                 <textarea class="form-control inherited " rows="3"></textarea>
                                             </div>
@@ -306,7 +306,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label" translate="TXT_PRICE_TYPE"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio"
@@ -317,7 +317,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
                                                 <div class="input-group col-sm-5"><input type="text"
@@ -333,7 +333,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label">查询价格变动</label>
                                             <div class="col-sm-8">
                                                 <div>
@@ -345,7 +345,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-3 text-right">
                                                 <label class="control-label"
                                                        translate="TXT_PROPERTY_STATUS"></label>
@@ -358,7 +358,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
                                             <div class="col-sm-9 form-inline">
                                                 <div class="col-sm-5 input-group">
@@ -444,7 +444,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortOneName"
-                                                            ng-options="sortOne.value as sortOne.name for sortOne in vm.masterData.sortList">
+                                                            ng-options="sortOne.configCode as sortOne.configValue1 for sortOne in vm.masterData.custAttsList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -468,7 +468,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortTwoName"
-                                                            ng-options="sortTwo.value as sortTwo.name for sortTwo in vm.masterData.sortList">
+                                                            ng-options="sortTwo.configCode as sortTwo.configValue1 for sortTwo in vm.masterData.custAttsList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -492,7 +492,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortThreeName"
-                                                            ng-options="sortThree.value as sortThree.name for sortThree in vm.masterData.sortList">
+                                                            ng-options="sortThree.configCode as sortThree.configValue1 for sortThree in vm.masterData.custAttsList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">

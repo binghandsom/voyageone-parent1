@@ -390,10 +390,41 @@ define([
         /**
          * 查询指定店铺cart类型下的所有类目(list形式)
          */
-        function getCat () {
+        function getCat (cartObj) {
+            if (cartObj == null || cartObj == undefined) {
+                $scope.vm.searchInfo.cartId = '';
+            } else {
+                $scope.vm.searchInfo.cartId = cartObj.value;
+            }
             if ($scope.vm.searchInfo.cartId == '0' || $scope.vm.searchInfo.cartId == '' || $scope.vm.searchInfo.cartId == undefined) {
+                // 清空平台相关查询条件
+                $scope.vm.searchInfo.productStatus = null;
+                $scope.vm.searchInfo.platformStatus = null;
+                $scope.vm.searchInfo.errorListStatus = null;
+
+                $scope.vm.searchInfo.promotionList = null;
+
+                $scope.vm.searchInfo.tags = [];
+                $scope.vm.searchInfo.priceChgFlg = '0';
+                $scope.vm.searchInfo.tagTypeSelectValue = '0';
+                $scope.vm.searchInfo.sortSales = '0';
+                $scope.vm.searchInfo.cidValue = [];
+
+                $scope.vm.searchInfo.priceEnd = '';
+                $scope.vm.searchInfo.priceStart = '';
+                $scope.vm.searchInfo.priceType = '';
+                $scope.vm.searchInfo.createTimeStart = '';
+                $scope.vm.searchInfo.createTimeTo = '';
+
                 $scope.vm.masterData.catList = [];
+                $scope.vm._cart_display = 0;
+                $scope.vm._mmmcart_display = 0;
                 return;
+            }
+            $scope.vm._cart_display = 1;
+            $scope.vm._mmmcart_display = 1;
+            if (cartObj.ismm) {
+                $scope.vm._mmmcart_display = 0;
             }
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){

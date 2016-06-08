@@ -5,8 +5,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -110,8 +108,8 @@ public class UploadToUSJoiService extends BaseTaskService{
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
+                    productModel.setCarts(new ArrayList<>());
                     creatGroup(productModel, usJoiChannelId);
-
 
                     List<ProductPriceBean> productPrices = new ArrayList<>();
                     List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();

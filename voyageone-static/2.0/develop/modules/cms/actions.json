@@ -70,7 +70,8 @@
         "revertCategory": "revertCategory",
         "getProductPlatform":"getProductPlatform",
         "changePlatformCategory":"changePlatformCategory",
-        "updateProductPlatform":"updateProductPlatform"
+        "updateProductPlatform":"updateProductPlatform",
+        "updateProductPlatformChk":"updateProductPlatformChk"
       }
     },
     "mapping": {

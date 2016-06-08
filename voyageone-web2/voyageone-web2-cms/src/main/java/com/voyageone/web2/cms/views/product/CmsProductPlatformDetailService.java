@@ -148,13 +148,20 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+            } else {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
             if (fieldsValue != null) {
                 FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             }
             platformCart.put("schemaFields", fields);
+            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
+            platformCart.setpCatId(platformCategorySchemaModel.getCatId());
             // platform 品牌名
             if (StringUtil.isEmpty(platformCart.getpBrandId())) {
                 Map<String, Object> parm = new HashMap<>();
@@ -170,7 +177,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+            } else {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             platformCart.put("schemaFields", fields);
             Map<String, Object> parm = new HashMap<>();
@@ -212,19 +224,20 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1())/100D+1.0;
         }
 
-
-        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
-        List<CmsBtProductModel_Sku> cmsBtProductModel_skus = cmsBtProduct.getSkus();
-        Map<String, Double> comPrice = cmsBtProductModel_skus.stream().
-                collect(Collectors.toMap(CmsBtProductModel_Sku::getSkuCode, CmsBtProductModel_Sku::getPriceRetail));
-        for(Map stringObjectBaseMongoMap : (List<Map<String,Object>>)platform.get("skus")){
-            String sku = (String) stringObjectBaseMongoMap.get("skuCode");
-            Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-            if(comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0){
-                return "4000091";
-            }
-            if(breakThreshold!=null && comPrice.containsKey(sku) && ((Double)(comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0 ){
-                return "4000092";
+        if(platform.get("skus") !=null ) {
+            CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+            List<CmsBtProductModel_Sku> cmsBtProductModel_skus = cmsBtProduct.getSkus();
+            Map<String, Double> comPrice = cmsBtProductModel_skus.stream().
+                    collect(Collectors.toMap(CmsBtProductModel_Sku::getSkuCode, CmsBtProductModel_Sku::getPriceRetail));
+            for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
+                String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
+                    return "4000091";
+                }
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {
+                    return "4000092";
+                }
             }
         }
         return null;
