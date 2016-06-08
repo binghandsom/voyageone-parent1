@@ -1,4 +1,7 @@
-(function () {
+define(function (require) {
+    /*
+     * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
+     */
 
     /*
      * 已知的 rule 有如下:
@@ -226,53 +229,6 @@
     }
 
     /**
-     * 为 maxlength 和 minlength 规则提供支持
-     */
-    function bindLengthRule(element, rule, name, attr) {
-
-        if (!rule) return;
-
-        if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, 'rules.' + name + '.getLength()');
-        } else {
-            element.attr(attr, rule);
-        }
-    }
-
-    /**
-     * 为 required 和 readonly 规则提供支持
-     */
-    function bindBoolRule(element, rule, name, attr) {
-
-        if (!rule) return;
-
-        if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, 'rules.' + name + '.checked()');
-        } else if (rule === 'true') {
-            element.attr(attr, true);
-        }
-    }
-
-    /**
-     * 禁用与启用规则, 只支持依赖类型, 默认其他类型都不支持
-     * 因为固定的没有意义
-     */
-    function bindDisableRule(element, rule) {
-        if (rule && rule instanceof DependentRule) {
-            element.attr('ng-if', '!rules.disableRule.checked()');
-        }
-    }
-
-    /**
-     * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
-     */
-    function bindTipRule(element, rule) {
-        if (rule) {
-            element.attr('title', rule);
-        }
-    }
-
-    /**
      * 获取字段是否包含那种类似 required 的验证类的规则, tip 就不是。
      */
     function hasValidateRule(field) {
@@ -285,138 +241,47 @@
         if (!field.rules.length)
             return false;
 
-        var someRuleIsNotTip = field.rules.find(function (rule) {
+        return field.rules.some(function (rule) {
             return rule.name.indexOf('tip') < 0;
         });
-
-        return !!someRuleIsNotTip;
     }
 
     /**
-     * 在 parent 指定的容器里编译 element, 并根据情况选择是否追加 ng-form
+     * 根据值类型规则返回相应的 input type
      */
-    function compileAndLink($compile, $scope, parent, element, fieldElementName, field, controllers) {
+    function getInputType(valueTypeRule) {
 
-        var schemaController = controllers[0];
+        var type = 'text';
 
-        var formController = controllers[1];
-
-        var formName, formElement, voMessage, container = parent;
-
-        if (hasValidateRule(field)) {
-            // 如果有需要验证的信息, 则追加信息显示
-
-            // 判断是否外层有 form 支持
-            if (formController) {
-                formName = formController.$name;
-            } else if (schemaController) {
-                formName = schemaController.formName;
-            } else {
-                // 如果完全没有 form 提供支持
-                // 那么需要自己开
-                formName = 'field_form_' + random();
-                formElement = angular.element('<ng-form name="' + formName + '"></ng-form>');
-                container.append(formElement);
-                $compile(formElement)($scope);
-
-                // 后续的元素将追加到自己开的 ngform 里
-                container = form;
-            }
-
-            voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
-
-            container.append(element, voMessage);
-
-            $compile(container.children())($scope);
-        } else {
-            // 如果无验证的话, 就不需要信息显示了
-            container.append(element);
-            $compile(element)($scope);
-        }
-    }
-
-    /**
-     * 统一 field directive 的构建基础部分
-     */
-    function schemaFieldDirectiveFactory(compile) {
-        return {
-            restrict: 'E',
-            require: ['?^schema', '?^form'],
-            scope: true,
-            link: function ($scope, elem, attr, controllers) {
-
-                var disposeWatcher = null;
-                var schemaController = controllers[0];
-
-                // 如果为 field 设置了什么, 就尝试获取 field 上的内容
-                if (attr.field) {
-                    disposeWatcher = $scope.$watch(attr.field, function (field) {
-                        if (!field)
-                            return;
-
-                        // 拿到字段后, 就可以销毁字段检查的 watcher 了
-                        disposeWatcher();
-
-                        if (schemaController) {
-                            // 外面提供了 schema。那么就要等待 schema 的数据
-                            disposeWatcher = $scope.$watch(function () {
-                                return schemaController.schema
-                            }, function (schema) {
-
-                                $scope.field = field;
-                                compile(field, schema, $scope, elem, attr, controllers);
-
-                                disposeWatcher();
-                                disposeWatcher = null;
-                            });
-                        } else {
-                            // 如果外面没有, 意思就是不要提供依赖验证支持。那就不用在折腾了
-                            $scope.field = field;
-                            compile(field, null, $scope, elem, attr, controllers);
-
-                            disposeWatcher = null;
-                        }
-                    });
-                    return;
-                }
-
-                // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
-                if (attr.fieldId) {
-
-                    // 但是没有外层 schema 的话。就只能...
-                    if (!schemaController) {
-                        elem.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
-                        return;
-                    }
-
-                    disposeWatcher = $scope.$watch(function () {
-                        return schemaController.schema
-                    }, function (schema) {
-
-                        if (!schema)
-                            return;
-
-                        var field = find(schema, function (field) {
-                            return field.id === attr.fieldId;
-                        });
-
-                        if (!field)
-                            elem.text('在 schema 上没有找到目标属性。');
-                        else {
-                            $scope.field = field;
-                            compile(field, schema, $scope, elem, attr, controllers);
-                        }
-
-                        disposeWatcher();
-                        disposeWatcher = null;
-                    });
-                    return;
-                }
-
-                // 如果两个都没设置, 或者没有外层 schema 那就....
-                elem.text('请提供 field 或者 field-id 属性。');
+        if (valueTypeRule) {
+            switch (valueTypeRule) {
+                case VALUE_TYPES.TEXT:
+                    type = 'text';
+                    break;
+                case VALUE_TYPES.HTML:
+                case VALUE_TYPES.TEXTAREA:
+                    type = 'textarea';
+                    break;
+                case VALUE_TYPES.INTEGER:
+                case VALUE_TYPES.LONG:
+                    type = 'number';
+                    break;
+                case VALUE_TYPES.DECIMAL:
+                    type = 'number';
+                    break;
+                case VALUE_TYPES.DATE:
+                    type = 'date';
+                    break;
+                case VALUE_TYPES.TIME:
+                    type = 'time';
+                    break;
+                case VALUE_TYPES.URL:
+                    type = 'url';
+                    break;
             }
         }
+
+        return type;
     }
 
     angular.module('voyageone.angular.directives')
@@ -424,20 +289,18 @@
             return {
                 restrict: 'E',
                 transclude: true,
-                template: '<ng-form name="{{$ctrl.formName}}"></ng-form>',
                 scope: true,
                 controllerAs: '$ctrl',
                 link: function ($scope, $element, $attrs, ctrl, transclude) {
+                    // 自己处理 transclude 来保证内部的 vo-message 可以访问到上层 scope 的 formController
                     transclude($scope, function (clone) {
-                        $element.find('ng-form').append(clone);
+                        $element.append(clone);
                     });
                 },
-                controller: function ($scope, $attrs) {
+                controller: function SchemaController($scope, $attrs) {
 
                     var self = this;
                     var disposeDataWatcher;
-
-                    self.formName = 'schema_form_' + random();
 
                     disposeDataWatcher = $scope.$watch($attrs.data, function (data) {
 
@@ -452,6 +315,221 @@
                 }
             }
         })
+        .directive('schemaField', function ($compile) {
+            return {
+                restrict: 'E',
+                require: ['?^schema', '?^form'],
+                scope: true,
+                link: function ($scope, elem, attr, controllers) {
+
+                    // schema-field
+                    // ---
+                    // 如果 SchemaController 存在, 即提供依赖类型的规则验证。但仅支持 disableRule, 如果想开启类似必填这些的验证, 需要在外层提供 form
+                    // ---
+                    // 如果 SchemaController 不存在, 只存在 FormController。那么只提供类似必填类的并且非依赖的验证, 所有依赖类型的都将被忽略。同时这里决定是否有 vo-message 的存在
+                    // ---
+                    // 如果啥都没有, 就不开验证, 后续的 rule 就都不用解析了。
+
+                    var disposeWatcher = null;
+                    var schemaController = controllers[0];
+                    var formController = controllers[1];
+                    var config = {
+                        // 解析依赖规则
+                        doDep: !!schemaController,
+                        // 是否显示名称
+                        showName: !!schemaController,
+                        // 解析验证规则
+                        doValid: !!formController,
+                        // 是否解析规则
+                        doRule: !!schemaController || !!formController,
+                        // 是否只解析启禁用规则
+                        onlyDisableRule: !!schemaController && !formController
+                    };
+                    var FIELD_TYPES;
+
+                    // 如果为 field 设置了什么, 就尝试获取 field 上的内容
+                    if (attr.field) {
+                        disposeWatcher = $scope.$watch(attr.field, function (field) {
+                            if (!field)
+                                return;
+
+                            // 拿到字段后, 就可以销毁字段检查的 watcher 了
+                            disposeWatcher();
+
+                            if (schemaController) {
+                                // 外面提供了 schema。那么就要等待 schema 的数据
+                                disposeWatcher = $scope.$watch(function () {
+                                    return schemaController.schema
+                                }, function (schema) {
+
+                                    compile(field, schema);
+
+                                    disposeWatcher();
+                                    disposeWatcher = null;
+                                });
+                            } else {
+                                // 如果外面没有, 意思就是不要提供依赖验证支持。那就不用在折腾了
+
+                                compile(field, null);
+
+                                disposeWatcher = null;
+                            }
+                        });
+                        return;
+                    }
+
+                    // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
+                    if (attr.fieldId) {
+
+                        // 但是没有外层 schema 的话。就只能...
+                        if (!schemaController) {
+                            elem.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
+                            return;
+                        }
+
+                        disposeWatcher = $scope.$watch(function () {
+                            return schemaController.schema
+                        }, function (schema) {
+
+                            if (!schema)
+                                return;
+
+                            var field = find(schema, function (field) {
+                                return field.id === attr.fieldId;
+                            });
+
+                            if (!field)
+                                elem.text('在 schema 上没有找到目标属性。');
+                            else {
+                                compile(field, schema);
+                            }
+
+                            disposeWatcher();
+                            disposeWatcher = null;
+                        });
+                        return;
+                    }
+
+                    // 如果两个都没设置, 或者没有外层 schema 那就....
+                    elem.text('请提供 field 或者 field-id 属性。');
+
+                    function compile(field, schema) {
+
+                        var innerElement, fieldElementName = 'field_' + random();
+
+                        var rules = $scope.$rules = doRule(field, schema);
+
+                        $scope.field = field;
+
+                        if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
+
+                        // 创建输入元素
+                        // 根据需要处理规则
+                        elem.append(innerElement = createElement(field, fieldElementName, rules));
+
+                        // 根据需要创建 vo-message
+                        if (config.doValid) {
+                            var formName = formController.$name;
+                            var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
+                            elem.append(voMessage);
+                        }
+
+                        // 最终编译
+                        $compile(elem.children())($scope);
+                    }
+
+                    function createElement(field, name, rules) {
+
+                        var innerElement;
+
+                        switch (field.type) {
+                            case FIELD_TYPES.input:
+
+                                var type = getInputType(rules.valueTypeRule);
+
+                                if (type === 'textarea') {
+                                    innerElement = angular.element('<textarea class="form-control">');
+                                } else {
+                                    innerElement = angular.element('<input class="form-control">').attr('type', type);
+                                }
+
+                                innerElement.attr('name', name);
+
+                                innerElement.attr('ng-model', 'field.$value');
+
+                                break;
+                            case FIELD_TYPES.singleCheck:
+
+                                innerElement = angular.element('<select class="form-control">');
+
+                                innerElement.attr('ng-options', 'option.value as option.displayName for option in field.options');
+
+                                innerElement.attr('name', name);
+
+                                innerElement.attr('ng-model', 'field.$value');
+
+                                break;
+                            case FIELD_TYPES.multiCheck:
+
+                                innerElement = [];
+
+                                // 创建用于记录每个多选框选中状态的对象
+                                $scope.selected = [];
+
+                                // 通过事件触发 update 来操作 field 的 values 数组
+                                $scope.update = function (index) {
+
+                                    var selectedValue = field.options[index].value;
+                                    var selectedIndex = field.$value.indexOf(selectedValue);
+
+                                    if ($scope.selected[index]) {
+                                        // 选中
+                                        if (selectedIndex < 0)
+                                            field.$value.push(selectedValue);
+                                    } else {
+                                        // 没选中
+                                        if (selectedIndex > -1)
+                                            field.$value.splice(selectedIndex, 1);
+                                    }
+
+                                };
+
+                                field.$value = [];
+
+                                field.options.forEach(function (option, index) {
+
+                                    var label = angular.element('<label></label>'),
+                                        checkbox = angular.element('<input type="checkbox">');
+
+                                    checkbox.attr('ng-model', 'selected[' + index + ']');
+
+                                    checkbox.attr('name', name);
+
+                                    checkbox.attr('ng-change', 'update(' + index + ')');
+
+                                    label.append(checkbox, '&nbsp;', option.displayName);
+
+                                    innerElement.push(label);
+                                });
+
+                                break;
+                            case FIELD_TYPES.complex:
+                                break;
+                            case FIELD_TYPES.multiComplex:
+                                break;
+                            default:
+                                console.error('不支持其他类型');
+                                return null;
+                        }
+
+                        return innerElement;
+                    }
+                }
+            };
+        })
+
+        /********************************************************************************************************************************************/
+
         .directive('schemaInput', function ($compile) {
             return schemaFieldDirectiveFactory(function (field, schema, $scope, elem, attr, controllers) {
 
@@ -624,7 +702,6 @@
                     bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
 
-
                     bindTipRule(checkbox, rules.tipRule);
 
                     label.append(checkbox, '&nbsp;', option.displayName);
@@ -641,4 +718,181 @@
         })
         .directive('schemaMultiComplex', function () {
         });
-})();
+
+    /********************************************************************************************************************************************/
+
+
+    /**
+     * 在 parent 指定的容器里编译 element, 并根据情况选择是否追加 ng-form
+     */
+    function compileAndLink($compile, $scope, parent, element, fieldElementName, field, controllers) {
+
+        var schemaController = controllers[0];
+
+        var formController = controllers[1];
+
+        var formName, formElement, voMessage, container = parent;
+
+        if (hasValidateRule(field)) {
+            // 如果有需要验证的信息, 则追加信息显示
+
+            // 判断是否外层有 form 支持
+            if (formController) {
+                formName = formController.$name;
+            } else if (schemaController) {
+                formName = schemaController.formName;
+            } else {
+                // 如果完全没有 form 提供支持
+                // 那么需要自己开
+                formName = 'field_form_' + random();
+                formElement = angular.element('<ng-form name="' + formName + '"></ng-form>');
+                container.append(formElement);
+                $compile(formElement)($scope);
+
+                // 后续的元素将追加到自己开的 ngform 里
+                container = form;
+            }
+
+            voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
+
+            container.append(element, voMessage);
+
+            $compile(container.children())($scope);
+        } else {
+            // 如果无验证的话, 就不需要信息显示了
+            container.append(element);
+            $compile(element)($scope);
+        }
+    }
+
+    /**
+     * 统一 field directive 的构建基础部分
+     */
+    function schemaFieldDirectiveFactory(compile) {
+        return {
+            restrict: 'E',
+            require: ['?^schema', '?^form'],
+            scope: true,
+            link: function ($scope, elem, attr, controllers) {
+
+                var disposeWatcher = null;
+                var schemaController = controllers[0];
+
+                // 如果为 field 设置了什么, 就尝试获取 field 上的内容
+                if (attr.field) {
+                    disposeWatcher = $scope.$watch(attr.field, function (field) {
+                        if (!field)
+                            return;
+
+                        // 拿到字段后, 就可以销毁字段检查的 watcher 了
+                        disposeWatcher();
+
+                        if (schemaController) {
+                            // 外面提供了 schema。那么就要等待 schema 的数据
+                            disposeWatcher = $scope.$watch(function () {
+                                return schemaController.schema
+                            }, function (schema) {
+
+                                $scope.field = field;
+                                compile(field, schema, $scope, elem, attr, controllers);
+
+                                disposeWatcher();
+                                disposeWatcher = null;
+                            });
+                        } else {
+                            // 如果外面没有, 意思就是不要提供依赖验证支持。那就不用在折腾了
+                            $scope.field = field;
+                            compile(field, null, $scope, elem, attr, controllers);
+
+                            disposeWatcher = null;
+                        }
+                    });
+                    return;
+                }
+
+                // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
+                if (attr.fieldId) {
+
+                    // 但是没有外层 schema 的话。就只能...
+                    if (!schemaController) {
+                        elem.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
+                        return;
+                    }
+
+                    disposeWatcher = $scope.$watch(function () {
+                        return schemaController.schema
+                    }, function (schema) {
+
+                        if (!schema)
+                            return;
+
+                        var field = find(schema, function (field) {
+                            return field.id === attr.fieldId;
+                        });
+
+                        if (!field)
+                            elem.text('在 schema 上没有找到目标属性。');
+                        else {
+                            $scope.field = field;
+                            compile(field, schema, $scope, elem, attr, controllers);
+                        }
+
+                        disposeWatcher();
+                        disposeWatcher = null;
+                    });
+                    return;
+                }
+
+                // 如果两个都没设置, 或者没有外层 schema 那就....
+                elem.text('请提供 field 或者 field-id 属性。');
+            }
+        }
+    }
+
+    /**
+     * 为 maxlength 和 minlength 规则提供支持
+     */
+    function bindLengthRule(element, rule, name, attr) {
+
+        if (!rule) return;
+
+        if (rule instanceof DependentRule) {
+            element.attr('ng-' + attr, 'rules.' + name + '.getLength()');
+        } else {
+            element.attr(attr, rule);
+        }
+    }
+
+    /**
+     * 为 required 和 readonly 规则提供支持
+     */
+    function bindBoolRule(element, rule, name, attr) {
+
+        if (!rule) return;
+
+        if (rule instanceof DependentRule) {
+            element.attr('ng-' + attr, 'rules.' + name + '.checked()');
+        } else if (rule === 'true') {
+            element.attr(attr, true);
+        }
+    }
+
+    /**
+     * 禁用与启用规则, 只支持依赖类型, 默认其他类型都不支持
+     * 因为固定的没有意义
+     */
+    function bindDisableRule(element, rule) {
+        if (rule && rule instanceof DependentRule) {
+            element.attr('ng-if', '!rules.disableRule.checked()');
+        }
+    }
+
+    /**
+     * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
+     */
+    function bindTipRule(element, rule) {
+        if (rule) {
+            element.attr('title', rule);
+        }
+    }
+});
