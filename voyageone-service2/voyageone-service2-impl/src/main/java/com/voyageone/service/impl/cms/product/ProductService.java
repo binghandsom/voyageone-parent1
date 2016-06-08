@@ -516,7 +516,7 @@ public class ProductService extends BaseService {
             queryObj.put("fields.code", productModel.getFields().getCode());
 
             BasicDBObject cartsObj = new BasicDBObject().append("carts", productModel.getCarts());
-            BasicDBObject pushObj = new BasicDBObject().append("$pushAll", cartsObj);
+            BasicDBObject pushObj = new BasicDBObject().append("$set", cartsObj);
             cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
         }
 
@@ -1133,6 +1133,8 @@ public class ProductService extends BaseService {
                 .filter(byCartId(carts))
                 .map(this::toProductModelCart)
                 .collect(Collectors.toList());
+
+        newCarts.addAll(carts);
 
         return newCarts;
     }
