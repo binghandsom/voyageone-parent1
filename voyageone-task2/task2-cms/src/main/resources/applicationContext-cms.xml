@@ -17,7 +17,7 @@
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 上新 -->
-        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/3 0-23 * * ?"/>
+        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
