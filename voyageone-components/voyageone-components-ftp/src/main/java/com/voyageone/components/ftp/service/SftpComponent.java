@@ -94,7 +94,7 @@ public class SftpComponent extends BaseFtpComponent {
         logger.info(String.format("sftp 上传文件开始:localFile[%s%s],remoteFile[%s%s]",
                 fileBean.getLocalPath(), fileBean.getLocalFilename(), fileBean.getRemotePath(), fileBean.getRemoteFilename()));
 
-        InputStream fileInputStream;
+        InputStream fileInputStream = null;
         try {
             if (fileBean.getLocalFileStream() != null) {
                 logger.info("localFileStream size=" + fileBean.getLocalFileStream().available());
@@ -128,9 +128,9 @@ public class SftpComponent extends BaseFtpComponent {
             logger.error(fileBean.getRemoteFilename() + " sftp 上传文件失败", e);
             throw new RuntimeException(e);
         } finally {
-            if (fileBean.getLocalFileStream() != null) {
+            if (fileInputStream != null) {
                 try {
-                    fileBean.getLocalFileStream().close();
+                    fileInputStream.close();
                 } catch (IOException ignored) {
                 }
             }
