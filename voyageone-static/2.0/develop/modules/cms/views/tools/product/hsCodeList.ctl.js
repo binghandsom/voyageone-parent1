@@ -7,9 +7,8 @@ define([
     cms.controller('HsCodeController', (function () {
         function HsCodeController(hsCodeInfoService) {
             this.hsCodeInfoService = hsCodeInfoService;
-            this.prodPageOption = {curr: 1, total: 0, fetch: searchHistoryTasks};
-            this.searchHistoryTasks = searchHistoryTasks;
-            this.getTask = getTask;
+            this.prodPageOption = {curr: 1, total: 0, fetch: search};
+            this.searchInfo = {};
             this.totalHsCodeCnt = 0;
             this.hsCodeTaskCnt = "";
             this.hsCodeStatus = "0";
@@ -18,7 +17,6 @@ define([
             this.productName = "";
             this.productMaterial = "";
             this.hsCodeValue = [];
-
         }
 
         HsCodeController.prototype = {
@@ -34,18 +32,20 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
-            search: function () {
+            search: function (page) {
                 var self = this;
-                self.hsCodeInfoService.search().then()
+                self.prodPageOption.curr=!page ? self.prodPageOption.curr : page;
+                self.searchInfo.pageNum = self.prodPageOption.curr;
+                self.searchInfo.pageSize = self.prodPageOption.size;
+                self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
+
+                })
             },
-            getTask: function () {
+            get: function () {
                 var self = this;
                 self.hsCodeInfoService.get().then()
             }
         };
-        function searchHistoryTasks() {
-
-        }
 
         return HsCodeController;
     })())
