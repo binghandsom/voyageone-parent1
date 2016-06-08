@@ -1159,7 +1159,10 @@ public class TmallProductService {
                 CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
                 constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
                 updateFields = resolveMappingProps(tmallUploadRunState, null);
-
+                // added by morse.lu 2016/06/08 start
+                // 清一下，开始进行商品上新
+                tmallUploadRunState.getContextBuildFields().clearContext();
+                // added by morse.lu 2016/06/08 end
             }
 
             // 更新产品
