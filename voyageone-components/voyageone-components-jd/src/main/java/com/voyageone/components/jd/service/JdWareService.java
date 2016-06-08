@@ -129,7 +129,7 @@ public class JdWareService extends JdBase {
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
         if (jdProduct.getListTime() != null)          request.setListTime(jdProduct.getListTime());
         // 品牌id
-        if (jdProduct.getBrandId() != null)           request.setBrandId(jdProduct.getBrandId());
+//        if (jdProduct.getBrandId() != null)           request.setBrandId(jdProduct.getBrandId());
 
         long wareId = 0;
 
@@ -258,6 +258,8 @@ public class JdWareService extends JdBase {
         if (jdProduct.getAdContent() != null)          request.setAdContent(jdProduct.getAdContent());
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
         if (jdProduct.getListTime() != null)           request.setListTime(jdProduct.getListTime());
+        // 品牌id
+//        if (jdProduct.getBrandId() != null)            request.setBrandId(jdProduct.getBrandId());
 
         // 商品更改时间
         String retModified = "";
