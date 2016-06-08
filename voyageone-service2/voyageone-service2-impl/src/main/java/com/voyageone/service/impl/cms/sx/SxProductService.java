@@ -1742,7 +1742,7 @@ public class SxProductService extends BaseService {
                 }
             } else if (resolveJdBrandSection_before(shopBean, field)) {
                 // 设置京东属性 - [品牌]（运营不用再设置这个属性了）
-                Map<String, Field> resolveField = resolveJdPriceSection(field, expressionParser.getSxData());
+                Map<String, Field> resolveField = resolveJdBrandSection(field, expressionParser.getSxData());
                 if (resolveField != null) {
                     if (retMap == null) {
                         retMap = new HashMap<>();

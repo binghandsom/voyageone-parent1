@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.platform.common;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -43,7 +44,7 @@ public class SxGetProductInfo {
 		List<CmsBtProductModel_Sku> skuList = new ArrayList<>();
 
 		// 获取group的所有商品的主数据信息 (取出一堆的product)
-		List<CmsBtProductModel> cmsBtProductModelList = getProductInfo(channelId, groupId);
+		List<CmsBtProductBean> cmsBtProductModelList = getProductInfo(channelId, groupId);
 		sxData.setProductList(cmsBtProductModelList);
 
 		// 分析出需要的platform (只取出当前的group的platform信息, 存放的是多个product的当前platform)
@@ -118,7 +119,7 @@ public class SxGetProductInfo {
 	/**
 	 * 获取group的所有商品的主数据信息
 	 */
-	private List<CmsBtProductModel> getProductInfo(String channelId, Long groupId) {
+	private List<CmsBtProductBean> getProductInfo(String channelId, Long groupId) {
 		return productService.getProductByGroupId(channelId, groupId, false);
 	}
 

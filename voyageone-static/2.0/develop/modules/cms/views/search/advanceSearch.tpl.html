@@ -6,8 +6,8 @@
                 <i class="pull-right glyphicon glyphicon-menu-down"
                    ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
             </uib-accordion-heading>
-            <tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
-                <tab>
+            <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
+                <uib-tab>
                     <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;{{'TXT_COMMON_SEARCH'|translate}}</tab-heading>
                     <div class="box">
                         <div class="table-responsive">
@@ -25,7 +25,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="form-group" ng-repeat="option in vm.custAttrList"><!-- 查询自由标签 -->
+                                            <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
                                                     <button class="btn btn-default" ng-click="openFreeTag('')">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
@@ -167,8 +167,8 @@
                             </div>
                         </div>
                     </div>
-                </tab>
-                <tab>
+                </uib-tab>
+                <uib-tab>
                     <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;{{'TXT_PLATFORM_SEARCH'|translate}}</tab-heading>
                     <div class="box">
                         <div class="table-responsive">
@@ -393,8 +393,8 @@
                             </div>
                         </div>
                     </div>
-                </tab>
-                <tab>
+                </uib-tab>
+                <uib-tab>
                     <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;{{'TXT_DIY_SEARCH'|translate}}
                     </tab-heading>
                     <div class="box">
@@ -403,32 +403,24 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group" ng-repeat="option in vm.custAttrList">
-                                            <label class="col-sm-3 control-label" ng-if="$index == 0"
-                                                   translate="TXT_CUST_QUERY_ATTR"></label>
+                                            <label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
                                             <label class="col-sm-3 control-label" ng-if="$index != 0"></label>
                                             <div class="col-sm-3">
-                                                <select class="form-control" ng-model="option.inputOptsKey"
-                                                        ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
+                                                <select class="form-control" ng-model="curSelAtts" ng-change="setSelValue(option, curSelAtts)"
+                                                        ng-options="custAtts as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-2">
-                                                <select class="form-control" ng-model="option.inputOpts">
-                                                    <option value="=">=</option>
-                                                    <option value="!=">!=</option>
-                                                    <option value="=null">=null</option>
-                                                    <option value="!=null">!=null</option>
+                                                <select class="form-control" ng-model="option.inputOpts"
+                                                    ng-options="optsObj.value as optsObj.name for optsObj in option._inputOptsList">
                                                 </select>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <input type="text" class="form-control"
-                                                       ng-readonly="vm.isCustAttrReadonly(option)"
-                                                       ng-model="option.inputVal">
+                                            <div class="col-sm-2" ng-if="option.display==1">
+                                                <input type="text" class="form-control" ng-model="option.inputVal">
                                             </div>
-                                            <button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs"
-                                                    ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
-                                            <button ng-if="$last" id="addCustDiv" class="btn btn-success btn-xs"
-                                                    style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i>
+                                            <button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+                                            <button ng-if="$last && $index < 4" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -524,8 +516,8 @@
                             </div>
                         </div>
                     </div>
-                </tab>
-            </tabset>
+                </uib-tab>
+            </uib-tabset>
         </uib-accordion-group>
     </uib-accordion>
     <div class="form-group text-center">
@@ -598,7 +590,7 @@
                 </h4>
             </div>
             <div class="container-fluid m-t-xs m-b-xs">
-                <tabset class="tab-container vo_nav-tabs">
+                <uib-tabset class="tab-container vo_nav-tabs">
                     <!--right-btn-->
                     <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
                         <div class="btn-group" uib-dropdown>
@@ -668,7 +660,7 @@
                         </div>
                     </div>
                     <!--tab-->
-                    <tab ng-click="vm.currTab = 'product'">
+                    <uib-tab ng-click="vm.currTab = 'product'">
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' |
                             translate}}
                         </tab-heading>
@@ -736,7 +728,7 @@
 											</span>
 										</span>
                                     <span class="label label-danger m-t-xs m-r-sm m-l-sm"
-                                          ng-if="productInfo.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
+                                          ng-if="productInfo.common.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
                                     <span class="label label-success m-t-xs m-r-sm"
                                           ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
@@ -745,17 +737,17 @@
 									    </span>&nbsp;
 										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
 											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank"
-                                               ng-bind="productInfo.fields.code"></a>
+                                               ng-bind="productInfo.common.fields.code"></a>
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
-											<a ng-if="productInfo.fields.longTitle"
+											<a ng-if="productInfo.common.fields.longTitle"
                                                href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.fields.longTitle}}"
-                                               target="_blank">{{productInfo.fields.longTitle | limitTo: 30}}{{productInfo.fields.longTitle.length > 30 ? '...' : ''}}</a>
-											<a ng-if="!productInfo.fields.longTitle"
+                                               title="{{productInfo.common.fields.longTitle}}"
+                                               target="_blank">{{productInfo.common.fields.longTitle | limitTo: 30}}{{productInfo.common.fields.longTitle.length > 30 ? '...' : ''}}</a>
+											<a ng-if="!productInfo.common.fields.longTitle"
                                                href="#/product/detail/{{productInfo.prodId}}"
-                                               title="{{productInfo.fields.productNameEn}}"
-                                               target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
+                                               title="{{productInfo.common.fields.productNameEn}}"
+                                               target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
 										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
 											<button ng-controller="showPopoverCtrl"
@@ -769,18 +761,18 @@
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
                                         <td class="text-left" style="display:inline-block;width:165px;height: 110px">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)"><img
-                                                    image="{{productInfo.fields.images1[0].image1}}"
-                                                    alt="{{productInfo.fields.code}}"
+                                                    image="{{productInfo.common.fields.images1[0].image1}}"
+                                                    alt="{{productInfo.common.fields.code}}"
                                                     class="thumb-sm-search pull-left m-r"/></a>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
-                                            {{productInfo.fields.brand}}
+                                            {{productInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:85px;">
                                             <!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
                                                     popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
                                                     class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
-                                            {{productInfo.fields.quantity || 0}}
+                                            {{productInfo.common.fields.quantity || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
                                             <button ng-controller="showPopoverCtrl"
@@ -843,8 +835,8 @@
                         <div class="col-sm-12 m-t-lg m-b-lg">
                             <vpagination config="vm.productPageOption"></vpagination>
                         </div>
-                    </tab>
-                    <tab ng-click="vm.currTab = 'group'">
+                    </uib-tab>
+                    <uib-tab ng-click="vm.currTab = 'group'">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' |
                             translate}}
                         </tab-heading>
@@ -907,15 +899,15 @@
                                            ng-bind="groupInfo.groupBean.numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
-										<a ng-if="groupInfo.fields.longTitle"
+										<a ng-if="groupInfo.common.fields.longTitle"
                                            ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                           title="{{groupInfo.fields.longTitle}}"
-                                           target="_blank">{{groupInfo.fields.longTitle | limitTo: 30}}{{groupInfo.fields.longTitle.length > 30 ? '...' : ''}}
+                                           title="{{groupInfo.common.fields.longTitle}}"
+                                           target="_blank">{{groupInfo.common.fields.longTitle | limitTo: 30}}{{groupInfo.common.fields.longTitle.length > 30 ? '...' : ''}}
 										</a>
-										<a ng-if="!groupInfo.fields.longTitle"
+										<a ng-if="!groupInfo.common.fields.longTitle"
                                            ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                           title="{{groupInfo.fields.productNameEn}}"
-                                           target="_blank">{{groupInfo.fields.productNameEn | limitTo: 30}}{{groupInfo.fields.productNameEn.length > 30 ? '...' : ''}}
+                                           title="{{groupInfo.common.fields.productNameEn}}"
+                                           target="_blank">{{groupInfo.common.fields.productNameEn | limitTo: 30}}{{groupInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}
 										</a>
 									</span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
@@ -925,14 +917,14 @@
                                         <td colspan="3" class="text-left m-t-sm"
                                             style="display:inline-block;width:400px;height: 110px">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)"><img
-                                                    image="{{groupInfo.fields.images1[0].image1}}"
-                                                    alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/></a>
+                                                    image="{{groupInfo.common.fields.images1[0].image1}}"
+                                                    alt="{{groupInfo.common.fields.code}}" class="thumb-sm-search pull-left m-r"/></a>
                                             <div class="table_main pull-left" style="width:60%">
                                                 <ul>
                                                     <li><a ng-href="#/product/detail/{{groupInfo.prodId}}"
-                                                           ng-bind="groupInfo.fields.code" target="_blank"></a></li>
+                                                           ng-bind="groupInfo.common.fields.code" target="_blank"></a></li>
                                                     <li><a ng-href="#/product/detail/{{groupInfo.prodId}}"
-                                                           ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn"
+                                                           ng-bind="groupInfo.common.fields.longTitle || groupInfo.common.fields.productNameEn"
                                                            target="_blank"></a></li>
                                                 </ul>
                                                 <div class="form-inline" ng-if="groupInfo.grpImgList.length > 0">
@@ -959,7 +951,7 @@
                                                    style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
-                                            {{groupInfo.fields.brand}}
+                                            {{groupInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr"
                                             style="display:inline-block;width:120px; overflow:hidden;">
@@ -1001,8 +993,8 @@
                         <div class="col-sm-12 m-t-lg m-b-lg">
                             <vpagination config="vm.groupPageOption"></vpagination>
                         </div>
-                    </tab>
-                </tabset><!-- tabset -->
+                    </uib-tab>
+                </uib-tabset><!-- tabset -->
             </div>
         </div>
     </div><!-- tabs ng-controller -->
