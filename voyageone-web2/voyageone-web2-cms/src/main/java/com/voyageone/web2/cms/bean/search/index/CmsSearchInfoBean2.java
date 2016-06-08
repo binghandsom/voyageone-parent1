@@ -74,7 +74,7 @@ public class CmsSearchInfoBean2 {
     private String sortThreeType;
 
     // 自定义查询条件
-    private List<Map<String, String>> custAttrMap;
+    private List<Map<String, Object>> custAttrMap;
 
 
     // ** 其它未定
@@ -126,11 +126,11 @@ public class CmsSearchInfoBean2 {
         this.priceDiffFlg = priceDiffFlg;
     }
 
-    public List<Map<String, String>> getCustAttrMap() {
+    public List<Map<String, Object>> getCustAttrMap() {
         return custAttrMap;
     }
 
-    public void setCustAttrMap(List<Map<String, String>> custAttrMap) {
+    public void setCustAttrMap(List<Map<String, Object>> custAttrMap) {
         this.custAttrMap = custAttrMap;
     }
 

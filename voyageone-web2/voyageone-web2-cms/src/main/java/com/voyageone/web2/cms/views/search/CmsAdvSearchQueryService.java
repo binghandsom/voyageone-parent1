@@ -291,14 +291,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 5.  !=null(已设值) 无输入框  eg {"a": {$nin:[null,''], $exists:true}}
         // 6.  包含   有输入框  eg {"a": {$regex: "oops"}}
         // 7.  不包含 有输入框  eg {"a":{$not: {$regex: "oops"}}}
-        List<Map<String, String>> custList = searchValue.getCustAttrMap();
+        List<Map<String, Object>> custList = searchValue.getCustAttrMap();
         if (custList != null && custList.size() > 0) {
             List<String> inputList = new ArrayList<>();
-            for (Map<String, String> item : custList) {
-                String inputOptsKey = item.get("inputOptsKey");//条件字段
-                String inputOpts = item.get("inputOpts");//操作符
-                String inputVal = item.get("inputVal");//值
-                String inputType = item.get("inputType");//输入类型 list/string/number
+            for (Map<String, Object> item : custList) {
+                String inputOptsKey = (String) item.get("inputOptsKey");//条件字段
+                String inputOpts = (String) item.get("inputOpts");//操作符
+                String inputVal = (String) item.get("inputVal");//值
+                String inputType = (String) item.get("inputType");//输入类型 list/string/number
                 String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOpts, inputVal, inputType);
                 if (!StringUtil.isEmpty(optsWhere)) {
                     inputList.add(optsWhere);
@@ -316,7 +316,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
     private String getCustAttrOptsWhere(String inputOptsKey ,String inputOpts, String inputVal, String inputType) {
         String result = null;
-        if ("list".equals(inputType)) {
+        if (inputType != null && inputType.indexOf("list") == 0) {
             result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
             return  result;
         }
