@@ -1131,6 +1131,50 @@ public class TmallProductService {
         ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 //        ShopBean shopBean = getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         // modified by morse.lu 2016/05/15 end
+
+		// 20160607 可能现在天猫改规则了, 要更新产品试试看 START
+		// 获取更新产品的规则的schema
+		String updateProductSchema;
+		try {
+			String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
+			updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean);
+		} catch (ApiException e) {
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+			throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+		}
+
+		// 填充内容
+		List<Field> updateFields;
+		{
+			Map<String, Field> fieldMap;
+			try {
+				fieldMap = schemaToIdPropMap(updateProductSchema);
+			} catch (TopSchemaException e) {
+				logger.error(e.getMessage(), e);
+				throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't convert schema to fields: " + e.getMessage()));
+			}
+			ExpressionParser expressionParser = tcb.getExpressionParser();
+			constructCustomPlatformProps(tcb, fieldMap, expressionParser, null, false);
+			CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+			constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
+			updateFields = resolveMappingProps(tmallUploadRunState, null);
+
+		}
+
+		// 更新产品
+		try {
+			String schema = SchemaWriter.writeParamXmlString(updateFields);
+
+			String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
+			String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean);
+			System.out.println(result);
+		} catch (TopSchemaException | ApiException e) {
+			issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+			throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
+		}
+
+		// 20160607 可能现在天猫改规则了, 要更新产品试试看 END
+
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
