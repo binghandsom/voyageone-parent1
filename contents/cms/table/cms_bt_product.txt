@@ -67,7 +67,7 @@
     * clientNetPrice      ->第三方成本价
     * priceMsrp
     * priceRetail
-* platform    ->平台属性
+* platforms    ->平台属性
   * P23  ->天猫国际
     * cartId
     * status
