@@ -55,7 +55,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
 
         if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
-            platformCart.setCartId(cartId + "");
+            platformCart.setCartId(cartId);
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
             // JM的场合schema就一条
             if(cartId == Integer.parseInt(CartEnums.Cart.JM.getId())){
@@ -78,7 +78,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
                 if(cmsMtBrandsMappingModel != null){
-                    platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
@@ -156,7 +156,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
                 if(cmsMtBrandsMappingModel != null){
-                    platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
@@ -172,7 +172,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             parm.put("active", 1);
             CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
             if(cmsMtBrandsMappingModel != null){
-                platformCart.setpBrandIds(cmsMtBrandsMappingModel.getBrandId());
+                platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                 platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
             }
             platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());

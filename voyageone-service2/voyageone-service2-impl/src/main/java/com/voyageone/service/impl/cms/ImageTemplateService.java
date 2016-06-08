@@ -324,15 +324,16 @@ public class ImageTemplateService extends BaseService {
     }
 
     /**
-     * 根据channelId,templateId,imageName返回图片生成返回的url
+     * 根据imageName返回图片生成返回的url
+     * @param imageName 图片名称
+     * @return 完整s7路径的图片地址(http://image.sneakerhead.com/is/image/sneakerhead/xxxx-xxx)
      */
-    public String getTemplateImageUrl(String channelId, String templateId, String imageName) {
+    public String getImageUrl(String imageName) {
 
-        String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
-        if (StringUtils.isEmpty(templateImageUrl))
-            throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
+        if (StringUtils.isEmpty(imageName))
+            return "";
 
-        return String.format(templateImageUrl, channelId, templateId, imageName);
+        return String.format(this.getDefaultImageUrl(), imageName);
     }
 
     /**
@@ -343,25 +344,9 @@ public class ImageTemplateService extends BaseService {
     }
 
     /**
-     * getCommonTemplate
+     * 取得显示用图片的url,其中图片名字的%s保留(http://image.sneakerhead.com/is/image/sneakerhead/%s)
      */
-    public CmsBtImageTemplateModel getCommonTemplate() {
-        String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
-        if (commonTemplateId == null) {
-            throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
-        }
-        return selectTemplateById(Long.valueOf(commonTemplateId));
-    }
-
-    /**
-     * 取得显示用图片的url,其中图片名字的%s保留(http://shenzhen-vo.oss-cn-shenzhen.aliyuncs.com/products/010/50/%s.jpg)
-     */
-    public String getDefaultImageUrl(String channelId) {
-
-        // 取得CMS中默认的显示用模板ID
-        String commonTemplateId = Codes.getCodeName("IMAGE_TEMPLATE", "DEFAULT_ID");
-        if (commonTemplateId == null)
-            throw new BusinessException("tm_code表中IMAGE_TEMPLATE的DEFAULT_ID定义不存在");
+    public String getDefaultImageUrl(){
 
         // 取得显示图片用URL
         String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
@@ -369,16 +354,7 @@ public class ImageTemplateService extends BaseService {
             throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
 
         // 返回图片URl(其中图片名字%s未替换)
-        return String.format(templateImageUrl, channelId, commonTemplateId, "%s");
-    }
-
-    /**
-     * 返回图片Url
-     */
-    public String getImageFullUrl(String channelId, String imageName) {
-        String tempUrl = this.getDefaultImageUrl(channelId);
-
-        return tempUrl.replace("%s", imageName) + ".jpg";
+        return templateImageUrl;
     }
 
     public List<CmsBtImageTemplateModel> getAllTemplate(String channel, Integer cart) {

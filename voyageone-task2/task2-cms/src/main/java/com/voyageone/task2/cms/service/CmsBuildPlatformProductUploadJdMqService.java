@@ -25,7 +25,10 @@ import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.impl.cms.*;
+import com.voyageone.service.impl.cms.CmsMtPlatformSkusService;
+import com.voyageone.service.impl.cms.DictService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -740,8 +743,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-//            attrMap = sxProductService.constructMappingPlatformProps(itemFieldList, platformMappingData, shopBean, expressionParser, user, true);
-            attrMap = constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
@@ -1549,151 +1551,4 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
     }
 
-    /**
-     * 设置天猫之外的平台Schema中该类目的各个Field里具体属性的值
-     * 2016/06/01 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
-     *
-     * @param fields List<Field> 直接把值set进这个fields对象
-     * @param shopBean ShopBean
-     * @param expressionParser ExpressionParser
-     * @return 设好值的FieldId和Field
-     * @throws Exception
-     */
-    public Map<String, Field> constructPlatformProps(List<Field> fields, ShopBean shopBean,
-                                                       ExpressionParser expressionParser) throws Exception {
-        // 返回用Map<field_id, Field>
-        Map<String, Field> retMap = null;
-        SxData sxData = expressionParser.getSxData();
-
-        Map<String, Field> fieldsMap = new HashMap<>();
-        for (Field field : fields) {
-            fieldsMap.put(field.getId(), field);
-        }
-
-        // TODO:特殊字段处理
-        // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
-        //Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
-
-        // 取得当前平台对应的特殊字段处理（目前mapSpAll为空，所以不会取到值）
-//        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
-        Map<String, Object> mapSp = new HashMap<>();
-
-        for(Field field : fields) {
-            if (mapSp.containsKey(field.getId())) {
-                // 特殊字段
-
-            } else if (sxProductService.resolveJdPriceSection_before(shopBean, field)) {
-                // 设置京东属性 - [价格][价位]
-                // mainProduct中不用设置价格价位Field的值，它是在这里根据maxJdPrice自动计算属性哪个价格区间，并把区间值设置到Field中
-                Map<String, Field> resolveField = sxProductService.resolveJdPriceSection(field, sxData);
-                if (resolveField != null) {
-                    if (retMap == null) {
-                        retMap = new HashMap<>();
-                    }
-                    retMap.putAll(resolveField);
-                }
-            } else {
-                // 除了价格价位之外，其余的FieldId对应的值都在这里设定
-                // 根据FieldId取得mainProduct中对应的属性值,设置到返回的Field中
-                Map<String, Field> resolveField = resolveFieldMapping(field, sxData);
-                if (resolveField != null) {
-                    if (retMap == null) {
-                        retMap = new HashMap<>();
-                    }
-                    retMap.putAll(resolveField);
-                }
-            }
-        }
-
-        return retMap;
-    }
-
-    /**
-     * 天猫以外的平台取得Product中FieldId对应的属性值(参考SxProductService.java的resolveMapping()方法)
-     * 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
-     *
-     * @param field Field    平台schema表中的propsItem里面的Field
-     * @param sxData SxData  上新数据
-     * @return 设好值的FieldId和Field
-     */
-    public Map<String, Field> resolveFieldMapping(Field field, SxData sxData) throws Exception {
-        Map<String, Field> retMap = new HashMap<>();
-
-        // MASTER文法解析子（解析并取得主产品的属性值）
-        Object objfieldItemValue = null;
-        String strfieldItemValue = "";
-        // 只支持MASTER类型Field,目前只发现SingleCheck(MultiCheck也是MASTER),没有发现Input(TextWordParser)类型
-        if (!StringUtils.isEmpty(field.getId())) {
-            objfieldItemValue = getPropValue(sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields(), field.getId());
-        }
-
-        // 取得值为null不设置，空字符串的时候还是要设置（可能是更新时特意把某个属性的值改为空）
-        if (null == objfieldItemValue) {
-            return null;
-        }
-
-        if (objfieldItemValue instanceof String) {
-            strfieldItemValue = String.valueOf(objfieldItemValue);
-        }
-
-        switch (field.getType()) {
-            case INPUT: {
-                InputField inputField = (InputField) field;
-                inputField.setValue(strfieldItemValue);
-                retMap.put(field.getId(), inputField);
-                break;
-            }
-            case SINGLECHECK: {
-                SingleCheckField singleCheckField = (SingleCheckField) field;
-                singleCheckField.setValue(strfieldItemValue);
-                retMap.put(field.getId(), singleCheckField);
-                break;
-            }
-            case MULTIINPUT:
-                break;
-            case MULTICHECK: {
-                String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue);
-
-                MultiCheckField multiCheckField = (MultiCheckField)field;
-                for (String val : valueArrays) {
-                    multiCheckField.addValue(val);
-                }
-                retMap.put(field.getId(), multiCheckField);
-                break;
-            }
-            case COMPLEX:
-                break;
-            case MULTICOMPLEX:
-                break;
-            case LABEL:
-                break;
-            default:
-                $error("复杂类型的属性:" + field.getType() + "不能使用MAPPING_SINGLE来作为匹配类型");
-                return null;
-        }
-
-        return retMap;
-    }
-
-    /**
-     * 取得Product中FieldId对应的属性值(Copy from MasterWordParser.java)
-     *
-     * @param evaluationContext Map<String, Object>  Product里面的PXX平台下面的fields
-     * @param propName true：商品 false：产品
-     * @return Map （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，
-     *                                       只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
-     */
-    public Object getPropValue(Map<String, Object> evaluationContext, String propName) {
-        char separator = '.';
-        if (evaluationContext == null) {
-            return null;
-        }
-        int separatorPos = propName.indexOf(separator);
-        if (separatorPos == -1) {
-            return evaluationContext.get(propName);
-        }
-        String firstPropName = propName.substring(0, separatorPos);
-        String leftPropName = propName.substring(separatorPos + 1);
-        return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
-    }
 }

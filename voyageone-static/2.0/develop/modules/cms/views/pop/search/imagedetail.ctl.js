@@ -27,13 +27,13 @@ define([
                 if ($rootScope.imageUrl == null || $rootScope.imageUrl == undefined) {
                     $rootScope.imageUrl = '';
                 }
-                picObj.mainPic =  $rootScope.imageUrl.replace("%s", picObj.mainPic) + ".jpg";//"http://image.sneakerhead.com/is/image/sneakerhead/" + ;
+                picObj.mainPic =  $rootScope.imageUrl.replace("%s", picObj.mainPic);//"http://image.sneakerhead.com/is/image/sneakerhead/" + ;
                 var picList = picObj.picList;
 
                 //框架foreach无法改变值，所以用js源生循环
                 for(var i=0,length=picList.length;i<length;i++){
                      for(var j=0,length2=picList[i].length;j<length2;j++){
-                         picList[i][j] = $rootScope.imageUrl.replace("%s", picList[i][j]) + ".jpg";
+                         picList[i][j] = $rootScope.imageUrl.replace("%s", picList[i][j]);
                      }
                  }
             }
