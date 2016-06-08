@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.monitor;
 
+import com.google.common.collect.Lists;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -18,7 +19,6 @@ import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -44,57 +44,78 @@ import java.util.zip.ZipFile;
 @Service
 public class ImageUploadService extends AbstractFileMonitoService {
 
+    private final String TASK_NAME = "CmsBulkUploadImageToS7Job";
+    private final static String[] EVENTS = {"close_write"};
+    private final String MODIFIER = getClass().getSimpleName();
+
     @Autowired
     private BusinessLogService businessLogService;
-
     @Autowired
     private ProductService productService;
 
     @Override
-    protected void onCreate(String filePath, String fileName, String channelId) {
-        LOG.info("监控到目录创建" + filePath);
-        onModify(filePath, fileName, channelId);
+    protected String getTaskName() {
+        return TASK_NAME;
     }
 
     @Override
-    protected void onDelete(String filePath, String fileName) {
-        LOG.info("监控到目录删除" + filePath + fileName);
+    protected String[] getInotifyEvents() {
+        return EVENTS;
     }
 
-    @Autowired
-    private TaskDao taskDao;
-
-
     @Override
-    protected void onModify(String filePath, String fileName, String channelId) {
+    protected boolean eventCheck(String event, String watchPath, String filePath, String fileName, String channelId) {
+        boolean result = true;
         if (!fileName.endsWith(".zip")) {
-            return;
+            result = false;
+        } else {
+            String watchPathTemp = watchPath;
+            if (!(watchPathTemp.endsWith("/") || watchPathTemp.endsWith("\\"))) {
+                watchPathTemp = watchPathTemp + "/";
+            }
+            File file = new File(filePath);
+            String parentPath = file.getParent().replaceAll("\\\\", "/");
+            if (!parentPath.endsWith("/")) {
+                parentPath = parentPath + "/";
+            }
+            if (!watchPathTemp.equals(parentPath)) {
+                result = false;
+            }
         }
+        return result;
+    }
+
+    @Override
+    protected void doEvent(String event, String filePath, String fileName, String channelId) {
+        LOG.info(String.format("doEvent event=%s filePath=%s fileName=%s channelId=%s", event, filePath, fileName, channelId));
         List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
         TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
 
         if (!"1".equals(taskControlBean.getCfg_val1())) {
-            LOG.warn(TASK_NAME + ":的run_flg设置为0,不执行该job");
+            LOG.warn(String.format(TASK_NAME + ":的run_flg设置为0,不执行该job. event=%s filePath=%s fileName=%s channelId=%s", event, filePath, fileName, channelId));
             return;
         }
 
-        LOG.info("监控到目录更新" + filePath);
         String baseTempDir = buildDirPath(filePath, "temp");
+        String baseErrorDir = buildDirPath(filePath, "error");
         String modifyDirName = new File(filePath).getName();
         File file = new File(filePath + fileName);
 
         int readImgCount = 0;
         int failedImgCount = 0;
+
         //异常信息
         StringBuilder errorMsg = new StringBuilder();
         try {
             String tempDir = buildDirPath(baseTempDir, file.getName());
+            String errorDir = buildDirPath(baseErrorDir, file.getName());
             //解压缩到临时目录
             deComparess(file, tempDir);
             //依据临时目录内容上传ftp，之后更新Mongo数据
-            LOG.info("文件压缩完成.");
+            LOG.info(String.format("deComparess finish tempDir=%s filePath=%s fileName=%s channelId=%s", tempDir, filePath, fileName, channelId));
             List<String> upFtpSuccessFiles = new ArrayList<>();
-            Map<String, Boolean> ftpUploadResultMap = ftpUpload(channelId, tempDir, buildDirPath(filePath, "error"));
+            Map<String, Boolean> ftpUploadResultMap = ftpUpload(taskControlList, channelId, tempDir, errorDir);
+
             readImgCount = ftpUploadResultMap.size();
             for (Map.Entry<String, Boolean> entry : ftpUploadResultMap.entrySet()) {
                 if (entry.getValue()) {
@@ -105,33 +126,37 @@ public class ImageUploadService extends AbstractFileMonitoService {
                 }
             }
             //排序
-            LOG.info("图片上传成功!图片总数:" + readImgCount + "上传成功图片数量:" +upFtpSuccessFiles.size());
+            LOG.info(String.format("upload image file count:%s:%s filePath=%s fileName=%s channelId=%s", readImgCount, upFtpSuccessFiles.size(), filePath, fileName, channelId));
             Collections.sort(upFtpSuccessFiles);
             Set<String> skuApprovedSet = new HashSet<>();
-            upFtpSuccessFiles.forEach(k -> {
-                LOG.info("原始图片文件的名字:" + k + "及lastIndex值-:" + k.lastIndexOf("-"));
-                String sku = k.substring(8, k.lastIndexOf("-"));
-                LOG.info("处理的Sku的值为:" + sku);
+            for (String strFileName : upFtpSuccessFiles) {
+                String sku = strFileName.substring(8, strFileName.lastIndexOf("-"));
+                LOG.info(String.format("fileName:%s sku:%s filePath=%s fileName=%s channelId=%s", strFileName, sku, filePath, fileName, channelId));
                 CmsBtProductModel model = productService.getProductBySku(channelId, sku);
                 if (model != null) {
-                    mongoOperator(model, modifyDirName, k);
+                    mongoOperator(model, modifyDirName, strFileName);
                     if (skuApprovedSet.add(sku))
                         approvedOperator(model);
                 } else {
-                    errorMsg.append(k.split("-ftp-")[1]).append("：找不到指定商品");
+                    errorMsg.append(strFileName.split("-ftp-")[1]).append("：找不到指定商品");
                 }
-            });
-            LOG.info("图片更新到product表中成功");
+            }
+            LOG.info(String.format("update products finish filePath=%s fileName=%s channelId=%s", filePath, fileName, channelId));
             //删除临时目录
             FileUtils.deleteDirectory(new File(tempDir));
-            LOG.info("删除临时文件夹成功:" + tempDir);
+            LOG.info(String.format("remove tempDir finish filePath=%s fileName=%s channelId=%s", filePath, fileName, channelId));
             //移动文件到备份目录
-            FileUtils.moveFile(file, new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis()));
-            LOG.info("移动到备份文件夹成功:" + buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis());
-        } catch (IOException e) {
+            File backupFile = new File(buildDirPath(filePath, "backup") + file.getName() + "." + System.currentTimeMillis());
+            LOG.info(String.format("move zipFile to backupDir[%s] start filePath=%s fileName=%s channelId=%s", backupFile.getPath(), filePath, fileName, channelId));
+            FileUtils.moveFile(file, backupFile);
+            LOG.info(String.format("move zipFile to backupDir[%s] finish filePath=%s fileName=%s channelId=%s", backupFile.getPath(), filePath, fileName, channelId));
+
+        } catch (Exception e) {
             errorMsg.append("其他异常：").append(e.getMessage());
-            LOG.error("处理zip文件" + filePath + "发生Io异常：", e);
+            LOG.error(String.format("doEvent error filePath=%s fileName=%s channelId=%s", filePath, fileName, channelId), e);
         }
+
+        //上传日志
         logForUpload(file.getName(), readImgCount, readImgCount - failedImgCount, failedImgCount, errorMsg.toString(), channelId);
 
         taskControlBean.setEnd_time(DateTimeUtil.getNow());
@@ -146,8 +171,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @return 目录path
      */
     private String buildDirPath(String filePath, String dirName) {
-        String filePathTmp = filePath;
-        if (!(filePathTmp.endsWith("/") || filePathTmp.endsWith("\\"))) {
+        String filePathTmp = filePath.replaceAll("\\\\", "/");
+        if (!filePathTmp.endsWith("/")) {
             filePathTmp = filePathTmp + "/";
         }
         File dir = new File(filePathTmp + dirName);
@@ -160,14 +185,13 @@ public class ImageUploadService extends AbstractFileMonitoService {
      *
      * @param zfile   zip文件
      * @param tempDir 临时目录
-     * @throws IOException
      */
     private void deComparess(File zfile, String tempDir) throws IOException {
         Charset CP866 = Charset.forName("iso-8859-1");
         ZipFile zf = new ZipFile(zfile, CP866);
         Enumeration entries = zf.entries();
 
-        LOG.info("文件正在解压:" + zf.getName());
+        LOG.info("deComparess start:" + zf.getName());
         while (entries.hasMoreElements()) {
             try {
                 ZipEntry entry = ((ZipEntry) entries.nextElement());
@@ -178,13 +202,15 @@ public class ImageUploadService extends AbstractFileMonitoService {
                     com.voyageone.common.util.FileUtils.moveFile(cf.getPath(), cf.getParent() + "/" + newFileName);
                     cf = new File(cf.getParent() + "/" + newFileName);
                 }
-                if (zf.getInputStream(entry).available() > 0) FileUtils.copyInputStreamToFile(zf.getInputStream(entry), cf);
+                if (zf.getInputStream(entry).available() > 0) {
+                    FileUtils.copyInputStreamToFile(zf.getInputStream(entry), cf);
+                }
             } catch (Exception e) {
-                LOG.error("未知异常:" , e);
+                LOG.error("deComparess error:", e);
             }
         }
 
-        LOG.info("文件解压完成:" + zf.getName());
+        LOG.info("deComparess finish:" + zf.getName());
         zf.close();
     }
 
@@ -194,10 +220,9 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param tempDir dir
      * @return 结果集 key 图片路径，value 上传结果
      */
-    private Map<String, Boolean> ftpUpload(String channelId, String tempDir, String errorDir) {
+    private Map<String, Boolean> ftpUpload(List<TaskControlBean> taskControlList, String channelId, String tempDir, String errorDir) throws InterruptedException {
         // FtpBean初期化
-        LOG.info("开始上传图片到S7的FTP服务器");
-        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+        LOG.info(String.format("start upload file to S7 tempDir=%s errorDir=%s channelId=%s", tempDir, errorDir, channelId));
 
         String uploadPath = ChannelConfigs.getVal1(channelId, ChannelConfigEnums.Name.scene7_image_folder);
         if (StringUtils.isEmpty(uploadPath)) {
@@ -206,38 +231,68 @@ public class ImageUploadService extends AbstractFileMonitoService {
             throw new RuntimeException(err);
         }
 
-        Map<String, Boolean> uploadResultMap = new HashMap<>();
+        Map<String, Boolean> uploadResultMap = new ConcurrentHashMap<>();
 
         //取得图片文件
         List<File> fileList = new ArrayList<>();
         filterImgFile(new File(tempDir), fileList);
 
-        //建立连接
-        ftpComponent.openConnect();
-        ftpComponent.enterLocalPassiveMode();
+        LOG.info(String.format("start upload file to S7 fileCount=%s tempDir=%s errorDir=%s channelId=%s", fileList.size(), tempDir, errorDir, channelId));
 
-        LOG.info("S7的FTP服务器连接成功,开始上传图片数量:" + fileList.size());
-        fileList.forEach(imgfile -> {
-            String uploadFileName = channelId + "-ftp-" + imgfile.getName();
-            FtpFileBean ftpFileBean = new FtpFileBean(imgfile.getParent(), imgfile.getName(), uploadPath, uploadFileName);
-            try {
-                ftpComponent.uploadFile(ftpFileBean);
-                uploadResultMap.put(uploadFileName, true);
-                LOG.info("S7的FTP文件上传成功:" + uploadFileName);
-            } catch (Exception e) {
-                uploadResultMap.put(uploadFileName, false);
+        // 线程List
+        List<Runnable> threads = new ArrayList<>();
+        List<List<File>> fileLists = Lists.partition(fileList, getThreadCount(taskControlList));
+
+        final String finalUploadPath = uploadPath;
+        for (List<File> subFileLists : fileLists) {
+            if (subFileLists == null || subFileLists.isEmpty()) {
+                continue;
+            }
+            threads.add(() -> uploadFileToS7(subFileLists, uploadResultMap, tempDir, errorDir, finalUploadPath, channelId));
+        }
+        // check threads
+        if (!threads.isEmpty()) {
+            ExecutorService pool = Executors.newFixedThreadPool(threads.size());
+            threads.forEach(pool::execute);
+            pool.shutdown();
+            // 等待子线程结束，再继续执行下面的代码
+            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        }
+
+        LOG.info(String.format("finish upload file to S7 tempDir=%s errorDir=%s channelId=%s", tempDir, errorDir, channelId));
+        return uploadResultMap;
+    }
+
+    /**
+     * 上传图片到指定目录，并返回上传结果集
+     */
+    private void uploadFileToS7(List<File> fileList, Map<String, Boolean> uploadResultMap, String tempDir, String errorDir, String uploadPath, String channelId) {
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+        try {
+            //建立连接
+            ftpComponent.openConnect();
+            ftpComponent.enterLocalPassiveMode();
+
+            for (File imgFile : fileList) {
+                String uploadFileName = channelId + "-ftp-" + imgFile.getName();
+                FtpFileBean ftpFileBean = new FtpFileBean(imgFile.getParent(), imgFile.getName(), uploadPath, uploadFileName);
                 try {
-                    LOG.info("S7的FTP文件上传异常:" + imgfile);
-                    FileUtils.copyFileToDirectory(imgfile, new File(errorDir + imgfile.getPath().split(tempDir)[1]), true);
-                } catch (IOException e1) {
-                    LOG.error("移动上传错误图片到error目录异常", e);
+                    ftpComponent.uploadFile(ftpFileBean);
+                    uploadResultMap.put(uploadFileName, true);
+                    LOG.info(String.format("upload %s to S7 success tempDir=%s", uploadFileName, tempDir));
+                } catch (Exception e) {
+                    LOG.error(String.format("upload %s to S7 success tempDir=%s", uploadFileName, tempDir), e);
+                    uploadResultMap.put(uploadFileName, false);
+                    try {
+                        FileUtils.copyFileToDirectory(imgFile, new File(errorDir), true);
+                    } catch (IOException e1) {
+                        LOG.error("移动上传错误图片到error目录异常", e);
+                    }
                 }
             }
-        });
-
-        ftpComponent.closeConnect();
-        LOG.info("S7的FTP服务器关闭成功");
-        return uploadResultMap;
+        } finally {
+            ftpComponent.closeConnect();
+        }
     }
 
     /**
@@ -252,13 +307,13 @@ public class ImageUploadService extends AbstractFileMonitoService {
             return;
         }
         for (File file : files) {
+            String fileName = file.getName().toLowerCase();
             if (file.isDirectory()) {
                 filterImgFile(file, fileList);
-            } else if (file.getName().endsWith(".jpg") || file.getName().endsWith(".png") || file.getName().endsWith(".gif")
-                    || file.getName().endsWith(".jpeg")) {
+            } else if (fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".gif") || fileName.endsWith(".jpeg")) {
                 fileList.add(file);
             } else {
-                LOG.warn("不支持上传的的文件类型");
+                LOG.warn(String.format("%s:不支持上传的的文件类型", fileName));
             }
         }
     }
@@ -267,11 +322,11 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * 操作mongodb
      */
     private void mongoOperator(CmsBtProductModel model, String modifyDirName, String uploadFileName) {
+        String code = "";
         try {
             /* fields */
             CmsBtProductModel_Field fields = model.getFields();
-
-            LOG.info("正在处理产品:" + fields.getCode());
+            code = fields.getCode();
 
             /* change fileds.images */
             List<Map<String, Object>> images = new CopyOnWriteArrayList<>();
@@ -297,24 +352,26 @@ public class ImageUploadService extends AbstractFileMonitoService {
             /* 是images6 忽略大小写,重新排序 */
             if (modifyDirName.equalsIgnoreCase("images6")) {
                 /* flag 0不copy,1copybefore,2copyafter */
-                CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(model.getChannelId()
-                        , CmsConstants.ChannelConfig.IMAGE_UPLOAD_SERVICE);
-                if ("1".equals(cmsChannelConfigBean.getConfigValue1()))
+                CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(model.getChannelId(), CmsConstants.ChannelConfig.IMAGE_UPLOAD_SERVICE);
+                if ("1".equals(cmsChannelConfigBean.getConfigValue1())) {
                     images.addAll(0, JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
-                if ("2".equals(cmsChannelConfigBean.getConfigValue1()))
+                } else if ("2".equals(cmsChannelConfigBean.getConfigValue1())) {
                     images.addAll(JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
+                }
             }
 
             Set<Map<String, Object>> sets = new HashSet<>();
-            LOG.info("原始图片列表:", images);
-            for (Map<String, Object> map : images) if (!sets.add(map)) images.remove(map);
-            LOG.info("更新图片列表:", images);
+            for (Map<String, Object> map : images) {
+                if (!sets.add(map)) {
+                    images.remove(map);
+                }
+            }
 
             updateProductModel(model.getChannelId(), model.getProdId(), modifyDirName, images);
 
-            LOG.info("产品处理成功:" + fields.getCode());
+            LOG.info("mongoOperator success:" + code);
         } catch (IOException e) {
-            LOG.info("JacksonUtil解析异常", e);
+            LOG.info(String.format("mongoOperator code:%s error:", code), e);
         }
     }
 
@@ -366,5 +423,24 @@ public class ImageUploadService extends AbstractFileMonitoService {
         logModel.setErrorTypeId(2);
         logModel.setCreater(TASK_NAME);
         businessLogService.insertBusinessLog(logModel);
+    }
+
+    /**
+     * getThreadCount
+     */
+    private int getThreadCount(List<TaskControlBean> taskControlList) {
+        String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.thread_count);
+        int intThreadCount = 1;
+
+        if (!StringUtils.isNullOrBlank2(threadCount)) {
+            intThreadCount = Integer.valueOf(threadCount);
+        }
+
+        // 如果最终计算获得线程数量无效，则提示错误
+        if (intThreadCount < 1) {
+            throw new IllegalArgumentException("thread count error.");
+        }
+
+        return intThreadCount;
     }
 }
