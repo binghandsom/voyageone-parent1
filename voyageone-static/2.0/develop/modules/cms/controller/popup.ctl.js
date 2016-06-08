@@ -64,6 +64,24 @@ define([
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
                     "controller": 'popAddChannelCategoryCtrl as ctrl'
+                },
+                "putOnOff": {
+                    "templateUrl": "views/pop/bulkUpdate/putonoff.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/putonoff.ctl",
+                    "controller": 'popPutOnOffCtl',
+                    "size": 'md'
+                },
+                "freeTag": {
+                    "templateUrl": "views/pop/bulkUpdate/freetag.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/freetag.ctl",
+                    "controller": 'popFreeTagCtl',
+                    "size": 'lg'
+                },
+                "salePrice": {
+                    "templateUrl": "views/pop/bulkUpdate/salePrice.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
+                    "controller": 'popSalePriceCtl',
+                    "size": 'md'
                 }
             },
             "category": {
@@ -1288,6 +1306,22 @@ define([
 
         $scope.openNewCategory = function (context) {
             return openModel(popActions.channel.newCategory, context);
+        };
+
+
+        //打开高级查询页的通用设置，上下架
+        $scope.openPutOnOff = function (context) {
+            return openModel(popActions.bulkUpdate.putOnOff, context);
+        };
+
+        //打开高级查询页的搜索条件，自由标签
+        $scope.openFreeTag = function (context) {
+            return openModel(popActions.bulkUpdate.freeTag, context);
+        };
+
+        //打开高级查询页的共通设置，最终售价
+        $scope.openSalePrice = function (context) {
+            return openModel(popActions.bulkUpdate.salePrice, context);
         };
 
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {

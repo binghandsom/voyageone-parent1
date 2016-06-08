@@ -79,7 +79,7 @@ define([
                 }
 
                 function saveProduct(){
-                    validSchema()
+                    console.log(validSchema());
 /*                    scope.vm.platform.cartId = "26";
                     productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
 
@@ -89,6 +89,10 @@ define([
                 function validSchema(){
                     scope.vm.platform.schemaFields.some(function(schema){
                         console.log(schema);
+                        if(schema.$valid == false){
+                            alert(schema.name + "不能为空！");
+                            return;
+                        }
                     });
                 }
             }

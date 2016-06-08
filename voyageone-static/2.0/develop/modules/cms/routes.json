@@ -70,6 +70,11 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
+  "search_advance_new": {
+    "hash": "/search/advanceSearch",
+    "templateUrl": "views/search/advanceSearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
+  },
   "search_feedsearch": {
     "url": "/search/feedsearch/",
     "hash": "/search/feedsearch",
@@ -213,7 +218,8 @@
   "tools_product":{
     "hash": "/tools/product",
     "templateUrl": "views/tools/product/hsCodeList.tpl.html",
-    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl"
+    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl",
+    "controller":"HsCodeController as ctrl"
   },
   "system_category_index": {
     "hash": "/system/category",
