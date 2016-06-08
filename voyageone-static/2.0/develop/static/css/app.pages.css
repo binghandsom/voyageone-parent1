@@ -241,6 +241,12 @@
         display: inline;
     }
 }
+.btn {
+    font-weight: 500;
+    border-radius: 2.5px;
+    box-shadow: 1px 1px 2px #888888;
+    outline: 0!important;
+}
 .stat-boxes{
     display: inline-block;
     list-style: none outside none;
