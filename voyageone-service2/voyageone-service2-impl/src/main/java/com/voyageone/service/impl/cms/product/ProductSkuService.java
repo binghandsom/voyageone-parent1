@@ -246,7 +246,7 @@ public class ProductSkuService extends BaseService {
                 String[] codeArr = new String[codeList.size()];
                 codeArr = codeList.toArray(codeArr);
                 List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{'common.fields':1,'platform':1}", channelId);
-                bulkList.add(calculateNewPriceRange(prodList, grpObj.getGroupId()));
+                bulkList.add(calculateNewPriceRange(prodList, grpObj));
             }
         });
         if (bulkList.size() > 0) {
@@ -331,7 +331,7 @@ public class ProductSkuService extends BaseService {
     }
 
     // 计算价格区间
-    private BulkUpdateModel calculateNewPriceRange(List<CmsBtProductModel> products, Long groupId) {
+    private BulkUpdateModel calculateNewPriceRange(List<CmsBtProductModel> products, CmsBtProductGroupModel group) {
         Double priceSaleSt = null;
         Double priceSaleEd = null;
         Double priceRetailSt = null;
@@ -340,9 +340,23 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpEd = null;
 
         for (CmsBtProductModel product : products) {
-            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
-                for (BaseMongoMap<String, Object> sku : entry.getValue().getSkus()) {
-                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt){
+            // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
+            if (group.getCartId() != 23) {
+                for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+                    if (group.getCartId() == entry.getValue().getCartId()) {
+                        for (BaseMongoMap<String, Object> sku : entry.getValue().getSkus()) {
+                            if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
+                                priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                            }
+                            if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
+                                priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+                            }
+                        }
+                    }
+                }
+            } else{
+                for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
                         priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
                     }
                     if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
@@ -368,8 +382,13 @@ public class ProductSkuService extends BaseService {
         }
 
         Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("priceSaleSt", priceSaleSt);
-        updateMap.put("priceSaleEd", priceSaleEd);
+        if (group.getCartId() == 0 || group.getCartId() == 1) {
+            updateMap.put("priceSaleSt", 0);
+            updateMap.put("priceSaleEd", 0);
+        } else {
+            updateMap.put("priceSaleSt", priceSaleSt);
+            updateMap.put("priceSaleEd", priceSaleEd);
+        }
         updateMap.put("priceRetailSt", priceRetailSt);
         updateMap.put("priceRetailEd", priceRetailEd);
         updateMap.put("priceMsrpSt", priceMsrpSt);
@@ -378,7 +397,7 @@ public class ProductSkuService extends BaseService {
         BulkUpdateModel bulk = new BulkUpdateModel();
         bulk.setUpdateMap(updateMap);
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("groupId", groupId);
+        queryMap.put("groupId", group.getGroupId());
         bulk.setQueryMap(queryMap);
 
         return bulk;
