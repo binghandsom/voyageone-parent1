@@ -32,6 +32,18 @@
         "saveCustColumnsInfo": "saveCustColumnsInfo",
         "addFreeTag": "addFreeTag"
       },
+      "$searchAdvanceService2": {
+        "root": "/cms/search/advanceSearch/",
+        "init": "init",
+        "search": "search",
+        "getGroupList": "getGroupList",
+        "getProductList": "getProductList",
+        "exportProducts": "exportProducts",
+        "getCustColumnsInfo": "getCustColumnsInfo",
+        "saveCustColumnsInfo": "saveCustColumnsInfo",
+        "addFreeTag": "addFreeTag",
+        "getCustSearchList": "getCustSearchList"
+      },
       "$feedSearchService": {
         "root": "/cms/search/feed/",
         "init": "init",

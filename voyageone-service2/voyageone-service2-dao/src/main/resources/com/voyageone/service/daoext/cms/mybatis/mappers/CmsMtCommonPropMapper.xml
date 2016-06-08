@@ -49,7 +49,8 @@
     <select id="select_cms_mt_common_prop_cust_cols" parameterType="HashMap" resultType="HashMap">
         select
         prop_id AS propId,
-        prop_name AS propName
+        prop_name AS propName,
+        value_type AS valType
         from voyageone_cms2.cms_mt_common_prop
         where
         action_type = 0

@@ -141,7 +141,7 @@ public class ProductService extends BaseService {
      * @param flag:     true:检索主商品以外的商品,false:检索所有的商品
      * @return List<CmsBtProductModel>
      */
-    public List<CmsBtProductModel> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
+    public List<CmsBtProductBean> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(String.format("{ \"groupId\":%d}", groupId));
         CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, channelId);
@@ -165,8 +165,8 @@ public class ProductService extends BaseService {
         codeArr = codeList.toArray(codeArr);
         queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
 
-        List<CmsBtProductModel> rst = cmsBtProductDao.select(queryObject, channelId);
-        rst.forEach(prodObj -> prodObj.setGroups(grpObj));
+        List<CmsBtProductBean> rst = cmsBtProductDao.selectBean(queryObject, channelId);
+        rst.forEach(prodObj -> prodObj.setGroupBean(grpObj));
         return rst;
     }
 
@@ -188,12 +188,12 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductModel> getList(String channelId, Set<Long> pids, String[] projections) {
+    public List<CmsBtProductBean> getList(String channelId, Set<Long> pids, String[] projections) {
         JomgoQuery queryObject = new JomgoQuery();
         String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
         queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
         queryObject.setProjectionExt(projections);
-        return getList(channelId, queryObject);
+        return getBeanList(channelId, queryObject);
     }
 
     /**
@@ -245,7 +245,6 @@ public class ProductService extends BaseService {
                 platformModel.setQty(groupModelMap.getQty());
                 platformModel.setPlatformStatus(groupModelMap.getPlatformStatus());
                 platformModel.setPlatformActive(groupModelMap.getPlatformActive());
-                prodObj.setGroups(platformModel);
                 prodObj.setGroupBean(platformModel);
             }
         }
@@ -315,15 +314,12 @@ public class ProductService extends BaseService {
         }
 
         //update channel and modifier
-        CmsBtProductGroupModel grp = product.getGroups();
-        product.setGroups(null);
         product.setChannelId(channelId);
         product.setCreater(modifier);
         product.setModifier(modifier);
 
         //save
         cmsBtProductDao.insert(product);
-        product.setGroups(grp);
     }
 
     public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {

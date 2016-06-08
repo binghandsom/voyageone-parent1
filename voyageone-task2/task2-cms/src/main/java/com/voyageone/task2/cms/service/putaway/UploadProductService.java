@@ -8,6 +8,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -104,14 +105,14 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             workload.setOrder_channel_id(channelId);
             workload.setGroupId(groupId);
 
-            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
+            List<CmsBtProductBean> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId, false);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
             CmsBtProductGroupModel mainProductPlatform = null;
             SxProductBean mainSxProduct = null;
 
-            for (CmsBtProductModel cmsBtProductModel : cmsBtProductModels) {
-                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroups();
+            for (CmsBtProductBean cmsBtProductModel : cmsBtProductModels) {
+                CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroupBean();
                 String prodCode = cmsBtProductModel.getFields().getCode();
                 // tom 获取feed info的数据 START
                 String orgChannelId = cmsBtProductModel.getOrgChannelId(); // feed信息要从org里获取
@@ -235,7 +236,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public void onComplete(WorkLoadBean workLoadBean) {
         List<SxProductBean> sxProductBeans = workLoadBeanListMap.get(workLoadBean);
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
-        CmsBtProductModel mainCmsProductModel = null;
+        CmsBtProductBean mainCmsProductModel = null;
         if (mainSxProduct != null) {
             mainCmsProductModel = mainSxProduct.getCmsBtProductModel();
         }
@@ -266,7 +267,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
 
                 assert mainCmsProductModel != null;
-                CmsBtProductGroupModel mainProductPlatform = mainCmsProductModel.getGroups();
+                CmsBtProductGroupModel mainProductPlatform = mainCmsProductModel.getGroupBean();
 
                 CmsConstants.PlatformStatus oldPlatformStatus = mainProductPlatform.getPlatformStatus();
                 CmsConstants.PlatformActive platformActive = mainProductPlatform.getPlatformActive();
