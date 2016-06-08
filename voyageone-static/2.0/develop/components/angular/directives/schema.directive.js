@@ -295,7 +295,7 @@
     /**
      * 在 parent 指定的容器里编译 element, 并根据情况选择是否追加 ng-form
      */
-    function compileAndLink($compile, $scope, parent, element, field, controllers) {
+    function compileAndLink($compile, $scope, parent, element, fieldElementName, field, controllers) {
 
         var schemaController = controllers[0];
 
@@ -323,12 +323,11 @@
                 container = form;
             }
 
-            voMessage = angular.element('<vo-message target="' + formName + '.' + element.attr('name') + '"></vo-message>');
+            voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
 
             container.append(element, voMessage);
 
-            $compile(element)($scope);
-            $compile(voMessage)($scope);
+            $compile(container.children())($scope);
         } else {
             // 如果无验证的话, 就不需要信息显示了
             container.append(element);
@@ -472,7 +471,7 @@
                 // var maxTargetSizeRule = rules.maxTargetSizeRule;
 
                 var type = 'text';
-                var innerElem;
+                var innerElem, elementName;
 
                 // 将规则保存在当前 scope 上, 模板上需要时便于绑定
                 $scope.rules = rules;
@@ -515,8 +514,8 @@
                     innerElem = angular.element('<input class="form-control">').attr('type', type);
                 }
 
-                innerElem.attr('name', 'field_name_' + random());
-                innerElem.attr('ng-model', 'field.value');
+                innerElem.attr('name', (elementName = 'field_name_' + random()));
+                innerElem.attr('ng-model', 'field.$value');
 
                 bindBoolRule(innerElem, rules.requiredRule, 'requiredRule', 'required');
                 bindBoolRule(innerElem, rules.readOnlyRule, 'readOnlyRule', 'readonly');
@@ -543,21 +542,21 @@
                     }
                 }
 
-                compileAndLink($compile, $scope, elem, innerElem, field, controllers);
+                compileAndLink($compile, $scope, elem, innerElem, elementName, field, controllers);
             });
         })
         .directive('schemaSingleCheck', function ($compile) {
             return schemaFieldDirectiveFactory(function (field, schema, $scope, elem, attr, controllers) {
 
-                var innerElem, rules = doRule(field, schema);
+                var innerElem, elementName, rules = doRule(field, schema);
 
                 $scope.rules = rules;
 
                 innerElem = angular.element('<select class="form-control">');
 
-                innerElem.attr('name', 'field_name_' + random());
+                innerElem.attr('name', (elementName = 'field_name_' + random()));
 
-                innerElem.attr('ng-model', 'field.value.value');
+                innerElem.attr('ng-model', 'field.$value');
 
                 innerElem.attr('ng-options', 'option.value as option.displayName for option in field.options');
 
@@ -568,53 +567,75 @@
 
                 bindTipRule(innerElem, rules.tipRule);
 
-                compileAndLink($compile, $scope, elem, innerElem, field, controllers)
+                compileAndLink($compile, $scope, elem, innerElem, elementName, field, controllers)
             });
         })
         .directive('schemaMultiCheck', function ($compile) {
 
             return schemaFieldDirectiveFactory(function (field, schema, $scope, elem, attr, controllers) {
-                
-                var checkboxes = [], rules = doRule(field, schema);
+
+                var checkboxes = [], elementName = 'field_name_' + random(), rules = doRule(field, schema);
 
                 $scope.rules = rules;
 
+                // 创建用于记录每个多选框选中状态的对象
                 $scope.selected = [];
 
+                // 通过事件触发 update 来操作 field 的 values 数组
                 $scope.update = function (index) {
 
                     var selectedValue = field.options[index].value;
-                    var selectedIndex = field.value.values.indexOf(selectedValue);
+                    var selectedIndex = field.$value.indexOf(selectedValue);
 
                     if ($scope.selected[index]) {
                         // 选中
                         if (selectedIndex < 0)
-                            field.value.values.push(selectedValue);
+                            field.$value.push(selectedValue);
                     } else {
                         // 没选中
                         if (selectedIndex > -1)
-                            field.value.values.splice(selectedIndex, 1);
+                            field.$value.splice(selectedIndex, 1);
                     }
 
                 };
+
+                field.$value = [];
 
                 field.options.forEach(function (option, index) {
 
                     var label = angular.element('<label></label>'),
                         checkbox = angular.element('<input type="checkbox">');
 
+                    var requiredRule = rules.requiredRule;
+
+                    checkbox.attr('name', elementName);
                     checkbox.attr('ng-model', 'selected[' + index + ']');
                     checkbox.attr('ng-change', 'update(' + index + ')');
+
+                    // checkbox 的必填比较特殊
+                    if (requiredRule) {
+                        if (requiredRule instanceof DependentRule) {
+                            checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.$value.length');
+                        } else {
+                            checkbox.attr('ng-required', '!field.$value.length');
+                        }
+                    }
+
+                    bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+
+
+
+                    bindTipRule(checkbox, rules.tipRule);
 
                     label.append(checkbox, '&nbsp;', option.displayName);
 
                     checkboxes.push(label);
                 });
-                
-                compileAndLink($compile, $scope, elem, checkboxes, field, controllers);
-                
+
+                compileAndLink($compile, $scope, elem, checkboxes, elementName, field, controllers);
+
             });
-            
+
         })
         .directive('schemaComplex', function () {
         })
