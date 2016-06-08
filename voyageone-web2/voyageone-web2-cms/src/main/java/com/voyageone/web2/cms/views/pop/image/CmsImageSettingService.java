@@ -12,7 +12,6 @@ import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformImagesService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
