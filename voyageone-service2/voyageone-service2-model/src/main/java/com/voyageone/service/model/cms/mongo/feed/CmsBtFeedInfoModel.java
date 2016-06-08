@@ -32,7 +32,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String color;
     private String origin;
     private String sizeType;
-    private String material;
     private List<String> image;
     private String brand;
     private String weight;
@@ -49,14 +48,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String productType;
     private String material;
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
 
     public String getCategory() {
         return category;
@@ -205,6 +196,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
+        attribute.put("material", this.weight);
         attribute.put("shortDescription", this.shortDescription);
         attribute.put("longDescription", this.longDescription);
 
