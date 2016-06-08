@@ -8,21 +8,21 @@ define(function (require) {
     /*
      * 已知的 rule 有如下:
      *   requiredRule
-     *   valueTypeRule
-     *   minValueRule
-     *   maxValueRule
+     *   readOnlyRule
      *   disableRule
-     *   minInputNumRule
-     *   maxInputNumRule
      *   regexRule
+     *   valueTypeRule
      *   tipRule
      *   devTipRule
+     *   minValueRule
+     *   maxValueRule
+     *   minInputNumRule
+     *   maxInputNumRule
      *   minLengthRule
      *   maxLengthRule
      *   maxTargetSizeRule
      *   minImageSizeRule
      *   maxImageSizeRule
-     *   readOnlyRule
      */
 
     /**
@@ -315,16 +315,6 @@ define(function (require) {
     }
 
     /**
-     * 禁用与启用规则, 只支持依赖类型, 默认其他类型都不支持
-     * 因为固定的没有意义
-     */
-    function bindDisableRule(element, rule) {
-        if (rule && rule instanceof DependentRule) {
-            element.attr('ng-if', '!rules.disableRule.checked()');
-        }
-    }
-
-    /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
      */
     function bindTipRule(element, rule) {
@@ -382,7 +372,6 @@ define(function (require) {
                     var disposeWatcher = null;
                     var schemaController = controllers[0];
                     var formController = controllers[1];
-                    var config;
 
                     // 如果为 field 设置了什么, 就尝试获取 field 上的内容
                     if (attr.field) {
@@ -452,32 +441,49 @@ define(function (require) {
 
                     function compile(field, schema) {
 
-                        var innerElement, fieldElementName = 'field_' + random();
+                        var innerElement;
 
-                        var rules = $scope.$rules = doRule(field, schema);
+                        var container = elem, fieldElementName = 'field_' + random();
+
+                        var hasValidate = !!formController && hasValidateRule(field);
+
+                        var rules = $scope.$rules = doRule(field, schema),
+                            disableRule = rules.disableRule;
 
                         $scope.field = field;
 
                         if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
-                        config = {
-                            // 是否显示名称
-                            showName: !!schemaController,
-                            // 解析依赖规则
-                            doDep: !!schemaController,
-                            // 解析验证规则
-                            doValid: !!formController && hasValidateRule(field)
-                        };
+                        if (disableRule && disableRule instanceof DependentRule) {
+
+                            var ngIfContainer = angular.element('<div>');
+
+                            ngIfContainer.attr('ng-if', '!rules.disableRule.checked()');
+
+                            container.append(ngIfContainer);
+
+                            container = ngIfContainer;
+                        }
 
                         // 创建输入元素
                         // 根据需要处理规则
-                        elem.append(innerElement = createElement(field, fieldElementName, rules));
+                        innerElement = createElement(field, fieldElementName, rules);
+
+                        if (innerElement instanceof Array)
+                            innerElement.forEach(function (element) {
+                                container.append(element);
+                            });
+                        else
+                            container.append(innerElement);
 
                         // 根据需要创建 vo-message
-                        if (config.doValid) {
+                        if (hasValidate) {
+
                             var formName = formController.$name;
+
                             var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
-                            elem.append(voMessage);
+
+                            container.append(voMessage);
                         }
 
                         // 最终编译
@@ -616,64 +622,5 @@ define(function (require) {
                     }
                 }
             };
-        })
-
-        /********************************************************************************************************************************************/
-
-        .directive('schemaMultiCheck', function ($compile) {
-
-            return schemaFieldDirectiveFactory(function (field, schema, $scope, elem, attr, controllers) {
-
-                var checkboxes = [], elementName = 'field_name_' + random(), rules = doRule(field, schema);
-
-                $scope.rules = rules;
-
-                // 创建用于记录每个多选框选中状态的对象
-                $scope.selected = [];
-
-                // 通过事件触发 update 来操作 field 的 values 数组
-                $scope.update = function (index) {
-
-                    var selectedValue = field.options[index].value;
-                    var selectedIndex = field.$value.indexOf(selectedValue);
-
-                    if ($scope.selected[index]) {
-                        // 选中
-                        if (selectedIndex < 0)
-                            field.$value.push(selectedValue);
-                    } else {
-                        // 没选中
-                        if (selectedIndex > -1)
-                            field.$value.splice(selectedIndex, 1);
-                    }
-
-                };
-
-                field.$value = [];
-
-                field.options.forEach(function (option, index) {
-
-                    var label = angular.element('<label></label>'),
-                        checkbox = angular.element('<input type="checkbox">');
-
-                    var requiredRule = rules.requiredRule;
-
-                    checkbox.attr('name', elementName);
-                    checkbox.attr('ng-model', 'selected[' + index + ']');
-                    checkbox.attr('ng-change', 'update(' + index + ')');
-
-
-
-                    label.append(checkbox, '&nbsp;', option.displayName);
-
-                    checkboxes.push(label);
-                });
-
-                compileAndLink($compile, $scope, elem, checkboxes, elementName, field, controllers);
-
-            });
-
         });
-
-    /********************************************************************************************************************************************/
 });
