@@ -129,6 +129,8 @@ public class SxProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private FeedCustomPropService customPropService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
