@@ -27,7 +27,6 @@ import java.util.*;
  */
 @Service
 public class CmsBtJmPromotionImportTask3Service {
-    private static final int PlatformId = 27;
     @Autowired
     CmsBtJmPromotionImportTaskDao cmsBtJmPromotionImportTaskDao;
     @Autowired
@@ -48,7 +47,8 @@ public class CmsBtJmPromotionImportTask3Service {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     TransactionRunner transactionRunner;
-
+@Autowired
+    CmsBtJmPromotionExportTask3Service serviceCmsBtJmPromotionExportTask3Service;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
@@ -104,8 +104,8 @@ public class CmsBtJmPromotionImportTask3Service {
         //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
-            String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
-            // serviceCmsBtJmPromotionExportTask.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, listSpecialErrorMap, true);
+            String errorfilePath = importPath+"/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
+            serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap,true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());

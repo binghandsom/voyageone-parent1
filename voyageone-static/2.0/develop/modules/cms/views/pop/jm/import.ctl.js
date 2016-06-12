@@ -29,7 +29,7 @@ define([
                     $scope.vm.messager = response.data.msg;
                 }
             } else {
-                $scope.vm.messager = response.code;
+                $scope.vm.messager = response.message;
             }
         };
     });

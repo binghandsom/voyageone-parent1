@@ -38,17 +38,27 @@ define([
         $scope.search = function () {
             // console.log("searchInfo");
              console.log($scope.searchInfo);
-            loadSearchInfo();
-            var data = angular.copy($scope.searchInfo);
+           // loadSearchInfo();
+            var data = getSearchInfo();
+
             goPage(1, 10)
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
             }, function (res) {
             });
         };
-        function goPage(pageIndex, size) {
+        function getSearchInfo() {
             loadSearchInfo();
             var data = angular.copy($scope.searchInfo);
+            for (var key in data) {
+                if (!data[key]) {
+                    data[key] = undefined;
+                }
+            }
+            return data;
+        }
+        function goPage(pageIndex, size) {
+            var data = getSearchInfo();
             data.start = (pageIndex - 1) * size;
             data.length = size;
             jmPromotionDetailService.getPromotionProductInfoListByWhere(data).then(function (res) {

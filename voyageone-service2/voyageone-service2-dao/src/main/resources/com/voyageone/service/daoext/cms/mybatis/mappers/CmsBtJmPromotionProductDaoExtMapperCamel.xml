@@ -121,8 +121,8 @@
             <if test="productCode!=null">
                 and    b.product_code  like CONCAT(#{productCode},'%')
             </if>
-            <if test="categoryLv1Name!=null">
-                and b.category_lv1_name =#{categoryLv1Name}
+            <if test="voCategoryName!=null">
+                and b.vo_category_name =#{voCategoryName}
             </if>
             <if test="synchStateList.size()!=0">
                 and  a.synch_state in
@@ -135,7 +135,7 @@
                 and a.discount>=#{beginDiscount}
             </if>
             <if test="endDiscount!=null">
-                and  a.discount&lt;=#{endDiscount};
+                and  a.discount&lt;=#{endDiscount}
             </if>
             <if test="priceType=='msrp'">
                 <if test="beginPrice!=null">
@@ -190,8 +190,8 @@
             <if test="productCode!=null">
                 and    b.product_code  like CONCAT(#{productCode},'%')
             </if>
-            <if test="categoryLv1Name!=null">
-                and b.category_lv1_name =#{categoryLv1Name}
+            <if test="voCategoryName!=null">
+                and b.vo_category_name =#{voCategoryName}
             </if>
             <if test="synchStateList.size()!=0">
                 and  a.synch_state in
