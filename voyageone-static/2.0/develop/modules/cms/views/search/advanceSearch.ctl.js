@@ -69,7 +69,6 @@ define([
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
-        $scope.clearCartCategory = clearCartCategory;
         $scope.platformCategoryMapping = platformCategoryMapping;
         /**
          * 初始化数据.
