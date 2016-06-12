@@ -16,6 +16,7 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdShopService;
@@ -248,8 +249,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
-            //List<CmsBtProductModel> productList = sxData.getProductList();
+            List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
             List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+
+            // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
+            if (ListUtils.isNull(cmsBtProductList)) {
+                String errMsg = String.format("未lock并且已Approved产品列表为空，中止该商品的上新处理！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                $error(errMsg);
+                sxData.setErrorMessage(errMsg);
+                throw new BusinessException(errMsg);
+            }
+
             // 主产品取得结果判断
             if (mainProduct == null) {
                 String errMsg = String.format("取得主商品信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
@@ -518,8 +528,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     channelId, cartId, groupId, jdWareId);
             $error(errMsg);
             ex.printStackTrace();
+            if (sxData == null) {
+                // 回写详细错误信息表(cms_bt_business_log)用
+                sxData = new SxData();
+                sxData.setChannelId(channelId);
+                sxData.setCartId(cartId);
+            }
             // 如果上新数据中的errorMessage为空
-            if (sxData != null && StringUtils.isEmpty(sxData.getErrorMessage())) {
+            if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(errMsg);
             }
             // 回写详细错误信息表(cms_bt_business_log)
