@@ -37,7 +37,7 @@ define([
              */
             init: function () {
                 var self = this;
-                if(self.cartId == null){
+                if (self.cartId == null) {
                     self.cartId = "0";
 
                 }
@@ -100,9 +100,11 @@ define([
                     "fullCatId": fullCIds,
                     "code": self.code,
                     "cartId": self.cartId
-                }).then(function (res) {
+                }).then(function (context) {
+                    self.context = context;
+                    self.context.catPath = fullCNames;
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    self.$uibModalInstance.close();
+                    self.$uibModalInstance.close(context);
                 });
             }
         };

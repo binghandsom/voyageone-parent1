@@ -49,6 +49,7 @@ define([
                     context.search();
                 }
             }, function (res) {
+                alert('TXT_FAIL');
             })
         }
     });

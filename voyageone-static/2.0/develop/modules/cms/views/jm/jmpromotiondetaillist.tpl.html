@@ -71,30 +71,30 @@
                                     <label class="col-sm-3 control-label">聚美类目</label>
 
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.categoryLv1Name">
+                                        <input type="text" class="form-control" ng-model="searchInfo.voCategoryName">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">状态</label>
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-sm-3 control-label">状态</label>-->
 
-                                    <div class="col-sm-8" style="padding-left:0px">
-                                        <label class="checkbox-inline c-checkbox" style="margin-left:4px">
-                                            <input type="checkbox" name="synchState0" value="0" ng-model="searchInfo.synchState0"/>
-                                            <span class="fa fa-check"></span>&nbsp;导入成功&nbsp;</label>
-                                        <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" name="synchState1" value="1" ng-model="searchInfo.synchState1"/>
-                                            <span class="fa fa-check"></span>&nbsp;待上传&nbsp;</label>
-                                        <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" name="synchState2" value="2" ng-model="searchInfo.synchState2"/>
-                                            <span class="fa fa-check"></span>&nbsp;上传成功&nbsp;</label>
-                                        <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" name="synchState3" value="3" ng-model="searchInfo.synchState3"/>
-                                            <span class="fa fa-check"></span>&nbsp;更新成功&nbsp;</label>
-                                        <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" name="synchState4" value="4" ng-model="searchInfo.synchState4">
-                                            <span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>
-                                    </div>
-                                </div>
+                                    <!--<div class="col-sm-8" style="padding-left:0px">-->
+                                        <!--<label class="checkbox-inline c-checkbox" style="margin-left:4px">-->
+                                            <!--<input type="checkbox" name="synchState0" value="0" ng-model="searchInfo.synchState0"/>-->
+                                            <!--<span class="fa fa-check"></span>&nbsp;导入成功&nbsp;</label>-->
+                                        <!--<label class="checkbox-inline c-checkbox">-->
+                                            <!--<input type="checkbox" name="synchState1" value="1" ng-model="searchInfo.synchState1"/>-->
+                                            <!--<span class="fa fa-check"></span>&nbsp;待上传&nbsp;</label>-->
+                                        <!--<label class="checkbox-inline c-checkbox">-->
+                                            <!--<input type="checkbox" name="synchState2" value="2" ng-model="searchInfo.synchState2"/>-->
+                                            <!--<span class="fa fa-check"></span>&nbsp;上传成功&nbsp;</label>-->
+                                        <!--<label class="checkbox-inline c-checkbox">-->
+                                            <!--<input type="checkbox" name="synchState3" value="3" ng-model="searchInfo.synchState3"/>-->
+                                            <!--<span class="fa fa-check"></span>&nbsp;更新成功&nbsp;</label>-->
+                                        <!--<label class="checkbox-inline c-checkbox">-->
+                                            <!--<input type="checkbox" name="synchState4" value="4" ng-model="searchInfo.synchState4">-->
+                                            <!--<span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">折扣</label>
 
@@ -113,47 +113,54 @@
                                         <label class="checkbox-inline c-radio" style="margin-left:4px">
                                             <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span
                                                 class="fa fa-check"></span>&nbsp;MSRP</label>
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span
-                                                class="fa fa-check"></span>&nbsp;市场价</label>
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span
-                                                class="fa fa-check"></span>&nbsp;团购价</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"></label>
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
 
-                                    <div class="col-sm-8 form-inline">
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginPrice"
-                                                                                 placeholder="from"/></div>
-                                        &nbsp;~&nbsp;
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endPrice"
-                                                                                 placeholder="to"/></div>
-                                    </div>
-                                </div>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span
+                                                class="fa fa-check"></span>&nbsp;中国指导价格</label>
+                                        <label class="checkbox-inline c-radio">
+                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span
+                                                class="fa fa-check"></span>&nbsp;中国最终售价</label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">商品名称</label>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
 
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.productNameCn"/>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">是否新建商品</label>
+                            <div class="col-sm-8 form-inline">
+                                <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginPrice"
+                                                                         placeholder="from"/></div>
+                                &nbsp;~&nbsp;
+                                <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endPrice"
+                                                                         placeholder="to"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品名称</label>
 
-                                    <div class="col-sm-8">
-                                        <select class="form-control" ng-model="searchInfo.state">
-                                            <option value="">ALL</option>
-                                            <option value="1">已上新再售</option>
-                                            <option value="0">未上新</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" ng-model="searchInfo.productNameCn"/>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                                    <!--<label class="col-sm-3 control-label">是否新建商品</label>-->
+
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<select class="form-control" ng-model="searchInfo.state">-->
+                                            <!--<option value="">ALL</option>-->
+                                            <!--<option value="1">已上新再售</option>-->
+                                            <!--<option value="0">未上新</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">品牌</label>
 

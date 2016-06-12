@@ -81,8 +81,9 @@ define([
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
                 if($routeParams.type == "3"){
                     var catObj = _.find($scope.vm.masterData.cartList, function(item){ return item.add_name2 == $routeParams.catType;});
-                    $scope.vm.searchInfo.cartId = catObj.value;
                     getCat();
+                    $scope.vm.searchInfo.cartId = catObj.value;
+                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
                 }
                 if ($routeParams.type != undefined) {
                     search();
@@ -197,16 +198,20 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategory (openAddChannelCategoryEdit) {
-            var selList = [];
-            if ($scope.vm.currTab === 'group') {
-                selList = $scope.vm.groupSelList.selList;
+            var selList = getSelProductList();
+            if (selList && selList.length) {
+                if ($scope.vm.currTab === 'group') {
+                    selList = $scope.vm.groupSelList.selList;
+                } else {
+                    selList = $scope.vm.productSelList.selList;
+                }
+                openAddChannelCategoryEdit(selList).then(function () {
+                    getGroupList();
+                    getProductList();
+                })
             } else {
-                selList = $scope.vm.productSelList.selList;
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
-            openAddChannelCategoryEdit(selList).then(function () {
-                getGroupList();
-                getProductList();
-            })
         }
 
         /**
@@ -349,10 +354,7 @@ define([
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
-                }).then(function(){
-                if($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
-            });
+                });
         }
 
         /**

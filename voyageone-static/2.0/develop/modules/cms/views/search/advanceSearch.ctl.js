@@ -24,8 +24,7 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: [],
-                catsss: "玩具/童车/益智/积木/模型>游泳池"
+                cidValue: []
 
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -41,7 +40,8 @@ define([
             custAttrList: [],
             sumCustomProps: [],
             platform: {catPath: null},
-            masterCat: {catPath: null}
+            masterCat: {catPath: null},
+            channelInner: {catPath: null}
         };
 
         $scope.initialize = initialize;
@@ -56,6 +56,7 @@ define([
         $scope.openCategoryMapping = openCategoryMapping;
         $scope.openMasterCategoryMapping = openMasterCategoryMapping;
         $scope.openFeedCategoryMapping = openFeedCategoryMapping;
+        $scope.openChannelInnerCategory = openChannelInnerCategory;
         $scope.bindCategory = bindCategory;
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
@@ -68,7 +69,6 @@ define([
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
-        $scope.clearCartCategory = clearCartCategory;
         $scope.platformCategoryMapping = platformCategoryMapping;
         /**
          * 初始化数据.
@@ -154,7 +154,7 @@ define([
                 }
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1000) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1100) + 'px';
             })
         }
 
@@ -211,17 +211,20 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategory(openAddChannelCategoryEdit) {
-            var selList = [];
-            if ($scope.vm.currTab === 'group') {
-                selList = $scope.vm.groupSelList.selList;
+            var selList = getSelProductList();
+            if (selList && selList.length) {
+                if ($scope.vm.currTab === 'group') {
+                    selList = $scope.vm.groupSelList.selList;
+                } else {
+                    selList = $scope.vm.productSelList.selList;
+                }
+                openAddChannelCategoryEdit(selList).then(function () {
+                    getGroupList();
+                    getProductList();
+                })
             } else {
-                selList = $scope.vm.productSelList.selList;
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
-            openAddChannelCategoryEdit(selList).then(function () {
-                getGroupList();
-                getProductList();
-            })
-
         }
 
         /**
@@ -270,6 +273,7 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         }
+
         /**
          * 类目变更
          */
@@ -482,7 +486,6 @@ define([
             }
         }
 
-
         function openAdvanceImagedetail(item) {
             var picList = [];
             for (var attr in item.commom.fields) {
@@ -499,10 +502,6 @@ define([
 
         function openApproval() {
             alert($translate.instant('TXT_BULK_APPROVAL'));
-        }
-
-        function clearCartCategory() {
-            $scope.vm.searchInfo.catsss = null;
         }
 
         /**
@@ -545,15 +544,32 @@ define([
          * popup弹出选择feed类目数据
          * @param popupNewCategory
          */
-        function openFeedCategoryMapping(popupNewCategory,categoryId) {
+        function openFeedCategoryMapping(popupNewCategory, categoryId) {
             feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
                 .then(function (res) {
-                    console.log(res);
                     popupNewCategory({
                         categories: res.data,
                         from: null
                     })
                 });
+        }
+
+        /**
+         * popup出添加到CategoryEdit的功能
+         * @param openCategoryEdit
+         */
+        function openChannelInnerCategory(openAddChannelCategoryEdit) {
+            var selList = getSelProductList();
+            if ($scope.vm.currTab === 'group') {
+                selList = $scope.vm.groupSelList.selList;
+            } else {
+                selList = $scope.vm.productSelList.selList;
+            }
+            openAddChannelCategoryEdit(selList).then(function (context) {
+                getGroupList();
+                getProductList();
+                $scope.vm.channelInner.catPath = context.catPath;
+            })
         }
 
     }

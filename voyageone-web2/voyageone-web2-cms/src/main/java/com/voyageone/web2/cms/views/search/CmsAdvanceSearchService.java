@@ -79,7 +79,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         // 获取publish status
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
-        // 获取label
+        // 获取自定义标签列表
         Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
@@ -95,7 +95,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
+        masterData.put("sortList", commonPropService.getSortColumns());
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));

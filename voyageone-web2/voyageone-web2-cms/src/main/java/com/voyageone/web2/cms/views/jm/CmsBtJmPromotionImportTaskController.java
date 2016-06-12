@@ -50,7 +50,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String path = Properties.readValue(CmsProperty.Props.CMS_JM_EXPORT_PATH);
+        String path = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         String fileName = model.getFailuresFileName().trim();
         String filepath = path + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, filepath);
