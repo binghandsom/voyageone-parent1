@@ -4,9 +4,6 @@ import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -63,6 +60,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
             fields = SchemaReader.readXmlForList(itemSchema);
         } catch (TopSchemaException e) {
             $error(e.getMessage(), e);
+            sxData.setErrorMessage("Can't convert schema to fields: " + e.getMessage());
             throw new BusinessException("Can't convert schema to fields: " + e.getMessage());
         }
 
@@ -71,6 +69,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         } catch (Exception e) {
             $error("商品类目设值失败! " + e.getMessage());
             sxData.setErrorMessage(e.getMessage());
+            throw new BusinessException(e.getMessage());
         }
 
         if (StringUtils.isEmpty(numIId)) {
@@ -79,7 +78,10 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 $debug("addTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + "]");
                 numIId = addTmallItem(categoryCode, platformProductId, fields, shopBean);
             } catch (ApiException e) {
-                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                sxData.setErrorMessage(e.getMessage());
+                throw new BusinessException(e.getMessage());
+            } catch (BusinessException e) {
                 sxData.setErrorMessage(e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
@@ -89,7 +91,10 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 $debug("updateTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + ", numIId:" + numIId + "]");
                 numIId = updateTmallItem(platformProductId, numIId, categoryCode, fields, shopBean);
             } catch (ApiException e) {
-                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                sxData.setErrorMessage(e.getMessage());
+                throw new BusinessException(e.getMessage());
+            } catch (BusinessException e) {
                 sxData.setErrorMessage(e.getMessage());
                 throw new BusinessException(e.getMessage());
             }
@@ -104,7 +109,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         try {
             xmlData = SchemaWriter.writeParamXmlString(itemFields);
         } catch (TopSchemaException e) {
-            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw new BusinessException(e.getMessage());
         }
         StringBuffer failCause = new StringBuffer();
@@ -151,7 +156,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         try {
             xmlData = SchemaWriter.writeParamXmlString(itemFields);
         } catch (TopSchemaException e) {
-            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw new BusinessException(e.getMessage());
         }
         StringBuffer failCause = new StringBuffer();

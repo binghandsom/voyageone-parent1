@@ -657,6 +657,12 @@ public class SxProductService extends BaseService {
         }
 
         removeProductList.forEach(productModelList::remove);
+        // added by morse.lu 2016/06/12 start
+        if (productModelList.size() == 0) {
+            // 没有对象
+            return null;
+        }
+        // added by morse.lu 2016/06/12 end
 
         sxData.setProductList(productModelList);
         sxData.setSkuList(skuList);

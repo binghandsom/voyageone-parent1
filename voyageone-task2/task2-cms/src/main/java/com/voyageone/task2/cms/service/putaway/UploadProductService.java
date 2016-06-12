@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.putaway;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -19,6 +20,7 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -222,6 +224,26 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
         if (cmsBtProductModelSkus == null) {
             return false;
         }
+
+        // added by morse.lu 2016/06/12 start
+        if (CartEnums.Cart.TM.getId().equals(String.valueOf(cartId))
+                || CartEnums.Cart.TB.getId().equals(String.valueOf(cartId))
+                || CartEnums.Cart.TG.getId().equals(String.valueOf(cartId))) {
+            // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
+            if (!cmsBtProductModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                return false;
+            }
+        } else {
+            // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
+            CmsBtProductModel_Platform_Cart productPlatformCart = cmsBtProductModel.getPlatform(cartId);
+            if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                return false;
+            }
+        }
+        if (!StringUtils.isEmpty(cmsBtProductModel.getLock()) && "1".equals(cmsBtProductModel.getLock())) {
+            return false;
+        }
+        // added by morse.lu 2016/06/12 end
 
         for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
             CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
