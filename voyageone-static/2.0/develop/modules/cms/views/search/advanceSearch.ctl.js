@@ -40,7 +40,7 @@ define([
             productSelList: { selList: []},
             custAttrList: [],
             sumCustomProps: [],
-            platform: null
+            platform: {catPath:null}
         };
 
         $scope.initialize = initialize;
@@ -512,13 +512,7 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                productDetailService.changePlatformCategory({
-                    cartId: $scope.vm.searchInfo.cartId,
-                    prodId: $scope.productId,
-                    catId: context.selected.catId
-                }).then(function (resp) {
-                    $scope.vm.platform = resp.data.platform;
-                });
+                    $scope.vm.platform.catPath = context.selected.catPath;
             });
         }
 

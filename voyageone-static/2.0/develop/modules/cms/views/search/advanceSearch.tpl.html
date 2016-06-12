@@ -259,7 +259,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control" ng-model="vm.platform.pCatPath">
+                                                <input type="text" class="form-control" ng-model="vm.platform.catPath">
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
@@ -664,8 +664,7 @@
                     </div>
                     <!--tab-->
                     <uib-tab ng-click="vm.currTab = 'product'">
-                        <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' |
-                            translate}}
+                        <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
                         </tab-heading>
                         <!-- Products table and controls -->
                         <div class="table-responsive box-body">
@@ -679,8 +678,7 @@
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)"
                                                    ng-disabled="!vm.productList.length">
-                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'
-                                            | translate}}&nbsp;</label>
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
                                     </td>
                                     <td class="text-left" translate="TXT_BRAND"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
