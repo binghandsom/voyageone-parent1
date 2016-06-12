@@ -575,9 +575,9 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 keySum7Map.put("name", cartObj.getName() + "7Days销量");
                 keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
                 keySum30Map.put("name", cartObj.getName() + "30Days销量");
-                keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+                keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
                 keySumAllMap.put("name", cartObj.getName() + "总销量");
-                keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+                keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
             }
             salseSum7List.add(keySum7Map);
             salseSum30List.add(keySum30Map);
