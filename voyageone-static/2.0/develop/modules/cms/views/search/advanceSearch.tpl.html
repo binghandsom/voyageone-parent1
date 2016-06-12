@@ -112,7 +112,7 @@
                                         <div class="form-horizontal">
                                             <div class="form-group"><!-- 查询主类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-default" ng-click="jdCategoryMapping(vm.productDetails, popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
@@ -176,8 +176,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'
-                                                | translate}}</label>
+                                            <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'  | translate}}</label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="_cartType_"
                                                         ng-change="getCat(_cartType_)"
@@ -253,14 +252,14 @@
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
                                     <div class="form-horizontal">
-                                        <div class="form-group"  ng-if="vm._cart_display"><!--主类目-->
+                                        <div class="form-group"  ng-if="vm._cart_display"><!--平台类目-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
-                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
+                                                <button class="btn btn-default" ng-click="platformCategoryMapping(popupNewCategory)">
+                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                 </button>
                                             </div>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control">
+                                                <input type="text" class="form-control" ng-model="vm.platform.pCatPath">
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
@@ -425,6 +424,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group">
@@ -433,6 +433,9 @@
                                             <div class="col-sm-8">
                                                     <textarea class="form-control inherited" rows="4"
                                                               ng-model="vm.searchInfo.codeList"></textarea>
+                                                <div class="text-warnings" style="padding-left:0px">
+                                                    <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
