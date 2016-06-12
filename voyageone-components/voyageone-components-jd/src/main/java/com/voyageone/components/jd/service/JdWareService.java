@@ -146,6 +146,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API新增京东商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() +
                             ",cart_id:" + shop.getCart_id() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -277,6 +278,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API修改商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -318,6 +320,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API删除商品失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
 
@@ -384,6 +387,7 @@ public class JdWareService extends JdBase {
                     logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + request.getWareId() + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc() +
                             ",attrValueId:" + attrValueId + ",pic_url:" + picUrl);
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
 
@@ -423,6 +427,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API获取商品上的所有图片列表失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -467,6 +472,7 @@ public class JdWareService extends JdBase {
                     logger.error("调用京东API删除指定商品上的所有图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc() +
                             ",colorIds:" + colorIds + ",imgIndexes:" + indexes);
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -511,6 +517,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API根据商品Id，销售属性值Id删除图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" +
                             shop.getCart_id() + ",ware_id:" + wareId + ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -551,6 +558,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API设置商品运费模板失败 " + "wareId:" + wareId + ",transportId:" + transportId +
                             ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
@@ -592,6 +600,7 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     logger.error("调用京东API设置商品关联版式失败 " + "版式id:" + layoutId + ",商品编号集合:" + wareIds +
                             ",error_code:" + response.getCode() +  ",error_msg:" + response.getZhDesc());
+                    throw new BusinessException(response.getZhDesc());
                 }
             }
         } catch (Exception ex) {
