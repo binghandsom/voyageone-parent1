@@ -243,6 +243,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
             }
+            // 如果取得上新对象商品信息出错时，报错
+            if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+                // 有错误的时候，直接报错
+                throw new BusinessException(sxData.getErrorMessage());
+            }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
                 sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
@@ -254,7 +259,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
-                String errMsg = String.format("未lock并且已Approved产品列表为空，中止该商品的上新处理！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                String errMsg = String.format("未lock并且已Approved产品列表为空");
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
@@ -262,7 +267,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 主产品取得结果判断
             if (mainProduct == null) {
-                String errMsg = String.format("取得主商品信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                String errMsg = String.format("取得主商品信息失败");
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
@@ -274,7 +279,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             if (strSkuCodeList.isEmpty()) {
-                String errMsg = String.format("已Approved产品sku列表为空，中止该商品的上新处理！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                String errMsg = String.format("已Approved产品sku列表为空");
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
@@ -435,7 +440,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     // 上传该商品下所有产品的图片
                     retStatus = uploadJdProductPics(shopProp, jdWareId, sxData, productColorMap, false);
                     if (!retStatus) {
-                        String errMsg = String.format("新增商品的产品图片设置失败! [WareId:%s]", jdWareId);
+                        String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
                         sxData.setErrorMessage(errMsg);
                     }
@@ -474,7 +479,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                      // 上传该商品下所有产品的图片
                     retStatus = uploadJdProductPics(shopProp, jdWareId, sxData, productColorMap, true);
                     if (!retStatus) {
-                        String errMsg = String.format("更新商品的产品图片设置失败! [WareId:%s]", jdWareId);
+                        String errMsg = String.format("更新商品的产品5张图片设置均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
                         sxData.setErrorMessage(errMsg);
                     }
@@ -533,10 +538,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
+                sxData.setGroupId(groupId);
+                sxData.setErrorMessage("取得上新用的商品数据信息异常！请向管理员确认");
             }
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                sxData.setErrorMessage(errMsg);
+                sxData.setErrorMessage(ex.getMessage());
             }
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
@@ -588,7 +595,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
         // 产地(非必须)
-        jdProductBean.setWareLocation(mainProduct.getFields().getOrigin());
+//        jdProductBean.setWareLocation(mainProduct.getFields().getOrigin());
         // 类目id(必须)
         jdProductBean.setCid(platformCategoryId);
         // 自定义店内分类(非必须)(123-111;122-222)
