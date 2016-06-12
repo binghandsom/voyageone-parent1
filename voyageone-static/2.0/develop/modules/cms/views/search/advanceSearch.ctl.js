@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService) {
 
         $scope.vm = {
             searchInfo: {
@@ -39,12 +39,13 @@ define([
             groupSelList: { selList: []},
             productSelList: { selList: []},
             custAttrList: [],
-            sumCustomProps: []
+            sumCustomProps: [],
+            platform: null
         };
 
         $scope.initialize = initialize;
         $scope.clear = clear;
-        $scope.search = function(){
+        $scope.search = function () {
             //$scope.vm.status.open = false;//收缩搜索栏
             search();
         };
@@ -65,10 +66,11 @@ define([
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.clearCartCategory = clearCartCategory;
+        $scope.platformCategoryMapping = platformCategoryMapping;
         /**
          * 初始化数据.
          */
-        function initialize () {
+        function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
 
             if ($routeParams.type == "1") {
@@ -289,9 +291,10 @@ define([
         /**
          * 添加新search选项
          */
-        function addCustAttribute () {
+        function addCustAttribute() {
+
             if ($scope.vm.custAttrList.length < 5) {
-                $scope.vm.custAttrList.push({ inputOptsKey: "",inputOpts: "",inputVal: ""});
+                $scope.vm.custAttrList.push({inputOptsKey: "", inputOpts: "", inputVal: ""});
             } else {
                 alert("最多只能添加5项")
             }
@@ -429,8 +432,8 @@ define([
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
-                }).then(function(){
-                if($routeParams.type == 3)
+                }).then(function () {
+                if ($routeParams.type == 3)
                     $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
             });
         }
@@ -443,7 +446,7 @@ define([
                 $scope.vm.searchInfo.sortSales = '';
                 return;
             }
-        }
+        };
 
         /**
          * 添加产品到指定自由标签
@@ -493,7 +496,33 @@ define([
             $scope.vm.searchInfo.catsss = null;
         }
 
+        /**
+         * popup弹出切换平台数据类目
+         * @param popupNewCategory
+         */
+        function platformCategoryMapping(popupNewCategory) {
+            platformMappingService.getPlatformCategories({cartId: $scope.vm.searchInfo.cartId})
+                .then(function (res) {
+                    if (!res.data || !res.data.length) {
+                        alert("没数据");
+                        return null;
+                    }
+                    return popupNewCategory({
+                        from: "",
+                        categories: res.data
+                    });
+                }).then(function (context) {
+                productDetailService.changePlatformCategory({
+                    cartId: $scope.vm.searchInfo.cartId,
+                    prodId: $scope.productId,
+                    catId: context.selected.catId
+                }).then(function (resp) {
+                    $scope.vm.platform = resp.data.platform;
+                });
+            });
+        }
+
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService'];
     return searchIndex;
 });
