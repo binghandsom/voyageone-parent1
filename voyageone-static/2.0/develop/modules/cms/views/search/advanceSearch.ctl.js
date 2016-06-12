@@ -439,7 +439,8 @@ define([
             }
             $scope.vm._cart_display = 1;
             $scope.vm._mmmcart_display = 1;
-            if (cartObj.ismm) {
+            if (cartObj.ismm || cartObj.value == 27) {
+                // 如果是minimall店铺或者是聚美平台，则不显示店铺内分类
                 $scope.vm._mmmcart_display = 0;
             }
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})

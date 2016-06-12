@@ -310,19 +310,32 @@ define([
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
 
+                // TODO--为保持新旧业务兼容，carts要从platforms转化而来，下次发布carts将删除
+                var cartArr = [];
+                if (productInfo.platforms) {
+                    _.forEach(productInfo.platforms, function (data) {
+                        var cartItem = {};
+                        cartItem.cartId = parseInt(data.cartId);
+                        cartItem.platformStatus = data.pStatus;
+                        cartItem.publishTime = data.pPublishTime;
+                        cartArr.push(cartItem);
+                    });
+                }
+                productInfo.carts = cartArr;
+
                 if (productInfo.carts) {
                     _.forEach(productInfo.carts, function (data) {
                         var cartInfo = Carts.valueOf(data.cartId);
-                        if (!_.isUndefined(cartInfo)) {
+                        if (cartInfo == null || cartInfo == undefined) {
+                            data._purl = '';
+                            data._pname = '';
+                        } else {
                             if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
                                 data._purl = '';
                             } else {
                                 data._purl = cartInfo.pUrl + data.numiid;
                             }
                             data._pname = cartInfo.name;
-                        } else {
-                            data._purl = '';
-                            data._pname = '';
                         }
                     });
                 }

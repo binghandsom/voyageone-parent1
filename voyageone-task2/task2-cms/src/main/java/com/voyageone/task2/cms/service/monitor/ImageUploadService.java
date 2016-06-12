@@ -341,10 +341,12 @@ public class ImageUploadService extends AbstractFileMonitoService {
                     }
 
             }
+            // 图片存在，返回
             for (Map<String, Object> img : images) {
                 if (uploadFileName.equals(img.get(modifyDirName)))
                     return;
             }
+            //加入图片
             images.add(new HashMap<String, Object>() {{
                 put(modifyDirName.replace("s", ""), uploadFileName.split("\\.")[0]);
             }});
@@ -359,7 +361,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
                     images.addAll(JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
                 }
             }
-
+            //去除重复
             Set<Map<String, Object>> sets = new HashSet<>();
             for (Map<String, Object> map : images) {
                 if (!sets.add(map)) {
