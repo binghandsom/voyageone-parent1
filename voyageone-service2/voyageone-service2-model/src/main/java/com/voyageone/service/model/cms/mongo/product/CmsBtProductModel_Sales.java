@@ -17,7 +17,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
 
     public final static String CODE_SUM_7 = "code_sum_7";
     public final static String CODE_SUM_30 = "code_sum_30";
-    public final static String CODE_SUM_ALL = "code_sum_30";
+    public final static String CODE_SUM_ALL = "code_sum_all";
     public final static String CARTID = "cartId_";
     public final static String SKUS = "skus";
 

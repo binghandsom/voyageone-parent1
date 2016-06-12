@@ -120,6 +120,7 @@
 		  * productLongName
 		  * productMediumName
 		  * productShortName
+		  * originCn
 		  * beforeDate
 		  * suitPeople
 		  * specialExplain

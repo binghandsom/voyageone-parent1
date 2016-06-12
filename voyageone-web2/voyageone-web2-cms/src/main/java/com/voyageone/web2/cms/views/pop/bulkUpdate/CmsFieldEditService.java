@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,15 +74,48 @@ public class CmsFieldEditService extends BaseAppService {
      */
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
         String prop_id = prop.get("id").toString();
-//        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-        List<String> productCodes = (ArrayList<String>)params.get("productIds");
+        if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+            // 如果是税号更新，则另外处理
+            // TODO -- 这里为了兼容新旧业务，同时更新了fields和common.fields，以后必须改过来
+            String hsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                hsCode = (String) valObj.get("value");
+            }
+            if (hsCode == null) {
+                hsCode = "";
+            }
+            Map<String, Object> quyObj10 = new HashMap<String, Object>();
+            Map<String, Object> quyObj11 = new HashMap<String, Object>();
+            quyObj11.put("$in", productCodes);
+            quyObj10.put("common.fields.code", quyObj11);
+            Map<String, Object> quyObj20 = new HashMap<String, Object>();
+            Map<String, Object> quyObj21 = new HashMap<String, Object>();
+            quyObj21.put("$in", productCodes);
+            quyObj20.put("fields.code", quyObj21);
+
+            List<Map<String, Object>> orList = new ArrayList<>();
+            Map<String, Object> quyObj = new HashMap<String, Object>();
+            orList.add(quyObj10);
+            orList.add(quyObj20);
+            quyObj.put("$or", orList);
+
+            Map<String, Object> updObj1 = new HashMap<String, Object>();
+            Map<String, Object> updObj2 = new HashMap<String, Object>();
+            updObj2.put("common.fields." + prop_id, hsCode);
+            updObj2.put("fields." + prop_id, hsCode);
+            updObj1.put("$set", updObj2);
+            productService.updateProduct(userInfo.getSelChannelId(), quyObj, updObj1);
+            return;
+        }
 
         // 获取更新数据
         Object[] field = getPropValue(params);
 
         // TODO: 16/4/27 以后改成一个语句批量更新,目前没时间改 
-        for(String code : productCodes) {
+        for (String code : productCodes) {
 
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);

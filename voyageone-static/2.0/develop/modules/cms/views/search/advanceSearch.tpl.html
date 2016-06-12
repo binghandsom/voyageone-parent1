@@ -33,10 +33,10 @@
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input type="radio"><span class="fa fa-check"></span> Include
+                                                        <input type="radio" name="freeTagOperation" value="1" ng-model="vm.searchInfo.freeTagOperation"><span class="fa fa-check"></span> Include
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input type="radio"><span class="fa fa-check"></span> Exclude
+                                                        <input type="radio" name="freeTagOperation" value="-1" ng-model="vm.searchInfo.freeTagOperation"><span class="fa fa-check"></span> Exclude
                                                     </label>
                                                 </div>
                                             </div>
@@ -55,7 +55,7 @@
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-10">
                                                         <select class="form-control"
-                                                                ng-model="vm.searchInfo.transStsFlg">
+                                                                ng-model="vm.searchInfo.catStsFlg">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}
                                                             </option>
                                                             <option value="0">未设置</option>
@@ -85,7 +85,7 @@
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-10">
                                                         <select class="form-control"
-                                                                ng-model="vm.searchInfo.transStsFlg">
+                                                                ng-model="vm.searchInfo.taxStsFlg">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}
                                                             </option>
                                                             <option value="0">未设置</option>
@@ -112,17 +112,17 @@
                                         <div class="form-horizontal">
                                             <div class="form-group"><!-- 查询主类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-default" ng-click="openMasterCategoryMapping(popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control">
+                                                    <input type="text" class="form-control" ng-model="vm.masterCat.catPath">
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-default" ng-click="openFeedCategoryMapping(popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_FEED_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
@@ -176,8 +176,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'
-                                                | translate}}</label>
+                                            <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'  | translate}}</label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="_cartType_"
                                                         ng-change="getCat(_cartType_)"
@@ -223,13 +222,13 @@
                                             <label class="col-sm-3 control-label">{{'TXT_SALES_SORT'|translate}}</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="sortSales_7days" type="radio"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_7days"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="sortSales_30days" type="radio"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_30days"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="sortSales_all" type="radio"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
+                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_allDays"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
                                                 </label>
                                             </div>
                                         </div>
@@ -253,29 +252,25 @@
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
                                     <div class="form-horizontal">
-                                        <div class="form-group"  ng-if="vm._cart_display"><!--主类目-->
+                                        <div class="form-group"  ng-if="vm._cart_display"><!--平台类目-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)">
-                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
+                                                <button class="btn btn-default" ng-click="platformCategoryMapping(popupNewCategory)">
+                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                 </button>
                                             </div>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control">
+                                                <input type="text" class="form-control" ng-model="vm.platform.catPath">
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default"
-                                                        ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">
+                                                <button class="btn btn-default" ng-click="openCategoryMapping(openAddChannelCategoryEdit)">
                                                     <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
                                                 </button>
                                             </div>
                                             <label class="pull-right m-r-xxl checkbox-inline c-checkbox"  ng-click="clearCartCategory()">
                                                 <input type="checkbox" ><span class="fa fa-check"></span> &nbsp;未设置
                                             </label>
-                                            <!--<button class="btn btn-default m-t-xs" ng-click="clearCartCategory()">-->
-                                            <!--<i class="fa fa-arrow-circle-right"></i>&nbsp;未设置的-->
-                                            <!--</button>-->
                                             <div class="col-sm-7">
                                                 <textarea class="form-control inherited" ng-model="vm.searchInfo.catsss" rows="3" readonly></textarea>
                                             </div>
@@ -290,10 +285,10 @@
                                             </div>
                                             <div class="col-sm-6 m-l-lg">
                                                 <label class="checkbox-inline c-radio">
-                                                    <input type="radio"><span class="fa fa-check"></span> Include
+                                                    <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Include
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input type="radio"><span class="fa fa-check"></span> Exclude
+                                                    <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Exclude
                                                 </label>
                                             </div>
                                         </div>
@@ -425,6 +420,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group">
@@ -433,6 +429,9 @@
                                             <div class="col-sm-8">
                                                     <textarea class="form-control inherited" rows="4"
                                                               ng-model="vm.searchInfo.codeList"></textarea>
+                                                <div class="text-warnings" style="padding-left:0px">
+                                                    <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -449,16 +448,12 @@
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortOne" type="radio" value="1"
-                                                               ng-model="vm.searchInfo.sortOneType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |
-                                                        translate }}
+                                                        <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |  translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortOne" type="radio" value="-1"
-                                                               ng-model="vm.searchInfo.sortOneType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' |
-                                                        translate }}
+                                                        <input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -601,9 +596,10 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
-                                </li>
+                                <!--最终售价 暂时不做-->
+                                <!--<li>-->
+                                    <!--<a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>-->
+                                <!--</li>-->
                                 <li>
                                     <a href="javascript:void(0)" ng-click="openPutOnOff('')">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
                                 </li>
@@ -617,6 +613,17 @@
                         </div>
                         &nbsp;
                         <div class="btn-group" uib-dropdown>
+                        <button type="button" class="btn btn-default" ng-disabled="vm.promotionList.length < 0" uib-dropdown-toggle>
+                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
+                        </button>
+                        <!-----------------------------参加活动------------------------------>
+                        <ul uib-dropdown-menu ng-if="vm.promotionList.length">
+                            <li ng-repeat="promotion in vm.promotionList">
+                                <a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+                            </li>
+                        </ul>
+                    </div>&nbsp;
+                        <div class="btn-group" uib-dropdown>
                             <button type="button" class="btn btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_FOR_JD_PLATFORM'|translate}}&nbsp;<span class="caret"></span>
                             </button>
@@ -624,9 +631,10 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
-                                </li>
+                                <!--最终售价 暂时不做-->
+                                <!--<li>-->
+                                    <!--<a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>-->
+                                <!--</li>-->
                                 <li>
                                     <a href="javascript:void(0)" ng-click="openPutOnOff('')">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
                                 </li>
@@ -647,9 +655,10 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
-                                </li>
+                                <!--最终售价 暂时不做-->
+                                <!--<li>-->
+                                    <!--<a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>-->
+                                <!--</li>-->
                                 <li>
                                     <a href="javascript:void(0)">加入聚美国际专场</a>
                                 </li>
@@ -661,8 +670,7 @@
                     </div>
                     <!--tab-->
                     <uib-tab ng-click="vm.currTab = 'product'">
-                        <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' |
-                            translate}}
+                        <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
                         </tab-heading>
                         <!-- Products table and controls -->
                         <div class="table-responsive box-body">
@@ -676,8 +684,7 @@
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)"
                                                    ng-disabled="!vm.productList.length">
-                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'
-                                            | translate}}&nbsp;</label>
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
                                     </td>
                                     <td class="text-left" translate="TXT_BRAND"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
@@ -685,7 +692,6 @@
                                         style="display:inline-block;width:85px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_SALE_PRICE"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
-                                    <td class="text-left" style="display:inline-block;width:180px;padding-left:8px">销售平台</td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
                                         style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
@@ -718,12 +724,8 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
 										<span class="label m-l-sm" ng-if="productInfo.carts">
-											<span class="label m-t-xs m-r-sm" style="padding-left:10px"
-                                                  ng-repeat="cartsObj in productInfo.carts"
-                                                  ng-class="{'label-yellow-new': cartsObj.platformStatus == 'WaitingPublish','label-success-new': cartsObj.platformStatus == 'OnSale', 'label-info': cartsObj.platformStatus == 'InStock'}">
-												<span ng-if="cartsObj._purl&&cartsObj._pname"><a
-                                                        ng-href="{{cartsObj._purl}}"
-                                                        target="_blank">{{cartsObj._pname}}</a></span>
+											<span class="label m-t-xs m-r-sm" style="padding-left:10px" ng-repeat="cartsObj in productInfo.carts" ng-class="{'label-yellow-new': cartsObj.platformStatus == 'WaitingPublish','label-success-new': cartsObj.platformStatus == 'OnSale', 'label-info': cartsObj.platformStatus == 'InStock'}">
+												<span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="" target="_blank">{{cartsObj._pname}}</a></span>
 												<span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
 											</span>
 										</span>
@@ -748,12 +750,6 @@
                                                href="#/product/detail/{{productInfo.prodId}}"
                                                title="{{productInfo.common.fields.productNameEn}}"
                                                target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
-										</span>
-										<span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
-											<button ng-controller="showPopoverCtrl"
-                                                    popover-html="showInfo(productInfo._freeTagsInfo)"
-                                                    popover-title="标签" type="button" popover-placement="left"
-                                                    class="btn btn-warning btn-xs">标签</button>
 										</span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
                                         </td>
@@ -783,9 +779,6 @@
                                             </button>
                                             <label ng-if="productInfo._prodChgInfo == 1"
                                                    style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
-                                        </td>
-                                        <td class="text-left" style="display:inline-block;width:180px;">
-                                            <key-value type="carts" ng-model="productInfo.carts"></key-value>
                                         </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr"
                                             style="display:inline-block;width:120px;">
