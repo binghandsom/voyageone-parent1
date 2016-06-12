@@ -11,7 +11,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
