@@ -486,7 +486,6 @@ define([
             }
         }
 
-
         function openAdvanceImagedetail(item) {
             var picList = [];
             for (var attr in item.commom.fields) {
@@ -504,7 +503,6 @@ define([
         function openApproval() {
             alert($translate.instant('TXT_BULK_APPROVAL'));
         }
-
 
         /**
          * popup弹出选择平台数据类目
