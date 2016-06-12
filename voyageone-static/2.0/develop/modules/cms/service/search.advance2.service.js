@@ -245,7 +245,7 @@ define([
                 // 设置price detail
                 groupInfo.groupBean.priceDetail = _setPriceDetail(groupInfo.groupBean);
 
-                //groupInfo.groupBean.priceSale = _setPriceSale(groupInfo.groupBean);
+                groupInfo.groupBean.priceSale = _setGroupPriceSale(groupInfo.groupBean);
 
                 // 设置time detail
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
@@ -318,6 +318,29 @@ define([
                         cartItem.cartId = parseInt(data.cartId);
                         cartItem.platformStatus = data.pStatus;
                         cartItem.publishTime = data.pPublishTime;
+                        // 设置产品状态显示区域的css(背景色)
+                        var cssVal = '';
+                        cartItem.cssVal = {};
+                        if (data.pPublishError == 'Error') {
+                            cssVal = 'red';
+                        } else {
+                            if (data.pStatus == 'OnSale') {
+                                cssVal = 'DeepSkyBlue';
+                            } else if (data.pStatus == 'InStock') {
+                                cssVal = 'Orange';
+                            } else if (data.pStatus == 'WaitingPublish') {
+                                if (data.status == 'Ready') {
+                                    cssVal = 'yellow';
+                                } else if (data.status == 'Approved') {
+                                    cssVal = 'YellowGreen';
+                                } else {
+                                    cssVal = 'DarkGray';
+                                }
+                            }
+                        }
+                        if (cssVal) {
+                            cartItem.cssVal = { "background-color" : cssVal };
+                        }
                         cartArr.push(cartItem);
                     });
                 }
@@ -422,6 +445,19 @@ define([
                 result.push('');
             }
             return result;
+        }
+
+        /**
+         * 设置页面上显示的价格
+         * @param object
+         * @returns {*}
+         * @private
+         */
+        function _setGroupPriceSale(object) {
+            if (object.priceSaleSt == object.priceSaleEd)
+                return object.priceSaleSt != null ? $filter('number')(object.priceSaleSt, 2) : '0.00';
+            else
+                return $filter('number')(object.priceSaleSt, 2) + '~' + $filter('number')(object.priceSaleEd, 2);
         }
 
         /**

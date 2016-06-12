@@ -727,15 +727,15 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
 										<span class="label m-l-sm" ng-if="productInfo.carts">
-											<span class="label m-t-xs m-r-sm" style="padding-left:10px" ng-repeat="cartsObj in productInfo.carts" ng-class="{'label-yellow-new': cartsObj.platformStatus == 'WaitingPublish','label-success-new': cartsObj.platformStatus == 'OnSale', 'label-info': cartsObj.platformStatus == 'InStock'}">
+											<span class="label m-t-xs m-r-sm" style="padding-left:10px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}">
 												<span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="" target="_blank">{{cartsObj._pname}}</a></span>
 												<span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
 											</span>
 										</span>
-                                    <span class="label label-danger m-t-xs m-r-sm m-l-sm"
-                                          ng-if="productInfo.common.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
-                                    <span class="label label-success m-t-xs m-r-sm"
-                                          ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
+                                        <span class="label label-danger m-t-xs m-r-sm m-l-sm"
+                                              ng-if="productInfo.common.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
+                                        <span class="label label-success m-t-xs m-r-sm"
+                                              ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 									    	<a ng-href="{{$root.productUrl}}{{productInfo.groupBean.numIId}}"
                                                target="_blank" ng-bind="productInfo.groupBean.numIId"></a>
@@ -889,26 +889,26 @@
                                                        ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
                                                 <span class="fa fa-check"></span>
                                             </label>
-									<span class="label m-r-sm m-l"
-                                          ng-class="{'label-success-new': groupInfo.cartBean.platformStatus == 'OnSale','label-yellow-new': groupInfo.cartBean.platformStatus == 'InStock', 'label-danger-new': groupInfo.cartBean.platformStatus == 'WaitingPublish'}">
-										&nbsp;{{groupInfo.cartBean.platformStatus}}&nbsp;
-									</span>
-									<span class="m-r-sm" ng-if="groupInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="{{$root.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank"
-                                           ng-bind="groupInfo.groupBean.numIId"></a>
-									</span>&nbsp;
-									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
-										<a ng-if="groupInfo.common.fields.longTitle"
-                                           ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                           title="{{groupInfo.common.fields.longTitle}}"
-                                           target="_blank">{{groupInfo.common.fields.longTitle | limitTo: 30}}{{groupInfo.common.fields.longTitle.length > 30 ? '...' : ''}}
-										</a>
-										<a ng-if="!groupInfo.common.fields.longTitle"
-                                           ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                           title="{{groupInfo.common.fields.productNameEn}}"
-                                           target="_blank">{{groupInfo.common.fields.productNameEn | limitTo: 30}}{{groupInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}
-										</a>
-									</span>
+                                            <span class="label m-r-sm m-l"
+                                                  ng-class="{'label-success-new': groupInfo.cartBean.platformStatus == 'OnSale','label-yellow-new': groupInfo.cartBean.platformStatus == 'InStock', 'label-danger-new': groupInfo.cartBean.platformStatus == 'WaitingPublish'}">
+                                                &nbsp;{{groupInfo.cartBean.platformStatus}}&nbsp;
+                                            </span>
+                                            <span class="m-r-sm" ng-if="groupInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+                                                <a ng-href="{{$root.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank"
+                                                   ng-bind="groupInfo.groupBean.numIId"></a>
+                                            </span>&nbsp;
+                                            <span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
+                                                <a ng-if="groupInfo.common.fields.longTitle"
+                                                   ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
+                                                   title="{{groupInfo.common.fields.longTitle}}"
+                                                   target="_blank">{{groupInfo.common.fields.longTitle | limitTo: 30}}{{groupInfo.common.fields.longTitle.length > 30 ? '...' : ''}}
+                                                </a>
+                                                <a ng-if="!groupInfo.common.fields.longTitle"
+                                                   ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
+                                                   title="{{groupInfo.common.fields.productNameEn}}"
+                                                   target="_blank">{{groupInfo.common.fields.productNameEn | limitTo: 30}}{{groupInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}
+                                                </a>
+                                            </span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
                                         </td>
                                     </tr>
