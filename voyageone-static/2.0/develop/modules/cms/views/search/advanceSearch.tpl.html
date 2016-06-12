@@ -264,15 +264,15 @@
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)">
+                                                <button class="btn btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
                                                     <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
                                                 </button>
                                             </div>
                                             <label class="pull-right m-r-xxl checkbox-inline c-checkbox">
-                                                <input type="checkbox" ><span class="fa fa-check"></span> &nbsp;未设置
+                                                <input type="checkbox" ng-model="noneSetter"><span class="fa fa-check"></span> &nbsp;未设置
                                             </label>
                                             <div class="col-sm-7">
-                                                <textarea class="form-control inherited" ng-model="vm.channelInner.catPath" rows="3" readonly></textarea>
+                                                <textarea class="form-control inherited" ng-model="vm.channelInner.catPath" rows="3" ng-disabled="noneSetter"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
@@ -612,17 +612,18 @@
                             </ul>
                         </div>
                         &nbsp;
-                        <div class="btn-group" uib-dropdown>
-                        <button type="button" class="btn btn-default" ng-disabled="vm.promotionList.length < 0" uib-dropdown-toggle>
-                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
-                        </button>
-                        <!-----------------------------参加活动------------------------------>
-                        <ul uib-dropdown-menu ng-if="vm.promotionList.length">
-                            <li ng-repeat="promotion in vm.promotionList">
-                                <a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
-                            </li>
-                        </ul>
-                    </div>&nbsp;
+                        <!--<div class="btn-group" uib-dropdown>-->
+                            <!--<button type="button" class="btn btn-default" ng-disabled="vm.promotionList.length < 0" uib-dropdown-toggle>-->
+                                <!--<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>-->
+                            <!--</button>-->
+                            <!--&lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;参加活动&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+                            <!--<ul uib-dropdown-menu ng-if="vm.promotionList.length">-->
+                                <!--<li ng-repeat="promotion in vm.promotionList">-->
+                                    <!--<a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                        <!--&nbsp;-->
                         <div class="btn-group" uib-dropdown>
                             <button type="button" class="btn btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_FOR_JD_PLATFORM'|translate}}&nbsp;<span class="caret"></span>
