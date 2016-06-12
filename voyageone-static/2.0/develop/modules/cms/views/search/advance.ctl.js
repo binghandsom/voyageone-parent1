@@ -81,8 +81,9 @@ define([
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
                 if($routeParams.type == "3"){
                     var catObj = _.find($scope.vm.masterData.cartList, function(item){ return item.add_name2 == $routeParams.catType;});
-                    $scope.vm.searchInfo.cartId = catObj.value;
                     getCat();
+                    $scope.vm.searchInfo.cartId = catObj.value;
+                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
                 }
                 if ($routeParams.type != undefined) {
                     search();
@@ -353,10 +354,7 @@ define([
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
-                }).then(function(){
-                if($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
-            });
+                });
         }
 
         /**
