@@ -98,7 +98,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //modifier
         String userName = (String) params.get("userName");
         //根据codeList取得相关联的code
-        List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
+        List<String> allCodeList = getAllCodeList(codeList, channelId, cartId);
+        $warn(String.format("该产品在group表中没有记录 codeList=%s, channelId=%s, cartId=%d", codeList.toString(), channelId, cartId));
+
         //同一店铺不同渠道的叶子类目插入形式不同
         String cnt = getSellerCatCategoryCid(cartId);
         List<String> editFullCNamesList = new ArrayList<>();
@@ -155,19 +157,24 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     /**
      * 根据codeList取得cms_bt_product_group相关的code
      */
-    public List<String> getAllCodeList(List<String> codeList,String channelId,int cartId){
+    public List<String> getAllCodeList(List<String> codeList, String channelId, int cartId) {
         List<String> allCodeList = new ArrayList<>();
         // 获取产品对应的group信息
-        for(String allCode:codeList){
+        for (String allCode : codeList) {
             //循环取得allCode
             CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, allCode, cartId);
+            if (groupModel == null || groupModel.getProductCodes() == null) {
+                $warn(String.format("该产品在group表中没有记录 code=%s, channelId=%s, cartId=%d", allCode, channelId, cartId));
+                continue;
+            }
             //循环取单条code
-            for(String code:groupModel.getProductCodes()){
+            for (String code : groupModel.getProductCodes()) {
                 allCodeList.add(code);
             }
         }
         return allCodeList;
     }
+
     /**
      * 数据check
      */

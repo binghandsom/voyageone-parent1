@@ -1133,12 +1133,13 @@ public class TmallProductService {
         // modified by morse.lu 2016/05/15 end
 
 		// 20160607 可能现在天猫改规则了, 要更新产品试试看 START
+        StringBuffer failCause = new StringBuffer();
         String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
         if (!StringUtils.isEmpty(productCode)) {
             // 获取更新产品的规则的schema
             String updateProductSchema;
             try {
-                updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean);
+                updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean, failCause);
             } catch (ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
@@ -1168,7 +1169,8 @@ public class TmallProductService {
             // 更新产品
             try {
                 String schema = SchemaWriter.writeParamXmlString(updateFields);
-                String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean);
+                failCause.setLength(0);
+                String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean, failCause);
                 System.out.println(result);
             } catch (TopSchemaException | ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);

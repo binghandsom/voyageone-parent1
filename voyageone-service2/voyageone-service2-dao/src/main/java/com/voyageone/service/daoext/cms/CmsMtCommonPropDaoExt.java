@@ -26,6 +26,11 @@ public class CmsMtCommonPropDaoExt extends ServiceBaseDao {
         return selectList("select_cms_mt_common_prop_cust_cols");
     }
 
+    // 取得排序用显示列设置
+    public List<Map<String, Object>> selectSortColumns() {
+        return selectList("select_cms_mt_common_prop_cust_cols_sort");
+    }
+
     // 取得用户自定义显示列设置
     public List<Map<String, Object>> selectUserCustColumns(int userId) {
         return selectList("select_synship_ct_user_config_cust_cols", parameters("userId", userId));
