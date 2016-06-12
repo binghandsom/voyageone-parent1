@@ -632,6 +632,12 @@ public class SxProductService extends BaseService {
                 }
             }
             // 2016/06/02 Update by desmond end
+            // 2016/06/12 add desmond START
+            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/06/12 add desmond END
 
             List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
             List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
