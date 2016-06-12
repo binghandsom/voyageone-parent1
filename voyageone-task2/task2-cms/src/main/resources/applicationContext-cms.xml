@@ -86,7 +86,7 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 0/2 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
 
 
     </task:scheduled-tasks>
