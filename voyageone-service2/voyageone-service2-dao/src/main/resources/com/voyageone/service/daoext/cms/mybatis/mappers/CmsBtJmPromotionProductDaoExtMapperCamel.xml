@@ -139,26 +139,26 @@
             </if>
             <if test="priceType=='msrp'">
                 <if test="beginPrice!=null">
-                    and   b.msrp>=#{beginPrice}
+                    and   b.msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp&lt;=#{endPrice}
+                    and   b.msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="priceType=='marketPrice'">
+            <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    a.market_price>=#{beginPrice}
+                    and    b.retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   a.market_price&lt;=#{endPrice}
+                    and   b.retail_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="priceType=='dealPrice'">
+            <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  a.deal_price>=#{beginPrice}
+                    and  b.sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  a.deal_price&lt;=#{endPrice}
+                    and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="productNameCn!=null">
