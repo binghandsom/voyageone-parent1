@@ -68,7 +68,7 @@ define([
                 "putOnOff": {
                     "templateUrl": "views/pop/bulkUpdate/putonoff.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/putonoff.ctl",
-                    "controller": 'popPutOnOffCtl',
+                    "controller": 'popPutOnOffCtl as ctrl',
                     "size": 'md'
                 },
                 "freeTag": {
