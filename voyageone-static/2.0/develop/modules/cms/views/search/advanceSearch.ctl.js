@@ -32,7 +32,7 @@ define([
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
             groupList: [],
             productList: [],
-            currTab: "group",
+            currTab: "product",
             status: {
                 open: true
             },
@@ -149,7 +149,7 @@ define([
                 }
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1150) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1000) + 'px';
             })
         }
 
