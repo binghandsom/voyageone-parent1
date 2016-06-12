@@ -245,7 +245,7 @@ define([
                 // 设置price detail
                 groupInfo.groupBean.priceDetail = _setPriceDetail(groupInfo.groupBean);
 
-                groupInfo.groupBean.priceSale = _setPriceSale(groupInfo.groupBean);
+                //groupInfo.groupBean.priceSale = _setPriceSale(groupInfo.groupBean);
 
                 // 设置time detail
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
@@ -349,10 +349,10 @@ define([
                 // 设置sku销售渠道信息
                 productInfo.skuDetail = _setSkuDetail(productInfo.skus);
 
-                // 设置price detail
+                // 设置price detail (数组形式)
                 productInfo.priceDetail = _setPriceDetail(productInfo.common.fields);
-
-                productInfo.priceSale = _setPriceSale(productInfo.common.fields);
+                // 设置各sku在各平台上的价格
+                productInfo.priceSale = _setPriceSale(productInfo.platforms);
 
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
@@ -407,15 +407,20 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON'), object.priceMsrpSt, object.priceMsrpEd);
-            if (!_.isNull(tempMsrpDetail))
+            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON') + " ", object.priceMsrpSt, object.priceMsrpEd);
+            if (!_.isNull(tempMsrpDetail)) {
                 result.push(tempMsrpDetail);
+            } else {
+                result.push('');
+            }
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON'), object.priceRetailSt, object.priceRetailEd);
-            if (!_.isNull(tempRetailPriceDetail))
+            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON') + " ", object.priceRetailSt, object.priceRetailEd);
+            if (!_.isNull(tempRetailPriceDetail)) {
                 result.push(tempRetailPriceDetail);
-
+            } else {
+                result.push('');
+            }
             return result;
         }
 
@@ -426,10 +431,44 @@ define([
          * @private
          */
         function _setPriceSale(object) {
-            if (object.priceSaleSt == object.priceSaleEd)
-                return object.priceSaleSt != null ? $filter('number')(object.priceSaleSt, 2) : '0.00';
-            else
-                return $filter('number')(object.priceSaleSt, 2) + '~' + $filter('number')(object.priceSaleEd, 2);
+            var result = [];
+            if (object == null || object == undefined) {
+                return result;
+            }
+            if (object) {
+                _.forEach(object, function (data) {
+                    if (data == null || data == undefined) {
+                        return;
+                    }
+                    var priceItem = '';
+                    var cartInfo = Carts.valueOf(data.cartId);
+                    if (cartInfo == null || cartInfo == undefined) {
+                        priceItem += data.cartId;
+                    } else {
+                        priceItem += cartInfo.name;
+                    }
+                    priceItem += ': ';
+                    // 合计sku价格的上下限
+                    var skuPriceList = [];
+                    if (data.skus) {
+                        _.forEach(data.skus, function (skusData) {
+                            skuPriceList.push(skusData.priceSale);
+                        });
+                    }
+                    skuPriceList = _.compact(skuPriceList);
+                    skuPriceList = _.sortBy(skuPriceList);
+                    skuPriceList = _.uniq(skuPriceList, true);
+                    if (skuPriceList.length == 1) {
+                        priceItem += $filter('number')(skuPriceList[0], 2);
+                    } else if (skuPriceList.length > 1) {
+                        priceItem += $filter('number')(skuPriceList[0], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(skuPriceList[skuPriceList.length - 1], 2);
+                    }
+                    result.push(priceItem);
+                });
+            }
+            return result;
         }
 
         /**

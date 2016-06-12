@@ -443,7 +443,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortOneName"
-                                                            ng-options="sortOne.configCode as sortOne.configValue1 for sortOne in vm.masterData.custAttsList">
+                                                            ng-options="sortOne.propId as sortOne.propName for sortOne in vm.masterData.sortList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -463,7 +463,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortTwoName"
-                                                            ng-options="sortTwo.configCode as sortTwo.configValue1 for sortTwo in vm.masterData.custAttsList">
+                                                            ng-options="sortTwo.propId as sortTwo.propName for sortTwo in vm.masterData.sortList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -487,7 +487,7 @@
                                             <div class="col-sm-8">
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortThreeName"
-                                                            ng-options="sortThree.configCode as sortThree.configValue1 for sortThree in vm.masterData.custAttsList">
+                                                            ng-options="sortThree.propId as sortThree.propName for sortThree in vm.masterData.sortList">
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -692,6 +692,8 @@
                                         style="display:inline-block;width:85px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_SALE_PRICE"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
+                                    <td class="text-center"
+                                        style="display:inline-block;width:150px;padding-left:8px">Sku Sale Price</td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
                                         style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
@@ -771,14 +773,17 @@
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            <button ng-controller="showPopoverCtrl"
-                                                    popover-html="showInfo({{productInfo.priceDetail}})"
-                                                    popover-title="{{'TXT_PRICE' | translate}}" type="button"
-                                                    popover-placement="left" class="btn btn-default btn-xs">
-                                                {{productInfo.priceSale}}
-                                            </button>
+                                            {{productInfo.priceDetail[0]}}<br>{{productInfo.priceDetail[1]}}
                                             <label ng-if="productInfo._prodChgInfo == 1"
                                                    style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                        </td>
+                                        <td class="text-center" style="display:inline-block;width:150px;">
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale"
+                                                    popover-html="showInfo({{productInfo.priceSale}})"
+                                                    popover-title="{{'TXT_PRICE' | translate}}" type="button"
+                                                    popover-placement="left" class="btn btn-default btn-xs">
+                                                {{productInfo.priceSale[0]}}
+                                            </button>
                                         </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr"
                                             style="display:inline-block;width:120px;">

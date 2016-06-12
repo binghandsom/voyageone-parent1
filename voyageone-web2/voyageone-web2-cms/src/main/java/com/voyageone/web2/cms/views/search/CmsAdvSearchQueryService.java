@@ -287,7 +287,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 1.  >  有输入框  eg {"a": {$gt: 123123}}
         // 2.  =  有输入框  eg {"a": 123123}}
         // 3.  <  有输入框  eg {"a": {$lt: 123123}}
-        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,''], $exists:false}}
+        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,''], $exists:true}}
         // 5.  !=null(已设值) 无输入框  eg {"a": {$nin:[null,''], $exists:true}}
         // 6.  包含   有输入框  eg {"a": {$regex: "oops"}}
         // 7.  不包含 有输入框  eg {"a":{$not: {$regex: "oops"}}}
@@ -295,11 +295,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (custList != null && custList.size() > 0) {
             List<String> inputList = new ArrayList<>();
             for (Map<String, Object> item : custList) {
-                String inputOptsKey = (String) item.get("inputOptsKey");//条件字段
-                String inputOpts = (String) item.get("inputOpts");//操作符
-                String inputVal = (String) item.get("inputVal");//值
-                String inputType = (String) item.get("inputType");//输入类型 list/string/number
-                String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOpts, inputVal, inputType);
+                String inputOptsKey = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputOptsKey"));//条件字段
+                if (inputOptsKey == null) {
+                    continue;
+                }
+                Object inputOptsObj = item.get("inputOpts");//操作符
+                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputVal"));//值
+                String inputType = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputType"));//输入类型 list/string/number
+                String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOptsObj, inputVal, inputType);
                 if (!StringUtil.isEmpty(optsWhere)) {
                     inputList.add(optsWhere);
                 }
@@ -314,33 +317,64 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         return result.toString();
     }
 
-    private String getCustAttrOptsWhere(String inputOptsKey ,String inputOpts, String inputVal, String inputType) {
+    private String getCustAttrOptsWhere(String inputOptsKey, Object inputOpts, String inputVal, String inputType) {
+        if (inputOptsKey == null) {
+            return null;
+        }
         String result = null;
         if (inputType != null && inputType.indexOf("list") == 0) {
-            result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+            if (inputOpts == null) {
+                return null;
+            }
+            if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                // 未设值
+                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
+            } else {
+                result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+            }
             return  result;
         }
-        switch (inputOpts) {
-            case "1":
+        if (inputOpts == null) {
+            return null;
+        }
+        switch ((Integer) inputOpts) {
+            case 1:
+                if (inputVal == null) {
+                    break;
+                }
                 result = "{'" + inputOptsKey + "':{$gt:" + inputVal + "}}";
                 break;
-            case "2":
+            case 2:
+                if (inputVal == null) {
+                    break;
+                }
                 result = "{'" + inputOptsKey + "':" + inputVal + "}";
                 break;
-            case "3":
+            case 3:
+                if (inputVal == null) {
+                    break;
+                }
                 result = "{'" + inputOptsKey + "':{$lt:" + inputVal + "}}";
                 break;
-            case "4":
-                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:false}}";
+            case 4:
+                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
                 break;
-            case "5":
+            case 5:
                 result = "{'" + inputOptsKey + "':{$nin:[null,''],$exists:true}}";
                 break;
-            case "6":
+            case 6:
+                if (inputVal == null) {
+                    break;
+                }
                 result = "{'" + inputOptsKey + "':{$regex:'" + inputVal + "'}}";
                 break;
-            case "7":
-                result = "{'" + inputOptsKey + "':{$not:{$regex:'" + inputOptsKey + "'}}}";
+            case 7:
+                if (inputVal == null) {
+                    break;
+                }
+                result = "{'" + inputOptsKey + "':{$not:{$regex:'" + inputVal + "'}}}";
+                break;
+            default:
                 break;
         }
         return  result;
