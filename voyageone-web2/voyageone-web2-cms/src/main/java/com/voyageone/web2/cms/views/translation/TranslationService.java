@@ -70,7 +70,7 @@ public class TranslationService extends BaseAppService {
      * @throws BusinessException
      */
     public TranslateTaskBean getUndoneTasks(UserSessionBean userInfo) throws BusinessException {
-        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
+        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -24);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.isMasterMain':1," +
@@ -88,8 +88,10 @@ public class TranslationService extends BaseAppService {
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
         translateTaskBean.setProdListTotal(cmsBtProductModels.size());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
-        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(),userInfo.getUserName()));
+        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        translateTaskBean.setTotalDistributeUndoneCount(this.getTotalDistributionUndoneCount(userInfo.getSelChannelId()));
+
         return translateTaskBean;
     }
 
@@ -329,7 +331,7 @@ public class TranslationService extends BaseAppService {
      * 获取个人完成翻译数.
      */
     private int getDoneTaskCount(String channelId, String userName) {
-        String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s'}", userName);
+        String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s','fields.isMasterMain':1}", userName);
         return ((Long)productService.getCnt(channelId, doneTaskCountQueryStr)).intValue();
     }
 
@@ -337,7 +339,7 @@ public class TranslationService extends BaseAppService {
      * 获取所有完成的数量.
      */
     private int getTotalDoneCount(String channelId) {
-        String totalDoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':'1'}";
+        String totalDoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.isMasterMain':1}";
         return ((Long)productService.getCnt(channelId, totalDoneCountQueryStr)).intValue();
     }
 
@@ -345,10 +347,16 @@ public class TranslationService extends BaseAppService {
      * 设定个人完成翻译数、完成翻译总数、待翻译总数.
      */
     private int getTotalUndoneCount(String channelId) {
-        String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}";
+        String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']},'fields.translator':{'$in':[null,'','0']},'fields.isMasterMain':1}";
         return ((Long)productService.getCnt(channelId, totalUndoneCountQueryStr)).intValue();
     }
-
+    /**
+     * 已分配但未完成.
+     */
+    private int getTotalDistributionUndoneCount(String channelId) {
+        String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']},'fields.translator':{'$nin':[null,'','0']},'fields.isMasterMain':1}";
+        return ((Long)productService.getCnt(channelId, totalUndoneCountQueryStr)).intValue();
+    }
     /**
      * 获取 feed info model.
      */

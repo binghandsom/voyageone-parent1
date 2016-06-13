@@ -999,7 +999,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         // 获取翻译状态
         String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
         if (transFlg != null) {
-            result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            if("0".equalsIgnoreCase(transFlg)){
+                result.append("'fields.translateStatus':{'$in':[null,'','0']}");
+            }else{
+                result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            }
             result.append(",");
         }
 

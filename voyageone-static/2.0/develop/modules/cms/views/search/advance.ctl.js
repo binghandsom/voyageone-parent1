@@ -81,9 +81,9 @@ define([
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
                 if($routeParams.type == "3"){
                     var catObj = _.find($scope.vm.masterData.cartList, function(item){ return item.add_name2 == $routeParams.catType;});
-                    getCat();
                     $scope.vm.searchInfo.cartId = catObj.value;
                     $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
+                    getCat();
                 }
                 if ($routeParams.type != undefined) {
                     search();
