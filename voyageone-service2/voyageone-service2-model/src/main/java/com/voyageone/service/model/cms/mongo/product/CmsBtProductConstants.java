@@ -43,9 +43,14 @@ public interface CmsBtProductConstants {
 		}
 	}
 
+	/**
+	 *  Platform_Field_COMM
+	 */
+	enum Platform_Field_COMM {
+	}
 
 	/**
-	 *  Platform_Field
+	 *  Platform_Field_JM
 	 */
 	enum Platform_Field_JM {
 		/* productNameCn */
@@ -71,7 +76,23 @@ public interface CmsBtProductConstants {
 	}
 
 	/**
-	 *  Platform_Field
+	 *  Platform_SKU_COM
+	 */
+	enum Platform_SKU_COM {
+		/* skuCode(共通) */
+		skuCode,
+		/* 平台级别的指导售价(共通) */
+		priceRetail,
+		/* priceSale(共通) */
+		priceSale,
+		/* 价格变更状态（U/D/XU/XD）(共通) */
+		priceChgFlg,
+		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
+		isSale,
+	}
+
+	/**
+	 *  Platform_SKU_JM
 	 */
 	enum Platform_SKU_JM {
 		/* skuCode(共通) */
