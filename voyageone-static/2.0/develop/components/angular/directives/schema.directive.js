@@ -186,7 +186,7 @@ define(function (require) {
                 case SYMBOLS.NOT_EQUALS:
                     return value != express.value;
                 case SYMBOLS.NOT_CONTAINS:
-                    return value.indexOf(express.value) < 0;
+                    return !!value && value.indexOf(express.value) < 0;
                 default:
                     return false;
             }
@@ -450,7 +450,7 @@ define(function (require) {
 
                 var controller = this,
                     $scope = controller.$scope;
-                    schema = controller.schema;
+                schema = controller.schema;
 
                 angular.forEach(schema, function (field) {
 
@@ -485,15 +485,18 @@ define(function (require) {
                         transclude($scope, function (clone) {
 
                             var fieldElements = clone.filter('schema-field');
+
                             var hasFieldElements = !!fieldElements.length;
 
-                            if (!hasFieldElements) return;
+                            if (!hasFieldElements) {
+                                // 如果元素内为空, 或内部没有元素, 就展开所有 field
+                                controller.$render($element);
+                                return;
+                            }
 
                             $element.append(fieldElements);
                         });
 
-                        // 如果元素内为空, 或内部没有元素, 就展开所有 field
-                        controller.$render($element);
                     });
 
                 },
@@ -563,56 +566,34 @@ define(function (require) {
                     }
 
                     if (parentController) {
-                        watchParent().then(function (fields) {
 
-                            var field = find(fields, function (field) {
-                                return field.id === $attrs.fieldId;
-                            });
-
-                            if (!schemaController) {
-                                tryCompile(field, null);
-                                return;
-                            }
-
-                            watchSchema().then(function (schema) {
-                                tryCompile(field, schema);
-                            });
+                        var fieldFromParent = find(parentController.fields, function (field) {
+                            return field.id === $attrs.fieldId;
                         });
+
+                        if (!schemaController) {
+                            tryCompile(fieldFromParent, null);
+                            return;
+                        }
+
+                        watchSchema().then(function (schema) {
+                            tryCompile(fieldFromParent, schema);
+                        });
+
                     } else {
                         watchSchema().then(function (schema) {
 
-                            var field = find(schema, function (field) {
+                            var fieldFromSchema = find(schema, function (field) {
                                 return field.id === $attrs.fieldId;
                             });
 
-                            tryCompile(field, schema);
+                            tryCompile(fieldFromSchema, schema);
                         });
                     }
                 } else {
 
                     // 如果两个都没设置, 或者没有外层 schema 那就....
                     $element.text('请提供 field 或者 field-id 属性。');
-                }
-
-                function watchParent() {
-
-                    return $q(function (resolve) {
-
-                        // 如果有父级就从父级查找
-                        var disposeWatcher = $scope.$watch(function () {
-
-                            return parentController.field;
-
-                        }, function (parentField) {
-
-                            if (!parentField) return;
-
-                            resolve(parentField.fields);
-
-                            disposeWatcher();
-                            disposeWatcher = null;
-                        });
-                    });
                 }
 
                 function watchSchema() {
@@ -871,21 +852,10 @@ define(function (require) {
 
                             innerElement = angular.element('<schema-complex-container>');
 
-                            field.fields.forEach(function (child) {
-
-                                var childElement = angular.element('<schema-field class="schema-child">');
-
-                                childElement.attr('field-id', child.id);
-
-                                innerElement.append(childElement);
-                            });
-
                             break;
                         case FIELD_TYPES.multiComplex:
 
-                            innerElement = angular.element('<schema-complex-container>');
-
-                            innerElement.text('我是 multi complex...');
+                            innerElement = angular.element('<schema-complex-container multi="true">');
 
                             break;
                         default:
@@ -927,7 +897,7 @@ define(function (require) {
 
             return {
                 restrict: 'E',
-                require: ['^^?schema', '^^?form', '^^?schemaField'],
+                require: ['^^?schema', '^^?form', '^^?schemaComplexContainer'],
                 scope: true,
                 controllerAs: '$ctrl',
                 link: function ($scope, elem, attr, controllers) {
@@ -938,6 +908,44 @@ define(function (require) {
                     });
                 },
                 controller: SchemaFieldController
+            };
+        })
+        .directive('schemaComplexContainer', function ($compile) {
+            
+            return {
+                restrict: 'E',
+                scope: true,
+                require: '^^schemaField',
+                controllerAs: '$ctrl',
+                link: function ($scope, $element, $attrs, schemaFieldController) {
+                    
+                    var schemaComplexController = $scope.$ctrl;
+
+                    var field = schemaFieldController.field;
+
+                    var isMulti = ($attrs.multi === 'true');
+                    
+                    var fields;
+
+                    if (!isMulti) {
+                        schemaComplexController.fields = field.fields;
+                    } else {
+                        schemaComplexController.fields = angular.copy(field.fields);
+                    }
+
+                    fields = schemaComplexController.fields;
+                    
+                    fields.forEach(function (field) {
+                        
+                        var child = angular.element('<schema-field field-id="' + field.id + '">');
+                        
+                        $element.append(child);
+                    });
+                    
+                    $compile($element.contents())($scope);
+                },
+                controller: function SchemaComplexController() {
+                }
             };
         });
 });

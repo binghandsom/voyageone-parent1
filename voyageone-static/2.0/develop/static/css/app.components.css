@@ -30,6 +30,11 @@ schema-complex-container {
     display: block;
 }
 
+schema-complex-container[multi] {
+    /* TODO 该颜色仅供测试 */
+    background: red;
+}
+
 schema-disable-container {
     display: block;
 }
