@@ -410,3 +410,87 @@
         min-height: 216px;
     }
 }
+/*uib-tab样式*/
+.tab-container {
+    margin-bottom: 15px;
+}
+.tab-container .tab-content {
+    padding:8px;
+    background-color: #F8F8F8;
+    border: 1px solid #d4cfcf;
+    border-top-width: 0;
+    border-radius: 0 0 2px 2px;
+}
+/*多级菜单样式*/
+.dropdown-header {
+    padding: 5px 15px;
+}
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+    background-color: #eceaea !important;
+    color: #42413a;
+}
+.dropdown-submenu:hover > .dropdown-menu,
+.dropdown-submenu:focus > .dropdown-menu {
+    display: block;
+}
+.dropdown-submenu.pull-left {
+    float: none !important;
+}
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+}
+.dropdown-submenu .dropdown-menu {
+    left: 100%;
+    top: 0;
+    margin-top: -6px;
+    margin-left: -1px;
+}
+.dropup .dropdown-submenu > .dropdown-menu {
+    top: auto;
+    bottom: 0;
+}
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: -100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 2px 2px 2px;
+    -moz-border-radius: 0 2px 2px 2px;
+    border-radius: 0 2px 2px 2px;
+}
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+.dropdown-submenu > a:before {
+    content: " ";
+    float: left;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid transparent;
+    margin-top: 4px;
+    margin-right: 10px;
+}
+.dropdown-submenu:hover > a:after {
+    border-left-color: #fff;
+}
+.dropdown-submenu.pull-left {
+    float: none;
+}
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 2px 0 2px 2px;
+    -moz-border-radius: 2px 0 2px 2px;
+    border-radius: 2px 0 2px 2px;
+}
