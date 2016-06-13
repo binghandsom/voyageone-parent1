@@ -34,25 +34,30 @@ public class JmBtDealImportService {
         JmBtDealImportModel modelJmBtDealImport = daoExtJmBtDealImport.selectJmBtDealImportModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtProductModel modelJmBtProduct = daoExtJmBtDealImport.selectJmBtProductModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtSkuModel modelJmBtSku = daoExtJmBtDealImport.selectJmBtSkuModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
+        if(modelJmBtProduct==null)
+        {
+            System.out.println("ChannelId:"+productDeal.getChannelId()+" DealId:"+productDeal.getDealId()+"  code:"+productDeal.getProductCode());
+            return;
+        }
         CmsBtJmProductModel modelCmsBtJmProduct = new CmsBtJmProductModel();
         modelCmsBtJmProduct.setAddressOfProduce(modelJmBtProduct.getAddressOfProduce());
-        // modelCmsBtJmProduct.setApplicableCrowd(modelJmBtProduct.get);
+        modelCmsBtJmProduct.setApplicableCrowd("");
         modelCmsBtJmProduct.setAttribute(modelJmBtProduct.getAttribute());
-        //modelCmsBtJmProduct.setAvailablePeriod();
+        modelCmsBtJmProduct.setAvailablePeriod("");
         modelCmsBtJmProduct.setBrandName(modelJmBtProduct.getBrandName());
         modelCmsBtJmProduct.setChannelId(modelJmBtProduct.getChannelId());
-        //modelCmsBtJmProduct.setColorEn(modelJmBtProduct.get);
+        modelCmsBtJmProduct.setColorEn("");
         modelCmsBtJmProduct.setForeignLanguageName(modelJmBtProduct.getForeignLanguageName());
         modelCmsBtJmProduct.setHsCode(modelJmBtProduct.getHsCode());
         modelCmsBtJmProduct.setHsName(modelJmBtProduct.getHsName());
         modelCmsBtJmProduct.setHsUnit(modelJmBtProduct.getHsUnit());
-        //modelCmsBtJmProduct.setImage1();
+        modelCmsBtJmProduct.setImage1("");
         modelCmsBtJmProduct.setJumeiProductId(modelJmBtProduct.getJumeiProductId());
-        //modelCmsBtJmProduct.setMaterialCn();
-        //modelCmsBtJmProduct.setMaterialEn(modelJmBtProduct.getm);
-        //modelCmsBtJmProduct.setMsrpRmb();
-        //modelCmsBtJmProduct.setMsrpUsd();
-        //modelCmsBtJmProduct.setOrigin();
+        modelCmsBtJmProduct.setMaterialCn("");
+        modelCmsBtJmProduct.setMaterialEn("");
+        modelCmsBtJmProduct.setMsrpRmb(new BigDecimal(0));
+        modelCmsBtJmProduct.setMsrpUsd(new BigDecimal(0));
+        modelCmsBtJmProduct.setOrigin("");
         modelCmsBtJmProduct.setOriginJmHashId(modelJmBtDealImport.getJumeiHashId());
         modelCmsBtJmProduct.setProductCode(modelJmBtProduct.getProductCode());
         modelCmsBtJmProduct.setProductDesCn(modelJmBtProduct.getProductDes());
@@ -92,8 +97,13 @@ public class JmBtDealImportService {
         modelCmsBtJmSku.setModified(new Date());
         modelCmsBtJmSku.setCreated(new Date());
         modelCmsBtJmSku.setCreater("system");
+         try {
+             daoCmsBtJmProduct.insert(modelCmsBtJmProduct);
+             daoCmsBtJmSku.insert(modelCmsBtJmSku);
+         }
+         catch (org.springframework.dao.DuplicateKeyException ex)
+         {
 
-        daoCmsBtJmProduct.insert(modelCmsBtJmProduct);
-        daoCmsBtJmSku.insert(modelCmsBtJmSku);
+         }
     }
 }
