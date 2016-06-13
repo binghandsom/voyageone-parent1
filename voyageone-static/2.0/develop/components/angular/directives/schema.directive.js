@@ -910,6 +910,15 @@ define(function (require) {
                         schemaComplexController.fields = field.fields;
                     } else {
                         schemaComplexController.fields = angular.copy(field.fields);
+
+                        // 追加工具栏, 用来删除当前 complex
+                        var toolbar = angular.element('<div class="schema-complex-toolbar">');
+
+                        var deleteButton = angular.element('<button>DELETE</button>');
+
+                        toolbar.append(deleteButton);
+
+                        $element.append(toolbar);
                     }
 
                     fields = schemaComplexController.fields;
