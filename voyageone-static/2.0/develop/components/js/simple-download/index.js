@@ -40,7 +40,7 @@
             var $frame = createIframe(id);
             $('body').append($form.append($hiddens), $frame);
             $frame.on('load', function () {
-                var responseContent = $frame.contents().find('body').text()
+                var responseContent = $frame.contents().find('body').text();
                 if (callback) callback(responseContent, param, context);
                 $form.remove();
                 $frame.remove();
@@ -53,7 +53,7 @@
             var $frame = createIframe(id);
             $('body').append($frame);
             $frame.on('load', function () {
-                var responseContent = $frame.contents().find('body').text()
+                var responseContent = $frame.contents().find('body').text();
                 if (callback) callback(responseContent, param, context);
                 $frame.remove();
             });
