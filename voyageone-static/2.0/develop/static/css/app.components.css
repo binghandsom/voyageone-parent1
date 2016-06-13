@@ -34,6 +34,10 @@ schema-disable-container {
     display: block;
 }
 
+schema-field-tip {
+    display: block;
+}
+
 /* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
 .vo-validate.ng-invalid input,
 .vo-validate.ng-invalid select,

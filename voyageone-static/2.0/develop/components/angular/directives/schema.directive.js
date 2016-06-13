@@ -3,6 +3,19 @@ define(function (require) {
      * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
      */
 
+    /**
+     * 以下代码包含下面这些自定义标签:
+     *  schema
+     *  schema-field
+     *  schema-field-name
+     *  schema-complex-name
+     *  schema-complex-container
+     *  schema-disable-container
+     *  schema-field-tip
+     *
+     * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
+     */
+
     var FIELD_TYPES;
 
     /*
@@ -386,10 +399,16 @@ define(function (require) {
     /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
      */
-    function bindTipRule(element, rule) {
-        if (rule) {
-            element.attr('title', rule);
-        }
+    function bindTipRule(container, rule) {
+        if (!rule) return;
+
+        var content = rule;
+
+        var contentContainer = angular.element('<schema-field-tip>');
+
+        contentContainer.text(content);
+
+        container.append(contentContainer);
     }
 
     angular.module('voyageone.angular.directives')
@@ -693,6 +712,8 @@ define(function (require) {
                     else
                         container.append(innerElement);
 
+                    bindTipRule(container, rules.tipRule);
+
                     // 根据需要创建 vo-message
                     if (hasValidate && isSimple) {
 
@@ -737,8 +758,6 @@ define(function (require) {
                             bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
                             bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
 
-                            bindTipRule(innerElement, rules.tipRule);
-
                             // 处理正则规则
                             if (regexRule) {
 
@@ -770,8 +789,6 @@ define(function (require) {
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
-                            bindTipRule(innerElement, rules.tipRule);
 
                             if (!field.$value && field.value)
                                 field.$value = field.value.value;
