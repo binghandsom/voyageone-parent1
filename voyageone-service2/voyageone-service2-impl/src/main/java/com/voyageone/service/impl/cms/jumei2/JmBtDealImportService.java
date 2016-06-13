@@ -34,7 +34,7 @@ public class JmBtDealImportService {
         JmBtDealImportModel modelJmBtDealImport = daoExtJmBtDealImport.selectJmBtDealImportModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtProductModel modelJmBtProduct = daoExtJmBtDealImport.selectJmBtProductModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtSkuModel modelJmBtSku = daoExtJmBtDealImport.selectJmBtSkuModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
-        if(modelJmBtProduct==null)
+        if(modelJmBtProduct==null)//不存在 sql可以查询出来  不用处理
         {
             System.out.println("ChannelId:"+productDeal.getChannelId()+" DealId:"+productDeal.getDealId()+"  code:"+productDeal.getProductCode());
             return;
@@ -101,7 +101,7 @@ public class JmBtDealImportService {
              daoCmsBtJmProduct.insert(modelCmsBtJmProduct);
              daoCmsBtJmSku.insert(modelCmsBtJmSku);
          }
-         catch (org.springframework.dao.DuplicateKeyException ex)
+         catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
          {
 
          }
