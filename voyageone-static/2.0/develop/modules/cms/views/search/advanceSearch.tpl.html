@@ -670,9 +670,10 @@
                                 </li>
                                 <li class="dropdown-submenu">
                                     <a href="javascript:void(0)">加入京东国际活动</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="javascript:void(0)">选择结果批量</a></li>
-                                        <li><a href="javascript:void(0)">检索结果全量</a></li>
+                                    <ul class="dropdown-menu" ng-if="vm.promotionList.length" style="left: -119%;">
+                                        <li ng-repeat="promotion in vm.promotionList">
+                                            <a ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="dropdown-submenu">
@@ -703,9 +704,10 @@
                                 <!--</li>-->
                                 <li class="dropdown-submenu">
                                     <a href="javascript:void(0)">加入聚美国际专场</a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="javascript:void(0)">选择结果批量</a></li>
-                                        <li><a href="javascript:void(0)">检索结果全量</a></li>
+                                    <ul class="dropdown-menu" ng-if="vm.promotionList.length" style="left: -119%;">
+                                        <li ng-repeat="promotion in vm.promotionList">
+                                            <a ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="dropdown-submenu">
