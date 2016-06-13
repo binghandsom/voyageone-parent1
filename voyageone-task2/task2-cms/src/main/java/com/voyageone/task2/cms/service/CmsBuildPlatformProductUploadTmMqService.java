@@ -193,6 +193,10 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 throw new BusinessException("SxData取得失败!");
                 // modified by morse.lu 2016/06/12 end
             }
+            if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+                // 有错误的时候，直接报错
+                throw new BusinessException(sxData.getErrorMessage());
+            }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
                 sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
