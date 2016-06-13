@@ -71,6 +71,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pIsMain", pIsMain);
     }
 
+    //pProductId
+    public String getpProductId() {
+        return getAttribute("pProductId");
+    }
+    public void setpProductId(String pNumIId) {
+        setAttribute("pProductId", pNumIId);
+    }
+
     //pNumIId
     public String getpNumIId() {
         return getAttribute("pNumIId");
@@ -149,6 +157,34 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setpAttributeSetTime(String pAttributeSetTime) {
         setAttribute("pAttributeSetTime", pAttributeSetTime);
+    }
+
+    //建议市场价格区间
+    public Double getpPriceRetailSt() {
+        return getDoubleAttribute("pPriceRetailSt");
+    }
+    public void setpPriceRetailSt(Double priceRetailSt) {
+        setAttribute("pPriceRetailSt", priceRetailSt);
+    }
+    public Double getpPriceRetailEd() {
+        return getDoubleAttribute("pPriceRetailEd");
+    }
+    public void setpPriceRetailEd(Double priceRetailEd) {
+        setAttribute("pPriceRetailEd", priceRetailEd);
+    }
+
+    //销售价格价格区间
+    public Double getpPriceSaleSt() {
+        return getDoubleAttribute("pPriceSaleSt");
+    }
+    public void setpPriceSaleSt(Double priceSaleSt) {
+        setAttribute("pPriceSaleSt", priceSaleSt);
+    }
+    public Double getpPriceSaleEd() {
+        return getDoubleAttribute("pPriceSaleEd");
+    }
+    public void setpPriceSaleEd(Double priceSaleEd) {
+        setAttribute("pPriceSaleEd", priceSaleEd);
     }
 
     //fields

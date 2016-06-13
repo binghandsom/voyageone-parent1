@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -16,10 +17,12 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,13 +199,36 @@ public class CmsAdvanceSearchController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
-    public ResponseEntity<byte[]> doExport(@RequestParam String params)
-            throws Exception {
+    public ResponseEntity<byte[]> doExport(@RequestParam String params) {
+        CmsSearchInfoBean2 p = null;
+        try {
+            p = JacksonUtil.json2Bean(params, CmsSearchInfoBean2.class);
+        } catch (Exception exp) {
+            $error("查询参数不正确", exp);
+            throw new BusinessException("4001");
+        }
 
-        CmsSearchInfoBean2 p = JacksonUtil.json2Bean(params,CmsSearchInfoBean2.class);
-        byte[] data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession());
-//        byte[] data = new byte[2];
-        return genResponseEntityFromBytes("product_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
+        String fileName = null;
+        if (p.getFileType() == 1) {
+            fileName = "productList_";
+        } else if (p.getFileType() == 2) {
+            fileName = "groupList_";
+        } else if (p.getFileType() == 3) {
+            fileName = "skuList_";
+        }
+        if (fileName == null) {
+            throw new BusinessException("4002");
+        }
+
+        byte[] data = null;
+        try {
+            data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession());
+        } catch (Exception e) {
+            $error("创建文件时出错", e);
+            throw new BusinessException("4003");
+        }
+        fileName += DateTimeUtil.getLocalTime(getUserTimeZone()) + ".xlsx";
+        return genResponseEntityFromBytes(fileName, data);
     }
 
     /**
