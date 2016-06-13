@@ -156,6 +156,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
         map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
         map.put("quantity", (Feeds.getVal1(channel, FeedEnums.Name.quantity)));
+        map.put("material", (Feeds.getVal1(channel, FeedEnums.Name.material)));
         return map;
     }
 
