@@ -201,7 +201,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         return platformCart;
     }
 
-    public Map<String, Object> updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform) {
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform) {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
 
@@ -209,8 +209,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         platform.remove("schemaFields");
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        productService.updateProductPlatform(channelId, prodId, platformModel);
-        return null;
+        return productService.updateProductPlatform(channelId, prodId, platformModel,true);
+
     }
 
     public String priceChk(String channelId, Long prodId, Map<String, Object> platform) {

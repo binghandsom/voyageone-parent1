@@ -22,6 +22,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public CmsBtProductModel_Platform_Cart(Map<String,Object> map){
         this.putAll(map);
     }
+
+    //modified
+    public String getModified(){
+        return getAttribute("modified");
+    }
+    public void setModified(String modified){
+        setAttribute("modified", modified);
+    }
+
     //cartId
     public int getCartId() {
         return getIntAttribute("cartId");
