@@ -1160,11 +1160,16 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     !StringUtils.isEmpty(sbDelImgIndexes.toString()) ) {
                 // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）每种颜色留一张图片
                 retUploadPics = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
-            }
 
-            // 删除商品图片失败
-            if (!retUploadPics) {
-                return false;
+                // 删除商品图片成功/失败
+                if (retUploadPics) {
+                    $info("调用京东API删除指定商品上的所有图片成功(每种颜色保留一张主图) [WareId:%s] [DelColorIds:%s] [DelImgIndexes:%s]",
+                            wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
+                } else {
+                    return false;
+                }
+            } else {
+                $info("京东平台上该商品没有颜色图片或每种颜色都只有一张主图，不用删除图片 [WareId:%s]", wareId);
             }
         }
 
