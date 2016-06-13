@@ -48,7 +48,14 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     public byte[] getCodeExcelFile(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean)
             throws IOException, InvalidFormatException {
 
-        String templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE);
+        String templatePath = null;
+        if (searchValue.getFileType() == 1) {
+            templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_PRODUCT);
+        } else if (searchValue.getFileType() == 2) {
+            templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_GROUP);
+        } else if (searchValue.getFileType() == 3) {
+            templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_SKU);
+        }
 
         long recCount = productService.getCnt(userInfo.getSelChannelId(), advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
 
@@ -98,16 +105,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     break;
                 }
             }
-
             $info("文档写入完成");
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
                 book.write(outputStream);
-
                 $info("已写入输出流");
-
                 return outputStream.toByteArray();
             }
         }
@@ -122,16 +125,16 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         CellStyle style = row.getCell(0).getCellStyle();
 
         int index = 16;
-        if(commonProps != null){
-            for (Map<String,String>prop: commonProps){
+        if (commonProps != null) {
+            for (Map<String, String> prop : commonProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
             }
         }
 
-        if(customProps != null){
-            for (Map<String,String>prop: customProps){
+        if (customProps != null) {
+            for (Map<String, String> prop : customProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
-                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation"))+"(en)");
+                FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")) + "(en)");
             }
         }
     }
@@ -171,69 +174,47 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         Sheet sheet = book.getSheetAt(0);
 
         for (CmsBtProductBean item : items) {
-
             Row row = FileUtils.row(sheet, startRowIndex);
-
             // 最大行限制
             if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
                 isContinueOutput = false;
-
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
-
                 break;
             }
             int index = 0;
 
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getBrand());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getProductType());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getSizeType());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getProductNameEn());
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getLongTitle());
-
             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(String.valueOf(item.getFields().getQuantity())));
-
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(item.getFields().getPriceMsrpSt(), item.getFields().getPriceMsrpEd()));
-
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(item.getFields().getPriceRetailSt(), item.getFields().getPriceRetailEd()));
-
             FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(item.getFields().getPriceSaleSt(), item.getFields().getPriceSaleEd()));
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getCatPath());
-
             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodeCrop()));
-
             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodePrivate()));
 
-
-            if(commonProps != null){
-                for (Map<String,String>prop: commonProps){
+            if (commonProps != null) {
+                for (Map<String, String> prop : commonProps) {
                     Object value = item.getFields().getAttribute(prop.get("propId"));
-
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                 }
             }
 
-            if(customProps != null){
-                for (Map<String,String>prop: customProps){
+            if (customProps != null) {
+                for (Map<String, String> prop : customProps) {
                     Object value = item.getFeed().getCnAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null?"":value.toString()));
+                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                 }
             }
 
