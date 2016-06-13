@@ -11,9 +11,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
@@ -37,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,9 +66,6 @@ public class BeatJobService extends BaseTaskService {
 
     @Autowired
     private CmsBeatInfoService beatInfoService;
-
-    @Autowired
-    private ImageCreateService imageCreateService;
 
     @Autowired
     private TbItemService tbItemService;
@@ -317,7 +312,7 @@ public class BeatJobService extends BaseTaskService {
             this.configBean = JacksonUtil.json2Bean(beatInfoBean.getTask().getConfig(), ConfigBean.class);
         }
 
-        private InputStream getImageStream(int templateId, String imageName, String imageFileName, boolean withPrice) {
+        private InputStream getImageStream(String templateUrl, String imageName, boolean withPrice) {
 
             // 检查当前图片状态
             ImageStatus currentStatus = beatInfoBean.getImageStatusEnum();
@@ -334,29 +329,22 @@ public class BeatJobService extends BaseTaskService {
             // 所以也就是只要不是 Error 其他状态都直接取图
 
             Double promotionPrice = beatInfoBean.getPromotion_code().getPromotionPrice();
-            String promotionPriceString = new DecimalFormat("#").format(promotionPrice);
-
-            ImageCreateGetRequest request = new ImageCreateGetRequest();
-
-            request.setFillStream(true);
-            request.setChannelId(shopBean.getOrder_channel_id());
-            request.setTemplateId(templateId);
-            request.setFile(imageFileName);
-            if (withPrice)
-                request.setVParam(new String[]{imageName, promotionPriceString});
-            else
-                request.setVParam(new String[]{imageName});
-
             try {
-                ImageCreateGetResponse response = imageCreateService.getImage(request);
-                return response.getImageInputStream();
+                String imageUrl;
+                if (withPrice)
+                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#").format(promotionPrice));
+                else
+                    imageUrl = templateUrl.replace("{key}", imageName);
+
+                URL url = new URL(imageUrl);
+                return url.openStream();
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
                 throw new BreakBeatJobException("取图失败, 发生异常", e);
             }
         }
 
-        private String getTaobaoImageUrl(int templateId, String imageName, String imageFileName, CmsMtImageCategoryModel categoryModel, boolean withPrice)
+        private String getTaobaoImageUrl(String imageUrl, String imageName, CmsMtImageCategoryModel categoryModel, boolean withPrice)
                 throws IOException, ApiException {
 
             // 首先尝试获取之前存在图片
@@ -364,7 +352,7 @@ public class BeatJobService extends BaseTaskService {
             // 直接继续上图
             try {
                 PictureGetResponse pictureGetResponse = tbPictureService.getPictures(shopBean,
-                        imageFileName, Long.valueOf(categoryModel.getCategory_tid()));
+                        imageName, Long.valueOf(categoryModel.getCategory_tid()));
 
                 List<Picture> pictures = pictureGetResponse.getPictures();
 
@@ -375,13 +363,13 @@ public class BeatJobService extends BaseTaskService {
             } catch (ApiException ignored) {
             }
 
-            $info("尝试下载并上传：[ %s ] -> [ %s ] -> [ %s ]", templateId, imageFileName, categoryModel.getCategory_name());
+            $info("尝试下载并上传：[ %s ] -> [ %s ] -> [ %s ]", imageUrl, imageName, categoryModel.getCategory_name());
 
-            InputStream inputStream = getImageStream(templateId, imageName, imageFileName, withPrice);
+            InputStream inputStream = getImageStream(imageUrl, imageName, withPrice);
 
             byte[] bytes = IOUtils.toByteArray(inputStream);
 
-            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageFileName, categoryModel.getCategory_tid());
+            PictureUploadResponse uploadResponse = tbPictureService.uploadPicture(shopBean, bytes, imageName, categoryModel.getCategory_tid());
 
             if (uploadResponse.isSuccess() && StringUtils.isEmpty(uploadResponse.getSubCode()))
                 // 成功返回
@@ -460,34 +448,32 @@ public class BeatJobService extends BaseTaskService {
 
         private String getTaobaoImageUrl(String image_url_key) throws IOException, ApiException {
 
-            Integer templateId;
+            String templateUrl;
             String imageName;
             boolean withPrice;
             CmsMtImageCategoryModel categoryModel;
 
             switch (beatInfoBean.getSynFlagEnum()) {
                 case BEATING:
-                    templateId = configBean.getBeat_template();
-                    imageName = image_url_key + ".beat.jpg";
+                    templateUrl = configBean.getBeat_template();
                     categoryModel = getUpCategory();
                     withPrice = true;
                     break;
                 case REVERT:
                 case SUCCESS:
-                    templateId = configBean.getRevert_template();
-                    imageName = image_url_key + ".jpg";
+                    templateUrl = configBean.getRevert_template();
                     categoryModel = getDownCategory();
                     withPrice = false;
                     break;
                 default:
                     return null;
             }
-            return getTaobaoImageUrl(templateId, image_url_key, imageName, categoryModel, withPrice);
+            return getTaobaoImageUrl(templateUrl, image_url_key, categoryModel, withPrice);
         }
 
         private String getTaobaoVerticalImageUrl() throws IOException, ApiException {
 
-            Integer templateId;
+            String templateUrl;
             CmsMtImageCategoryModel categoryModel;
             boolean withPrice;
 
@@ -497,22 +483,20 @@ public class BeatJobService extends BaseTaskService {
 
             switch (beatInfoBean.getSynFlagEnum()) {
                 case BEATING:
-                    templateId = configBean.getBeat_vtemplate();
-                    imageName = image_url_key + ".beat.jpg";
+                    templateUrl = configBean.getBeat_vtemplate();
                     categoryModel = getUpCategory();
                     withPrice = true;
                     break;
                 case REVERT:
                 case SUCCESS:
-                    templateId = configBean.getRevert_vtemplate();
-                    imageName = image_url_key + ".jpg";
+                    templateUrl = configBean.getRevert_vtemplate();
                     categoryModel = getDownCategory();
                     withPrice = false;
                     break;
                 default:
                     return null;
             }
-            return getTaobaoImageUrl(templateId, image_url_key, imageName, categoryModel, withPrice);
+            return getTaobaoImageUrl(templateUrl, image_url_key, categoryModel, withPrice);
         }
     }
 }

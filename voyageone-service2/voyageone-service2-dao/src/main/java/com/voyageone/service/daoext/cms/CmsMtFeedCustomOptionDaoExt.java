@@ -41,7 +41,7 @@ public class CmsMtFeedCustomOptionDaoExt extends ServiceBaseDao {
 	public List<CmsMtFeedCustomOptionModel> selectPropValue(String channel_id) {
 
 		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("channel_id", channel_id);
+		paramMap.put("channelId", channel_id);
 
 		return selectList("cms_mt_feed_custom_option_select", paramMap);
 	}

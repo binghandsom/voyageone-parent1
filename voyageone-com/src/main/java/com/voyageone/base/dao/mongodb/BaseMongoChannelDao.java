@@ -2,7 +2,6 @@ package com.voyageone.base.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.Iterator;
 import java.util.List;

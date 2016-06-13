@@ -82,6 +82,7 @@ define([
                 if($routeParams.type == "3"){
                     var catObj = _.find($scope.vm.masterData.cartList, function(item){ return item.add_name2 == $routeParams.catType;});
                     $scope.vm.searchInfo.cartId = catObj.value;
+                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
                     getCat();
                 }
                 if ($routeParams.type != undefined) {
@@ -349,10 +350,7 @@ define([
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function(resp){
                     $scope.vm.masterData.catList = resp.data.catTree;
-                }).then(function(){
-                if($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
-            });
+                });
         }
 
         /**
