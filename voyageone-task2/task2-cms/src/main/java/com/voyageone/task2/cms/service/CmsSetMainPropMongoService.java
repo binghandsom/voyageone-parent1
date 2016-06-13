@@ -830,71 +830,71 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 field.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
             }
 
-            {
-                // 所有的翻译内容
-                String transFlg = "";
-                Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
-                // 翻译(标题 和 长描述)
-                String strProductNameEn = field.getProductNameEn();
-                String strLongDesEn = field.getLongDesEn();
-                for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
-                    strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
-                    strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
-                }
-                // 调用百度翻译
-                // List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
-                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
-                    // transBaiduOrg.add(strProductNameEn); // 标题
-                    transFlg = "标题";
-                }
-                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
-                    if (!StringUtils.isEmpty(strLongDesEn)) {
-                        // TODO: 临时关掉017
-                        if ("010".equals(feed.getChannelId())) {
-                            $info("英寸转厘米:原始:" + strLongDesEn);
-                            // transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
-                        } else {
-                            // transBaiduOrg.add(strLongDesEn); // 长描述
-                        }
-                        transFlg = "长描述";
-                    }
-                }
-                List<String> transBaiduCn; // 百度翻译 - 输出参数
-                try {
-//                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
-                        // lucky vitamin 和 BHFO不做翻译
-                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
-                            field.setOriginalTitleCn(""); // 标题
-                        }
-                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
-                            field.setOriginalDesCn(""); // 长描述
-                        }
-//                    } else {
-//                        if (transBaiduOrg.size() > 0) {
-//                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
-//                            if (transBaiduOrg.size() == 2) {
-//                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-//                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
-//                            } else {
-//                                if ("标题".equals(transFlg)) {
-//                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
-//                                } else {
-//                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
-//                                }
-//                            }
+//            {
+//                // 所有的翻译内容
+//                String transFlg = "";
+//                Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
+//                // 翻译(标题 和 长描述)
+//                String strProductNameEn = field.getProductNameEn();
+//                String strLongDesEn = field.getLongDesEn();
+//                for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
+//                    strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
+//                    strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
+//                }
+//                // 调用百度翻译
+//                // List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
+//                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
+//                    // transBaiduOrg.add(strProductNameEn); // 标题
+//                    transFlg = "标题";
+//                }
+//                if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
+//                    if (!StringUtils.isEmpty(strLongDesEn)) {
+//                        // TODO: 临时关掉017
+//                        if ("010".equals(feed.getChannelId())) {
+//                            $info("英寸转厘米:原始:" + strLongDesEn);
+//                            // transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+//                        } else {
+//                            // transBaiduOrg.add(strLongDesEn); // 长描述
 //                        }
+//                        transFlg = "长描述";
 //                    }
-
-                } catch (Exception e) {
-                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
-                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
-                        field.setOriginalTitleCn(""); // 标题
-                    }
-                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
-                        field.setOriginalDesCn(""); // 长描述
-                    }
-                }
-            }
+//                }
+//                List<String> transBaiduCn; // 百度翻译 - 输出参数
+//                try {
+////                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+//                        // lucky vitamin 和 BHFO不做翻译
+//                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
+//                            field.setOriginalTitleCn(""); // 标题
+//                        }
+//                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
+//                            field.setOriginalDesCn(""); // 长描述
+//                        }
+////                    } else {
+////                        if (transBaiduOrg.size() > 0) {
+////                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+////                            if (transBaiduOrg.size() == 2) {
+////                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+////                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+////                            } else {
+////                                if ("标题".equals(transFlg)) {
+////                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+////                                } else {
+////                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
+////                                }
+////                            }
+////                        }
+////                    }
+//
+//                } catch (Exception e) {
+//                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+//                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
+//                        field.setOriginalTitleCn(""); // 标题
+//                    }
+//                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
+//                        field.setOriginalDesCn(""); // 长描述
+//                    }
+//                }
+//            }
 //            }
 
             // 官方网站链接，商品图片1，产品分类，适用人群的Feed数据可能会变化，所以不管新建还是更新操作都会去重新设定
