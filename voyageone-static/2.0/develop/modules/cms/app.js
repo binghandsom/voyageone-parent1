@@ -462,7 +462,7 @@ define([
                     $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
                     break;
                 case "TH":
-                    $location.path(cRoutes.search_feedsearch_param.url + "1/" + catPath);
+                    $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
                     break;
                 default:
                     $location.path(cRoutes.search_advance_param.url + "3/" + catId + "/" + $rootScope.platformType.cTypeId);
