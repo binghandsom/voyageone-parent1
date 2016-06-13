@@ -159,6 +159,20 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pAttributeSetTime", pAttributeSetTime);
     }
 
+    //MSRP价格区间
+    public Double getpPriceMsrpSt() {
+        return getDoubleAttribute("pPriceMsrpSt");
+    }
+    public void setpPriceMsrpSt(Double pPriceMsrpSt) {
+        setAttribute("pPriceMsrpSt", pPriceMsrpSt);
+    }
+    public Double getpPriceMsrpEd() {
+        return getDoubleAttribute("pPriceMsrpEd");
+    }
+    public void setpPriceMsrpEd(Double pPriceMsrpEd) {
+        setAttribute("pPriceMsrpEd", pPriceMsrpEd);
+    }
+
     //建议市场价格区间
     public Double getpPriceRetailSt() {
         return getDoubleAttribute("pPriceRetailSt");
