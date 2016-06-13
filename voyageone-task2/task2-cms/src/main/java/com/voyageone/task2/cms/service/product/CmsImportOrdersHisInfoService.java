@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 从oms系统导入产品前90天订单信息,统计销量数据
@@ -35,9 +37,9 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 从oms系统导入产品前90天订单信息
-        cmsCopyOrdersInfoService.copyOrdersInfo(getTaskName());
+        Map<String, Set<String>> prodCodeChannelMap = cmsCopyOrdersInfoService.copyOrdersInfo(getTaskName());
         // 统计销售数据
-        cmsFindProdOrdersInfoService.onStartup(taskControlList);
+        cmsFindProdOrdersInfoService.onStartup(taskControlList, prodCodeChannelMap);
     }
 
 }

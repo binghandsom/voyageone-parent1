@@ -47,7 +47,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
-            run();
+            new Thread(this::run).start();
         }
     }
 
