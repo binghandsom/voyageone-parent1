@@ -7,6 +7,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -26,6 +27,7 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
@@ -85,6 +87,10 @@ public class ProductService extends BaseService {
 
     @Autowired
     private MongoSequenceService commSequenceMongoService;
+
+    @Autowired
+    private ProductGroupService productGroupService;
+
 
     /**
      * 获取商品 根据ID获
@@ -1136,20 +1142,49 @@ public class ProductService extends BaseService {
         cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
     }
 
-    public void updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
+        return updateProductPlatform(channelId,prodId,platformModel,false);
+    }
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, Boolean isModifiedChk){
+
+
+        if(isModifiedChk){
+            CmsBtProductModel cmsBtProduct = getProductById(channelId, prodId);
+            CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProduct.getPlatform(platformModel.getCartId());
+            String oldModified = cmsBtProductModel_platform_cart.getModified();
+            if(oldModified != null ){
+                if(!oldModified.equalsIgnoreCase(platformModel.getModified())){
+                    throw new BusinessException("200011");
+                }
+            }else if(platformModel.getModified() != null){
+                throw new BusinessException("200011");
+            }
+        }
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("platforms.P"+platformModel.getCartId(), platformModel);
+        platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+        updateMap.put("platforms.P" + platformModel.getCartId(), platformModel);
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
+        if(CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())){
+            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
+            if(group != null){
+                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
+                sxWorkloadModel.setCartId(platformModel.getCartId());
+                sxWorkloadModel.setChannelId(channelId);
+                sxWorkloadModel.setGroupId(group.getGroupId());
+                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
+            }
+        }
+        return platformModel.getModified();
     }
 
     public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){
