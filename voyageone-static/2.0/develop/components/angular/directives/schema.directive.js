@@ -503,211 +503,77 @@ define(function (require) {
                 controller: SchemaController
             }
         })
-        .directive('schemaField', function ($compile) {
+        .directive('schemaField', function ($compile, $q) {
 
-            function SchemaFieldController($scope, $element, $attrs, $q) {
-
-                // schema-field
-                // ---
-                // 如果 SchemaController 存在, 即提供依赖类型的规则验证。但仅支持 disableRule, 如果想开启类似必填这些的验证, 需要在外层提供 form
-                // ---
-                // 如果 SchemaController 不存在, 只存在 FormController。那么只提供类似必填类的并且非依赖的验证, 所有依赖类型的都将被忽略。同时这里决定是否有 vo-message 的存在
-                // ---
-                // 如果啥都没有, 就不开验证, 后续的 rule 就都不用解析了。
-
+            function SchemaFieldController($scope, $element) {
                 this.$scope = $scope;
                 this.$element = $element;
-                this.$attrs = $attrs;
-                this.$q = $q;
             }
 
-            SchemaFieldController.prototype.$render = function (controllers) {
+            SchemaFieldController.prototype.$render = function (field, schema) {
 
                 var controller = this,
-                    $attrs = controller.$attrs,
                     $element = controller.$element,
                     $scope = controller.$scope,
-                    $q = controller.$q;
+                    formController = controller.formController,
+                    showName = controller.showName;
 
-                var schemaController = controllers.schema,
-                    formController = controllers.form,
-                    parentController = controllers.parent;
+                var container = $element,
+                    fieldElementName = 'field_' + random(),
+                    hasValidate = !!formController && hasValidateRule(field);
 
-                var showName = !$attrs.showName || $attrs.showName === 'true';
+                var rules = $scope.$rules = doRule(field, schema),
+                    disableRule = rules.disableRule;
 
-                // 如果为 field 设置了什么, 就尝试获取 field 上的内容
-                if ($attrs.field) {
+                var innerElement, nameElement, isSimple;
 
-                    watchField().then(function (field) {
+                controller.field = $scope.field = field;
 
-                        if (schemaController) {
+                if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
-                            watchSchema().then(function (schema) {
+                isSimple = (field.type != FIELD_TYPES.complex && field.type != FIELD_TYPES.multiComplex);
 
-                                tryCompile(field, schema);
+                if (disableRule && disableRule instanceof DependentRule) {
 
-                            });
+                    var ngIfContainer = angular.element('<div class="schema-disable-container">');
 
-                        } else {
+                    ngIfContainer.attr('ng-if', '!$rules.disableRule.checked()');
 
-                            tryCompile(field, null);
+                    container.append(ngIfContainer);
 
-                        }
+                    container = ngIfContainer;
+                }
 
+                if (showName) {
+                    nameElement = createNameElement(field, fieldElementName);
+                    container.append(nameElement);
+                }
+
+                // 创建输入元素
+                // 根据需要处理规则
+                innerElement = createElement(field, fieldElementName, rules);
+
+                if (innerElement instanceof Array)
+                    innerElement.forEach(function (element) {
+                        container.append(element);
                     });
+                else
+                    container.append(innerElement);
 
-                } else if ($attrs.fieldId) {
-                    // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
+                bindTipRule(container, rules.tipRule);
 
-                    // 但是没有外层 schema 的话。就只能...
-                    if (!schemaController && !parentController) {
-                        $element.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
-                        return;
-                    }
+                // 根据需要创建 vo-message
+                if (hasValidate && isSimple) {
 
-                    if (parentController) {
+                    var formName = formController.$name;
 
-                        var fieldFromParent = find(parentController.fields, function (field) {
-                            return field.id === $attrs.fieldId;
-                        });
+                    var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
 
-                        if (!schemaController) {
-                            tryCompile(fieldFromParent, null);
-                            return;
-                        }
-
-                        watchSchema().then(function (schema) {
-                            tryCompile(fieldFromParent, schema);
-                        });
-
-                    } else {
-                        watchSchema().then(function (schema) {
-
-                            var fieldFromSchema = find(schema, function (field) {
-                                return field.id === $attrs.fieldId;
-                            });
-
-                            tryCompile(fieldFromSchema, schema);
-                        });
-                    }
-                } else {
-
-                    // 如果两个都没设置, 或者没有外层 schema 那就....
-                    $element.text('请提供 field 或者 field-id 属性。');
+                    container.append(voMessage);
                 }
 
-                function watchSchema() {
-
-                    return $q(function (resolve) {
-
-                        // 如果有父级就从父级查找
-                        var disposeWatcher = $scope.$watch(function () {
-
-                            return schemaController.schema;
-
-                        }, function (schema) {
-
-                            if (!schema)
-                                return;
-
-                            resolve(schema);
-
-                            disposeWatcher();
-                            disposeWatcher = null;
-                        });
-                    });
-                }
-
-                function watchField() {
-
-                    return $q(function (resolve) {
-
-                        var disposeWatcher = $scope.$watch($attrs.field, function (field) {
-
-                            if (!field)
-                                return;
-
-                            resolve(field);
-
-                            disposeWatcher();
-                            disposeWatcher = null;
-                        });
-                    });
-                }
-
-                /**
-                 * 元素创建与编译前的检查
-                 */
-                function tryCompile(field, schema) {
-
-                    if (!field)
-                        $element.text('在 schema 上没有找到目标属性。');
-                    else
-                        innerCompile(field, schema);
-                }
-
-                /**
-                 * 元素编译过程
-                 */
-                function innerCompile(field, schema) {
-
-                    var innerElement, nameElement, isSimple;
-
-                    var container = $element, fieldElementName = 'field_' + random();
-
-                    var hasValidate = !!formController && hasValidateRule(field);
-
-                    var rules = $scope.$rules = doRule(field, schema),
-                        disableRule = rules.disableRule;
-
-                    controller.field = $scope.field = field;
-
-                    if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
-
-                    isSimple = (field.type != FIELD_TYPES.complex && field.type != FIELD_TYPES.multiComplex);
-
-                    if (disableRule && disableRule instanceof DependentRule) {
-
-                        var ngIfContainer = angular.element('<div class="schema-disable-container">');
-
-                        ngIfContainer.attr('ng-if', '!$rules.disableRule.checked()');
-
-                        container.append(ngIfContainer);
-
-                        container = ngIfContainer;
-                    }
-
-                    if (showName) {
-                        nameElement = createNameElement(field, fieldElementName);
-                        container.append(nameElement);
-                    }
-
-                    // 创建输入元素
-                    // 根据需要处理规则
-                    innerElement = createElement(field, fieldElementName, rules);
-
-                    if (innerElement instanceof Array)
-                        innerElement.forEach(function (element) {
-                            container.append(element);
-                        });
-                    else
-                        container.append(innerElement);
-
-                    bindTipRule(container, rules.tipRule);
-
-                    // 根据需要创建 vo-message
-                    if (hasValidate && isSimple) {
-
-                        var formName = formController.$name;
-
-                        var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
-
-                        container.append(voMessage);
-                    }
-
-                    // 最终编译
-                    $compile($element.contents())($scope);
-                }
+                // 最终编译
+                $compile($element.contents())($scope);
 
                 /**
                  * 元素创建过程
@@ -900,12 +766,125 @@ define(function (require) {
                 require: ['^^?schema', '^^?form', '^^?schemaComplexContainer'],
                 scope: true,
                 controllerAs: '$ctrl',
-                link: function ($scope, elem, attr, controllers) {
-                    $scope.$ctrl.$render({
-                        schema: controllers[0],
-                        form: controllers[1],
-                        parent: controllers[2]
-                    });
+                link: function ($scope, $element, $attrs, controllers) {
+
+                    var controller = $scope.$ctrl,
+                        schemaController = controllers[0],
+                        parentController = controllers[2];
+
+                    controller.formController = controllers[1];
+                    controller.showName = !$attrs.showName || $attrs.showName === 'true';
+
+                    // 如果为 field 设置了什么, 就尝试获取 field 上的内容
+                    if ($attrs.field) {
+
+                        watchField().then(function (field) {
+
+                            if (schemaController) {
+
+                                watchSchema().then(function (schema) {
+
+                                    tryRender(field, schema);
+
+                                });
+
+                            } else {
+
+                                tryRender(field, null);
+
+                            }
+
+                        });
+
+                    } else if ($attrs.fieldId) {
+                        // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
+
+                        // 但是没有外层 schema 的话。就只能...
+                        if (!schemaController && !parentController) {
+                            $element.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
+                            return;
+                        }
+
+                        if (parentController) {
+
+                            var fieldFromParent = find(parentController.fields, function (field) {
+                                return field.id === $attrs.fieldId;
+                            });
+
+                            if (!schemaController) {
+                                tryRender(fieldFromParent, null);
+                                return;
+                            }
+
+                            watchSchema().then(function (schema) {
+                                tryRender(fieldFromParent, schema);
+                            });
+
+                        } else {
+                            watchSchema().then(function (schema) {
+
+                                var fieldFromSchema = find(schema, function (field) {
+                                    return field.id === $attrs.fieldId;
+                                });
+
+                                tryRender(fieldFromSchema, schema);
+                            });
+                        }
+                    } else {
+
+                        // 如果两个都没设置, 或者没有外层 schema 那就....
+                        $element.text('请提供 field 或者 field-id 属性。');
+                    }
+
+                    function watchSchema() {
+
+                        return $q(function (resolve) {
+
+                            // 如果有父级就从父级查找
+                            var disposeWatcher = $scope.$watch(function () {
+
+                                return schemaController.schema;
+
+                            }, function (schema) {
+
+                                if (!schema)
+                                    return;
+
+                                resolve(schema);
+
+                                disposeWatcher();
+                                disposeWatcher = null;
+                            });
+                        });
+                    }
+
+                    function watchField() {
+
+                        return $q(function (resolve) {
+
+                            var disposeWatcher = $scope.$watch($attrs.field, function (field) {
+
+                                if (!field)
+                                    return;
+
+                                resolve(field);
+
+                                disposeWatcher();
+                                disposeWatcher = null;
+                            });
+                        });
+                    }
+
+                    /**
+                     * 元素创建与编译前的检查
+                     */
+                    function tryRender(field, schema) {
+
+                        if (!field)
+                            $element.text('在 schema 上没有找到目标属性。');
+                        else
+                            controller.$render(field, schema);
+                    }
                 },
                 controller: SchemaFieldController
             };
