@@ -629,13 +629,12 @@
 
                                 <li class="dropdown-submenu">
                                     <a href ng-disabled="vm.promotionList.length < 0">加入天猫国际活动</a>
-                                    <ul class="dropdown-menu" ng-if="vm.promotionList.length">
+                                    <ul class="dropdown-menu" ng-if="vm.promotionList.length" style="left: -119%;">
                                         <li ng-repeat="promotion in vm.promotionList">
                                             <a ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
                                         </li>
                                     </ul>
                                 </li>
-
                                 <li class="dropdown-submenu">
                                     <a href="javascript:void(0)" ng-click="openApproval('')">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                     <ul class="dropdown-menu">
