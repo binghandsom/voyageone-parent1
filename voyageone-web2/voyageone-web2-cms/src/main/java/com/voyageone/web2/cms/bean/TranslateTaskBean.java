@@ -23,6 +23,11 @@ public class TranslateTaskBean {
     private int totalUndoneCount;
 
     /**
+     * 所有未完成的数量.
+     */
+    private int totalDistributeUndoneCount;
+
+    /**
      * 任务分配策略,1:只分配主商品，0:或者所有的商品都可以分配.
      */
     private int distributeRule;
@@ -150,4 +155,11 @@ public class TranslateTaskBean {
         this.sortRule = sortRule;
     }
 
+    public int getTotalDistributeUndoneCount() {
+        return totalDistributeUndoneCount;
+    }
+
+    public void setTotalDistributeUndoneCount(int totalDistributeUndoneCount) {
+        this.totalDistributeUndoneCount = totalDistributeUndoneCount;
+    }
 }
