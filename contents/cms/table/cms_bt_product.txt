@@ -75,6 +75,7 @@
     * pCatPath
     * pCatStatus
     * pIsMain   ->是否是该平台主商品
+    * pProductId
     * pNumIId
     * pStatus
     * pPublishError  ->表示平台上新是否失败，用于高级检索
@@ -84,6 +85,10 @@
     * pAttributeStatus
     * pAttributeSetter
     * pAttributeSetTime
+    * pPriceRetailSt
+    * pPriceRetailEd
+    * pPriceSaleSt
+    * pPriceSaleEd
     * fields
       * 平台特有fields属性
     * skus[]
@@ -106,6 +111,7 @@
 	  * pCatStatus
 	  * status
 	  * pIsMain
+	  * pProductId
 	  * pNumIId
 	  * pStatus
 	  * pPublishError
@@ -115,6 +121,10 @@
 	  * pAttributeStatus
 	  * pAttributeSetter
 	  * pAttributeSetTime
+      * pPriceRetailSt
+      * pPriceRetailEd
+      * pPriceSaleSt
+      * pPriceSaleEd
 	  * fields
 		  * productNameCn
 		  * productNameEn
