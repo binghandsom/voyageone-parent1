@@ -60,17 +60,12 @@ public class CmsMenuController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
         //主数据类目+Feed类目
-        if (cTypeId.equals(CartType.MASTER.getShortName())) {
+        if (cTypeId.equals(CartType.MASTER.getShortName()) || cTypeId.equals(CartType.FEED.getShortName())) {
             // 获取主数据类目CategoryTreeList
-            List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(CartType.MASTER.getShortName(), channelId);
+
+            List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(cTypeId, channelId);
 
             resultBean.put("categoryTreeList", categoryTreeList);
-        }else if (cTypeId.equals(CartType.FEED.getShortName())){
-            // 获取Feed类目CategoryTreeList
-            if (!channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
-                List<CmsMtCategoryTreeModel> feedTreeList = menuService.getCategoryTreeList(CartType.FEED.getShortName(), channelId);
-                resultBean.put("categoryTreeList", feedTreeList);
-            }
         }
         //店铺自定义类目
         else
