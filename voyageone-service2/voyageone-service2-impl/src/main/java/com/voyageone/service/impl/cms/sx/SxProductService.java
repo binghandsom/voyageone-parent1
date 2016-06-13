@@ -561,6 +561,13 @@ public class SxProductService extends BaseService {
                 String prodOrgCode = productModel.getFields().getOriginalCode(); // 有可能会有原始code
                 if (prodOrgCode == null) prodOrgCode = productModel.getFields().getCode();
                 CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
+                // Add by desmond 2016/06/12 start
+                if (feedInfo == null) {
+                    // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
+                    sxData.setErrorMessage("该商品对应的feed信息不存在");
+                    break;
+                }
+                // Add by desmond 2016/06/12 end
                 // modified by morse.lu 2016/06/07 end
                 sxData.setCmsBtFeedInfoModel(feedInfo);
 
@@ -655,6 +662,13 @@ public class SxProductService extends BaseService {
                 removeProductList.add(productModel);
             }
         }
+
+        // Add by desmond 2016/06/12 start
+        if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+            // 有错误(例如feed信息不存在)的时候，直接返回
+            return sxData;
+        }
+        // Add by desmond 2016/06/12 end
 
         removeProductList.forEach(productModelList::remove);
         // added by morse.lu 2016/06/12 start

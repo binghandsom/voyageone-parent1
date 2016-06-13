@@ -444,7 +444,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         for (CmsBtProductBean groupObj : groupsList) {
-            CmsBtProductModel_Field fields = groupObj.getFields();
+            CmsBtProductModel_Field fields = groupObj.getCommon().getFields();
             String prodCode = null;
             if (fields != null) {
                 prodCode = fields.getCode();
