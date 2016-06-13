@@ -203,16 +203,16 @@ define(function (require) {
      */
     function doRule(field, schema) {
 
+        // 规则的简单结果
+        var rules = {};
+
         // 没啥可用的信息就算了
         if (!field || !field.rules)
-            return;
+            return rules;
 
         // 没有规则好处理, 果断算了
         if (!field.rules.length)
-            return;
-
-        // 规则的简单结果
-        var rules = {};
+            return rules;
 
         field.rules.forEach(function (rule) {
 
@@ -244,7 +244,16 @@ define(function (require) {
             return false;
 
         return field.rules.some(function (rule) {
-            return rule.name.indexOf('tip') < 0;
+
+            // 以下规则都不需要追加 vo-message
+
+            return (rule.name === 'valueTypeRule'
+                && rule.value !== VALUE_TYPES.TEXT
+                && rule.value !== VALUE_TYPES.TEXTAREA
+                && rule.value !== VALUE_TYPES.HTML)
+                || (rule.name !== 'tipRule'
+                && rule.name !== 'devTipRule'
+                && rule.name !== 'disableRule');
         });
     }
 
@@ -255,35 +264,65 @@ define(function (require) {
 
         var type = 'text';
 
-        if (valueTypeRule) {
-            switch (valueTypeRule) {
-                case VALUE_TYPES.TEXT:
-                    type = 'text';
-                    break;
-                case VALUE_TYPES.HTML:
-                case VALUE_TYPES.TEXTAREA:
-                    type = 'textarea';
-                    break;
-                case VALUE_TYPES.INTEGER:
-                case VALUE_TYPES.LONG:
-                    type = 'number';
-                    break;
-                case VALUE_TYPES.DECIMAL:
-                    type = 'number';
-                    break;
-                case VALUE_TYPES.DATE:
-                    type = 'date';
-                    break;
-                case VALUE_TYPES.TIME:
-                    type = 'time';
-                    break;
-                case VALUE_TYPES.URL:
-                    type = 'url';
-                    break;
-            }
+        if (!valueTypeRule)
+            return type;
+
+        switch (valueTypeRule) {
+            case VALUE_TYPES.TEXT:
+                type = 'text';
+                break;
+            case VALUE_TYPES.HTML:
+            case VALUE_TYPES.TEXTAREA:
+                type = 'textarea';
+                break;
+            case VALUE_TYPES.INTEGER:
+            case VALUE_TYPES.LONG:
+                type = 'number';
+                break;
+            case VALUE_TYPES.DECIMAL:
+                type = 'number';
+                break;
+            case VALUE_TYPES.DATE:
+                type = 'date';
+                break;
+            case VALUE_TYPES.TIME:
+                type = 'time';
+                break;
+            case VALUE_TYPES.URL:
+                type = 'url';
+                break;
         }
 
         return type;
+    }
+
+    /**
+     * 根据 valueTypeRule 转换值类型
+     */
+    function getInputValue(value, valueTypeRule) {
+
+        if (!valueTypeRule)
+            return value;
+
+        switch (valueTypeRule) {
+            case VALUE_TYPES.TEXT:
+            case VALUE_TYPES.HTML:
+            case VALUE_TYPES.TEXTAREA:
+            case VALUE_TYPES.URL:
+                return value;
+            case VALUE_TYPES.INTEGER:
+            case VALUE_TYPES.LONG:
+                return parseInt(value);
+            case VALUE_TYPES.DECIMAL:
+                return parseFloat(value);
+            case VALUE_TYPES.DATE:
+                return new Date(value);
+            case VALUE_TYPES.TIME:
+                return new Date(value);
+        }
+
+        // default
+        return value;
     }
 
     /**
@@ -324,34 +363,92 @@ define(function (require) {
     }
 
     angular.module('voyageone.angular.directives')
-        .directive('schema', function () {
+        .directive('schema', function ($compile) {
+
+            function SchemaController($scope, $attrs, $q) {
+
+                var controller = this;
+
+                controller.$attrs = $attrs;
+                controller.$scope = $scope;
+                controller.$q = $q;
+            }
+
+            SchemaController.prototype.$watchSchema = function () {
+
+                var controller = this,
+                    $attrs = controller.$attrs,
+                    $scope = controller.$scope,
+                    $q = controller.$q;
+
+                var deferred = $q.defer();
+
+                var disposeDataWatcher = $scope.$watch($attrs.data, function (data) {
+
+                    if (!data)
+                        return;
+
+                    deferred.resolve(controller.schema = data);
+
+                    disposeDataWatcher();
+                    disposeDataWatcher = null;
+                });
+
+                return deferred.promise;
+            };
+
+            SchemaController.prototype.$render = function ($element) {
+
+                var controller = this,
+                    $scope = controller.$scope;
+                    schema = controller.schema;
+
+                angular.forEach(schema, function (field) {
+
+                    var fieldElement = angular.element('<schema-field>');
+
+                    fieldElement.attr('field-id', field.id);
+
+                    $element.append(fieldElement);
+                });
+
+                $compile($element.contents())($scope);
+            };
+
             return {
                 restrict: 'E',
                 transclude: true,
                 scope: true,
                 controllerAs: '$ctrl',
                 link: function ($scope, $element, $attrs, ctrl, transclude) {
+
+                    var controller = $scope.$ctrl;
+
                     // 自己处理 transclude 来保证内部的 vo-message 可以访问到上层 scope 的 formController
-                    transclude($scope, function (clone) {
-                        $element.append(clone);
+                    // 处理之前, 先等待 schema 数据
+                    controller.$watchSchema().then(function () {
+
+                        // 拿到 schema 之后
+                        // 如果 schema directive 内部有 field 子元素
+                        // 就直接用子元素
+                        // 否则需要展开所有字段
+
+                        transclude($scope, function (clone) {
+
+                            var fieldElements = clone.filter('schema-field');
+                            var hasFieldElements = !!fieldElements.length;
+
+                            if (!hasFieldElements) return;
+
+                            $element.append(fieldElements);
+                        });
+
+                        // 如果元素内为空, 或内部没有元素, 就展开所有 field
+                        controller.$render($element);
                     });
+
                 },
-                controller: function SchemaController($scope, $attrs) {
-
-                    var self = this;
-                    var disposeDataWatcher;
-
-                    disposeDataWatcher = $scope.$watch($attrs.data, function (data) {
-
-                        if (!data)
-                            return;
-
-                        self.schema = data;
-
-                        disposeDataWatcher();
-                        disposeDataWatcher = null;
-                    });
-                }
+                controller: SchemaController
             }
         })
         .directive('schemaField', function ($compile) {
@@ -372,16 +469,19 @@ define(function (require) {
                 this.$q = $q;
             }
 
-            SchemaFieldController.prototype.$render = function(controllers) {
+            SchemaFieldController.prototype.$render = function (controllers) {
 
-                var $attrs = this.$attrs,
-                    $element = this.$element,
-                    $scope = this.$scope,
-                    $q = this.$q;
+                var controller = this,
+                    $attrs = controller.$attrs,
+                    $element = controller.$element,
+                    $scope = controller.$scope,
+                    $q = controller.$q;
 
                 var schemaController = controllers.schema,
                     formController = controllers.form,
                     parentController = controllers.parent;
+
+                var showName = !$attrs.showName || $attrs.showName === 'true';
 
                 // 如果为 field 设置了什么, 就尝试获取 field 上的内容
                 if ($attrs.field) {
@@ -420,15 +520,14 @@ define(function (require) {
                                 return field.id === $attrs.fieldId;
                             });
 
-                            if (schemaController) {
-
-                                watchSchema().then(function (schema) {
-                                    tryCompile(field, schema);
-                                });
+                            if (!schemaController) {
+                                tryCompile(field, null);
+                                return;
                             }
 
-                            tryCompile(field, null);
-
+                            watchSchema().then(function (schema) {
+                                tryCompile(field, schema);
+                            });
                         });
                     } else {
                         watchSchema().then(function (schema) {
@@ -506,16 +605,23 @@ define(function (require) {
                     });
                 }
 
+                /**
+                 * 元素创建与编译前的检查
+                 */
                 function tryCompile(field, schema) {
+
                     if (!field)
                         $element.text('在 schema 上没有找到目标属性。');
                     else
                         innerCompile(field, schema);
                 }
 
+                /**
+                 * 元素编译过程
+                 */
                 function innerCompile(field, schema) {
 
-                    var innerElement;
+                    var innerElement, nameElement, isSimple;
 
                     var container = $element, fieldElementName = 'field_' + random();
 
@@ -524,19 +630,26 @@ define(function (require) {
                     var rules = $scope.$rules = doRule(field, schema),
                         disableRule = rules.disableRule;
 
-                    $scope.field = field;
+                    controller.field = $scope.field = field;
 
                     if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
+                    isSimple = (field.type != FIELD_TYPES.complex && field.type != FIELD_TYPES.multiComplex);
+
                     if (disableRule && disableRule instanceof DependentRule) {
 
-                        var ngIfContainer = angular.element('<div>');
+                        var ngIfContainer = angular.element('<div class="schema-disable-container">');
 
                         ngIfContainer.attr('ng-if', '!rules.disableRule.checked()');
 
                         container.append(ngIfContainer);
 
                         container = ngIfContainer;
+                    }
+
+                    if (showName) {
+                        nameElement = createNameElement(field, fieldElementName);
+                        container.append(nameElement);
                     }
 
                     // 创建输入元素
@@ -551,7 +664,7 @@ define(function (require) {
                         container.append(innerElement);
 
                     // 根据需要创建 vo-message
-                    if (hasValidate) {
+                    if (hasValidate && isSimple) {
 
                         var formName = formController.$name;
 
@@ -561,9 +674,12 @@ define(function (require) {
                     }
 
                     // 最终编译
-                    $compile($element.children())($scope);
+                    $compile($element.contents())($scope);
                 }
 
+                /**
+                 * 元素创建过程
+                 */
                 function createElement(field, name, rules) {
 
                     var innerElement;
@@ -571,8 +687,9 @@ define(function (require) {
                     switch (field.type) {
                         case FIELD_TYPES.input:
 
-                            var type = getInputType(rules.valueTypeRule);
                             var regexRule = rules.regexRule;
+                            var valueTypeRule = rules.valueTypeRule;
+                            var type = getInputType(valueTypeRule);
 
                             if (type === 'textarea') {
                                 innerElement = angular.element('<textarea class="form-control">');
@@ -607,6 +724,9 @@ define(function (require) {
                                 }
                             }
 
+                            if (!field.$value)
+                                field.$value = getInputValue(field.value, valueTypeRule);
+
                             break;
                         case FIELD_TYPES.singleCheck:
 
@@ -623,15 +743,19 @@ define(function (require) {
 
                             bindTipRule(innerElement, rules.tipRule);
 
+                            if (!field.$value && field.value)
+                                field.$value = field.value.value;
+
                             break;
                         case FIELD_TYPES.multiCheck:
 
+                            var selected, $value;
                             var requiredRule = rules.requiredRule;
 
                             innerElement = [];
 
                             // 创建用于记录每个多选框选中状态的对象
-                            $scope.selected = [];
+                            selected = $scope.selected = [];
 
                             // 通过事件触发 update 来操作 field 的 values 数组
                             $scope.update = function (index) {
@@ -651,7 +775,18 @@ define(function (require) {
 
                             };
 
-                            field.$value = [];
+                            if (!field.$value) {
+
+                                if (field.values && field.values.length) {
+                                    field.$value = field.values.map(function (val) {
+                                        return val.value;
+                                    });
+                                } else {
+                                    field.$value = [];
+                                }
+                            }
+
+                            $value = field.$value;
 
                             field.options.forEach(function (option, index) {
 
@@ -677,6 +812,8 @@ define(function (require) {
 
                                 bindTipRule(checkbox, rules.tipRule);
 
+                                selected[index] = !($value.indexOf(option.value) < 0);
+
                                 label.append(checkbox, '&nbsp;', option.displayName);
 
                                 innerElement.push(label);
@@ -685,24 +822,57 @@ define(function (require) {
                             break;
                         case FIELD_TYPES.complex:
 
-                            innerElement = angular.element('<ul>');
+                            innerElement = angular.element('<schema-complex-container>');
 
                             field.fields.forEach(function (child) {
 
-                                var li = angular.element('<li>');
+                                var childElement = angular.element('<schema-field class="schema-child">');
 
-                                li.text(child.name);
+                                childElement.attr('field-id', child.id);
 
-                                innerElement.append(li);
+                                innerElement.append(childElement);
                             });
 
                             break;
                         case FIELD_TYPES.multiComplex:
+
+                            innerElement = angular.element('<schema-complex-container>');
+
+                            innerElement.text('我是 multi complex...');
+
                             break;
                         default:
                             console.error('不支持其他类型');
                             return null;
                     }
+
+                    return innerElement;
+                }
+
+                /**
+                 * 名称显示元素创建过程
+                 */
+                function createNameElement(field, name) {
+
+                    var innerElement;
+
+                    switch (field.type) {
+                        case FIELD_TYPES.input:
+                        case FIELD_TYPES.singleCheck:
+                        case FIELD_TYPES.multiCheck:
+                            innerElement = angular.element('<schema-field-name>');
+                            break;
+                        case FIELD_TYPES.complex:
+                        case FIELD_TYPES.multiComplex:
+                            innerElement = angular.element('<schema-complex-name>');
+                            break;
+                        default:
+                            console.error('不支持其他类型');
+                            return null;
+                    }
+
+                    innerElement.attr('for', name);
+                    innerElement.text(field.name || field.id);
 
                     return innerElement;
                 }
