@@ -85,6 +85,8 @@
     * pAttributeStatus
     * pAttributeSetter
     * pAttributeSetTime
+    * pPriceMsrpSt
+    * pPriceMsrpEd
     * pPriceRetailSt
     * pPriceRetailEd
     * pPriceSaleSt
@@ -94,8 +96,9 @@
     * skus[]
       * 平台特有sku属性
       * skuCode
+      * priceMsrp   ->各平台的MSRP售价
       * priceRetail ->各平台的销售指导价
-      * priceSale
+      * priceSale   ->各平台的最终售价
       * priceChgFlg ->价格变更状态（U/D/XU/XD）
       * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
     * sellerCats[]  ->店铺内分类
@@ -121,6 +124,8 @@
 	  * pAttributeStatus
 	  * pAttributeSetter
 	  * pAttributeSetTime
+      * pPriceMsrpSt
+      * pPriceMsrpEd
       * pPriceRetailSt
       * pPriceRetailEd
       * pPriceSaleSt
@@ -138,9 +143,10 @@
 		  * searchMetaTextCustom
 	  * skus[]
 		  * skuCode
+          * priceMsrp   ->各平台的MSRP售价
           * priceRetail ->各平台的销售指导价
-		  * priceSale //中国最终售价
-		  * priceChgFlg ->价格变更状态（U/D/XU/XD）
+		  * priceSale   ->各平台的中国最终售价
+		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 		  * jmSpuNo
 		  * jmSkuNo
 		  * property
