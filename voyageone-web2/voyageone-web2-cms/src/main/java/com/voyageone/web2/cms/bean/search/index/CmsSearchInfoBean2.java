@@ -76,6 +76,8 @@ public class CmsSearchInfoBean2 {
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
 
+    // 文件下载类型
+    private int fileType = 0;
 
     // ** 其它未定
     // 价格比较查询用标志位
@@ -468,5 +470,13 @@ public class CmsSearchInfoBean2 {
 
     public void setSalesEnd(String salesEnd) {
         this.salesEnd = salesEnd;
+    }
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
     }
 }

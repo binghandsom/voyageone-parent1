@@ -68,7 +68,17 @@ define([
 
         function exportFile (data) {
             data = resetSearchInfo(data);
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)});
+            function _exportFileCallback (res) {
+                var obj = JSON.parse(res);
+                if (obj.code == '4001') {
+                    alert("查询参数不正确，请重试。");
+                } else if (obj.code == '4002') {
+                    alert("未设置下载文件名。");
+                } else if (obj.code == '4003') {
+                    alert("创建文件时出错。");
+                }
+            }
+            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);
         }
 
         /**

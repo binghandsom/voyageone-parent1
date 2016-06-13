@@ -161,8 +161,20 @@ define([
         /**
          * 数据导出
          */
-        function exportFile() {
-            searchAdvanceService2.exportFile($scope.vm.searchInfo);
+        function exportFile(fileType) {
+            var msg = '';
+            if (fileType == 1) {
+                msg = '即将导出Code级的搜索结果，请确认。';
+            } else if (fileType == 2) {
+                msg = '即将导出Group级的搜索结果，请确认。';
+            } else if (fileType == 3) {
+                msg = '即将导出SKU级的搜索结果，请确认。';
+            }
+            confirm(msg).result
+                .then(function () {
+                    $scope.vm.searchInfo.fileType = fileType;
+                    searchAdvanceService2.exportFile($scope.vm.searchInfo);
+                });
         }
 
         /**

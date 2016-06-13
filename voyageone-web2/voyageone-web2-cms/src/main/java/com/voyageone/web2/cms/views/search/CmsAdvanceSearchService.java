@@ -3,11 +3,13 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -100,11 +102,21 @@ public class CmsAdvanceSearchService extends BaseAppService {
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
-        // 获取promotion list
-        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
-
-        //add by holysky  新增一些页的聚美促销活动预加载
-        masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+        // 店铺(cart/平台)列表
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+        // 按cart获取promotion list
+        Map<String, List> promotionMap = new HashMap<>();
+        param = new HashMap<>();
+        for (TypeChannelBean cartBean : cartList) {
+            if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
+                // 聚美促销活动预加载
+                promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+            } else {
+                param.put("cartId", Integer.parseInt(cartBean.getValue()));
+                promotionMap.put(cartBean.getValue(), promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), param));
+            }
+        }
+        masterData.put("promotionMap", promotionMap);
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
@@ -122,8 +134,8 @@ public class CmsAdvanceSearchService extends BaseAppService {
             masterData.put("channelList", Channels.getUsJoiChannelList());
         }
 
-        //获取店铺列表
-        masterData.put("cartList",TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        // 获取店铺列表
+        masterData.put("cartList", cartList);
 
         return masterData;
     }

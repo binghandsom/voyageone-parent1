@@ -138,10 +138,10 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     //qty
-    public int getQty() {
+    public Integer getQty() {
         return getAttribute("qty");
     }
-    public void setQty(int qty) {
+    public void setQty(Integer qty) {
         setAttribute("qty", qty);
     }
 
