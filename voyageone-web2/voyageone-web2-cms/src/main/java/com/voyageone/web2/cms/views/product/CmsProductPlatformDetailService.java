@@ -127,6 +127,11 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         mastData.put("model", cmsBtProduct.getFields().getModel());
         mastData.put("groupId", cmsBtProductGroup.getGroupId());
         mastData.put("skus", cmsBtProduct.getSkus());
+
+        // TODO 取得Sku的库存
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, cmsBtProduct.getFields().getCode());
+        cmsBtProduct.getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
+
         if (cmsBtProduct.getCommon().getFields() != null) {
             mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
             mastData.put("hsCodeStatus", cmsBtProduct.getCommon().getFields().getHsCodeStatus());
