@@ -327,9 +327,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
             List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
             if (cmsMtPlatformSkusList == null || cmsMtPlatformSkusList.size() == 0) {
-                String errMsg = String.format("获取颜色和尺寸信息失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [Active:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
+                String errMsg = String.format("平台skus表中该商品类目对应的颜色和尺寸信息不存在！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
                 $error(errMsg);
-                sxData.setErrorMessage(errMsg);
+                sxData.setErrorMessage("平台skus表中该商品类目对应的颜色和尺寸信息不存在 [平台类目Id:" + platformCategoryId + "]");
                 throw new BusinessException(errMsg);
             }
 
@@ -424,14 +424,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
-                String modified;
+                String modified = "";
                 try {
                     modified = jdWareService.updateProduct(shopProp, updateProductBean);
                 } catch (Exception ex) {
                     String errMsg = String.format("新增商品之后调用京东商品更新API批量设置SKU信息失败! [WareId:%s]", jdWareId);
                     $error(errMsg);
-                    sxData.setErrorMessage(errMsg);
-                    throw ex;
+                    sxData.setErrorMessage(ex.getMessage());
                 }
 
                 // 设置SKU信息是否成功判断
@@ -442,18 +441,20 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(errMsg);
                     }
-                } else {
+                }
+
+                // 新增商品成功之后更新SKU信息失败时，删除该商品
+                if (StringUtils.isEmpty(modified) || !retStatus) {
                     // 新增之后更新商品SKU信息失败
                     // 删除商品
                     try {
                         // 参数：1.ware_id 2.trade_no(流水号：现在时刻)
                         jdWareService.deleteWare(shopProp, String.valueOf(jdWareId), Long.toString(new Date().getTime()));
                     } catch (Exception ex) {
-                        String errMsg = String.format("新增商品SKU信息设置失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
+                        String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(errMsg);
+                        sxData.setErrorMessage("新增商品后设置SKU信息失败之后，删除该新增商品失败");
                         throw ex;
                     }
 
