@@ -290,7 +290,7 @@
                                                                                                                    ng-model="model.isChecked"><span
                                             class="fa fa-check"></span></label></td>
                                     <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="$parent.openJmProductDetail({'productCode': model.productCode, 'cmsBtJmPromotionId': parentModel.id}, openJmProductDetail)">
+                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="$parent.openJmProductDetail({promotionProductId:model.id},openJmProductDetail)">
                                         {{model.productLongName}}  </a>
                                     </td>
                                     <td class="text-left">{{model.promotionTag}}</td>
