@@ -196,7 +196,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
-        attribute.put("material", this.weight);
+        attribute.put("material", this.material);
         attribute.put("shortDescription", this.shortDescription);
         attribute.put("longDescription", this.longDescription);
 
