@@ -138,17 +138,6 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "search_advance_new": {
-    "hash": "/search/advanceSearch",
-    "templateUrl": "views/search/advanceSearch.tpl.html",
-    "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
-  },
-
-  "search_feedsearch": {
-    "url": "/search/feedsearch/",
-    "hash": "/search/feedsearch",
-    "templateUrl": "views/search/feedsearch.tpl.html",
-    "controllerUrl": "modules/cms/views/search/feedsearch.ctl"
   "marketing_error_upload_error_list": {
     "hash": "/marketing_error/upload_error_list/:type",
     "templateUrl": "views/system/error/list.tpl.html",
