@@ -127,10 +127,14 @@ define(function (require) {
 
             var field = searchField(dependExpress.fieldId, schema);
 
+            if (!field) {
+                console.warn('cant find field for dep rule. -> ' + dependExpress.fieldId);
+            }
+
             var symbol = SYMBOLS[dependExpress.symbol];
 
             if (!symbol)
-                console.error('没有找到可用符号: ' + dependExpress.symbol);
+                console.warn('没有找到可用符号: ' + dependExpress.symbol);
 
             return {
                 field: field,
@@ -147,21 +151,47 @@ define(function (require) {
      * 获取依赖结果
      */
     DependentRule.prototype.checked = function () {
-        // TODO
+
+        var self = this;
+        var dependExpressList = self.dependExpressList;
+
+        return dependExpressList.every(function (express) {
+
+            // 每一个表达式的计算, 都只支持简单处理
+            // 如果后续需要, 请继续扩展
+
+            var field = express.field;
+
+            if (!field)
+                return false;
+
+            var value = field.$value;
+
+            switch (express.symbol) {
+                case SYMBOLS.EQUALS:
+                    return value == express.value;
+                case SYMBOLS.NOT_EQUALS:
+                    return value != express.value;
+                case SYMBOLS.NOT_CONTAINS:
+                    return value.indexOf(express.value) < 0;
+                default:
+                    return false;
+            }
+        });
     };
 
     /**
      * 根据依赖结果返回正则值
      */
     DependentRule.prototype.getRegex = function () {
-        // TODO
+        return this.checked() ? this.value : null;
     };
 
     /**
      * 根据依赖结果返回 maxlength 或 minlength 的 length 值
      */
     DependentRule.prototype.getLength = function () {
-        // TODO
+        return this.checked() ? this.value : null;
     };
 
     /**
@@ -640,7 +670,7 @@ define(function (require) {
 
                         var ngIfContainer = angular.element('<div class="schema-disable-container">');
 
-                        ngIfContainer.attr('ng-if', '!rules.disableRule.checked()');
+                        ngIfContainer.attr('ng-if', '!$rules.disableRule.checked()');
 
                         container.append(ngIfContainer);
 
