@@ -459,7 +459,7 @@
 }
 .dropdown-submenu > .dropdown-menu {
     top: 0;
-    left: -100%;
+    left: -91%;
     margin-top: -6px;
     margin-left: -1px;
     -webkit-border-radius: 0 2px 2px 2px;
@@ -477,9 +477,9 @@
     border-style: solid;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid transparent;
+    border-left: 0 solid transparent;
     margin-top: 4px;
-    margin-right: 10px;
+    margin-right: 6px;
 }
 .dropdown-submenu:hover > a:after {
     border-left-color: #fff;

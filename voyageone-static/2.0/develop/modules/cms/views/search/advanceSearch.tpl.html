@@ -631,7 +631,7 @@
                                     <a href ng-disabled="vm.promotionList.length < 0">加入天猫国际活动</a>
                                     <ul class="dropdown-menu" ng-if="vm.promotionList.length">
                                         <li ng-repeat="promotion in vm.promotionList">
-                                            <a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+                                            <a ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
                                         </li>
                                     </ul>
                                 </li>
