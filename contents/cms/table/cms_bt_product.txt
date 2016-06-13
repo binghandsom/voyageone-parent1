@@ -89,6 +89,7 @@
     * skus[]
       * 平台特有sku属性
       * skuCode
+      * priceRetail ->各平台的销售指导价
       * priceSale
       * priceChgFlg ->价格变更状态（U/D/XU/XD）
       * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
@@ -127,6 +128,7 @@
 		  * searchMetaTextCustom
 	  * skus[]
 		  * skuCode
+          * priceRetail ->各平台的销售指导价
 		  * priceSale //中国最终售价
 		  * priceChgFlg ->价格变更状态（U/D/XU/XD）
 		  * jmSpuNo
