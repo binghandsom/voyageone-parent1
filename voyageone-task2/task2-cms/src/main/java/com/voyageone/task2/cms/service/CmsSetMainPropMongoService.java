@@ -1244,6 +1244,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put("skuCode", sku.getSku());
+                    skuInfo.put("isSale", "1");
                     skuList.add(skuInfo);
                 }
 
@@ -1675,6 +1676,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     if (!blnFound) {
                         BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                         skuInfo.put("skuCode", feedSku.getSku());
+                        skuInfo.put("isSale", "1");
                         if (entry.getValue().getSkus() == null) {
                             entry.getValue().setSkus(new ArrayList<BaseMongoMap<String, Object>>());
                         }
