@@ -18,22 +18,6 @@ import java.util.Map;
  */
 public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
-    //主类目ID
-    public String getCatId() {
-        return getAttribute("catId");
-    }
-    public void setCatId(String catId) {
-        setAttribute("catId", catId);
-    }
-
-    //主类目完整PATH
-    public String getCatPath() {
-        return getAttribute("catPath");
-    }
-    public void setCatPath(String catPath) {
-        setAttribute("catPath", catPath);
-    }
-
     //code 产品code
     public String getCode() {
         return getAttribute("code");
