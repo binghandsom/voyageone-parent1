@@ -570,8 +570,6 @@ define([
                     productIds.push(object.code);
                 });
                 return openModel(popActions.bulkUpdate.fieldEdit, {"productIds": productIds});
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         };
 
@@ -1109,12 +1107,12 @@ define([
         /**
          * 新增advance查询页分类edit弹出
          * */
-        $scope.openAddChannelCategoryEdit = function (selList) {
+        $scope.openAddChannelCategoryEdit = function (selList, cartId) {
             var productIds = [];
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
             });
-            return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds});
+            return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds, 'cartId':cartId});
         };
 
 
