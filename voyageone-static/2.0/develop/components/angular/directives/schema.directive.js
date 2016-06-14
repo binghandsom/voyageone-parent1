@@ -892,6 +892,13 @@ define(function (require) {
                 $compile($element.contents())($scope);
             };
 
+            SchemaFieldController.prototype.remove = function (complexValue) {
+                var $scope = this.$scope;
+                var list = $scope.$complexValues;
+                var index = list.indexOf(complexValue);
+                list.splice(index, 1);
+            };
+
             return {
                 restrict: 'E',
                 require: ['^^?schema', '^^?form', '^^?schemaComplexContainer'],
@@ -1028,13 +1035,20 @@ define(function (require) {
                 scope: true,
                 require: '^^schemaField',
                 controllerAs: '$ctrl',
-                link: function ($scope, $element, $attrs) {
+                link: function ($scope, $element, $attrs, schemaFieldController) {
 
                     var isMulti = ($attrs.multi === 'true');
 
                     var fields = $scope.$eval($attrs.fields);
 
                     $scope.$ctrl.fields = fields;
+
+                    if (isMulti) {
+                        $scope.$remove = function (complexValue) {
+                            schemaFieldController.remove(complexValue);
+                        };
+                        $element.append('<button ng-click="$remove(complexValue)">删除</button>');
+                    }
 
                     each(fields, function (field) {
 
