@@ -81,7 +81,9 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 // added by morse.lu 2016/06/13 start
                 // target店，第一张图不要，从第二张开始到第六张
                 index++;
-                if (systemParam.getOrderChannelId().equals(ChannelConfigEnums.Channel.TARGET.getId()) && (index < 2 || index > 6)) {
+                if (systemParam.getOrderChannelId().equals(ChannelConfigEnums.Channel.TARGET.getId())
+                        && CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType
+                        && (index < 2 || index > 6)) {
                     continue;
                 }
                 // added by morse.lu 2016/06/13 end
