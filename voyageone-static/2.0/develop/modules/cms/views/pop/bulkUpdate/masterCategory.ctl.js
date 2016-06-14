@@ -2,7 +2,9 @@
  * Created by linanbin on 15/12/7.
  */
 
-define(['cms'], function (cms) {
+define(['cms',
+        'underscore'
+    ],function (cms) {
 
     return cms.controller('popCategoryCtl', (function () {
 
@@ -54,10 +56,9 @@ define(['cms'], function (cms) {
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
 
-                //测试默认选中
-                //console.log(this.context.from.split(">"));
-
-
+                /**产品详情页平台schema默认选中*/
+                if(this.context.plateSchema)
+                    this.defaultCategroy();
             },
             /**
              * 打开一个类目(选定一个类目)
@@ -86,6 +87,22 @@ define(['cms'], function (cms) {
                 if (!category.children || !category.children.length) return;
 
                 this.categoryPath.push({level: level + 1, categories: category.children});
+            },
+            defaultCategroy:function(){
+                // 默认选中
+                var self = this;
+                var arrayCat = this.context.from.split(">");
+                angular.forEach(arrayCat,function(item1,index){
+                    _.filter(self.categoryPath[index].categories,function(item2){
+                        if(item2.catName == item1){
+                            if(item2.children.length != 0)
+                                self.categoryPath.push({level:index+2,categories:item2.children});
+                            else
+                                self.selected = item2;
+                            return true;
+                        }
+                    });
+                });
             },
             ok: function () {
 

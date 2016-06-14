@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,8 @@ public class CmsFieldEditController extends CmsController {
         if (prop != null) {
             if ("approval".equals((String) prop.get("_option"))) {
                 // 商品审批
-
+                Map<String, Object> rs = propChangeService.setProductApproval(params, getUser(), cmsSession);
+                return success(rs);
             }
         }
         int cartId = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
