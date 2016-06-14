@@ -2,7 +2,7 @@
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="row wrapper">
-                <div class="container-fluid">
+                <div class="container-fluid"  id="{{cartInfo.name}}1">
                     <div class="col-md-8 form-group">
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills col-md-8">
@@ -134,13 +134,13 @@
                             <h3>导航栏</h3>
                             <ul class="nav bs-docs-sidenav">
                                 <li class="">
-                                    <a href="javascript:void(0)">group</a>
+                                    <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">group</a>
                                 </li>
                                 <li class="">
-                                    <a href="javascript:void(0)">product</a>
+                                    <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">product</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="goto(cartInfo.name)">sku</a>
+                                    <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">sku</a>
                                 </li>
                             </ul>
                         </nav>
@@ -151,7 +151,7 @@
                 <hr>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
 
-                <div class="container-fluid">
+                <div class="container-fluid" id="{{cartInfo.name}}2">
                     <div class="col-sm-7">
                         <schema-header ng-repeat="field in vm.platform.schemaFields" data="field" ng-if="field.isDisplay != 0">
                             <schema-item data="field"></schema-item>
@@ -161,12 +161,12 @@
 
                 <hr>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
-                <div class="container-fluid" id="{{cartInfo.name}}">
+                <div class="container-fluid" id="{{cartInfo.name}}3">
                     <div class="table-responsive">
                         <table class="table text-left">
                             <thead>
                             <tr>
-                                <th><input type="checkbox">All</th>
+                                <th><input class="sku_check" type="checkbox" ng-click="selectAll()">All</th>
                                 <th class="text-left ng-binding ng-scope vo_reqfield">skuCode</th>
                                 <th class="text-left ng-binding ng-scope vo_reqfield">库存</th>
                                 <th class="text-left ng-binding ng-scope vo_reqfield">size</th>
@@ -178,9 +178,9 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
-                                <th><input type="checkbox"></th>
+                                <th><input class="sku_check" type="checkbox" ng-model="entity.isSale"></th>
                                 <td class="text-left ng-scope">{{entity.skuCode}}</td>
-                                <td class="text-left ng-scope"></td>
+                                <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                 <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].size}}</td>
                                 <td class="text-left ng-scope">{{vm.skuTemp[entity.skuCode].priceRetail}}</td>
                                 <td class="text-left ng-scope"></td>

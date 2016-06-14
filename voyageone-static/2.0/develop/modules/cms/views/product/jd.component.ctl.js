@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,productDetailService,platformMappingService,$translate,notify,$location,$anchorScroll) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,productDetailService,platformMappingService,$translate,notify,confirm) {
         return {
             restrict: "E",
             replace: false,
@@ -34,10 +34,8 @@ define([
                 scope.openSellerCat = openSellerCat;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
-                scope.goto = function (id) {
-                    console.log($("#"+id).offset().top);
-                    $("body").animate({ scrollTop:  $("#"+id).offset().top}, 1000);
-                };
+                scope.selectAll = selectAll;
+                scope.pageAnchor = pageAnchor;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -125,7 +123,7 @@ define([
                          statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                      }
 
-                    if(scope.vm.platform.status == "Approved" && scope.vm.platform.pBrandName == null){
+                    if(scope.vm.platform.status == "Ready" && scope.vm.platform.pBrandName == null){
                         notify.danger("请先确认是否在京东后台申请过相应品牌");
                         return;
                     }
@@ -148,13 +146,15 @@ define([
                         scope.vm.platform.modified = resp.data.modified;
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     },function(resp){
-
+                        confirm(resp.message + ",是否强制上新").result.then(function () {
+                             productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
+                             scope.vm.platform.modified = resp.data.modified;
+                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                             });
+                        });
                     });
 
-/*                     productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
-                         scope.vm.platform.modified = resp.data.modified;
-                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    });*/
+
                 }
 
                 function validSchema(save){
@@ -173,6 +173,19 @@ define([
                            return true;
                         }
                     });
+                }
+
+                function selectAll(){
+                    scope.vm.platform.skus.forEach(function(element){
+                        element.isSale = $(".table-responsive thead .sku_check").prop('checked');
+                    });
+                }
+
+                function pageAnchor(index,speed){
+                    var offsetTop = 0;
+                    if(index != 1)
+                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop}, speed);
                 }
             }
         };
