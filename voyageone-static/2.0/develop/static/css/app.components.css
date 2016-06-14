@@ -12,6 +12,7 @@ schema-item .ng-invalid .c-checkbox span {
 /* schema 相关的 directive 默认样式定义 */
 schema {
     display: block;
+    font-size: 16px !important;
 }
 
 schema-field {
@@ -28,11 +29,15 @@ schema-complex-name {
 
 schema-complex-container {
     display: block;
+    /* TODO 该颜色仅供测试 */
+    background: #00ffe1;
+    padding: 10px;
 }
 
 schema-complex-container[multi] {
     /* TODO 该颜色仅供测试 */
-    background: red;
+    background: #ffc106;
+    padding: 10px;
 }
 
 schema-disable-container {
