@@ -204,7 +204,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> productList = sxData.getProductList();
-            List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+//            List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
             // 主产品取得结果判断
             if (mainProduct == null) {
                 String errMsg = String.format("取得主商品信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
