@@ -73,8 +73,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         queryObject.setProjectionExt(CmsAdvanceSearchService.searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
         queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
 
-        try (InputStream inputStream = new FileInputStream(templatePath);
-             Workbook book = WorkbookFactory.create(inputStream)) {
+        InputStream inputStream = new FileInputStream(templatePath);
+        Workbook book = WorkbookFactory.create(inputStream);
+        try {
             writeHead(book,cmsSessionBean);
             for (int i = 0; i < pageCount; i++) {
 
@@ -84,19 +85,8 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 if (items.size() == 0) {
                     break;
                 }
-                advSearchQueryService.getGroupExtraInfo(items, userInfo.getSelChannelId(), Integer.parseInt(cmsSessionBean.getPlatformType().get("cartId").toString()), false);
+                advSearchQueryService.getGroupExtraInfo(items, userInfo.getSelChannelId(), searchValue.getCartId(), false);
 
-                List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
-                items.forEach(item -> {
-                    if (!StringUtils.isEmpty(item.getFields().getHsCodePrivate())) {
-                        for (TypeChannelBean hscode : hscodes) {
-                            if (hscode.getValue().equalsIgnoreCase(item.getFields().getHsCodePrivate())) {
-                                item.getFields().setHsCodePrivate(hscode.getName());
-                                break;
-                            }
-                        }
-                    }
-                });
                 // 每页开始行
                 int startRowIndex = i * SELECT_PAGE_SIZE + 1;
                 boolean isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, startRowIndex);
@@ -108,11 +98,17 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             $info("文档写入完成");
 
             // 返回值设定
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try {
                 book.write(outputStream);
                 $info("已写入输出流");
                 return outputStream.toByteArray();
+            } finally {
+                outputStream.close();
             }
+        } finally {
+            inputStream.close();
+            book.close();
         }
     }
 
