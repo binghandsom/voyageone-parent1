@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, categorySettingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -41,6 +41,7 @@ define([
             sumCustomProps: [],
             platform: {catPath: null},
             masterCat: {catPath: null},
+            feedCat: {catPath: null},
             channelInner: {catPath: null}
         };
 
@@ -593,10 +594,15 @@ define([
          * @param popupNewCategory
          */
         function openMasterCategoryMapping(popupNewCategory) {
-            feedMappingService.getMainCategories()
+            var para = {catLevel: 0};
+            categorySettingService.getMasterSubCategoryList(para)
                 .then(function (res) {
-                    popupNewCategory({
-                        categories: res.data,
+                    if (!res.data.catList || !res.data.catList.length) {
+                        alert("没数据");
+                        return null;
+                    }
+                    return popupNewCategory({
+                        categories: res.data.catList,
                         from: null
                     }).then(function (context) {
                         $scope.vm.masterCat.catPath = context.selected.catPath;
@@ -609,12 +615,19 @@ define([
          * @param popupNewCategory
          */
         function openFeedCategoryMapping(popupNewCategory, categoryId) {
-            feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
+            attributeService.getCatTree()
                 .then(function (res) {
-                    popupNewCategory({
-                        categories: res.data,
+                    if (!res.data.categoryTree || !res.data.categoryTree.length) {
+                        alert("没数据");
+                        return null;
+                    }
+                    return popupNewCategory({
+                        categories: res.data.categoryTree,
                         from: null
-                    })
+                    }).then( function (context) {
+                        $scope.vm.feedCat.catPath = context.selected.catPath;
+                        }
+                    );
                 });
         }
 
@@ -638,6 +651,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'categorySettingService', 'attributeService'];
     return searchIndex;
 });
