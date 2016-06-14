@@ -46,8 +46,6 @@ public class CmsAdvanceSearchController extends CmsController {
     private CmsAdvSearchCustColumnService advSearchCustColumnService;
     @Autowired
     private CmsAdvSearchExportFileService advSearchExportFileService;
-    @Autowired
-    private ProductTagService productTagService;
 
     /**
      * 初始化,获取master数据
@@ -71,6 +69,7 @@ public class CmsAdvanceSearchController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();
+        cmsSession.putAttribute("_adv_search_params", params);
 
         // 获取product列表
         List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
@@ -87,7 +86,11 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productListTotal", productListTotal);
 
         // 查询该商品是否有价格变动
-        List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
+        Integer cartId = params.getCartId();
+        if (cartId == null) {
+            cartId = (Integer) cmsSession.getPlatformType().get("cartId");
+        }
+        List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
         resultBean.put("freeTagsList", infoArr[2]);
@@ -106,7 +109,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), cartId, true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -327,7 +330,7 @@ public class CmsAdvanceSearchController extends CmsController {
         String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
         UserSessionBean userInfo = getUser();
 
-        productTagService.addProdTag(userInfo.getSelChannelId(), tagPath, prodIdList, "freeTags", userInfo.getUserName());
+        searchIndexService.addProdTag(userInfo.getSelChannelId(), tagPath, prodIdList, "freeTags", userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

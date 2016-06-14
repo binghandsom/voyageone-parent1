@@ -55,7 +55,7 @@ define(['cms'], function (cms) {
                 this.categoryPath = [{level: 1, categories: this.categories}];
 
                 //测试默认选中
-                console.log(this.context.from.split(">"));
+                //console.log(this.context.from.split(">"));
 
 
             },

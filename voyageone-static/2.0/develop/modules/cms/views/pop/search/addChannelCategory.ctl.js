@@ -22,7 +22,7 @@ define([
             this.cartList = [];
             this.channelCategoryList = null;
             this.isSelectCid = [];
-            this.cartId = $rootScope.platformType.cartId.toString();
+            this.cartId = context.cartId;
             this.cnt = "";
             this.addChannelCategoryService = $addChannelCategoryService;
             this.$uibModalInstance = $uibModalInstance;
@@ -38,8 +38,7 @@ define([
             init: function () {
                 var self = this;
                 if (self.cartId == null) {
-                    self.cartId = "0";
-
+                    self.cartId = 0;
                 }
                 self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId}).then(function (res) {
                     //默认对打钩的数目和店铺渠道选择的验证处于隐藏状态
@@ -48,7 +47,7 @@ define([
                     self.cartList = res.data.cartList;
                     self.cnt = res.data.cnt;
                     // 如果店铺渠道选择master或feed，不显示分类列
-                    if (self.cartId == "0" || self.cartId == "1") {
+                    if (self.cartId == 0 || self.cartId == 1) {
                         self.isSelectCid = [];
                         self.channelCategoryList = null;
                         return;
@@ -64,7 +63,7 @@ define([
             save: function () {
                 var self = this;
                 //save保存时，如果店铺渠道选择的是master或feed，则显示警告：操作无效
-                if (self.cartId == "0" || self.cartId == "1") {
+                if (self.cartId == 1 || self.cartId == 0) {
                     self.cartIdValid = true;
                     return;
                 }
