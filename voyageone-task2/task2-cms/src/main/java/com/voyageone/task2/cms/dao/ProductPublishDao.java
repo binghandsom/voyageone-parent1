@@ -32,11 +32,29 @@ public class ProductPublishDao extends BaseDao {
         update(Constants.DAO_NAME_SPACE_CMS + "ims_updateProductPublishMini", dataMap);
     }
 
-    // 统计前一天订单中的产品数量
+    //  从oms系统导入产品前90天订单信息
     public List<Map> selectProductOrderCount(long oIdx, long oLimit) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("oIdx", oIdx);
         dataMap.put("oLimit", oLimit);
         return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCount", dataMap);
     }
+
+
+    //  从oms系统导入产品所有订单信息
+    public List<Map> selectProductOrderCountAllDays(long oIdx, long oLimit) {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("oIdx", oIdx);
+        dataMap.put("oLimit", oLimit);
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCountAllDays_history", dataMap);
+    }
+
+    //  从oms系统导入产品所有订单信息
+    public List<Map> selectProductOrderCountAllDaysHistory(long oIdx, long oLimit) {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("oIdx", oIdx);
+        dataMap.put("oLimit", oLimit);
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectProductOrderCountAllDays_history", dataMap);
+    }
+
 }

@@ -91,7 +91,8 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             }
             if (!rs.isEmpty()) {
                 BulkWriteResult rslt = bbulkOpe.execute();
-                $info(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
+                $debug(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
+                $info(String.format("copyOrdersInfo excute rows:%s", oIdx * PAGE_LIMIT));
             }
         } while (rs.size() == PAGE_LIMIT);
 
