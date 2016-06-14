@@ -1047,7 +1047,7 @@ define(function (require) {
                         $scope.$remove = function (complexValue) {
                             schemaFieldController.remove(complexValue);
                         };
-                        $element.append('<button ng-click="$remove(complexValue)">删除</button>');
+                        $element.append('<button ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1">删除</button>');
                     }
 
                     each(fields, function (field) {
