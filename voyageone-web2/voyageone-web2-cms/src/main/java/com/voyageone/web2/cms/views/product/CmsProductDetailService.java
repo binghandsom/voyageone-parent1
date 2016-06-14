@@ -479,6 +479,18 @@ public class CmsProductDetailService extends BaseAppService {
         return resultMap;
     }
 
+    public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+        List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        Map<String, Object> result = new HashMap<>();
+        if (cmsBtProduct.getCommon() != null) {
+            FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
+            result.put("fields", cmsMtCommonFields);
+            result.put("skus", cmsBtProduct.getCommon().getSkus());
+        }
+        return result;
+    }
+
     /**
      * 获取 feed info model.
      */
