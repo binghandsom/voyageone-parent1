@@ -538,7 +538,9 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function() {callback(cartId, null, context);});
+                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function () {
+                    callback(cartId, null, context);
+                });
             }
         }
 
@@ -557,13 +559,14 @@ define([
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
-                    .then(function () {
+                    .then(function (openUpdateApproval) {
                         var propertyInfo = {
-                            property: {'cartId': cartId, '_option':'approval'},
+                            property: {'cartId': cartId, '_option': 'approval'},
                             productIds: _selProdList
                         };
                         $fieldEditService.setProductFields(propertyInfo).then(function () {
-                            notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            return openUpdateApproval();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         });
                     });
             }
@@ -624,8 +627,8 @@ define([
                     return popupNewCategory({
                         categories: res.data.categoryTree,
                         from: null
-                    }).then( function (context) {
-                        $scope.vm.feedCat.catPath = context.selected.catPath;
+                    }).then(function (context) {
+                            $scope.vm.feedCat.catPath = context.selected.catPath;
                         }
                     );
                 });

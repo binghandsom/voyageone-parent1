@@ -566,17 +566,17 @@
                                 <i class="fa fa-exchange"></i>&nbsp;{{'TXT_COMMON_EXCHANGE' | translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li class="dropdown-submenu">
+                                <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupNewCategory)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
                                 </li>
-                                <li class="dropdown-submenu">
+                                <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>
-                                <li class="dropdown-submenu">
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
-                                <li class="dropdown-submenu">
-                                    <a href="javascript:void(0)" ng-click="openApproval()">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval)">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>
                                 </li>
                             </ul>
                         </div>
