@@ -217,9 +217,9 @@ public class CmsFieldEditService extends BaseAppService {
             return rsMap;
         }
 
-        int cartId = (Integer) prop.get("cartId");
+        Integer cartId = (Integer) prop.get("cartId");
         List<Integer> cartList = null;
-        if (cartId == 0) {
+        if (cartId == null || cartId == 0) {
             // 表示全平台更新
             // 店铺(cart/平台)列表
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
@@ -234,7 +234,7 @@ public class CmsFieldEditService extends BaseAppService {
         StringBuilder qryStr = new StringBuilder();
         qryStr.append("{'common.fields.code':{$in:#},");
         for (Integer cartIdVal : cartList) {
-            qryStr.append("'platforms.P" + cartIdVal + ".status':{$ne:'Ready',$ne:'Approved'},");
+            qryStr.append("$and:[{'platforms.P" + cartIdVal + ".status':{$ne:'Ready'}},{'platforms.P" + cartIdVal + ".status':{$ne:'Approved'}}],");
         }
         qryStr.deleteCharAt(qryStr.length() - 1);
         qryStr.append("}");
