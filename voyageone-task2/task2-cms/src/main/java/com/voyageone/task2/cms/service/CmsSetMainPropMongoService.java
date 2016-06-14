@@ -323,8 +323,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                      // 获取类目属性匹配关系(指定的主类目)
                      mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCatPath());
-                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getFields().getCatPath() != null) {
-                         newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getFields().getCatPath());
+                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getCatPath() != null) {
+                         newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      }
 
                      // mapping check
@@ -482,8 +482,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         blnProductExist = true;
                         // 获取类目属性匹配关系(指定的主类目)
                         mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCatPath());
-                        if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getFields().getCatPath() != null) {
-                            newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getFields().getCatPath());
+                        if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getCatPath() != null) {
+                            newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
                         }
                     }
 
@@ -1141,8 +1141,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             if (newMapping != null) {
                 String catPath = newMapping.getMainCategoryPath();
-                common.getFields().setCatId(MD5.getMD5(catPath)); // 主类目id
-                common.getFields().setCatPath(catPath); // 主类目path
+                common.setCatId(MD5.getMD5(catPath)); // 主类目id
+                common.setCatPath(catPath); // 主类目path
             }
 
             // 获取当前channel, 有多少个platform
@@ -1514,8 +1514,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 没有上新并且Feed到主数据Mapping存在并且设置Feed重新导入的情况下重新设置主类目
             if (numIdNoSet && newMapping!= null && "1".equals(feed.getIsFeedReImport())) {
                 String catPath = newMapping.getMainCategoryPath();
-                product.getCommon().getFields().setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.getCommon().getFields().setCatPath(catPath); // 主类目path
+                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.getCommon().setCatPath(catPath); // 主类目path
             }
             // product.setFields(field);
 
