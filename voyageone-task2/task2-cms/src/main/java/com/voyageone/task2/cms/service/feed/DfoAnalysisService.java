@@ -217,6 +217,6 @@ public class DfoAnalysisService extends BaseAnalysisService  {
 
     @Override
     public String getTaskName() {
-        return "CmsBfoAnalySisJob";
+        return "CmsDfoAnalySisJob";
     }
 }
