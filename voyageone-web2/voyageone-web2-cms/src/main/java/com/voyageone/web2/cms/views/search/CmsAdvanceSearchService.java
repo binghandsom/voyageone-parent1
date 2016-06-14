@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -18,6 +19,7 @@ import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -62,6 +64,8 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsBtJmPromotionService jmPromotionService;
     @Autowired
     private CmsAdvSearchQueryService advSearchQueryService;
+    @Autowired
+    private ProductTagService productTagService;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;sales;platforms;" +
@@ -141,7 +145,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 获取当前页的product列表
+     * 获取当前查询的product列表
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -157,10 +161,71 @@ public class CmsAdvanceSearchService extends BaseAppService {
         // 取得符合条件的产品code列表
         List<String> codeList = new ArrayList<>(prodList.size());
         for (CmsBtProductModel prodObj : prodList) {
+            if (prodObj.getCommon() == null) {
+                continue;
+            }
             CmsBtProductModel_Field field = prodObj.getCommon().getFields();
             if (field != null && field.getCode() != null) {
                 codeList.add(field.getCode());
             }
+        }
+        return codeList;
+    }
+
+    /**
+     * 获取当前查询的product code列表
+     */
+    public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
+        CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
+        if (searchValue == null) {
+            return new ArrayList<>(0);
+        }
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
+        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+
+        List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
+        if (prodList == null || prodList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
+            return new ArrayList<>(0);
+        }
+
+        // 取得符合条件的产品code列表
+        List<String> codeList = new ArrayList<>(prodList.size());
+        for (CmsBtProductModel prodObj : prodList) {
+            if (prodObj.getCommon() == null) {
+                continue;
+            }
+            CmsBtProductModel_Field field = prodObj.getCommon().getFields();
+            if (field != null && field.getCode() != null) {
+                codeList.add(field.getCode());
+            }
+        }
+        return codeList;
+    }
+
+    /**
+     * 获取当前查询的product id列表
+     */
+    public List<Long> getProductIdList(String channelId, CmsSessionBean cmsSessionBean) {
+        CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
+        if (searchValue == null) {
+            return new ArrayList<>(0);
+        }
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
+        queryObject.setProjection("{'prodId':1,'_id':0}");
+
+        List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
+        if (prodList == null || prodList.isEmpty()) {
+            $warn("CmsSearchAdvanceService.getProductIdList prodList为空");
+            return new ArrayList<>(0);
+        }
+
+        // 取得符合条件的产品code列表
+        List<Long> codeList = new ArrayList<>(prodList.size());
+        for (CmsBtProductModel prodObj : prodList) {
+            codeList.add(prodObj.getProdId());
         }
         return codeList;
     }
@@ -290,4 +355,24 @@ public class CmsAdvanceSearchService extends BaseAppService {
         return commonPropService.getCustColumns();
     }
 
+    /**
+     * 向产品添加tag，同时添加该tag的所有上级tag
+     */
+    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier, CmsSessionBean cmsSession) {
+        if (tagPath == null) {
+            $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
+            throw new BusinessException("缺少参数!");
+        }
+
+        if (prodIdList == null || prodIdList.isEmpty()) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            prodIdList = getProductIdList(channelId, cmsSession);
+            if (prodIdList == null || prodIdList.isEmpty()) {
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
+                throw new BusinessException("缺少参数!");
+            }
+        }
+
+        productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
+    }
 }

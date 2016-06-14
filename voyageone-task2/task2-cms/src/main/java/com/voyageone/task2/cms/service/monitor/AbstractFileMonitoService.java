@@ -75,6 +75,10 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
 
                 File filePath = new File(finalPath);
                 if (!filePath.exists()) {
+                    LOG.warn(String.format("AbstractFileMonitoService.run filePath not found channelId:=%s;finalPath=%s", channelId, finalPath));
+                    continue;
+                }
+                if (!filePath.isDirectory()) {
                     continue;
                 }
 
@@ -134,18 +138,25 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
 
         File workFolder = new File(System.getProperty("user.dir"));
 
+        // kill process
+        processKill(watchPath);
+
         String cmd = buildCmd(watchPath);
         LOG.info("AbstractFileMonitoService.executeCmd cmd:=" + cmd);
 
         BufferedReader reader = null;
         try {
+            // start process
             Process process = Runtime.getRuntime().exec(cmd, null, workFolder);
 
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while (true) {
                 String line = reader.readLine();
-                String[] result = line.split(":");
+                if (line == null) {
+                    continue;
+                }
 
+                String[] result = line.split(":");
                 if (result.length != 3) {
                     continue;
                 }
@@ -181,5 +192,21 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
         bf.append(" --format %w:%f:%e ");
         bf.append(watchPath);
         return bf.toString();
+    }
+
+    private boolean processKill(String cmdPath) {
+        try {
+            String cmd = String.format("ps -ef|grep %s |grep -v grep|cut -c 9-15|xargs kill -9", cmdPath);
+            LOG.info("AbstractFileMonitoService.processKill cmd:=" + cmd);
+            Process process = Runtime.getRuntime().exec(cmd);
+            // 进程的出口值。根据惯例，0 表示正常终止。
+            int exitVal = process.waitFor();
+            if (exitVal == 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            LOG.error("AbstractFileMonitoService.executeKill error:", e);
+        }
+        return false;
     }
 }

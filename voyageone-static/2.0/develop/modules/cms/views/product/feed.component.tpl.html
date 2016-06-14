@@ -1,0 +1,60 @@
+<div class="wrapper-md product-shema-detail">
+
+    <div ng-if="vm.showInfoFlag">
+
+
+                <!-- Products table and controls -->
+                <form class="form-horizontal" name="productCustomForm">
+                    <div class="panel vo_panel tab_panel">
+                        <div class="row wrapper">
+                            <div class="container-fluid" ng-repeat="feedAttr in vm.productDetails.feedInfoModel">
+                                <div class="col-sm-7">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label" ng-bind="feedAttr.key"></label>
+
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" ng-model="feedAttr.value" readonly
+                                                   ng-if="feedAttr.value.length < 50">
+                                            <textarea rows="3" class="form-control no-resize" ng-model="feedAttr.value"
+                                                      readonly ng-if="feedAttr.value.length >= 50"></textarea>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label class="i-checks-sm m-b-none"><input type="checkbox"
+                                                                                       ng-model="feedAttr.exists"
+                                                                                       disabled></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--.col -->
+                                <!---------------------------------------显示中文区域------------------------------------------->
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label" ng-bind="feedAttr.cnKey"></label>
+
+                                        <div class="col-sm-6" ng-show="feedAttr.cnKey">
+                                            <input type="text" class="form-control" ng-model="feedAttr.cnValue"
+                                                   ng-if="feedAttr.value.length < 50">
+                                            <textarea rows="3" class="form-control no-resize"
+                                                      ng-model="feedAttr.cnValue"
+                                                      ng-if="feedAttr.value.length >= 50"></textarea>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <label class="i-checks-sm m-b-none">
+                                                <input type="checkbox" ng-model="feedAttr.selected" ng-if="feedAttr.cnKey">
+                                            </label>
+                                        </div>
+                                        <!--<div class="col-sm-1">-->
+                                        <!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->
+                                        <!--</div>-->
+                                    </div>
+                                </div>
+                                <!-- .col -->
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+
+    </div>
+
+</div><!-- end .wrapper-md -->

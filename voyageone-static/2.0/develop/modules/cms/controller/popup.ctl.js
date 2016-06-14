@@ -82,6 +82,12 @@ define([
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
                     "controller": 'popSalePriceCtl',
                     "size": 'md'
+                },
+                "updateProductApproval": {
+                    "templateUrl": "views/pop/bulkUpdate/updateProductApproval.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/updateProductApproval.ctl",
+                    "controller": 'popUpdateProductApprovalCtl as ctrl',
+                    "size": 'md'
                 }
             },
             "category": {
@@ -570,8 +576,6 @@ define([
                     productIds.push(object.code);
                 });
                 return openModel(popActions.bulkUpdate.fieldEdit, {"productIds": productIds});
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         };
 
@@ -1110,11 +1114,15 @@ define([
          * 新增advance查询页分类edit弹出
          * */
         $scope.openAddChannelCategoryEdit = function (selList) {
-            var productIds = [];
+            var productIds = [],data;
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
             });
-            return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds});
+            if(selList[0].plateSchema)
+                data = {"productIds": productIds,"cartId":selList[0].cartId,"selectedIds":selList[0].selectedIds,plateSchema:true}
+            else
+                data = {"productIds": productIds}
+            return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 
 
@@ -1322,6 +1330,11 @@ define([
         //打开高级查询页的共通设置，最终售价
         $scope.openSalePrice = function (context) {
             return openModel(popActions.bulkUpdate.salePrice, context);
+        };
+
+        //打开高级查询页的共通设置，上新审批
+        $scope.openUpdateApproval = function (context) {
+            return openModel(popActions.bulkUpdate.updateProductApproval, context);
         };
 
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {

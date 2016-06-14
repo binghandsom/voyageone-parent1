@@ -226,7 +226,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
 
         String uploadPath = ChannelConfigs.getVal1(channelId, ChannelConfigEnums.Name.scene7_image_folder);
         if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", channelId);
+            String err = String.format("uploadPath未配置 channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", channelId);
             LOG.error(err);
             throw new RuntimeException(err);
         }
@@ -355,10 +355,12 @@ public class ImageUploadService extends AbstractFileMonitoService {
             if (modifyDirName.equalsIgnoreCase("images6")) {
                 /* flag 0不copy,1copybefore,2copyafter */
                 CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(model.getChannelId(), CmsConstants.ChannelConfig.IMAGE_UPLOAD_SERVICE);
-                if ("1".equals(cmsChannelConfigBean.getConfigValue1())) {
-                    images.addAll(0, JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
-                } else if ("2".equals(cmsChannelConfigBean.getConfigValue1())) {
-                    images.addAll(JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
+                if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                    if ("1".equals(cmsChannelConfigBean.getConfigValue1())) {
+                        images.addAll(0, JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
+                    } else if ("2".equals(cmsChannelConfigBean.getConfigValue1())) {
+                        images.addAll(JacksonUtil.jsonToMapList(fields.get("images1").toString().replace("image1", "image6")));
+                    }
                 }
             }
             //去除重复
@@ -419,9 +421,14 @@ public class ImageUploadService extends AbstractFileMonitoService {
         stringBuilder.append("\n异常处理图片个数：").append(failedSkuCount);
         stringBuilder.append("\n错误说明：").append(errorMsg);
 
+        String errorMsgTmp = stringBuilder.toString();
+        if (errorMsgTmp.length() > 2000) {
+            errorMsgTmp = errorMsgTmp.substring(0, 2000);
+        }
+
         CmsBtBusinessLogModel logModel = new CmsBtBusinessLogModel();
         logModel.setChannelId(channelId);
-        logModel.setErrorMsg(stringBuilder.toString());
+        logModel.setErrorMsg(errorMsgTmp);
         logModel.setErrorTypeId(2);
         logModel.setCreater(TASK_NAME);
         businessLogService.insertBusinessLog(logModel);

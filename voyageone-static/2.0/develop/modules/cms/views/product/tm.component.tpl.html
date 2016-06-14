@@ -1,0 +1,278 @@
+<div class="wrapper-md product-shema-detail">
+    <div class="vo_accordion vo_attr" ng-if="vm.showInfoFlag">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="container-fluid m-t-sm m-l-xs m-r-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12  m-b-sm font-bold text-vo">
+                            <span class="label label-danger m-r-sm pull-left" ng-if="vm._isMain == 1">&nbsp;M&nbsp;</span>
+                            <span class="label label-yellow-new pull-left" ng-if="vm._isminimall == 1">&nbsp;{{vm._orgChaName}}&nbsp;</span>
+                            <span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}</b>
+                                {{vm.productDetails.categoryFullPath}}</span>
+
+                            <div class="form-inline pull-right" ng-controller="popupCtrl">
+                                <!-- TODO 暂时未实现 -->
+                                <!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
+<!--                                <button type="button" class="btn btn-default"
+                                        ng-click="openHistoryPromotion('lg', vm.productDetails.productCode)"><i
+                                        class="fa fa-rotate-left"></i>&nbsp;{{'BTN_PROMOTION_HISTORY' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-default"
+                                        ng-click="openHistoryPrice('lg', vm.productDetails.productCode, 'code')"><i
+                                        class="fa fa-jpy"></i>&nbsp;{{'BTN_PRICE_HISTORY' | translate}}
+                                </button>-->
+                                <button class="btn btn-default"
+                                        ng-click="openCategoryMapping(vm.productDetails, popupNewCategory)"><i
+                                        class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' |
+                                    translate}}
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-8 form-inline pull-left m-b-xs m-r-sm">
+
+                            <label class="m-t-xs col-sm-2" translate="TXT_IS_FIX_TRANSLATED"></label>
+
+                            <div class="col-sm-2 text-left">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox"
+                                           id="switchIsTranslated"
+                                           ng-model="vm.productDetails.productStatus.translateStatus">
+                                    <label class="onoffswitch-label" for="switchIsTranslated">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                                <!-- onoff switch -->
+                            </div>
+                            <label class="m-t-xs col-sm-2 text-right" translate="TXT_STATUS"></label>
+                            <div class="col-sm-6 text-left m-t-xs">
+                                <label class="checkbox-inline c-radio" ng-repeat="productStatus in vm.productStatusList">
+                                    <input ng-disabled="vm.productDetails.productStatus.isApproved" name="priceType" type="radio" ng-value="productStatus.value" ng-model="vm.productDetails.productStatus.approveStatus"><span class="fa fa-check"></span> {{productStatus.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="pull-right m-r-xs">
+                            <div class="form-inline text-center">
+                                <button type="submit" class="btn btn-default ng-binding" ng-click="cancelProductDetail()"><i class="fa fa-remove"></i> 取消
+                                </button>
+                                <button type="submit" class="btn btn-vo ng-binding" ng-click="updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存
+                                </button>
+                            </div>
+                            <!-- .form-inline -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   <!-- <div ng-if="ctrl.showInfoFlag">-->
+    <div>
+
+                <!-- Products table and controls -->
+                <form class="form-horizontal" name="productFieldForm" novalidate>
+                    <div class="panel vo_panel tab_panel">
+                        <div class="row wrapper">
+                            <div class="container-fluid">
+                                <div class="col-sm-7">
+                                    <schema-header ng-repeat="field in vm.productDetails.masterFields" data="field"
+                                                   ng-if="field.isDisplay != 0">
+                                        <schema-item data="field"></schema-item>
+                                    </schema-header>
+                                </div>
+                                <div class="col-sm-5" style="width: 380px;margin-left: -38px;">
+                                    <!-- product detail panel starts here -->
+                                    <div class="col no-padder bg-light vo_prodDetailPanel">
+                                        <div id="vo_fixProdPanel">
+                                            <!-- product photos -->
+                                            <div class="vo_prodGallery">
+                                                <div class="imageContainer">
+                                                    <div class="imageWrapper">
+                                                        <img  class="imageWrapper" ng-src="{{vm.currentImage}}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <uib-tabset class="tab-container vo_nav-tabs">
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        品牌方商品图
+                                                    </tab-heading>
+                                                    <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image1 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image1}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image1) + ')'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image1 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        PC端自拍商品图
+                                                    </tab-heading>
+                                                    <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image6 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image6}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image6)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6)+ ')'}">
+
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image6 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        包装图
+                                                    </tab-heading>
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image2 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image2}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image2)+ ')'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image2 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        角度图
+                                                    </tab-heading>
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image3 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image3}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image3)+ ')'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image3 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        PC端自定义图
+                                                    </tab-heading>
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image4 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image4}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image4)+ ')'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image4 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                                <uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        APP端自定义图
+                                                    </tab-heading>
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in vm.productDetails.productImages.image5 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':vm.currentImage == image.image5}"
+                                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image5)+ ')'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in vm.tempImage.image5 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>
+                                            </uib-tabset>
+                                            <!-- .vo_prodGallery -->
+                                            <!-- .wrapper -->
+                                            <div class="wrapper-sm m-t-xs" style="margin-top: -10px;">
+                                                <h5 class="text-vo font-bold">SKU库存明细</h5>
+                                                <hr style="margin-top:0px;margin-bottom:10px"/>
+                                                <div>
+                                                    <div class="form-group" ng-repeat="invObj in vm.inventoryList">
+                                                        <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skucode}}</label>
+                                                        <div class="col-sm-2 text-left">
+                                                            <input type="text" class="form-control" ng-model="invObj.skyqty" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <hr>
+
+                <div class="panel vo_panel tab_panel">
+                    <div class="container-fluid">
+                        <schema-item class="modal-open" data="vm.productDetails.skuFields"
+                                     ng-if="vm.productDetails.skuFields != null" not-show-edit="true"></schema-item>
+                    </div>
+                </div>
+    </div>
+
+<!--    <div style="width:80%" ng-show="!ctrl.showInfoFlag">
+        &lt;!&ndash; TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) &ndash;&gt;
+
+        <div class="text-center text-hs ng-binding ng-scope" id="noData">
+            <h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_REMINDER_WITH_COLON' |
+                translate}}</h4>
+            {{!ctrl.productDetails.productDataIsReady ? ('TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate) : ctrl.errorMsg}}
+        </div>
+    </div>-->
+</div>

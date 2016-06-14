@@ -4,6 +4,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -45,6 +46,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -55,6 +57,8 @@ import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
@@ -101,6 +105,8 @@ public class SxProductService extends BaseService {
     private ImageCreateService imageCreateService;
     @Autowired
     private FeedCustomPropService customPropService;
+    @Autowired
+    private SizeChartService sizeChartService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -319,23 +325,26 @@ public class SxProductService extends BaseService {
         }
     }
 
-    /**
-     * 尺码转换
-     *
-     * @param cmsBtSizeMapModelList 尺码对照表
-     * @param originalSize   转换前size
-     * @return 转后后size
-     */
-    public String changeSize(List<CmsBtSizeMapModel> cmsBtSizeMapModelList, String originalSize) {
-
-        for (CmsBtSizeMapModel cmsBtSizeMapModel : cmsBtSizeMapModelList) {
-            if (originalSize.equals(cmsBtSizeMapModel.getOriginalSize())) {
-                return cmsBtSizeMapModel.getAdjustSize();
-            }
-        }
-
-        return null;
-    }
+    // delete by morse.lu 2016/06/14 start
+    // 设计变更，mysql -> mongo , 新方法getSizeMap
+//    /**
+//     * 尺码转换
+//     *
+//     * @param cmsBtSizeMapModelList 尺码对照表
+//     * @param originalSize   转换前size
+//     * @return 转后后size
+//     */
+//    public String changeSize(List<CmsBtSizeMapModel> cmsBtSizeMapModelList, String originalSize) {
+//
+//        for (CmsBtSizeMapModel cmsBtSizeMapModel : cmsBtSizeMapModelList) {
+//            if (originalSize.equals(cmsBtSizeMapModel.getOriginalSize())) {
+//                return cmsBtSizeMapModel.getAdjustSize();
+//            }
+//        }
+//
+//        return null;
+//    }
+    // delete by morse.lu 2016/06/14 end
 
     /**
      * 上传图片到天猫图片空间
@@ -548,7 +557,10 @@ public class SxProductService extends BaseService {
         codeArr = productCodeList.toArray(codeArr);
 
         // 通过上面取得的code，得到对应的产品信息，以及sku信息
-        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        // modified by morse.lu 2016/06/13 start
+//        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        List<BaseMongoMap<String, Object>> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        // modified by morse.lu 2016/06/13 end
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
@@ -646,21 +658,47 @@ public class SxProductService extends BaseService {
             }
             // 2016/06/12 add desmond END
 
-            List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-            List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-            productModelSku.forEach(sku -> {
-                if (sku.getSkuCarts().contains(cartId)) {
-                    skus.add(sku);
-                }
-            });
+            // added by morse.lu 2016/06/13 start
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+                // 天猫(淘宝)平台的时候，从外面的skus那里取得
+                // added by morse.lu 2016/06/13 end
+                List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+                List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                productModelSku.forEach(sku -> {
+                    if (sku.getSkuCarts().contains(cartId)) {
+                        skus.add(sku);
+                    }
+                });
 
-            if (skus.size() > 0) {
-                productModel.setSkus(skus);
-                skuList.addAll(skus);
+                if (skus.size() > 0) {
+                    productModel.setSkus(skus);
+                    skuList.addAll(skus);
+                } else {
+                    // 该product下没有允许在该平台上上架的sku
+                    removeProductList.add(productModel);
+                }
+                // added by morse.lu 2016/06/13 start
             } else {
-                // 该product下没有允许在该平台上上架的sku
-                removeProductList.add(productModel);
+                // 天猫以外平台的时候，从各个平台下面的skus那里取得
+                List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
+                List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                productModelSku.forEach(sku -> {
+                    if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                        skus.add(sku);
+                    }
+                });
+
+                if (skus.size() > 0) {
+                    productModel.getPlatform(cartId).setSkus(skus);
+                    skuList.addAll(skus);
+                } else {
+                    // 该product下没有允许在该平台上上架的sku
+                    removeProductList.add(productModel);
+                }
             }
+            // added by morse.lu 2016/06/13 end
         }
 
         // Add by desmond 2016/06/12 start
@@ -1666,7 +1704,7 @@ public class SxProductService extends BaseService {
         for (Integer key : sortKey) {
             List<CmsBtImageGroupModel> matchModels =  matchMap.get(key);
             if (matchModels.size() > 1) {
-                throw new BusinessException("找到两条以上符合的记录,请修正设定!" +
+                throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
                         ",imageType= " + imageType +
@@ -1697,6 +1735,96 @@ public class SxProductService extends BaseService {
         }
 
         return listUrls;
+    }
+
+    /**
+     * 从cms_bt_size_chart(mongo)取得尺码对照数据，取得逻辑与getImageUrls相同
+     *
+     * @return Map<originalSize, adjustSize>
+     */
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) throws Exception {
+        Map<String, String> sizeMap = new HashMap<>();
+        Map<Integer, List<CmsBtSizeChartModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
+        for (int index = 0; index < 1 << 3; index++) {
+            // 初期化
+            // 这一版的key是3个：brandName, productType, sizeType
+            matchMap.put(index, new ArrayList<>());
+        }
+        List<Integer> sortKey = new ArrayList<>(); // key的sort
+        {
+            // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            sortKey.add(7); // 111
+            sortKey.add(6); // 110
+            sortKey.add(5); // 101
+            sortKey.add(3); // 011
+            sortKey.add(4); // 100
+            sortKey.add(2); // 010
+            sortKey.add(1); // 001
+            sortKey.add(0); // 000
+        }
+
+        String paramBrandName = brandName;
+        String paramProductType = productType;
+        String paramSizeType = sizeType;
+        List<String> brandNameList = new ArrayList<>();
+        List<String> productTypeList = new ArrayList<>();
+        List<String> sizeTypeList = new ArrayList<>();
+        if (StringUtils.isEmpty(brandName)) {
+            paramBrandName = SizeChartService.VALUE_ALL;
+        } else {
+            brandNameList.add(brandName);
+        }
+        if (StringUtils.isEmpty(productType)) {
+            paramProductType = SizeChartService.VALUE_ALL;
+        } else {
+            productTypeList.add(productType);
+        }
+        if (StringUtils.isEmpty(sizeType)) {
+            paramSizeType = SizeChartService.VALUE_ALL;
+        } else {
+            sizeTypeList.add(sizeType);
+        }
+
+        List<CmsBtSizeChartModel> modelsAll = sizeChartService.getSizeChartSearch(channelId, null, null, null, null, brandNameList, productTypeList, sizeTypeList, 1, 0);
+        for (CmsBtSizeChartModel model : modelsAll) {
+            String matchVal = "";
+            if (model.getBrandName().contains(paramBrandName)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getProductType().contains(paramProductType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            if (model.getSizeType().contains(paramSizeType)) {
+                matchVal += 1;
+            } else {
+                matchVal += 0;
+            }
+            matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
+        }
+
+        for (Integer key : sortKey) {
+            List<CmsBtSizeChartModel> matchModels =  matchMap.get(key);
+            if (matchModels.size() > 1) {
+                throw new BusinessException("尺码对照表找到两条以上符合的记录,请修正设定!" +
+                        "channelId= " + channelId +
+                        ",paramBrandName= " + paramBrandName +
+                        ",paramProductType= " + paramProductType +
+                        ",paramSizeType=" + paramSizeType);
+            }
+            if (matchModels.size() == 1) {
+                $info("找到size_chart记录!");
+                for (CmsBtSizeChartModelSizeMap sizeInfo : matchModels.get(0).getSizeMap()) {
+                    sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
+                }
+                break;
+            }
+        }
+
+        return sizeMap;
     }
 
     // 20160513 tom 图片服务器切换 START

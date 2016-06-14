@@ -22,6 +22,9 @@ public class SizeChartService extends BaseService {
     private CmsBtSizeChartDao cmsBtSizeChartDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService;
+
+    public final static String VALUE_ALL = "All";
+
     /**
      * 按照填写的条件去数据库检索记录
      * @param channelId
@@ -84,7 +87,11 @@ public class SizeChartService extends BaseService {
             sbQuery.append("\"sizeChartName\":{$regex:\"").append(sizeChartName).append("\"},");
         }
         //finish
-        if(!StringUtils.isEmpty(String.valueOf(finishFlag))){
+        // modified by morse.lu 2016/06/14 start
+        // 誰が作ったバグですね,修正修正
+//        if(!StringUtils.isEmpty(String.valueOf(finishFlag))){
+        if(!StringUtils.isEmpty(finishFlag)){
+            // modified by morse.lu 2016/06/14 end
             sbQuery.append(MongoUtils.splicingValue("finish", finishFlag));
             sbQuery.append(",");
         }
@@ -106,19 +113,19 @@ public class SizeChartService extends BaseService {
         }
         //BrandName
         if(brandNameList.size()>0){
-            brandNameList.add("All");
+            brandNameList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
             sbQuery.append(",");
         }
         //ProductType
         if(productTypeList.size()>0){
-            productTypeList.add("All");
+            productTypeList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
             sbQuery.append(",");
         }
         //SizeType
         if(sizeTypeList.size()>0){
-            sizeTypeList.add("All");
+            sizeTypeList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("sizeType",  sizeTypeList.toArray(new String[sizeTypeList.size()])));
             sbQuery.append(",");
         }
@@ -176,7 +183,7 @@ public class SizeChartService extends BaseService {
         //产品品牌
         if (brandNameList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
             cmsBtSizeChartModel.setBrandName(brandNameList);
@@ -184,7 +191,7 @@ public class SizeChartService extends BaseService {
         //产品类型
         if(productTypeList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
         } else {
             cmsBtSizeChartModel.setProductType(productTypeList);
@@ -192,7 +199,7 @@ public class SizeChartService extends BaseService {
         //产品性别
         if(sizeTypeList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);
         } else {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
@@ -230,7 +237,7 @@ public class SizeChartService extends BaseService {
         //产品品牌
         if (brandNameList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
             cmsBtSizeChartModel.setBrandName(brandNameList);
@@ -238,7 +245,7 @@ public class SizeChartService extends BaseService {
         //产品类型
         if(productTypeList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
         } else {
             cmsBtSizeChartModel.setProductType(productTypeList);
@@ -246,7 +253,7 @@ public class SizeChartService extends BaseService {
         //产品性别
         if(sizeTypeList.size()==0) {
             List lst = new ArrayList<String>();
-            lst.add("All");
+            lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);
         } else {
             cmsBtSizeChartModel.setSizeType(sizeTypeList);
