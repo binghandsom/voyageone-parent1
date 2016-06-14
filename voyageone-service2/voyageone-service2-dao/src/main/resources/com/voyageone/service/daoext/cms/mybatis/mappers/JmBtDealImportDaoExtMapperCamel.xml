@@ -13,7 +13,7 @@
     <select id="selectJmBtProductModel" resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtProductModel">
         SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}      limit 1
     </select>
-    <select id="selectJmBtSkuModel"  resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtSkuModel">
-        SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}      limit 1
+    <select id="selectListJmBtSkuModel"  resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtSkuModel">
+        SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}
     </select>
 </mapper>

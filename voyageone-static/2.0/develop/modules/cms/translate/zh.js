@@ -17,6 +17,7 @@ define(function(){
         "TXT_PLATFORM_CONNECTION_SETTING": "平台匹配关系设置",
         "TXT_DICTIONARY_INDEX": "字典一览",
         "TXT_CHANNEL_MANAGER": "店铺管理",
+        "TXT_ATTRIBUTE":"属性",
         "TXT_CUSTOM_ATTRIBUTE_MANAGER": "自定义属性设置",
         "TXT_COMMON_ATTRIBUTE_MANAGER": "共通属性设置",
         "TXT_FEED_IMPORT_RULE": "Feed输入规则",

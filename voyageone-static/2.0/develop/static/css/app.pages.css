@@ -332,7 +332,7 @@
 /**平台schema*/
 .product-shema-detail .nav span{
     display: inline-block;
-    width: 85px;
+    width: 135px;
     height: 27px;
     background: #23ad44;
     color: white;
@@ -372,17 +372,20 @@
     word-break: break-all;
 }
 
-@media screen and (max-width: 1500px) {
+/*@media screen and (max-width: 1500px) {
     .product-shema-detail .bs-docs-sidebar{
         display: none;
     }
-}
+}*/
 
 .product-shema-detail .bs-docs-sidebar{
-    float: right;
+    position: fixed;
+    right: 40px;
     color: white;
     margin-top: 80px;
     border: 1px solid #ADCAE2;
+    background: #FFFFFF;
+
 }
 
 .product-shema-detail .bs-docs-sidebar h3{
@@ -415,11 +418,11 @@
     border-left: 1px solid #ADCAE2;
 }
 
-@media screen and (max-width: 1441px) {
+/*@media screen and (max-width: 1441px) {
     .bs-docs-sidebar{
         min-height: 216px;
     }
-}
+}*/
 /*uib-tab样式*/
 .tab-container {
     margin-bottom: 15px;

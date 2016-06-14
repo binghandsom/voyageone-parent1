@@ -82,6 +82,12 @@ define([
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
                     "controller": 'popSalePriceCtl',
                     "size": 'md'
+                },
+                "updateProductApproval": {
+                    "templateUrl": "views/pop/bulkUpdate/updateProductApproval.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/updateProductApproval.ctl",
+                    "controller": 'popUpdateProductApprovalCtl as ctrl',
+                    "size": 'md'
                 }
             },
             "category": {
@@ -1324,6 +1330,11 @@ define([
         //打开高级查询页的共通设置，最终售价
         $scope.openSalePrice = function (context) {
             return openModel(popActions.bulkUpdate.salePrice, context);
+        };
+
+        //打开高级查询页的共通设置，上新审批
+        $scope.openUpdateApproval = function (context) {
+            return openModel(popActions.bulkUpdate.updateProductApproval, context);
         };
 
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {
