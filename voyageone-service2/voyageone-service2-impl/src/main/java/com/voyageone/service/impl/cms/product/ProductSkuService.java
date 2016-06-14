@@ -195,10 +195,27 @@ public class ProductSkuService extends BaseService {
             updateMap.put("common.skus", cmsProduct.getCommon().getSkus());
         }
 
-        // 更新platforms的SalePrice
+        // 更新platforms.Pxx.skus的RetailPrice和SalePrice
+        // 更新platforms.Pxx的RetailPrice和SalePrice的价格区间
         if (cmsProduct.getPlatforms() != null) {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
                 updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
+                if (entry.getValue().getSkus() != null) {
+                    Map<String, Double> result = getPlatformPriceScope(entry.getValue().getSkus());
+                    entry.getValue().setpPriceMsrpSt(result.get("pPriceMsrpSt"));
+                    entry.getValue().setpPriceMsrpEd(result.get("pPriceMsrpEd"));
+                    entry.getValue().setpPriceRetailSt(result.get("pPriceRetailSt"));
+                    entry.getValue().setpPriceRetailEd(result.get("pPriceRetailEd"));
+                    entry.getValue().setpPriceSaleSt(result.get("pPriceSaleSt"));
+                    entry.getValue().setpPriceSaleEd(result.get("pPriceSaleEd"));
+
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceMsrpSt", entry.getValue().getpPriceMsrpSt());
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceMsrpEd", entry.getValue().getpPriceMsrpEd());
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceRetailSt", entry.getValue().getpPriceRetailSt());
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceRetailEd", entry.getValue().getpPriceRetailEd());
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceSaleSt", entry.getValue().getpPriceSaleSt());
+                    updateMap.put("platforms.P" + entry.getValue().getCartId() + ".pPriceSaleEd", entry.getValue().getpPriceSaleEd());
+                }
             }
         }
 
@@ -217,6 +234,7 @@ public class ProductSkuService extends BaseService {
                 updateMap.put("common.fields.priceRetailEd", cmsProduct.getCommon().getFields().getPriceRetailEd());
             }
         }
+
         updateMap.put("modifier", modifier);
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
         BulkUpdateModel model = new BulkUpdateModel();
@@ -225,14 +243,14 @@ public class ProductSkuService extends BaseService {
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
-        updateNewGroupPrice(channelId, cmsProduct.getProdId());
+        updateNewGroupPrice(channelId, cmsProduct.getProdId(), modifier);
 
     }
 
     /**
      *  更新group里的价格
      */
-    private void updateNewGroupPrice(String channelId, Long ProdId) {
+    private void updateNewGroupPrice(String channelId, Long ProdId, String modifier) {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         // 先根据产品id找到产品code
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{'prodId':" + ProdId + "}", channelId);
@@ -246,7 +264,7 @@ public class ProductSkuService extends BaseService {
                 String[] codeArr = new String[codeList.size()];
                 codeArr = codeList.toArray(codeArr);
                 List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{'common.fields':1,'platform':1}", channelId);
-                bulkList.add(calculateNewPriceRange(prodList, grpObj));
+                bulkList.add(calculateNewPriceRange(prodList, grpObj, modifier));
             }
         });
         if (bulkList.size() > 0) {
@@ -331,7 +349,7 @@ public class ProductSkuService extends BaseService {
     }
 
     // 计算价格区间
-    private BulkUpdateModel calculateNewPriceRange(List<CmsBtProductModel> products, CmsBtProductGroupModel group) {
+    private BulkUpdateModel calculateNewPriceRange(List<CmsBtProductModel> products, CmsBtProductGroupModel group, String modifier) {
         Double priceSaleSt = null;
         Double priceSaleEd = null;
         Double priceRetailSt = null;
@@ -344,13 +362,11 @@ public class ProductSkuService extends BaseService {
             if (group.getCartId() != 23) {
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                     if (group.getCartId() == entry.getValue().getCartId()) {
-                        for (BaseMongoMap<String, Object> sku : entry.getValue().getSkus()) {
-                            if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
-                                priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                            }
-                            if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
-                                priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                            }
+                        if (priceSaleSt == null || entry.getValue().getpPriceSaleSt() < priceSaleSt) {
+                            priceSaleSt = entry.getValue().getpPriceSaleSt();
+                        }
+                        if (priceSaleEd == null || entry.getValue().getpPriceSaleEd() > priceSaleEd) {
+                            priceSaleEd = entry.getValue().getpPriceSaleEd();
                         }
                     }
                 }
@@ -365,26 +381,83 @@ public class ProductSkuService extends BaseService {
                 }
             }
 
-            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt) {
-                priceRetailSt = product.getFields().getPriceRetailSt();
-            }
-            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd) {
-                priceRetailEd = product.getFields().getPriceRetailEd();
+            if (group.getCartId() == 0 || group.getCartId() == 1) {
+                if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceRetailSt() != null) {
+                    if (priceRetailSt == null || product.getCommon().getFields().getPriceRetailSt() < priceRetailSt) {
+                        priceRetailSt = product.getCommon().getFields().getPriceRetailSt();
+                    }
+                }
+                if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceRetailEd() != null) {
+                    if (priceRetailEd == null || product.getCommon().getFields().getPriceRetailEd() > priceRetailEd) {
+                        priceRetailEd = product.getCommon().getFields().getPriceRetailEd();
+                    }
+                }
+            } else {
+                // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
+                if (group.getCartId() != 23) {
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+                        if (group.getCartId() == entry.getValue().getCartId()) {
+                            if (priceRetailSt == null || entry.getValue().getpPriceRetailSt() < priceRetailSt) {
+                                priceRetailSt = entry.getValue().getpPriceRetailSt();
+                            }
+                            if (priceRetailEd == null || entry.getValue().getpPriceRetailEd() > priceRetailEd) {
+                                priceRetailEd = entry.getValue().getpPriceRetailEd();
+                            }
+                        }
+                    }
+                } else{
+                    for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                        if (priceRetailSt == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) < priceRetailSt) {
+                            priceRetailSt = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+                        }
+                        if (priceRetailEd == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) > priceRetailEd) {
+                            priceRetailEd = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+                        }
+                    }
+                }
             }
 
-            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt) {
-                priceMsrpSt = product.getFields().getPriceMsrpSt();
+            if (group.getCartId() == 0 || group.getCartId() == 1) {
+                if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceMsrpSt() != null) {
+                    if (priceMsrpSt == null || product.getCommon().getFields().getPriceMsrpSt() < priceMsrpSt) {
+                        priceMsrpSt = product.getCommon().getFields().getPriceMsrpSt();
+                    }
+                }
+                if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceMsrpEd() != null) {
+                    if (priceMsrpEd == null || product.getCommon().getFields().getPriceMsrpEd() > priceMsrpEd) {
+                        priceMsrpEd = product.getCommon().getFields().getPriceMsrpEd();
+                    }
+                }
+            } else {
+                // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
+                if (group.getCartId() != 23) {
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+                        if (group.getCartId() == entry.getValue().getCartId()) {
+                            if (priceMsrpSt == null || entry.getValue().getpPriceMsrpSt() < priceMsrpSt) {
+                                priceMsrpSt = entry.getValue().getpPriceMsrpSt();
+                            }
+                            if (priceMsrpEd == null || entry.getValue().getpPriceMsrpEd() > priceMsrpEd) {
+                                priceMsrpEd = entry.getValue().getpPriceMsrpEd();
+                            }
+                        }
+                    }
+                } else{
+                    for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                        if (priceMsrpSt == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) < priceMsrpSt) {
+                            priceMsrpSt = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+                        }
+                        if (priceMsrpEd == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) > priceMsrpEd) {
+                            priceMsrpEd = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+                        }
+                    }
+                }
             }
-            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd) {
-                priceMsrpEd = product.getFields().getPriceMsrpEd();
-            }
-
         }
 
         Map<String, Object> updateMap = new HashMap<>();
         if (group.getCartId() == 0 || group.getCartId() == 1) {
-            updateMap.put("priceSaleSt", 0);
-            updateMap.put("priceSaleEd", 0);
+            updateMap.put("priceSaleSt", new Double("0.0"));
+            updateMap.put("priceSaleEd", new Double("0.0"));
         } else {
             updateMap.put("priceSaleSt", priceSaleSt);
             updateMap.put("priceSaleEd", priceSaleEd);
@@ -394,6 +467,8 @@ public class ProductSkuService extends BaseService {
         updateMap.put("priceMsrpSt", priceMsrpSt);
         updateMap.put("priceMsrpEd", priceMsrpEd);
 
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
         BulkUpdateModel bulk = new BulkUpdateModel();
         bulk.setUpdateMap(updateMap);
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -738,6 +813,63 @@ public class ProductSkuService extends BaseService {
     /**
      * 取得Sku区间
      */
+    private Map<String, Double> getPlatformPriceScope(List<BaseMongoMap<String, Object>> platformSkus) {
+
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+
+        Map<String, Double> result = new HashMap<>();
+        for (BaseMongoMap<String, Object> platformSku : platformSkus) {
+            if (priceSaleSt == null) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleSt > Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleSt = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+            if (priceSaleEd == null) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            } else if (priceSaleEd < Double.parseDouble(String.valueOf(platformSku.get("priceSale")))) {
+                priceSaleEd = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+            }
+            if (priceRetailSt == null) {
+                priceRetailSt = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
+            } else if (priceRetailSt > Double.parseDouble(String.valueOf(platformSku.get("priceRetail")))) {
+                priceRetailSt = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
+            }
+            if (priceRetailEd == null) {
+                priceRetailEd = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
+            } else if (priceRetailEd < Double.parseDouble(String.valueOf(platformSku.get("priceRetail")))) {
+                priceRetailEd = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
+            }
+
+            if (priceMsrpSt == null) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpSt > Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpSt = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+            if (priceMsrpEd == null) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            } else if (priceMsrpEd < Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")))) {
+                priceMsrpEd = Double.parseDouble(String.valueOf(platformSku.get("priceMsrp")));
+            }
+        }
+
+        result.put("pPriceSaleSt", priceSaleSt);
+        result.put("pPriceSaleEd", priceSaleEd);
+        result.put("pPriceRetailSt", priceRetailSt);
+        result.put("pPriceRetailEd", priceRetailEd);
+        result.put("pPriceMsrpSt", priceMsrpSt);
+        result.put("pPriceMsrpEd", priceMsrpEd);
+
+        return result;
+    }
+
+    /**
+     * 取得Sku区间
+     */
     private Map<String, Double> getPriceScope(List<CmsBtProductModel_Sku> commonSkus) {
 
         Double priceMsrpSt = null;
@@ -749,22 +881,22 @@ public class ProductSkuService extends BaseService {
         for (CmsBtProductModel_Sku commonSku : commonSkus) {
             if (priceMsrpSt == null) {
                 priceMsrpSt = commonSku.getPriceMsrp();
-            } else if (priceMsrpSt < commonSku.getPriceMsrp()) {
+            } else if (priceMsrpSt > commonSku.getPriceMsrp()) {
                 priceMsrpSt = commonSku.getPriceMsrp();
             }
             if (priceMsrpEd == null) {
                 priceMsrpEd = commonSku.getPriceMsrp();
-            } else if (priceMsrpEd > commonSku.getPriceMsrp()) {
+            } else if (priceMsrpEd < commonSku.getPriceMsrp()) {
                 priceMsrpEd = commonSku.getPriceMsrp();
             }
             if (priceRetailSt == null) {
                 priceRetailSt = commonSku.getPriceRetail();
-            } else if (priceRetailSt < commonSku.getPriceRetail()) {
+            } else if (priceRetailSt > commonSku.getPriceRetail()) {
                 priceRetailSt = commonSku.getPriceRetail();
             }
             if (priceRetailEd == null) {
                 priceRetailEd = commonSku.getPriceRetail();
-            } else if (priceRetailEd > commonSku.getPriceRetail()) {
+            } else if (priceRetailEd < commonSku.getPriceRetail()) {
                 priceRetailEd = commonSku.getPriceRetail();
             }
         }
