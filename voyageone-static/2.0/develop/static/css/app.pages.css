@@ -340,6 +340,12 @@
     line-height: 24px;
 }
 
+.product-shema-detail span a{
+    color: #e67e22;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
 .product-shema-detail button span{
     font-size: 12px;
 }
@@ -352,10 +358,14 @@
     border-bottom: 2px solid #e67e22;
 }
 
-.product-shema-detail .thumbnail.active{
+.product-shema-detail .thumbnail.main{
     border: 1px solid #337ab7;
-    box-shadow: 0px 0px 4px 0px #337ab7 inset;
+    box-shadow: 0px 1px 8px 0px #337ab7;
 }
+
+.product-shema-detail .thumbnail.current{
+    background: #FB6E52;
+ }
 
 .product-shema-detail h4{
     font-size: 12px;

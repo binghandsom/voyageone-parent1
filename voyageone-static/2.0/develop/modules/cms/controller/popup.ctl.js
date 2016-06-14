@@ -1110,11 +1110,15 @@ define([
          * 新增advance查询页分类edit弹出
          * */
         $scope.openAddChannelCategoryEdit = function (selList) {
-            var productIds = [];
+            var productIds = [],data;
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
             });
-            return openModel(popActions.bulkUpdate.addChannelCategory, {"productIds": productIds});
+            if(selList[0].plateSchema)
+                data = {"productIds": productIds,"cartId":selList[0].cartId,"selectedIds":selList[0].selectedIds,plateSchema:true}
+            else
+                data = {"productIds": productIds}
+            return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 
 

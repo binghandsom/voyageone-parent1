@@ -21,6 +21,7 @@ define([
 		this.changeCategory = changeCategory;
 		this.getProductPlatform =  getProductPlatform;
 		this.changePlatformCategory =  changePlatformCategory;
+		this.updateProductPlatformChk = updateProductPlatformChk;
 		this.updateProductPlatform = updateProductPlatform;
 
 		/**
@@ -191,6 +192,22 @@ define([
 			$productDetailService.changePlatformCategory(req)
 				.then (function (res) {
 					defer.resolve(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 *检查sku sale price
+		 * @param { prodId:"",cartId:"",platform} 产品id，平台id,platform
+		 */
+		function updateProductPlatformChk(req){
+			var defer = $q.defer();
+			$productDetailService.updateProductPlatformChk(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
 				});
 
 			return defer.promise;

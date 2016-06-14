@@ -1,5 +1,8 @@
 /**
  * Created by sofia on 5/19/2016.
+ * @author tony-piao
+ * @description 不会触发保存接口，把信息返回给调用者
+ * @version 2.1.0
  */
 define([
     'cms'
@@ -22,13 +25,14 @@ define([
             this.cartList = [];
             this.channelCategoryList = null;
             this.isSelectCid = [];
-            this.cartId = $rootScope.platformType.cartId.toString();
+            this.cartId = context.cartId == null ? $rootScope.platformType.cartId.toString() : context.cartId;
             this.cnt = "";
             this.addChannelCategoryService = $addChannelCategoryService;
             this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
             this.checkedCountValid = false;
             this.cartIdValid = false;
+            this.context = context;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -53,7 +57,7 @@ define([
                         self.channelCategoryList = null;
                         return;
                     }
-                    self.isSelectCid = res.data.isSelectCid;
+                    self.isSelectCid = self.context.plateSchema?self.context.selectedIds:res.data.isSelectCid;
                     self.channelCategoryList = res.data.channelCategoryList;
                 });
             },
@@ -93,7 +97,8 @@ define([
                     self.checkedCountValid = true;
                     return;
                 }
-                self.addChannelCategoryService.save({
+
+/*                self.addChannelCategoryService.save({
                     "cIds": cIds,
                     "cNames": cNames,
                     "fullCNames": fullCNames,
@@ -104,8 +109,17 @@ define([
                     self.context = context;
                     self.context.catPath = fullCNames;
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    self.$uibModalInstance.close(context);
-                });
+                    self.$uibModalInstance.close();
+                });*/
+                self.context.saveInfo = {
+                    "cIds": cIds,
+                    "cNames": cNames,
+                    "fullCNames": fullCNames,
+                    "fullCatId": fullCIds,
+                    "code": self.code,
+                    "cartId": self.cartId
+                };
+                self.$uibModalInstance.close(self.context);
             }
         };
         return PopAddChannelCategoryCtrl;
