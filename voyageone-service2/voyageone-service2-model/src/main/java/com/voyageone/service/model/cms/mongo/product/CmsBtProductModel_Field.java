@@ -492,7 +492,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     // 主数据平台是否为主商品
     public int getIsMasterMain() {
-        return getAttribute("isMasterMain");
+        return getIntAttribute("isMasterMain");
     }
     public void setIsMasterMain(int isMasterMain) {
         setAttribute("isMasterMain", isMasterMain);
