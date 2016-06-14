@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
@@ -218,6 +219,47 @@ public class PlatformCategoryService extends BaseService {
             if (catTreeModel.getChildren().size() > 0) {
                 CmsMtPlatformCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
                 if (category != null) return category;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取类目名称对应的类目对象
+     *
+     * @return CmsMtCategoryTreeAllModel
+     */
+    public CmsMtPlatformCategoryTreeModel getCategoryByCatPath(String catPath, int cartId) {
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeList = getPlatformCategory(cartId);
+        for (CmsMtPlatformCategoryTreeModel platformCategoryTree : platformCategoryTreeList) {
+            CmsMtPlatformCategoryTreeModel model = findCategory(platformCategoryTree, catPath);
+            if (model != null) {
+                return  model;
+            }
+        }
+        return  null;
+    }
+
+    /**
+     * 取得一级类目列表（所有平台数据）
+     *
+     * @return CmsMtCategoryTreeAllModel
+     */
+    public List<CmsMtPlatformCategoryTreeModel> getPlatformCategory(int cartId) {
+        return platformCategoryDao.selectAll(cartId);
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtPlatformCategoryTreeModel findCategory(CmsMtPlatformCategoryTreeModel tree, String catPath) {
+        for (CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel : tree.getChildren()) {
+            if (cmsMtPlatformCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
+                return cmsMtPlatformCategoryTreeModel;
+            }
+            if (cmsMtPlatformCategoryTreeModel.getChildren().size() > 0) {
+                CmsMtPlatformCategoryTreeModel platformCategory = findCategory(cmsMtPlatformCategoryTreeModel, catPath);
+                if (platformCategory != null) return platformCategory;
             }
         }
         return null;

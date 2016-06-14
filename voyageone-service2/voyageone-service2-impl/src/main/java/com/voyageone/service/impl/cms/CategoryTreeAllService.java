@@ -31,7 +31,7 @@ public class CategoryTreeAllService extends BaseService {
         List<String> categorys = Arrays.asList(categoryPath.split(">"));
         // 取得一级类目树
 
-        CmsMtCategoryTreeAllModel categoryTree = getFeedCategoryByCatId(MD5.getMD5(categorys.get(0)));
+        CmsMtCategoryTreeAllModel categoryTree = getCategoryByCatId(MD5.getMD5(categorys.get(0)));
 
         if (categoryTree == null) {
             categoryTree = new CmsMtCategoryTreeAllModel();
@@ -101,12 +101,37 @@ public class CategoryTreeAllService extends BaseService {
     }
 
     /**
-     * 根据一级类目获取一级类目下所有的类目
+     * 根据类目id获取一级类目下的类目
      *
      * @return CmsMtCategoryTreeAllModel
      */
-    public CmsMtCategoryTreeAllModel getFeedCategoryByCatId(String catId) {
+    public CmsMtCategoryTreeAllModel getCategoryByCatId(String catId) {
         return cmsMtCategoryTreeAllDao.selectByCatId(catId);
+    }
+
+    /**
+     * 根据类目Path获取一级类目下的类目
+     *
+     * @return CmsMtCategoryTreeAllModel
+     */
+    public CmsMtCategoryTreeAllModel getFirstLevelCategoryByCatPath(String catPath) {
+        return cmsMtCategoryTreeAllDao.selectByCatPath(catPath);
+    }
+
+    /**
+     * 获取类目名称对应的类目的一级类目对象
+     *
+     * @return CmsMtCategoryTreeAllModel
+     */
+    public CmsMtCategoryTreeAllModel getFirstLevelCategoryObjectByCatPath(String catPath) {
+        List<CmsMtCategoryTreeAllModel> categoryTreeList = getMasterCategory();
+        for (CmsMtCategoryTreeAllModel categoryTree : categoryTreeList) {
+            CmsMtCategoryTreeAllModel model = findCategory(categoryTree, catPath);
+            if (model != null) {
+                return  categoryTree;
+            }
+        }
+        return  null;
     }
 
     /**
@@ -114,7 +139,7 @@ public class CategoryTreeAllService extends BaseService {
      *
      * @return CmsMtCategoryTreeAllModel
      */
-    public CmsMtCategoryTreeAllModel getFeedCategoryByCatPath(String catPath) {
+    public CmsMtCategoryTreeAllModel getCategoryByCatPath(String catPath) {
         List<CmsMtCategoryTreeAllModel> categoryTreeList = getMasterCategory();
        for (CmsMtCategoryTreeAllModel categoryTree : categoryTreeList) {
            CmsMtCategoryTreeAllModel model = findCategory(categoryTree, catPath);

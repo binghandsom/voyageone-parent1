@@ -43,6 +43,14 @@ public class CmsMtCategoryTreeAllDao extends BaseMongoDao<CmsMtCategoryTreeAllMo
     }
 
     /**
+     * 取得 根据CatId
+     */
+    public CmsMtCategoryTreeAllModel selectByCatPath(String catPath) {
+        String queryStr = "{\"catPath\":\"" + catPath + "\"}";
+        return selectOneWithQuery(queryStr);
+    }
+
+    /**
      * 插入
      */
     public WriteResult insert(CmsMtCategoryTreeAllModel model) {

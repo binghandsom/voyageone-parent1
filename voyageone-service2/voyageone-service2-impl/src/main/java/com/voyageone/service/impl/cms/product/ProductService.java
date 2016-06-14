@@ -1151,7 +1151,10 @@ public class ProductService extends BaseService {
         if(isModifiedChk){
             CmsBtProductModel cmsBtProduct = getProductById(channelId, prodId);
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProduct.getPlatform(platformModel.getCartId());
-            String oldModified = cmsBtProductModel_platform_cart.getModified();
+            String oldModified = null;
+            if(cmsBtProductModel_platform_cart !=null) {
+                oldModified = cmsBtProductModel_platform_cart.getModified();
+            }
             if(oldModified != null ){
                 if(!oldModified.equalsIgnoreCase(platformModel.getModified())){
                     throw new BusinessException("200011");
@@ -1181,6 +1184,7 @@ public class ProductService extends BaseService {
                 sxWorkloadModel.setCartId(platformModel.getCartId());
                 sxWorkloadModel.setChannelId(channelId);
                 sxWorkloadModel.setGroupId(group.getGroupId());
+                sxWorkloadModel.setPublishStatus(0);
                 cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
             }
         }
