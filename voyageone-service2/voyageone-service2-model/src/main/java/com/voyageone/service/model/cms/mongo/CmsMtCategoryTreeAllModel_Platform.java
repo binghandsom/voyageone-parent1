@@ -5,18 +5,16 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CmsMtCategoryTreeAllModel_Platform extends BaseMongoModel {
-    private String cartId;
+public class CmsMtCategoryTreeAllModel_Platform {
+    private String platformId;
     private String catId;
     private String catPath;
 
-    public String getCartId() {
-        return cartId;
+    public String getPlatformId() {
+        return platformId;
     }
 
-    public void setCartId(String cartId) {
-        this.cartId = cartId;
-    }
+    public void setPlatformId(String platformId) { this.platformId = platformId; }
 
     public String getCatId() {
         return catId;

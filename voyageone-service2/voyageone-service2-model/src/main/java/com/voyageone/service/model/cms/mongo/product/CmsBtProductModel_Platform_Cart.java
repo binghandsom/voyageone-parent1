@@ -22,6 +22,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public CmsBtProductModel_Platform_Cart(Map<String,Object> map){
         this.putAll(map);
     }
+
+    //modified
+    public String getModified(){
+        return getAttribute("modified");
+    }
+    public void setModified(String modified){
+        setAttribute("modified", modified);
+    }
+
     //cartId
     public int getCartId() {
         return getIntAttribute("cartId");
@@ -60,6 +69,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setpIsMain(int pIsMain) {
         setAttribute("pIsMain", pIsMain);
+    }
+
+    //pProductId
+    public String getpProductId() {
+        return getAttribute("pProductId");
+    }
+    public void setpProductId(String pNumIId) {
+        setAttribute("pProductId", pNumIId);
     }
 
     //pNumIId
@@ -140,6 +157,48 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setpAttributeSetTime(String pAttributeSetTime) {
         setAttribute("pAttributeSetTime", pAttributeSetTime);
+    }
+
+    //MSRP价格区间
+    public Double getpPriceMsrpSt() {
+        return getDoubleAttribute("pPriceMsrpSt");
+    }
+    public void setpPriceMsrpSt(Double pPriceMsrpSt) {
+        setAttribute("pPriceMsrpSt", pPriceMsrpSt);
+    }
+    public Double getpPriceMsrpEd() {
+        return getDoubleAttribute("pPriceMsrpEd");
+    }
+    public void setpPriceMsrpEd(Double pPriceMsrpEd) {
+        setAttribute("pPriceMsrpEd", pPriceMsrpEd);
+    }
+
+    //建议市场价格区间
+    public Double getpPriceRetailSt() {
+        return getDoubleAttribute("pPriceRetailSt");
+    }
+    public void setpPriceRetailSt(Double priceRetailSt) {
+        setAttribute("pPriceRetailSt", priceRetailSt);
+    }
+    public Double getpPriceRetailEd() {
+        return getDoubleAttribute("pPriceRetailEd");
+    }
+    public void setpPriceRetailEd(Double priceRetailEd) {
+        setAttribute("pPriceRetailEd", priceRetailEd);
+    }
+
+    //销售价格价格区间
+    public Double getpPriceSaleSt() {
+        return getDoubleAttribute("pPriceSaleSt");
+    }
+    public void setpPriceSaleSt(Double priceSaleSt) {
+        setAttribute("pPriceSaleSt", priceSaleSt);
+    }
+    public Double getpPriceSaleEd() {
+        return getDoubleAttribute("pPriceSaleEd");
+    }
+    public void setpPriceSaleEd(Double priceSaleEd) {
+        setAttribute("pPriceSaleEd", priceSaleEd);
     }
 
     //fields

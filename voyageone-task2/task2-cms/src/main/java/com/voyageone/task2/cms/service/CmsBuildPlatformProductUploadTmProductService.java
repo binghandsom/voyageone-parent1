@@ -49,7 +49,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的天猫platformProductId列表 (如果没有找到, 返回null)
      */
     public List<String> getProductIdFromTmall(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                      CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
+                                              CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
         // 产品id列表(返回值)
         List<String> platformProductIdList = new ArrayList<>();
         // 上新数据
@@ -63,6 +63,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             // 调用天猫API获取匹配产品规则（tmall.product.match.schema.get）
             String strXml = tbProductService.getProductMatchSchema(platformCategoryId, shopBean);
             $debug("调用天猫API获取的匹配产品规则 strXml:" + strXml);
+            // added by morse.lu 2016/06/06 start
+            if (StringUtils.isEmpty(strXml)) {
+                // ★★★只有Schema取不到才可以返回null，用于外部判断是不是Schema取不到★★★
+                return null;
+            }
+            // added by morse.lu 2016/06/06 end
             // 将取得的响应xml转换为List<Field>
             fieldList = SchemaReader.readXmlForList(strXml);
         } catch (ApiException ex) {
@@ -228,7 +234,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
     }
 
     /**
-     * 上传产品到天猫(天猫国际)平台
+     * 上传产品到天猫(天猫国际)平台（增加）
      * 1. 从Mango数据库中查询所有产品的字段
      * 2. 对所有产品字段进行mapping填值
      * 3. 调用Tmall API上传产品，如果上传成功，进入上传商品状态
@@ -240,8 +246,8 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @param modifier 更新者
      * @return 返回的产品上传成功的天猫productId
      */
-    public String uploadProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+    public String addTmallProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
+                                  CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上传成功返回的产品id(返回值)
         String platformProductId = "";
         // 上新数据
@@ -261,11 +267,17 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 //            String strXml = tbProductService.getAddProductSchema(platformCategoryId, brandCode, shopBean);
 //            $debug("调用天猫API获取的产品发布规则 strXml:" + strXml);
             $debug("productSchema:" + productSchema);
+            // added by morse.lu 2016/06/06 start
+            if (StringUtils.isEmpty(productSchema)) {
+                // ★★★只有Schema取不到才可以返回null，可用于外部判断是不是Schema取不到★★★
+                return null;
+            }
+            // added by morse.lu 2016/06/06 end
             // 将取得的产品Schema xml转换为List<Field>
             fieldList = SchemaReader.readXmlForList(productSchema);
         } catch (TopSchemaException ex) {
             // 解析XML异常
-            String errMsg = String.format("将取得的产品Schema xml转换为field列表失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
+            String errMsg = String.format("新增产品时,将取得的产品Schema xml转换为field列表失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformCategoryId);
             $error(errMsg);
             ex.printStackTrace();
@@ -291,7 +303,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         try {
             // 将取得所有field对应的属性值的列表转成xml字符串
             xmlData = SchemaWriter.writeParamXmlString(fieldList);
-            $debug("调用天猫API上传产品 xmlData:" + xmlData);
+            $debug("调用天猫API新增产品 xmlData:" + xmlData);
             // 调用天猫API使用Schema文件发布一个产品(tmall.product.schema.add)
             addProductResult = tbProductService.addProduct(platformCategoryId, brandCode, xmlData, shopBean, failCause);
         } catch (TopSchemaException ex) {
@@ -342,6 +354,77 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         }
 
         return platformProductId;
+    }
+
+    /**
+     * 上传产品到天猫(天猫国际)平台（更新）
+     *
+     * @param expressionParser ExpressionParser (包含SxData)
+     * @param platformProductId  天猫productId
+     * @param cmsMtPlatformMappingModel MongoDB 平台CategoryId取得，mapping设定
+     * @param shopBean ShopBean 店铺信息
+     * @param modifier 更新者
+     */
+    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+        // 上新数据
+        SxData sxData = expressionParser.getSxData();
+        StringBuffer failCause = new StringBuffer();
+
+        // 获取更新产品的规则的schema
+        String updateProductSchema;
+        try {
+            updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(platformProductId), shopBean, failCause);
+            if (StringUtils.isEmpty(updateProductSchema)) {
+                sxData.setErrorMessage(failCause.toString());
+                throw new BusinessException(failCause.toString());
+            }
+        } catch (ApiException e) {
+            sxData.setErrorMessage(e.getMessage());
+            throw new BusinessException(e.getMessage());
+        }
+
+        List<Field> fieldList;
+        try {
+            fieldList = SchemaReader.readXmlForList(updateProductSchema);
+        } catch (TopSchemaException e) {
+            // 解析XML异常
+            String errMsg = String.format("更新产品时,将取得的产品Schema xml转换为field列表失败(解析XML异常)！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
+                    sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId(), platformProductId);
+            $error(errMsg);
+            e.printStackTrace();
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(e.getMessage());
+        }
+
+        // 根据field列表取得属性值mapping数据
+        try {
+            // 取得所有field对应的属性值
+            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+        } catch (Exception ex) {
+            String errMsg = String.format("更新产品时,根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
+                    shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformProductId);
+            $error(errMsg);
+            ex.printStackTrace();
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(ex.getMessage());
+        }
+
+        // 更新产品
+        try {
+            // 将取得所有field对应的属性值的列表转成xml字符串
+            String xmlData = SchemaWriter.writeParamXmlString(fieldList);
+            $debug("调用天猫API更新产品 xmlData:" + xmlData);
+
+            failCause.setLength(0);
+            String result = tbProductService.updateProduct(Long.parseLong(platformProductId), xmlData, shopBean, failCause);
+            if (StringUtils.isEmpty(result)) {
+                sxData.setErrorMessage(failCause.toString());
+                throw new BusinessException(failCause.toString());
+            }
+        } catch (TopSchemaException | ApiException e) {
+            sxData.setErrorMessage(e.getMessage());
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     /**

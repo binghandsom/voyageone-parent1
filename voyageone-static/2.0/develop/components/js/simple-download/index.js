@@ -40,7 +40,8 @@
             var $frame = createIframe(id);
             $('body').append($form.append($hiddens), $frame);
             $frame.on('load', function () {
-                if (callback) callback($frame, $form, param, context);
+                var responseContent = $frame.contents().find('body').text();
+                if (callback) callback(responseContent, param, context);
                 $form.remove();
                 $frame.remove();
             });
@@ -52,7 +53,8 @@
             var $frame = createIframe(id);
             $('body').append($frame);
             $frame.on('load', function () {
-                if (callback) callback($frame, param, context);
+                var responseContent = $frame.contents().find('body').text();
+                if (callback) callback(responseContent, param, context);
                 $frame.remove();
             });
             $frame[0].contentWindow.href = url + '?' + $.param(param);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.JmBtDealImportDaoExt">
+    <select id="selectListProductDealByChannelId" resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JMProductDealBean">
+        SELECT product_code,`channel_id`,MAX(`deal_id`) AS deal_Id
+        FROM  jumei.`jm_bt_deal_import`
+        WHERE `channel_id`=#{channelId}
+        GROUP BY `product_code`,`channel_id`
+    </select>
+    <select id="selectJmBtDealImportModel" resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtDealImportModel">
+        SELECT * from jumei.jm_bt_deal_import where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}  limit 1
+    </select>
+    <select id="selectJmBtProductModel" resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtProductModel">
+        SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}      limit 1
+    </select>
+    <select id="selectListJmBtSkuModel"  resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtSkuModel">
+        SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}
+    </select>
+</mapper>

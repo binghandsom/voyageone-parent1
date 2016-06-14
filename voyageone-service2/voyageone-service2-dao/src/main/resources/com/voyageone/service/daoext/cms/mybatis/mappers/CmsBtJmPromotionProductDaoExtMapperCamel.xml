@@ -121,8 +121,15 @@
             <if test="productCode!=null">
                 and    b.product_code  like CONCAT(#{productCode},'%')
             </if>
-            <if test="categoryLv1Name!=null">
-                and b.category_lv1_name =#{categoryLv1Name}
+            <if test="voCategoryName!=null">
+                and b.vo_category_name =#{voCategoryName}
+            </if>
+            <if test="tagIdList!=null and tagIdList.size()!=0">
+            and  a.id in (SELECT `cms_bt_jm_promotion_product_id`  FROM `cms_bt_jm_promotion_tag_product`
+                WHERE `cms_bt_tag_id` in   <foreach item="item" index="i" collection="tagIdList"
+                                                    open="(" separator="," close=")">
+                #{item}
+            </foreach>)
             </if>
             <if test="synchStateList.size()!=0">
                 and  a.synch_state in
@@ -135,30 +142,30 @@
                 and a.discount>=#{beginDiscount}
             </if>
             <if test="endDiscount!=null">
-                and  a.discount&lt;=#{endDiscount};
+                and  a.discount&lt;=#{endDiscount}
             </if>
             <if test="priceType=='msrp'">
                 <if test="beginPrice!=null">
-                    and   b.msrp>=#{beginPrice}
+                    and   b.msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp&lt;=#{endPrice}
+                    and   b.msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="priceType=='marketPrice'">
+            <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    a.market_price>=#{beginPrice}
+                    and    b.retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   a.market_price&lt;=#{endPrice}
+                    and   b.retail_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="priceType=='dealPrice'">
+            <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  a.deal_price>=#{beginPrice}
+                    and  b.sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  a.deal_price&lt;=#{endPrice}
+                    and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="productNameCn!=null">
@@ -190,8 +197,8 @@
             <if test="productCode!=null">
                 and    b.product_code  like CONCAT(#{productCode},'%')
             </if>
-            <if test="categoryLv1Name!=null">
-                and b.category_lv1_name =#{categoryLv1Name}
+            <if test="voCategoryName!=null">
+                and b.vo_category_name =#{voCategoryName}
             </if>
             <if test="synchStateList.size()!=0">
                 and  a.synch_state in

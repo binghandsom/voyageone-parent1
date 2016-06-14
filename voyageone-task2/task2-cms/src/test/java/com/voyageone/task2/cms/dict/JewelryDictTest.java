@@ -21,7 +21,7 @@ public class JewelryDictTest {
 	@Test
 	public void startupTest() {
 
-		doCreateJson("详情页描述", false, doDict_详情页描述());
+		doCreateJson("京东详情页描述", false, doDict_详情页描述());
 
 	}
 
@@ -125,31 +125,25 @@ public class JewelryDictTest {
 					RuleExpression imageTemplate = new RuleExpression();
 					String htmlTemplate =
 							"http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$" +
-									"&$product=%s" + // 图片
-									"&$title01=%s" + // 标题1
-									"&$text01=%s" + // 文本1
-									"&$title02=%s" + // 2
-									"&$text02=%s" + // 2
-									"&$title03=%s" +
-									"&$text03=%s" +
-									"&$title04=%s" +
-									"&$text04=%s" +
-									"&$title05=%s" +
-									"&$text05=%s" +
-									"&$title06=%s" +
-									"&$text06=%s" +
-									"&$title07=%s" +
-									"&$text07=%s" +
-									"&$title08=%s" +
-									"&$text08=%s";
+                                    "&$product=%s" + // 图片
+                                    "&$text01=%s" +  // 标题1   文本1
+                                    "&$text02=%s" +
+                                    "&$text03=%s" +
+                                    "&$text04=%s" +
+                                    "&$text05=%s" +
+                                    "&$text06=%s" +
+                                    "&$text07=%s" +
+                                    "&$text08=%s";
 //					String htmlTemplate = "42";
 					imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
+                    // 参数imageParams
 					List<RuleExpression> imageParams = new ArrayList<>();
 					// 参数
 					{
 						{
 							// 第一张商品图片
+                            // 第一个参数是product_id(GetMainProductImages)
 							CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
 							RuleExpression img_imageIndex = new RuleExpression();
 							img_imageIndex.addRuleWord(new TextWord("0"));
@@ -166,126 +160,137 @@ public class JewelryDictTest {
 							imageParams.add(imgWord);
 						}
 
-						{
-							// 第1个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 0)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 0)); imageParams.add(ruleExpression_val);
+                        {
+                            // 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
+                            for (int index = 0; index < 8; index++) {
+                                RuleExpression ruleExpression = new RuleExpression();
+                                ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                                ruleExpression.addRuleWord(new TextWord("   "));
+                                ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                                imageParams.add(ruleExpression);
+                            }
+                        }
 
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 0));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 0));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第2个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 1)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 1)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 1));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 1));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第3个自定义字
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 2)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 2)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 2));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 2));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第4个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 3)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 3)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 3));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 3));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第5个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 4)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 4)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 4));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 4));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第6个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 5)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 5)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 5));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 5));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第7个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 6)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 6)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 6));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 6));
-							imageParams.add(ruleExpression);
-
-						}
-						{
-							// 第8个自定义字段
-//							// 的 标题
-//							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 7)); imageParams.add(ruleExpression_key);
-//							// 的 值
-//							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 7)); imageParams.add(ruleExpression_val);
-
-							// 合并
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, 7));
-							ruleExpression.addRuleWord(new TextWord("   "));
-							ruleExpression.addRuleWord(new FeedCnWord(false, 7));
-							imageParams.add(ruleExpression);
-
-						}
+//						{
+//							// 第1个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 0)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 0)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 0));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 0));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第2个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 1)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 1)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 1));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 1));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第3个自定义字
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 2)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 2)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 2));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 2));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第4个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 3)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 3)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 3));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 3));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第5个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 4)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 4)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 4));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 4));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第6个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 5)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 5)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 5));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 5));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第7个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 6)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 6)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 6));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 6));
+//							imageParams.add(ruleExpression);
+//
+//						}
+//						{
+//							// 第8个自定义字段
+////							// 的 标题
+////							RuleExpression ruleExpression_key = new RuleExpression(); ruleExpression_key.addRuleWord(new FeedCnWord(true, 7)); imageParams.add(ruleExpression_key);
+////							// 的 值
+////							RuleExpression ruleExpression_val = new RuleExpression(); ruleExpression_val.addRuleWord(new FeedCnWord(false, 7)); imageParams.add(ruleExpression_val);
+//
+//							// 合并
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, 7));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, 7));
+//							imageParams.add(ruleExpression);
+//
+//						}
 
 //						{
 //							RuleExpression ruleExpression = new RuleExpression(); ruleExpression.addRuleWord(new TextWord("标题1")); imageParams.add(ruleExpression);

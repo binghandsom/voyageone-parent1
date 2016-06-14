@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -15,17 +18,20 @@ import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
+import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
@@ -42,6 +48,8 @@ public class CmsFieldEditService extends BaseAppService {
     private ProductGroupService productGroupService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CmsAdvanceSearchService advanceSearchService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -73,15 +81,48 @@ public class CmsFieldEditService extends BaseAppService {
      */
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
         String prop_id = prop.get("id").toString();
-//        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-        List<String> productCodes = (ArrayList<String>)params.get("productIds");
+        if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+            // 如果是税号更新，则另外处理
+            // TODO -- 这里为了兼容新旧业务，同时更新了fields和common.fields，以后必须改过来
+            String hsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                hsCode = (String) valObj.get("value");
+            }
+            if (hsCode == null) {
+                hsCode = "";
+            }
+            Map<String, Object> quyObj10 = new HashMap<String, Object>();
+            Map<String, Object> quyObj11 = new HashMap<String, Object>();
+            quyObj11.put("$in", productCodes);
+            quyObj10.put("common.fields.code", quyObj11);
+            Map<String, Object> quyObj20 = new HashMap<String, Object>();
+            Map<String, Object> quyObj21 = new HashMap<String, Object>();
+            quyObj21.put("$in", productCodes);
+            quyObj20.put("fields.code", quyObj21);
+
+            List<Map<String, Object>> orList = new ArrayList<>();
+            Map<String, Object> quyObj = new HashMap<String, Object>();
+            orList.add(quyObj10);
+            orList.add(quyObj20);
+            quyObj.put("$or", orList);
+
+            Map<String, Object> updObj1 = new HashMap<String, Object>();
+            Map<String, Object> updObj2 = new HashMap<String, Object>();
+            updObj2.put("common.fields." + prop_id, hsCode);
+            updObj2.put("fields." + prop_id, hsCode);
+            updObj1.put("$set", updObj2);
+            productService.updateProduct(userInfo.getSelChannelId(), quyObj, updObj1);
+            return;
+        }
 
         // 获取更新数据
         Object[] field = getPropValue(params);
 
         // TODO: 16/4/27 以后改成一个语句批量更新,目前没时间改 
-        for(String code : productCodes) {
+        for (String code : productCodes) {
 
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
@@ -155,11 +196,163 @@ public class CmsFieldEditService extends BaseAppService {
     }
 
     /**
+     * 批量修改属性(商品审批)
+     */
+    public Map<String, Object> setProductApproval(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+        Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) prop.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        Map<String, Object> rsMap = new HashMap<>();
+        if (isSelAll == 1 && (productCodes == null || productCodes.isEmpty())) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+            $error("没有code条件 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) prop.get("cartId");
+        List<Integer> cartList = null;
+        if (cartId == null || cartId == 0) {
+            // 表示全平台更新
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+        } else {
+            cartList = new ArrayList<>(1);
+            cartList.add(cartId);
+        }
+
+        // 先判断是否是ready状态
+        JomgoQuery queryObject = new JomgoQuery();
+        StringBuilder qryStr = new StringBuilder();
+        qryStr.append("{'common.fields.code':{$in:#},");
+        for (Integer cartIdVal : cartList) {
+            qryStr.append("$and:[{'platforms.P" + cartIdVal + ".status':{$ne:'Ready'}},{'platforms.P" + cartIdVal + ".status':{$ne:'Approved'}}],");
+        }
+        qryStr.deleteCharAt(qryStr.length() - 1);
+        qryStr.append("}");
+        queryObject.setQuery(qryStr.toString());
+        queryObject.setParameters(productCodes);
+        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+
+        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
+        if (prodList != null && prodList.size() > 0) {
+            // 存在未ready状态
+            List<String> codeList = new ArrayList<>(prodList.size());
+            for (CmsBtProductModel prodObj : prodList) {
+                if (prodObj.getCommon() == null) {
+                    continue;
+                }
+                CmsBtProductModel_Field field = prodObj.getCommon().getFields();
+                if (field != null && field.getCode() != null) {
+                    codeList.add(field.getCode());
+                }
+            }
+            rsMap.put("ecd", 2);
+            rsMap.put("codeList", codeList);
+            return rsMap;
+        }
+
+        // 检查商品价格 notChkPrice=1时表示忽略价格问题
+        Integer notChkPriceFlg = (Integer) prop.get("notChkPrice");
+        if (notChkPriceFlg == null) {
+            notChkPriceFlg = 0;
+        }
+        if (notChkPriceFlg == 0) {
+            for (String code : productCodes) {
+                // 获取产品的信息
+                CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
+                // 阈值价格 TODO-- 暂无
+                double priceLimit = 999;
+                boolean isOver = false;
+                for (Integer cartIdVal : cartList) {
+                    qryStr.append("'platforms.P" + cartIdVal + ".status':{$ne:'Ready',$ne:'Approved'},");
+                    CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdVal);
+                    List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
+                    for (BaseMongoMap<String, Object> skuObj : skuObjList) {
+                        double priceSale = skuObj.getDoubleAttribute("priceSale");
+                        double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+                        if (priceSale < priceRetail) {
+                            rsMap.put("priceRetail", priceRetail);
+                        }
+                        if (priceRetail > priceLimit) {
+                            rsMap.put("priceLimit", priceLimit);
+                        }
+                        if (priceSale < priceRetail || priceRetail > priceLimit) {
+                            isOver = true;
+                            rsMap.put("priceSale", priceSale);
+                            rsMap.put("skuCode", skuObj.get("skuCode"));
+                            break;
+                        }
+                    }
+                    if (isOver) {
+                        rsMap.put("cartName", Carts.getCart(cartIdVal).getName());
+                        break;
+                    }
+                }
+                if (isOver) {
+                    rsMap.put("code", code);
+                    break;
+                }
+            }
+            if (rsMap.size() > 0) {
+                rsMap.put("ecd", 3);
+                return rsMap;
+            }
+        }
+
+        for (String code : productCodes) {
+            // 获取产品的信息
+            CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
+
+            // 如果该产品以前就是approved,则不做处理
+            if (com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(productModel.getFields().getStatus())) {
+                break;
+            }
+            // 如果该产品不是ready,则停止处理
+            if (com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(productModel.getFields().getStatus())) {
+                break;
+            }
+
+          //  productModel.getFields().setAttribute(field[0].toString(), field[1]);
+
+            ProductUpdateBean updateRequest = new ProductUpdateBean();
+            updateRequest.setProductModel(productModel);
+            updateRequest.setIsCheckModifed(false);
+            updateRequest.setModifier(userInfo.getUserName());
+
+            //执行product的carts更新
+            if (updateRequest.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                // 执行carts更新
+                List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
+                updateRequest.getProductModel().setCarts(carts);
+            }
+            productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
+
+            CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+
+            //执行product上新
+            if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                // 插入上新程序
+                productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+            }
+        }
+        rsMap.put("ecd", 0);
+        return rsMap;
+    }
+
+    /**
      * 根据request值获取需要更新的Field数据
      */
     private Object[] getPropValue(Map<String, Object> params) {
         try {
-
 //            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
             Object[] field = new Object[2];
 
@@ -208,8 +401,6 @@ public class CmsFieldEditService extends BaseAppService {
      * 返回OptionField数据.
      */
     private OptionsField getOptions (Field field, String language, String channelId) {
-
-
         OptionsField optionsField = (OptionsField) field;
         if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
             List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);

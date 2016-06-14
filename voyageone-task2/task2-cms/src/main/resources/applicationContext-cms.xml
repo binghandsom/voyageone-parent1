@@ -14,10 +14,10 @@
 
         <!-- cms2 batch add    -->
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
-        <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/3 0-23 * * ?"/>
+        <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 上新 -->
-        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/3 0-23 * * ?"/>
+        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -67,6 +67,9 @@
         <!-- Gilt feed 导入 cms2 -->
         <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
+        <!-- Gilt feed 导入 cms2 -->
+        <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
+
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
 
@@ -86,7 +89,7 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 0/2 * * ?"/>
 
 
     </task:scheduled-tasks>

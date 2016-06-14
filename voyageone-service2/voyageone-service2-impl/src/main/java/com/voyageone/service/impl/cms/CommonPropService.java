@@ -28,6 +28,11 @@ public class CommonPropService extends BaseService {
         return cmsMtCommonPropDaoExt.selectCustColumns();
     }
 
+    // 取得排序用显示列设置
+    public List<Map<String, Object>> getSortColumns() {
+        return cmsMtCommonPropDaoExt.selectSortColumns();
+    }
+
     public List<Map<String, Object>> getCustColumnsByUserId(int userId) {
         return cmsMtCommonPropDaoExt.selectUserCustColumns(userId);
     }

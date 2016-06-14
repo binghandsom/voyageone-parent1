@@ -1,0 +1,19 @@
+* _id
+* groupId
+* cartId
+* numIId
+* platformPid
+* publishTime
+* onSaleTime
+* inStockTime
+* platformStatus
+* platformActive
+* mainProductCode
+* productCodes[]
+* qty
+* priceMsrpSt  ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceMsrpSt的最小值,如果非0/1,取platform.Pxx的priceMsrpSt的最小值
+* priceMsrpEd  ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceMsrpEd的最大值,如果非0/1,取platform.Pxx的priceMsrpEd的最大值
+* priceRetailSt ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceRetailSt的最小值,如果非0/1,取platform.Pxx的priceRetailSt的最小值
+* priceRetailEd ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceRetailEd的最大值,如果非0/1,取platform.Pxx的priceRetailEd的最大值
+* priceSaleSt ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceRetailSt的最小值,如果非0/1,取platform.Pxx的priceSaleSt的最小值
+* priceSaleEd ->如果cartId=0/1的时候,取得该group下面的产品的common.fields中的对应的priceRetailEd的最大值,如果非0/1,取platform.Pxx的priceSaleEd的最大值

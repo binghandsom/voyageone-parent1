@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init=" ctrl.init()">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click=" ctrl.cancel()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
@@ -6,7 +6,7 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_CATEGORY' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <div class="category_ts">
+        <div class="category_ts" ng-if="ctrl.context.plateSchema != true">
             <!--这里是Feed和主数据相互切换的-->
             <p>{{'TXT_FEED_OR_MASTER_CATEGORY_WITH_COLON' | translate}}{{ ctrl.context.from }}</p>
         </div>

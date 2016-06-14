@@ -21,7 +21,23 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
 
-    public CmsBtProductModel_Field getFields() {
+    //主类目ID
+    public String getCatId() {
+        return getAttribute("catId");
+    }
+    public void setCatId(String catId) {
+        setAttribute("catId", catId);
+    }
+
+    //主类目完整PATH
+    public String getCatPath() {
+        return getAttribute("catPath");
+    }
+    public void setCatPath(String catPath) {
+        setAttribute("catPath", catPath);
+    }
+
+    public CmsBtProductModel_Field getFields()  {
         return getAttribute("fields");
     }
 

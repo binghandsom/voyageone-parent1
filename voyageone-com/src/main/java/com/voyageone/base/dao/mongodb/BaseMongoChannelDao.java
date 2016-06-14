@@ -2,7 +2,7 @@ package com.voyageone.base.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.common.util.DateTimeUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -142,26 +142,35 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         //modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
 
         for (BulkUpdateModel model: bulkList){
-
-            //生成更新对象
-            BasicDBObject updateObj = new BasicDBObject();
-            BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
-
-            //设置更新者和更新时间
-            if ("$set".equals(key)) {
-                updateContent.putAll(modifierObj.toMap());
+            if (model.getQueryMap() == null) {
+                // 如果没有查询条件，则认为是插入数据
+                BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
+                updateContent.put("modifier", modifier);
+                updateContent.put("modified", DateTimeUtil.getNowTimeStamp());
+                updateContent.put("creater", modifier);
+                updateContent.put("created", DateTimeUtil.getNowTimeStamp());
+                bwo.insert(updateContent);
             } else {
-                updateObj.append("$set", modifierObj);
-            }
-            updateObj.append(key, updateContent);
+                //生成更新对象
+                BasicDBObject updateObj = new BasicDBObject();
+                BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
 
-            //生成查询对象
-            BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+                //设置更新者和更新时间
+                if ("$set".equals(key)) {
+                    updateContent.putAll(modifierObj.toMap());
+                } else {
+                    updateObj.append("$set", modifierObj);
+                }
+                updateObj.append(key, updateContent);
 
-            if (isUpsert) {
-                bwo.find(queryObj).upsert().update(updateObj);
-            } else {
-                bwo.find(queryObj).update(updateObj);
+                //生成查询对象
+                BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+
+                if (isUpsert) {
+                    bwo.find(queryObj).upsert().update(updateObj);
+                } else {
+                    bwo.find(queryObj).update(updateObj);
+                }
             }
         }
         //最终批量运行

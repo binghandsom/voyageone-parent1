@@ -46,8 +46,8 @@ public class CmsProductPlatformDetailServiceTest {
 
         Map<String, Object> result = new HashMap<>();
 
-        result.put("mastData", cmsProductPlatformDetailService.getProductMastData("010",5924L,26));
-        result.put("platform", cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 26));
+        result.put("mastData", cmsProductPlatformDetailService.getProductMastData("010",5924L,27));
+        result.put("platform", cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 27));
 
         System.out.println(JacksonUtil.bean2Json(result));
     }
@@ -73,7 +73,7 @@ public class CmsProductPlatformDetailServiceTest {
         productUpdateBean.setProductModel(cmsBtProductModel);
         productUpdateBean.setIsCheckModifed(false);
 
-        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1349", 26);
+        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("11935", 26);
         List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
 
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform(26);

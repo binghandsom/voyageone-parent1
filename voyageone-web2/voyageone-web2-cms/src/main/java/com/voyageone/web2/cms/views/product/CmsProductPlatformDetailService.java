@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
@@ -19,6 +22,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2016/6/3.
@@ -45,39 +50,40 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     /**
      * 获取产品平台信息
+     *
      * @param channelId channelId
-     * @param prodId prodId
-     * @param cartId cartId
+     * @param prodId    prodId
+     * @param cartId    cartId
      * @return 产品平台信息
      */
     public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
 
-        if(platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())){
+        if (platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())) {
             platformCart.setCartId(cartId);
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
             // JM的场合schema就一条
-            if(cartId == Integer.parseInt(CartEnums.Cart.JM.getId())){
+            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
                 platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
-            }else{
+            } else {
                 platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
             }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            if(fieldsValue != null){
+            if (fieldsValue != null) {
                 FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             }
-            platformCart.put("schemaFields",fields);
+            platformCart.put("schemaFields", fields);
             // platform 品牌名
-            if(StringUtil.isEmpty(platformCart.getpBrandId())){
-                Map<String,Object> parm = new HashMap<>();
-                parm.put("channelId",channelId);
-                parm.put("cartId",cartId);
-                parm.put("cmsBrand",cmsBtProduct.getFields().getBrand());
+            if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+                Map<String, Object> parm = new HashMap<>();
+                parm.put("channelId", channelId);
+                parm.put("cartId", cartId);
+                parm.put("cmsBrand", cmsBtProduct.getFields().getBrand());
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
-                if(cmsMtBrandsMappingModel != null){
+                if (cmsMtBrandsMappingModel != null) {
                     platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
@@ -88,21 +94,22 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     /**
      * 获取产品的基础数据给平台展示用
+     *
      * @param channelId
      * @param prodId
      * @param cartId
      * @return
      */
-    public Map<String,Object> getProductMastData(String channelId, Long prodId, int cartId){
-        Map<String,Object>mastData = new HashMap<>();
+    public Map<String, Object> getProductMastData(String channelId, Long prodId, int cartId) {
+        Map<String, Object> mastData = new HashMap<>();
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getFields().getCode(), cartId);
-        if(cmsBtProductGroup == null){
+        if (cmsBtProductGroup == null) {
             cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getFields().getCode(), 0);
         }
-        List<Map<String,Object>> images = new ArrayList<>();
+        List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
             CmsBtProductModel product = cmsBtProduct.getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
@@ -117,61 +124,80 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         mastData.put("productCode", cmsBtProduct.getFields().getCode());
         mastData.put("productName", StringUtil.isEmpty(cmsBtProduct.getFields().getProductNameCn()) ? cmsBtProduct.getFields().getProductNameEn() : cmsBtProduct.getFields().getProductNameCn());
-        mastData.put("model",cmsBtProduct.getFields().getModel());
-        mastData.put("groupId",cmsBtProductGroup.getGroupId());
-        mastData.put("skus",cmsBtProduct.getSkus());
-        if(cmsBtProduct.getCommon().getFields() != null){
-            mastData.put("translateStatus",cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus",cmsBtProduct.getCommon().getFields().getHsCodeStatus());
+        mastData.put("model", cmsBtProduct.getFields().getModel());
+        mastData.put("groupId", cmsBtProductGroup.getGroupId());
+        mastData.put("skus", cmsBtProduct.getSkus());
+        mastData.put("isMain",finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getFields().getCode()));
+
+        // TODO 取得Sku的库存
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, cmsBtProduct.getFields().getCode());
+        cmsBtProduct.getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null?0:skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
+
+        if (cmsBtProduct.getCommon().getFields() != null) {
+            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
+            mastData.put("hsCodeStatus", cmsBtProduct.getCommon().getFields().getHsCodeStatus());
         }
-        mastData.put("images",images);
+        mastData.put("images", images);
         return mastData;
     }
 
     /**
      * 平台类目变更
+     *
      * @param channelId
      * @param prodId
      * @param cartId
      * @param catId
      * @return
      */
-    public Map<String,Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId){
+    public Map<String, Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
-        if(platformCart != null){
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+        if (platformCart != null) {
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+            } else {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            if(fieldsValue != null){
+            if (fieldsValue != null) {
                 FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             }
-            platformCart.put("schemaFields",fields);
+            platformCart.put("schemaFields", fields);
+            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
+            platformCart.setpCatId(platformCategorySchemaModel.getCatId());
             // platform 品牌名
-            if(StringUtil.isEmpty(platformCart.getpBrandId())){
-                Map<String,Object> parm = new HashMap<>();
-                parm.put("channelId",channelId);
-                parm.put("cartId",cartId);
-                parm.put("cmsBrand",cmsBtProduct.getFields().getBrand());
+            if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+                Map<String, Object> parm = new HashMap<>();
+                parm.put("channelId", channelId);
+                parm.put("cartId", cartId);
+                parm.put("cmsBrand", cmsBtProduct.getFields().getBrand());
                 parm.put("active", 1);
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
-                if(cmsMtBrandsMappingModel != null){
+                if (cmsMtBrandsMappingModel != null) {
                     platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
             }
-        }else{
-            platformCart =new CmsBtProductModel_Platform_Cart();
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+        } else {
+            platformCart = new CmsBtProductModel_Platform_Cart();
+            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+            } else {
+                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+            }
             List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
-            platformCart.put("schemaFields",fields);
-            Map<String,Object> parm = new HashMap<>();
-            parm.put("channelId",channelId);
-            parm.put("cartId",cartId);
-            parm.put("cmsBrand",cmsBtProduct.getFields().getBrand());
+            platformCart.put("schemaFields", fields);
+            Map<String, Object> parm = new HashMap<>();
+            parm.put("channelId", channelId);
+            parm.put("cartId", cartId);
+            parm.put("cmsBrand", cmsBtProduct.getFields().getBrand());
             parm.put("active", 1);
             CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
-            if(cmsMtBrandsMappingModel != null){
+            if (cmsMtBrandsMappingModel != null) {
                 platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                 platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
             }
@@ -181,7 +207,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         return platformCart;
     }
 
-    public Map<String,Object>updateProductPlatform( String channelId,Long prodId,Map<String,Object> platform){
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform) {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
 
@@ -189,7 +215,37 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         platform.remove("schemaFields");
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        productService.updateProductPlatform(channelId,prodId,platformModel);
+        return productService.updateProductPlatform(channelId, prodId, platformModel,true);
+
+    }
+
+    public String priceChk(String channelId, Long prodId, Map<String, Object> platform) {
+
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+
+        Double breakThreshold = null;
+        if(cmsChannelConfigBean != null){
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1())/100D+1.0;
+        }
+
+        if(platform.get("skus") !=null ) {
+            CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+            List<CmsBtProductModel_Sku> cmsBtProductModel_skus = cmsBtProduct.getSkus();
+            Map<String, Double> comPrice = cmsBtProductModel_skus.stream().
+                    collect(Collectors.toMap(CmsBtProductModel_Sku::getSkuCode, CmsBtProductModel_Sku::getPriceRetail));
+            for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
+                String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
+                    return "4000091";
+                }
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {
+                    return "4000092";
+                }
+            }
+        }
         return null;
     }
 

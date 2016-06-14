@@ -13,6 +13,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class TbProductService extends TbBase {
 
+	/**
+     * 获取[更新产品]的规则的schema
+     * @throws ApiException
+     */
+    public String getProductUpdateSchema(Long productId, ShopBean config, StringBuffer failCause) throws ApiException {
+        TmallProductUpdateSchemaGetRequest request = new TmallProductUpdateSchemaGetRequest();
+        request.setProductId(productId);
+
+        TmallProductUpdateSchemaGetResponse response = reqTaobaoApi(config, request);
+        if (response.getErrorCode() != null) {
+            logger.error(response.getSubMsg());
+            failCause.append(response.getSubMsg());
+        }
+
+        return response.getUpdateProductSchema();
+    }
+
+	/**
+     * 更新产品
+     * @throws ApiException
+     */
+    public String updateProduct(Long productId, String xmlData, ShopBean config, StringBuffer failCause) throws ApiException {
+
+        TmallProductSchemaUpdateRequest request = new TmallProductSchemaUpdateRequest();
+        request.setProductId(productId);
+        request.setXmlData(xmlData);
+
+        TmallProductSchemaUpdateResponse response = reqTaobaoApi(config, request);
+        if (response.getErrorCode() != null) {
+            logger.error(response.getSubMsg());
+            failCause.append(response.getSubMsg());
+        }
+
+        return response.getUpdateProductResult();
+    }
+
     public String getProductMatchSchema(Long categoryId, ShopBean config) throws ApiException {
 
         TmallProductMatchSchemaGetRequest request = new TmallProductMatchSchemaGetRequest();

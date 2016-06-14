@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -52,7 +53,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         String catId = String.valueOf(params.get("catId"));
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId,prodId,cartId,catId));
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId));
 
         return success(result);
     }
@@ -66,9 +67,28 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String,Object> platform = (Map<String, Object>) params.get("platform");
 
-        result.put("platform", cmsProductPlatformDetailService.updateProductPlatform(channelId,prodId,platform));
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform));
 
         return success(result);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM_CHK)
+    public AjaxResponse doUpdateProductPlatformChk(@RequestBody Map params) {
+
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String,Object> platform = (Map<String, Object>) params.get("platform");
+        String errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+
+        if(errcode != null){
+            throw new BusinessException(errcode);
+        }else{
+            return doUpdateProductPlatform(params);
+        }
     }
 }
 

@@ -95,14 +95,26 @@ public class CmsBtJmPromotionService {
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter,String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
-        if (parameter.getModel().getId()!=null&&parameter.getModel().getId() > 0) {//更新
+        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getActivityAppId())) {
+            parameter.getModel().setActivityAppId("");
+        }
+        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getActivityPcId())) {
+            parameter.getModel().setActivityPcId("");
+        }
+        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getBrand())) {
+            parameter.getModel().setBrand("");
+        }
+        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getCategory())) {
+            parameter.getModel().setCategory("");
+        }
+        if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {//更新
             parameter.getModel().setModifier(userName);
-             updateModel(parameter);
+            updateModel(parameter);
             saveCmsBtPromotion(parameter.getModel());
         } else {//新增
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
-             insertModel(parameter);
+            insertModel(parameter);
             saveCmsBtPromotion(parameter.getModel());
         }
         return 1;
