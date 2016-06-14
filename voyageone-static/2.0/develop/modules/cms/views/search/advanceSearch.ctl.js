@@ -559,7 +559,7 @@ define([
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
-                    .then(function () {
+                    .then(function (openUpdateApproval) {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
                             _.forEach(_selProdList, function (object) {
@@ -599,6 +599,7 @@ define([
                                     msg += "最终售价[" + res.data.priceSale + "] > 阈值价格[" + res.data.priceLimit + "]";
                                 }
                                 alert(msg);
+                                return openUpdateApproval();
                                 return;
                             }
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
