@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -38,10 +39,7 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -255,7 +253,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
-            List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+            // modified by morse.lu 2016/06/13 start
+//            List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
+            List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
+            // modified by morse.lu 2016/06/13 end
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
@@ -275,7 +276,10 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 构造该产品所有SKUCODE的字符串列表
             List<String> strSkuCodeList = new ArrayList<>();
-            skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
+            // modified by morse.lu 2016/06/13 start
+//            skuList.forEach(sku -> strSkuCodeList.add(sku.getSkuCode()));
+            skuList.forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
+            // modified by morse.lu 2016/06/13 end
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             if (strSkuCodeList.isEmpty()) {
@@ -327,9 +331,9 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
             List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
             if (cmsMtPlatformSkusList == null || cmsMtPlatformSkusList.size() == 0) {
-                String errMsg = String.format("获取颜色和尺寸信息失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [Active:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
+                String errMsg = String.format("平台skus表中该商品类目对应的颜色和尺寸信息不存在！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]", channelId, cartId, platformCategoryId, AttrType_Active_1);
                 $error(errMsg);
-                sxData.setErrorMessage(errMsg);
+                sxData.setErrorMessage("平台skus表中该商品类目对应的颜色和尺寸信息不存在 [平台类目Id:" + platformCategoryId + "]");
                 throw new BusinessException(errMsg);
             }
 
@@ -424,14 +428,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
-                String modified;
+                String modified = "";
                 try {
                     modified = jdWareService.updateProduct(shopProp, updateProductBean);
                 } catch (Exception ex) {
                     String errMsg = String.format("新增商品之后调用京东商品更新API批量设置SKU信息失败! [WareId:%s]", jdWareId);
                     $error(errMsg);
-                    sxData.setErrorMessage(errMsg);
-                    throw ex;
+                    sxData.setErrorMessage(ex.getMessage());
                 }
 
                 // 设置SKU信息是否成功判断
@@ -442,18 +445,20 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(errMsg);
                     }
-                } else {
+                }
+
+                // 新增商品成功之后更新SKU信息失败时，删除该商品
+                if (StringUtils.isEmpty(modified) || !retStatus) {
                     // 新增之后更新商品SKU信息失败
                     // 删除商品
                     try {
                         // 参数：1.ware_id 2.trade_no(流水号：现在时刻)
                         jdWareService.deleteWare(shopProp, String.valueOf(jdWareId), Long.toString(new Date().getTime()));
                     } catch (Exception ex) {
-                        String errMsg = String.format("新增商品SKU信息设置失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
+                        String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(errMsg);
+                        sxData.setErrorMessage("新增商品后设置SKU信息失败之后，删除该新增商品失败");
                         throw ex;
                     }
 

@@ -570,8 +570,6 @@ define([
                     productIds.push(object.code);
                 });
                 return openModel(popActions.bulkUpdate.fieldEdit, {"productIds": productIds});
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         };
 

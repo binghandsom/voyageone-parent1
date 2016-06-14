@@ -10,7 +10,7 @@ define([
     angularAMD
         .service('searchAdvanceService2', searchAdvanceService2);
 
-    function searchAdvanceService2($q, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
+    function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
 
         this.init = init;
         this.search = search;

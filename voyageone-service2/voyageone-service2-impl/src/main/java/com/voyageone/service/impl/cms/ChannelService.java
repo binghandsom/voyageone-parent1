@@ -7,16 +7,12 @@ import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.OrderChannelDao;
-import com.voyageone.common.configs.dao.ShopDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtConfigHistoryDao;
 import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class ChannelService {
@@ -28,13 +24,13 @@ public class ChannelService {
     CmsBtConfigHistoryDao historyDao;
 
     /**
-     * @param channelId
-     * @param channelName
+     * @param channelId String
+     * @param channelName String
      * @param allowMinimall -1 表示查询所有
      * @param active        0 表示查询删除过的.1表示查询未删除的.null的话查询所有
-     * @return
+     * @return List<OrderChannelBean>
      */
-    public List getChannelListBy(String channelId, String channelName, Integer allowMinimall, String active) {
+    public List<OrderChannelBean> getChannelListBy(String channelId, String channelName, Integer allowMinimall, String active) {
 
         OrderChannelBean bean = new OrderChannelBean();
         if (!Strings.isNullOrEmpty(channelId)) {
@@ -64,7 +60,7 @@ public class ChannelService {
     /**
      * 根据id查询Cart 注意如果为empty list 返回所有
      *
-     * @return
+     * @return <CartBean>
      */
     public List<CartBean> getCarts() {
         return Carts.getAllCartList();

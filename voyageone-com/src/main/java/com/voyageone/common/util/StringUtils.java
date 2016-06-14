@@ -1,5 +1,6 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
@@ -299,7 +300,7 @@ public final class StringUtils {
         }
         return sb.toString();
     }
-    
+
     /**
      * 判断字符串中是否包含某些字符串
      */
@@ -313,13 +314,13 @@ public final class StringUtils {
 		}
         return false;
     }
-    
+
     /**
      * 字符串首字母大写
      */
-    public static String uppercaseFirst(String name)  
-    {  
-        return name.substring(0, 1).toUpperCase() + name.substring(1);  
+    public static String uppercaseFirst(String name)
+    {
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     /**
@@ -409,8 +410,8 @@ public final class StringUtils {
 
         return ret;
     }
-	
-	
+
+
 	/**
      * 把str中的【.】替换成【->】
      */
@@ -492,4 +493,23 @@ public final class StringUtils {
         }
         return val;
     }
+
+    public static int toIntValue(Object val) {
+        if (val == null) {
+            return -1;
+        }
+        if (val instanceof Integer) {
+            return (Integer) val;
+        }
+        if (val instanceof String) {
+            String strVal = (String) val;
+            if ("".equals(strVal)) {
+                return -1;
+            } else {
+                return NumberUtils.toInt(strVal);
+            }
+        }
+        return -1;
+    }
+
 }

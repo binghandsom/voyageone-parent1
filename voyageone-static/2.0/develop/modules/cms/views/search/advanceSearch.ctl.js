@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService) {
 
         $scope.vm = {
             searchInfo: {
@@ -24,8 +24,8 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: []
-
+                cidValue: [],
+                _selall: false
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -115,7 +115,8 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                cidValue: []
+                cidValue: [],
+                _selall: false
             };
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
@@ -211,7 +212,12 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion(promotion, openAddToPromotion) {
-            openAddToPromotion(promotion, getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openAddToPromotion(promotion, selList).then(function () {
                 searchAdvanceService2.clearSelList();
                 getGroupList();
                 getProductList();
@@ -223,19 +229,13 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategory(openAddChannelCategoryEdit) {
-            var selList = getSelProductList();
-            if (selList && selList.length) {
-                if ($scope.vm.currTab === 'group') {
-                    selList = $scope.vm.groupSelList.selList;
-                } else {
-                    selList = $scope.vm.productSelList.selList;
-                }
-                openAddChannelCategoryEdit(selList).then(function () {
+            _chkProductSel(null, _openAddChannelCategory);
+
+            function _openAddChannelCategory(cartId, selList) {
+                openAddChannelCategoryEdit(selList, cartId).then(function () {
                     getGroupList();
                     getProductList();
                 })
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         }
 
@@ -257,11 +257,15 @@ define([
          * @param openFieldEdit
          */
         function openBulkUpdate(openFieldEdit) {
-            openFieldEdit(getSelProductList()).then(function () {
-                searchAdvanceService2.clearSelList();
-                getGroupList();
-                getProductList();
-            })
+            _chkProductSel(null, _openBulkUpdate);
+
+            function _openBulkUpdate(cartId, selList) {
+                openFieldEdit(selList).then(function () {
+                    searchAdvanceService2.clearSelList();
+                    getGroupList();
+                    getProductList();
+                })
+            }
         }
 
         /**
@@ -269,33 +273,34 @@ define([
          * @param popupNewCategory
          */
         function openCategoryMapping(popupNewCategory) {
-            var selList = getSelProductList();
-            if (selList && selList.length) {
+            _chkProductSel(null, _openCategoryMapping);
+
+            function _openCategoryMapping(cartId, selList) {
                 feedMappingService.getMainCategories()
                     .then(function (res) {
                         popupNewCategory({
                             categories: res.data,
                             from: null
                         }).then(function (res) {
-                                bindCategory(res)
+                                bindCategory(res, selList)
                             }
                         );
                     });
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         }
 
         /**
          * 类目变更
          */
-        function bindCategory(context) {
+        function bindCategory(context, selList) {
             confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                 .then(function () {
                     var productIds = [];
-                    _.forEach(getSelProductList(), function (object) {
-                        productIds.push(object.id);
-                    });
+                    if (selList) {
+                        _.forEach(selList, function (object) {
+                            productIds.push(object.id);
+                        });
+                    }
                     var data = {
                         prodIds: productIds,
                         catId: context.selected.catId,
@@ -305,9 +310,9 @@ define([
                         if (res.data.isChangeCategory) {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             $scope.search();
-                        }
-                        else
+                        } else {
                             notify($translate.instant('TXT_MSG_PRODUCT_IS_PUBLISHING'));
+                        }
                     })
                 });
         }
@@ -316,7 +321,6 @@ define([
          * 添加新search选项
          */
         function addCustAttribute() {
-
             if ($scope.vm.custAttrList.length < 5) {
                 $scope.vm.custAttrList.push({inputOptsKey: "", inputOpts: "", inputVal: ""});
             } else {
@@ -418,12 +422,12 @@ define([
          * 查询指定店铺cart类型下的所有类目(list形式)
          */
         function getCat(cartObj) {
-            if (cartObj == null || cartObj == undefined) {
-                $scope.vm.searchInfo.cartId = '';
+            if (cartObj == null || cartObj == undefined || cartObj == '') {
+                $scope.vm.searchInfo.cartId = -1;
             } else {
-                $scope.vm.searchInfo.cartId = cartObj.value;
+                $scope.vm.searchInfo.cartId = parseInt(cartObj.value);
             }
-            if ($scope.vm.searchInfo.cartId == '0' || $scope.vm.searchInfo.cartId == '' || $scope.vm.searchInfo.cartId == undefined) {
+            if ($scope.vm.searchInfo.cartId == -1) {
                 // 清空平台相关查询条件
                 $scope.vm.searchInfo.productStatus = null;
                 $scope.vm.searchInfo.platformStatus = null;
@@ -477,12 +481,15 @@ define([
          * 添加产品到指定自由标签
          */
         function addFreeTag(tagBean) {
-            var selList = getSelProductList();
-            if (selList && selList.length) {
+            _chkProductSel(null, _addFreeTag);
+
+            function _addFreeTag(cartId, selList) {
                 var productIds = [];
-                _.forEach(selList, function (object) {
-                    productIds.push(object.id);
-                });
+                if (selList && selList.length) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.id);
+                    });
+                }
 
                 confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
                     .then(function () {
@@ -493,8 +500,6 @@ define([
                             getProductList();
                         })
                     });
-            } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
             }
         }
 
@@ -512,8 +517,55 @@ define([
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 
-        function openApproval() {
-            alert($translate.instant('TXT_BULK_APPROVAL'));
+        function _chkProductSel(cartId, callback, context) {
+            if (cartId == null || cartId == undefined) {
+                // 全平台处理
+                cartId = 0;
+            } else {
+                cartId = parseInt(cartId);
+            }
+            var selList = null;
+            if (!$scope.vm._selall) {
+                selList = getSelProductList();
+                if (selList.length == 0) {
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+                callback(cartId, selList, context);
+            } else {
+                if ($scope.vm.productPageOption.total == 0) {
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function() {callback(cartId, null, context);});
+            }
+        }
+
+        // 商品上下架
+        $scope._openPutOnOff = function (openPutOnOffFnc, cartId) {
+            _chkProductSel(cartId, __openPutOnOff);
+
+            function __openPutOnOff(cartId, _selProdList) {
+                openPutOnOffFnc();
+            }
+        };
+
+        // 商品审批
+        function openApproval(cartId) {
+            _chkProductSel(cartId, __openApproval);
+
+            function __openApproval(cartId, _selProdList) {
+                confirm($translate.instant('TXT_BULK_APPROVAL')).result
+                    .then(function () {
+                        var propertyInfo = {
+                            property: {'cartId': cartId, '_option':'approval'},
+                            productIds: _selProdList
+                        };
+                        $fieldEditService.setProductFields(propertyInfo).then(function () {
+                            notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        });
+                    });
+            }
         }
 
         /**
@@ -586,6 +638,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService'];
     return searchIndex;
 });
