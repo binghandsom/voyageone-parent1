@@ -97,6 +97,13 @@ define(function (require) {
     }
 
     /**
+     * 解耦包装 each 方法
+     */
+    function each(obj, iteratee) {
+        return _.each(obj, iteratee);
+    }
+
+    /**
      * 获取字段的正确 id。
      * 由于后端的问题。schema 的 field id 中的 '.' 会被转换成 '->'。
      * 所以查找时需要进行转换查找。
@@ -191,7 +198,7 @@ define(function (require) {
         if (!field.rules.length)
             return rules;
 
-        field.rules.forEach(function (rule) {
+        each(field.rules, function (rule) {
 
             if (!hasDepend(rule)) {
                 // 如果不需要监视, 则就是固定值。
@@ -353,7 +360,7 @@ define(function (require) {
 
     function getFieldMap(fields) {
         var map = {};
-        fields.forEach(function (f) {
+        each(fields, function (f) {
             map[f.id] = angular.copy(f);
         });
         return map;
@@ -364,6 +371,17 @@ define(function (require) {
             fieldKeySet: getFieldKeySet(fields),
             fieldMap: getFieldMap(fields)
         };
+    }
+
+    function resetValue(valueObj, fieldObj) {
+
+        ['value', 'values', 'complexValue', 'complexValues'].some(function (key) {
+            if (valueObj[key] && !fieldObj[key]) {
+                fieldObj[key] = valueObj[key];
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
@@ -445,6 +463,7 @@ define(function (require) {
     };
 
     angular.module('voyageone.angular.directives')
+
         .directive('schema', function ($compile) {
 
             function SchemaController($scope, $attrs, $q) {
@@ -485,7 +504,7 @@ define(function (require) {
                     $scope = controller.$scope;
                 schema = controller.schema;
 
-                angular.forEach(schema, function (field) {
+                each(schema, function (field) {
 
                     var fieldElement = angular.element('<schema-field>');
 
@@ -536,6 +555,7 @@ define(function (require) {
                 controller: SchemaController
             }
         })
+
         .directive('schemaField', function ($compile, $q) {
 
             function SchemaFieldController($scope, $element) {
@@ -652,7 +672,7 @@ define(function (require) {
 
                             $value = field.$value;
 
-                            field.options.forEach(function (option, index) {
+                            each(field.options, function (option, index) {
 
                                 var label = angular.element('<label></label>'),
                                     checkbox = angular.element('<input type="checkbox">');
@@ -688,7 +708,29 @@ define(function (require) {
 
                             // complex 字段, 每个 field 的值都是存在其 value 上的。
                             // 所以直接使用 fields 属性即可。
-                            innerElement = angular.element('<schema-complex-container>');
+                            // 还原 complexValue 中的原始值到 field 上
+
+                            var fieldValueMap,
+                                complexValue = field.complexValue;
+
+                            if (complexValue) {
+                                fieldValueMap = complexValue.fieldMap;
+
+                                if (fieldValueMap) {
+                                    each(field.fields, function (childField) {
+
+                                        var valueObj = fieldValueMap[childField.id];
+
+                                        if (!valueObj) return;
+
+                                        resetValue(valueObj, childField);
+                                    });
+                                }
+                            }
+
+                            $scope.$fields = field.fields;
+
+                            innerElement = angular.element('<schema-complex-container fields="$fields">');
 
                             break;
                         case FIELD_TYPES.multiComplex:
@@ -705,14 +747,14 @@ define(function (require) {
                             } else {
                                 // 否则就为 complexValues 里的 field 补全属性
                                 // 如果有遗漏 field 就补全 field
-                                complexValues.forEach(function (complexValue) {
+                                each(complexValues, function (complexValue) {
                                     // 这里没有使用 angular.copy 完整的 field 来覆盖 complexValues 内的 field。
                                     // 是为了减少可能存在的影响。
                                     // 只选择把后续需要的属性进行了赋值(引用)
                                     var fieldKeySet = complexValue.fieldKeySet || (complexValue.fieldKeySet = []);
                                     var fieldMap = complexValue.fieldMap || (complexValue.fieldMap = {});
 
-                                    field.fields.forEach(function (field) {
+                                    each(field.fields, function (field) {
                                         // 如果 keySet 里没有这个字段的 key 就补上
                                         if (fieldKeySet.indexOf(field.id) < 0)
                                             fieldKeySet.push(field.id);
@@ -731,9 +773,19 @@ define(function (require) {
                                 });
                             }
 
-                            innerElement = complexValues.map(function (complexValue, index) {
-                                return angular.element('<schema-complex-container multi="true" value-index="' + index + '">');
-                            });
+                            $scope.$complexValues = complexValues;
+
+                            innerElement = angular.element('<schema-complex-container multi="true" fields="complexValue.fieldMap">');
+
+                            innerElement.attr('ng-repeat', 'complexValue in $complexValues');
+
+                            // multiComplex 字段, 有多个 complexValue
+                            // 所以需要创建工具栏和按钮, 来新建 complexValue
+                            $scope.$newComplexValue = function () {
+                                complexValues.push(createComplexValue(field.fields));
+                            };
+
+                            container.append('<button ng-click="$newComplexValue()">新增</button>');
 
                             break;
                         default:
@@ -787,7 +839,9 @@ define(function (require) {
 
                 var innerElement, nameElement, isSimple;
 
-                controller.field = $scope.field = field;
+                // 放到 scope 上, 供画面绑定使用
+                // 创建元素时, ngModel 会直接指向到 field.$value
+                $scope.field = field;
 
                 if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
@@ -805,6 +859,8 @@ define(function (require) {
                 }
 
                 if (showName) {
+                    // 如果需要显示名称
+                    // 就创建专用的名称元素
                     nameElement = createNameElement(field, fieldElementName);
                     container.append(nameElement);
                 }
@@ -814,7 +870,7 @@ define(function (require) {
                 innerElement = createElement(field, fieldElementName, rules);
 
                 if (innerElement instanceof Array)
-                    innerElement.forEach(function (element) {
+                    each(innerElement, function (element) {
                         container.append(element);
                     });
                 else
@@ -848,7 +904,7 @@ define(function (require) {
                         parentController = controllers[2];
 
                     controller.formController = controllers[1];
-                    controller.showName = !$attrs.showName || $attrs.showName === 'true';
+                    controller.showName = (!$attrs.showName || $attrs.showName === 'true');
 
                     // 如果为 field 设置了什么, 就尝试获取 field 上的内容
                     if ($attrs.field) {
@@ -964,116 +1020,33 @@ define(function (require) {
                 controller: SchemaFieldController
             };
         })
+
         .directive('schemaComplexContainer', function ($compile) {
-
-            function resetValue(valueObj, fieldObj) {
-
-                ['value', 'values', 'complexValue', 'complexValues'].some(function (key) {
-                    if (valueObj[key] && !fieldObj[key]) {
-                        fieldObj[key] = valueObj[key];
-                        return true;
-                    }
-                    return false;
-                });
-            }
-
-            function SchemaComplexController() {
-            }
-
-            SchemaComplexController.prototype.setParentFieldController = function (parentFieldController) {
-
-                var controller = this,
-                    isMulti = controller.isMulti,
-                    valueIndex = controller.valueIndex;
-
-                var parentField = parentFieldController.field;
-
-                if (!isMulti) {
-                    // 参见 schemaField createElement 中的描述
-                    // complex 的值是直接存在 field 中的, 所以直接使用
-                    // complexValue 只负责把原有值还原到 field 上。
-                    controller.fields = parentField.fields;
-                    controller.complexValue = parentField.complexValue;
-                } else {
-                    // 参见 schemaField createElement 中的描述
-                    // multiComplex 的值就在 complexValue 上
-                    // 所以 field 要使用 complexValue 提供的 field.。
-                    var fullKeys, complexValue;
-                    controller.complexValue = complexValue = parentField.complexValues[valueIndex];
-                    fullKeys = Object.keys(complexValue.fieldMap);
-                    controller.fields = fullKeys.map(function (key) {
-                        return complexValue.fieldMap[key];
-                    });
-                }
-            };
-
-            SchemaComplexController.prototype.tryResetComplexValue = function () {
-
-                // 注意!! 该方法仅供 complex 类型使用
-
-                var fieldValueMap,
-                    complexValue = this.complexValue;
-
-                if (!complexValue) return;
-
-                fieldValueMap = complexValue.fieldMap;
-
-                if (!fieldValueMap) return;
-
-                // 尝试为每个 field 还原其值
-
-                this.fields.forEach(function (field) {
-
-                    var valueObj = fieldValueMap[field.id];
-
-                    if (!valueObj) return;
-
-                    resetValue(valueObj, field);
-                });
-            };
-
-            SchemaComplexController.prototype.renderTo = function ($element) {
-
-                this.fields.forEach(function (field) {
-
-                    var child = angular.element('<schema-field field-id="' + field.id + '">');
-
-                    $element.append(child);
-                });
-
-            };
 
             return {
                 restrict: 'E',
                 scope: true,
                 require: '^^schemaField',
                 controllerAs: '$ctrl',
-                link: function ($scope, $element, $attrs, schemaFieldController) {
-
-                    var schemaComplexController = $scope.$ctrl;
+                link: function ($scope, $element, $attrs) {
 
                     var isMulti = ($attrs.multi === 'true');
 
-                    var valueIndex = null;
+                    var fields = $scope.$eval($attrs.fields);
 
-                    if (isMulti)
-                        // 如果是 multiComplex 则 container 需要知道它绘制的是哪一个 complexValue
-                        // 如果这里 parse 失败, 则直接报错, 不做细节处理。
-                        valueIndex = parseInt($attrs.valueIndex);
+                    $scope.$ctrl.fields = fields;
 
-                    schemaComplexController.isMulti = isMulti;
+                    each(fields, function (field) {
 
-                    schemaComplexController.valueIndex = valueIndex;
+                        var child = angular.element('<schema-field field-id="' + field.id + '">');
 
-                    schemaComplexController.setParentFieldController(schemaFieldController);
-
-                    schemaComplexController.tryResetComplexValue();
-
-                    schemaComplexController.renderTo($element);
+                        $element.append(child);
+                    });
 
                     $compile($element.contents())($scope);
                 },
-                controller: SchemaComplexController
+                controller: function SchemaComplexController() {
+                }
             };
         });
 });
