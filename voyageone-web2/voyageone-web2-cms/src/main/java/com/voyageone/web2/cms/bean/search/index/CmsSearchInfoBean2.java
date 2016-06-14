@@ -35,7 +35,7 @@ public class CmsSearchInfoBean2 {
     private int freeTagType = 0;
 
     // ** 平台搜索条件 **
-    private Integer platformCart;
+    private Integer cartId = -1;
     private String[] productStatus;
     private String[] platformStatus;
 
@@ -144,12 +144,12 @@ public class CmsSearchInfoBean2 {
         this.productStatus = productStatus;
     }
 
-    public Integer getPlatformCart() {
-        return platformCart;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setPlatformCart(Integer platformCart) {
-        this.platformCart = platformCart;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String[] getPlatformStatus() {

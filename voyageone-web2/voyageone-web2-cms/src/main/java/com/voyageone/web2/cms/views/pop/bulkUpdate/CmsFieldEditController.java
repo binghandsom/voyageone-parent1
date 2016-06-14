@@ -44,6 +44,13 @@ public class CmsFieldEditController extends CmsController {
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.SET_PRODUCT_FIELDS)
     public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
         CmsSessionBean cmsSession = getCmsSession();
+        Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        if (prop != null) {
+            if ("approval".equals((String) prop.get("_option"))) {
+                // 商品审批
+
+            }
+        }
         int cartId = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
         propChangeService.setProductFields(params, getUser(), cartId);
         return success(true);

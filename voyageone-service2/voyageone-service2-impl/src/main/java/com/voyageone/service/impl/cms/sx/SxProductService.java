@@ -4,6 +4,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -548,7 +549,10 @@ public class SxProductService extends BaseService {
         codeArr = productCodeList.toArray(codeArr);
 
         // 通过上面取得的code，得到对应的产品信息，以及sku信息
-        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        // modified by morse.lu 2016/06/13 start
+//        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        List<BaseMongoMap<String, Object>> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
+        // modified by morse.lu 2016/06/13 end
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
@@ -646,21 +650,47 @@ public class SxProductService extends BaseService {
             }
             // 2016/06/12 add desmond END
 
-            List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-            List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-            productModelSku.forEach(sku -> {
-                if (sku.getSkuCarts().contains(cartId)) {
-                    skus.add(sku);
-                }
-            });
+            // added by morse.lu 2016/06/13 start
+            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+                // 天猫(淘宝)平台的时候，从外面的skus那里取得
+                // added by morse.lu 2016/06/13 end
+                List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+                List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                productModelSku.forEach(sku -> {
+                    if (sku.getSkuCarts().contains(cartId)) {
+                        skus.add(sku);
+                    }
+                });
 
-            if (skus.size() > 0) {
-                productModel.setSkus(skus);
-                skuList.addAll(skus);
+                if (skus.size() > 0) {
+                    productModel.setSkus(skus);
+                    skuList.addAll(skus);
+                } else {
+                    // 该product下没有允许在该平台上上架的sku
+                    removeProductList.add(productModel);
+                }
+                // added by morse.lu 2016/06/13 start
             } else {
-                // 该product下没有允许在该平台上上架的sku
-                removeProductList.add(productModel);
+                // 天猫以外平台的时候，从各个平台下面的skus那里取得
+                List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
+                List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                productModelSku.forEach(sku -> {
+                    if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                        skus.add(sku);
+                    }
+                });
+
+                if (skus.size() > 0) {
+                    productModel.getPlatform(cartId).setSkus(skus);
+                    skuList.addAll(skus);
+                } else {
+                    // 该product下没有允许在该平台上上架的sku
+                    removeProductList.add(productModel);
+                }
             }
+            // added by morse.lu 2016/06/13 end
         }
 
         // Add by desmond 2016/06/12 start

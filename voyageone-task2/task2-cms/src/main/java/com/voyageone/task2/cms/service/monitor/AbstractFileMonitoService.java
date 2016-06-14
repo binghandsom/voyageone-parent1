@@ -144,8 +144,11 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while (true) {
                 String line = reader.readLine();
-                String[] result = line.split(":");
+                if (line == null) {
+                    continue;
+                }
 
+                String[] result = line.split(":");
                 if (result.length != 3) {
                     continue;
                 }
