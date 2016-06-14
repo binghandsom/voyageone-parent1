@@ -3,9 +3,8 @@
  * 京东产品概述（schema）
  */
 define([
-    'cms',
-    'underscore'
-],function(cms,_) {
+    'cms'
+],function(cms) {
     cms.directive("jdSchema", function (productDetailService,feedMappingService,productDetailService,platformMappingService,$translate,notify,$location,$anchorScroll) {
         return {
             restrict: "E",
@@ -101,8 +100,7 @@ define([
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selectedIds = {};
                     scope.vm.sellerCats.forEach(function(element){
-                        var cid = element.cid;
-                        _.extend(selectedIds,{cid:true});
+                        selectedIds[element.cid]=true;
                     });
                     console.log(selectedIds);
                     var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.platform.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
