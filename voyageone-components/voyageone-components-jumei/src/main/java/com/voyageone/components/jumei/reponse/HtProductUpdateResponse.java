@@ -39,7 +39,7 @@ public class HtProductUpdateResponse extends BaseJMResponse {
 
     public void setBody(String body) throws IOException {
         Map<String, Object> map = JacksonUtil.jsonToMap(body);
-        if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
+        if (map.containsKey("is_Success") && "0".equals(map.get("is_Success"))) {
             this.setIs_Success(true);
         } else {
             this.setErrorMsg(body);
