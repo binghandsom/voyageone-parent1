@@ -618,7 +618,7 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="$parent.openApproval(cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                 </li>
                             </ul>
                         </div>
@@ -707,6 +707,10 @@
                                                    href="#/product/detail/{{productInfo.prodId}}"
                                                    title="{{productInfo.common.fields.productNameEn}}"
                                                    target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
+                                            </span>
+                                            <span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
+                                                <button ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
+                                                        popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                             </span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
                                         </td>
