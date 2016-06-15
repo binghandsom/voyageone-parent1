@@ -59,7 +59,7 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
      */
     public int updateAllUpdFlg(String channelId, int updFlg) {
 
-        WriteResult updateRes = mongoTemplate.updateMulti("{}", String.format("{ $set: {updFlg: %d}}", updFlg),
+        WriteResult updateRes = mongoTemplate.updateMulti("{updFlg: 1}", String.format("{ $set: {updFlg: %d}}", updFlg),
                 getCollectionName(channelId));
         return updateRes.getN();
     }
