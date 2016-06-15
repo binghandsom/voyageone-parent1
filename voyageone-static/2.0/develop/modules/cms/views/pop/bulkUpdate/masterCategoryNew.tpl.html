@@ -42,8 +42,8 @@
             <div ng-if="platform.isNotApply == 0" class="category_ts">
                 <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span></p>
             </div>
-            <div ng-if="platform.isNotApply == 1" class="category_red">
-                <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span><span align="right"> 未申请此类目 </span></p>
+            <div ng-if="platform.isNotApply == 1" class="category_ts category_highlight">
+                <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span><span class="pull-right"> 未申请此类目 </span></p>
             </div>
         </div>
     </div>
