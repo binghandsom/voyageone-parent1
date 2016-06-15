@@ -11,6 +11,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -215,7 +216,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(6000);
+            queryObject.setLimit(500);
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
@@ -1218,7 +1219,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
                 // 设定是否主商品
-                CmsBtProductGroupModel group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                // 如果是聚美的话，那么就是一个Code对应一个Group
+                CmsBtProductGroupModel group = null;
+                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())) {
+                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                }
                 if (group == null) {
                     platform.setpIsMain(1);
                 } else {
@@ -1860,8 +1865,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // group对象
+                CmsBtProductGroupModel group = null;
                 // 如果是聚美的话，那么就是一个Code对应一个Group
-                CmsBtProductGroupModel group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())) {
+                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                }
 
                 // 看看同一个model里是否已经有数据在cms里存在的
                 //   如果已经有存在的话: 直接用那个group
@@ -2175,7 +2183,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private int
         getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
-                    String.format("{'feed.orgAtts.modelCode':'%s'}", feed.getModel()));
+                    String.format("{\"feed.orgAtts.modelCode\":\"%s\", \"fields.isMasterMain\":1}", feed.getModel()));
             if (cnt < 1) {
                 return 1;
             }

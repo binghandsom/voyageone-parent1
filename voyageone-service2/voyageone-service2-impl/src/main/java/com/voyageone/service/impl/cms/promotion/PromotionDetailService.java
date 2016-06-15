@@ -61,7 +61,7 @@ public class PromotionDetailService extends BaseService {
     private ProductTagService productTagService;
 
     /**
-     * 添加
+     * 添加商品到promotion
      */
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean) {
@@ -102,7 +102,7 @@ public class PromotionDetailService extends BaseService {
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
         // 插入cms_bt_promotion_code表
-        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier);
+        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier, cartId);
         cmsBtPromotionCodesBean.setNumIid(numIId);
         cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);

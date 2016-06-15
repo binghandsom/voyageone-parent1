@@ -108,9 +108,6 @@ define([
 
                 if (type === 'propFeed') {
                     value = ttt.field.value;
-                } else if (!ttt.field.$valid) {
-                    ttt.alert('TXT_MSG_FIELD_VAL_INVALID');
-                    return;
                 } else {
                     value = ttt.getValue(ttt.field);
                 }

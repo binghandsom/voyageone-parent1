@@ -19,6 +19,10 @@ import java.util.TreeMap;
 
 /**
  * Created by sn3 on 2015-07-16.
+ *
+ * @author Ethan Shi
+ * @version 2.0.1
+ *
  */
 public class JmBase extends ComponentBase {
 
@@ -102,6 +106,9 @@ public class JmBase extends ComponentBase {
 
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         logger.info("result：" + result);
+
+        //Test
+//        result = "{\"error_code\":\"0\",\"reason\":\"success\",\"response\":\"\"}";
 
         //转换错误信息
         if (result != null && result.contains("\"error\"")) {

@@ -19,7 +19,7 @@ public class HtSpuUpdateRequest implements BaseJMRequest {
     private String jumei_spu_no;    //Number  聚美Spu_No.
     //update_data	Json  修改数据.参数范围: 只传需要修改的字段
     private String upc_code;// 可选	Number 商品自带条码
-    private String propery; // 可选	Number   规格 :FORMAL 正装 MS 中小样 OTHER 其他
+    private String property; // 可选	Number   规格 :FORMAL 正装 MS 中小样 OTHER 其他
     private String size;// 可选	String 容量/尺码
     private String attribute; //可选	String  型号/颜色
     private double abroad_price;// 可选	Number   海外官网价
@@ -54,13 +54,6 @@ public class HtSpuUpdateRequest implements BaseJMRequest {
         this.upc_code = upc_code;
     }
 
-    public String getPropery() {
-        return propery;
-    }
-
-    public void setPropery(String propery) {
-        this.propery = propery;
-    }
 
     public String getSize() {
         return size;
@@ -110,6 +103,14 @@ public class HtSpuUpdateRequest implements BaseJMRequest {
         this.normalImage = normalImage;
     }
 
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
+    }
+
     @Override
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
@@ -117,7 +118,7 @@ public class HtSpuUpdateRequest implements BaseJMRequest {
 
         Map<String, Object> update_data = new HashMap<>();
         if (!StringUtils.isEmpty(getUpc_code()))    update_data.put("upc_code", this.getUpc_code());
-        if (!StringUtils.isEmpty(getPropery()))     update_data.put("propery", this.getPropery());
+        if (!StringUtils.isEmpty(property) )    update_data.put("property",property);
         if (!StringUtils.isEmpty(getSize()))        update_data.put("size", this.getSize());
         if (!StringUtils.isEmpty(getAttribute()))   update_data.put("attribute", this.getAttribute());
         if (getAbroad_price() != 0.0d)              update_data.put("abroad_price", this.getAbroad_price());
