@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtJmConfigDaoExt {
-    public CmsMtJmConfigModel getByKey(String channelId, String key);
+    public CmsMtJmConfigModel selectByKey(String channelId, String key);
 }
