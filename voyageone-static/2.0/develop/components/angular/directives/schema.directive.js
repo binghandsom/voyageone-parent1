@@ -14,11 +14,7 @@ define(function (require) {
      *  schema-field-tip
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
-     */
-
-    var FIELD_TYPES;
-
-    /*
+     *
      * 已知的 rule 有如下:
      *   requiredRule
      *   readOnlyRule
@@ -37,6 +33,10 @@ define(function (require) {
      *   minImageSizeRule
      *   maxImageSizeRule
      */
+
+    var FIELD_TYPES;
+
+    var find, findIndex, each, any, all;
 
     /**
      * 已知的 valueType 包含的值
@@ -68,39 +68,26 @@ define(function (require) {
     SYMBOLS['!='] = SYMBOLS.NOT_EQUALS;
     SYMBOLS['=='] = SYMBOLS.EQUALS;
 
+    (function () {
+
+        // 解耦包装帮主函数
+        // 便于后续脱离第三方库时, 进行自定义实现
+
+        var _ = require('underscore');
+
+        find = _.find;
+        any = _.some;
+        all = _.every;
+        each = _.each;
+        findIndex = _.findIndex;
+
+    })();
+
     /**
      * 获取随机数字
      */
     function random(length) {
         return Math.random().toString().substr(2, length || 6);
-    }
-
-    /**
-     * 解耦包装 find 方法
-     */
-    function find(obj, predicate) {
-        return _.find(obj, predicate);
-    }
-
-    /**
-     * 解耦包装 some 方法
-     */
-    function any(obj, predicate) {
-        return _.some(obj, predicate);
-    }
-
-    /**
-     * 解耦包装 every 方法
-     */
-    function all(obj, predicate) {
-        return _.every(obj, predicate);
-    }
-
-    /**
-     * 解耦包装 each 方法
-     */
-    function each(obj, iteratee) {
-        return _.each(obj, iteratee);
     }
 
     /**
@@ -285,6 +272,8 @@ define(function (require) {
      */
     function getInputValue(value, valueTypeRule) {
 
+        var parsedValue = null;
+
         if (!valueTypeRule)
             return value;
 
@@ -296,13 +285,32 @@ define(function (require) {
                 return value;
             case VALUE_TYPES.INTEGER:
             case VALUE_TYPES.LONG:
-                return parseInt(value);
+
+                parsedValue = parseInt(value);
+
+                if (isNaN(parsedValue))
+                    return 0;
+
+                return parsedValue;
+
             case VALUE_TYPES.DECIMAL:
-                return parseFloat(value);
+
+                parsedValue = parseFloat(value);
+
+                if (isNaN(parsedValue))
+                    return 0;
+
+                return parsedValue;
+
             case VALUE_TYPES.DATE:
-                return new Date(value);
             case VALUE_TYPES.TIME:
-                return new Date(value);
+
+                parsedValue = new Date(value);
+
+                if (isNaN(parsedValue.getDate))
+                    throw '日期(时间)格式不正确';
+
+                return parsedValue;
         }
 
         // default
@@ -433,7 +441,7 @@ define(function (require) {
             if (!field)
                 return false;
 
-            var value = field.$value;
+            var value = field.values || field.value;
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -587,7 +595,7 @@ define(function (require) {
 
                             innerElement.attr('name', name);
 
-                            innerElement.attr('ng-model', 'field.$value');
+                            innerElement.attr('ng-model', 'field.value');
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
@@ -610,8 +618,8 @@ define(function (require) {
                                 }
                             }
 
-                            if (!field.$value)
-                                field.$value = getInputValue(field.value, valueTypeRule);
+                            // 根据类型转换值类型
+                            field.value = getInputValue(field.value, valueTypeRule);
 
                             break;
                         case FIELD_TYPES.singleCheck:
@@ -622,18 +630,18 @@ define(function (require) {
 
                             innerElement.attr('name', name);
 
-                            innerElement.attr('ng-model', 'field.$value');
+                            innerElement.attr('ng-model', 'field.value.value');
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
-                            if (!field.$value && field.value)
-                                field.$value = field.value.value;
+                            if (!field.value)
+                                field.value = {value: null};
 
                             break;
                         case FIELD_TYPES.multiCheck:
 
-                            var selected, $value;
+                            var selected, valueStringList;
                             var requiredRule = rules.requiredRule;
 
                             innerElement = [];
@@ -644,33 +652,33 @@ define(function (require) {
                             // 通过事件触发 update 来操作 field 的 values 数组
                             $scope.update = function (index) {
 
+                                // 获取选中值
                                 var selectedValue = field.options[index].value;
-                                var selectedIndex = field.$value.indexOf(selectedValue);
+
+                                // 获取选中的值, 在选中值集合里的位置
+                                var selectedIndex = findIndex(field.values, function (valueObj) {
+                                    return valueObj.value == selectedValue;
+                                });
 
                                 if ($scope.selected[index]) {
-                                    // 选中
+                                    // 当前选中选中, 并且不在集合中的
                                     if (selectedIndex < 0)
-                                        field.$value.push(selectedValue);
+                                        field.values.push({value: selectedValue});
                                 } else {
-                                    // 没选中
+                                    // 没选中, 并且在集合中的
                                     if (selectedIndex > -1)
-                                        field.$value.splice(selectedIndex, 1);
+                                        field.values.splice(selectedIndex, 1);
                                 }
 
                             };
 
-                            if (!field.$value) {
+                            if (!field.values)
+                                field.values = [];
 
-                                if (field.values && field.values.length) {
-                                    field.$value = field.values.map(function (val) {
-                                        return val.value;
-                                    });
-                                } else {
-                                    field.$value = [];
-                                }
-                            }
-
-                            $value = field.$value;
+                            // 先把 values 里的选中值取出, 便于后续判断
+                            valueStringList = field.values.map(function (valueObj) {
+                                return valueObj.value;
+                            });
 
                             each(field.options, function (option, index) {
 
@@ -686,9 +694,9 @@ define(function (require) {
                                 // checkbox 的必填比较特殊
                                 if (requiredRule) {
                                     if (requiredRule instanceof DependentRule) {
-                                        checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.$value.length');
+                                        checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
                                     } else {
-                                        checkbox.attr('ng-required', '!field.$value.length');
+                                        checkbox.attr('ng-required', '!field.values.length');
                                     }
                                 }
 
@@ -696,7 +704,7 @@ define(function (require) {
 
                                 bindTipRule(checkbox, rules.tipRule);
 
-                                selected[index] = !($value.indexOf(option.value) < 0);
+                                selected[index] = !(valueStringList.indexOf(option.value) < 0);
 
                                 label.append(checkbox, '&nbsp;', option.displayName);
 
@@ -840,7 +848,7 @@ define(function (require) {
                 var innerElement, nameElement, isSimple;
 
                 // 放到 scope 上, 供画面绑定使用
-                // 创建元素时, ngModel 会直接指向到 field.$value
+                // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
                 $scope.field = field;
 
                 if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
