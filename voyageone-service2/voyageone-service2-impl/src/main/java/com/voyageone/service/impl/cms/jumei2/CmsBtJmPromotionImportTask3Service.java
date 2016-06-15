@@ -47,7 +47,7 @@ public class CmsBtJmPromotionImportTask3Service {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     TransactionRunner transactionRunner;
-@Autowired
+    @Autowired
     CmsBtJmPromotionExportTask3Service serviceCmsBtJmPromotionExportTask3Service;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
