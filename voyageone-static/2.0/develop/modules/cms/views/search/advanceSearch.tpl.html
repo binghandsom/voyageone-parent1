@@ -27,7 +27,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="openFreeTag('')">
+                                                    <button class="btn btn-pop btn-default" ng-click="openFreeTag('')">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
                                                     </button>
                                                 </div>
@@ -143,7 +143,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询主类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="openMasterCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openMasterCategoryMapping(popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
@@ -153,7 +153,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-default" ng-click="openFeedCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openFeedCategoryMapping(popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_FEED_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
@@ -254,7 +254,7 @@
                                     <div class="form-horizontal">
                                         <div class="form-group"  ng-if="vm._cart_display"><!--平台类目-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default" ng-click="platformCategoryMapping(popupNewCategory)">
+                                                <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)">
                                                     <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                 </button>
                                             </div>
@@ -264,7 +264,7 @@
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
+                                                <button class="btn btn-pop btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
                                                     <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
                                                 </button>
                                             </div>
@@ -278,7 +278,7 @@
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="btn-group" uib-dropdown>
-                                                    <button type="button" class="btn btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
+                                                    <button type="button" class="btn btn-pop btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
                                                     </button>
                                                 </div>
@@ -524,12 +524,12 @@
                 <h4 class="panel-title" style="min-height:25px;line-height: 25px;">
                     <label class="pull-left m-t-xs m-r-sm label label-primary">{{'TXT_COMMON_ATTRIBUTE_MANAGER'|translate}}</label>
                     <div class="form-inline pull-left" ng-controller="popupCtrl">
-                        <button class="btn btn-default" ng-click="openCustomColumn('lg',search)">
+                        <button class="btn btn-pop btn-default" ng-click="openCustomColumn('lg',search)">
                             <i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}
                         </button>
                         &nbsp;
                         <div class="btn-group" uib-dropdown>
-                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                            <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-mail-reply"></i>&nbsp;{{'BTN_EXPORT'|translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
@@ -551,7 +551,7 @@
                         <!--</button>-->
                         &nbsp;
                         <div class="btn-group" uib-dropdown>
-                            <button type="button" class="btn btn-default" ng-disabled="vm.masterData.freetagList.length == 0" uib-dropdown-toggle>
+                            <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0" uib-dropdown-toggle>
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu ng-if="vm.masterData.freetagList.length">
@@ -562,7 +562,7 @@
                         </div>
                         &nbsp;
                         <div class="btn-group" uib-dropdown>
-                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                            <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-exchange"></i>&nbsp;{{'TXT_COMMON_EXCHANGE' | translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
@@ -591,7 +591,7 @@
                             <input type="checkbox" value="1" ng-model="vm._selall">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;</label>
                         <div class="btn-group" style="margin-left:10px" uib-dropdown ng-repeat="cartBean in vm.masterData.cartList">
-                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                            <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
