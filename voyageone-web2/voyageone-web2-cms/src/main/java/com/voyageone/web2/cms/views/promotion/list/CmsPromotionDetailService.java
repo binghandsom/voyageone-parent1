@@ -392,7 +392,11 @@ public class CmsPromotionDetailService extends BaseAppService {
         code.setOrgChannelId(ExcelUtils.getString(row,CmsConstants.CellNum.channelIdCellNum));
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
-            code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
+            String id =ExcelUtils.getString(row, CmsConstants.CellNum.productIdCellNum, "#");
+            if(!StringUtil.isEmpty(id)){
+                code.setProductId(Long.parseLong(id));
+            }
+
         }
         code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
 
