@@ -191,7 +191,7 @@ public class JuMeiProductUpdatePlatformService {
         HtSpuUpdateRequest requestSpu = new HtSpuUpdateRequest();
         requestSpu.setJumei_spu_no(modelSku.getJmSpuNo());//);
         requestSpu.setUpc_code(modelSku.getUpc());
-        requestSpu.setPropery("OTHER");
+        requestSpu.setProperty("OTHER");
         requestSpu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
         requestSpu.setAttribute(info.getModelCmsBtJmProduct().getAttribute());//jmBtProductImport.getAttribute());
        // requestSpu.setAbroad_price(info.getModelCmsBtJmProduct().getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());

@@ -659,7 +659,7 @@ define([
          * popup弹出选择feed类目数据
          * @param popupNewCategory
          */
-        function openFeedCategoryMapping(popupNewCategory, categoryId) {
+        function openFeedCategoryMapping(popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -668,7 +668,7 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: null
+                        from: ""
                     }).then(function (context) {
                             $scope.vm.feedCat.catPath = context.selected.catPath;
                         }
