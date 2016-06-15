@@ -1,5 +1,7 @@
 /**
  * Created by linanbin on 15/12/7.
+ * @author sofia
+ * @description 新增层级判断
  */
 
 define(['cms',
@@ -51,7 +53,6 @@ define(['cms',
                     this.divType = this.context.divType;
                 }
 
-
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
 
@@ -75,7 +76,7 @@ define(['cms',
                     level = category.catPath.split('-').length;
                 } else if (this.divType == '>') {
                     level = category.catPath.split('>').length;
-                }else {
+                } else {
                     level = category.catPath.split(this.divType).length;
                 }
                 // 获取这一级别的数据
