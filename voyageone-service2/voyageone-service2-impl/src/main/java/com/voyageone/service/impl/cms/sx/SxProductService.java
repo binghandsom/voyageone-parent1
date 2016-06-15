@@ -302,13 +302,13 @@ public class SxProductService extends BaseService {
             String code = sxProduct.getFields().getCode();
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                    sxData.getChannelId(),
+                    sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
                     sxData.getCartId(),
                     code);
             if (imsBtProductModel == null) {
                 // 没找到就插入
                 imsBtProductModel = new ImsBtProductModel();
-                imsBtProductModel.setChannelId(sxData.getChannelId());
+                imsBtProductModel.setChannelId(sxData.getMainProduct().getOrgChannelId()); // ims表要用OrgChannelId
                 imsBtProductModel.setCartId(sxData.getCartId());
                 imsBtProductModel.setCode(code);
                 imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
