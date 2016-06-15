@@ -527,6 +527,10 @@ public class SxProductService extends BaseService {
 
     /**
      * 上新用的商品数据取得
+     * 对象外的code（不会set进productList）：
+     *     1：status不是Approved
+     *     2：code下没有允许在该平台上上架的sku（skus.carts里不包含本次上新的cartId，以后改成platform.skus.isSale=false，这些sku不会set进skuList）
+     *     3：lock = 1
      *
      * @param channelId channelId
      * @param groupId   groupId
