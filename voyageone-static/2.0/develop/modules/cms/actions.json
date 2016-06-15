@@ -155,7 +155,8 @@
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",
-        "add": "add"
+        "add": "add",
+        "getPromotionTags": "getPromotionTags"
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",

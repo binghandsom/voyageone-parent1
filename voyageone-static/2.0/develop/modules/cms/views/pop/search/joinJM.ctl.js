@@ -3,32 +3,54 @@
  */
 define([
     'underscore',
-    'angularAMD',
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function (_,angularAMD) {
+], function (_,cms) {
 
-    angularAMD.controller('popJoinJMCtl', function ($scope, $translate, jmPromotionProductAddService, notify, context) {
+    return cms.controller('popJoinJMCtl', (function () {
 
-        $scope.vm = _.extend({}, context);//包含promotion和selected products
+        function popJoinJMCtl($translate, jmPromotionProductAddService, notify, context, $uibModalInstance) {
 
+            this.jmPromotionProductAddService = jmPromotionProductAddService;
+            this.$uibModalInstance = $uibModalInstance;
+            this.notify = notify;
+            this.$translate = $translate;{}
+            this.promotion = context.promotion;
+            this.products = context.products;
 
-        $scope.hasDiscount=true; //是否有折扣
-        $scope.vm.discount = 1.0;//无折扣
-        $scope.vm.priceType="1";
-        $scope.discountForShow = 10;
-        $scope.$watch('discountForShow', function (newVal, oldVal) {
-            if(newVal>10 || newVal<0) {
-               $scope.discountForShow=newVal>10?10:0;//设置合理的值
+            this.hasDiscount = true;
+            this.priceType = "1";
+        }
+
+        popJoinJMCtl.prototype = {
+            /**
+             * 初始化时,加载必需数据
+             */
+            init: function () {
+                var self = this;
+                self.jmPromotionProductAddService.getPromotionTags(self.promotion).then(function (res) {
+                    self.subPromotionList = res.data;
+                });
+            },
+            save: function () {
+                var self = this;
+                var data = {};
+                data.promotion = self.promotion;
+                data.products = self.products;
+                data.tagId = self.tagInfo.tagPath;
+                data.tagName = self.tagInfo.tagName;
+                data.priceType = self.priceType;
+                data.discount = self.hasDiscount ? self.discount / 10 : null;
+                self.jmPromotionProductAddService.add(data)
+                    .then(function() {
+                        self.notify.success (self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        self.$uibModalInstance.$uibModalInstance.$dismiss();
+                    });
             }
-            $scope.vm.discount=$scope.discountForShow/10;
-        });
-
-        $scope.save = function () {
-            jmPromotionProductAddService.add($scope.vm).then(function(resp) {
-                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                $scope.$close();
-            });
         };
 
-    });
+        return popJoinJMCtl;
+
+    })());
+
 });
