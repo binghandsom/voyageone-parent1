@@ -123,7 +123,7 @@ public class JuMeiProductUpdateService {
         dataTypeList.add(5);
         dataTypeList.add(6);
         parameterCmsMtMasterInfo.put("dataTypeList",dataTypeList);
-        List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel = daoExtCmsMtMasterInfo.getListJMNewImageInfo(parameterCmsMtMasterInfo);//daoCmsMtMasterInfo.selectList(parameterCmsMtMasterInfo);
+        List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel = daoExtCmsMtMasterInfo.selectListJMNewImageInfo(parameterCmsMtMasterInfo);//daoCmsMtMasterInfo.selectList(parameterCmsMtMasterInfo);
         info.setListCmsMtMasterInfo(listCmsMtMasterInfoModel);
 
         return info;

@@ -167,7 +167,7 @@ public class CmsBtJmPromotionImportTask3Service {
 
     private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport,ProductImportBean product) {
         ProductSaveInfo saveInfo = new ProductSaveInfo();
-        saveInfo.productModel = daoExtCmsBtJmPromotionProduct.getByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
+        saveInfo.productModel = daoExtCmsBtJmPromotionProduct.selectByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.productModel == null) {
             saveInfo.productModel = new CmsBtJmPromotionProductModel();
         }
@@ -216,7 +216,7 @@ public class CmsBtJmPromotionImportTask3Service {
         CmsBtJmPromotionSkuModel skuModel = null;
         for (SkuImportBean skuImportBean : listImport) {
             if (saveInfo.productModel.getId()!=null&& saveInfo.productModel.getId()> 0) {
-                skuModel = daoExtCmsBtJmPromotionSku.getBySkuCode(skuImportBean.getSkuCode(), saveInfo.productModel.getId());
+                skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(skuImportBean.getSkuCode(), saveInfo.productModel.getId());
             }
             if (skuModel == null) {
                 skuModel = new CmsBtJmPromotionSkuModel();

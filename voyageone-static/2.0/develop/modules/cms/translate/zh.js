@@ -616,6 +616,9 @@ define(function(){
         "TXT_CLIENT_NET_PRICE":"客户成本价",
         "TXT_CLIENT_RETAIL_PRICE":"客户指导价",
         "TXT_CLIENT_MSRP_PRICE":"客户建议零售价",
-        "TXT_CLIENT_PROMOTION_PRICE":"客户促销价"
+        "TXT_CLIENT_PROMOTION_PRICE":"客户促销价",
+
+        /**平台schema*/
+        "TXT_BAR_CODE":"条形码"
     };
 });

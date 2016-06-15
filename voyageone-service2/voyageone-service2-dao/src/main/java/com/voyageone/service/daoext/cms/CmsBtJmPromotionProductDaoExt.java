@@ -14,13 +14,13 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionProductDaoExt {
 
-    List getListByWhere(Map<String, Object> map);
+    List selectListByWhere(Map<String, Object> map);
 
-    CmsBtJmPromotionProductModel getByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    CmsBtJmPromotionProductModel selectByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List getExportInfoListByPromotionId(int promotionId);
+    List selectExportInfoListByPromotionId(int promotionId);
 
-    List getListCmsBtJmImportProductByPromotionId(int promotionId);
+    List selectListCmsBtJmImportProductByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -35,16 +35,16 @@ public interface CmsBtJmPromotionProductDaoExt {
     int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
-    List getPageByWhere(Map<String, Object> map);//add
+    List selectPageByWhere(Map<String, Object> map);//add
 
-    int getCountByWhere(Map<String, Object> ma);//add
+    int selectCountByWhere(Map<String, Object> ma);//add
 
     //add
     Boolean existsCode(@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
-    CmsBtJmPromotionProductModel getByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List getExportListByPromotionId(int promotionId);
+    List selectExportListByPromotionId(int promotionId);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
@@ -60,7 +60,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int deleteAllProduct(int promotionId);
 
-    List<CmsBtJmPromotionProductModel> getJMCopyList(int promotionId);
+    List<CmsBtJmPromotionProductModel> selectJMCopyList(int promotionId);
 
 
     /**
@@ -69,6 +69,6 @@ public interface CmsBtJmPromotionProductDaoExt {
      * @param channelId
      * @return
      */
-    List<String> getJmHashIds (String productCode, String channelId);
+    List<String> selectJmHashIds(String productCode, String channelId);
     //jm2 end
 }
