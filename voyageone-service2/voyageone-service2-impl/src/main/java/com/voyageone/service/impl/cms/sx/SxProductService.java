@@ -1782,7 +1782,7 @@ public class SxProductService extends BaseService {
      *
      * @return Map<originalSize, adjustSize>
      */
-    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) throws Exception {
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
         Map<String, String> sizeMap = new HashMap<>();
         Map<Integer, List<CmsBtSizeChartModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
         for (int index = 0; index < 1 << 3; index++) {
