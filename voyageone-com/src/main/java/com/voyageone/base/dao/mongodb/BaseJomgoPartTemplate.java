@@ -270,7 +270,7 @@ public class BaseJomgoPartTemplate {
         if (StringUtils.isEmpty(updateObject.getQuery())) {
             findAndModify = getCollection(collectionName).findAndModify();
         } else {
-            findAndModify = getCollection(collectionName).findAndModify(updateObject.getQuery());
+            findAndModify = getCollection(collectionName).findAndModify(updateObject.getQuery(), updateObject.getQueryParameters());
         }
 
         //column
@@ -285,7 +285,7 @@ public class BaseJomgoPartTemplate {
 
         //update
         if (!StringUtils.isEmpty(updateObject.getUpdate())) {
-            findAndModify = findAndModify.with(updateObject.getUpdate());
+            findAndModify = findAndModify.with(updateObject.getUpdate(), updateObject.getUpdateParameters());
         }
 
         //remove

@@ -658,47 +658,58 @@ public class SxProductService extends BaseService {
             }
             // 2016/06/12 add desmond END
 
-            // added by morse.lu 2016/06/13 start
-            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-                // 天猫(淘宝)平台的时候，从外面的skus那里取得
-                // added by morse.lu 2016/06/13 end
-                List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-                List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-                productModelSku.forEach(sku -> {
-                    if (sku.getSkuCarts().contains(cartId)) {
-                        skus.add(sku);
-                    }
-                });
-
-                if (skus.size() > 0) {
-                    productModel.setSkus(skus);
-                    skuList.addAll(skus);
-                } else {
-                    // 该product下没有允许在该平台上上架的sku
-                    removeProductList.add(productModel);
-                }
-                // added by morse.lu 2016/06/13 start
-            } else {
-                // 天猫以外平台的时候，从各个平台下面的skus那里取得
-                List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
-                List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-                productModelSku.forEach(sku -> {
-                    if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-                        skus.add(sku);
-                    }
-                });
-
-                if (skus.size() > 0) {
-                    productModel.getPlatform(cartId).setSkus(skus);
-                    skuList.addAll(skus);
-                } else {
-                    // 该product下没有允许在该平台上上架的sku
-                    removeProductList.add(productModel);
-                }
+            // modified by morse.lu 2016/06/15 start
+            // TODO:{}1中的这段暂时不要，临时用{}2，以后恢复
+            {
+                // {}1
+//                // added by morse.lu 2016/06/13 start
+//                if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+//                        || CartEnums.Cart.TB.getId().equals(cartId.toString())
+//                        || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+//                    // 天猫(淘宝)平台的时候，从外面的skus那里取得
+//                    // added by morse.lu 2016/06/13 end
+//                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+//                    List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+//                    productModelSku.forEach(sku -> {
+//                        if (sku.getSkuCarts().contains(cartId)) {
+//                            skus.add(sku);
+//                        }
+//                    });
+//
+//                    if (skus.size() > 0) {
+//                        productModel.setSkus(skus);
+//                        skuList.addAll(skus);
+//                    } else {
+//                        // 该product下没有允许在该平台上上架的sku
+//                        removeProductList.add(productModel);
+//                    }
+//                    // added by morse.lu 2016/06/13 start
+//                } else {
+//                    // 天猫以外平台的时候，从各个平台下面的skus那里取得
+//                    List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
+//                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+//                    productModelSku.forEach(sku -> {
+//                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+//                            skus.add(sku);
+//                        }
+//                    });
+//
+//                    if (skus.size() > 0) {
+//                        productModel.getPlatform(cartId).setSkus(skus);
+//                        skuList.addAll(skus);
+//                    } else {
+//                        // 该product下没有允许在该平台上上架的sku
+//                        removeProductList.add(productModel);
+//                    }
+//                }
+//                // added by morse.lu 2016/06/13 end
             }
-            // added by morse.lu 2016/06/13 end
+            {
+                // {}2
+                // 暂时sku不判断是不是能在该平台上上架，且都从外面的skus里取
+                skuList.addAll(productModel.getSkus());
+            }
+            // modified by morse.lu 2016/06/15 end
         }
 
         // Add by desmond 2016/06/12 start
@@ -1657,6 +1668,11 @@ public class SxProductService extends BaseService {
         List<Integer> sortKey = new ArrayList<>(); // key的sort
         {
             // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            // 完全匹配:入参brandName为nike，检索结果也是nike。 不完全匹配：入参brandName为nike，检索结果是All
+            // 这里第一位是brandName，完全匹配为1，不完全匹配为0
+            // 这里第二位是productType，完全匹配为1，不完全匹配为0
+            // 这里第三位是sizeType，完全匹配为1，不完全匹配为0
+            // 按完全匹配数量+优先顺：Brand>ProductType>SizeType，进行下面顺序设定
             sortKey.add(7); // 111
             sortKey.add(6); // 110
             sortKey.add(5); // 101
@@ -1682,6 +1698,7 @@ public class SxProductService extends BaseService {
 
         List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {
+            // 这里第一位是，第二位是productType，第三位是sizeType，按顺序判断
             String matchVal = "";
             if (model.getBrandName().contains(paramBrandName)) {
                 matchVal += 1;
