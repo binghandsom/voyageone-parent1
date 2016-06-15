@@ -786,6 +786,7 @@ define(function (require) {
                                             // 如果已经存在, 只要补全属性就可以了
                                             mapItem.rules = field.rules;
                                             mapItem.name = field.name;
+                                            mapItem.options = field.options;
                                         }
                                     });
                                 });

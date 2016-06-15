@@ -71,12 +71,12 @@ define([
                             scope.vm.productCode = res.data
                         })
 
-                    switch(scope.cartInfo.value){
+                    switch(+scope.cartInfo.value){
                         case 26:
-                            scope.vm.productUrl = "";
+                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
                             break;
                         case 27:
-                            scope.vm.productUrl = "";
+                            scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
 
                     }
