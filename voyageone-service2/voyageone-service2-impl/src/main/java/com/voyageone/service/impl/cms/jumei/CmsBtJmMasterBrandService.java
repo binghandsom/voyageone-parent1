@@ -33,7 +33,7 @@ public class CmsBtJmMasterBrandService {
         List<JmBrandBean> list = serviceJumeiBrand.getBrands(serviceJMShopBean.getShopBean(channelId));
         CmsBtJmMasterBrandModel model = null;
         for (JmBrandBean bean : list) {
-            model = daoExtCmsBtJmMasterBrand.getByJmMasterBrandId(bean.getId());
+            model = daoExtCmsBtJmMasterBrand.selectByJmMasterBrandId(bean.getId());
             if (model == null) {
                 model = new CmsBtJmMasterBrandModel();
             }

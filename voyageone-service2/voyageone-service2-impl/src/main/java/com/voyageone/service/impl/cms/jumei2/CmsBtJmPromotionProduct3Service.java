@@ -45,11 +45,11 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        return daoExt.getPageByWhere(map);
+        return daoExt.selectPageByWhere(map);
     }
 
     public int getCountByWhere(Map<String, Object> map) {
-        return daoExt.getCountByWhere(map);
+        return daoExt.selectCountByWhere(map);
     }
 
     public int delete(int id) {
@@ -138,10 +138,10 @@ public class CmsBtJmPromotionProduct3Service {
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
         CmsBtJmPromotionProductModel modelPromotionProduct = dao.select(promotionProductId);
-        CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.getByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
+        CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
         productViewBean.setModelJmPromotionProduct(modelPromotionProduct);
         productViewBean.setModelJmProduct(modelProduct);
-        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.getViewListByPromotionProductId(promotionProductId);
+        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId);
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }

@@ -9,35 +9,48 @@ schema-item .ng-invalid .c-checkbox span {
     border: 1px solid red;
 }
 
-/* schema 相关的 directive 默认样式定义 */
+/* schema directive 样式定义 { */
+
+/* 默认样式 */
+
 schema {
     display: block;
-    font-size: 16px !important;
 }
 
 schema-field {
     display: block;
+    margin-bottom: 12px;
 }
 
 schema-field-name {
     display: block;
+    margin-bottom: 3px;
+    font-weight: bold;
 }
 
 schema-complex-name {
-    display: block;
+    display: inline-block;
+    margin-bottom: 3px;
+    font-weight: bold;
 }
 
 schema-complex-container {
     display: block;
-    /* TODO 该颜色仅供测试 */
-    background: #00ffe1;
-    padding: 10px;
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+schema-complex-container schema-field-name {
+    color: #7d7d7d;
 }
 
 schema-complex-container[multi] {
-    /* TODO 该颜色仅供测试 */
-    background: #ffc106;
-    padding: 10px;
+
+}
+
+schema-complex-container[multi] schema-field {
+    display: table-cell;
+    padding: 3px;
 }
 
 schema-disable-container {
@@ -46,7 +59,50 @@ schema-disable-container {
 
 schema-field-tip {
     display: block;
+    color: #ee903d;
 }
+
+schema-field-tip:before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    content: '\f0a2';
+    padding-right: 3px;
+}
+
+schema-field vo-message {
+    margin-top: 3px;
+}
+
+.btn-schema {
+    margin-left: 10px;
+}
+
+schema-complex-container .btn-schema {
+    margin-left: 0;
+}
+
+/* 为 multiComplex 使用 flex 提供更完善的样式外观 */
+
+schema-complex-container[multi] {
+    display: flex;
+    align-items: center;
+}
+
+schema-complex-container[multi] schema-field {
+    order: 1;
+    flex-grow: 3;
+}
+
+schema-complex-container[multi] .btn-schema {
+    order: 2;
+    flex-grow: 0;
+}
+
+/* } schema directive 样式定义 */
+
 
 /* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
 .vo-validate.ng-invalid input,

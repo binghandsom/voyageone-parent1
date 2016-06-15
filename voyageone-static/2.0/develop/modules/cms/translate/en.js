@@ -614,7 +614,9 @@ define(function() {
         "TXT_CLIENT_NET_PRICE":"clientNetPrice",
         "TXT_CLIENT_RETAIL_PRICE":"clientRetailPrice",
         "TXT_CLIENT_MSRP_PRICE":"clientMsrpPrice",
-        "TXT_CLIENT_PROMOTION_PRICE":"clientPromotionPrice"
+        "TXT_CLIENT_PROMOTION_PRICE":"clientPromotionPrice",
 
+        /**平台schema*/
+        "TXT_BAR_CODE":"Bar Code"
     };
 });

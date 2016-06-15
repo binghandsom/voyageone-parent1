@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface CmsBtJmPromotionExportTaskDaoExt {
-    public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    public List<CmsBtJmPromotionExportTaskModel> selectByPromotionId(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 }

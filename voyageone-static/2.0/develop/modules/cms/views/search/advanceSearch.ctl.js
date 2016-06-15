@@ -557,7 +557,10 @@ define([
                 }
                 var property = {'cartId': cartId, '_option':'putonoff', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall?1:0;
-                openPutOnOffFnc(property);
+                openPutOnOffFnc(property).then(
+                    function () {
+                        $scope.search();
+                    });
             }
         };
 
@@ -574,14 +577,11 @@ define([
                                 productIds.push(object.code);
                             });
                         }
-                        var propertyInfo = {
-                            property: {'cartId': cartId, '_option':'approval'},
-                            productIds: productIds
-                        };
-                        propertyInfo.property.isSelAll = $scope.vm._selall?1:0;
+                        var property = {'cartId': cartId, '_option':'approval', 'productIds': productIds};
+                        property.isSelAll = $scope.vm._selall?1:0;
 
-                        function check() {
-                            return $fieldEditService.setProductFields(propertyInfo).then(callback);
+                        function check(propParams) {
+                            return $fieldEditService.setProductFields(propParams).then(callback);
                         }
 
                         function callback(res) {
@@ -601,15 +601,15 @@ define([
                             }
                             if (res.data.ecd == 3) {
                                 // 商品价格有问题
-                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':propertyInfo}).then(function () {
-                                    return check();
+                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':property}).then(function (data) {
+                                    return check(data);
                                 });
                             }
                             $scope.search();
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         }
 
-                        check();
+                        check(property);
                     });
             }
         }

@@ -527,6 +527,10 @@ public class SxProductService extends BaseService {
 
     /**
      * 上新用的商品数据取得
+     * 对象外的code（不会set进productList）：
+     *     1：status不是Approved
+     *     2：code下没有允许在该平台上上架的sku（skus.carts里不包含本次上新的cartId，以后改成platform.skus.isSale=false，这些sku不会set进skuList）
+     *     3：lock = 1
      *
      * @param channelId channelId
      * @param groupId   groupId
@@ -666,7 +670,7 @@ public class SxProductService extends BaseService {
 //                if (CartEnums.Cart.TM.getId().equals(cartId.toString())
 //                        || CartEnums.Cart.TB.getId().equals(cartId.toString())
 //                        || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-//                    // 天猫(淘宝)平台的时候，从外面的skus那里取得
+//                    // 天猫(淘宝)平台的时候，从外面的skus那里取得（天猫以后也会变成else分支那样的结构）
 //                    // added by morse.lu 2016/06/13 end
 //                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
 //                    List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
@@ -685,17 +689,29 @@ public class SxProductService extends BaseService {
 //                    }
 //                    // added by morse.lu 2016/06/13 start
 //                } else {
-//                    // 天猫以外平台的时候，从各个平台下面的skus那里取得
-//                    List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
+//                    // 天猫以外平台的时候（天猫以后也会变成这样的结构）
+//                    // added by morse.lu 2016/06/15 start
+//                    Map<String, BaseMongoMap<String, Object>> mapProductModelSku = new HashMap<>();
+//                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+//                    productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
+//                    // added by morse.lu 2016/06/15 end
+//                    List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
 //                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-//                    productModelSku.forEach(sku -> {
+//                    productPlatformSku.forEach(sku -> {
 //                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-//                            skus.add(sku);
+//                            // modified by morse.lu 2016/06/15 start
+////                            skus.add(sku);
+//                            // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
+//                            // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
+//                            BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                            mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+//                            skus.add(mapSku);
+//                            // modified by morse.lu 2016/06/15 end
 //                        }
 //                    });
 //
 //                    if (skus.size() > 0) {
-//                        productModel.getPlatform(cartId).setSkus(skus);
+//                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
 //                        skuList.addAll(skus);
 //                    } else {
 //                        // 该product下没有允许在该平台上上架的sku

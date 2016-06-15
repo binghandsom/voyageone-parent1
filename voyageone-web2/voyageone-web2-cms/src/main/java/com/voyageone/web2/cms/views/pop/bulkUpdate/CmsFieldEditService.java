@@ -27,7 +27,6 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * @author gubuchun 15/12/9
@@ -206,9 +203,8 @@ public class CmsFieldEditService extends BaseAppService {
      * 批量修改属性.(商品上下架)
      */
     public Map<String, Object> setProductOnOff(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
-        Map<String, Object> prop = (Map<String, Object>) params.get("property");
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
-        Integer isSelAll = (Integer) prop.get("isSelAll");
+        Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
         }
@@ -224,39 +220,45 @@ public class CmsFieldEditService extends BaseAppService {
             return rsMap;
         }
 
-        String prop_id = (String) prop.get("putFlg");
+        String prop_id = (String) params.get("putFlg");
         if (prop_id == null || prop_id.isEmpty()) {
             $error("没有设置上下架操作");
             rsMap.put("ecd", 2);
             return rsMap;
         }
+        if (!"1".equals(prop_id) && !"0".equals(prop_id)) {
+            $error("没有设置上下架操作");
+            rsMap.put("ecd", 2);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        List<Integer> cartList = null;
+        if (cartId == null || cartId == 0) {
+            // 表示全平台更新
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+        } else {
+            cartList = new ArrayList<>(1);
+            cartList.add(cartId);
+        }
 
         for (String code : productCodes) {
             // 获取产品的信息
-            CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
-
-            // 如果更新的是platformActive,则更新cms_bt_product_groups表
-            if ("platformActive".equals(prop_id)) {
-                CmsBtProductGroupModel CmsBtProductGroupModel = new CmsBtProductGroupModel();
-//                if (0 != cartId && 1 != cartId) CmsBtProductGroupModel.setCartId(cartId);
-                CmsBtProductGroupModel.setChannelId(userInfo.getSelChannelId());
-
-                // 只要找到对应的
-                CmsBtProductGroupModel.setMainProductCode(code);
-
-                // 设置platformActive的状态
-                if("1".equals(prop_id)) {
-                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.ToOnSale);
-                } else if ("0".equals(prop_id)) {
-                    CmsBtProductGroupModel.setPlatformActive(com.voyageone.common.CmsConstants.PlatformActive.ToInStock);
-                } else {
-                    $error("没有设置上下架操作");
-                    rsMap.put("ecd", 2);
-                    return rsMap;
-                }
-                CmsBtProductGroupModel.setModifier(userInfo.getUserName());
-                productGroupService.updateGroupsPlatformActiveBympCode(CmsBtProductGroupModel);
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#},'platformActive':{$ne:#}}");
+            updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
+            // 设置platformActive的状态
+            if ("1".equals(prop_id)) {
+                updObj.setQueryParameters(code, userInfo.getSelChannelId(), cartList, com.voyageone.common.CmsConstants.PlatformActive.ToOnSale);
+                updObj.setUpdateParameters(com.voyageone.common.CmsConstants.PlatformActive.ToOnSale, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            } else if ("0".equals(prop_id)) {
+                updObj.setQueryParameters(code, userInfo.getSelChannelId(), cartList, com.voyageone.common.CmsConstants.PlatformActive.ToInStock);
+                updObj.setUpdateParameters(com.voyageone.common.CmsConstants.PlatformActive.ToInStock, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
             }
+
+            cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
         }
         rsMap.put("ecd", 0);
         return rsMap;
@@ -266,9 +268,8 @@ public class CmsFieldEditService extends BaseAppService {
      * 批量修改属性(商品审批)
      */
     public Map<String, Object> setProductApproval(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
-        Map<String, Object> prop = (Map<String, Object>) params.get("property");
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
-        Integer isSelAll = (Integer) prop.get("isSelAll");
+        Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
         }
@@ -284,7 +285,7 @@ public class CmsFieldEditService extends BaseAppService {
             return rsMap;
         }
 
-        Integer cartId = (Integer) prop.get("cartId");
+        Integer cartId = (Integer) params.get("cartId");
         List<Integer> cartList = null;
         if (cartId == null || cartId == 0) {
             // 表示全平台更新
@@ -328,12 +329,12 @@ public class CmsFieldEditService extends BaseAppService {
         }
 
         // 检查商品价格 notChkPrice=1时表示忽略价格问题
-        Integer notChkPriceFlg = (Integer) prop.get("notChkPrice");
+        Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
         if (notChkPriceFlg == null) {
             notChkPriceFlg = 0;
         }
         if (notChkPriceFlg == 0) {
-            Integer startIdx = (Integer) prop.get("startIdx");
+            Integer startIdx = (Integer) params.get("startIdx");
             if (startIdx == null) {
                 startIdx = 0;
             }
@@ -423,21 +424,28 @@ public class CmsFieldEditService extends BaseAppService {
             }
             String updStr = "{$set:{";
             updStr += StringUtils.join(strList, ',');
-            updStr += ",'carts':#,'modified':#,'modifier':#}}";
+            if (carts != null && carts.size() > 0) {
+                updStr += ",'carts':#";
+            }
+            updStr += ",'modified':#,'modifier':#}}";
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':#}");
             updObj.setQueryParameters(code);
             updObj.setUpdate(updStr);
-            updObj.setUpdateParameters(carts, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            if (carts != null && carts.size() > 0) {
+                updObj.setUpdateParameters(carts, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            } else {
+                updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            }
 
             //执行product的pStatus更新及group的publishStatus更新
-            cmsBtProductDao.findAndModify(updObj, userInfo.getSelChannelId());
+            cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());
 
-            updObj.setQuery("{'productCodes':#,'cartId':{$in:#}}");
-            updObj.setQueryParameters(code, updCartList);
+            updObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#}}");
+            updObj.setQueryParameters(code, userInfo.getSelChannelId(), updCartList);
             updObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            cmsBtProductGroupDao.findAndModify(updObj, userInfo.getSelChannelId());
+            cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
 
             // 这里需要确认更新成功后再记录上新操作表
             CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
