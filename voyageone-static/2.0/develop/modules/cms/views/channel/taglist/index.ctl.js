@@ -8,7 +8,7 @@ define([
 
     function cmsChannelTagController($scope, channelTagService,confirm) {
         $scope.vm = {
-            tagTypeSelectValue:"4",
+            tagTypeSelectValue:"1",
             tagTree: null,
             id: "",
             parentTagId: "",
