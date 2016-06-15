@@ -27,7 +27,6 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedMappingService;
@@ -757,7 +756,7 @@ public class ProductService extends BaseService {
      */
     public void updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
         // 先根据产品code找到其model
-        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{'fields.code':'" + prodCode + "'},{'fields.model':1,'_id':0}", channelId);
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{\"fields.code\":\"" + prodCode + "\"},{\"fields.model\":1,\"_id\":0}", channelId);
         String prodModel = prodObj.getFields().getModel();
 
         Map<String, Object> queryMap = new HashMap<>();
@@ -933,7 +932,7 @@ public class ProductService extends BaseService {
                 bean.setImgPath(imagePath);
 
                 // 取得该商品的组信息
-                CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{'cartId':" + cartId + ",'productCodes':'" + product.getFields().getCode() + "'},{'numIid':1,'_id':0}", channelId);
+                CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery("{\"cartId\":" + cartId + ",\"productCodes\":\"" + product.getFields().getCode() + "\"},{\"numIid\":1,\"_id\":0}", channelId);
 
                 // TODO 目前写死,以后再想办法修改
                 String numIid = "";
