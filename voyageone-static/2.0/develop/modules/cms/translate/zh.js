@@ -1,5 +1,6 @@
 define(function(){
     return {
+        "TXT_NO_DATA": "没有任何数据。",
         "TXT_IMAGE_STATUS": "图片状态",
         "TXT_REMINDER_WITH_COLON": "温馨提示：",
         "TXT_EDIT_TASK": "编辑当前 Task ",
@@ -38,9 +39,6 @@ define(function(){
         "TXT_PRODUCT_STATUS": "产品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_MSRP_PRICE": "中国专柜售价",
-        "TXT_CLIENT_MSRP_PRICE": "客户美金售价",
-        "TXT_CLIENT_RETAIL_PRICE": "客户美金销售价",
-        "TXT_CLIENT_NET_PRICE": "成本价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
         "TXT_INVENTORY": "库存",
@@ -321,7 +319,6 @@ define(function(){
         "TXT_DATA_TYPE": "数据类型",
         "TXT_SPECIAL_DESCRIPTION": "特殊说明",
         "TXT_BRAND_STORY": "品牌故事图",
-        "TXT_SIZE_CHART": "尺码图",
         "TXT_SHIPPING_DESCRIPTION": "物流介绍",
         "TXT_INDEX": "编号",
         "TXT_ORIGIN_IMAGE_URL": "原始图片地址",
