@@ -14,7 +14,6 @@ define([
             parentTagId: "",
             tagTypeList:[]
         };
-
         $scope.tree = [];
         $scope.key = [];
         $scope.selected = [];
