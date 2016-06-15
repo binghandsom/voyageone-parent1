@@ -254,52 +254,58 @@
                                     <div class="form-horizontal">
                                         <div class="form-group"  ng-if="vm._cart_display"><!--平台类目-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="nonePlatformSetter">
-                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
-                                                </button>
+                                                <div class="">
+                                                    <label class="checkbox-inline c-checkbox">
+                                                        <input type="checkbox" ng-model="nonePlatformSetter"><span class="fa fa-check"></span> &nbsp;未设置
+                                                    </label>
+                                                </div>
+                                                <div class="">
+                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="nonePlatformSetter">
+                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <label class="pull-right m-r-xxl checkbox-inline c-checkbox">
-                                                <input type="checkbox" ng-model="nonePlatformSetter"><span class="fa fa-check"></span> &nbsp;未设置
-                                            </label>
-                                            <div class="col-sm-7">
-                                                <input type="text" class="form-control" ng-model="vm.platform.catPath" ng-disabled="nonePlatformSetter">
+                                            <div class="col-sm-7 m-t-sm">
+                                                <textarea class="form-control inherited" ng-model="vm.platform.catPath" rows="2" ng-disabled="nonePlatformSetter"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
-                                                <button class="btn btn-pop btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
-                                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
-                                                </button>
+                                                <div class="">
+                                                    <label class="checkbox-inline c-checkbox">
+                                                        <input type="checkbox" ng-model="noneSetter"><span class="fa fa-check"></span> &nbsp;未设置
+                                                    </label>
+                                                </div>
+                                                <div class="">
+                                                    <button class="btn btn-pop btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
+                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <label class="pull-right m-r-xxl checkbox-inline c-checkbox">
-                                                <input type="checkbox" ng-model="noneSetter"><span class="fa fa-check"></span> &nbsp;未设置
-                                            </label>
-                                            <div class="col-sm-7">
+                                            <div class="col-sm-7 m-t-sm">
                                                 <textarea class="form-control inherited" ng-model="vm.channelInner.catPath" rows="2" ng-disabled="noneSetter"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
                                             <div class="col-sm-4 text-right">
-                                                <div class="btn-group" uib-dropdown>
-                                                    <button type="button" class="btn btn-pop btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
-                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
-                                                    </button>
+                                                <div class="btn-group">
+                                                    <div class="" style="margin-left: -17px;">
+                                                        <label class="checkbox-inline c-radio">
+                                                            <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Include
+                                                            <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Exclude
+                                                        </label>
+                                                    </div>
+                                                    <div class="">
+                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
+                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6 m-l-lg">
-                                                <label class="checkbox-inline c-radio">
-                                                    <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Include
-                                                </label>
-                                                <label class="checkbox-inline c-radio">
-                                                    <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Exclude
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" ng-if="vm._cart_display">
-                                            <div class="col-sm-7 col-sm-offset-4">
+                                            <div class="col-sm-7 m-t-sm">
                                                 <textarea class="form-control inherited " rows="2"></textarea>
                                             </div>
-                                        </div><!--End: promotion tag-->
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
