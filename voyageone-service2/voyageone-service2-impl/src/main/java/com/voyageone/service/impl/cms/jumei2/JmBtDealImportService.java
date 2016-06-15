@@ -61,7 +61,7 @@ public class JmBtDealImportService extends BaseService {
         try {
             //取所有商品最后一次deal信息
             List<JMProductDealBean> listJMProductDealBean = daoExtJmBtDealImport.selectListProductDealByChannelId(channelId);
-            List<List<JMProductDealBean>> listPage = ListHelp.getPageList(listJMProductDealBean, 500);
+            List<List<JMProductDealBean>> listPage = ListHelp.getPageList(listJMProductDealBean, 1000);
             for (List<JMProductDealBean> page : listPage) {
                 importPage(channelId, sbResult, page);
             }
