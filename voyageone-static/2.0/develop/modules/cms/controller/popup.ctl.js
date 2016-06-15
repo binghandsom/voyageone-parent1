@@ -60,6 +60,13 @@ define([
                     "backdrop": 'static',
                     "size": 'lg'
                 },
+                "categoryNew": {
+                    "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
+                    "controller": 'popCategoryNewCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'lg'
+                },
                 "addChannelCategory": {
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
@@ -617,6 +624,16 @@ define([
         $scope.popupNewCategory = function (context) {
             return openModel(popActions.bulkUpdate.category, context);
         };
+
+        /**
+         * 打开新的类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupCategoryNew = function (context) {
+            return openModel(popActions.bulkUpdate.categoryNew, context);
+        };
+
 
         /**
          * 打开类目属性编辑页面
