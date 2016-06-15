@@ -819,6 +819,7 @@ public class SxProductService extends BaseService {
     public boolean resolveJdPriceSection_before(ShopBean shopBean, Field field) {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
+        String strRex3 = "其它";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -856,6 +857,12 @@ public class SxProductService extends BaseService {
                 Pattern pattern = Pattern.compile(strRex2, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(optionDisplayName);
                 if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                if (optionDisplayName.equals(strRex3)) {
                     blnError = true;
                 }
             }
