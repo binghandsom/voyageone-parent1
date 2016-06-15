@@ -374,6 +374,12 @@
     word-break: break-all;
 }
 
+.product-shema-detail .ng-number{
+    width: 150px;
+    text-align: right;
+    margin: 0px auto;
+}
+
 /*@media screen and (max-width: 1500px) {
     .product-shema-detail .bs-docs-sidebar{
         display: none;
