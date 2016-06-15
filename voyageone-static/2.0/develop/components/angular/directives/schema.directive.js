@@ -1,4 +1,4 @@
-define(function (require) {
+define(['require', 'underscore'], function (require, _) {
     /*
      * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
      */
@@ -507,8 +507,8 @@ define(function (require) {
             SchemaController.prototype.$render = function ($element) {
 
                 var controller = this,
-                    $scope = controller.$scope;
-                schema = controller.schema;
+                    $scope = controller.$scope,
+                    schema = controller.schema;
 
                 each(schema, function (field) {
 
