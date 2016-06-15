@@ -538,7 +538,9 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function() {callback(cartId, null, context);});
+                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function () {
+                    callback(cartId, null, context);
+                });
             }
         }
 
@@ -547,24 +549,67 @@ define([
             _chkProductSel(cartId, __openPutOnOff);
 
             function __openPutOnOff(cartId, _selProdList) {
-                openPutOnOffFnc();
+                var productIds = [];
+                if (_selProdList && _selProdList.length) {
+                    _.forEach(_selProdList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var property = {'cartId': cartId, '_option':'putonoff', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall?1:0;
+                openPutOnOffFnc(property).then(
+                    function () {
+                        $scope.search();
+                    });
             }
         };
 
         // 商品审批
-        function openApproval(cartId) {
+        function openApproval(openUpdateApprovalFnc, cartId) {
             _chkProductSel(cartId, __openApproval);
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
                     .then(function () {
-                        var propertyInfo = {
-                            property: {'cartId': cartId, '_option':'approval'},
-                            productIds: _selProdList
-                        };
-                        $fieldEditService.setProductFields(propertyInfo).then(function () {
-                            notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        });
+                        var productIds = [];
+                        if (_selProdList && _selProdList.length) {
+                            _.forEach(_selProdList, function (object) {
+                                productIds.push(object.code);
+                            });
+                        }
+                        var property = {'cartId': cartId, '_option':'approval', 'productIds': productIds};
+                        property.isSelAll = $scope.vm._selall?1:0;
+
+                        function check(propParams) {
+                            return $fieldEditService.setProductFields(propParams).then(callback);
+                        }
+
+                        function callback(res) {
+                            if (res.data.ecd == null || res.data.ecd == undefined) {
+                                alert("提交请求时出现错误");
+                                return;
+                            }
+                            if (res.data.ecd == 1) {
+                                // 存在未ready状态
+                                alert("未选择商品，请选择后再操作。");
+                                return;
+                            }
+                            if (res.data.ecd == 2) {
+                                // 存在未ready状态
+                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
+                                return;
+                            }
+                            if (res.data.ecd == 3) {
+                                // 商品价格有问题
+                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':property}).then(function (data) {
+                                    return check(data);
+                                });
+                            }
+                            $scope.search();
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        }
+
+                        check(property);
                     });
             }
         }
@@ -614,7 +659,7 @@ define([
          * popup弹出选择feed类目数据
          * @param popupNewCategory
          */
-        function openFeedCategoryMapping(popupNewCategory, categoryId) {
+        function openFeedCategoryMapping(popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -623,9 +668,9 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: null
-                    }).then( function (context) {
-                        $scope.vm.feedCat.catPath = context.selected.catPath;
+                        from: ""
+                    }).then(function (context) {
+                            $scope.vm.feedCat.catPath = context.selected.catPath;
                         }
                     );
                 });

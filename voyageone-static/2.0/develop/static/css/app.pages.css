@@ -243,9 +243,11 @@
 }
 .btn {
     font-weight: 500;
+    outline: 0!important;
+}
+.btn-pop {
     border-radius: 2.5px;
     box-shadow: 1px 1px 2px #888888;
-    outline: 0!important;
 }
 .stat-boxes{
     display: inline-block;
@@ -332,7 +334,7 @@
 /**平台schema*/
 .product-shema-detail .nav span{
     display: inline-block;
-    width: 85px;
+    width: 135px;
     height: 27px;
     background: #23ad44;
     color: white;
@@ -472,7 +474,7 @@
 }
 .dropdown-submenu > .dropdown-menu {
     top: 0;
-    left: -91%;
+    left: -100%;
     margin-top: -6px;
     margin-left: -1px;
     -webkit-border-radius: 0 2px 2px 2px;
@@ -493,6 +495,7 @@
     border-left: 0 solid transparent;
     margin-top: 4px;
     margin-right: 6px;
+    margin-left: -7px;
 }
 .dropdown-submenu:hover > a:after {
     border-left-color: #fff;

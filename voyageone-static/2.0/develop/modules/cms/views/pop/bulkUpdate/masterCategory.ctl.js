@@ -38,7 +38,7 @@ define(['cms',
              * 父节点与子节点之间的区分符,缺省是'>'
              * @type {String}
              */
-            this.divType = null;
+            this.divType = '-';
         }
 
         PopCategoryController.prototype = {

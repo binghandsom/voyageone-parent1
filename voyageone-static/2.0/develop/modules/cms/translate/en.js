@@ -1,5 +1,6 @@
 define(function() {
     return {
+        "TXT_NO_DATA": "There is no data。",
         "TXT_IMAGE_STATUS": "Image Status",
         "TXT_REMINDER_WITH_COLON": "Reminder：",
         "TXT_EDIT_TASK": "Edit Task ",
@@ -17,6 +18,7 @@ define(function() {
         "TXT_PLATFORM_CONNECTION_SETTING": "Platform Connection Setting",
         "TXT_DICTIONARY_INDEX": "Dictionary List",
         "TXT_CHANNEL_MANAGER": "Channel Setting",
+        "TXT_ATTRIBUTE":"Attributes",
         "TXT_CUSTOM_ATTRIBUTE_MANAGER": "Custom Attributes",
         "TXT_COMMON_ATTRIBUTE_MANAGER": "Common Attributes",
         "TXT_FEED_IMPORT_RULE": "Feed Import Rule",
@@ -37,9 +39,6 @@ define(function() {
         "TXT_PRODUCT_STATUS": "Product Status",
         "TXT_PLATFORM_STATUS": "Platform Status",
         "TXT_MSRP_PRICE": "Msrp Price",
-        "TXT_CLIENT_MSRP_PRICE": "Client Msrp Price",
-        "TXT_CLIENT_RETAIL_PRICE": "Client Retail Price",
-        "TXT_CLIENT_NET_PRICE": "Client Net Price",
         "TXT_CREATE_TIME": "Create Time",
         "TXT_PUBLISH_TIME": "Publish Time",
         "TXT_INVENTORY": "Inventory",
@@ -311,7 +310,6 @@ define(function() {
         "TXT_DATA_TYPE": "Data Type",
         "TXT_SPECIAL_DESCRIPTION": "Special Description",
         "TXT_BRAND_STORY": "Brand Story Image",
-        "TXT_SIZE_CHART": "SizChart",
         "TXT_SHIPPING_DESCRIPTION": "Shipping Description",
         "TXT_INDEX": "Index",
         "TXT_ORIGIN_IMAGE_URL": "Original Image Url",
@@ -340,8 +338,6 @@ define(function() {
         "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH_2": "Search include:Code(use enter to split),Model(use enter to split)",
         "TXT_MSG_INSERT_SUCCESS": "Insert is successful.",
         "TXT_MSG_INSERT_FAIL": "Insert is fail.",
-        "TXT_MSG_UPDATE_SUCCESS": "Update is successful.",
-        "TXT_MSG_UPDATE_FAIL": "Update is fail.",
         "TXT_MSG_SET_SUCCESS": "Set is successful.",
         "TXT_MSG_SET_FAIL": "Set is fail.",
         "TXT_MSG_SEPARATE_SUCCESS": "Separate is successful.",
@@ -613,7 +609,9 @@ define(function() {
         "TXT_CLIENT_NET_PRICE":"clientNetPrice",
         "TXT_CLIENT_RETAIL_PRICE":"clientRetailPrice",
         "TXT_CLIENT_MSRP_PRICE":"clientMsrpPrice",
-        "TXT_CLIENT_PROMOTION_PRICE":"clientPromotionPrice"
+        "TXT_CLIENT_PROMOTION_PRICE":"clientPromotionPrice",
 
+        /**平台schema*/
+        "TXT_BAR_CODE":"Bar Code"
     };
 });

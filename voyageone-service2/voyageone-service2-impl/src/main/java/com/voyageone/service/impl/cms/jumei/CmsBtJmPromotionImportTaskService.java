@@ -228,7 +228,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         for (CmsBtJmImportProduct importProductModel : listProductModel) {
             saveInfo = new CmsBtJmProductImportSaveInfo();
             //商品
-            oldProductModel = cmsBtJmProductDaoExt.getByProductCodeChannelId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId());
+            oldProductModel = cmsBtJmProductDaoExt.selectByProductCodeChannelId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId());
             importProductModel.setChannelId(modelCmsBtJmPromotion.getChannelId());
             if (oldProductModel != null) {
 //                if (oldProductModel.getState() == 0) {//未上新 全覆盖
@@ -307,7 +307,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
     }
     private void loadSavePromotionProductInfoByImportModel(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmProductModel oldProductModel, CmsBtJmImportProduct importProductModel) {
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct;
-        modelCmsBtJmPromotionProduct = cmsBtJmPromotionProductDaoExt.getByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
+        modelCmsBtJmPromotionProduct = cmsBtJmPromotionProductDaoExt.selectByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (modelCmsBtJmPromotionProduct == null) {
             modelCmsBtJmPromotionProduct = new CmsBtJmPromotionProductModel();
             modelCmsBtJmPromotionProduct.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
@@ -352,7 +352,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 * */
         //特殊说明 data_type=3
 
-        CmsMtMasterInfoModel specialNote = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 3);
+        CmsMtMasterInfoModel specialNote = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 3);
         //  CmsMtMasterInfoModel specialNote = new CmsMtMasterInfoModel();
         if (specialNote == null) {
             specialNote = new CmsMtMasterInfoModel();
@@ -365,7 +365,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(specialNote);//特殊说明 data_type=3
         }
         //品牌故事图data_type=4
-        CmsMtMasterInfoModel model4 = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 4);
+        CmsMtMasterInfoModel model4 = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 4);
         if (model4 == null) {
             model4 = new CmsMtMasterInfoModel();
             model4.setDataType(4);
@@ -377,7 +377,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(model4);//品牌故事图data_type=4
         }
         //尺码图data_type=5
-        CmsMtMasterInfoModel model5 = cmsMtMasterInfoDaoExt.getByKeySizeType(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 5, importProductModel.getSizeType());
+        CmsMtMasterInfoModel model5 = cmsMtMasterInfoDaoExt.selectByKeySizeType(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 5, importProductModel.getSizeType());
         if (model5 == null) {
             model5 = new CmsMtMasterInfoModel();
             model5.setDataType(5);
@@ -390,7 +390,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(model5);//尺码图data_type=5
         }
         //物流介绍data_type=6
-        CmsMtMasterInfoModel model6 = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 6);
+        CmsMtMasterInfoModel model6 = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 6);
         if (model6 == null) {
             model6 = new CmsMtMasterInfoModel();
             model6.setDataType(6);
@@ -466,7 +466,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private void addPropertyImage(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, String propertyImage1, String productCode, int imageType, int imageIndex) {
         if (StringUtils.isEmpty(propertyImage1)) return;  //为空 不覆盖
-        CmsBtJmProductImagesModel propertyImageModel = cmsBtJmProductImagesDaoExt.getByKey(modelCmsBtJmPromotion.getChannelId(), productCode, imageType, imageIndex);
+        CmsBtJmProductImagesModel propertyImageModel = cmsBtJmProductImagesDaoExt.selectByKey(modelCmsBtJmPromotion.getChannelId(), productCode, imageType, imageIndex);
         if (propertyImageModel == null) {
             propertyImageModel = new CmsBtJmProductImagesModel();
         }
@@ -498,7 +498,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
     private void addImageByProductImageUrlKey(String ProductImageUrlKey, CmsBtJmImportSpecialImage specialImageModel, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, List<CmsMtTemplateImagesModel> listCmsMtTemplateImages, int imageIndex) {
         if (StringUtils.isEmpty(ProductImageUrlKey)) return; //为空 不覆盖
         for (CmsMtTemplateImagesModel templateImage : listCmsMtTemplateImages) {
-            CmsBtJmProductImagesModel productImage = cmsBtJmProductImagesDaoExt.getByKey(modelCmsBtJmPromotion.getChannelId(), specialImageModel.getProductCode(), templateImage.getTemplateType(), imageIndex);
+            CmsBtJmProductImagesModel productImage = cmsBtJmProductImagesDaoExt.selectByKey(modelCmsBtJmPromotion.getChannelId(), specialImageModel.getProductCode(), templateImage.getTemplateType(), imageIndex);
             if (productImage == null) {
                 productImage = new CmsBtJmProductImagesModel();
             }
@@ -528,7 +528,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private void loadPromotionSku(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmSkuModel oldSkuModel, CmsBtJmImportSku importSkuModel) {
         CmsBtJmPromotionSkuModel promotionSkuModel;
-        promotionSkuModel = cmsBtJmPromotionSkuDaoExt.getBySkuCodeChannelIdCmsBtJmPromotionId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
+        promotionSkuModel = cmsBtJmPromotionSkuDaoExt.selectBySkuCodeChannelIdCmsBtJmPromotionId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (promotionSkuModel == null) {
             promotionSkuModel = new CmsBtJmPromotionSkuModel();
         }
@@ -562,7 +562,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private CmsBtJmSkuModel loadSku(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmImportSku importSkuModel) {
         CmsBtJmSkuModel oldSkuModel;
-        oldSkuModel = cmsBtJmSkuDaoExt.getBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
+        oldSkuModel = cmsBtJmSkuDaoExt.selectBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
         importSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());//渠道
         if (oldSkuModel != null) {
             importSkuModel.setId(oldSkuModel.getId());
@@ -598,7 +598,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         return result;
     }
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
-        return cmsBtJmPromotionImportTaskDaoExt.getByPromotionId(promotionId);
+        return cmsBtJmPromotionImportTaskDaoExt.selectByPromotionId(promotionId);
     }
 
     @VOTransactional

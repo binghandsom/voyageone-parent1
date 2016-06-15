@@ -65,7 +65,13 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{'fields.code':{'$in':[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
-
+    /**
+     * 根据codes返回多条产品数据
+     */
+    public CmsBtProductModel selectByCode(String code, String channelId) {
+        String query = "{\"fields.code\":\"" + code + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
     public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }

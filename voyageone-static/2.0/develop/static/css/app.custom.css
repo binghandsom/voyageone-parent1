@@ -17,3 +17,10 @@ ul[uib-datepicker-popup-wrap] table {
 ul[uib-datepicker-popup-wrap] button {
     border: 0;
 }
+.category_highlight{
+    background: hotpink;
+    color: #fff;
+}
+.category_highlight>p>span{
+    color: #fff;
+}

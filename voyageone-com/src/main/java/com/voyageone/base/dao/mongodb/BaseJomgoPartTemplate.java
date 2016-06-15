@@ -270,7 +270,7 @@ public class BaseJomgoPartTemplate {
         if (StringUtils.isEmpty(updateObject.getQuery())) {
             findAndModify = getCollection(collectionName).findAndModify();
         } else {
-            findAndModify = getCollection(collectionName).findAndModify(updateObject.getQuery());
+            findAndModify = getCollection(collectionName).findAndModify(updateObject.getQuery(), updateObject.getQueryParameters());
         }
 
         //column
@@ -285,7 +285,7 @@ public class BaseJomgoPartTemplate {
 
         //update
         if (!StringUtils.isEmpty(updateObject.getUpdate())) {
-            findAndModify = findAndModify.with(updateObject.getUpdate());
+            findAndModify = findAndModify.with(updateObject.getUpdate(), updateObject.getUpdateParameters());
         }
 
         //remove
@@ -334,6 +334,14 @@ public class BaseJomgoPartTemplate {
 
     public WriteResult updateMulti(final String strQuery, final String strUpdate, final String collectionName) {
         return getCollection(collectionName).update(strQuery).multi().with(strUpdate);
+    }
+
+    public WriteResult updateFirst(JomgoUpdate updObj, final String collectionName) {
+        return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).with(updObj.getUpdate(), updObj.getUpdateParameters());
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, final String collectionName) {
+        return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).multi().with(updObj.getUpdate(), updObj.getUpdateParameters());
     }
 
     public WriteResult upsertFirst(String strQuery, String strUpdate, String collectionName) {

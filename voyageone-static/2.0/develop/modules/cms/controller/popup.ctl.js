@@ -60,6 +60,13 @@ define([
                     "backdrop": 'static',
                     "size": 'lg'
                 },
+                "categoryNew": {
+                    "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
+                    "controller": 'popCategoryNewCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'lg'
+                },
                 "addChannelCategory": {
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
@@ -74,13 +81,19 @@ define([
                 "freeTag": {
                     "templateUrl": "views/pop/bulkUpdate/freetag.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/freetag.ctl",
-                    "controller": 'popFreeTagCtl',
+                    "controller": 'popFreeTagCtl as ctrl',
                     "size": 'lg'
                 },
                 "salePrice": {
                     "templateUrl": "views/pop/bulkUpdate/salePrice.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
                     "controller": 'popSalePriceCtl',
+                    "size": 'md'
+                },
+                "updateProductApproval": {
+                    "templateUrl": "views/pop/bulkUpdate/updateProductApproval.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/updateProductApproval.ctl",
+                    "controller": 'popUpdateProductApprovalCtl as ctrl',
                     "size": 'md'
                 }
             },
@@ -611,6 +624,16 @@ define([
         $scope.popupNewCategory = function (context) {
             return openModel(popActions.bulkUpdate.category, context);
         };
+
+        /**
+         * 打开新的类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupCategoryNew = function (context) {
+            return openModel(popActions.bulkUpdate.categoryNew, context);
+        };
+
 
         /**
          * 打开类目属性编辑页面
@@ -1324,6 +1347,11 @@ define([
         //打开高级查询页的共通设置，最终售价
         $scope.openSalePrice = function (context) {
             return openModel(popActions.bulkUpdate.salePrice, context);
+        };
+
+        //打开高级查询页的共通设置，上新审批
+        $scope.openUpdateApproval = function (context) {
+            return openModel(popActions.bulkUpdate.updateProductApproval, context);
         };
 
         //$scope.openJmPromotionProductImport = function (context,fnInitial) {

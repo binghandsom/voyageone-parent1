@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
-import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
 import com.voyageone.common.util.excel.ExportFileExcelUtil;
@@ -11,12 +10,9 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
-import com.voyageone.service.impl.cms.jumei.enumjm.*;
-import com.voyageone.service.model.cms.CmsBtJmProductImagesModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,7 +36,7 @@ public class CmsBtJmPromotionExportTask3Service {
         return dao.select(id);
     }
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
-        return daoExt.getByPromotionId(promotionId);
+        return daoExt.selectByPromotionId(promotionId);
     }
     public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
@@ -51,8 +47,8 @@ public class CmsBtJmPromotionExportTask3Service {
         int TemplateType = model.getTemplateType();
         try {
             dao.update(model);
-            List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.getExportListByPromotionId(model.getCmsBtJmPromotionId());
-            List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.getExportListByPromotionId(model.getCmsBtJmPromotionId());
+            List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
+            List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
             model.setFileName(fileName);

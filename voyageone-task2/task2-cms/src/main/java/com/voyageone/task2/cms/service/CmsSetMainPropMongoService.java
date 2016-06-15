@@ -11,6 +11,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -215,7 +216,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(6000);
+            queryObject.setLimit(500);
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // --------------------------------------------------------------------------------------------
@@ -323,8 +324,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                      // 获取类目属性匹配关系(指定的主类目)
                      mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCatPath());
-                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getFields().getCatPath() != null) {
-                         newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getFields().getCatPath());
+                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getCatPath() != null) {
+                         newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      }
 
                      // mapping check
@@ -482,8 +483,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         blnProductExist = true;
                         // 获取类目属性匹配关系(指定的主类目)
                         mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCatPath());
-                        if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getFields().getCatPath() != null) {
-                            newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getFields().getCatPath());
+                        if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getCatPath() != null) {
+                            newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
                         }
                     }
 
@@ -1141,8 +1142,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             if (newMapping != null) {
                 String catPath = newMapping.getMainCategoryPath();
-                common.getFields().setCatId(MD5.getMD5(catPath)); // 主类目id
-                common.getFields().setCatPath(catPath); // 主类目path
+                common.setCatId(MD5.getMD5(catPath)); // 主类目id
+                common.setCatPath(catPath); // 主类目path
             }
 
             // 获取当前channel, 有多少个platform
@@ -1218,7 +1219,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
                 // 设定是否主商品
-                CmsBtProductGroupModel group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                // 如果是聚美的话，那么就是一个Code对应一个Group
+                CmsBtProductGroupModel group = null;
+                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())) {
+                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                }
                 if (group == null) {
                     platform.setpIsMain(1);
                 } else {
@@ -1514,8 +1519,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 没有上新并且Feed到主数据Mapping存在并且设置Feed重新导入的情况下重新设置主类目
             if (numIdNoSet && newMapping!= null && "1".equals(feed.getIsFeedReImport())) {
                 String catPath = newMapping.getMainCategoryPath();
-                product.getCommon().getFields().setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.getCommon().getFields().setCatPath(catPath); // 主类目path
+                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.getCommon().setCatPath(catPath); // 主类目path
             }
             // product.setFields(field);
 
@@ -1860,7 +1865,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // group对象
-                CmsBtProductGroupModel group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                CmsBtProductGroupModel group = null;
+                // 如果是聚美的话，那么就是一个Code对应一个Group
+                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())) {
+                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                }
 
                 // 看看同一个model里是否已经有数据在cms里存在的
                 //   如果已经有存在的话: 直接用那个group
@@ -2174,7 +2183,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private int
         getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
-                    String.format("{'feed.orgAtts.modelCode':'%s'}", feed.getModel()));
+                    String.format("{\"feed.orgAtts.modelCode\":\"%s\", \"fields.isMasterMain\":1}", feed.getModel()));
             if (cnt < 1) {
                 return 1;
             }

@@ -163,9 +163,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
 
     //carts
+    @Deprecated
     public List<CmsBtProductModel_Carts> getCarts() {
         return carts;
     }
+    @Deprecated
     public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
         this.carts = productCarts;
     }

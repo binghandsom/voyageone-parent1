@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtJmApiLogDaoExt">
     <resultMap id="ResultMap" type="CmsBtJmApiLogModel">
     </resultMap>
-    <select id="getPage" resultType="Map">
+    <select id="selectPage" resultType="Map">
         select id,source_id,api_type,error_msg,error_code,remark        from cms_bt_jm_api_log
     </select>
 </mapper>

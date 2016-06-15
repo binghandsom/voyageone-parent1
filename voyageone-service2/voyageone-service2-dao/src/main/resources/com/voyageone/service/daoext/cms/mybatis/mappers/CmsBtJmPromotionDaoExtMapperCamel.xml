@@ -4,7 +4,7 @@
     <resultMap id="ResultMap" type="CmsBtJmPromotionModel">
 
     </resultMap>
-    <select id="getListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
+    <select id="selectListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
           <where>
               active=1
@@ -49,7 +49,7 @@
 
         order by id desc
     </select>
-    <select id="getActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
+    <select id="selectActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
         where channel_id=#{channelId}
         and activity_start &lt; now() and activity_end &gt; now()
