@@ -70,7 +70,7 @@ public class CmsJmPromotionIndexController extends CmsController {
     @RequestMapping(value = "/jm/import",method =RequestMethod.GET )
     public Object importChannel(@RequestParam("channelId") String channelId) {
        // return success(service3.getTagListByPromotionId(promotionId));
-        serviceJmBtDealImport.importJM(channelId);
-        return "true";
+      return   serviceJmBtDealImport.importJM(channelId);
+       // return "true";
     }
 }
