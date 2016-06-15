@@ -21,7 +21,7 @@
                             <div class="category_drag_list_dp" style="height:260px;">
                                 <ul>
                                     <li ng-repeat="tag1 in ctrl.tree[0]">
-                                        <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:selected[0] == tag1}">
+                                        <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
                                             <span>{{tag1.tagChildrenName}}</span>
                                         </a>
                                     </li>
@@ -42,7 +42,7 @@
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
                                 <li ng-repeat="tag2 in ctrl.tree[1]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"  ng-class="{indexSelected:selected[1] == tag2}">
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"  ng-class="{indexSelected:ctrl.selected[1] == tag2}">
                                         <span>{{tag2.tagChildrenName}}</span>
                                     </a>
                                 </li>
@@ -62,11 +62,10 @@
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
                                 <li ng-repeat="tag3 in ctrl.tree[2]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:selected[2] == tag3}">
-                                        <span>{{ tag3.tagChildrenName }}</span>
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
+                                        <span>{{ tag3.tagChildrenName }}{{tag3.tagPathName}}</span>
                                     </a>
                                 </li>
-
                             </ul>
                         </div>
                     </div>
@@ -77,6 +76,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div><!-- .vo_modal -->
