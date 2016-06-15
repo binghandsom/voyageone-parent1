@@ -681,7 +681,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}">
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}">
                                                     <span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="" target="_blank">{{cartsObj._pname}}</a></span>
                                                     <span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
                                                 </span>
@@ -707,10 +707,6 @@
                                                    href="#/product/detail/{{productInfo.prodId}}"
                                                    title="{{productInfo.common.fields.productNameEn}}"
                                                    target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
-                                            </span>
-                                            <span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;
-                                                <button ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._freeTagsInfo)"
-                                                        popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                             </span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
                                         </td>
