@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope">
-                            <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(vm.productDetails, popupNewCategory)" ng-disabled = "vm.platform.status == 'Approved'"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                            <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(vm.productDetails, popupNewCategory)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                             </button>
                             <div class="col-md-8">
                                 <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope">
-                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.platform.status == 'Approved'"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;{{"TXT_STORE_CATEGORY"|translate}}</span>
+                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;{{"TXT_STORE_CATEGORY"|translate}}</span>
                             </button>
                             <div class="col-md-8">
                                 <div class="panel panel-default">
