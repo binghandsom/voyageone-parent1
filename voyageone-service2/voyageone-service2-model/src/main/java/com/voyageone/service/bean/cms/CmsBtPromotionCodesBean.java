@@ -59,15 +59,15 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private List<CmsBtPromotionSkuBean> skus;
 
-    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator) {
+    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
         super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
 //        this.setProductName(productInfo.getFields().getProductNameEn());
-        this.setSalePrice(productInfo.getFields().getPriceSaleEd());
-        this.setRetailPrice(productInfo.getFields().getPriceRetailEd());
-        this.setMsrp(productInfo.getFields().getPriceMsrpEd());
+        this.setSalePrice(productInfo.getPlatform(cartId).getSkus().get(0).getDoubleAttribute("priceSale"));
+        this.setRetailPrice(productInfo.getPlatform(cartId).getSkus().get(0).getDoubleAttribute("priceRetail"));
+        this.setMsrp(productInfo.getPlatform(cartId).getSkus().get(0).getDoubleAttribute("priceMsrp"));
     }
 
     public CmsBtPromotionCodesBean() {
