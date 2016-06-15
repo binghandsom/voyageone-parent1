@@ -317,7 +317,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     }
 
                     //获取jm_hash_id列表
-                    List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(productCode, channelId);
+                    List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.getJmHashIds(productCode, channelId);
                     jmHashIdList.add(originHashId);
 
                     skuList = getCmsBtJmSkuModels(channelId, productCode);
