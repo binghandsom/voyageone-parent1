@@ -71,7 +71,7 @@ public class JmBtDealImportService {
         modelCmsBtJmProduct.setAvailablePeriod("");
         modelCmsBtJmProduct.setBrandName(modelJmBtProduct.getBrandName());
         modelCmsBtJmProduct.setChannelId(modelJmBtProduct.getChannelId());
-        modelCmsBtJmProduct.setColorEn("");
+        modelCmsBtJmProduct.setColorEn(modelJmBtProduct.getAttribute());
         modelCmsBtJmProduct.setForeignLanguageName(modelJmBtProduct.getForeignLanguageName());
         modelCmsBtJmProduct.setHsCode(modelJmBtProduct.getHsCode());
         modelCmsBtJmProduct.setHsName(modelJmBtProduct.getHsName());
@@ -110,7 +110,6 @@ public class JmBtDealImportService {
 
         }
     }
-
     private void insertCmsBtJmSkuModel(List<JmBtSkuModel> listModelJmBtSku) {
         for (JmBtSkuModel modelJmBtSku : listModelJmBtSku) {
             CmsBtJmSkuModel modelCmsBtJmSku = new CmsBtJmSkuModel();
@@ -120,7 +119,7 @@ public class JmBtDealImportService {
             }
             modelCmsBtJmSku.setSkuCode(modelJmBtSku.getSku());
             modelCmsBtJmSku.setChannelId(modelJmBtSku.getChannelId());
-            modelCmsBtJmSku.setCmsSize("");//modelJmBtSku.getSize();
+            modelCmsBtJmSku.setCmsSize(modelJmBtSku.getSize());//modelJmBtSku.getSize();
             modelCmsBtJmSku.setFormat("");
             modelCmsBtJmSku.setJmSize(modelJmBtSku.getSize());
             modelCmsBtJmSku.setJmSkuNo(modelJmBtSku.getJumeiSkuNo());
@@ -170,7 +169,7 @@ public class JmBtDealImportService {
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());
-        fields.setAttribute("originCn", "");
+        fields.setAttribute("originCn",modelJmBtProduct.getAddressOfProduce());
         fields.setAttribute("beforeDate", "");
         fields.setAttribute("suitPeople", "");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
