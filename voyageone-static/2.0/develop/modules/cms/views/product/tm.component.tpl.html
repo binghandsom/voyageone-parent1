@@ -266,7 +266,9 @@
                     <div class="container-fluid">
 <!--                        <schema-item class="modal-open" data="vm.productDetails.skuFields"
                                      ng-if="vm.productDetails.skuFields != null" not-show-edit="true"></schema-item>-->
-                        <schema-field field="vm.productDetails.skuFields"></schema-field>
+                        <ng-form name="skuForm" novalidate>
+                            <schema-field field="vm.productDetails.skuFields"></schema-field>
+                        </ng-form>
                     </div>
                 </div>
     </div>
