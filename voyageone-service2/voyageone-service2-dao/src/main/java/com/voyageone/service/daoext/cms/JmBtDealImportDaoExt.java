@@ -16,5 +16,5 @@ public interface  JmBtDealImportDaoExt {
 
     JmBtProductModel selectJmBtProductModel(@Param("channelId") String channelId, @Param("dealId") String dealId, @Param("productCode") String productCode);
 
-   List<JmBtSkuModel> selectListJmBtSkuModel(@Param("channelId") String channelId, @Param("dealId") String dealId, @Param("productCode") String productCode);
+   List<JmBtSkuModel> selectListJmBtSkuModel(@Param("channelId") String channelId, @Param("productCode") String productCode);
 }
