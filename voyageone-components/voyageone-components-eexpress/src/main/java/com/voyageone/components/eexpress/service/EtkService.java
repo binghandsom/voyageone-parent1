@@ -69,7 +69,7 @@ public class EtkService extends EtkBase {
 			throw new Exception("调用E特快登录API eExpressShipmentImport错误：" + (loginRes==null?"null":loginRes.getMsg()));
 		}		
 		
-		//Bean -->  XML
+		//bean -->  XML
 		XStream xstream = new XStream(new DomDriver());
 		xstream.autodetectAnnotations(true);  
 		String postXml = xstream.toXML(order);

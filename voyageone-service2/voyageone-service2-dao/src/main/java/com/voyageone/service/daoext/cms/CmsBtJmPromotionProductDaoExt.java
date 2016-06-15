@@ -69,6 +69,6 @@ public interface CmsBtJmPromotionProductDaoExt {
      * @param channelId
      * @return
      */
-    List<String> selectJmHashIds(String productCode, String channelId);
+    List<String> selectJmHashIds (@Param("channelId") String channelId, @Param("productCode") String productCode);
     //jm2 end
 }

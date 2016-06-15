@@ -326,7 +326,7 @@ define([
             },
 
             /**
-             * 重新设置 Bean 对象的 Mapping 和 MainMapping 属性
+             * 重新设置 bean 对象的 Mapping 和 MainMapping 属性
              * @param feedCategoryPath
              * @param mappingModel
              */

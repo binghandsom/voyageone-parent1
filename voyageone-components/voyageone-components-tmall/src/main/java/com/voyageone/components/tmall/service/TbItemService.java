@@ -45,7 +45,7 @@ public class TbItemService extends TbBase {
 
         if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) throw new GetUpdateSchemaFailException(res);
 
-        // 转换 Schema Xml 到 Field Bean 集合
+        // 转换 Schema Xml 到 Field bean 集合
         List<Field> fields = SchemaReader.readXmlForList(res.getUpdateItemResult());
 
         return new TbItemSchema(num_iid, fields);
