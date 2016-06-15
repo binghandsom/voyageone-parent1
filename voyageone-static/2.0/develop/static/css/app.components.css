@@ -88,7 +88,7 @@ schema-complex-container .btn-schema {
 
 schema-complex-container[multi] {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 schema-complex-container[multi] schema-field {
@@ -99,6 +99,7 @@ schema-complex-container[multi] schema-field {
 schema-complex-container[multi] .btn-schema {
     order: 2;
     flex-grow: 0;
+    align-self: center;
 }
 
 /* } schema directive 样式定义 */
