@@ -86,12 +86,7 @@ define(['cms',
             ok: function () {
 
                 if (!this.selected) {
-                    this.notify.danger(this.$translate.instant('TXT_MSG_NO_CATEGORY_SELECT'));
-                    return;
-                }
-
-                if (this.selected.isParent === 1) {
-                    this.notify.danger(this.$translate.instant('TXT_MSG_IS_NOT_CHILE_CATEGORY'));
+                    this.notify.danger(this.$translate.instant('TXT_MSG_NO_SELECT_CATEGORY'));
                     return;
                 }
 
