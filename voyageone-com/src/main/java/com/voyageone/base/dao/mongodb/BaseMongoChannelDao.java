@@ -70,6 +70,12 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findById(id, entityClass, getCollectionName(channelId));
     }
 
+    /**
+     * 使用此方法时必须注意，此处只会更新符合条件的第一条数据
+     * @param updateObject
+     * @param channelId
+     * @return
+     */
     public T findAndModify(JomgoUpdate updateObject, String channelId) {
         return mongoTemplate.findAndModify(updateObject, entityClass, getCollectionName(channelId));
     }
@@ -101,6 +107,14 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
 
     public WriteResult upsertFirst(String strQuery, String strUpdate, String channelId) {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(channelId));
+    }
+
+    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateFirst(updObj, getCollectionName(channelId));
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateMulti(updObj, getCollectionName(channelId));
     }
 
     /**

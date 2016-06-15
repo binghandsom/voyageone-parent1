@@ -5,7 +5,7 @@
                 <div class="container-fluid"  id="{{cartInfo.name}}1">
                     <div class="col-md-8 form-group">
                             <!----------------------------------check 状态------------------------------------------>
-                            <ul class="nav nav-pills col-md-8">
+                            <ul class="nav nav-pills">
                                 <li>
                                     <span ng-class = "{tagFlag:vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
                                         <i class="fa fa-check" ng-if="vm.checkFlag.translate == 1"></i>
@@ -31,8 +31,6 @@
                                     </span>
                                 </li>
                             </ul>
-                            <div class="col-md-4">
-                            </div>
 
                     </div>
                     <div class="col-md-4">

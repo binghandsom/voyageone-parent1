@@ -5,8 +5,9 @@ define([
     'cms'
 ], function (cms) {
     return cms.controller('popFreeTagCtl', (function () {
-        function popFreeTagCtl(channelTagService, confirm) {
+        function popFreeTagCtl(channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
+            this.$uibModalInstance = $uibModalInstance;
             this.tagTypeSelectValue = "4";
             this.tagTree = null;
             this.id = "";
@@ -80,25 +81,15 @@ define([
                 }
             },
             /**
-             * 新增tag操作
-             * @param savedata
+             * 点击保存
              */
-            save: function (savedata) {
+            save: function () {
                 var self = this;
-                //记录新增记录名称
-                self.selected[$scope.newIndex.value] = savedata.vm.tagPathName;
+                self.channelTagService.save().then(function () {
 
-                self.channelTagService.save(savedata.vm).then(function (res) {
-                        self.source = self.tagTree = res.data.tagInfo.tagTree;
-                        self.search(0);
-                        savedata.$close();
-                    },
-                    function (err) {
-                        if (err.message != null) {
-                            savedata.vm.errMsg = err.message;
-                        }
-                        self.search(0);
-                    })
+                    }
+                );
+                self.$uibModalInstance.close();
             }
         };
 

@@ -336,6 +336,14 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).update(strQuery).multi().with(strUpdate);
     }
 
+    public WriteResult updateFirst(JomgoUpdate updObj, final String collectionName) {
+        return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).with(updObj.getUpdate(), updObj.getUpdateParameters());
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, final String collectionName) {
+        return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).multi().with(updObj.getUpdate(), updObj.getUpdateParameters());
+    }
+
     public WriteResult upsertFirst(String strQuery, String strUpdate, String collectionName) {
         return getCollection(collectionName).update(strQuery).upsert().with(strUpdate);
     }

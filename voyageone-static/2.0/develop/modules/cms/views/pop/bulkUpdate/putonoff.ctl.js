@@ -27,10 +27,9 @@ define([
                     alert("没有设置上下架操作，请选择后重试。");
                     return;
                 }
-                $scope.search();
+                $modalInstance.close();
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             });
-            $modalInstance.close();
         }
     });
 });
