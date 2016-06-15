@@ -1,4 +1,4 @@
-define(['require', 'underscore'], function (require, _) {
+define(function (require) {
     /*
      * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
      */
@@ -73,12 +73,18 @@ define(['require', 'underscore'], function (require, _) {
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
+        var _ = window._ || require('underscore', function () {
+            }, function () {
+                console.warn('Please add underscore to requirejs`s "paths"');
+            });
+
+        if (!_) return;
+
         find = _.find;
         any = _.some;
         all = _.every;
         each = _.each;
         findIndex = _.findIndex;
-
     })();
 
     /**
