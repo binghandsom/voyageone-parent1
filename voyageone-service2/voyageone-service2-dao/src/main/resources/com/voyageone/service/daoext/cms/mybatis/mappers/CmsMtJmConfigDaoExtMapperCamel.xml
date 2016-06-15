@@ -4,7 +4,7 @@
     <resultMap id="ResultMap" type="CmsMtJmConfigModel">
         
     </resultMap>
-    <select id="getByKey" resultMap="ResultMap">
+    <select id="selectByKey" resultMap="ResultMap">
         select * from cms_mt_jm_config where `key`=#{key}
     </select>
 

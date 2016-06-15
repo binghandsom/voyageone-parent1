@@ -4,16 +4,16 @@
     <resultMap id="ResultMap" type="CmsMtMasterInfoModel">
         
     </resultMap>
-    <select id="getByKey" parameterType="HashMap" resultMap="ResultMap">
+    <select id="selectByKey" parameterType="HashMap" resultMap="ResultMap">
         select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
         and  `product_type`=#{productType} and `data_type`=#{dataType} limit 1
 
     </select>
-    <select id="getByKeySizeType" parameterType="HashMap" resultMap="ResultMap">
+    <select id="selectByKeySizeType" parameterType="HashMap" resultMap="ResultMap">
         select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
         and  `product_type`=#{productType} and `data_type`=#{dataType}     and size_type=#{sizeType} limit 1
     </select>
-    <select id="getListByWhere" parameterType="HashMap" resultMap="ResultMap">
+    <select id="selectListByWhere" parameterType="HashMap" resultMap="ResultMap">
         select *
         from cms_mt_master_info
         <where>
@@ -70,7 +70,7 @@
         </if>
     </select>
 
-    <select id="getCountByWhere" parameterType="HashMap" resultType="Integer">
+    <select id="selectCountByWhere" parameterType="HashMap" resultType="Integer">
         select count(1)
         from cms_mt_master_info
         <where>
@@ -122,7 +122,7 @@
             </if>
         </where>
     </select>
-   <select id="getListJMNewImageInfo" resultMap="ResultMap">
+   <select id="selectListJMNewImageInfo" resultMap="ResultMap">
          select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
         and  `product_type`=#{productType}
        and `data_type`  in  <foreach item="item" index="i" collection="dataTypeList"

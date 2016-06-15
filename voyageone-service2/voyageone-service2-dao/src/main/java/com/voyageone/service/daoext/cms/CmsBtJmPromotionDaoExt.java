@@ -8,13 +8,13 @@ import java.util.Map;
 
 @Repository
 public interface CmsBtJmPromotionDaoExt {
-    List<MapModel> getListByWhere(Map<String, Object> map);
+    List<MapModel> selectListByWhere(Map<String, Object> map);
 
     /**
      * 获取相关渠道的可用promotions
      * @param channelId
      * @return
      */
-    List<MapModel> getActivesOfChannel(String channelId);
+    List<MapModel> selectActivesOfChannel(String channelId);
 
 }

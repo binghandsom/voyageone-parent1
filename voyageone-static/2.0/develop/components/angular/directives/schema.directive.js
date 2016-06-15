@@ -622,6 +622,8 @@ define(function (require) {
                                 }
                             }
 
+                            innerElement.attr('title', field.name || field.id);
+
                             // 根据类型转换值类型
                             field.value = getInputValue(field.value, valueTypeRule);
 
@@ -641,6 +643,8 @@ define(function (require) {
 
                             if (!field.value)
                                 field.value = {value: null};
+
+                            innerElement.attr('title', field.name || field.id);
 
                             break;
                         case FIELD_TYPES.multiCheck:
@@ -692,6 +696,8 @@ define(function (require) {
                                 checkbox.attr('ng-model', 'selected[' + index + ']');
 
                                 checkbox.attr('name', name);
+
+                                checkbox.attr('title', field.name || field.id);
 
                                 checkbox.attr('ng-change', 'update(' + index + ')');
 

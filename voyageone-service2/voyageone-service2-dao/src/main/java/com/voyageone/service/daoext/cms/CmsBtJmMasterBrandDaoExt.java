@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtJmMasterBrandDaoExt {
-    CmsBtJmMasterBrandModel getByJmMasterBrandId(Integer jmMasterBrandId);
+    CmsBtJmMasterBrandModel selectByJmMasterBrandId(Integer jmMasterBrandId);
 }

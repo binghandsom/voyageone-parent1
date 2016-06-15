@@ -5,7 +5,7 @@
         
     </resultMap>
 
-    <select id="getBySkuCodeChannelId"  resultMap="ResultMap">
+    <select id="selectBySkuCodeChannelId"  resultMap="ResultMap">
         select  *   from cms_bt_jm_sku where channel_id=#{channelId} and sku_code=#{skuCode} limit 1
     </select>
 </mapper>

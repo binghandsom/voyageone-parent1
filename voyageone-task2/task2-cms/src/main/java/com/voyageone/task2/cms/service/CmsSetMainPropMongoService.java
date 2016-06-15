@@ -1860,6 +1860,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // group对象
+                // 如果是聚美的话，那么就是一个Code对应一个Group
                 CmsBtProductGroupModel group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
 
                 // 看看同一个model里是否已经有数据在cms里存在的
