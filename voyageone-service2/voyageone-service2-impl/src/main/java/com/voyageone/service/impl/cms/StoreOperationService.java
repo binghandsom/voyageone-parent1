@@ -278,7 +278,7 @@ public class StoreOperationService extends BaseService {
      *
      * @param storeOperationHistoryList 检索结果（Model）
      * @param lang 语言
-     * @return 检索结果（Bean）
+     * @return 检索结果（bean）
      */
     private List<CmsBtStoreOperationHistoryBean> changeToBeanList(List<CmsBtStoreOperationHistoryModel> storeOperationHistoryList, String lang) {
         List<CmsBtStoreOperationHistoryBean> storeOperationHistoryBeanList = new ArrayList<>();

@@ -1190,9 +1190,9 @@ public class ImportExcelFileService extends BaseTaskService {
                 break;
             }
 
-            // Product Bean 生成
+            // Product bean 生成
             JmBtProductImportModel productImportModel = getProductModel(row);
-            // Image Bean 生成
+            // Image bean 生成
             List<JmBtImagesModel> imagesModelList = getProductImageModel(row);
 
             // 读入异常的场合
@@ -1260,7 +1260,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 break;
             }
 
-            // Sku Bean 生成
+            // Sku bean 生成
             JmBtSkuImportModel skuImportModel = getSkuModel(row);
             // 读入异常的场合
             if (skuImportModel == null) {
@@ -1317,7 +1317,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 break;
             }
 
-            // Images Bean 生成
+            // Images bean 生成
             JmBtImagesModel imagesModel = getImageModel(row);
             if (imagesModel == null) {
                 ret = false;
@@ -1372,7 +1372,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 break;
             }
 
-            // Deal Bean 生成
+            // Deal bean 生成
             JmBtDealImportModel dealImportModel = getDealModel(row);
             if (dealImportModel == null) {
                 ret = false;

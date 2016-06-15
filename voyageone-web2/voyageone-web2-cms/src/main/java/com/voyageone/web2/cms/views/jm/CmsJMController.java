@@ -42,7 +42,16 @@ public class CmsJMController extends CmsController {
         List<Map<String, String>> products;
         Double discount=1.0; //正折扣不是 xxx% off
         Integer priceType=1; //默认用官方销售价计算
+        String tag;
 
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
 
         public void setPriceType(Integer priceType) {
             this.priceType = priceType;
@@ -101,6 +110,7 @@ public class CmsJMController extends CmsController {
             service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
                     param.discount,
                     param.priceType,
+                    param.tag,
                     user.getUserName());
             return success(true);
         } catch (Exception e) {
