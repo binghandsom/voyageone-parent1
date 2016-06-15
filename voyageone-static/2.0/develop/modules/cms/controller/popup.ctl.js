@@ -81,7 +81,7 @@ define([
                 "freeTag": {
                     "templateUrl": "views/pop/bulkUpdate/freetag.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/freetag.ctl",
-                    "controller": 'popFreeTagCtl',
+                    "controller": 'popFreeTagCtl as ctrl',
                     "size": 'lg'
                 },
                 "salePrice": {

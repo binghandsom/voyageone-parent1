@@ -2,11 +2,53 @@
  * 项目自定义通用样式,比如angular的自定义directive
  */
 
-/* 为 schema-item directive 的输入控件提供错误样式
- * 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
+/* 为 schema-item directive 的输入控件提供错误样式 */
 schema-item .ng-invalid input,
 schema-item .ng-invalid select,
-schema-item .ng-invalid .c-checkbox span,
+schema-item .ng-invalid .c-checkbox span {
+    border: 1px solid red;
+}
+
+/* schema 相关的 directive 默认样式定义 */
+schema {
+    display: block;
+    font-size: 16px !important;
+}
+
+schema-field {
+    display: block;
+}
+
+schema-field-name {
+    display: block;
+}
+
+schema-complex-name {
+    display: block;
+}
+
+schema-complex-container {
+    display: block;
+    /* TODO 该颜色仅供测试 */
+    background: #00ffe1;
+    padding: 10px;
+}
+
+schema-complex-container[multi] {
+    /* TODO 该颜色仅供测试 */
+    background: #ffc106;
+    padding: 10px;
+}
+
+schema-disable-container {
+    display: block;
+}
+
+schema-field-tip {
+    display: block;
+}
+
+/* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
 .vo-validate.ng-invalid input,
 .vo-validate.ng-invalid select,
 .vo-validate.ng-invalid .c-checkbox span {

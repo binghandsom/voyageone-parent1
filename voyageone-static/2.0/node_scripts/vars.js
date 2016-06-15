@@ -132,17 +132,6 @@ var publish = {
     }
 };
 var tasks = {
-    build: {
-        actions: 'build-actions-doc',
-        angular: 'build-angular-com',
-        angular_suff: 'build-angular-suff',
-        com: 'build-com',
-        css: {
-            all: 'build-css',
-            app: 'build-css-app',
-            login: 'build-css-login'
-        }
-    },
     publish: {
         all: 'publish',
         statics: 'publish-static',
