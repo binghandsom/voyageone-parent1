@@ -107,16 +107,21 @@ public class JmBase extends ComponentBase {
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         logger.info("result：" + result);
 
-        //Test
-//        result = "{\"error_code\":\"0\",\"reason\":\"success\",\"response\":\"\"}";
-
         //转换错误信息
         if (result != null && result.contains("\"error\"")) {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
             if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
                 throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
             }
-        } else {
+        }
+        else if (result != null && result.contains("\"error_code\""))
+        {
+            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
+            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code"))) {
+                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
+            }
+        }
+        else {
             JMErrorResult res;
             try {
                 res = JsonUtil.jsonToBean(result, JMErrorResult.class);
