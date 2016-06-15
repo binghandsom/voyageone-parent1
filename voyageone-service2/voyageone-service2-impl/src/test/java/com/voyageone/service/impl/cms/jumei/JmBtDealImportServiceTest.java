@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -21,8 +22,8 @@ public class JmBtDealImportServiceTest {
 
     @Test
     public void test() {
+        System.out.println("begin:"+new Date());
         service.importJM("001");
-
-
+        System.out.println("end:"+new Date());
     }
 }

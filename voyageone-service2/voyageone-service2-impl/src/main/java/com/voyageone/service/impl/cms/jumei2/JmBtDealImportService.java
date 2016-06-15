@@ -1,7 +1,11 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.businessmodel.JMImportData.JMProductDealBean;
 import com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtDealImportModel;
 import com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtProductModel;
@@ -34,28 +38,32 @@ public class JmBtDealImportService {
     @Autowired
     CmsBtProductDao daoCmsBtProductDao;
 
+    @VOTransactional
     public void importJM(String channelId) {
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        //取所有商品最后一次deal信息
         List<JMProductDealBean> listJMProductDealBean = daoExtJmBtDealImport.selectListProductDealByChannelId(channelId);
         for (JMProductDealBean productDeal : listJMProductDealBean) {
-            importProduct(productDeal);
+            importProduct(productDeal,bulkList);
         }
+        daoCmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "system", "$set");
     }
-
-    private void importProduct(JMProductDealBean productDeal) {
+    private void importProduct(JMProductDealBean productDeal,List<BulkUpdateModel> bulkList) {
         JmBtDealImportModel modelJmBtDealImport = daoExtJmBtDealImport.selectJmBtDealImportModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtProductModel modelJmBtProduct = daoExtJmBtDealImport.selectJmBtProductModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
-        List<JmBtSkuModel> listModelJmBtSku = daoExtJmBtDealImport.selectListJmBtSkuModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
+        List<JmBtSkuModel> listModelJmBtSku = daoExtJmBtDealImport.selectListJmBtSkuModel(productDeal.getChannelId(), productDeal.getProductCode());
         if (modelJmBtProduct == null)//不存在 sql可以查询出来  不用处理
         {
             System.out.println("ChannelId:" + productDeal.getChannelId() + " DealId:" + productDeal.getDealId() + "  code:" + productDeal.getProductCode());
             return;
         }
-        insertProduct(modelJmBtDealImport, modelJmBtProduct);
-        insertSku(listModelJmBtSku);
-        importCmsBtProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku);
+        insertCmsBtJmProduct(modelJmBtDealImport, modelJmBtProduct);
+        insertCmsBtJmSkuModel(listModelJmBtSku);
+       // importCmsBtProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku);
+        BulkUpdateModel model = getBulkUpdateModels(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku);
+        bulkList.add(model);
     }
-
-    private void insertProduct(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct) {
+    private void insertCmsBtJmProduct(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct) {
         CmsBtJmProductModel modelCmsBtJmProduct = new CmsBtJmProductModel();
         modelCmsBtJmProduct.setAddressOfProduce(modelJmBtProduct.getAddressOfProduce());
         modelCmsBtJmProduct.setApplicableCrowd("");
@@ -63,7 +71,7 @@ public class JmBtDealImportService {
         modelCmsBtJmProduct.setAvailablePeriod("");
         modelCmsBtJmProduct.setBrandName(modelJmBtProduct.getBrandName());
         modelCmsBtJmProduct.setChannelId(modelJmBtProduct.getChannelId());
-        modelCmsBtJmProduct.setColorEn("");
+        modelCmsBtJmProduct.setColorEn(modelJmBtProduct.getAttribute());
         modelCmsBtJmProduct.setForeignLanguageName(modelJmBtProduct.getForeignLanguageName());
         modelCmsBtJmProduct.setHsCode(modelJmBtProduct.getHsCode());
         modelCmsBtJmProduct.setHsName(modelJmBtProduct.getHsName());
@@ -102,18 +110,21 @@ public class JmBtDealImportService {
 
         }
     }
-
-    private void insertSku(List<JmBtSkuModel> listModelJmBtSku) {
+    private void insertCmsBtJmSkuModel(List<JmBtSkuModel> listModelJmBtSku) {
         for (JmBtSkuModel modelJmBtSku : listModelJmBtSku) {
             CmsBtJmSkuModel modelCmsBtJmSku = new CmsBtJmSkuModel();
+            if(StringUtils.isEmpty(modelJmBtSku.getSku()))
+            {
+                String aa=modelCmsBtJmSku.getSkuCode();
+            }
+            modelCmsBtJmSku.setSkuCode(modelJmBtSku.getSku());
             modelCmsBtJmSku.setChannelId(modelJmBtSku.getChannelId());
-            modelCmsBtJmSku.setCmsSize("");
+            modelCmsBtJmSku.setCmsSize(modelJmBtSku.getSize());//modelJmBtSku.getSize();
             modelCmsBtJmSku.setFormat("");
             modelCmsBtJmSku.setJmSize(modelJmBtSku.getSize());
             modelCmsBtJmSku.setJmSkuNo(modelJmBtSku.getJumeiSkuNo());
             modelCmsBtJmSku.setJmSpuNo(modelJmBtSku.getJumeiSpuNo());
             modelCmsBtJmSku.setProductCode(modelJmBtSku.getProductCode());
-            modelCmsBtJmSku.setSkuCode(modelJmBtSku.getSku());
             modelCmsBtJmSku.setMsrpRmb(new BigDecimal(0));
             modelCmsBtJmSku.setMsrpUsd(new BigDecimal(0));
             modelCmsBtJmSku.setRetailPrice(new BigDecimal(0));
@@ -125,6 +136,7 @@ public class JmBtDealImportService {
             modelCmsBtJmSku.setCreater("system");
             try {
                 daoCmsBtJmSku.insert(modelCmsBtJmSku);//CmsBtJmSku
+
             } catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
             {
 
@@ -132,15 +144,15 @@ public class JmBtDealImportService {
         }
     }
 
-    void importCmsBtProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
-        CmsBtProductModel productModel = new CmsBtProductModel();
-        productModel.setCatId(CartEnums.Cart.JM.getId());
-        productModel.setOrgChannelId(modelJmBtDealImport.getChannelId());
+//    void importCmsBtProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
+//        List<BulkUpdateModel> bulkList = new ArrayList<>();
+//        BulkUpdateModel model = getBulkUpdateModels(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku);
+//        bulkList.add(model);
+//        daoCmsBtProductDao.bulkUpdateWithMap(modelJmBtProduct.getChannelId(), bulkList, "system", "$set");
+//    }
 
-
+    private BulkUpdateModel getBulkUpdateModels(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
         CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
-        productModel.setPlatform(CartEnums.Cart.JM, platform);
-
         platform.setCartId(CartEnums.Cart.JM.getValue());
         platform.setpBrandId(Integer.toString(modelJmBtProduct.getBrandId()));
         platform.setpBrandName(modelJmBtProduct.getBrandName());
@@ -157,7 +169,7 @@ public class JmBtDealImportService {
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());
-        fields.setAttribute("originCn", "");
+        fields.setAttribute("originCn",modelJmBtProduct.getAddressOfProduce());
         fields.setAttribute("beforeDate", "");
         fields.setAttribute("suitPeople", "");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
@@ -180,9 +192,21 @@ public class JmBtDealImportService {
             skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
         }
         platform.setSkus(skus);
-        //commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID)
-        daoCmsBtProductDao.insert(productModel);
-//        * P27  ->聚美
+
+       // List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platforms.P27",platform);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("fields.code",modelJmBtProduct.getProductCode());
+        queryMap.put("channelId", modelJmBtProduct.getChannelId());
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        //bulkList.add(model);
+        return model;
+        //        * P27  ->聚美
 //            * cartId
 //            * pCatId
 //            * pCatPath
