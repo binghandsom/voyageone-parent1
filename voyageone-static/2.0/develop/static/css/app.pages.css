@@ -420,6 +420,19 @@
     border-left: 1px solid #ADCAE2;
 }
 
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container button{
+    margin-top: 23px;
+    align-self: auto;
+}
+
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container label{
+    text-indent: 1em;
+}
+
+.tm-sku-detail input:not([type='checkbox']) {
+    width: 125px;
+}
+
 /*@media screen and (max-width: 1441px) {
     .bs-docs-sidebar{
         min-height: 216px;

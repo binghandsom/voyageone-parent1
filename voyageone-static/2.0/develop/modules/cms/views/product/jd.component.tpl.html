@@ -55,7 +55,7 @@
                             </label>
                             <div class="col-md-8">
                                 <span class="m-r-sm" ng-if="vm.platform.pNumIId">&nbsp;
-                                    <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
+                                    <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
                                 </span>&nbsp;
                                 <span class="m-r-sm" ng-if="vm.platform.pStatus == 'Failed'" title="{{vm.platform.pPublishError}}">&nbsp;
                                     {{vm.platform.pPublishError | limitTo: 30}}{{vm.platform.pPublishError.length > 30 ? '...' : ''}}

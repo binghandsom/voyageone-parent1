@@ -642,7 +642,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 高(单位:mm)(必须)
         jdProductBean.setHigh("50");
         // 重量(单位:kg)(必须)
-        jdProductBean.setWeight("1");
+        Object objfieldItemValue = null;
+        String strWeight = "1";  // 默认为1kg
+        objfieldItemValue = sxProductService.getPropValue(mainProduct.getPlatform(sxData.getCartId()).getFields(), "productWeightKg");
+        // 取得值为null不设置，空字符串的时候还是要设置（可能是更新时特意把某个属性的值改为空）
+        if (objfieldItemValue != null && objfieldItemValue instanceof String) {
+            strWeight = String.valueOf(objfieldItemValue);
+        }
+        jdProductBean.setWeight(strWeight);
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
