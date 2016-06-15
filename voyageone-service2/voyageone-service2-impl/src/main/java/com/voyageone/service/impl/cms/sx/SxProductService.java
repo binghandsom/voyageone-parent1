@@ -835,6 +835,7 @@ public class SxProductService extends BaseService {
     public boolean resolveJdPriceSection_before(ShopBean shopBean, Field field) {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
+        String strRex3 = "其它";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -872,6 +873,12 @@ public class SxProductService extends BaseService {
                 Pattern pattern = Pattern.compile(strRex2, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(optionDisplayName);
                 if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                if (optionDisplayName.equals(strRex3)) {
                     blnError = true;
                 }
             }
@@ -1775,7 +1782,7 @@ public class SxProductService extends BaseService {
      *
      * @return Map<originalSize, adjustSize>
      */
-    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) throws Exception {
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
         Map<String, String> sizeMap = new HashMap<>();
         Map<Integer, List<CmsBtSizeChartModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
         for (int index = 0; index < 1 << 3; index++) {
