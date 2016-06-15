@@ -1,12 +1,13 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.bean.cms.jumei.ProductImportBean;
+import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -15,6 +16,7 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -22,10 +24,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportProduct;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSku;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSpecialImage;
-import com.voyageone.service.bean.cms.businessmodel.JmProductImportAllInfo;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,15 +223,15 @@ public class CmsBtJmPromotionService {
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
-        if (map.containsKey("state1") && (Boolean) map.get("state1") == false)//待进行
+        if (map.containsKey("state1") && !((Boolean) map.get("state1")))//待进行
         {
             map.remove("state1");  //小于开始时间
         }
-        if (map.containsKey("state2") && (Boolean) map.get("state2") == false)//进行中
+        if (map.containsKey("state2") && !((Boolean) map.get("state2")))//进行中
         {
             map.remove("state2"); // 当前时间大于开始时间 小于结束时间
         }
-        if (map.containsKey("state3") && (Boolean) map.get("state3") == false)//完成
+        if (map.containsKey("state3") && !((Boolean) map.get("state3")))//完成
         {
             map.remove("state3"); //当前时间大于结束时间
         }
@@ -255,6 +255,9 @@ public class CmsBtJmPromotionService {
     @Autowired
     CmsMtChannelValuesService channelValuesService; //获取渠道价格信息
 
+    @Autowired
+    CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service;
+
     /**
      * 新增产品列表到聚美的产品项目中
      *
@@ -264,32 +267,27 @@ public class CmsBtJmPromotionService {
     public void addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
                                          Double discount,
                                          Integer priceType,
+                                         String tag,
                                          String creater) {
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
             return;
         }
-
-        JmProductImportAllInfo importInfo = buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
-
-//        System.out.println(importInfo);
-
-        jmPromotionImportTaskService.saveJmProductImportAllInfo(importInfo,creater);
-
-
-    }
-
-    protected JmProductImportAllInfo buildJmProductImportAllInfo(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId, Double discount, Integer priceType) {
         List<CmsBtProductModel> orginProducts = productDao.selectProductByIds(productIds, channelId);
-        JmProductImportAllInfo importInfo = new JmProductImportAllInfo();
-        importInfo.setModelCmsBtJmPromotion(promotion);
+        List<ProductImportBean > listProductImport = new ArrayList<>();
+        List< SkuImportBean > listSkuImport = new ArrayList<>();
         orginProducts.stream().forEach(product -> { //pal
-            importInfo.getListProductModel().add(buildProductFrom(product));
-            importInfo.getListSkuModel().addAll(buildSkusFrom(product, discount, priceType));
-            importInfo.getListSpecialImageModel().add(buildImagesFrom(product));
+            ProductImportBean productImportBean = buildProductFrom(product, promotion);
+            productImportBean.setPromotionTag(tag);
+            listProductImport.add(productImportBean);
+            listSkuImport.addAll(buildSkusFrom(product, discount, priceType));
         });
-        return importInfo;
+
+
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport);
+
+
     }
 
 
@@ -298,33 +296,13 @@ public class CmsBtJmPromotionService {
     @Resource
     SynshipComMtValueChannelDao synshipComMtValueChannelDao;
 
-    private CmsBtJmImportProduct buildProductFrom(CmsBtProductModel model) {
+    private ProductImportBean buildProductFrom(CmsBtProductModel model,CmsBtJmPromotionModel promotion) {
         CmsBtProductModel_Field fields = model.getFields();
-        CmsBtJmImportProduct bean = new CmsBtJmImportProduct();
-        if (fields != null) {
-            bean.setChannelId(model.getChannelId());
-            bean.setProductCode(fields.getCode());
-            //bean.setProductNameCn(fields.getProductNameCn());
-//            bean.setProductLongName(fields.getLongTitle());
-//            bean.setProductMediumName(fields.getMiddleTitle());
-//            bean.setProductShortName(fields.getShortTitle());
-            //bean.setBrandName(fields.getBrand());
-           // bean.setProductType(fields.getProductType());
-           // bean.setSizeType(fields.getSizeType());
-           // bean.setColorEn(fields.getColor());
-           // bean.setProductDesCn(fields.getLongDesCn());
-           // bean.setProductDesEn(fields.getLongDesEn());
-
-            if (fields.getHsCodePrivate() != null) {  //海关编号,名称,和单位
-                String value = synshipComMtValueChannelDao.selectName(fields.getHsCodePrivate(), 43, "en",model.getChannelId());
-                if (StringUtils.isNotBlank(value)) {
-                    List<String> props = Splitter.on(",").splitToList(value);
-//                    bean.setHsCode(props.size() > 0 ? props.get(0) : null);
-//                    bean.setHsName(props.size() > 1 ? props.get(1) : null);
-//                    bean.setHsUnit(props.size() > 2 ? props.get(2) : null);
-                }
-            }
-        }
+        ProductImportBean bean = new ProductImportBean();
+        bean.setAppId(promotion.getActivityAppId());
+        bean.setPcId(promotion.getActivityPcId());
+        bean.setLimit(0);
+        bean.setProductCode(fields.getCode());
         return bean;
     }
 
@@ -334,18 +312,15 @@ public class CmsBtJmPromotionService {
      * @param priceType 1 表示用官方价(Msrp)打折,2表示用销售价(Sale Price)
      * @return
      */
-    private List<CmsBtJmImportSku> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
+    private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
 
         final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
         return model.getSkus().stream().map(oldSku -> {
-            CmsBtJmImportSku bean = new CmsBtJmImportSku();
+            SkuImportBean bean = new SkuImportBean();
             bean.setProductCode(model.getFields().getCode());
             bean.setSkuCode(oldSku.getSkuCode());
-            bean.setJmSkuNo(oldSku.getSkuCode());
-            bean.setUpc(oldSku.getBarcode());
-            bean.setCmsSize((oldSku.getSize()));
             bean.setMarketPrice(oldSku.getPriceMsrp());
             Double finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getPriceSale() * discountCopy));
             bean.setDealPrice(finalPrice);
