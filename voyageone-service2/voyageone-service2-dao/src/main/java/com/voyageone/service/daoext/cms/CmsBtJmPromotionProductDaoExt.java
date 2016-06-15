@@ -61,5 +61,14 @@ public interface CmsBtJmPromotionProductDaoExt {
     int deleteAllProduct(int promotionId);
 
     List<CmsBtJmPromotionProductModel> getJMCopyList(int promotionId);
+
+
+    /**
+     * 获取jm_hash_id
+     * @param productCode
+     * @param channelId
+     * @return
+     */
+    List<String> getJmHashIds (String productCode, String channelId);
     //jm2 end
 }

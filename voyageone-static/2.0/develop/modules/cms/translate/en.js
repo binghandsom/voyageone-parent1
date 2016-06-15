@@ -17,6 +17,7 @@ define(function() {
         "TXT_PLATFORM_CONNECTION_SETTING": "Platform Connection Setting",
         "TXT_DICTIONARY_INDEX": "Dictionary List",
         "TXT_CHANNEL_MANAGER": "Channel Setting",
+        "TXT_ATTRIBUTE":"Attributes",
         "TXT_CUSTOM_ATTRIBUTE_MANAGER": "Custom Attributes",
         "TXT_COMMON_ATTRIBUTE_MANAGER": "Common Attributes",
         "TXT_FEED_IMPORT_RULE": "Feed Import Rule",

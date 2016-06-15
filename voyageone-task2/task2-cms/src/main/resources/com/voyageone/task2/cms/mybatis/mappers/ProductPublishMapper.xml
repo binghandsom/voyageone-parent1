@@ -65,12 +65,40 @@
 			cart_id, order_channel_id channel_id, sku, date, CAST(sum(qty) AS signed) qty
 		from
 			(
-			select a.cart_id, a.order_channel_id, b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
-			from oms_bt_order_details b,oms_bt_orders a
+			select a.cart_id, a.parent_order_channel_id order_channel_id, b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
+			from oms_bt_order_details b, oms_bt_orders a
 			where a.order_number = b.order_number and b.adjustment=0
-			and b.`status` not in ('Canceled')
+			and b.`status` not in ('Canceled', 'Returned')
 			and (a.order_date_time <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
 			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
+			) sales
+		group by cart_id, order_channel_id, sku, date limit #{oIdx},#{oLimit}
+	]]></select>
+
+	<!-- 统计所有订单中的产品数量 -->
+	<select id="cms_selectProductOrderCountAllDays" resultType="Map"><![CDATA[
+		select
+			cart_id, order_channel_id channel_id, sku, date, CAST(sum(qty) AS signed) qty
+		from
+			(
+			select a.cart_id, a.parent_order_channel_id order_channel_id, b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
+			from oms_bt_order_details b, oms_bt_orders a
+			where a.order_number = b.order_number and b.adjustment=0
+			and b.`status` not in ('Canceled', 'Returned')
+			) sales
+		group by cart_id, order_channel_id, sku, date limit #{oIdx},#{oLimit}
+	]]></select>
+
+	<!-- 统计synship_history订单中的产品数量 -->
+	<select id="cms_selectProductOrderCountAllDays_history" resultType="Map"><![CDATA[
+		select
+			cart_id, order_channel_id channel_id, sku, date, CAST(sum(qty) AS signed) qty
+		from
+			(
+			select a.cart_id, a.parent_order_channel_id order_channel_id, b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
+			from synship_history.oms_bt_order_details b, synship_history.oms_bt_orders a
+			where a.order_number = b.order_number and b.adjustment=0
+			and b.`status` not in ('Canceled', 'Returned')
 			) sales
 		group by cart_id, order_channel_id, sku, date limit #{oIdx},#{oLimit}
 	]]></select>

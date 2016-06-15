@@ -317,5 +317,9 @@
         FROM `cms_bt_jm_promotion_product` a
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId} and  (a.synch_status=1 or a.price_status=1 )
     </select>
+
+    <select id="getJmHashIds" resultType="java.lang.String">
+        select  jm_hash_id   from cms_bt_jm_promotion where channel_id=#{channelId} and product_code=#{productCode} and activity_end = 1 and jm_hash_id is not null
+    </select>
     <!--jm2 end-->
 </mapper>

@@ -549,17 +549,25 @@ define([
             _chkProductSel(cartId, __openPutOnOff);
 
             function __openPutOnOff(cartId, _selProdList) {
-                openPutOnOffFnc();
+                var productIds = [];
+                if (_selProdList && _selProdList.length) {
+                    _.forEach(_selProdList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var property = {'cartId': cartId, '_option':'putonoff', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall?1:0;
+                openPutOnOffFnc(property);
             }
         };
 
         // 商品审批
-        function openApproval(cartId) {
+        function openApproval(openUpdateApprovalFnc, cartId) {
             _chkProductSel(cartId, __openApproval);
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
-                    .then(function (openUpdateApproval) {
+                    .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
                             _.forEach(_selProdList, function (object) {
@@ -571,7 +579,12 @@ define([
                             productIds: productIds
                         };
                         propertyInfo.property.isSelAll = $scope.vm._selall?1:0;
-                        $fieldEditService.setProductFields(propertyInfo).then(function (res) {
+
+                        function check() {
+                            return $fieldEditService.setProductFields(propertyInfo).then(callback);
+                        }
+
+                        function callback(res) {
                             if (res.data.ecd == null || res.data.ecd == undefined) {
                                 alert("提交请求时出现错误");
                                 return;
@@ -588,22 +601,15 @@ define([
                             }
                             if (res.data.ecd == 3) {
                                 // 商品价格有问题
-                                var msg = "提示 商品[" + res.data.code + "] (" + res.data.cartName + " :-> " + res.data.skuCode + ") :<br>";
-                                if (res.data.priceRetail) {
-                                    msg += "最终售价[" + res.data.priceSale + "] < 销售指导价[" + res.data.priceRetail + "]";
-                                }
-                                if (res.data.priceLimit) {
-                                    if (res.data.priceRetail) {
-                                        msg += "， ";
-                                    }
-                                    msg += "最终售价[" + res.data.priceSale + "] > 阈值价格[" + res.data.priceLimit + "]";
-                                }
-                                alert(msg);
-                                return openUpdateApproval();
-                                return;
+                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':propertyInfo}).then(function () {
+                                    return check();
+                                });
                             }
+                            $scope.search();
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        });
+                        }
+
+                        check();
                     });
             }
         }

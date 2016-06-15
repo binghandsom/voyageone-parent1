@@ -26,7 +26,8 @@ define([
                     skuTemp:{},
                     checkFlag:{translate:0, tax:0, category:0, attribute:0},
                     resultFlag:0,
-                    sellerCats:[]
+                    sellerCats:[],
+                    productUrl:""
                 };
 
                 initialize();
@@ -56,7 +57,7 @@ define([
                         });
 
 /*                      scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
-                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;      */
+                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;*/
                         scope.vm.checkFlag.translate = 1;
                         scope.vm.checkFlag.tax = 1;
 
@@ -66,6 +67,16 @@ define([
                             scope.vm.productDetails = res.data.productInfo;
                             scope.vm.productCode = res.data
                         })
+
+                    switch(scope.cartInfo.value){
+                        case 26:
+                            scope.vm.productUrl = "";
+                            break;
+                        case 27:
+                            scope.vm.productUrl = "";
+                            break;
+
+                    }
                 }
 
                 function jdCategoryMapping(productInfo, popupNewCategory) {

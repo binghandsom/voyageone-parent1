@@ -19,6 +19,10 @@ public class JomgoUpdate extends BaseCondition {
      * query condition
      */
     private String query;
+    /**
+     * query condition
+     */
+    private Object[] queryParameters = null;
 
     /**
      * sort
@@ -29,6 +33,10 @@ public class JomgoUpdate extends BaseCondition {
      * update
      */
     private String update;
+    /**
+     * query condition
+     */
+    private Object[] updateParameters = null;
 
     /**
      * remove
@@ -115,5 +123,27 @@ public class JomgoUpdate extends BaseCondition {
     public JomgoUpdate setUpsert(boolean upsert) {
         this.upsert = upsert;
         return this;
+    }
+
+    public Object[] getQueryParameters() {
+        if (queryParameters == null) {
+            return new Object[0];
+        }
+        return queryParameters;
+    }
+
+    public void setQueryParameters(Object... queryParameters) {
+        this.queryParameters = queryParameters;
+    }
+
+    public Object[] getUpdateParameters() {
+        if (updateParameters == null) {
+            return new Object[0];
+        }
+        return updateParameters;
+    }
+
+    public void setUpdateParameters(Object... updateParameters) {
+        this.updateParameters = updateParameters;
     }
 }

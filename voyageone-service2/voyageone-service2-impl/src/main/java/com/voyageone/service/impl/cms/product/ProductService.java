@@ -647,6 +647,46 @@ public class ProductService extends BaseService {
     }
     // jeff 2016/04 change end
 
+    public void insertSxWorkLoad(String channelId, String prodCode, List<Integer> cartIdList, String modifier) {
+        // 根据商品code获取其所有group信息(所有平台)
+        List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
+        Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+
+        // 获取所有的可上新的平台group信息
+        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+
+        for (int cartId : cartIdList) {
+            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+            model.setChannelId(channelId);
+            if (platformsMap.get(cartId) != null) {
+                model.setGroupId(platformsMap.get(cartId));
+            } else {
+                CmsBtProductGroupModel newGroup;
+                try {
+                    newGroup = (CmsBtProductGroupModel) BeanUtils.cloneBean(groups.get(0));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                newGroup.set_id(null);
+                newGroup.setChannelId(channelId);
+                newGroup.setNumIId(null);
+                newGroup.setCartId(cartId);
+                newGroup.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+                cmsBtProductGroupDao.insert(newGroup);
+                model.setGroupId(newGroup.getGroupId());
+            }
+            model.setCartId(cartId);
+            model.setPublishStatus(0);
+            model.setCreater(modifier);
+            model.setModifier(modifier);
+            models.add(model);
+        }
+
+        if (models.size() > 0) {
+            addtSxWorkloadModels(models);
+        }
+    }
+
     /**
      * confirm change category
      */
