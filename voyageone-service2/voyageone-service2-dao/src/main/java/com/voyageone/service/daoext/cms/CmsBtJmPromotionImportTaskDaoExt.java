@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmPromotionImportTaskDaoExt {
-     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+     public List<CmsBtJmPromotionImportTaskModel> selectByPromotionId(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
     }

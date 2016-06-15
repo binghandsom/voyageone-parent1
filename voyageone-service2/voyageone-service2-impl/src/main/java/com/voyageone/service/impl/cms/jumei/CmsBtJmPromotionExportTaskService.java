@@ -58,20 +58,20 @@ public class CmsBtJmPromotionExportTaskService {
         try {
             dao.update(model);
             if (TemplateType == 0) {//导入模板
-                List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.getListCmsBtJmImportProductByPromotionId(model.getCmsBtJmPromotionId());
-                List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.getListCmsBtJmImportSkuByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectListCmsBtJmImportProductByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectListCmsBtJmImportSkuByPromotionId(model.getCmsBtJmPromotionId());
                 List<Map<String, Object>> listSpecialImage = getListSpecialImage(model.getCmsBtJmPromotionId(), listProduct);
                 export(filePath, listProduct, listSku, listSpecialImage, false);
                 model.setSuccessRows(listProduct.size());
                 model.setFileName(fileName);
             } else if (TemplateType == 1) {//价格修正模板
-                List<Map<String, Object>> list = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> list = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionId(model.getCmsBtJmPromotionId());
                 ExportExcelInfo<Map<String, Object>> info = getSkuPriceInfo(list);
                 ExportFileExcelUtil.exportExcel(filePath, info);
                 model.setSuccessRows(list.size());
                 model.setFileName(fileName);
             } else if (TemplateType == 2) {//专场模板
-                List<Map<String, Object>> list = daoExtCmsBtJmPromotionProduct.getExportInfoListByPromotionId(model.getCmsBtJmPromotionId());
+                List<Map<String, Object>> list = daoExtCmsBtJmPromotionProduct.selectExportInfoListByPromotionId(model.getCmsBtJmPromotionId());
                 List<Map<String, Object>> pcList = new ArrayList<>();
                 List<Map<String, Object>> appList = new ArrayList<>();
                 loadPCAppList(list, pcList, appList);
@@ -93,7 +93,7 @@ public class CmsBtJmPromotionExportTaskService {
 
     List<Map<String, Object>> getListSpecialImage(int promotionId, List<Map<String, Object>> listProduct) {
         List<Map<String, Object>> result = new ArrayList<>();
-        List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel = daoExtCmsBtJmProductImages.getListByPromotionId(promotionId);
+        List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel = daoExtCmsBtJmProductImages.selectListByPromotionId(promotionId);
         Map<String, Object> mapSpecialImage = null;
         boolean isImage = false;
         for (Map<String, Object> mapProduct : listProduct) {
@@ -234,7 +234,7 @@ public class CmsBtJmPromotionExportTaskService {
     }
 
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
-        return daoExt.getByPromotionId(promotionId);
+        return daoExt.selectByPromotionId(promotionId);
     }
 }
 

@@ -75,10 +75,14 @@
                         <div class="row wrapper">
                             <div class="container-fluid">
                                 <div class="col-sm-7">
-                                    <schema-header ng-repeat="field in vm.productDetails.masterFields" data="field"
+<!--                                    <schema-header ng-repeat="field in vm.productDetails.masterFields" data="field"
                                                    ng-if="field.isDisplay != 0">
                                         <schema-item data="field"></schema-item>
-                                    </schema-header>
+                                    </schema-header>-->
+
+                                    <ng-form name="schemaForm" novalidate>
+                                        <schema data="vm.productDetails.masterFields"></schema>
+                                    </ng-form>
                                 </div>
                                 <div class="col-sm-5" style="width: 380px;margin-left: -38px;">
                                     <!-- product detail panel starts here -->
@@ -260,8 +264,11 @@
 
                 <div class="panel vo_panel tab_panel">
                     <div class="container-fluid">
-                        <schema-item class="modal-open" data="vm.productDetails.skuFields"
-                                     ng-if="vm.productDetails.skuFields != null" not-show-edit="true"></schema-item>
+<!--                        <schema-item class="modal-open" data="vm.productDetails.skuFields"
+                                     ng-if="vm.productDetails.skuFields != null" not-show-edit="true"></schema-item>-->
+                        <ng-form name="skuForm" novalidate>
+                            <schema-field field="vm.productDetails.skuFields"></schema-field>
+                        </ng-form>
                     </div>
                 </div>
     </div>

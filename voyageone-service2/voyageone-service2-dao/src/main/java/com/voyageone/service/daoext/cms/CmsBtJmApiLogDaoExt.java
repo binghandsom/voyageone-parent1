@@ -6,5 +6,5 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmApiLogDaoExt {
-    public List  getPage();
+    public List selectPage();
     }

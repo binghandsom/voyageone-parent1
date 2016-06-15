@@ -14,12 +14,12 @@ define([
 
         $scope.save = function (updateAll) {
             if (updateAll) {
-                $scope.vm.propertyInfo.property.notChkPrice = 1;
+                $scope.vm.propertyInfo.notChkPrice = 1;
             }
             if ($scope.vm.retInfo.startIdx != undefined) {
-                $scope.vm.propertyInfo.property.startIdx = $scope.vm.retInfo.startIdx;
+                $scope.vm.propertyInfo.startIdx = $scope.vm.retInfo.startIdx;
             }
-            $modalInstance.close();
+            $modalInstance.close($scope.vm.propertyInfo);
         }
     });
 });

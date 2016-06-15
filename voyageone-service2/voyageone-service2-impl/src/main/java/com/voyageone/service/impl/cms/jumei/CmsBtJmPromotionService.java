@@ -235,12 +235,12 @@ public class CmsBtJmPromotionService {
         {
             map.remove("state3"); //当前时间大于结束时间
         }
-        return daoExt.getListByWhere(map);
+        return daoExt.selectListByWhere(map);
     }
 
     public List<MapModel> getJMActivePromotions(String channelId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
-        return daoExt.getActivesOfChannel(channelId);
+        return daoExt.selectActivesOfChannel(channelId);
     }
 
 
