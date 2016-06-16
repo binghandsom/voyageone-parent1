@@ -21,6 +21,7 @@ import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -143,6 +144,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+                    productModel.setCarts(new ArrayList<CmsBtProductModel_Carts>());
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                     ProductPriceBean priceBean = new ProductPriceBean();
