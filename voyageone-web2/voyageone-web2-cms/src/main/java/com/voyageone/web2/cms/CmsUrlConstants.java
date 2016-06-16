@@ -35,6 +35,7 @@ public interface CmsUrlConstants {
                 String GET = "get";
                 String GetEditModel="getEditModel";
                 String GetTagListByPromotionId="getTagListByPromotionId";
+                String ImportJM="importJM";
 
             }
 

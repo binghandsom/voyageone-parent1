@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 将主类目/对应的平台类目信息导入到cms_mt_category_tree表
+ * 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表
  *
  * @author jeff.duan on 2016/6/12.
  * @version 2.1.0
@@ -80,6 +80,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             if (file.isFile() && file.getName().toLowerCase().contains(".xlsx")) {
                 importCategoryTree(file);
                 // 移动文件到bak
+                FileUtils.mkdirPath(filePath + "/bak");
                 FileUtils.moveFile(file.getAbsolutePath(), filePath + "/bak/" + file.getName());
             }
         }
@@ -113,17 +114,17 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             importPlatformCategoryData(tmallCategorySheet, 23);
         }
 
-//        // 导入京东类目与主类目的匹配关系
-//        Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
-//        if (jdCategorySheet != null) {
-//            importPlatformCategoryData(jdCategorySheet, 26);
-//        }
-//
-//        // 导入聚美类目与主类目的匹配关系
-//        Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
-//        if (jdCategorySheet != null) {
-//            importPlatformCategoryData(jumeiCategorySheet, 27);
-//        }
+        // 导入京东类目与主类目的匹配关系
+        Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
+        if (jdCategorySheet != null) {
+            importPlatformCategoryData(jdCategorySheet, 26);
+        }
+
+        // 导入聚美类目与主类目的匹配关系
+        Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
+        if (jdCategorySheet != null) {
+            importPlatformCategoryData(jumeiCategorySheet, 27);
+        }
 
 
     }

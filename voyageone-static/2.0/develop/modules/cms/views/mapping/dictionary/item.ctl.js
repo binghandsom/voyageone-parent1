@@ -54,7 +54,7 @@ define([
      * 清空画面上显示的数据,并返回到字典列表页面
      */
     function cancel () {
-      $location.path(cRoutes.mapping_dict_index.hash);
+      $location.path(cRoutes.image_dictionary_list.hash);
     }
 
     /**
@@ -75,13 +75,13 @@ define([
           $dictionaryService.setDict(data)
               .then(function () {
                 notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                $location.path(cRoutes.mapping_dict_index.hash);
+                $location.path(cRoutes.image_dictionary_list.hash);
               })
         } else {
           $dictionaryService.addDict(data)
               .then(function () {
                 notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                $location.path(cRoutes.mapping_dict_index.hash);
+                $location.path(cRoutes.image_dictionary_list.hash);
               })
         }
       } else {
