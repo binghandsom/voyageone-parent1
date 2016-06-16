@@ -282,7 +282,7 @@ define([
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = productInfo.common.fields[data.propId];
-                    if (itemVal == undefined) {
+                    if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
                     commArr.push({value: itemVal});
@@ -293,7 +293,7 @@ define([
                 _.forEach(customProps, function (data) {
                     var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
                     var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined) {
+                    if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
@@ -307,12 +307,12 @@ define([
                     var dotIdx = selValue.indexOf(".", 6);
                     var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
                     var itemVal = null;
-                    if (itemValObj == undefined) {
+                    if (itemValObj == undefined || itemVal == null) {
                         itemVal = "0";
                     } else {
                         dotIdx = selValue.lastIndexOf(".");
                         itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined) {
+                        if (itemVal == undefined || itemVal == null) {
                             itemVal = "0";
                         }
                     }

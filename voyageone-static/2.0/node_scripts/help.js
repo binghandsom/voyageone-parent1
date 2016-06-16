@@ -3,17 +3,36 @@
  */
 
 var fs = require('fs');
+var glob = require('glob');
 
-fs.readFile('develop/login.js', function (err, buffer) {
-    var content = buffer.toString("utf-8").replace(/paths:(.|\n)+?\}/, function(match, g1) {
-        return match.replace(/['"].+?['"].+?['"](.+?)['"],?/g, function (row, g1) {
-            var jsMinFile = 'develop/' + g1 + '.min.js';
-            try {
-                fs.accessSync(jsMinFile);
-                return row.replace(g1, g1 + '.min');
-            } catch (e) {
-                return row;
-            }
-        });
-    });
+glob('../develop/components/angular/*/*.js', function (err, files) {
+
+    if (err) {
+        console.error(err);
+        return;
+    }
+
+    let once = true;
+
+    files.forEach(file => fs.readFile(file, (err, contents) => {
+
+        var strings = String(contents);
+
+        strings = strings.replace(/^\(function\(\)\s?\{/, "").replace(/\}\)\(\);$/, "");
+
+        if (once) {
+
+            var result = UglifyJS.minify(strings, {
+                beautify: true,
+                fromString: true,
+                compress: null,
+                mangle: false
+            });
+
+            console.log(result.code);
+            once = false;
+        }
+
+    }))
+
 });

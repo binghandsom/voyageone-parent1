@@ -14,6 +14,6 @@
         SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}      limit 1
     </select>
     <select id="selectListJmBtSkuModel"  resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtSkuModel">
-        SELECT * from jumei.jm_bt_product where channel_id=#{channelId} and deal_id=#{dealId} and product_code=#{productCode}
+        SELECT * from jumei.jm_bt_sku where channel_id=#{channelId} and product_code=#{productCode}
     </select>
 </mapper>

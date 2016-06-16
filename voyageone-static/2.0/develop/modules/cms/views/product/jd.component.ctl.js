@@ -8,8 +8,6 @@ define([
     cms.directive("jdSchema", function (productDetailService,feedMappingService,productDetailService,platformMappingService,$translate,notify,confirm) {
         return {
             restrict: "E",
-            replace: false,
-            transclude: true,
             templateUrl : "views/product/jd.component.tpl.html",
             /**独立的scope对象*/
             scope: {
@@ -28,6 +26,10 @@ define([
                     resultFlag:0,
                     sellerCats:[],
                     productUrl:""
+                };
+
+                scope.showForm = function () {
+                    console.log(scope.schemaForm);
                 };
 
                 initialize();
@@ -50,16 +52,17 @@ define([
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
                             scope.vm.sellerCats = scope.vm.platform.sellerCats;
+                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null ? "Failed":scope.vm.platform.pStatus;
                         }
 
                         _.each(scope.vm.mastData.skus,function(mSku){
                                 scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
-/*                      scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
-                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;*/
-                        scope.vm.checkFlag.translate = 1;
-                        scope.vm.checkFlag.tax = 1;
+                      scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
+                      scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
+/*                        scope.vm.checkFlag.translate = 1;
+                        scope.vm.checkFlag.tax = 1;*/
 
                     });
                     productDetailService.getProductInfo({productId: scope.productId})
@@ -68,12 +71,12 @@ define([
                             scope.vm.productCode = res.data
                         })
 
-                    switch(scope.cartInfo.value){
+                    switch(+scope.cartInfo.value){
                         case 26:
-                            scope.vm.productUrl = "";
+                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
                             break;
                         case 27:
-                            scope.vm.productUrl = "";
+                            scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
 
                     }
@@ -152,7 +155,7 @@ define([
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
                      scope.vm.platform.cartId = scope.cartInfo.value;
 
-                      //判断价格
+                    //判断价格
                     productDetailService.updateProductPlatformChk({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -162,28 +165,14 @@ define([
                              scope.vm.platform.modified = resp.data.modified;
                              notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                              });
-                        });
+                    });
                     });
 
 
                 }
 
-                function validSchema(save){
-                    if (!scope.vm.platform)
-                        return false;
-
-                    if (!scope.vm.platform.schemaFields)
-                        return false;
-
-                    return !scope.vm.platform.schemaFields.some(function(schema){
-                        if(schema.form == null)
-                            return true;
-                        if(schema.form.$valid == false){
-                            if(save)
-                                alert(schema.name + "不能为空！");
-                           return true;
-                        }
-                    });
+                function validSchema(){
+                    return scope.vm.platform == null ? false : scope.schemaForm.$valid;
                 }
 
                 function selectAll(){

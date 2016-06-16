@@ -2,9 +2,6 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,17 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
     public void setSkus(List<CmsBtProductModel_Sku> skus) {
         setAttribute("skus", skus);
+    }
+
+    public CmsBtProductModel_Sku getSku(String skuCode) {
+        if (skuCode != null && getSkus() != null) {
+            for (CmsBtProductModel_Sku sku : getSkus()) {
+                if (skuCode.equals(sku.getSkuCode())) {
+                    return sku;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -302,13 +302,13 @@ public class SxProductService extends BaseService {
             String code = sxProduct.getFields().getCode();
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                    sxData.getChannelId(),
+                    sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
                     sxData.getCartId(),
                     code);
             if (imsBtProductModel == null) {
                 // 没找到就插入
                 imsBtProductModel = new ImsBtProductModel();
-                imsBtProductModel.setChannelId(sxData.getChannelId());
+                imsBtProductModel.setChannelId(sxData.getMainProduct().getOrgChannelId()); // ims表要用OrgChannelId
                 imsBtProductModel.setCartId(sxData.getCartId());
                 imsBtProductModel.setCode(code);
                 imsBtProductModel.setNumIid(sxData.getPlatform().getNumIId());
@@ -527,6 +527,10 @@ public class SxProductService extends BaseService {
 
     /**
      * 上新用的商品数据取得
+     * 对象外的code（不会set进productList）：
+     *     1：status不是Approved
+     *     2：code下没有允许在该平台上上架的sku（skus.carts里不包含本次上新的cartId，以后改成platform.skus.isSale=false，这些sku不会set进skuList）
+     *     3：lock = 1
      *
      * @param channelId channelId
      * @param groupId   groupId
@@ -658,47 +662,70 @@ public class SxProductService extends BaseService {
             }
             // 2016/06/12 add desmond END
 
-            // added by morse.lu 2016/06/13 start
-            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-                // 天猫(淘宝)平台的时候，从外面的skus那里取得
-                // added by morse.lu 2016/06/13 end
-                List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-                List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-                productModelSku.forEach(sku -> {
-                    if (sku.getSkuCarts().contains(cartId)) {
-                        skus.add(sku);
-                    }
-                });
-
-                if (skus.size() > 0) {
-                    productModel.setSkus(skus);
-                    skuList.addAll(skus);
-                } else {
-                    // 该product下没有允许在该平台上上架的sku
-                    removeProductList.add(productModel);
-                }
-                // added by morse.lu 2016/06/13 start
-            } else {
-                // 天猫以外平台的时候，从各个平台下面的skus那里取得
-                List<BaseMongoMap<String, Object>> productModelSku = productModel.getPlatform(cartId).getSkus();
-                List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-                productModelSku.forEach(sku -> {
-                    if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-                        skus.add(sku);
-                    }
-                });
-
-                if (skus.size() > 0) {
-                    productModel.getPlatform(cartId).setSkus(skus);
-                    skuList.addAll(skus);
-                } else {
-                    // 该product下没有允许在该平台上上架的sku
-                    removeProductList.add(productModel);
-                }
+            // modified by morse.lu 2016/06/15 start
+            // TODO:{}1中的这段暂时不要，临时用{}2，以后恢复
+            {
+                // {}1
+//                // added by morse.lu 2016/06/13 start
+//                if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+//                        || CartEnums.Cart.TB.getId().equals(cartId.toString())
+//                        || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+//                    // 天猫(淘宝)平台的时候，从外面的skus那里取得（天猫以后也会变成else分支那样的结构）
+//                    // added by morse.lu 2016/06/13 end
+//                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+//                    List<CmsBtProductModel_Sku> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+//                    productModelSku.forEach(sku -> {
+//                        if (sku.getSkuCarts().contains(cartId)) {
+//                            skus.add(sku);
+//                        }
+//                    });
+//
+//                    if (skus.size() > 0) {
+//                        productModel.setSkus(skus);
+//                        skuList.addAll(skus);
+//                    } else {
+//                        // 该product下没有允许在该平台上上架的sku
+//                        removeProductList.add(productModel);
+//                    }
+//                    // added by morse.lu 2016/06/13 start
+//                } else {
+//                    // 天猫以外平台的时候（天猫以后也会变成这样的结构）
+//                    // added by morse.lu 2016/06/15 start
+//                    Map<String, BaseMongoMap<String, Object>> mapProductModelSku = new HashMap<>();
+//                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
+//                    productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
+//                    // added by morse.lu 2016/06/15 end
+//                    List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
+//                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+//                    productPlatformSku.forEach(sku -> {
+//                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+//                            // modified by morse.lu 2016/06/15 start
+////                            skus.add(sku);
+//                            // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
+//                            // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
+//                            BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                            mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+//                            skus.add(mapSku);
+//                            // modified by morse.lu 2016/06/15 end
+//                        }
+//                    });
+//
+//                    if (skus.size() > 0) {
+//                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+//                        skuList.addAll(skus);
+//                    } else {
+//                        // 该product下没有允许在该平台上上架的sku
+//                        removeProductList.add(productModel);
+//                    }
+//                }
+//                // added by morse.lu 2016/06/13 end
             }
-            // added by morse.lu 2016/06/13 end
+            {
+                // {}2
+                // 暂时sku不判断是不是能在该平台上上架，且都从外面的skus里取
+                skuList.addAll(productModel.getSkus());
+            }
+            // modified by morse.lu 2016/06/15 end
         }
 
         // Add by desmond 2016/06/12 start
@@ -808,6 +835,7 @@ public class SxProductService extends BaseService {
     public boolean resolveJdPriceSection_before(ShopBean shopBean, Field field) {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
+        String strRex3 = "其它";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -845,6 +873,12 @@ public class SxProductService extends BaseService {
                 Pattern pattern = Pattern.compile(strRex2, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(optionDisplayName);
                 if (matcher.find()) {
+                    blnError = true;
+                }
+            }
+
+            if (!blnError) {
+                if (optionDisplayName.equals(strRex3)) {
                     blnError = true;
                 }
             }
@@ -1657,6 +1691,11 @@ public class SxProductService extends BaseService {
         List<Integer> sortKey = new ArrayList<>(); // key的sort
         {
             // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            // 完全匹配:入参brandName为nike，检索结果也是nike。 不完全匹配：入参brandName为nike，检索结果是All
+            // 这里第一位是brandName，完全匹配为1，不完全匹配为0
+            // 这里第二位是productType，完全匹配为1，不完全匹配为0
+            // 这里第三位是sizeType，完全匹配为1，不完全匹配为0
+            // 按完全匹配数量+优先顺：Brand>ProductType>SizeType，进行下面顺序设定
             sortKey.add(7); // 111
             sortKey.add(6); // 110
             sortKey.add(5); // 101
@@ -1682,6 +1721,7 @@ public class SxProductService extends BaseService {
 
         List<CmsBtImageGroupModel> modelsAll = cmsBtImageGroupDao.selectListByKeysWithAll(channelId, cartId, imageType, viewType, paramBrandName, paramProductType, paramSizeType, 1);
         for (CmsBtImageGroupModel model : modelsAll) {
+            // 这里第一位是，第二位是productType，第三位是sizeType，按顺序判断
             String matchVal = "";
             if (model.getBrandName().contains(paramBrandName)) {
                 matchVal += 1;
@@ -1742,7 +1782,7 @@ public class SxProductService extends BaseService {
      *
      * @return Map<originalSize, adjustSize>
      */
-    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) throws Exception {
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
         Map<String, String> sizeMap = new HashMap<>();
         Map<Integer, List<CmsBtSizeChartModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
         for (int index = 0; index < 1 << 3; index++) {

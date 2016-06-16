@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
@@ -63,7 +64,19 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(sxProduct, imageType);
             // modified by morse.lu 2016/06/02 end
 
+            // added by morse.lu 2016/06/13 start
+            int index = 0;
+            // added by morse.lu 2016/06/13 end
             for (CmsBtProductModel_Field_Image cmsBtProductModelFieldImage : cmsBtProductModelFieldImages) {
+                // added by morse.lu 2016/06/13 start
+                // target店，第一张图不要，从第二张开始到第六张
+                index++;
+                if (sxData.getChannelId().equals(ChannelConfigEnums.Channel.TARGET.getId())
+                        && CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType
+                        && (index < 2 || index > 6)) {
+                    continue;
+                }
+                // added by morse.lu 2016/06/13 end
                 // 20160512 tom 有可能为空 add START
                 if (StringUtils.isEmpty(cmsBtProductModelFieldImage.getName())) {
                     continue;

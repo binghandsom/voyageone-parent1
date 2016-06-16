@@ -9,9 +9,9 @@ import java.util.Map;
 
 @Repository
 public interface CmsMtMasterInfoDaoExt {
-    public CmsMtMasterInfoModel getByKey(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType);
-    public CmsMtMasterInfoModel getByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, @Param("sizeType") String sizeType);
-    public  Integer getCountByWhere(Map<String, Object> map);
-    public  List getListByWhere(Map<String, Object> map);
-    public List<CmsMtMasterInfoModel> getListJMNewImageInfo(Map<String, Object> map);
+    public CmsMtMasterInfoModel selectByKey(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType);
+    public CmsMtMasterInfoModel selectByKeySizeType(@Param("platformId") int platformId, @Param("channelId") String channelId, @Param("brandName") String brandName, @Param("productType") String productType, @Param("dataType") int dataType, @Param("sizeType") String sizeType);
+    public  Integer selectCountByWhere(Map<String, Object> map);
+    public  List selectListByWhere(Map<String, Object> map);
+    public List<CmsMtMasterInfoModel> selectListJMNewImageInfo(Map<String, Object> map);
 }

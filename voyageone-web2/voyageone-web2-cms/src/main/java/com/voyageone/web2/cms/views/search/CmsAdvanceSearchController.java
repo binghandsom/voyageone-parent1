@@ -222,7 +222,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
         byte[] data = null;
         try {
-            data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession());
+            data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession(), getLang());
         } catch (Exception e) {
             $error("创建文件时出错", e);
             throw new BusinessException("4003");

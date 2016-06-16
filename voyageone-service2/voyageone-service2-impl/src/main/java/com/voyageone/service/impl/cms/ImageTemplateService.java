@@ -72,7 +72,7 @@ public class ImageTemplateService extends BaseService {
      * @param imageGroupList 检索结果（Model）
      * @param channelId      渠道id
      * @param lang           语言
-     * @return 检索结果（Bean）
+     * @return 检索结果（bean）
      */
     private List<CmsBtImageTemplateBean> changeToBeanList(List<CmsBtImageTemplateModel> imageGroupList, String channelId, String lang) {
         List<CmsBtImageTemplateBean> imageGroupBeanList = new ArrayList<>();
@@ -92,7 +92,7 @@ public class ImageTemplateService extends BaseService {
     /**
      * 检索结果转换
      *
-     * @param bean      检索结果（Bean）
+     * @param bean      检索结果（bean）
      * @param channelId 渠道id
      * @param lang      语言
      */

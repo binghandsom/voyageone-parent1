@@ -60,6 +60,13 @@ define([
                     "backdrop": 'static',
                     "size": 'lg'
                 },
+                "categoryNew": {
+                    "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
+                    "controller": 'popCategoryNewCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'lg'
+                },
                 "addChannelCategory": {
                     "templateUrl": "views/pop/search/addChannelCategory.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/addChannelCategory.ctl",
@@ -74,7 +81,7 @@ define([
                 "freeTag": {
                     "templateUrl": "views/pop/bulkUpdate/freetag.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/bulkUpdate/freetag.ctl",
-                    "controller": 'popFreeTagCtl',
+                    "controller": 'popFreeTagCtl as ctrl',
                     "size": 'lg'
                 },
                 "salePrice": {
@@ -364,7 +371,7 @@ define([
                 "joinJM": {
                     "templateUrl": "views/pop/search/joinJM.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
-                    "controller": 'popJoinJMCtl',
+                    "controller": 'popJoinJMCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
                 },
@@ -617,6 +624,16 @@ define([
         $scope.popupNewCategory = function (context) {
             return openModel(popActions.bulkUpdate.category, context);
         };
+
+        /**
+         * 打开新的类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupCategoryNew = function (context) {
+            return openModel(popActions.bulkUpdate.categoryNew, context);
+        };
+
 
         /**
          * 打开类目属性编辑页面
@@ -1113,15 +1130,15 @@ define([
         /**
          * 新增advance查询页分类edit弹出
          * */
-        $scope.openAddChannelCategoryEdit = function (selList) {
+        $scope.openAddChannelCategoryEdit = function (selList, cartId) {
             var productIds = [],data;
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
             });
-            if(selList[0].plateSchema)
-                data = {"productIds": productIds,"cartId":selList[0].cartId,"selectedIds":selList[0].selectedIds,plateSchema:true}
+            if(selList.length > 0 && selList[0].plateSchema )
+                data = {"productIds": productIds,"cartId":selList[0].cartId,"selectedIds":selList[0].selectedIds,plateSchema:true};
             else
-                data = {"productIds": productIds}
+                data = {"productIds": productIds,"cartId":cartId};
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 

@@ -56,7 +56,7 @@ public class JuMeiProductPlatform3Service {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
         LOG.info(promotionId + " 聚美上新开始");
-        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.getJMCopyList(promotionId);
+        List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 updateJm(model, shopBean);
@@ -72,8 +72,8 @@ public class JuMeiProductPlatform3Service {
         try {
             if (model.getSynchStatus() == 1) {
                 // 再售
-                CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.getByProductCodeChannelId(model.getProductCode(), model.getChannelId());
-                List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionProductId(model.getId());
+                CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
+                List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
                 String jmSkuNoList = getjmSkuNo(listSkuPrice);
                 jmHtDealCopy(model, shopBean, modelJmProduct.getOriginJmHashId());//再售
                 jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
@@ -86,7 +86,7 @@ public class JuMeiProductPlatform3Service {
             }
             else if (model.getPriceStatus() == 1) //更新价格
             {
-                List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.getJmSkuPriceInfoListByPromotionProductId(model.getId());
+                List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);
                 model.setPriceStatus(2);
                 model.setErrorMsg("");

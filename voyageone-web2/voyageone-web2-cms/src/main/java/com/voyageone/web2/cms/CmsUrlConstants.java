@@ -29,12 +29,13 @@ public interface CmsUrlConstants {
             interface INDEX {
                 String ROOT = "/cms/jmpromotion/index";
                 String INIT = "init";
-                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
                 String SaveModel = "saveModel";
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel="getEditModel";
                 String GetTagListByPromotionId="getTagListByPromotionId";
+                String ImportJM="importJM";
 
             }
 
@@ -43,7 +44,7 @@ public interface CmsUrlConstants {
 
                 String INIT = "init";
 
-                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
                 String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE = "getPromotionProductInfoListByWhere";
                 String GetPromotionProductInfoCountByWhere = "getPromotionProductInfoCountByWhere";
                 String INSERT = "insert";
@@ -81,7 +82,7 @@ public interface CmsUrlConstants {
         interface LIST {
             interface INDEX {
                 String ROOT = "/cms/CmsBtJmPromotionImportTask/index";
-                String GET_BY_PROMOTIONID = "getByPromotionId";
+                String GET_BY_PROMOTIONID = "selectByPromotionId";
             }
         }
     }
@@ -90,7 +91,7 @@ public interface CmsUrlConstants {
         interface LIST {
             interface INDEX {
                 String ROOT = "/cms/CmsBtJmPromotionExportTask/index";
-                String GET_BY_PROMOTIONID = "getByPromotionId";
+                String GET_BY_PROMOTIONID = "selectByPromotionId";
                 String ADDEXPORT = "addExport";
             }
         }
@@ -101,12 +102,12 @@ public interface CmsUrlConstants {
             interface INDEX {
                 String ROOT = "/cms/cmsmtmasterinfo/index";
                 String INIT = "init";
-                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
                 String INSERT = "insert";
                 String UPDATE = "update";
                 String GET = "get";
                 String UPDATEJMIMG = "updateJMImg";
-                String GetCountByWhere = "getCountByWhere";
+                String GetCountByWhere = "selectCountByWhere";
                 String LoadJmMasterBrand = "loadJmMasterBrand";
             }
         }
@@ -119,7 +120,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String INSERT = "insert";
                 String UPDATE = "update";
-                String GETBYKEY = "getByKey";
+                String GETBYKEY = "selectByKey";
 
             }
         }
@@ -594,7 +595,7 @@ public interface CmsUrlConstants {
         interface CHANNEL_IMAGE_TEMPLATE {
             String ROOT = "/cms/channel/image_template";
             String Init = "init";
-            String GetPage = "getPage";
+            String GetPage = "selectPage";
             String GetCount = "getCount";
             String Save = "save";
             String Delete = "delete";
@@ -649,8 +650,8 @@ public interface CmsUrlConstants {
     interface ImageCreate {
         String ROOT = "/cms/imagecreate/index";
         String Upload = "upload";
-        String GetPageByWhere = "getPageByWhere";
-        String GetCountByWhere = "getCountByWhere";
+        String GetPageByWhere = "selectPageByWhere";
+        String GetCountByWhere = "selectCountByWhere";
         String DownloadExcel = "downloadExcel";
         String DownloadImportErrorExcel = "downloadImportErrorExcel";
     }

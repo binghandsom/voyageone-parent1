@@ -34,7 +34,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
@@ -292,8 +291,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
 
-            //String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
-
             // 属性值准备
             // 2016/06/01 Delete by desmond start   京东不需要mapping表了
             // 取得主产品类目对应的platform mapping数据
@@ -344,10 +341,11 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             //       * sizeGroupId        <-设置SKU信息     //不是新任务列表中的groupid
             //       * sizeChartIdPc      <-上传图片用
             //       * sizeChartIdMobile  <-上传图片用
-            // 调用共通函数
-            // TODO No.1 SizeMapGroupId现在没有后面会加到field里面去,暂时不做
-            List<CmsBtSizeMapModel> cmsBtSizeMapModelList = new ArrayList<>();
-//                cmsBtSizeMapModelList = sxProductService.selectSizeMapList();
+            //String sizeMapGroupId = ""; // TODO No.1 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
+
+            // 取得尺码转换信息
+            Map<String, String> jdSizeMap = sxProductService.getSizeMap(channelId, mainProduct.getFields().getBrand(),
+                    mainProduct.getFields().getProductType(), mainProduct.getFields().getSizeType());
 
             // 获取字典表(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
@@ -426,7 +424,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 updateProductBean.setWareId(String.valueOf(jdWareId));
                 // 构造更新用商品bean，主要设置SKU相关属性
                 updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, cmsMtPlatformSkusList,
-                        cmsBtSizeMapModelList, shopProp, productColorMap, skuLogicQtyMap);
+                        shopProp, productColorMap, skuLogicQtyMap, jdSizeMap);
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
@@ -443,7 +441,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 if (!StringUtils.isEmpty(modified)) {
                     // 新增之后更新商品SKU信息成功
                     // 上传该商品下所有产品的图片
-                    retStatus = uploadJdProductPics(shopProp, jdWareId, sxData, productColorMap, false);
+                    retStatus = uploadJdProductAddPics(shopProp, jdWareId, sxData, productColorMap);
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
@@ -475,7 +473,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                 // 更新商品的时候
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                 jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, cmsMtPlatformSkusList,
-                        cmsBtSizeMapModelList, shopProp, productColorMap, skuLogicQtyMap);
+                        shopProp, productColorMap, skuLogicQtyMap, jdSizeMap);
 
                 // 京东商品更新API返回的更新时间
                 // 调用京东商品更新API
@@ -483,12 +481,12 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
                 // 更新商品是否成功
                 if (!StringUtils.isEmpty(retModified)) {
-                     // 上传该商品下所有产品的图片
-                    retStatus = uploadJdProductPics(shopProp, jdWareId, sxData, productColorMap, true);
+                     // 更新该商品下所有产品的图片
+                    retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap);
                     if (!retStatus) {
                         String errMsg = String.format("更新商品的产品5张图片设置均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(errMsg);
+//                        sxData.setErrorMessage(errMsg);
                     }
                 }
             }
@@ -540,7 +538,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             }
         } catch (Exception ex) {
             // 异常结束时
-            String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+            String errMsg = String.format("京东单个商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, jdWareId);
             $error(errMsg);
             ex.printStackTrace();
@@ -560,7 +558,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             sxProductService.insertBusinessLog(sxData, getTaskName());
             // 回写workload表   (失败2)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-            throw ex;
+            return;
         }
 
         // 正常结束
@@ -644,7 +642,14 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         // 高(单位:mm)(必须)
         jdProductBean.setHigh("50");
         // 重量(单位:kg)(必须)
-        jdProductBean.setWeight("1");
+        Object objfieldItemValue = null;
+        String strWeight = "1";  // 默认为1kg
+        objfieldItemValue = sxProductService.getPropValue(mainProduct.getPlatform(sxData.getCartId()).getFields(), "productWeightKg");
+        // 取得值为null不设置，空字符串的时候还是要设置（可能是更新时特意把某个属性的值改为空）
+        if (objfieldItemValue != null && objfieldItemValue instanceof String) {
+            strWeight = String.valueOf(objfieldItemValue);
+        }
+        jdProductBean.setWeight(strWeight);
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
@@ -825,7 +830,7 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
                         if (valueList != null && valueList.size() > 0) {
                             for (int i = 0; i < valueList.size(); i++) {
                                 // 属性值id(fieldId对应的属性值id)
-                                sbMultiAttrValue.append(valueList.get(i));
+                                sbMultiAttrValue.append(valueList.get(i).getValue());
                                 // 如果不是属性值列表中的最后一个则加上逗号(末尾不加逗号)
                                 if (i < valueList.size() - 1) {
                                     sbMultiAttrValue.append(Separtor_Coma);   // ","
@@ -890,19 +895,17 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      * @param targetProductBean JdProductBean   产品对象
      * @param sxData SxData     产品对象
      * @param cmsMtPlatformSkusList List<CmsMtPlatformSkusModel>  SKU颜色和尺寸列表
-     * @param cmsBtSizeMapModelList List<CmsBtSizeMapModel> 尺码对照表
      * @param shop ShopBean 店铺信息
      * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表
      * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
+     * @param jdSizeMap  Map<String, String> 尺码对照表
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData, List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList,
-                                              List<CmsBtSizeMapModel> cmsBtSizeMapModelList, ShopBean shop, Map<String, Object> productColorMap,
-                                              Map<String, Integer> skuLogicQtyMap) throws BusinessException {
-        //CmsBtProductModel mainProduct = sxData.getMainProduct();
+                                              ShopBean shop, Map<String, Object> productColorMap,
+                                              Map<String, Integer> skuLogicQtyMap, Map<String, String> jdSizeMap) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
-        //List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
 
         // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
         List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -1006,10 +1009,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             sbPropertyAlias.append(entry.getValue());         // 尺寸值
             sbPropertyAlias.append(Separtor_Colon);           // ":"
             // 尺码别名到尺码表转换一下(参数为尺码对照表id,转换前size)
-            // TODO: 暂时不做尺码转换， 直接使用原始的size，预计五月中旬再改
-//            String size = sxProductService.changeSize(cmsBtSizeMapModelList, entry.getKey());
             String size = entry.getKey();
-            sbPropertyAlias.append(size == null ? "" : size); // 尺寸值别名(转换后尺码)
+            sbPropertyAlias.append((StringUtils.isEmpty(jdSizeMap.get(size))) ? size : jdSizeMap.get(size)); // 尺寸值别名(转换后尺码)
             sbPropertyAlias.append(Separtor_Xor);             // "^"
         }
 
@@ -1053,25 +1054,19 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     }
 
     /**
-     * 设置该商品每个产品的图片
-     * 遍历当前group里的所有的product，每个product上传5张图片
-     * 检索到当前商品ware里所有图片，先全部删掉，再一张一张增加
-     * 第一张图设true， 其他的都设置为false（如果不满5张，必须使用一张图片作为补充）
+     * 新增商品时设置该商品每个产品的图片
+     * 遍历当前group里的所有的product列表，每个product上传5张图片
+     * 第一张图设为主图true，其他的都设置为false
      *
      * @param wareId long 商品id
      * @param sxData SxData 产品对象
      * @param productColorMap Map<String Object> 产品和颜色值Mapping关系表
-     * @param updateFlg boolean 是否更新商品标志
-     * @return boolean 上传指定商品SKU图片是否成功
+     * @return boolean 新增商品上传SKU图片是否成功
      */
-    private boolean uploadJdProductPics(ShopBean shopProp, long wareId, SxData sxData,
-                                           Map<String, Object> productColorMap, boolean updateFlg) {
-        boolean retUploadPics = true;
-
-        //CmsBtProductModel mainProduct = sxData.getMainProduct();
+    private boolean uploadJdProductAddPics(ShopBean shopProp, long wareId, SxData sxData,
+                                        Map<String, Object> productColorMap) {
+        boolean retUploadAddPics = true;
         List<CmsBtProductModel> productList = sxData.getProductList();
-        //List<CmsBtProductModel_Sku> skuList = sxData.getSkuList();
-
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
         // 产品5张图片名称列表(TODO 暂时为固定值，以后会改成从表中读取)
@@ -1081,108 +1076,6 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         productPicNameList.add("京东产品图片-3");
         productPicNameList.add("京东产品图片-4");
         productPicNameList.add("京东产品图片-5");
-
-        // 检索     调用API【根据商品Id，检索商品图片】(更新时)
-        // 删除图片(更新时)  调用API【删除商品图片】  因为京东不能删除全部的图片，所以一定要留一张不删，等5张图片上完后再删除
-        // 增加图片  调用API【根据商品Id，销售属性值Id增加图片】(新增或更新时)  京东最多可上传6张图片
-        // 删除修改前没删除的最后一张图片图片(更新时)  调用API【删除商品图片】
-
-        // 更新的时候，保存更新之前的颜色和图片INDEX列表用（不包含颜色值Id为0000000000主图）
-        Map<String,List<String>> colorIndexesMap = new HashMap<>();
-
-        // 更新商品的时候需要事先删除京东平台上已有的SKU图片，新增的时候不需要
-        if (updateFlg) {
-            // 根据商品Id，检索商品图片列表
-            // 检索 调用API【根据商品Id，检索商品图片】
-            // 检索指定商品Id对应的商品图片列表（包含颜色值Id为0000000000）
-            List<Image> wareIdPics;
-            try {
-                // 调用京东API根据商品Id，检索商品图片
-                wareIdPics = jdWareService.getImagesByWareId(shopProp, wareId);
-            } catch (Exception ex) {
-                $error("京东根据商品Id检索商品图片列表失败！ [WareId:%s]", wareId);
-                return false;
-            }
-
-            // 删除图片 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）
-            // 删除商品图片的接口，支持批量 颜色和排序的数组长度要一致 删除时按数组对应的坐标删除
-
-            // 取出商品图片列表中的要删除颜色值Id列表(去掉重复，去掉主图颜色值Id(ID0000000000))
-            for (Image img : wareIdPics) {
-                // 过滤掉主图的颜色值Id0000000000
-                if (ColorId_MinPic.equals(img.getColorId())) {
-                    continue;
-                }
-
-                // 如果删除对象MAP中没有这个颜色
-                if (!colorIndexesMap.containsKey(img.getColorId())) {
-                    colorIndexesMap.put(img.getColorId(), new ArrayList<>());
-                }
-
-                // 将图片index追加到列表中
-                if (colorIndexesMap.containsKey(img.getColorId())){
-                    colorIndexesMap.get(img.getColorId()).add(img.getImgIndex().toString());
-                }
-            }
-
-            // 根据要删除的列表及图片列表作成删除用的颜色id数组和图片位置数组("123,234,345")
-            // 因为每种颜色的图片不能全部删除，必须要留一张图片
-            StringBuilder sbDelColorIds = new StringBuilder();
-            StringBuilder sbDelImgIndexes = new StringBuilder();
-            // 循环作成要删除图片的颜色ID和图片index列表（每种颜色留一张图片）
-            for (Map.Entry<String, List<String>> entry : colorIndexesMap.entrySet()) {
-                // 颜色Id
-                //String colorId = entry.getKey();
-                // 图片位置列表
-                List<String> idxList = entry.getValue();
-
-                // 如果该颜色对应的图片index个数等于1件或0件时，不作为图片删除对象
-                if (idxList == null || idxList.size() <= 1) {
-                    continue;
-                }
-
-                // 图片位置列表
-                for (int i = 0; i < idxList.size(); i++) {
-                    // 由于不能删除每种颜色的全部图片，最后一张图片留着，不删除（新的5张图片传好之后再删除）
-                    if (i == idxList.size() - 1) {
-                        continue;
-                    }
-
-                    // 颜色id
-                    sbDelColorIds.append(entry.getKey());
-                    sbDelColorIds.append(",");
-
-                    // 图片index
-                    sbDelImgIndexes.append(idxList.get(i));
-                    sbDelImgIndexes.append(",");
-                }
-            }
-            // 移除颜色id值数组最后的"，"
-            if (sbDelColorIds.length() > 0) {
-                sbDelColorIds.deleteCharAt(sbDelColorIds.length() - 1);
-            }
-            // 移除图片位置最后的"，"
-            if (sbDelImgIndexes.length() > 0) {
-                sbDelImgIndexes.deleteCharAt(sbDelImgIndexes.length() - 1);
-            }
-
-            // 如果京东平台上该商品只剩一张主图，则要删除的颜色id和index也会为空，不调用京东API删除图片
-            if (!StringUtils.isEmpty(sbDelColorIds.toString()) &&
-                    !StringUtils.isEmpty(sbDelImgIndexes.toString()) ) {
-                // 调用API【删除商品图片】批量删除该商品全部SKU图片，不删主图（颜色值Id0000000000）每种颜色留一张图片
-                retUploadPics = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
-
-                // 删除商品图片成功/失败
-                if (retUploadPics) {
-                    $info("调用京东API删除指定商品上的所有图片成功(每种颜色保留一张主图) [WareId:%s] [DelColorIds:%s] [DelImgIndexes:%s]",
-                            wareId, sbDelColorIds.toString(), sbDelImgIndexes.toString());
-                } else {
-                    return false;
-                }
-            } else {
-                $info("京东平台上该商品没有颜色图片或每种颜色都只有一张主图，不用删除图片 [WareId:%s]", wareId);
-            }
-        }
 
         // 增加图片  调用API【根据商品Id，销售属性值Id增加图片】
         // 每个颜色要传五张图，第一张图设为主图，其他的都设置为非主图
@@ -1234,58 +1127,177 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
 
             // 该产品5张图片全部上传失败的时候
             if (!uploadProductPicResult) {
-                $error("京东根据商品Id销售属性值Id增加该产品图片失败！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
+                $error("新增商品时该颜色图片全部上传失败！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
             } else {
-                $info("京东根据商品Id销售属性值Id增加该产品图片成功！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
+                $info("新增商品时该颜色图片至少有1张上传成功！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
             }
 
             // 图片上传返回状态判断(该商品下所有产品的图片均上传成功时，才返回成功，否则返回失败)
-            retUploadPics = retUploadPics && uploadProductPicResult;
+            retUploadAddPics = retUploadAddPics && uploadProductPicResult;
+
+            // 只要有一个产品（颜色）的5张图片都上传失败，则认为失败，退出循环，后面会删除该商品
+            if (!retUploadAddPics) {
+                break;
+            }
         }
 
-        // 更新时，删除修改前没删除的最后一张图片（不删除颜色值Id为0000000000，以及更新前就没有图片的颜色）
-        if (updateFlg) {
-            // 删除修改前没删除的最后一张图片
-            StringBuilder sbDelLastColorIds = new StringBuilder();
-            StringBuilder sbDelLastImgIndexes = new StringBuilder();
-            // 循环作成要删除图片的颜色ID和图片index列表
-            for (Map.Entry<String, List<String>> entry : colorIndexesMap.entrySet()) {
-                // 颜色Id
-                String colorId = entry.getKey();
-                // 图片位置列表
-                List<String> idxList = entry.getValue();
+        return retUploadAddPics;
+    }
 
-                // 如果该颜色对应的图片index个数等于或0件时，不作为图片删除对象
-                if (idxList == null || idxList.size() == 0) {
-                    continue;
+    /**
+     * 更新商品时更新该商品每个产品的图片（不包括主图）
+     * 遍历当前group里的所有的product，更新每个product的5张图片
+     * 每个颜色先上传一张，再删除一张，最后删除多余的更新前图片
+     *
+     * @param wareId long 商品id
+     * @param sxData SxData 产品对象
+     * @param productColorMap Map<String Object> 产品和颜色值Mapping关系表
+     * @return boolean 上传指定商品SKU图片是否成功
+     */
+    private boolean uploadJdProductUpdatePics(ShopBean shopProp, long wareId, SxData sxData,
+                                           Map<String, Object> productColorMap) {
+        boolean retUploadUpdatePics = true;
+        List<CmsBtProductModel> productList = sxData.getProductList();
+
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+        // 产品5张图片名称列表(TODO 暂时为固定值，以后会改成从表中读取)
+        List<String> productPicNameList = new ArrayList<>();
+        productPicNameList.add("京东产品图片-1");
+        productPicNameList.add("京东产品图片-2");
+        productPicNameList.add("京东产品图片-3");
+        productPicNameList.add("京东产品图片-4");
+        productPicNameList.add("京东产品图片-5");
+
+        // ---------------------------------------------
+        // 京东平台如果想替换产品图片需要将图片先上传到京东平台，并且每种颜色不能删除全部的图片
+        // 有的类目需要最少留1张图片，有的类目需要最少留3张图片，不能全部删除。
+        // （京东平台上每种颜色最多可以上传6张图，我们最多只会上5张图）
+        // 基于以上原因，商品更新时颜色图片的更新采用以下方法：
+        //
+        // 1.检索 取得图片更新前京东平台上每种颜色的图片张数（可能范围：0~5张）
+        // 2.循环颜色（产品）列表更新图片
+        //     再循环产品中的要更新的图片列表（可能范围：0~5张），执行下面操作
+        //         上传一张到京东平台（会自动添加到京东平台颜色图片末尾），再删除京东平台产品图片的第一张（删除之后图片会自动往前移）
+        //     如果更新后的图片件数比平台上更新前的图片件数少，则循环删除京东平台上剩余未删除的图片
+        //   结束颜色列表循环
+        //
+        // 备注：每种颜色的5张图片如果有一张上传成功则认为成功，
+        //      但是如果有一种颜色的5张图片都上传失败，则认为更新失败并退出循环，并将颜色及错误信息写入log表
+        // ---------------------------------------------
+
+        // 1.检索 取得图片更新前京东平台上每种颜色的图片张数（可能范围：0~5张）
+        // 更新的时候，保存更新之前的颜色和图片INDEX列表用（不包含颜色值Id为0000000000主图）
+        Map<String,List<String>> jdColorIndexesMap = new HashMap<>();
+        // 调用京东API根据商品Id检索指定商品Id对应的商品图片列表（包含颜色值Id为0000000000）
+        List<Image> wareIdPics = jdWareService.getImagesByWareId(shopProp, wareId);
+        // 取得图片更新前京东平台上每种颜色的图片张数
+        for (Image img : wareIdPics) {
+            // 过滤掉主图的颜色值Id0000000000
+            if (ColorId_MinPic.equals(img.getColorId())) {
+                continue;
+            }
+
+            // 如果对象MAP中没有这个颜色
+            if (!jdColorIndexesMap.containsKey(img.getColorId())) {
+                jdColorIndexesMap.put(img.getColorId(), new ArrayList<>());
+            }
+
+            // 将图片index追加到列表中
+            if (jdColorIndexesMap.containsKey(img.getColorId())){
+                jdColorIndexesMap.get(img.getColorId()).add(img.getImgIndex().toString());
+            }
+        }
+
+        // 2.循环颜色（产品）列表更新图片
+        // 每个颜色先上传一张，再删除一张，最后删除多余的更新前图片
+        for (CmsBtProductModel product:productList) {
+            // 颜色值id取得
+            // 新增或更新商品的时候，从产品和颜色值Mapping关系表中取得该产品对应的颜色值
+            String colorId = "";
+            if (!StringUtil.isEmpty(productColorMap.get(product.getFields().getCode()).toString())) {
+                String[] colorIdArray = productColorMap.get(product.getFields().getCode()).toString().split(Separtor_Colon);
+                if (colorIdArray.length >= 2) {
+                    // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
+                    colorId = colorIdArray[1];
+                }
+            }
+
+            // 主图不上传
+            if (ColorId_MinPic.equals(colorId)) {
+                continue;
+            }
+
+            // 根据商品Id，销售属性值Id增加5张产品图片
+            // SKU图片上传是否成功(只要5张图片有一张上传成功则认为成功)
+            boolean uploadProductPicResult = false;
+            // 取得图片URL参数
+            String[] extParameter = {product.getFields().getCode()};   // 产品code
+            // 京东平台上该颜色对应的更新前图片张数
+            int intOldImageCnt = 0;
+            if (!ListUtils.isNull(jdColorIndexesMap.get(colorId))) {
+                intOldImageCnt = jdColorIndexesMap.get(colorId).size();
+            }
+            // 要更新的产品图片张数
+//            int intNewImageCnt = product.getFields().getImages1().size();
+            // 京东平台上该颜色已经删除的图片件数
+            int delImageCnt = 0;
+
+            // 循环取得5张图片的url并分别上传到京东
+            for (String picName : productPicNameList) {
+                try {
+                    // 取得图片URL(TODO 这里的解析字典不能知道现在到底是哪个颜色产品的图片，目前每个商品都只有一个product，暂时没问题)
+                    String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
+
+                    // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
+                    boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
+
+                    // 5张图片只有曾经有一张上传成功就认为SKU图片上传成功
+                    uploadProductPicResult = uploadProductPicResult || skuPicResult;
+                } catch (Exception ex) {
+                    // 如果5张图片里面有一张上传成功的时候
+                    if (uploadProductPicResult) {
+                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                    } else {
+                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                    }
+                    $error(ex);
+                    // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
                 }
 
-                // 颜色id
-                sbDelLastColorIds.append(colorId);
-                sbDelLastColorIds.append(",");   // ","
+                // 删除第一张图片(及时上传失败，也要删除老的图片，如果报必须大于3张/1张的错误，只能让运营把图片改好)
+                if (delImageCnt < intOldImageCnt) {
+                    // 调用API【删除商品图片】批量删除该商品该颜色的第一张图片
+                    jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+                }
 
-                // 图片index
-                sbDelLastImgIndexes.append("1");   // index=1(之前没删的最后一张图片)
-                sbDelLastImgIndexes.append(",");   // ","
-            }
-            // 移除颜色id值数组最后的"，"
-            if (sbDelLastColorIds.length() > 0) {
-                sbDelLastColorIds.deleteCharAt(sbDelLastColorIds.length() - 1);
+                // 京东平台上该颜色已经删除的图片件数
+                delImageCnt++;
             }
 
-            // 移除图片位置最后的"，"
-            if (sbDelLastImgIndexes.length() > 0) {
-                sbDelLastImgIndexes.deleteCharAt(sbDelLastImgIndexes.length() - 1);
+            // 删除剩余的图片
+//            for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+//                // 调用删除图片API（指定删除第一张）
+//                jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+//            }
+
+            // 该产品5张图片全部上传失败的时候
+            if (!uploadProductPicResult) {
+                $error("更新商品时该颜色图片全部上传失败！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
+            } else {
+                $info("更新商品时该颜色图片至少有1张上传成功！[WareId:%s] [ProductCode:%s]", wareId, product.getFields().getCode());
             }
 
-            // 调用API【删除商品图片】批量删除该商品全部SKU的残留的最后一张图片
-            boolean delSkuLastPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, sbDelLastColorIds.toString(), sbDelLastImgIndexes.toString());
+            // 图片上传返回状态判断(该商品下所有产品的图片均上传成功时，才返回成功，否则返回失败)
+            retUploadUpdatePics = retUploadUpdatePics && uploadProductPicResult;
 
-            // 删除商品修改前的最后一张图片失败
-            retUploadPics = retUploadPics && delSkuLastPicResult;
+            // 只要有一个产品（颜色）的5张图片都上传失败，则认为失败，退出循环，后面会删除该商品
+            if (!retUploadUpdatePics) {
+                break;
+            }
         }
 
-        return retUploadPics;
+        return retUploadUpdatePics;
     }
 
     /**
@@ -1330,13 +1342,15 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
         if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类
             // 2016/06/17暂时用外面的部分平台的SellerCats，以后改成分平台里面的sellerCats
-            if (sxData.getCartId().equals(sxData.getMainProduct().getSellerCats().getCartId())) {
-                // 取得
-                List<String> sellerCatList = sxData.getMainProduct().getSellerCats().getFullCIds();
-                for (String sellerCat : sellerCatList ) {
-                    // 里面的数据是“1233797770-1233809821”样式的
-                    sbbuilder.append(sellerCat);
-                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+            if (sxData.getMainProduct().getSellerCats() != null && sxData.getMainProduct().getSellerCats().size() > 0) {
+                if (sxData.getCartId().equals(sxData.getMainProduct().getSellerCats().getCartId())) {
+                    // 取得
+                    List<String> sellerCatList = sxData.getMainProduct().getSellerCats().getFullCIds();
+                    for (String sellerCat : sellerCatList ) {
+                        // 里面的数据是“1233797770-1233809821”样式的
+                        sbbuilder.append(sellerCat);
+                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    }
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了

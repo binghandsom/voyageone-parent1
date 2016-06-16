@@ -8,6 +8,9 @@ import java.util.List;
 
 /**
  * Created by Leo on 15-12-7.
+ *
+ * @version 2.0.1
+ * @author Ethan Shi
  */
 @Repository
 public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
@@ -61,4 +64,9 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         ));
         return result.size();
     }
+
+    public int updatePublishStatus(CmsBtSxWorkloadModel model) {
+        return update("update_publish_status", model);
+    }
+
 }

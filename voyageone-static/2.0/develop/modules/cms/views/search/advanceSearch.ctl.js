@@ -164,6 +164,10 @@ define([
          * 数据导出
          */
         function exportFile(fileType) {
+            if ($scope.vm.productPageOption.total == 0) {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+                return;
+            }
             var msg = '';
             if (fileType == 1) {
                 msg = '即将导出Code级的搜索结果，请确认。';
@@ -428,27 +432,29 @@ define([
             } else {
                 $scope.vm.searchInfo.cartId = parseInt(cartObj.value);
             }
+            // 清空平台相关查询条件
+            $scope.vm.searchInfo.productStatus = null;
+            $scope.vm.searchInfo.platformStatus = null;
+            $scope.vm.searchInfo.errorListStatus = null;
+
+            $scope.vm.searchInfo.promotionList = null;
+
+            $scope.vm.searchInfo.tags = [];
+            $scope.vm.searchInfo.priceChgFlg = '0';
+            $scope.vm.searchInfo.tagTypeSelectValue = '0';
+            $scope.vm.searchInfo.sortSales = '0';
+            $scope.vm.searchInfo.salesSortType = null;
+            $scope.vm.searchInfo.cidValue = [];
+
+            $scope.vm.searchInfo.priceEnd = '';
+            $scope.vm.searchInfo.priceStart = '';
+            $scope.vm.searchInfo.priceType = '';
+            $scope.vm.searchInfo.createTimeStart = '';
+            $scope.vm.searchInfo.createTimeTo = '';
+
+            $scope.vm.masterData.catList = [];
+
             if ($scope.vm.searchInfo.cartId == -1) {
-                // 清空平台相关查询条件
-                $scope.vm.searchInfo.productStatus = null;
-                $scope.vm.searchInfo.platformStatus = null;
-                $scope.vm.searchInfo.errorListStatus = null;
-
-                $scope.vm.searchInfo.promotionList = null;
-
-                $scope.vm.searchInfo.tags = [];
-                $scope.vm.searchInfo.priceChgFlg = '0';
-                $scope.vm.searchInfo.tagTypeSelectValue = '0';
-                $scope.vm.searchInfo.sortSales = '0';
-                $scope.vm.searchInfo.cidValue = [];
-
-                $scope.vm.searchInfo.priceEnd = '';
-                $scope.vm.searchInfo.priceStart = '';
-                $scope.vm.searchInfo.priceType = '';
-                $scope.vm.searchInfo.createTimeStart = '';
-                $scope.vm.searchInfo.createTimeTo = '';
-
-                $scope.vm.masterData.catList = [];
                 $scope.vm._cart_display = 0;
                 $scope.vm._mmmcart_display = 0;
                 return;
@@ -549,29 +555,42 @@ define([
             _chkProductSel(cartId, __openPutOnOff);
 
             function __openPutOnOff(cartId, _selProdList) {
-                openPutOnOffFnc();
+                var productIds = [];
+                if (_selProdList && _selProdList.length) {
+                    _.forEach(_selProdList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var property = {'cartId': cartId, '_option':'putonoff', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall?1:0;
+                openPutOnOffFnc(property).then(
+                    function () {
+                        $scope.search();
+                    });
             }
         };
 
         // 商品审批
-        function openApproval(cartId) {
+        function openApproval(openUpdateApprovalFnc, cartId) {
             _chkProductSel(cartId, __openApproval);
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
-                    .then(function (openUpdateApproval) {
+                    .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
                             _.forEach(_selProdList, function (object) {
                                 productIds.push(object.code);
                             });
                         }
-                        var propertyInfo = {
-                            property: {'cartId': cartId, '_option':'approval'},
-                            productIds: productIds
-                        };
-                        propertyInfo.property.isSelAll = $scope.vm._selall?1:0;
-                        $fieldEditService.setProductFields(propertyInfo).then(function (res) {
+                        var property = {'cartId': cartId, '_option':'approval', 'productIds': productIds};
+                        property.isSelAll = $scope.vm._selall?1:0;
+
+                        function check(propParams) {
+                            return $fieldEditService.setProductFields(propParams).then(callback);
+                        }
+
+                        function callback(res) {
                             if (res.data.ecd == null || res.data.ecd == undefined) {
                                 alert("提交请求时出现错误");
                                 return;
@@ -588,22 +607,15 @@ define([
                             }
                             if (res.data.ecd == 3) {
                                 // 商品价格有问题
-                                var msg = "提示 商品[" + res.data.code + "] (" + res.data.cartName + " :-> " + res.data.skuCode + ") :<br>";
-                                if (res.data.priceRetail) {
-                                    msg += "最终售价[" + res.data.priceSale + "] < 销售指导价[" + res.data.priceRetail + "]";
-                                }
-                                if (res.data.priceLimit) {
-                                    if (res.data.priceRetail) {
-                                        msg += "， ";
-                                    }
-                                    msg += "最终售价[" + res.data.priceSale + "] > 阈值价格[" + res.data.priceLimit + "]";
-                                }
-                                alert(msg);
-                                return openUpdateApproval();
-                                return;
+                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':property}).then(function (data) {
+                                    return check(data);
+                                });
                             }
+                            $scope.search();
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        });
+                        }
+
+                        check(property);
                     });
             }
         }
@@ -653,7 +665,7 @@ define([
          * popup弹出选择feed类目数据
          * @param popupNewCategory
          */
-        function openFeedCategoryMapping(popupNewCategory, categoryId) {
+        function openFeedCategoryMapping(popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -662,7 +674,7 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: null
+                        from: ""
                     }).then(function (context) {
                             $scope.vm.feedCat.catPath = context.selected.catPath;
                         }

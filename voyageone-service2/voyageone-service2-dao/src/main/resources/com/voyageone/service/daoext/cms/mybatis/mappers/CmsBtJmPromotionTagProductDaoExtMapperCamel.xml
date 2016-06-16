@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDaoExt" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel" />
 
-    <select id="getTagListByNames">
+    <select id="selectTagListByNames">
 
     </select>
 
