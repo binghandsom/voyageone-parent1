@@ -641,7 +641,8 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                $scope.vm.platform.catPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatId = context.selected.catId;
             });
         }
 
@@ -656,7 +657,8 @@ define([
                         categories: res.data,
                         from: null
                     }).then(function (res) {
-                            $scope.vm.masterCat.catPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatId = res.selected.catId;
                         }
                     );
                 });
@@ -677,7 +679,8 @@ define([
                         categories: res.data.categoryTree,
                         from: ""
                     }).then(function (context) {
-                            $scope.vm.feedCat.catPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatId = context.selected.catId;
                         }
                     );
                 });

@@ -149,7 +149,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" ng-model="vm.masterCat.catPath">
+                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.mCatPath">
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
@@ -159,7 +159,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" ng-model="vm.feedCat.catPath">
+                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath">
                                                 </div>
                                             </div>
                                         </div>
@@ -223,13 +223,13 @@
                                             <label class="col-sm-3 control-label">{{'TXT_SALES_SORT'|translate}}</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="1" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="7" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="2" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="30" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="3" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
+                                                    <input name="salesSort" type="radio" value="all" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
                                                 </label>
                                             </div>
                                         </div>
@@ -267,7 +267,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited" ng-model="vm.platform.catPath" rows="2" ng-disabled="nonePlatformSetter"></textarea>
+                                                <textarea class="form-control inherited" ng-model="vm.searchInfo.pCatPath" rows="2" ng-disabled="nonePlatformSetter"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
@@ -313,13 +313,13 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group" ng-if="vm._cart_display">
-                                            <label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
+                                            <label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
                                             <div class="col-sm-9 form-inline">
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.createTimeStart"
+                                                           ng-model="vm.searchInfo.publishTimeStart"
                                                            date-model-format="yyyy-MM-dd"
-                                                           max-date="vm.searchInfo.createTimeTo" is-open="datePicker1"
+                                                           max-date="vm.searchInfo.publishTimeTo" is-open="datePicker1"
                                                            close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
@@ -330,9 +330,9 @@
                                                 &nbsp;~&nbsp;
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.createTimeTo"
+                                                           ng-model="vm.searchInfo.publishTimeTo"
                                                            date-model-format="yyyy-MM-dd"
-                                                           min-date="vm.searchInfo.createTimeStart"
+                                                           min-date="vm.searchInfo.publishTimeStart"
                                                            is-open="datePicker2" close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
