@@ -73,8 +73,8 @@ public class JmBtDealImportService extends BaseService {
             $error("JmBtDealImportService.importJM error",ex);
             return false;
         }
-        $error("JmBtDealImportService.importJM","导入成功");
-        $error("JmBtDealImportService.importJM",sbResult.toString());
+        $error("JmBtDealImportService.importJM 导入成功");
+        $error("JmBtDealImportService.importJM"+sbResult.toString());
         return true;
     }
 
