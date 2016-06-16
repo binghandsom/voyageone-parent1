@@ -371,7 +371,7 @@ define([
                 "joinJM": {
                     "templateUrl": "views/pop/search/joinJM.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/search/joinJM.ctl",
-                    "controller": 'popJoinJMCtl',
+                    "controller": 'popJoinJMCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
                 },
