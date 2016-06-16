@@ -698,18 +698,20 @@ public class SxProductService extends BaseService {
 //                    // added by morse.lu 2016/06/15 end
 //                    List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
 //                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-//                    productPlatformSku.forEach(sku -> {
-//                        if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-//                            // modified by morse.lu 2016/06/15 start
+//                    if (productPlatformSku != null) {
+//                        productPlatformSku.forEach(sku -> {
+//                            if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+//                                // modified by morse.lu 2016/06/15 start
 ////                            skus.add(sku);
-//                            // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
-//                            // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
-//                            BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                            mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
-//                            skus.add(mapSku);
-//                            // modified by morse.lu 2016/06/15 end
-//                        }
-//                    });
+//                                // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
+//                                // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
+//                                BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+//                                skus.add(mapSku);
+//                                // modified by morse.lu 2016/06/15 end
+//                            }
+//                        });
+//                    }
 //
 //                    if (skus.size() > 0) {
 //                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
@@ -1750,9 +1752,9 @@ public class SxProductService extends BaseService {
                         ",cartId= " + cartId +
                         ",imageType= " + imageType +
                         ",viewType= "+ viewType +
-                        ",paramBrandName= " + paramBrandName +
-                        ",paramProductType= " + paramProductType +
-                        ",paramSizeType=" + paramSizeType);
+                        ",BrandName= " + paramBrandName +
+                        ",ProductType= " + paramProductType +
+                        ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
                 $info("找到image_group记录!");
@@ -1852,13 +1854,24 @@ public class SxProductService extends BaseService {
             if (matchModels.size() > 1) {
                 throw new BusinessException("尺码对照表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
-                        ",paramBrandName= " + paramBrandName +
-                        ",paramProductType= " + paramProductType +
-                        ",paramSizeType=" + paramSizeType);
+                        ",BrandName= " + paramBrandName +
+                        ",ProductType= " + paramProductType +
+                        ",SizeType=" + paramSizeType);
             }
             if (matchModels.size() == 1) {
                 $info("找到size_chart记录!");
                 for (CmsBtSizeChartModelSizeMap sizeInfo : matchModels.get(0).getSizeMap()) {
+                    // added by morse.lu start 2016/06/16 start
+                    if (sizeMap.containsKey(sizeInfo.getOriginalSize())) {
+                        // 这一版暂时不允许有原始尺码一样的，以后会支持
+                        throw new BusinessException("尺码对照表找到一条符合的记录,但有相同的原始尺码,请修正设定!" +
+                                "channelId= " + channelId +
+                                ",BrandName= " + paramBrandName +
+                                ",ProductType= " + paramProductType +
+                                ",SizeType=" + paramSizeType +
+                                "OriginalSize=" + sizeInfo.getOriginalSize());
+                    }
+                    // added by morse.lu start 2016/06/16 end
                     sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
                 }
                 break;
@@ -1866,6 +1879,28 @@ public class SxProductService extends BaseService {
         }
 
         return sizeMap;
+    }
+
+    /**
+     * 指定尺码进行转换，尺码表找不到，用原始尺码，找到，用转换后尺码
+     *
+     * @param listOriSize 需要转换的原始尺码list
+     * @return Map<originalSize, adjustSize>
+     */
+    public Map<String, String> getSizeMapWithOriSize(String channelId, String brandName, String productType, String sizeType, List<String> listOriSize) {
+        Map<String, String> retSizeMap = new HashMap<>();
+
+        Map<String, String> sizeMapFromDB = getSizeMap(channelId, brandName, productType, sizeType);
+        listOriSize.forEach(oriSize -> {
+            String adjSize = sizeMapFromDB.get(oriSize);
+            if (StringUtils.isEmpty(adjSize)) {
+                retSizeMap.put(oriSize, oriSize);
+            } else {
+                retSizeMap.put(oriSize, adjSize);
+            }
+        });
+
+        return retSizeMap;
     }
 
     // 20160513 tom 图片服务器切换 START
