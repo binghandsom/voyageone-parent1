@@ -222,13 +222,13 @@
                                             <label class="col-sm-3 control-label">{{'TXT_SALES_SORT'|translate}}</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_7days"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="1" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_30days"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="2" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" ng-model="vm.searchInfo.salesSort_allDays"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
+                                                    <input name="salesSort" type="radio" value="3" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
                                                 </label>
                                             </div>
                                         </div>

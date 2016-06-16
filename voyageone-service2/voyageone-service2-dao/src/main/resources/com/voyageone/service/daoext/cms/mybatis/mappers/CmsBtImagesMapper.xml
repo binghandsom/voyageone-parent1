@@ -42,6 +42,7 @@
         </where>
         limit 0,100
     </select>
+
     <insert id="insert_cms_bt_images" parameterType="com.voyageone.service.model.cms.CmsBtImagesModel" >
         insert into voyageone_cms2.cms_bt_images(
                 channel_id,
@@ -87,4 +88,19 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
+
+    <!-- 根据channleid和product code查询feed原图url -->
+    <select id="select_cms_bt_images_bycode" resultType="HashMap" parameterType="HashMap" >
+        select
+        code,
+        original_url
+        from voyageone_cms2.cms_bt_images
+        where
+        channel_id = #{channelId}
+        and code in
+        <foreach collection="codeList" item="prodCode" open="(" separator="," close=")">
+            #{prodCode}
+        </foreach>
+    </select>
+
 </mapper>
