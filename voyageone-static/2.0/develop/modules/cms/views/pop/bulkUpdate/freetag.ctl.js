@@ -86,11 +86,15 @@ define([
              */
             save: function () {
                 var self = this;
-                self.channelTagService.save().then(function () {
-
+                for (var i = 2; i >= 0; i--) {
+                    var selectedVal = self.selected[i];
+                    if (selectedVal !== undefined) {
+                        tagPath = selectedVal.tagPathName;
+                        break;
                     }
-                );
-                self.$uibModalInstance.close();
+                }
+                self.context ={"tagPath": tagPath};
+                self.$uibModalInstance.close(self.context);
             }
         };
 
