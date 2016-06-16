@@ -262,7 +262,7 @@ define(function (require) {
                 type = 'date';
                 break;
             case VALUE_TYPES.TIME:
-                type = 'time';
+                type = 'datetime-local';
                 break;
             case VALUE_TYPES.URL:
                 type = 'url';
@@ -275,10 +275,21 @@ define(function (require) {
     /**
      * 根据 valueTypeRule 转换值类型
      */
-    function getInputValue(value, valueTypeRule) {
+    function getInputValue(value, field, valueTypeRule) {
 
         var parsedValue = null;
+        var valueType = field.fieldValueType;
 
+        // 如果字段上有具体的值类型声明
+        // 就使用支持的类型进行转换
+        switch (valueType) {
+            case 'INT':
+                return parseInt(value);
+            case 'DOUBLE':
+                return parseFloat(value);
+        }
+        
+        // 否则, 按 valueTypeRule 来转换
         if (!valueTypeRule)
             return value;
 
@@ -646,16 +657,16 @@ define(function (require) {
                             innerElement.attr('title', field.name || field.id);
 
                             // 根据类型转换值类型
-                            field.value = getInputValue(field.value, valueTypeRule);
+                            field.value = getInputValue(field.value, field, valueTypeRule);
 
-                            if ((!rules.readOnlyRule || rules.readOnlyRule instanceof DependentRule) && type === 'date') {
+                            if ((!rules.readOnlyRule || rules.readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                 // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
                                 // 并且 readonly 时, 要把这个按钮隐藏掉
                                 var inputGroup = angular.element('<div class="input-group">');
                                 var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
 
                                 innerElement.attr('uib-datepicker-popup', '');
-                                innerElement.attr('date-model-format', 'yyyy-MM-dd');
+                                innerElement.attr('date-model-format', (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
                                 innerElement.attr('is-open', '$opened');
 
                                 if (rules.readOnlyRule instanceof DependentRule) {
@@ -681,9 +692,14 @@ define(function (require) {
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
+                            
                             if (!field.value)
                                 field.value = {value: null};
+                            else {
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                field.value.value = getInputValue(field.value.value, field);
+                            }
 
                             innerElement.attr('title', field.name || field.id);
 
@@ -718,7 +734,6 @@ define(function (require) {
                                     if (selectedIndex > -1)
                                         field.values.splice(selectedIndex, 1);
                                 }
-
                             };
 
                             if (!field.values)
@@ -726,7 +741,9 @@ define(function (require) {
 
                             // 先把 values 里的选中值取出, 便于后续判断
                             valueStringList = field.values.map(function (valueObj) {
-                                return valueObj.value;
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                return (valueObj.value = getInputValue(valueObj.value, field).toString());
                             });
 
                             each(field.options, function (option, index) {
@@ -830,6 +847,7 @@ define(function (require) {
                                             mapItem.rules = field.rules;
                                             mapItem.name = field.name;
                                             mapItem.options = field.options;
+                                            mapItem.fieldValueType = field.fieldValueType;
                                         }
                                     });
                                 });
