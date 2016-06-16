@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, categorySettingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -645,19 +645,15 @@ define([
          * @param popupNewCategory
          */
         function openMasterCategoryMapping(popupNewCategory) {
-            var para = {catLevel: 0};
-            categorySettingService.getMasterSubCategoryList(para)
+            feedMappingService.getMainCategories()
                 .then(function (res) {
-                    if (!res.data.catList || !res.data.catList.length) {
-                        alert("没数据");
-                        return null;
-                    }
-                    return popupNewCategory({
-                        categories: res.data.catList,
+                    popupNewCategory({
+                        categories: res.data,
                         from: null
-                    }).then(function (context) {
-                        $scope.vm.masterCat.catPath = context.selected.catPath;
-                    })
+                    }).then(function (res) {
+                        $scope.vm.masterCat.catPath = res.selected.catPath;
+                        }
+                    );
                 });
         }
 
@@ -702,6 +698,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'categorySettingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
     return searchIndex;
 });

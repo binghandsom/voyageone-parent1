@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,productDetailService,platformMappingService,$translate,notify,confirm) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -14,7 +14,7 @@ define([
                 productId: "=productId",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope,element) {
+            link: function (scope) {
                 scope.vm = {
                     productDetails:null,
                     productCode:"",
@@ -26,10 +26,6 @@ define([
                     resultFlag:0,
                     sellerCats:[],
                     productUrl:""
-                };
-
-                scope.showForm = function () {
-                    console.log(scope.schemaForm);
                 };
 
                 initialize();
@@ -51,7 +47,7 @@ define([
                             scope.vm.platform.status = scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
-                            scope.vm.sellerCats = scope.vm.platform.sellerCats;
+                            scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
                             scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null ? "Failed":scope.vm.platform.pStatus;
                         }
 
@@ -69,7 +65,7 @@ define([
                         .then(function (res) {
                             scope.vm.productDetails = res.data.productInfo;
                             scope.vm.productCode = res.data
-                        })
+                        });
 
                     switch(+scope.cartInfo.value){
                         case 26:
@@ -114,8 +110,7 @@ define([
                     scope.vm.sellerCats.forEach(function(element){
                         selectedIds[element.cid]=true;
                     });
-                    console.log(selectedIds);
-                    var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.platform.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
+                    var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
@@ -127,7 +122,7 @@ define([
                                 scope.vm.sellerCats.push({cid:cid,cids:cids,cName:cName,cNames:cNames});
                             });
 
-                    })
+                    });
                 }
 
                 function saveProduct(){
