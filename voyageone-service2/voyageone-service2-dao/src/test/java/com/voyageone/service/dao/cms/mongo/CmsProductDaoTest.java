@@ -17,8 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.net.UnknownHostException;
 import java.util.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsProductDaoTest {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

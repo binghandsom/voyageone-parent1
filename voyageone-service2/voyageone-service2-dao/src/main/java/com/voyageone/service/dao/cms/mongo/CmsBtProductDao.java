@@ -11,14 +11,20 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+
+/**
+ *
+ * @author Ethan Shi
+ * @version 2.1.0
+ *
+ */
 @Repository
 public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
@@ -139,119 +145,91 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel) {
-        String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':'" + catModel.getCatId() + "'}";
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId ) {
+        String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
-        for (CmsBtProductModel model : allProduct) {
-            List<String> cIds = model.getSellerCats().getCid();
-            List<String> cNames = model.getSellerCats().getCNames();
-            List<String> fullCNames = model.getSellerCats().getFullCNames();
-            List<String> fullCIds = model.getSellerCats().getFullCIds();
 
-            //删除cId
-            for (int i = cIds.size() - 1; i >= 0; i--) {
-                if (cIds.get(i).equals(catModel.getCatId())) {
-                    cIds.remove(i);
+
+        for (CmsBtProductModel product : allProduct) {
+
+            List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
+
+            for(int i = sellerCatList.size() - 1 ; i >= 0 ; i--)
+            {
+                if(sellerCatList.get(i).getcId().equals(catModel.getCatId()))
+                {
+                    sellerCatList.remove(i);
                     break;
                 }
             }
 
-            //删除cName
-            for (int i = cNames.size() - 1; i >= 0; i--) {
-                if (cNames.get(i).equals(catModel.getCatName())) {
-                    cNames.remove(i);
-                    break;
-                }
-            }
 
-            //删除fullCNames
-            for (int i = fullCNames.size() - 1; i >= 0; i--) {
-                if (fullCNames.get(i).equals(catModel.getCatPath())) {
-                    fullCNames.remove(i);
-                    break;
-                }
-            }
-
-            //删除fullCIds
-            for (int i = fullCIds.size() - 1; i >= 0; i--) {
-                if (fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatId())) {
-                    fullCIds.remove(i);
-                    break;
-                }
-            }
-
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("sellerCats.cIds", cIds);
-            updateMap.put("sellerCats.cNames", cNames);
-            updateMap.put("sellerCats.fullCNames", fullCNames);
-            updateMap.put("sellerCats.fullCIds", fullCIds);
+            HashMap<String, Object> rsMap = new HashMap<>();
+            rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
 
             HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("prodId", model.getProdId());
+            queryMap.put("prodId", product.getProdId());
 
-            BulkUpdateModel bulkModel = new BulkUpdateModel();
-            bulkModel.setUpdateMap(updateMap);
-            bulkModel.setQueryMap(queryMap);
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("$set", rsMap);
 
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            bulkList.add(bulkModel);
-            BulkWriteResult result = bulkUpdateWithMap(model.getChannelId(), bulkList, "", "$set");
+            update(product.getChannelId(), queryMap, updateMap);
         }
 
         return allProduct;
     }
 
-
     /**
      * 更新产品的店铺内分类数据
+     *
+     * @param product
+     * @param catModel
      */
-    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel) {
-        List<String> cIds = product.getSellerCats().getCid();
-        List<String> cNames = product.getSellerCats().getCNames();
-        List<String> fullCNames = product.getSellerCats().getFullCNames();
-        List<String> fullCIds = product.getSellerCats().getFullCIds();
-        //找到cId
-        for (int i = cIds.size() - 1; i >= 0; i--) {
-            if (cIds.get(i).equals(catModel.getCatId())) {
-                cNames.set(i, catModel.getCatName());
-                break;
-            }
-        }
-        for (int i = fullCIds.size() - 1; i >= 0; i--) {
-            if (fullCIds.get(i).equals(catModel.getCatId()) || fullCIds.get(i).equals(catModel.getFullCatId())) {
-                fullCNames.set(i, catModel.getCatPath());
-                break;
+    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel, int cartId) {
+
+        List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
+
+        for (CmsBtProductModel_SellerCat cat : sellerCatList) {
+            List<String> cIds = cat.getcIds();
+            List<String> cNames = cat.getcNames();
+            String cId = catModel.getCatId();
+            //如果包含修改过的cId,则需要修改cName和cNames
+            if (cIds.stream().filter(w -> w.equals(cId)).count() > 0) {
+                for(int i = 0 ; i < cIds.size(); i++)
+                {
+                    if(cIds.get(i).equals(cId))
+                    {
+                        cNames.set(i , catModel.getCatName());
+                        break;
+                    }
+                }
+               cat.setcName(Joiner.on(">").join(cNames));
             }
         }
 
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("sellerCats.cNames", cNames);
-        updateMap.put("sellerCats.fullCNames", fullCNames);
+        HashMap<String, Object> rsMap = new HashMap<>();
+        rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", product.getProdId());
 
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        bulkList.add(model);
-        BulkWriteResult result = bulkUpdateWithMap(product.getChannelId(), bulkList, "", "$set");
-
-//        String strUpdate = String.format("{\"sellerCats.cNames\":%s, \"sellerCats.fullCNames\":%s}", JsonUtil.bean2Json(cNames),  JsonUtil.bean2Json(fullCNames));
-//        String strQuery = String.format("{\"prodId\":%s}", product.getProdId());
-//        updateFirst(strQuery, strUpdate, product.getChannelId()) ;
-//        update(product);
+        update(product.getChannelId(), queryMap, updateMap);
     }
 
 
     /**
      * 更新所有产品的店铺内分类数据
+     *
+     * @param channelId
+     * @param catList
+     * @return
      */
-    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList) {
+    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList, int cartId) {
         if (catList != null) {
             StringBuilder sb = new StringBuilder();
 
@@ -264,13 +242,13 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             }
 
-            String queryStr = "{'channelId':'" + channelId + "','sellerCats.cIds':" + "{'$elemMatch': { '$in': [" + sb.toString() + "]}}}";
+            String queryStr = "{'channelId':'" + channelId + "','platforms.P"+cartId+".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
 
             List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
             for (CmsBtProductModel model : allProduct) {
                 for (CmsBtSellerCatModel sellerCat : catList) {
-                    updateSellerCat(model, sellerCat);
+                    updateSellerCat(model, sellerCat, cartId);
                 }
             }
             return allProduct;
