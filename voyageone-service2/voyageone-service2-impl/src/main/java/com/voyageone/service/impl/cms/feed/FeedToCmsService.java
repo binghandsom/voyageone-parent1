@@ -140,6 +140,8 @@ public class FeedToCmsService extends BaseService {
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
                     if((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1) && insertLog){
                         product.setUpdFlg(0);
+                    }else{
+                        product.setUpdFlg(befproduct.getUpdFlg());
                     }
                 }else{
                     insertLog = true;
