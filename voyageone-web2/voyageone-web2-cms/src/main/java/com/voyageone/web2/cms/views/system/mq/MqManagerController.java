@@ -1,8 +1,5 @@
 package com.voyageone.web2.cms.views.system.mq;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.GetResponse;
 import com.voyageone.common.mq.config.MQConfigUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
@@ -15,11 +12,8 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.ReceiveAndReplyCallback;
-import org.springframework.amqp.rabbit.core.ChannelCallback;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +56,10 @@ public class MqManagerController extends CmsController {
             if(StringUtils.isEmpty(routingKey)||StringUtils.isEmpty(messageBody)|| MapUtils.isEmpty(JacksonUtil.jsonToMap(messageBody)))
                 return success(new HashSet(){{ add("参数未通过校验，requestMap:"+JacksonUtil.bean2Json(request.getParameterMap()));}});
             try {
-                this.rabbitTemplate.execute(channel -> channel.basicGet(annotationProcessorByIP.isLocal()?MQConfigUtils.getAddStrQueneName(routingKey):routingKey,false));
+                this.rabbitTemplate.execute(channel -> {
+                    channel.basicGet(annotationProcessorByIP.isLocal() ? MQConfigUtils.getAddStrQueneName(routingKey) : routingKey, false);
+                    return channel.basicRecover();
+                });
             }catch (Exception e){
                 return success(new HashSet(){{ add("发送的队列没有激活(需要提供消费者激活)，"+e.getMessage());}});
             }
