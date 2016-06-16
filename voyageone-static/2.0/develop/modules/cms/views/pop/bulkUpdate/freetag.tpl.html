@@ -69,7 +69,22 @@
                             </ul>
                         </div>
                     </div>
+                    </div>
                 </div>
+                <div class="col-sm-12">
+                    <div class="category_ts category_highlight" ng-show="ctrl.selectdTagListValid">
+                        <p class="text-center">Sorry! 您已重复选择了：&nbsp;&nbsp;<span> {{ ctrl.doubleValue }} </span></p>
+                    </div>
+                    <div class="category_ts">
+                        <p>{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}<span> {{ ctrl.tagPath }} </span>
+                            <button class="btn btn-default pull-right" ng-click="ctrl.confirm()" ng-model="ctrl.count" style="margin-top: -5px;">清除重复值</button>
+                            <button class="btn btn-default pull-right" ng-click="ctrl.delete()" ng-model="ctrl.count" style="margin-top: -5px;">确认添加此类目作为搜索条件</button>
+                        </p>
+                    </div>
+                    <div class="category_ts">
+                        <p>您已选择了：<span> {{ ctrl.selectdTagList }} </span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </form>

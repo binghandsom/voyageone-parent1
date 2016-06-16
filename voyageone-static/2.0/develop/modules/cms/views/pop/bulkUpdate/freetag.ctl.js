@@ -17,7 +17,9 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.newIndex = {value: -1};
+            this.count = 0;
+            this.selectdTagList = [];
+            this.selectdTagListValid = false;
         }
 
         popFreeTagCtl.prototype = {
@@ -34,6 +36,7 @@ define([
                     self.search(0);
                 });
             },
+
             byTagChildrenName: function (arr, index) {
                 var self = this;
                 var key = self.key[index];
@@ -41,6 +44,7 @@ define([
                     return item.tagChildrenName.indexOf(self.key[index]) > -1;
                 }) : arr;
             },
+
             /**
              * 当用户点击搜索时触发
              * @param index：记录层级
@@ -80,20 +84,46 @@ define([
                             selected[index] = tree[index][0];
                     }
                 }
+                for (var i = 2; i >= 0; i--) {
+                    var selectedVal = self.selected[i];
+                    if (selectedVal !== undefined) {
+                        self.tagPath = selectedVal.tagPathName;
+                        break;
+                    }
+                }
+            },
+
+            /**
+             * 点击确认添加的搜索条件
+             */
+            confirm: function () {
+                var self = this;
+                self.selectdTagListValid = false;
+                for (var j = 1; j < (self.count + 1); j++) {
+                    self.selectdTagList[j] = self.selectdTagList[j - 1];
+                }
+                self.selectdTagList.push(self.tagPath);
+                //校验选择的是否有重复值
+                self.selectdTagListValid = self.selectdTagList.sort();
+                for (var i = 0; i < self.selectdTagList.length; i++) {
+                    if (self.selectdTagListValid[i] == self.selectdTagListValid[i + 1]) {
+                        self.doubleValue = self.selectdTagListValid[i];
+                        self.context.selectdTagList.slice(self.selectdTagListValid[i]);
+                        console.log(self.selectdTagList);
+                        self.selectdTagListValid = true;
+                        return;
+                    }
+                };
+                self.context = {"selectdTagList": self.selectdTagList};
+            },
+            delete:function () {
+                
             },
             /**
              * 点击保存
              */
             save: function () {
                 var self = this;
-                for (var i = 2; i >= 0; i--) {
-                    var selectedVal = self.selected[i];
-                    if (selectedVal !== undefined) {
-                        tagPath = selectedVal.tagPathName;
-                        break;
-                    }
-                }
-                self.context ={"tagPath": tagPath};
                 self.$uibModalInstance.close(self.context);
             }
         };

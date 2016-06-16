@@ -42,8 +42,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8 col-sm-offset-3">
-                                                    <textarea class="form-control inherited " rows="3" ng-model="vm.searchInfo.freeTags"></textarea>
+                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.free.tagPathList" style=" min-height: 40px;  max-height: 160px;">
+                                                    <button class="btn btn-default" ng-repeat=" a in vm.free.tagPathList">{{a}}</button>&nbsp;&nbsp;
                                                 </div>
                                             </div>
                                         </div>
@@ -304,8 +304,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited " rows="2" ng-model="vm.searchInfo.promotionTags"></textarea>
+                                            <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.promotion.tagPathList" style=" min-height: 40px;  max-height: 160px;">
+                                                <button class="btn btn-default" ng-repeat=" a in vm.promotion.tagPathList">{{a}}</button>&nbsp;&nbsp;&nbsp;
                                             </div>
                                         </div>
                                     </div>

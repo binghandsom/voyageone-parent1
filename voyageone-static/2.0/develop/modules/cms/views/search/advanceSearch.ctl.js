@@ -43,8 +43,8 @@ define([
             masterCat: {catPath: null},
             feedCat: {catPath: null},
             channelInner: {catPath: null},
-            promotion: {tagPath: null},
-            free: {tagPath: null}
+            promotion: {tagPathList: null},
+            free: {tagPathList: null}
         };
 
         $scope.initialize = initialize;
@@ -642,8 +642,8 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                    $scope.vm.searchInfo.pCatId = context.selected.catId;
+                $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                $scope.vm.searchInfo.pCatId = context.selected.catId;
             });
         }
 
@@ -706,21 +706,14 @@ define([
         }
 
         /**
-         * popup出选择Tag变迁的功能
+         * popup出选择Tag的功能
          * @param openFreeTag
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                    if (isPromoTag) {
-                        $scope.vm.promotion.tagPath = res.tagPath;
-                    } else {
-                        $scope.vm.free.tagPath = res.tagPath;
-                    }
-                }
-            );
+                isPromoTag ? $scope.vm.promotion.tagPathList = res.selectdTagList : $scope.vm.free.tagPathList = res.selectdTagList;
+            });
         }
-
-
     }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
