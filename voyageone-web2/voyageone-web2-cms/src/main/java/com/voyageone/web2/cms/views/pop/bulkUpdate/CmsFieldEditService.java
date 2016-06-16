@@ -259,6 +259,14 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+
+            // 这里需要确认更新成功后再记录上新操作表
+            CmsBtProductModel newProduct = productService.getProductByCode(userInfo.getSelChannelId(), code);
+            // 执行product上新
+            if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                // 插入上新程序
+                productService.insertSxWorkLoad(userInfo.getSelChannelId(), code, cartList, userInfo.getUserName());
+            }
         }
         rsMap.put("ecd", 0);
         return rsMap;
