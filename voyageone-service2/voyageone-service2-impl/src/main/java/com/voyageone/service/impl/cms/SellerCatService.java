@@ -37,6 +37,9 @@ import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by Ethan Shi on 2016/5/23.
+ *
+ * @author Ethan Shi
+ * @version 2.1.0
  */
 @Service
 public class SellerCatService extends BaseService {
@@ -251,9 +254,9 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
 
-        //更新product表中素所有的店铺内分类
+        //更新product表中所有的店铺内分类
         if(changedList != null) {
-            List<CmsBtProductModel>  list  =  cmsBtProductDao.updateSellerCat(channelId, changedList);
+            List<CmsBtProductModel>  list  =  cmsBtProductDao.updateSellerCat(channelId, changedList , cartId);
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
 
@@ -284,9 +287,9 @@ public class SellerCatService extends BaseService {
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
-        //删除product表中素所有的店铺内分类
+        //删除product表中所有的店铺内分类
         if(deleted != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted);
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted , cartId);
 
 
             //插入上新表
@@ -367,6 +370,7 @@ public class SellerCatService extends BaseService {
 
 
 
+    @Deprecated
     public void refeshAllProduct(String channelId, int cartId, String creator) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
@@ -486,29 +490,6 @@ public class SellerCatService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "", "$set");
 
     }
-
-
-//    private String joinStr(Set<String> codes)
-//    {
-//        ArrayList<String> list = new ArrayList<>();
-//        list.addAll(codes);
-//
-//        StringBuffer sb = new StringBuffer();
-//        sb.append("[");
-//
-//        for (int i = 0 ; i < codes.size(); i++)
-//        {
-//            if (i == 0) {
-//                sb.append("\"").append(list.get(i)).append("\"");
-//            } else {
-//                sb.append(", \"").append(list.get(i)).append("\"");
-//            }
-//
-//        }
-//        sb.append("]");
-//
-//        return sb.toString();
-//    }
 
 
     /**
