@@ -43,7 +43,8 @@ define([
             masterCat: {catPath: null},
             feedCat: {catPath: null},
             channelInner: {catPath: null},
-            tagManage: {tagPath: null}
+            promotion: {tagPath: null},
+            free: {tagPath: null}
         };
 
         $scope.initialize = initialize;
@@ -641,7 +642,8 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                $scope.vm.platform.catPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatId = context.selected.catId;
             });
         }
 
@@ -656,7 +658,8 @@ define([
                         categories: res.data,
                         from: null
                     }).then(function (res) {
-                            $scope.vm.masterCat.catPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatId = res.selected.catId;
                         }
                     );
                 });
@@ -677,7 +680,8 @@ define([
                         categories: res.data.categoryTree,
                         from: ""
                     }).then(function (context) {
-                            $scope.vm.feedCat.catPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatId = context.selected.catId;
                         }
                     );
                 });
@@ -705,9 +709,13 @@ define([
          * popup出选择Tag变迁的功能
          * @param openFreeTag
          */
-        function openTagManagement(openFreeTag) {
-            openFreeTag('4').then(function (res) {
-                    $scope.vm.tagManage.tagPath = res.tagPath;
+        function openTagManagement(openFreeTag, isPromoTag) {
+            openFreeTag.then(function (res) {
+                    if (isPromoTag) {
+                        $scope.vm.promotion.tagPath = res.tagPath;
+                    } else {
+                        $scope.vm.free.tagPath = res.tagPath;
+                    }
                 }
             );
         }
