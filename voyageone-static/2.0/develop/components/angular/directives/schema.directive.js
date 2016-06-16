@@ -309,6 +309,9 @@ define(function (require) {
             case VALUE_TYPES.DATE:
             case VALUE_TYPES.TIME:
 
+                if (!value)
+                    return null;
+
                 parsedValue = new Date(value);
 
                 if (isNaN(parsedValue.getDate))
@@ -625,6 +628,12 @@ define(function (require) {
                             innerElement.attr('title', field.name || field.id);
 
                             // 根据类型转换值类型
+                            switch (valueTypeRule) {
+                                case VALUE_TYPES.DATE:
+                                case VALUE_TYPES.TIME:
+                                    console.log(field);
+                                    break;
+                            }
                             field.value = getInputValue(field.value, valueTypeRule);
 
                             break;

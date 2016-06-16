@@ -435,8 +435,8 @@
     text-indent: 1em;
 }
 
-.tm-sku-detail input:not([type='checkbox']) {
-    width: 125px;
+.tm-sku-detail schema-field {
+    min-width: 125px;
 }
 
 /*@media screen and (max-width: 1441px) {
