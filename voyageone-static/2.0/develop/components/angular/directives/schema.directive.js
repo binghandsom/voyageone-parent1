@@ -828,7 +828,9 @@ define(function (require) {
                                 complexValues.push(createComplexValue(field.fields));
                             };
 
-                            container.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                            if (controller.canAdd) {
+                                container.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                            }
 
                             break;
                         default:
@@ -958,6 +960,7 @@ define(function (require) {
 
                     controller.formController = controllers[1];
                     controller.showName = (!$attrs.showName || $attrs.showName === 'true');
+                    controller.canAdd = $attrs.add !== 'false';
 
                     // 如果为 field 设置了什么, 就尝试获取 field 上的内容
                     if ($attrs.field) {
