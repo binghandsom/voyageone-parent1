@@ -136,7 +136,12 @@
 						</div>
 					</td>
 					<td class="text-center" ng-controller="popupCtrl">
-						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i></button>
+						<button ng-if="promotion.cartId != '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
+								ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i>
+						</button>
+						<button ng-if = "promotion.cartId == '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
+								ng-click="openJmPromotionDetail({search:search})"><i class="fa fa-pencil"></i>
+						</button>
 						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" ng-disabled="promotion.promotionStatus" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
 					</td>
