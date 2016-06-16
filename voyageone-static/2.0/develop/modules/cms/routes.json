@@ -132,6 +132,11 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
+  "search_advance_new": {
+    "hash": "/search/advanceSearch",
+    "templateUrl": "views/search/advanceSearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
+  },
   "search_advance_param": {
     "url": "/search/advance/",
     "hash": "/search/advance/:type/:value/:catType",

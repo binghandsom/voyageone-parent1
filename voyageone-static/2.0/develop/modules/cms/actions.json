@@ -163,7 +163,6 @@
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
         "delete": "delete",
-        "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId": "deleteByPromotionId",
         "deleteByProductIdList": "deleteByProductIdList",
         "jmNewUpdateAll": "jmNewUpdateAll",
