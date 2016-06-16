@@ -19,7 +19,7 @@ public class CmsSearchInfoBean2 {
     private String mCatId;
     private String fCatId;
 
-    private String categoryStatus;
+    private String mCatStatus;
     // 翻译状态查询用标志位
     private String transStsFlg = null;
     private String taxNoStatus;
@@ -30,7 +30,7 @@ public class CmsSearchInfoBean2 {
 
     private String brand;
     private String[] freeTags;
-    private int freeTagType = 0;
+    private String freeTagType;
 
     // ** 平台搜索条件 **
     private Integer cartId = -1;
@@ -329,12 +329,12 @@ public class CmsSearchInfoBean2 {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
     }
 
-    public String getCategoryStatus() {
-        return categoryStatus;
+    public String getmCatStatus() {
+        return mCatStatus;
     }
 
-    public void setCategoryStatus(String categoryStatus) {
-        this.categoryStatus = categoryStatus;
+    public void setmCatStatus(String categoryStatus) {
+        this.mCatStatus = categoryStatus;
     }
 
     public String getTaxNoStatus() {
@@ -353,11 +353,11 @@ public class CmsSearchInfoBean2 {
         this.freeTags = freeTags;
     }
 
-    public int getFreeTagType() {
+    public String getFreeTagType() {
         return freeTagType;
     }
 
-    public void setFreeTagType(int freeTagType) {
+    public void setFreeTagType(String freeTagType) {
         this.freeTagType = freeTagType;
     }
 
