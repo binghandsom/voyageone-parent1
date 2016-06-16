@@ -62,7 +62,7 @@
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
                                 <li ng-repeat="tag3 in ctrl.tree[2]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
                                         <span>{{ tag3.tagChildrenName }}</span>
                                     </a>
                                 </li>
