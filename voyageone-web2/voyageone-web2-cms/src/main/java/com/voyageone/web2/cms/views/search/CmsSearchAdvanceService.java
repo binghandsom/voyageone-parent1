@@ -1130,11 +1130,20 @@ public class CmsSearchAdvanceService extends BaseAppService {
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
 
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+            if(item.getGroupBean() != null && item.getGroupBean().getGroupId() != null){
+                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+            }else{
+                index++;
+            }
+
 
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
 
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
+            if(item.getGroupBean() != null && item.getGroupBean().getNumIId() != null){
+                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
+            }else{
+                index++;
+            }
 
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
 
