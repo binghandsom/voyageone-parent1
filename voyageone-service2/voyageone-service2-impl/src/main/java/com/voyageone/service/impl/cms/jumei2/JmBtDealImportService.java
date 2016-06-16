@@ -69,11 +69,12 @@ public class JmBtDealImportService extends BaseService {
         catch (Exception ex )
         {
             ex.printStackTrace();
-            $error("JmBtDealImportService.importJM",ex);
-            return ex;
+            $error("JmBtDealImportService.importJM error",ex);
+            return false;
         }
         $error("JmBtDealImportService.importJM","导入成功");
-        return sbResult.toString();
+        $error("JmBtDealImportService.importJM",sbResult.toString());
+        return true;
     }
 
     private void importPage(String channelId, StringBuilder sbResult,List<JMProductDealBean> listJMProductDealBean) {

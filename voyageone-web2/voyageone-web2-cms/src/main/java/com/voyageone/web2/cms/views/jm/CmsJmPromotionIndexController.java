@@ -65,12 +65,15 @@ public class CmsJmPromotionIndexController extends CmsController {
     public AjaxResponse getTagListByPromotionId(@RequestBody int promotionId) {
         return success(service3.getTagListByPromotionId(promotionId));
     }
-@Autowired
+
+    @Autowired
     JmBtDealImportService serviceJmBtDealImport;
-    @RequestMapping(value = "/jm/import",method =RequestMethod.GET )
+
+    //"/cms/jmpromotion/index/importJM"
+    @RequestMapping(value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ImportJM, method = RequestMethod.GET)
     public Object importChannel(@RequestParam("channelId") String channelId) {
-       // return success(service3.getTagListByPromotionId(promotionId));
-      return   serviceJmBtDealImport.importJM(channelId);
-       // return "true";
+        // return success(service3.getTagListByPromotionId(promotionId));
+        return serviceJmBtDealImport.importJM(channelId);
+        // return "true";
     }
 }
