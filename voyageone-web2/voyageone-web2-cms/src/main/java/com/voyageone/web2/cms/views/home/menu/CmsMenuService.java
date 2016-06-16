@@ -53,8 +53,6 @@ public class CmsMenuService extends BaseAppService{
             } else if (CartType.MASTER.getShortName().equals(cTypeId)) {
                 // 取得主数据的类目树 (mongo:cms_mt_category_tree)
                 categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
-            } else {
-                // 取得各平台类目数据 (mongo:cms_mt_platform_category_tree)
             }
 
             return categoryTreeList;

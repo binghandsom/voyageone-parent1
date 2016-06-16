@@ -189,11 +189,11 @@ public class ProductGroupService extends BaseService {
             StringBuilder sbQuery = new StringBuilder();
             sbQuery.append(MongoUtils.splicingValue("carts.cartId", model.getCartId()));
             sbQuery.append(",");
-            sbQuery.append(MongoUtils.splicingValue("fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
+            sbQuery.append(MongoUtils.splicingValue("common.fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
             queryObject.setQuery("{" + sbQuery.toString() + "}");
 
             // 如果该产品已经上新过,则对应值为true,否则为false
-            queryObject.setProjection("{'fields.code': 1, 'carts.$': 1}");
+            queryObject.setProjection("{\"common.fields.code\": 1, \"carts.$\": 1}");
             List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, model.getChannelId());
             Map<String, Boolean> isPublishedProducts = new HashMap<>();
             for(CmsBtProductModel product : products) {
@@ -203,6 +203,7 @@ public class ProductGroupService extends BaseService {
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
+            List<BulkUpdateModel> bulkList2 = new ArrayList<>();
             for (String code : model.getProductCodes()) {
 
                 if (!isPublishedProducts.containsKey(code)) {
@@ -211,16 +212,27 @@ public class ProductGroupService extends BaseService {
 
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
-                bulkQueryMap.put("fields.code", code);
+                bulkQueryMap.put("common.fields.code", code);
                 bulkQueryMap.put("carts.cartId", model.getCartId());
+
+                // 设置批量更新条件
+                HashMap<String, Object> bulkQueryMap2 = new HashMap<>();
+                bulkQueryMap2.put("common.fields.code", code);
+                bulkQueryMap2.put("platform.P"+model.getCartId() + ".cartId", model.getCartId());
 
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+                HashMap<String, Object> bulkUpdateMap2 = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
                     bulkUpdateMap.put("carts.$.platformStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 if (!isPublishedProducts.get(code)) {
                     bulkUpdateMap.put("carts.$.publishTime", model.getPublishTime());
+                    bulkUpdateMap.put("carts.$.numIId", model.getNumIId());
+
+                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".publishTime", model.getPublishTime());
+                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".numIId", model.getNumIId());
                 }
 
                 // 设定批量更新条件和值
@@ -230,11 +242,24 @@ public class ProductGroupService extends BaseService {
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
                     bulkList.add(bulkUpdateModel);
                 }
+
+                // 设定批量更新条件和值
+                if (bulkUpdateMap2.size() > 0) {
+                    BulkUpdateModel bulkUpdateModel2 = new BulkUpdateModel();
+                    bulkUpdateModel2.setUpdateMap(bulkUpdateMap2);
+                    bulkUpdateModel2.setQueryMap(bulkQueryMap2);
+                    bulkList2.add(bulkUpdateModel2);
+                }
             }
 
             // 批量更新product表
             if (bulkList.size() > 0) {
                 cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", true);
+            }
+
+            // 批量更新product表
+            if (bulkList2.size() > 0) {
+                cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList2, null, "$set", true);
             }
         }
 

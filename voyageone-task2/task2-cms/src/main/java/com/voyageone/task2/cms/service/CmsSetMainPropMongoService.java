@@ -968,6 +968,29 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                                }
 //                            }
 //                        }
+//                        if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalDesCn())) {
+//                            field.setOriginalDesCn(""); // 长描述
+//                        }
+////                    } else {
+////                        if (transBaiduOrg.size() > 0) {
+////                            transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+////                            if (transBaiduOrg.size() == 2) {
+////                                field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+////                                field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+////                            } else {
+////                                if ("标题".equals(transFlg)) {
+////                                    field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+////                                } else {
+////                                    field.setOriginalDesCn(transBaiduCn.get(0)); // 长描述
+////                                }
+////                            }
+////                        }
+////                    }
+//
+//                } catch (Exception e) {
+//                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+//                    if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
+//                        field.setOriginalTitleCn(""); // 标题
 //                    }
 
 //                } catch (Exception e) {

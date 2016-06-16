@@ -95,7 +95,7 @@ class SEAnalysisContext {
         product.setSizeType(feedBean.getSize_type());
         List<String> imageUrls = new ArrayList<>();
         for (int i = 1; i <= 5; i++)
-            imageUrls.add(imageTemplateService.getImageUrl(feedBean.getImg_id()));
+            imageUrls.add(String.format("http://image.sneakerhead.com/is/image/sneakerhead/%s-%s", feedBean.getImg_id(), i));
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");

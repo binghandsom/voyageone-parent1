@@ -5,7 +5,7 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_PROMOTION_AND_TAG' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" name="addPromotionForm" novalidate>
             <div class="form-group">
                 <label class="col-sm-4 control-label">{{'TXT_CHANNEL_WITH_COLON' | translate}}</label>
                 <div class="col-sm-7">
@@ -29,12 +29,17 @@
                 <label class="col-sm-4 control-label vo_reqfield">{{'TXT_PROMOTION_TAG_WITH_COLON' | translate}}</label>
 
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="vm.promotionInfo.tagId"
+                    <select name="tag" class="form-control" ng-model="vm.promotionInfo.tagId"
                             ng-options="subPromotion.id as subPromotion.tagName for subPromotion in vm.subPromotionList" required>
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
                 <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <vo-message target="addPromotionForm.tag"></vo-message>
+                </div>
             </div>
         </form>
     </div>

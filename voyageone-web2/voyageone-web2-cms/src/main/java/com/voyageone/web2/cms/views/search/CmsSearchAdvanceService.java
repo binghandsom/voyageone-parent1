@@ -999,7 +999,11 @@ public class CmsSearchAdvanceService extends BaseAppService {
         // 获取翻译状态
         String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
         if (transFlg != null) {
-            result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            if("0".equalsIgnoreCase(transFlg)){
+                result.append("'fields.translateStatus':{'$in':[null,'','0']}");
+            }else{
+                result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            }
             result.append(",");
         }
 
@@ -1124,9 +1128,22 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+
+            if(item.getGroupBean() != null && item.getGroupBean().getGroupId() != null){
+                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
+            }else{
+                index++;
+            }
+
+
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
-            FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
+
+            if(item.getGroupBean() != null && item.getGroupBean().getNumIId() != null){
+                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
+            }else{
+                index++;
+            }
+
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getBrand());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getProductType());

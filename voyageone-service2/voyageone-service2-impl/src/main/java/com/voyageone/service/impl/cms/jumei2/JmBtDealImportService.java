@@ -24,6 +24,7 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,11 +70,12 @@ public class JmBtDealImportService extends BaseService {
         catch (Exception ex )
         {
             ex.printStackTrace();
-            $error("JmBtDealImportService.importJM",ex);
-            return ex;
+            $error("JmBtDealImportService.importJM error",ex);
+            return false;
         }
-        $error("JmBtDealImportService.importJM","导入成功");
-        return sbResult.toString();
+        $error("JmBtDealImportService.importJM 导入成功");
+        $error("JmBtDealImportService.importJM"+sbResult.toString());
+        return true;
     }
 
     private void importPage(String channelId, StringBuilder sbResult,List<JMProductDealBean> listJMProductDealBean) {
@@ -130,9 +132,14 @@ public class JmBtDealImportService extends BaseService {
 
     private void insertCmsBtJmProduct(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, CmsBtProductModel modelCmsBtProduct) {
         List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getSkus();
+        CmsBtProductModel_Field commonField=null;
+        if(modelCmsBtProduct.getCommon()!=null) {
+            commonField = modelCmsBtProduct.getCommon().getFields();
+        }
         CmsBtJmProductModel modelCmsBtJmProduct = new CmsBtJmProductModel();
         modelCmsBtJmProduct.setAddressOfProduce(modelJmBtProduct.getAddressOfProduce());
         modelCmsBtJmProduct.setApplicableCrowd("");
+
         modelCmsBtJmProduct.setAttribute(modelJmBtProduct.getAttribute());
         modelCmsBtJmProduct.setAvailablePeriod("");
         modelCmsBtJmProduct.setBrandName(modelJmBtProduct.getBrandName());
@@ -144,9 +151,18 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setHsUnit(modelJmBtProduct.getHsUnit());
         modelCmsBtJmProduct.setImage1("");
         modelCmsBtJmProduct.setJumeiProductId(modelJmBtProduct.getJumeiProductId());
-        modelCmsBtJmProduct.setMaterialCn("");
-        modelCmsBtJmProduct.setMaterialEn("");
-
+        if(commonField!=null&&!StringUtils.isEmpty(commonField.getMaterialCn())) {
+            modelCmsBtJmProduct.setMaterialCn(commonField.getMaterialCn());
+        }
+        else {
+            modelCmsBtJmProduct.setMaterialCn("");
+        }
+        if(commonField!=null&&!StringUtils.isEmpty(commonField.getMaterialEn())) {
+            modelCmsBtJmProduct.setMaterialEn(commonField.getMaterialEn());
+        }
+        else {
+            modelCmsBtJmProduct.setMaterialEn("");
+        }
         modelCmsBtJmProduct.setOrigin("");
         modelCmsBtJmProduct.setOriginJmHashId(modelJmBtDealImport.getJumeiHashId());
         modelCmsBtJmProduct.setProductCode(modelJmBtProduct.getProductCode());
