@@ -149,6 +149,10 @@ define([
          * 数据导出
          */
         function exportFile () {
+            if ($scope.vm.productPageOption.total == 0) {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+                return;
+            }
             searchAdvanceService.exportFile($scope.vm.searchInfo);
         }
 

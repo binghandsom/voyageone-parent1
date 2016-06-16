@@ -5,6 +5,7 @@ import com.voyageone.service.model.cms.CmsBtImagesModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Edward
@@ -15,6 +16,10 @@ public class CmsBtImagesDaoExt extends ServiceBaseDao {
 
     public List<CmsBtImagesModel> selectImages(CmsBtImagesModel image) {
         return selectList("select_cms_bt_images", image);
+    }
+
+    public List<Map> selectImagesByCode(String channelId, List<String> prodCodeList) {
+        return selectList("select_cms_bt_images_bycode", parameters("channelId", channelId, "codeList", prodCodeList));
     }
 
     public void insertImages(CmsBtImagesModel image) {

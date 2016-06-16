@@ -164,6 +164,10 @@ define([
          * 数据导出
          */
         function exportFile(fileType) {
+            if ($scope.vm.productPageOption.total == 0) {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+                return;
+            }
             var msg = '';
             if (fileType == 1) {
                 msg = '即将导出Code级的搜索结果，请确认。';
@@ -428,27 +432,29 @@ define([
             } else {
                 $scope.vm.searchInfo.cartId = parseInt(cartObj.value);
             }
+            // 清空平台相关查询条件
+            $scope.vm.searchInfo.productStatus = null;
+            $scope.vm.searchInfo.platformStatus = null;
+            $scope.vm.searchInfo.errorListStatus = null;
+
+            $scope.vm.searchInfo.promotionList = null;
+
+            $scope.vm.searchInfo.tags = [];
+            $scope.vm.searchInfo.priceChgFlg = '0';
+            $scope.vm.searchInfo.tagTypeSelectValue = '0';
+            $scope.vm.searchInfo.sortSales = '0';
+            $scope.vm.searchInfo.salesSortType = null;
+            $scope.vm.searchInfo.cidValue = [];
+
+            $scope.vm.searchInfo.priceEnd = '';
+            $scope.vm.searchInfo.priceStart = '';
+            $scope.vm.searchInfo.priceType = '';
+            $scope.vm.searchInfo.createTimeStart = '';
+            $scope.vm.searchInfo.createTimeTo = '';
+
+            $scope.vm.masterData.catList = [];
+
             if ($scope.vm.searchInfo.cartId == -1) {
-                // 清空平台相关查询条件
-                $scope.vm.searchInfo.productStatus = null;
-                $scope.vm.searchInfo.platformStatus = null;
-                $scope.vm.searchInfo.errorListStatus = null;
-
-                $scope.vm.searchInfo.promotionList = null;
-
-                $scope.vm.searchInfo.tags = [];
-                $scope.vm.searchInfo.priceChgFlg = '0';
-                $scope.vm.searchInfo.tagTypeSelectValue = '0';
-                $scope.vm.searchInfo.sortSales = '0';
-                $scope.vm.searchInfo.cidValue = [];
-
-                $scope.vm.searchInfo.priceEnd = '';
-                $scope.vm.searchInfo.priceStart = '';
-                $scope.vm.searchInfo.priceType = '';
-                $scope.vm.searchInfo.createTimeStart = '';
-                $scope.vm.searchInfo.createTimeTo = '';
-
-                $scope.vm.masterData.catList = [];
                 $scope.vm._cart_display = 0;
                 $scope.vm._mmmcart_display = 0;
                 return;
