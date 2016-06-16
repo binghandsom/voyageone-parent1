@@ -649,7 +649,8 @@ public class SxProductService extends BaseService {
             } else {
                 // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
                 CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
-                if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                if (productPlatformCart == null ||
+                        !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
                     removeProductList.add(productModel);
                     continue;
                 }

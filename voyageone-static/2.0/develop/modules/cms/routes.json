@@ -278,8 +278,7 @@
   },
   "system_cache_set": {
     "hash": "/system/cache/index",
-    "templateUrl": "views/system/cache/index.tpl.html",
-    "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+    "templateUrl": "views/system/cache/index.tpl.html"
   },
   "system_category_setting": {
     "hash": "/system/categorysetting/:type",

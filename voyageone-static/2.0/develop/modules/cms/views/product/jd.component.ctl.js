@@ -57,10 +57,8 @@ define([
 
                       scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
                       scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
-/*
-                        scope.vm.checkFlag.translate = 1;
-                        scope.vm.checkFlag.tax = 1;
-*/
+/*                        scope.vm.checkFlag.translate = 1;
+                        scope.vm.checkFlag.tax = 1;*/
 
                     });
                     productDetailService.getProductInfo({productId: scope.productId})

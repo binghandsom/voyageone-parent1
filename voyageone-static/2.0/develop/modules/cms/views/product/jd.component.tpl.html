@@ -31,7 +31,9 @@
                                     </span>
                                 </li>
                             </ul>
-
+                            <div class="text-warnings" style="padding-left:0px">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
+                            </div>
                     </div>
                     <div class="col-md-4">
                         <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
@@ -99,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;设置店铺内分类，将改变本Group下所有商品的店铺内分类
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;切换平台店铺内分类将影响整个Group中的所有商品，请慎重！
                                 </div>
                             </div>
                         </div>
@@ -120,6 +122,9 @@
                             <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
                             <div class="col-md-8">
                                 <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
+                                <div class="text-warnings" style="padding-left:0px">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
+                                </div>
                             </div>
                         </div>
 
