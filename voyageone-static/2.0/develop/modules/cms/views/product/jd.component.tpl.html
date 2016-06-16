@@ -41,7 +41,7 @@
                             <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                         </div>
                         <div class="pull-right text-warnings" style="padding-left:0px">
-                            <i class="icon fa fa-bell-o"></i>&nbsp;{{cartInfo.name}}，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上JG NumIID进入{{cartInfo.name}}商品页面。
+                            <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
                         </div>
                     </div>
                     <div class="col-sm-7">
