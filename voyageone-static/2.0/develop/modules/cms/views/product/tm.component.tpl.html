@@ -1,5 +1,5 @@
 <div class="wrapper-md product-shema-detail">
-    <div class="vo_accordion vo_attr" ng-if="vm.showInfoFlag">
+    <div class="vo_accordion vo_attr" ng-if="vm.showInfoFlag" id="tm1">
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="container-fluid m-t-sm m-l-xs m-r-xs">
@@ -67,7 +67,7 @@
         </div>
     </div>
    <!-- <div ng-if="ctrl.showInfoFlag">-->
-    <div>
+    <div id="tm2">
 
                 <!-- Products table and controls -->
                 <form class="form-horizontal" name="productFieldForm" novalidate>
@@ -75,16 +75,11 @@
                         <div class="row wrapper">
                             <div class="container-fluid">
                                 <div class="col-sm-7">
-<!--                                    <schema-header ng-repeat="field in vm.productDetails.masterFields" data="field"
-                                                   ng-if="field.isDisplay != 0">
-                                        <schema-item data="field"></schema-item>
-                                    </schema-header>-->
-
                                     <ng-form name="schemaForm" novalidate>
                                         <schema data="vm.productDetails.masterFields"></schema>
                                     </ng-form>
                                 </div>
-                                <div class="col-sm-5" style="width: 380px;">
+                                <div class="col-sm-3" style="width: 380px;">
                                     <!-- product detail panel starts here -->
                                     <div class="col no-padder bg-light vo_prodDetailPanel">
                                         <div id="vo_fixProdPanel">
@@ -253,7 +248,24 @@
                                         </div>
                                         </div>
                                     </div>
+                                </div>
 
+                                <!----------------------------------------右侧悬浮框-------------------------------------------->
+                                <div >
+                                    <nav class="bs-docs-sidebar">
+                                        <h3>导航栏</h3>
+                                        <ul class="nav bs-docs-sidenav">
+                                            <li class="">
+                                                <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
+                                            </li>
+                                            <li class="">
+                                                <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">平台属性</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">sku属性</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
@@ -262,7 +274,7 @@
 
                 <hr>
 
-                <div class="panel vo_panel tab_panel" style="overflow-x: scroll">
+                <div class="panel vo_panel tab_panel" style="overflow-x: scroll" id="tm3">
                     <div class="container-fluid tm-sku-detail" style="width:1830px;">
                         <ng-form name="skuForm" novalidate>
                             <schema-field field="vm.productDetails.skuFields" add="false"></schema-field>

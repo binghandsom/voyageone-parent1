@@ -60,7 +60,7 @@ define([
                 function updateProductDetail () {
 
                     if (!validSchema()&& scope.vm.productDetails.productStatus.approveStatus == 'Approved') {
-                        return alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
+                        return alert("保存失败，请查看schema的属性是否填写正确！");
                     }
 
                     /**推算产品状态
@@ -143,8 +143,16 @@ define([
                     scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady
                 }
 
+                scope.pageAnchor = pageAnchor;
+                function pageAnchor(index,speed){
+                    var offsetTop = 0;
+                    if(index != 1)
+                        offsetTop = ($("#tm"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                }
+
                 function validSchema(){
-                    return scope.vm.platform == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
+                    return scope.vm.productDetails == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
             }
         };
