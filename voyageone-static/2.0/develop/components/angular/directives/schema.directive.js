@@ -585,7 +585,7 @@ define(function (require) {
                 /**
                  * 元素创建过程
                  */
-                function createElement(field, name, rules) {
+                function createElement(field, name) {
 
                     var innerElement;
 
@@ -866,6 +866,17 @@ define(function (require) {
                     innerElement.attr('for', name);
                     innerElement.text(field.name || field.id);
 
+                    if (rules.requiredRule) {
+                        // 如果这个字段是需要必填的
+                        // 就加个红星
+                        // 如果是依赖型的必填, 那就给红星 class 加成 ng-class
+                        if (rules.requiredRule instanceof DependentRule) {
+                            innerElement.attr('ng-class', '{"schema-field-required":$rules.requiredRule.checked()}');
+                        } else {
+                            innerElement.addClass('schema-field-required');
+                        }
+                    }
+
                     return innerElement;
                 }
 
@@ -912,7 +923,7 @@ define(function (require) {
 
                 // 创建输入元素
                 // 根据需要处理规则
-                innerElement = createElement(field, fieldElementName, rules);
+                innerElement = createElement(field, fieldElementName);
 
                 // 日期输入框需要进行特殊处理
                 if (innerElement)
