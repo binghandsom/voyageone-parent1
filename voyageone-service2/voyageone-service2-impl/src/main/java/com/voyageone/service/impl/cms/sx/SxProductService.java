@@ -2042,11 +2042,7 @@ public class SxProductService extends BaseService {
                 return null;
             }
             List<String> plainPropValues = (List<String>) objfieldItemValue;
-            List<String> mappedPropValues = new ArrayList<>();
-            for (String plainPropValue : plainPropValues) {
-                mappedPropValues.add(plainPropValue);
-            }
-            strfieldItemValue = ExpressionParser.encodeStringArray(mappedPropValues); // 用"~~"分隔
+            strfieldItemValue = ExpressionParser.encodeStringArray(plainPropValues); // 用"~~"分隔
         } else {
             $error("Master value must be String or String[]");
             return null;
