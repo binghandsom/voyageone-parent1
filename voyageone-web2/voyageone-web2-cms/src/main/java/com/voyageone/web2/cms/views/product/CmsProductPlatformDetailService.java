@@ -134,8 +134,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         cmsBtProduct.getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null?0:skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
 
         if (cmsBtProduct.getCommon().getFields() != null) {
-            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus", cmsBtProduct.getCommon().getFields().getHsCodeStatus());
+            mastData.put("translateStatus", cmsBtProduct.getFields().getTranslateStatus());
+            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getFields().getHsCodePrivate())?0:1);
         }
         mastData.put("images", images);
         return mastData;

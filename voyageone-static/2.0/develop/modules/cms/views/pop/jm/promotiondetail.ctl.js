@@ -42,6 +42,8 @@ define([
                 });
         };
         $scope.ok = function() {
+            if (!$scope.promotionForm.$valid)
+                return;
             $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
             jmPromotionService.saveModel($scope.editModel).then(function (res) {
                     $scope.$close();

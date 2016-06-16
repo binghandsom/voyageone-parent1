@@ -4,6 +4,7 @@ import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -33,20 +34,18 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.io.IOUtils;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +63,7 @@ import java.util.concurrent.Executors;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadJdJob)
-public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
+public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
     // 京东平台的操作类型(在售)
     private final static String OptioinType_onsale = "onsale";
@@ -130,8 +128,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
     private ProductGroupService productGroupService;
 
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        doMain(taskControlList);
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "CmsBuildPlatformProductUploadJdJob";
     }
 
     /**
@@ -139,7 +142,8 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
      *
      * @param taskControlList taskcontrol信息
      */
-    public void doMain(List<TaskControlBean> taskControlList) throws Exception {
+    @Override
+    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -152,13 +156,13 @@ public class CmsBuildPlatformProductUploadJdMqService extends BaseMQCmsService {
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JD.getId()));
+//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JG.getId()));
+//                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGJ.getId()));
+//                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
                 // 京东国际商品信息新增或更新(京东国际 悦境)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.JGY.getId()));
+                doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
             }
         }
 

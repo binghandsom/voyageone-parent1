@@ -5,10 +5,10 @@ define([
     'cms'
 ], function (cms) {
     return cms.controller('popFreeTagCtl', (function () {
-        function popFreeTagCtl(channelTagService, $uibModalInstance) {
+        function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
-            this.tagTypeSelectValue = "4";
+            this.tagTypeSelectValue = context;
             this.tagTree = null;
             this.id = "";
             this.parentTagId = "";
@@ -27,6 +27,7 @@ define([
             init: function () {
                 var self = this;
                 //默认选中店铺类分类
+
                 self.channelTagService.init({tagTypeSelectValue: self.tagTypeSelectValue}).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
                     self.tagTypeList = res.data.tagTypeList[3];
@@ -85,11 +86,15 @@ define([
              */
             save: function () {
                 var self = this;
-                self.channelTagService.save().then(function () {
-
+                for (var i = 2; i >= 0; i--) {
+                    var selectedVal = self.selected[i];
+                    if (selectedVal !== undefined) {
+                        tagPath = selectedVal.tagPathName;
+                        break;
                     }
-                );
-                self.$uibModalInstance.close();
+                }
+                self.context ={"tagPath": tagPath};
+                self.$uibModalInstance.close(self.context);
             }
         };
 

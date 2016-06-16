@@ -639,10 +639,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
         deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
-        deal.setStart_time(DateTimeUtil.getNowTimeStampLong());
+        deal.setStart_time(System.currentTimeMillis()/1000);
         Calendar rightNow = Calendar.getInstance();
         rightNow.add(Calendar.MINUTE, 30);
-        deal.setEnd_time(rightNow.getTimeInMillis());
+        deal.setEnd_time(rightNow.getTimeInMillis()/1000);
         List<String> skuCodeList = product.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
@@ -664,7 +664,29 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             spu.setPropery("OTHER");
 //            spu.setPropery(jmSku.getStringAttribute("property"));
 //            spu.setAttribute(jmSku.getStringAttribute("attribute"));//TODO
-            spu.setSize(jmSku.getStringAttribute("size")); //TODO
+//            spu.setSize(jmSku.getStringAttribute("size")); //TODO
+
+            String sizeStr =jmSku.getStringAttribute("size");
+
+            if(!StringUtils.isNullOrBlank2(sizeStr)) {
+                Map sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
+                if(sizeMap != null)
+                {
+                    String changedSize = (String)sizeMap.get(sizeStr);
+                    spu.setSize(changedSize);
+                }
+                else
+                {
+                    spu.setSize(sizeStr);
+                }
+            }
+            else
+            {
+                spu.setSize("NO SIZE");
+            }
+
+
+
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
 

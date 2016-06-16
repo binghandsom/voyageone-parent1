@@ -27,22 +27,23 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-pop btn-default" ng-click="openFreeTag('')">
+                                                    <!--4 是自由标签-->
+                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag('4'), false)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input type="radio" name="freeTagOperation" value="1" ng-model="vm.searchInfo.freeTagOperation"><span class="fa fa-check"></span> Include
+                                                        <input type="radio" name="freeTagOperation" value="1" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> Include
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input type="radio" name="freeTagOperation" value="-1" ng-model="vm.searchInfo.freeTagOperation"><span class="fa fa-check"></span> Exclude
+                                                        <input type="radio" name="freeTagOperation" value="2" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> Exclude
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
                                                 <div class="col-sm-8 col-sm-offset-3">
-                                                    <textarea class="form-control inherited " rows="3"></textarea>
+                                                    <textarea class="form-control inherited " rows="3" ng-model="vm.searchInfo.freeTags"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -55,7 +56,7 @@
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-10">
                                                         <select class="form-control"
-                                                                ng-model="vm.searchInfo.catStsFlg">
+                                                                ng-model="vm.searchInfo.mCatStatus">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}
                                                             </option>
                                                             <option value="0">未设置</option>
@@ -85,7 +86,7 @@
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-10">
                                                         <select class="form-control"
-                                                                ng-model="vm.searchInfo.taxStsFlg">
+                                                                ng-model="vm.searchInfo.taxNoStatus">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}
                                                             </option>
                                                             <option value="0">未设置</option>
@@ -148,7 +149,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" ng-model="vm.masterCat.catPath">
+                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.mCatPath">
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
@@ -158,7 +159,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" ng-model="vm.feedCat.catPath">
+                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath">
                                                 </div>
                                             </div>
                                         </div>
@@ -214,7 +215,7 @@
                                                    translate="TXT_LIST_ERROR"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" ng-model="vm.searchInfo.errorListStatus"><span class="fa fa-check"></span> {{'Error'|translate}}
+                                                    <input type="checkbox" value="1" ng-model="vm.searchInfo.hasErrorFlg"><span class="fa fa-check"></span> {{'Error'|translate}}
                                                 </label>
                                             </div>
                                         </div>
@@ -222,29 +223,29 @@
                                             <label class="col-sm-3 control-label">{{'TXT_SALES_SORT'|translate}}</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="1" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="7" ng-model="vm.searchInfo.salesType"><span class="fa fa-check"></span>&nbsp;{{'TXT_7_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="2" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
+                                                    <input name="salesSort" type="radio" value="30" ng-model="vm.searchInfo.salesType"><span class="fa fa-check"></span>&nbsp;{{'TXT_30_DAYS' | translate }}
                                                 </label>
                                                 <label class="checkbox-inline c-radio">
-                                                    <input name="salesSort" type="radio" value="3" ng-model="vm.searchInfo.salesSortType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
+                                                    <input name="salesSort" type="radio" value="all" ng-model="vm.searchInfo.salesType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SHOW_ALL' | translate }}
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
                                                 </div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
                                                 </div>
                                                 <label class="checkbox-inline c-radio ng-binding" style="margin-left: 0px">
-                                                    <input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.sortSales" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
+                                                    <input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.salesSortType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
                                                 </label>
                                                 <label class="checkbox-inline c-radio ng-binding" style="margin-left: 0px">
-                                                    <input name="sortSales" type="radio" value="-1" ng-model="vm.searchInfo.sortSales" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC'|translate}}
+                                                    <input name="sortSales" type="radio" value="-1" ng-model="vm.searchInfo.salesSortType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC'|translate}}
                                                 </label>
                                             </div>
                                         </div><!--End：销量排序-->
@@ -256,34 +257,34 @@
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="nonePlatformSetter"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.pCatStatus"><span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">
-                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="nonePlatformSetter">
+                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="vm.searchInfo.pCatStatus">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited" ng-model="vm.platform.catPath" rows="2" ng-disabled="nonePlatformSetter"></textarea>
+                                                <textarea class="form-control inherited" ng-model="vm.searchInfo.pCatPath" rows="2" ng-disabled="vm.searchInfo.pCatStatus"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group"  ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="noneSetter"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.shopCatStatus"><span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">
-                                                    <button class="btn btn-pop btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="noneSetter">
+                                                    <button class="btn btn-pop btn-default" ng-click="openChannelInnerCategory(openAddChannelCategoryEdit)"  ng-disabled="vm.searchInfo.shopCatStatus">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_STORE_CLASSIFY' | translate}}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited" ng-model="vm.channelInner.catPath" rows="2" ng-disabled="noneSetter"></textarea>
+                                                <textarea class="form-control inherited" ng-model="vm.searchInfo.cidValue" rows="2" ng-disabled="vm.searchInfo.shopCatStatus"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
@@ -291,19 +292,20 @@
                                                 <div class="btn-group">
                                                     <div class="" style="margin-left: -17px;">
                                                         <label class="checkbox-inline c-radio">
-                                                            <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Include
-                                                            <input type="radio" name="promotionCategory" ng-model="vm.searchInfo.promotion"><span class="fa fa-check"></span> Exclude
+                                                            <input type="radio" name="promotionCategory" value="1" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Include
+                                                            <input type="radio" name="promotionCategory" value="2" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Exclude
                                                         </label>
                                                     </div>
                                                     <div class="">
-                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="$parent.openCategoryMapping(popupNewCategory)">
-                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
+                                                        <!--2 是活动标签-->
+                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag('2'), true)">
+                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited " rows="2"></textarea>
+                                                <textarea class="form-control inherited " rows="2" ng-model="vm.searchInfo.promotionTags"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -311,13 +313,13 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group" ng-if="vm._cart_display">
-                                            <label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
+                                            <label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
                                             <div class="col-sm-9 form-inline">
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.createTimeStart"
+                                                           ng-model="vm.searchInfo.publishTimeStart"
                                                            date-model-format="yyyy-MM-dd"
-                                                           max-date="vm.searchInfo.createTimeTo" is-open="datePicker1"
+                                                           max-date="vm.searchInfo.publishTimeTo" is-open="datePicker1"
                                                            close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
@@ -328,9 +330,9 @@
                                                 &nbsp;~&nbsp;
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.createTimeTo"
+                                                           ng-model="vm.searchInfo.publishTimeTo"
                                                            date-model-format="yyyy-MM-dd"
-                                                           min-date="vm.searchInfo.createTimeStart"
+                                                           min-date="vm.searchInfo.publishTimeStart"
                                                            is-open="datePicker2" close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
@@ -385,7 +387,7 @@
                                                        translate="TXT_PROPERTY_STATUS"></label>
                                             </div>
                                             <div class="col-sm-8">
-                                                <select class="form-control">
+                                                <select class="form-control" ng-model="vm.searchInfo.propertyStatus">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="0">未设置</option>
                                                     <option value="1">已设置</option>

@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;{{'TXT_TAG_FREE'|translate}}&nbsp;</span></h5>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;{{'TXT_TAG_MANAGEMENT'|translate}}&nbsp;</span></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal m-b-md ng-pristine ng-valid">
@@ -62,7 +62,7 @@
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
                                 <li ng-repeat="tag3 in ctrl.tree[2]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
                                         <span>{{ tag3.tagChildrenName }}</span>
                                     </a>
                                 </li>
