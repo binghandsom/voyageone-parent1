@@ -195,7 +195,23 @@ define(function (require) {
             if (!hasDepend(rule)) {
                 // 如果不需要监视, 则就是固定值。
                 // 就不需要怎么处理, 记下来下一个即可
-                rules[rule.name] = rule.value;
+                if (rule.value === 'false')
+                    // 除了 disable/readonly/required 这类值回事布尔外, 其他的一定都不是
+                    // 所以固定值总是 false 的也不用继续处理了
+                    return;
+
+                if (rule.value === 'true')
+                    rules[rule.name] = true;
+                else if (/^-?\d+(\.\d+)?$/.test(rule.value))
+                    // 尝试简单的数字检查, 如果是就转换
+                    rules[rule.name] = parseFloat(rule.value);
+                else if ('url' in rule)
+                    // 如果是有 url 的就把完整的记下来
+                    rules[rule.name] = rule;
+                else
+                    rules[rule.name] = rule.value;
+
+
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
                 rules[rule.name] = new DependentRule(rule, schema);
@@ -359,7 +375,7 @@ define(function (require) {
 
         if (rule instanceof DependentRule) {
             element.attr('ng-' + attr, '$rules.' + name + '.checked()');
-        } else if (rule === 'true') {
+        } else if (rule) {
             element.attr(attr, true);
         }
     }
@@ -367,16 +383,28 @@ define(function (require) {
     /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
      */
-    function bindTipRule(container, rule) {
-        if (!rule) return;
+    function bindTipRule(container, rules) {
 
-        var content = rule;
+        // 除了 tipRule 和 devTipRule 外, 天猫还有其他非固定名称的 rule, 形如: 45690217-1。
+        // 一般这种 rule 都是关系型 rule, 无法进行逻辑控制
+        // 所以也作为 tip 显示
 
-        var contentContainer = angular.element('<schema-field-tip>');
+        each(rules, function (content, key) {
+            if (key === 'tipRule' || key.indexOf('Rule') < 0) {
 
-        contentContainer.text(content);
+                var contentContainer = angular.element('<schema-field-tip>');
+                container.append(contentContainer);
 
-        container.append(contentContainer);
+                // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
+                if ((typeof content !== 'string') && 'url' in content) {
+                    var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
+                    aTag.text(content.value);
+                    contentContainer.append(aTag);
+                } else {
+                    contentContainer.text(content);
+                }
+            }
+        });
     }
 
     function getFieldKeySet(fields) {
@@ -770,8 +798,6 @@ define(function (require) {
 
                                 bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
-                                bindTipRule(checkbox, rules.tipRule);
-
                                 selected[index] = !(valueStringList.indexOf(option.value) < 0);
 
                                 label.append(checkbox, '&nbsp;', option.displayName);
@@ -978,7 +1004,7 @@ define(function (require) {
                 else
                     container.append(innerElement);
 
-                bindTipRule(container, rules.tipRule);
+                bindTipRule(container, rules);
 
                 // 根据需要创建 vo-message
                 if (hasValidate && isSimple) {
