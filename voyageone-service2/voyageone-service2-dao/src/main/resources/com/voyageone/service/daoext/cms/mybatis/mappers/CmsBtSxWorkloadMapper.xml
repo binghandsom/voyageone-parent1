@@ -112,6 +112,7 @@
     </insert>
 
     <update id="update_publish_status" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        <![CDATA[
         UPDATE
         voyageone_cms2.cms_bt_sx_workload
         SET
@@ -119,6 +120,7 @@
         modifier=#{modifier},
         modified=now()
         WHERE
-        modified &lt;= #{modified}
+        modified <= #{modified}
+         ]]>
     </update>
 </mapper>
