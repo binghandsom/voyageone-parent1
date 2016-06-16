@@ -639,10 +639,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
         deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
-        deal.setStart_time(DateTimeUtil.getNowTimeStampLong());
+        deal.setStart_time(System.currentTimeMillis()/1000);
         Calendar rightNow = Calendar.getInstance();
         rightNow.add(Calendar.MINUTE, 30);
-        deal.setEnd_time(rightNow.getTimeInMillis());
+        deal.setEnd_time(rightNow.getTimeInMillis()/1000);
         List<String> skuCodeList = product.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
