@@ -11,6 +11,7 @@ define(function (require) {
      *  schema-complex-name
      *  schema-complex-container
      *  schema-disable-container
+     *  schema-input-container
      *  schema-field-tip
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
@@ -194,7 +195,23 @@ define(function (require) {
             if (!hasDepend(rule)) {
                 // 如果不需要监视, 则就是固定值。
                 // 就不需要怎么处理, 记下来下一个即可
-                rules[rule.name] = rule.value;
+                if (rule.value === 'false')
+                    // 除了 disable/readonly/required 这类值回事布尔外, 其他的一定都不是
+                    // 所以固定值总是 false 的也不用继续处理了
+                    return;
+
+                if (rule.value === 'true')
+                    rules[rule.name] = true;
+                else if (/^-?\d+(\.\d+)?$/.test(rule.value))
+                    // 尝试简单的数字检查, 如果是就转换
+                    rules[rule.name] = parseFloat(rule.value);
+                else if ('url' in rule)
+                    // 如果是有 url 的就把完整的记下来
+                    rules[rule.name] = rule;
+                else
+                    rules[rule.name] = rule.value;
+
+
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
                 rules[rule.name] = new DependentRule(rule, schema);
@@ -261,7 +278,7 @@ define(function (require) {
                 type = 'date';
                 break;
             case VALUE_TYPES.TIME:
-                type = 'time';
+                type = 'datetime-local';
                 break;
             case VALUE_TYPES.URL:
                 type = 'url';
@@ -274,10 +291,21 @@ define(function (require) {
     /**
      * 根据 valueTypeRule 转换值类型
      */
-    function getInputValue(value, valueTypeRule) {
+    function getInputValue(value, field, valueTypeRule) {
 
         var parsedValue = null;
+        var valueType = field.fieldValueType;
 
+        // 如果字段上有具体的值类型声明
+        // 就使用支持的类型进行转换
+        switch (valueType) {
+            case 'INT':
+                return parseInt(value);
+            case 'DOUBLE':
+                return parseFloat(value);
+        }
+        
+        // 否则, 按 valueTypeRule 来转换
         if (!valueTypeRule)
             return value;
 
@@ -347,7 +375,7 @@ define(function (require) {
 
         if (rule instanceof DependentRule) {
             element.attr('ng-' + attr, '$rules.' + name + '.checked()');
-        } else if (rule === 'true') {
+        } else if (rule) {
             element.attr(attr, true);
         }
     }
@@ -355,16 +383,28 @@ define(function (require) {
     /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
      */
-    function bindTipRule(container, rule) {
-        if (!rule) return;
+    function bindTipRule(container, rules) {
 
-        var content = rule;
+        // 除了 tipRule 和 devTipRule 外, 天猫还有其他非固定名称的 rule, 形如: 45690217-1。
+        // 一般这种 rule 都是关系型 rule, 无法进行逻辑控制
+        // 所以也作为 tip 显示
 
-        var contentContainer = angular.element('<schema-field-tip>');
+        each(rules, function (content, key) {
+            if (key === 'tipRule' || key.indexOf('Rule') < 0) {
 
-        contentContainer.text(content);
+                var contentContainer = angular.element('<schema-field-tip>');
+                container.append(contentContainer);
 
-        container.append(contentContainer);
+                // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
+                if ((typeof content !== 'string') && 'url' in content) {
+                    var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
+                    aTag.text(content.value);
+                    contentContainer.append(aTag);
+                } else {
+                    contentContainer.text(content);
+                }
+            }
+        });
     }
 
     function getFieldKeySet(fields) {
@@ -391,10 +431,12 @@ define(function (require) {
     function resetValue(valueObj, fieldObj) {
 
         ['value', 'values', 'complexValue', 'complexValues'].some(function (key) {
-            if (valueObj[key] && !fieldObj[key]) {
+
+            if (key in valueObj) {
                 fieldObj[key] = valueObj[key];
                 return true;
             }
+
             return false;
         });
     }
@@ -437,16 +479,27 @@ define(function (require) {
 
         var self = this;
         var dependExpressList = self.dependExpressList;
+        var currRule = self.origin;
 
         return all(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
 
+            var parentDisableRule;
+
             var field = express.field;
 
             if (!field)
                 return false;
+
+            if (currRule.name === 'disableRule' && !!(parentDisableRule = field.$rules.disableRule)) {
+                // 如果当前要检查的就是 disableRule
+                // 并且父级也有 disableRule
+                // 那么如果父级不显示, 子级自然不能显示
+                if (parentDisableRule.checked())
+                    return true;
+            }
 
             var value = field.values || field.value.value || field.value;
 
@@ -585,7 +638,7 @@ define(function (require) {
                 /**
                  * 元素创建过程
                  */
-                function createElement(field, name, rules) {
+                function createElement(field, name) {
 
                     var innerElement;
 
@@ -598,6 +651,9 @@ define(function (require) {
 
                             if (type === 'textarea') {
                                 innerElement = angular.element('<textarea class="form-control">');
+                                // 如果是 html 就加个特殊样式用来便于外观控制
+                                if (valueTypeRule === VALUE_TYPES.HTML)
+                                    innerElement.addClass('schema-field-html');
                             } else {
                                 innerElement = angular.element('<input class="form-control">').attr('type', type);
                             }
@@ -629,16 +685,16 @@ define(function (require) {
                             innerElement.attr('title', field.name || field.id);
 
                             // 根据类型转换值类型
-                            field.value = getInputValue(field.value, valueTypeRule);
+                            field.value = getInputValue(field.value, field, valueTypeRule);
 
-                            if ((!rules.readOnlyRule || rules.readOnlyRule instanceof DependentRule) && type === 'date') {
+                            if ((!rules.readOnlyRule || rules.readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                 // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
                                 // 并且 readonly 时, 要把这个按钮隐藏掉
                                 var inputGroup = angular.element('<div class="input-group">');
                                 var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
 
                                 innerElement.attr('uib-datepicker-popup', '');
-                                innerElement.attr('date-model-format', 'yyyy-MM-dd');
+                                innerElement.attr('date-model-format', (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
                                 innerElement.attr('is-open', '$opened');
 
                                 if (rules.readOnlyRule instanceof DependentRule) {
@@ -655,18 +711,26 @@ define(function (require) {
                         case FIELD_TYPES.singleCheck:
 
                             innerElement = angular.element('<select class="form-control">');
-
                             innerElement.attr('ng-options', 'option.value as option.displayName for option in field.options');
-
                             innerElement.attr('name', name);
-
                             innerElement.attr('ng-model', 'field.value.value');
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
+                            // 创建空默认
+                            field.options.unshift({
+                                displayName: '',
+                                value: null
+                            });
+
                             if (!field.value)
                                 field.value = {value: null};
+                            else {
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                field.value.value = getInputValue(field.value.value, field);
+                            }
 
                             innerElement.attr('title', field.name || field.id);
 
@@ -701,7 +765,6 @@ define(function (require) {
                                     if (selectedIndex > -1)
                                         field.values.splice(selectedIndex, 1);
                                 }
-
                             };
 
                             if (!field.values)
@@ -709,7 +772,9 @@ define(function (require) {
 
                             // 先把 values 里的选中值取出, 便于后续判断
                             valueStringList = field.values.map(function (valueObj) {
-                                return valueObj.value;
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                return (valueObj.value = getInputValue(valueObj.value, field).toString());
                             });
 
                             each(field.options, function (option, index) {
@@ -736,8 +801,6 @@ define(function (require) {
 
                                 bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
-                                bindTipRule(checkbox, rules.tipRule);
-
                                 selected[index] = !(valueStringList.indexOf(option.value) < 0);
 
                                 label.append(checkbox, '&nbsp;', option.displayName);
@@ -756,9 +819,11 @@ define(function (require) {
                                 complexValue = field.complexValue;
 
                             if (complexValue) {
+
                                 fieldValueMap = complexValue.fieldMap;
 
                                 if (fieldValueMap) {
+
                                     each(field.fields, function (childField) {
 
                                         var valueObj = fieldValueMap[childField.id];
@@ -811,6 +876,7 @@ define(function (require) {
                                             mapItem.rules = field.rules;
                                             mapItem.name = field.name;
                                             mapItem.options = field.options;
+                                            mapItem.fieldValueType = field.fieldValueType;
                                         }
                                     });
                                 });
@@ -866,6 +932,17 @@ define(function (require) {
                     innerElement.attr('for', name);
                     innerElement.text(field.name || field.id);
 
+                    if (rules.requiredRule) {
+                        // 如果这个字段是需要必填的
+                        // 就加个红星
+                        // 如果是依赖型的必填, 那就给红星 class 加成 ng-class
+                        if (rules.requiredRule instanceof DependentRule) {
+                            innerElement.attr('ng-class', '{"schema-field-required":$rules.requiredRule.checked()}');
+                        } else {
+                            innerElement.addClass('schema-field-required');
+                        }
+                    }
+
                     return innerElement;
                 }
 
@@ -879,7 +956,7 @@ define(function (require) {
                     fieldElementName = 'field_' + random(),
                     hasValidate = !!formController && hasValidateRule(field);
 
-                var rules = $scope.$rules = doRule(field, schema),
+                var rules = doRule(field, schema),
                     disableRule = rules.disableRule;
 
                 var innerElement, nameElement, isSimple;
@@ -887,6 +964,10 @@ define(function (require) {
                 // 放到 scope 上, 供画面绑定使用
                 // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
                 $scope.field = field;
+                $scope.$rules = rules;
+
+                // 把处理好的规则保存到字段上, 便于依赖型的规则可以递归查询
+                field.$rules = rules;
 
                 if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
@@ -910,12 +991,14 @@ define(function (require) {
                     container.append(nameElement);
                 }
 
+                // 创建一个专门的输入元素容器便于控制外观
+                innerElement = angular.element('<schema-input-container>');
+                container.append(innerElement);
+                container = innerElement;
+
                 // 创建输入元素
                 // 根据需要处理规则
-                innerElement = createElement(field, fieldElementName, rules);
-
-                // 日期输入框需要进行特殊处理
-                if (innerElement)
+                innerElement = createElement(field, fieldElementName);
 
                 if (innerElement instanceof Array)
                     each(innerElement, function (element) {
@@ -924,7 +1007,7 @@ define(function (require) {
                 else
                     container.append(innerElement);
 
-                bindTipRule(container, rules.tipRule);
+                bindTipRule(container, rules);
 
                 // 根据需要创建 vo-message
                 if (hasValidate && isSimple) {

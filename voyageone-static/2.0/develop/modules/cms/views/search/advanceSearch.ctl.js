@@ -42,7 +42,9 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null}
+            channelInner: {catPath: null},
+            promotion: {tagPath: null},
+            free: {tagPath: null}
         };
 
         $scope.initialize = initialize;
@@ -71,6 +73,7 @@ define([
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.platformCategoryMapping = platformCategoryMapping;
+        $scope.openTagManagement = openTagManagement;
         /**
          * 初始化数据.
          */
@@ -561,8 +564,8 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                var property = {'cartId': cartId, '_option':'putonoff', 'productIds': productIds};
-                property.isSelAll = $scope.vm._selall?1:0;
+                var property = {'cartId': cartId, '_option': 'putonoff', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall ? 1 : 0;
                 openPutOnOffFnc(property).then(
                     function () {
                         $scope.search();
@@ -583,8 +586,8 @@ define([
                                 productIds.push(object.code);
                             });
                         }
-                        var property = {'cartId': cartId, '_option':'approval', 'productIds': productIds};
-                        property.isSelAll = $scope.vm._selall?1:0;
+                        var property = {'cartId': cartId, '_option': 'approval', 'productIds': productIds};
+                        property.isSelAll = $scope.vm._selall ? 1 : 0;
 
                         function check(propParams) {
                             return $fieldEditService.setProductFields(propParams).then(callback);
@@ -607,7 +610,10 @@ define([
                             }
                             if (res.data.ecd == 3) {
                                 // 商品价格有问题
-                                return openUpdateApprovalFnc({'resData':res.data, 'propertyInfo':property}).then(function (data) {
+                                return openUpdateApprovalFnc({
+                                    'resData': res.data,
+                                    'propertyInfo': property
+                                }).then(function (data) {
                                     return check(data);
                                 });
                             }
@@ -636,7 +642,8 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                $scope.vm.platform.catPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatId = context.selected.catId;
             });
         }
 
@@ -651,7 +658,8 @@ define([
                         categories: res.data,
                         from: null
                     }).then(function (res) {
-                        $scope.vm.masterCat.catPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatPath = res.selected.catPath;
+                            $scope.vm.searchInfo.mCatId = res.selected.catId;
                         }
                     );
                 });
@@ -672,7 +680,8 @@ define([
                         categories: res.data.categoryTree,
                         from: ""
                     }).then(function (context) {
-                            $scope.vm.feedCat.catPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatPath = context.selected.catPath;
+                            $scope.vm.searchInfo.fCatId = context.selected.catId;
                         }
                     );
                 });
@@ -695,6 +704,22 @@ define([
                 $scope.vm.channelInner.catPath = context.catPath;
             })
         }
+
+        /**
+         * popup出选择Tag变迁的功能
+         * @param openFreeTag
+         */
+        function openTagManagement(openFreeTag, isPromoTag) {
+            openFreeTag.then(function (res) {
+                    if (isPromoTag) {
+                        $scope.vm.promotion.tagPath = res.tagPath;
+                    } else {
+                        $scope.vm.free.tagPath = res.tagPath;
+                    }
+                }
+            );
+        }
+
 
     }
 
