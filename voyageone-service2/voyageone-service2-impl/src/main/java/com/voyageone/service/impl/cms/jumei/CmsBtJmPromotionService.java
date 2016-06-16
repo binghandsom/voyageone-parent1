@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -8,23 +9,21 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
+import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSpecialImage;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -267,7 +266,8 @@ public class CmsBtJmPromotionService {
     public void addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
                                          Double discount,
                                          Integer priceType,
-                                         String tag,
+                                         String tagName,
+                                         String tagId,
                                          String creater) {
 
         if (productIds == null || productIds.size() == 0) {
@@ -277,17 +277,27 @@ public class CmsBtJmPromotionService {
         List<CmsBtProductModel> orginProducts = productDao.selectProductByIds(productIds, channelId);
         List<ProductImportBean > listProductImport = new ArrayList<>();
         List< SkuImportBean > listSkuImport = new ArrayList<>();
+
+        // 设置批量更新product的tag
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
         orginProducts.stream().forEach(product -> { //pal
             ProductImportBean productImportBean = buildProductFrom(product, promotion);
-            productImportBean.setPromotionTag(tag);
+            productImportBean.setPromotionTag(tagName);
             listProductImport.add(productImportBean);
             listSkuImport.addAll(buildSkusFrom(product, discount, priceType));
+
+            if (!product.getTags().contains(tagId))
+                bulkList.add(buildBulkUpdateTag(product, tagId, creater));
         });
 
-
+        // 插入jm的promotion信息
         cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport);
 
-
+        // 批量更新product表
+        if (bulkList.size() > 0) {
+            productDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", true);
+        }
     }
 
 
@@ -329,30 +339,30 @@ public class CmsBtJmPromotionService {
     }
 
     /**
-     * 对应mongo表中fields.images1数据构建需要插入到聚美活动的图片
+     * 设置批量更新product的tags标签
      * @param model
+     * @param tagId
+     * @param creater
      * @return
      */
-    private CmsBtJmImportSpecialImage buildImagesFrom(CmsBtProductModel model) {
+    private BulkUpdateModel buildBulkUpdateTag(CmsBtProductModel model, String tagId, String creater) {
 
 
-        CmsBtJmImportSpecialImage image = new CmsBtJmImportSpecialImage();
-        image.setProductCode(model.getFields().getCode());
-        List<CmsBtProductModel_Field_Image> images = null;
-        if (model == null || model.getFields() == null || (images = model.getFields().getImages1()) == null) {
-            return image;
-        }
-        image.setProductCode(model.getFields().getCode()); // productCode
-        for (int i = 0; i < Math.min(images.size(),10); i++) {
-            try {
-                java.lang.reflect.Method method = CmsBtJmImportSpecialImage.class.getMethod("setProductImageUrlKey" + (i+1), new Class[]{String.class});
-                method.invoke(image, images.get(i).getName());
-            } catch (Exception e) {
-                //pass
-                log.error("LOG00050:CmsBtJmImportSpecialImage.setProductImageUrlKey"+i+" 方法不存在", e);
-            }
-        }
-        return image;
+        HashMap<String, Object> bulkQueryMap = new HashMap<>();
+        bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
+
+        // 设置更新值
+        HashMap<String, Object> bulkUpdateMap = new HashMap<>();
+        List<String> newTags = model.getTags();
+        newTags.add(tagId);
+
+        bulkUpdateMap.put("tags", newTags);
+
+        // 设定批量更新条件和值
+        BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+        bulkUpdateModel.setUpdateMap(bulkUpdateMap);
+        bulkUpdateModel.setQueryMap(bulkQueryMap);
+        return bulkUpdateModel;
     }
 
     //------------------聚美活动新增商品end-------------------------------------------------------------------------------

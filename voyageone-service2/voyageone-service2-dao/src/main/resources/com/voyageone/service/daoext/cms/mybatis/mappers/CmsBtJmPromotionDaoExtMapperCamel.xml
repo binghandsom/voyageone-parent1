@@ -50,8 +50,8 @@
         order by id desc
     </select>
     <select id="selectActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
-        select *  from cms_bt_jm_promotion
-        where channel_id=#{channelId}
-        and activity_start &lt; now() and activity_end &gt; now()
+        select a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
+        where a.channel_id=#{channelId}
+        and a.activity_start &lt; now() and a.activity_end &gt; now()
     </select>
 </mapper>
