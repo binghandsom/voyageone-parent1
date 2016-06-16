@@ -711,16 +711,19 @@ define(function (require) {
                         case FIELD_TYPES.singleCheck:
 
                             innerElement = angular.element('<select class="form-control">');
-
                             innerElement.attr('ng-options', 'option.value as option.displayName for option in field.options');
-
                             innerElement.attr('name', name);
-
                             innerElement.attr('ng-model', 'field.value.value');
 
                             bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-                            
+
+                            // 创建空默认
+                            field.options.unshift({
+                                displayName: '',
+                                value: null
+                            });
+
                             if (!field.value)
                                 field.value = {value: null};
                             else {
