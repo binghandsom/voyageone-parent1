@@ -163,7 +163,12 @@ public class JmBtDealImportService extends BaseService {
         else {
             modelCmsBtJmProduct.setMaterialEn("");
         }
-        modelCmsBtJmProduct.setOrigin("");
+        if(commonField!=null&&!StringUtils.isEmpty(commonField.getOrigin())) {
+            modelCmsBtJmProduct.setOrigin(commonField.getOrigin());
+        }
+        else {
+            modelCmsBtJmProduct.setOrigin("");
+        }
         modelCmsBtJmProduct.setOriginJmHashId(modelJmBtDealImport.getJumeiHashId());
         modelCmsBtJmProduct.setProductCode(modelJmBtProduct.getProductCode());
         modelCmsBtJmProduct.setProductDesCn(modelJmBtProduct.getProductDes());
@@ -173,8 +178,12 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setProductMediumName(modelJmBtDealImport.getProductMediumName());
         modelCmsBtJmProduct.setProductNameCn(modelJmBtProduct.getProductName());
         modelCmsBtJmProduct.setProductShortName(modelJmBtDealImport.getProductShortName());
-        modelCmsBtJmProduct.setProductType("");
-
+        if(commonField!=null&&!StringUtils.isEmpty(commonField.getProductType())) {
+            modelCmsBtJmProduct.setProductType(commonField.getProductType());
+        }
+        else {
+            modelCmsBtJmProduct.setProductType("");
+        }
         modelCmsBtJmProduct.setRetailPrice(new BigDecimal(0));
         modelCmsBtJmProduct.setSalePrice(new BigDecimal(0));
         modelCmsBtJmProduct.setMsrpRmb(new BigDecimal(0));
