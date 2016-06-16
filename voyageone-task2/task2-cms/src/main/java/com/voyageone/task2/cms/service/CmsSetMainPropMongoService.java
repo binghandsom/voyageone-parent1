@@ -1754,7 +1754,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private int getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
-                    String.format("{'feed.orgAtts.modelCode':'%s'}", feed.getModel()));
+                    String.format("{\"feed.orgAtts.modelCode\":\"%s\"}", feed.getModel()));
             if (cnt < 1) {
                 return 1;
             }
