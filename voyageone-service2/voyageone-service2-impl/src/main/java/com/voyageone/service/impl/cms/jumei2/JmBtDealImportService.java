@@ -1,13 +1,13 @@
 package com.voyageone.service.impl.cms.jumei2;
-import com.mchange.lang.DoubleUtils;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.BigDecimalUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.excel.ListHelp;
 import com.voyageone.service.bean.cms.businessmodel.JMImportData.JMProductDealBean;
@@ -29,10 +29,12 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -70,11 +72,11 @@ public class JmBtDealImportService extends BaseService {
         catch (Exception ex )
         {
             ex.printStackTrace();
-            $error("JmBtDealImportService.importJM error",ex);
-            return false;
+            $error("JmBtDealImportService.importJM error", ex);
+            throw new BusinessException("JmBtDealImportService.importJM error", ex);
         }
-        $error("JmBtDealImportService.importJM 导入成功");
-        $error("JmBtDealImportService.importJM"+sbResult.toString());
+        $info("JmBtDealImportService.importJM 导入成功");
+        $info("JmBtDealImportService.importJM"+sbResult.toString());
         return true;
     }
 
@@ -278,8 +280,8 @@ public class JmBtDealImportService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("numIId", modelJmBtDealImport.getJumeiHashId());
         updateMap.put("platformPid", modelJmBtProduct.getJumeiProductId());
-        updateMap.put("publishTime", modelJmBtProduct.getCreated());
-        updateMap.put("onSaleTime", modelJmBtProduct.getCreated());
+        updateMap.put("publishTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
+        updateMap.put("onSaleTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -296,7 +298,7 @@ public class JmBtDealImportService extends BaseService {
         platform.setpNumIId(modelJmBtDealImport.getJumeiHashId());
         platform.setpProductId(modelJmBtProduct.getJumeiProductId());
         platform.setStatus(CmsConstants.ProductStatus.Approved.name());
-        platform.setpPublishTime(modelJmBtDealImport.getCreated().toLocalDateTime().toString());
+        platform.setpPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         platform.setpAttributeStatus("1");
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
 
