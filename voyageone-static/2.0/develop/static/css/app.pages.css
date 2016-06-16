@@ -434,8 +434,8 @@
     text-indent: 1em;
 }
 
-.tm-sku-detail input:not([type='checkbox']) {
-    width: 125px;
+.tm-sku-detail schema-field {
+    min-width: 125px;
 }
 
 /*uib-tab样式*/

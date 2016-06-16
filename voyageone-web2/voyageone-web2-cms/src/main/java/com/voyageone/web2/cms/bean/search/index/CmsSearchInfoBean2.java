@@ -17,22 +17,20 @@ public class CmsSearchInfoBean2 {
 
     // ** 共通搜索条件 **
     private String mCatId;
-    private String mCatPath;
     private String fCatId;
-    private String fCatPath;
 
-    private String categoryStatus;
+    private String mCatStatus;
     // 翻译状态查询用标志位
     private String transStsFlg = null;
     private String taxNoStatus;
+    private Integer inventory;
 
     private String createTimeStart;
     private String createTimeTo;
 
     private String brand;
-    private String[] codeList;
     private String[] freeTags;
-    private int freeTagType = 0;
+    private String freeTagType;
 
     // ** 平台搜索条件 **
     private Integer cartId = -1;
@@ -47,12 +45,14 @@ public class CmsSearchInfoBean2 {
     private BigDecimal priceEnd;
 
     private String pCatId;
-    private String pCatPath;
+    private String pCatStatus;
 
     private String[] promotionTags;
     private int promotionTagType = 0;
     // 店铺内分类的查询
     private List<String>  cidValue;
+    private String shopCatStatus;
+
     // 价格变动查询用标志位
     private int priceChgFlg = 0;
     private String propertyStatus;
@@ -60,8 +60,8 @@ public class CmsSearchInfoBean2 {
 
     private String salesSortType = null;
     private String salesType = null;
-    private String salesStart = null;
-    private String salesEnd = null;
+    private BigDecimal salesStart = null;
+    private BigDecimal salesEnd = null;
 
     // ** 自定义搜索条件 **
     private String sortOneName;
@@ -75,6 +75,7 @@ public class CmsSearchInfoBean2 {
 
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
+    private String[] codeList;
 
     // 文件下载类型
     private int fileType = 0;
@@ -86,7 +87,7 @@ public class CmsSearchInfoBean2 {
     private String orgChaId = null;
 
     private String compareType;
-    private Integer inventory;
+
 
     public List<String> getCidValue() {
         return cidValue;
@@ -328,12 +329,12 @@ public class CmsSearchInfoBean2 {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
     }
 
-    public String getCategoryStatus() {
-        return categoryStatus;
+    public String getmCatStatus() {
+        return mCatStatus;
     }
 
-    public void setCategoryStatus(String categoryStatus) {
-        this.categoryStatus = categoryStatus;
+    public void setmCatStatus(String categoryStatus) {
+        this.mCatStatus = categoryStatus;
     }
 
     public String getTaxNoStatus() {
@@ -352,11 +353,11 @@ public class CmsSearchInfoBean2 {
         this.freeTags = freeTags;
     }
 
-    public int getFreeTagType() {
+    public String getFreeTagType() {
         return freeTagType;
     }
 
-    public void setFreeTagType(int freeTagType) {
+    public void setFreeTagType(String freeTagType) {
         this.freeTagType = freeTagType;
     }
 
@@ -408,67 +409,19 @@ public class CmsSearchInfoBean2 {
         this.salesType = salesType;
     }
 
-    public String getMCatId() {
-        return mCatId;
-    }
-
-    public void setMCatId(String mCatId) {
-        this.mCatId = mCatId;
-    }
-
-    public String getMCatPath() {
-        return mCatPath;
-    }
-
-    public void setMCatPath(String mCatPath) {
-        this.mCatPath = mCatPath;
-    }
-
-    public String getFCatId() {
-        return fCatId;
-    }
-
-    public void setFCatId(String fCatId) {
-        this.fCatId = fCatId;
-    }
-
-    public String getFCatPath() {
-        return fCatPath;
-    }
-
-    public void setFCatPath(String fCatPath) {
-        this.fCatPath = fCatPath;
-    }
-
-    public String getPCatId() {
-        return pCatId;
-    }
-
-    public void setPCatId(String pCatId) {
-        this.pCatId = pCatId;
-    }
-
-    public String getPCatPath() {
-        return pCatPath;
-    }
-
-    public void setPCatPath(String pCatPath) {
-        this.pCatPath = pCatPath;
-    }
-
-    public String getSalesStart() {
+    public BigDecimal getSalesStart() {
         return salesStart;
     }
 
-    public void setSalesStart(String salesStart) {
+    public void setSalesStart(BigDecimal salesStart) {
         this.salesStart = salesStart;
     }
 
-    public String getSalesEnd() {
+    public BigDecimal getSalesEnd() {
         return salesEnd;
     }
 
-    public void setSalesEnd(String salesEnd) {
+    public void setSalesEnd(BigDecimal salesEnd) {
         this.salesEnd = salesEnd;
     }
 
@@ -478,5 +431,53 @@ public class CmsSearchInfoBean2 {
 
     public void setFileType(int fileType) {
         this.fileType = fileType;
+    }
+
+    public String getShopCatStatus() {
+        return shopCatStatus;
+    }
+
+    public void setShopCatStatus(String shopCatStatus) {
+        this.shopCatStatus = shopCatStatus;
+    }
+
+    public String getPCatStatus() {
+        return pCatStatus;
+    }
+
+    public void setPCatStatus(String pCatStatus) {
+        this.pCatStatus = pCatStatus;
+    }
+
+    public String getmCatId() {
+        return mCatId;
+    }
+
+    public void setmCatId(String mCatId) {
+        this.mCatId = mCatId;
+    }
+
+    public String getfCatId() {
+        return fCatId;
+    }
+
+    public void setfCatId(String fCatId) {
+        this.fCatId = fCatId;
+    }
+
+    public String getpCatId() {
+        return pCatId;
+    }
+
+    public void setpCatId(String pCatId) {
+        this.pCatId = pCatId;
+    }
+
+    public String getpCatStatus() {
+        return pCatStatus;
+    }
+
+    public void setpCatStatus(String pCatStatus) {
+        this.pCatStatus = pCatStatus;
     }
 }

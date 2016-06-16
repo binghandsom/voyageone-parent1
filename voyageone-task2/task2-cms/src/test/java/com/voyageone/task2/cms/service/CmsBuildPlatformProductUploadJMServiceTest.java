@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
@@ -15,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -45,6 +44,45 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
+
+
+    @Test
+    public void TestDate() throws Exception {
+        long currentTime = System.currentTimeMillis();
+        System.out.println(currentTime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(currentTime);
+        String dateStr = formatter.format(date);
+        System.out.println(dateStr);
+
+        Long time = getTime(dateStr);
+        System.out.println(time);
+
+        Calendar rightNow = Calendar.getInstance();
+        rightNow.add(Calendar.MINUTE, 30);
+        System.out.println(rightNow.getTimeInMillis());
+        Date date1 = new Date(rightNow.getTimeInMillis());
+        String date1Str = formatter.format(date1);
+        System.out.println(date1Str);
+
+        time = getTime(date1Str);
+        System.out.println(time);
+
+
+    }
+
+    private static Long getTime(String user_time) throws Exception {
+        String re_time = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d;
+
+
+        d = sdf.parse(user_time);
+        long l = d.getTime()/1000-8*3600;
+
+        return l;
+    }
+
 
 
     @Test
