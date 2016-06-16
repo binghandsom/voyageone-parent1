@@ -11,6 +11,7 @@ define(function (require) {
      *  schema-complex-name
      *  schema-complex-container
      *  schema-disable-container
+     *  schema-input-container
      *  schema-field-tip
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
@@ -921,6 +922,11 @@ define(function (require) {
                     container.append(nameElement);
                 }
 
+                // 创建一个专门的输入元素容器便于控制外观
+                innerElement = angular.element('<schema-input-container>');
+                container.append(innerElement);
+                container = innerElement;
+                
                 // 创建输入元素
                 // 根据需要处理规则
                 innerElement = createElement(field, fieldElementName);
