@@ -392,10 +392,12 @@ define(function (require) {
     function resetValue(valueObj, fieldObj) {
 
         ['value', 'values', 'complexValue', 'complexValues'].some(function (key) {
-            if (valueObj[key] && !fieldObj[key]) {
+
+            if (key in valueObj) {
                 fieldObj[key] = valueObj[key];
                 return true;
             }
+
             return false;
         });
     }
@@ -438,16 +440,27 @@ define(function (require) {
 
         var self = this;
         var dependExpressList = self.dependExpressList;
+        var currRule = self.origin;
 
         return all(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
 
+            var parentDisableRule;
+
             var field = express.field;
 
             if (!field)
                 return false;
+
+            if (currRule.name === 'disableRule' && !!(parentDisableRule = field.$rules.disableRule)) {
+                // 如果当前要检查的就是 disableRule
+                // 并且父级也有 disableRule
+                // 那么如果父级不显示, 子级自然不能显示
+                if (parentDisableRule.checked())
+                    return true;
+            }
 
             var value = field.values || field.value.value || field.value;
 
@@ -599,6 +612,9 @@ define(function (require) {
 
                             if (type === 'textarea') {
                                 innerElement = angular.element('<textarea class="form-control">');
+                                // 如果是 html 就加个特殊样式用来便于外观控制
+                                if (valueTypeRule === VALUE_TYPES.HTML)
+                                    innerElement.addClass('schema-field-html');
                             } else {
                                 innerElement = angular.element('<input class="form-control">').attr('type', type);
                             }
@@ -757,9 +773,11 @@ define(function (require) {
                                 complexValue = field.complexValue;
 
                             if (complexValue) {
+
                                 fieldValueMap = complexValue.fieldMap;
 
                                 if (fieldValueMap) {
+
                                     each(field.fields, function (childField) {
 
                                         var valueObj = fieldValueMap[childField.id];
@@ -891,7 +909,7 @@ define(function (require) {
                     fieldElementName = 'field_' + random(),
                     hasValidate = !!formController && hasValidateRule(field);
 
-                var rules = $scope.$rules = doRule(field, schema),
+                var rules = doRule(field, schema),
                     disableRule = rules.disableRule;
 
                 var innerElement, nameElement, isSimple;
@@ -899,6 +917,10 @@ define(function (require) {
                 // 放到 scope 上, 供画面绑定使用
                 // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
                 $scope.field = field;
+                $scope.$rules = rules;
+
+                // 把处理好的规则保存到字段上, 便于依赖型的规则可以递归查询
+                field.$rules = rules;
 
                 if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
@@ -926,13 +948,10 @@ define(function (require) {
                 innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
                 container = innerElement;
-                
+
                 // 创建输入元素
                 // 根据需要处理规则
                 innerElement = createElement(field, fieldElementName);
-
-                // 日期输入框需要进行特殊处理
-                if (innerElement)
 
                 if (innerElement instanceof Array)
                     each(innerElement, function (element) {
