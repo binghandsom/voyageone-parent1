@@ -332,7 +332,7 @@ define(function (require) {
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, 'rules.' + name + '.getLength()');
+            element.attr('ng-' + attr, '$rules.' + name + '.getLength()');
         } else {
             element.attr(attr, rule);
         }
@@ -346,7 +346,7 @@ define(function (require) {
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, 'rules.' + name + '.checked()');
+            element.attr('ng-' + attr, '$rules.' + name + '.checked()');
         } else if (rule === 'true') {
             element.attr(attr, true);
         }
@@ -448,7 +448,7 @@ define(function (require) {
             if (!field)
                 return false;
 
-            var value = field.values || field.value;
+            var value = field.values || field.value.value || field.value;
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -456,7 +456,9 @@ define(function (require) {
                 case SYMBOLS.NOT_EQUALS:
                     return value != express.value;
                 case SYMBOLS.NOT_CONTAINS:
-                    return !!value && value.indexOf(express.value) < 0;
+                    return !!value && !any(value, function (valueObj) {
+                            return valueObj.value == express.value;
+                        });
                 default:
                     return false;
             }
@@ -601,11 +603,10 @@ define(function (require) {
                             }
 
                             innerElement.attr('name', name);
-
                             innerElement.attr('ng-model', 'field.value');
 
-                            bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
                             bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+                            bindBoolRule(innerElement, rules.requiredRule, 'requiredRule', 'required');
 
                             bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
                             bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
@@ -616,7 +617,7 @@ define(function (require) {
                                 if (regexRule instanceof DependentRule) {
                                     // 如果是依赖类型
                                     // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
-                                    innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
+                                    innerElement.attr('ng-pattern', '$rules.regexRule.getRegex()');
 
                                 } else if (regexRule !== 'yyyy-MM-dd') {
                                     // 如果是日期格式验证就不需要了
@@ -628,13 +629,27 @@ define(function (require) {
                             innerElement.attr('title', field.name || field.id);
 
                             // 根据类型转换值类型
-                            switch (valueTypeRule) {
-                                case VALUE_TYPES.DATE:
-                                case VALUE_TYPES.TIME:
-                                    console.log(field);
-                                    break;
-                            }
                             field.value = getInputValue(field.value, valueTypeRule);
+
+                            if ((!rules.readOnlyRule || rules.readOnlyRule instanceof DependentRule) && type === 'date') {
+                                // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
+                                // 并且 readonly 时, 要把这个按钮隐藏掉
+                                var inputGroup = angular.element('<div class="input-group">');
+                                var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
+
+                                innerElement.attr('uib-datepicker-popup', '');
+                                innerElement.attr('date-model-format', 'yyyy-MM-dd');
+                                innerElement.attr('is-open', '$opened');
+
+                                if (rules.readOnlyRule instanceof DependentRule) {
+                                    inputGroupBtn.attr('ng-if', '!$rules.readOnlyRule.checked()')
+                                }
+
+                                inputGroup.append(innerElement);
+                                inputGroup.append(inputGroupBtn);
+
+                                innerElement = inputGroup;
+                            }
 
                             break;
                         case FIELD_TYPES.singleCheck:
@@ -713,7 +728,7 @@ define(function (require) {
                                 // checkbox 的必填比较特殊
                                 if (requiredRule) {
                                     if (requiredRule instanceof DependentRule) {
-                                        checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
+                                        checkbox.attr('ng-required', '$rules.requiredRule.checked() && !field.values.length');
                                     } else {
                                         checkbox.attr('ng-required', '!field.values.length');
                                     }
@@ -896,6 +911,9 @@ define(function (require) {
                 // 创建输入元素
                 // 根据需要处理规则
                 innerElement = createElement(field, fieldElementName, rules);
+
+                // 日期输入框需要进行特殊处理
+                if (innerElement)
 
                 if (innerElement instanceof Array)
                     each(innerElement, function (element) {
