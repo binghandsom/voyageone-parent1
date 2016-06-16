@@ -23,6 +23,7 @@
         <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="cartName" property="cartName" jdbcType="VARCHAR"/>
+        <result column="promotion_id" property="promotionId" jdbcType="INTEGER"/>
         <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel">
             <id column="tag_id" property="id" jdbcType="INTEGER"/>
             <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
@@ -57,6 +58,7 @@
         a.creater,
         a.modified,
         a.modifier,
+        a.promotion_id,
     </sql>
 
     <!-- 根据id查询单条记录 -->
