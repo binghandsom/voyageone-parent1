@@ -182,27 +182,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         int threadPoolCnt = 5;
 
         // 获取店铺信息
-//        ShopBean shopProp = Shops.getShop(channelId, cartId);
-//        if (shopProp == null) {
-//            $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
-//            return;
-//        }
-        // for test only==============================================================
-        // 京东国际悦境店（秘密信息，不能对外透露）
-        if (!"929".equals(channelId) && !"29".equals(cartId)) {
-            return;
-        }
         ShopBean shopProp = Shops.getShop(channelId, cartId);
         if (shopProp == null) {
             $error("获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
         }
-        shopProp.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shopProp.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        shopProp.setSessionKey("7d7cb9f2-8011-4004-9cad-1f046966a06b");
-        // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
-        shopProp.setPlatform_id("2");
-        // for test only==============================================================
         $info("获取店铺信息成功![ChannelId:%s] [CartId:%s]", channelId, cartId);
 
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
