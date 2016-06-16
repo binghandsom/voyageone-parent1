@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, categorySettingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -164,6 +164,10 @@ define([
          * 数据导出
          */
         function exportFile(fileType) {
+            if ($scope.vm.productPageOption.total == 0) {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+                return;
+            }
             var msg = '';
             if (fileType == 1) {
                 msg = '即将导出Code级的搜索结果，请确认。';
@@ -428,27 +432,29 @@ define([
             } else {
                 $scope.vm.searchInfo.cartId = parseInt(cartObj.value);
             }
+            // 清空平台相关查询条件
+            $scope.vm.searchInfo.productStatus = null;
+            $scope.vm.searchInfo.platformStatus = null;
+            $scope.vm.searchInfo.errorListStatus = null;
+
+            $scope.vm.searchInfo.promotionList = null;
+
+            $scope.vm.searchInfo.tags = [];
+            $scope.vm.searchInfo.priceChgFlg = '0';
+            $scope.vm.searchInfo.tagTypeSelectValue = '0';
+            $scope.vm.searchInfo.sortSales = '0';
+            $scope.vm.searchInfo.salesSortType = null;
+            $scope.vm.searchInfo.cidValue = [];
+
+            $scope.vm.searchInfo.priceEnd = '';
+            $scope.vm.searchInfo.priceStart = '';
+            $scope.vm.searchInfo.priceType = '';
+            $scope.vm.searchInfo.createTimeStart = '';
+            $scope.vm.searchInfo.createTimeTo = '';
+
+            $scope.vm.masterData.catList = [];
+
             if ($scope.vm.searchInfo.cartId == -1) {
-                // 清空平台相关查询条件
-                $scope.vm.searchInfo.productStatus = null;
-                $scope.vm.searchInfo.platformStatus = null;
-                $scope.vm.searchInfo.errorListStatus = null;
-
-                $scope.vm.searchInfo.promotionList = null;
-
-                $scope.vm.searchInfo.tags = [];
-                $scope.vm.searchInfo.priceChgFlg = '0';
-                $scope.vm.searchInfo.tagTypeSelectValue = '0';
-                $scope.vm.searchInfo.sortSales = '0';
-                $scope.vm.searchInfo.cidValue = [];
-
-                $scope.vm.searchInfo.priceEnd = '';
-                $scope.vm.searchInfo.priceStart = '';
-                $scope.vm.searchInfo.priceType = '';
-                $scope.vm.searchInfo.createTimeStart = '';
-                $scope.vm.searchInfo.createTimeTo = '';
-
-                $scope.vm.masterData.catList = [];
                 $scope.vm._cart_display = 0;
                 $scope.vm._mmmcart_display = 0;
                 return;
@@ -639,19 +645,15 @@ define([
          * @param popupNewCategory
          */
         function openMasterCategoryMapping(popupNewCategory) {
-            var para = {catLevel: 0};
-            categorySettingService.getMasterSubCategoryList(para)
+            feedMappingService.getMainCategories()
                 .then(function (res) {
-                    if (!res.data.catList || !res.data.catList.length) {
-                        alert("没数据");
-                        return null;
-                    }
-                    return popupNewCategory({
-                        categories: res.data.catList,
+                    popupNewCategory({
+                        categories: res.data,
                         from: null
-                    }).then(function (context) {
-                        $scope.vm.masterCat.catPath = context.selected.catPath;
-                    })
+                    }).then(function (res) {
+                        $scope.vm.masterCat.catPath = res.selected.catPath;
+                        }
+                    );
                 });
         }
 
@@ -696,6 +698,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'categorySettingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
     return searchIndex;
 });
