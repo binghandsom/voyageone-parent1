@@ -432,6 +432,7 @@ define(function(){
         "TXT_MSG_NO_PRODUCT_ROWS": "请至少保证有一条产品数据",
         "TXT_MSG_NO_CATEGORY_SELECT": "请选择一个子类目.",
         "TXT_MSG_NO_SELECT_CATEGORY": "请选择一个类目.",
+        "TXT_MSG_NO_APPLY_CATEGORY": "未申请此类目",
         "TXT_MSG_IS_NOT_CHILE_CATEGORY": "选择的类目不是一个子类目.",
         "TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT": "如果您变更主商品,将会对平台的商品信息产生一些影响.<br>您确定要执行这个操作吗?",
         "TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY": "如果您切换主类目,产品的属性将会被重置.<br>您确定要执行这个操作吗?",

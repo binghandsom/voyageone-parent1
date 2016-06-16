@@ -35,7 +35,7 @@
             </div>
 
         </div>
-        <div class="category_ts">
+        <div ng-if="ctrl.selected != null" class="category_ts">
             <p>{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}<span> {{ ctrl.selected.catPath }} </span></p>
         </div>
         <div ng-repeat="platform in ctrl.selected.platformCategory">
@@ -43,7 +43,7 @@
                 <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span></p>
             </div>
             <div ng-if="platform.isNotApply == 1" class="category_ts category_highlight">
-                <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span><span class="pull-right"> 未申请此类目 </span></p>
+                <p>{{ platform.cartName }} {{'TXT_PLATFORM_CATEGORY' | translate}}:<span> {{ platform.catPath }} </span><span class="pull-right"> {{'TXT_MSG_NO_APPLY_CATEGORY' | translate}} </span></p>
             </div>
         </div>
     </div>
