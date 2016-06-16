@@ -350,6 +350,7 @@ define(function() {
         "TXT_MSG_NO_PRODUCT_ROWS": "No products was in this table",
         "TXT_MSG_NO_CATEGORY_SELECT": "No leaf category was selected.",
         "TXT_MSG_NO_SELECT_CATEGORY": "No category was selected.",
+        "TXT_MSG_NO_APPLY_CATEGORY": "Not Apply this category",
         "TXT_MSG_IS_NOT_CHILE_CATEGORY": "Selected category is not leaf category.",
         "TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT": "If you change the primary product,some changing will be happened in platform.<br>Are you sure to continue?",
         "TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY": "If you change the master category,products' attributes will be reset.<br>Are you sure to continue?",
