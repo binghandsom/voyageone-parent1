@@ -10,9 +10,10 @@ define(function (require) {
      *  schema-field-name
      *  schema-complex-name
      *  schema-complex-container
-     *  schema-disable-container
      *  schema-input-container
      *  schema-field-tip
+     *  schema-input-toolbar
+     *  schema-complex-toolbox
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
      *
@@ -35,7 +36,7 @@ define(function (require) {
      *   maxImageSizeRule
      */
 
-    var FIELD_TYPES;
+    var FIELD_TYPES = require('modules/cms/enums/FieldTypes');
 
     var find, findIndex, each, any, all;
 
@@ -895,7 +896,9 @@ define(function (require) {
                             };
 
                             if (controller.canAdd) {
-                                container.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                                var toolbar = angular.element('<schema-input-toolbar>');
+                                toolbar.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                                container.append(toolbar);
                             }
 
                             break;
@@ -942,6 +945,9 @@ define(function (require) {
                             innerElement.addClass('schema-field-required');
                         }
                     }
+                    
+                    if (hasDisableRule)
+                        innerElement.attr('ng-if', '!$rules.disableRule.checked()');
 
                     return innerElement;
                 }
@@ -957,7 +963,8 @@ define(function (require) {
                     hasValidate = !!formController && hasValidateRule(field);
 
                 var rules = doRule(field, schema),
-                    disableRule = rules.disableRule;
+                    disableRule = rules.disableRule,
+                    hasDisableRule = (disableRule && disableRule instanceof DependentRule);
 
                 var innerElement, nameElement, isSimple;
 
@@ -969,20 +976,7 @@ define(function (require) {
                 // 把处理好的规则保存到字段上, 便于依赖型的规则可以递归查询
                 field.$rules = rules;
 
-                if (!FIELD_TYPES) FIELD_TYPES = require('modules/cms/enums/FieldTypes');
-
                 isSimple = (field.type != FIELD_TYPES.complex && field.type != FIELD_TYPES.multiComplex);
-
-                if (disableRule && disableRule instanceof DependentRule) {
-
-                    var ngIfContainer = angular.element('<div class="schema-disable-container">');
-
-                    ngIfContainer.attr('ng-if', '!$rules.disableRule.checked()');
-
-                    container.append(ngIfContainer);
-
-                    container = ngIfContainer;
-                }
 
                 if (showName) {
                     // 如果需要显示名称
@@ -995,6 +989,10 @@ define(function (require) {
                 innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
                 container = innerElement;
+                if (field.type === FIELD_TYPES.multiComplex)
+                    container.attr('multi', true);
+                if (hasDisableRule)
+                    container.attr('ng-if', '!$rules.disableRule.checked()');
 
                 // 创建输入元素
                 // 根据需要处理规则
@@ -1175,19 +1173,21 @@ define(function (require) {
 
                     $scope.$ctrl.fields = fields;
 
-                    if (isMulti) {
-                        $scope.$remove = function (complexValue) {
-                            schemaFieldController.remove(complexValue);
-                        };
-                        $element.append('<button class="btn btn-schema btn-default" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1">删除</button>');
-                    }
-
                     each(fields, function (field) {
 
                         var child = angular.element('<schema-field field-id="' + field.id + '">');
 
                         $element.append(child);
                     });
+
+                    if (isMulti) {
+                        $scope.$remove = function (complexValue) {
+                            schemaFieldController.remove(complexValue);
+                        };
+                        var toolbox = angular.element('<schema-complex-toolbox>');
+                        toolbox.append('<button class="btn btn-schema btn-default" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1">删除</button>');
+                        $element.append(toolbox);
+                    }
 
                     $compile($element.contents())($scope);
                 },
