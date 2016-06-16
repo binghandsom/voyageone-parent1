@@ -358,8 +358,10 @@ public class SchemaJsonReader {
                 inputField.setDefaultValue(defaultValue);
             }
 
-            String valueStr = (String)fieldMap.get("value");
-            if(valueStr != null) {
+            Object valueObj = fieldMap.get("value");
+
+            if (valueObj != null) {
+                String valueStr = String.valueOf(valueObj);
                 inputField.setValue(valueStr);
             }
 

@@ -41,7 +41,6 @@
 }
 
 .category_drag_list{
-    /*float:left;*/
     margin:0px;
     padding:4px 4px 0px 4px;
     height:180px;
@@ -104,7 +103,6 @@
 }
 .vo_prodGallery .imageWrapper {
     display: block;
-    /*width: 100%;*/
     height: 250px;
     background-size: contain;
     background-position: center;
@@ -247,7 +245,7 @@
 }
 .btn-pop {
     border-radius: 2.5px;
-    box-shadow: 1px 1px 2px #888888;
+    box-shadow: 1px 1px 2px #888;
 }
 .stat-boxes{
     display: inline-block;
@@ -290,10 +288,13 @@
     margin-top: 6px;
     display: block;
 }
-.data-priority-0,.data-priority-1,.data-priority-2,.data-priority-3,.data-priority-4
+.data-priority-0,
+.data-priority-1,
+.data-priority-2,
+.data-priority-3,
+.data-priority-4
 {
     border-left:3px solid red;
-    /*transition:border-left 0.09s;*/
     transition:border-left 218ms ease-in,opacity 218ms ease-in;
     -moz-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Firefox 4 */
     -webkit-transition:border-left 218ms ease-in,opacity 218ms ease-in; /* Safari and Chrome */
@@ -380,20 +381,18 @@
     margin: 0px auto;
 }
 
-/*@media screen and (max-width: 1500px) {
-    .product-shema-detail .bs-docs-sidebar{
-        display: none;
-    }
-}*/
-
 .product-shema-detail .bs-docs-sidebar{
     position: fixed;
     right: 40px;
     color: white;
     margin-top: 80px;
     border: 1px solid #ADCAE2;
-    background: #FFFFFF;
+    background: #fff;
+    opacity: .5;
+}
 
+.product-shema-detail .bs-docs-sidebar:hover{
+    opacity: 1;
 }
 
 .product-shema-detail .bs-docs-sidebar h3{
@@ -439,11 +438,6 @@
     width: 125px;
 }
 
-/*@media screen and (max-width: 1441px) {
-    .bs-docs-sidebar{
-        min-height: 216px;
-    }
-}*/
 /*uib-tab样式*/
 .tab-container {
     margin-bottom: 15px;

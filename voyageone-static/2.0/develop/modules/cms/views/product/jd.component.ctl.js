@@ -55,10 +55,10 @@ define([
                                 scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
-                      scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
-                      scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
-/*                        scope.vm.checkFlag.translate = 1;
-                        scope.vm.checkFlag.tax = 1;*/
+/*                      scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
+                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;*/
+                        scope.vm.checkFlag.translate = 1;
+                        scope.vm.checkFlag.tax = 1;
 
                     });
                     productDetailService.getProductInfo({productId: scope.productId})
@@ -160,7 +160,7 @@ define([
                              scope.vm.platform.modified = resp.data.modified;
                              notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                              });
-                    });
+                        });
                     });
 
 
@@ -180,7 +180,7 @@ define([
                     var offsetTop = 0;
                     if(index != 1)
                         offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
-                    $("body").animate({ scrollTop:  offsetTop}, speed);
+                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
                 }
             }
         };
