@@ -104,8 +104,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 获取platform category
-            if (searchValue.getPCatId() != null) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatId", searchValue.getPCatId()));
+            if (searchValue.getpCatId() != null) {
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatId", searchValue.getpCatId()));
                 result.append(",");
             }
             // 平台类目是否未设置
@@ -195,14 +195,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         StringBuilder result = new StringBuilder();
 
         // 获取 feed category
-        if (searchValue.getFCatId() != null) {
-            result.append(MongoUtils.splicingValue("feed.catId", searchValue.getFCatId()));
+        if (searchValue.getfCatId() != null) {
+            result.append(MongoUtils.splicingValue("feed.catId", searchValue.getfCatId()));
             result.append(",");
         }
 
         // 获取 master category
-        if (searchValue.getMCatId() != null) {
-            result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getMCatId()));
+        if (searchValue.getmCatId() != null) {
+            result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getmCatId()));
             result.append(",");
         }
 
@@ -236,11 +236,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取free tag查询条件
-        if (searchValue.getFreeTags() != null && searchValue.getFreeTags().length > 0 && searchValue.getFreeTagType() > 0) {
-            if (searchValue.getFreeTagType() == 1) {
+        if (searchValue.getFreeTags() != null && searchValue.getFreeTags().length > 0 && searchValue.getFreeTagType() != null) {
+            if ("1".equals(searchValue.getFreeTagType())) {
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags()));
                 result.append(",");
-            } else if (searchValue.getPromotionTagType() == 2) {
+            } else if ("2".equals(searchValue.getPromotionTagType())) {
                 // 不在指定范围
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags(), "$nin"));
                 result.append(",");
@@ -254,7 +254,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             result.append(",");
         }
         // 获取主类目完成状态
-        String mStatus = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getCategoryStatus());
+        String mStatus = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getmCatStatus());
         if (mStatus != null) {
             result.append(MongoUtils.splicingValue("common.fields.categoryStatus", mStatus));
             result.append(",");
