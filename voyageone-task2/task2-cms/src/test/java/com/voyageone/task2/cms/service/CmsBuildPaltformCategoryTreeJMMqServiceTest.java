@@ -21,8 +21,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsBuildPaltformCategoryTreeJMMqServiceTest {
 
-//    @Autowired
-//    CmsBuildPaltformCategoryTreeJMMqService cmsBuildPaltformCategoryTreeJMMqService;
+    @Autowired
+    CmsBuildPaltformCategoryTreeJMMqService cmsBuildPaltformCategoryTreeJMMqService;
 
     @Autowired
     private MqSender sender;
@@ -31,8 +31,8 @@ public class CmsBuildPaltformCategoryTreeJMMqServiceTest {
     public void testOnStartup() throws Exception {
 
         Map<String,Object> messageMap = new HashMap<>();
-        messageMap.put("channelId","010");
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob, messageMap);
-//        cmsBuildPaltformCategoryTreeJMMqService.onStartup(messageMap);
+        messageMap.put("channelId","017");
+//        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob, messageMap);
+        cmsBuildPaltformCategoryTreeJMMqService.onStartup(messageMap);
     }
 }

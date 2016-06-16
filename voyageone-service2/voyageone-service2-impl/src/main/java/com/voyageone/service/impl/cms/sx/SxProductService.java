@@ -649,7 +649,8 @@ public class SxProductService extends BaseService {
             } else {
                 // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
                 CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
-                if (!CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                if (productPlatformCart == null ||
+                        !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
                     removeProductList.add(productModel);
                     continue;
                 }
@@ -2010,7 +2011,7 @@ public class SxProductService extends BaseService {
     }
 
     /**
-     * 天猫以外的平台取得Product中FieldId对应的属性值(参考SxProductService.java的resolveMapping()方法)
+     * 天猫以外的平台取得Product中FieldId对应的属性值(参考SxProductService的resolveMapping()方法)
      * 天猫之外的平台不需要用platform_mapping表信息来取得平台类目Schema的各个Field属性值，直接product.P29.fields取得
      *
      * @param field Field    平台schema表中的propsItem里面的Field
@@ -2035,6 +2036,20 @@ public class SxProductService extends BaseService {
 
         if (objfieldItemValue instanceof String) {
             strfieldItemValue = String.valueOf(objfieldItemValue);
+        } else if (objfieldItemValue instanceof ArrayList) {
+            if (((ArrayList) objfieldItemValue).size() == 0) {
+                // 检查一下, 如果没有值的话, 后面的也不用做了
+                return null;
+            }
+            List<String> plainPropValues = (List<String>) objfieldItemValue;
+            List<String> mappedPropValues = new ArrayList<>();
+            for (String plainPropValue : plainPropValues) {
+                mappedPropValues.add(plainPropValue);
+            }
+            strfieldItemValue = ExpressionParser.encodeStringArray(mappedPropValues); // 用"~~"分隔
+        } else {
+            $error("Master value must be String or String[]");
+            return null;
         }
 
         switch (field.getType()) {
@@ -2053,7 +2068,7 @@ public class SxProductService extends BaseService {
             case MULTIINPUT:
                 break;
             case MULTICHECK: {
-                String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue);
+                String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue); // 解析"~~"分隔的字符串
 
                 MultiCheckField multiCheckField = (MultiCheckField)field;
                 for (String val : valueArrays) {
