@@ -121,6 +121,12 @@
         modified=now()
         WHERE
         modified <= #{modified}
+        AND
+        channel_id =  #{channelId}
+        AND
+        cart_id =  #{cartId}
+        AND
+        group_id =  #{groupId}
          ]]>
     </update>
 </mapper>
