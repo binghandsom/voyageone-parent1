@@ -664,7 +664,29 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             spu.setPropery("OTHER");
 //            spu.setPropery(jmSku.getStringAttribute("property"));
 //            spu.setAttribute(jmSku.getStringAttribute("attribute"));//TODO
-            spu.setSize(jmSku.getStringAttribute("size")); //TODO
+//            spu.setSize(jmSku.getStringAttribute("size")); //TODO
+
+            String sizeStr =jmSku.getStringAttribute("size");
+
+            if(!StringUtils.isNullOrBlank2(sizeStr)) {
+                Map sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
+                if(sizeMap != null)
+                {
+                    String changedSize = (String)sizeMap.get(sizeStr);
+                    spu.setSize(changedSize);
+                }
+                else
+                {
+                    spu.setSize(sizeStr);
+                }
+            }
+            else
+            {
+                spu.setSize("NO SIZE");
+            }
+
+
+
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
 
