@@ -28,7 +28,7 @@
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
                                                     <!--4 是自由标签-->
-                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag('4'), false)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
                                                     </button>
                                                 </div>
@@ -43,7 +43,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
                                                 <div class="col-sm-8 col-sm-offset-3">
-                                                    <textarea class="form-control inherited " rows="3" ng-model="vm.tagManage.tagPath"></textarea>
+                                                    <textarea class="form-control inherited " rows="3" ng-model="vm.free.tagPath"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -298,14 +298,14 @@
                                                     </div>
                                                     <div class="">
                                                         <!--2 是活动标签-->
-                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag)">
+                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag('2'), true)">
                                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited " rows="2" ng-model="vm.tagManage.tagPath"></textarea>
+                                                <textarea class="form-control inherited " rows="2" ng-model="vm.promotion.tagPath"></textarea>
                                             </div>
                                         </div>
                                     </div>
