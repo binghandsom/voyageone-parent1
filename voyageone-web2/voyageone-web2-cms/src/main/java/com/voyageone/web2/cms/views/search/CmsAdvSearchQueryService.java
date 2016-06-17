@@ -245,7 +245,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             if (searchValue.getFreeTagType() == 1) {
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags()));
                 result.append(",");
-            } else if (searchValue.getPromotionTagType() == 2) {
+            } else if (searchValue.getFreeTagType() == 2) {
                 // 不在指定范围
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags(), "$nin"));
                 result.append(",");

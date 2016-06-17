@@ -25,9 +25,7 @@ define([
                 promotionList: [],
                 catgoryList: [],
                 cidValue: [],
-                _selall: false,
-                promotion: {promotionTags: null},
-                free: {freeTags: null}
+                _selall: false
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -120,9 +118,7 @@ define([
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
                 cidValue: [],
-                _selall: false,
-                promotion: {promotionTags: null},
-                free: {freeTags: null}
+                _selall: false
             };
             $scope.vm._cartType_ = '';
             getCat(null);
@@ -716,7 +712,7 @@ define([
             openAddChannelCategoryEdit(selList).then(function (context) {
                 getGroupList();
                 getProductList();
-                $scope.vm.channelInner.catPath = context.catPath;
+                $scope.vm.channelInner.catPath = context.saveInfo.fullCNames;
             })
         }
 
@@ -726,7 +722,13 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.searchInfo.promotionTags = res.selectdTagList : $scope.vm.searchInfo.freeTags = res.selectdTagList;
+                if (isPromoTag) {
+                    $scope.vm._promotionTags = res.selectdTagList;
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                } else {
+                    $scope.vm._freeTags = res.selectdTagList;
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                }
             });
         }
     }
