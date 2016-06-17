@@ -12,13 +12,14 @@
 * lock    ->锁住该产品，不能进行任何操作(暂时功能不开放)
 * comment   ->添加产品注释(暂时功能不开放)
 * common    ->共通属性
+  * catId    ->新的主类目Id
+  * catPath  ->新的主类目完整路径
   * fields
-    * catId    ->新的主类目Id
-    * catPath  ->新的主类目完整路径
     * model
     * code
     * brand
     * isMasterMain    ->是否为默认主商品
+    * sizeChart       ->选择的尺码对照
     * productNameEn
     * originalTitleCn
     * shortDesEn
@@ -137,10 +138,13 @@
 		  * productMediumName
 		  * productShortName
 		  * originCn
+		  * property
+		  * attribute
 		  * beforeDate
 		  * suitPeople
 		  * specialExplain
 		  * searchMetaTextCustom
+		  * userPurchaseLimit
 	  * skus[]
 		  * skuCode
           * priceMsrp   ->各平台的MSRP售价
@@ -149,9 +153,6 @@
 		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 		  * jmSpuNo
 		  * jmSkuNo
-		  * property
-		  * attribute
-		  * size
 	  * sellerCats[]
 		  * cId
 		  * cIds

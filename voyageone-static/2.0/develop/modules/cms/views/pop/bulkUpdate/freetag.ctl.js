@@ -17,7 +17,8 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.newIndex = {value: -1};
+            this.count = 0;
+            this.selectdTagList = [];
         }
 
         popFreeTagCtl.prototype = {
@@ -34,6 +35,7 @@ define([
                     self.search(0);
                 });
             },
+
             byTagChildrenName: function (arr, index) {
                 var self = this;
                 var key = self.key[index];
@@ -41,6 +43,7 @@ define([
                     return item.tagChildrenName.indexOf(self.key[index]) > -1;
                 }) : arr;
             },
+
             /**
              * 当用户点击搜索时触发
              * @param index：记录层级
@@ -80,20 +83,48 @@ define([
                             selected[index] = tree[index][0];
                     }
                 }
+                for (var i = 2; i >= 0; i--) {
+                    var selectedVal = self.selected[i];
+                    if (selectedVal !== undefined) {
+                        self.id = selectedVal.id;
+                        self.tagPath = selectedVal.tagPathName;
+                        self.list = {"id":self.id ,"tagPath":self.tagPath};
+                        break;
+                    }
+                }
+            },
+
+            /**
+             * 点击确认添加的搜索条件
+             */
+            confirm: function () {
+                var self = this;
+                for (var j = 1; j < (self.count + 1); j++) {
+                    self.selectdTagList[j] = self.selectdTagList[j - 1];
+                }
+                self.selectdTagList.push(self.list);
+                //校验选择的是否有重复值,如果有就删除
+                self.selectdTagListValid = self.selectdTagList.sort();
+                for (var i = 0; i < self.selectdTagList.length; i++) {
+                    if (self.selectdTagListValid[i] == self.selectdTagListValid[i + 1]) {
+                        self.selectdTagListValid.splice(i + 1, 1);
+                        self.count = self.count - 1;
+                        return;
+                    }
+                }
+            },
+            clear: function () {
+                var self = this;
+                console.log(self.selectdTagList);
+                self.count = self.count - 1;
+                self.selectdTagList.pop();
             },
             /**
              * 点击保存
              */
             save: function () {
                 var self = this;
-                for (var i = 2; i >= 0; i--) {
-                    var selectedVal = self.selected[i];
-                    if (selectedVal !== undefined) {
-                        tagPath = selectedVal.tagPathName;
-                        break;
-                    }
-                }
-                self.context ={"tagPath": tagPath};
+                self.context = {"selectdTagList": self.selectdTagList};
                 self.$uibModalInstance.close(self.context);
             }
         };

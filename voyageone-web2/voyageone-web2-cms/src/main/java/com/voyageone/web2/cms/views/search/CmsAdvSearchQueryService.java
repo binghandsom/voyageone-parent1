@@ -7,7 +7,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.TagService;
@@ -19,6 +18,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     @Autowired
     private TagService tagService;
 
-    private final static String _KeyPrefix = "platform.P";
+    private final static String _KeyPrefix = "platforms.P";
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
@@ -57,7 +57,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         int cartId = searchValue.getCartId();
 
         // 只有选中具体的某个平台的时候,和platform相关的检索才有效
-        if (cartId != 0 && cartId != 1) {
+        if (cartId > 1) {
             // 设置platform检索条件
             StringBuilder resultPlatforms = new StringBuilder();
             resultPlatforms.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".cartId", cartId));
@@ -76,15 +76,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result.append(",");
             }
 
-            if (searchValue.getPublishTimeStart() != null || searchValue.getPublishTimeTo() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart()) || StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
                 resultPlatforms.append("'" + _KeyPrefix + cartId + ".pPublishTime':{" );
                 // 获取publishTime start
-                if (searchValue.getPublishTimeStart() != null) {
+                if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
                     resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
                 }
                 // 获取publishTime End
-                if (searchValue.getPublishTimeTo() != null) {
-                    if (searchValue.getPublishTimeStart() != null) {
+                if (StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
+                    if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
                         resultPlatforms.append(",");
                     }
                     resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
@@ -93,23 +93,23 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 获取price start
-            if (searchValue.getPriceType() != null && searchValue.getPriceStart() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceStart() != null) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".skus." + searchValue.getPriceType(), searchValue.getPriceStart(), "$gte"));
                 result.append(",");
             }
             // 获取price end
-            if (searchValue.getPriceType() != null && searchValue.getPriceEnd() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceEnd() != null) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".skus." + searchValue.getPriceType(), searchValue.getPriceEnd(), "$lte"));
                 result.append(",");
             }
 
             // 获取platform category
-            if (searchValue.getpCatId() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getpCatId())) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatId", searchValue.getpCatId()));
                 result.append(",");
             }
             // 平台类目是否未设置
-            if (searchValue.getPCatStatus() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getPCatStatus())) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatStatus", new String[]{null, "", "0"}, "$in"));
                 result.append(",");
             }
@@ -126,12 +126,12 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 }
             }
             // 获取店铺内分类查询条件
-            if (searchValue.getCidValue().size() > 0) {
+            if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
                 result.append(",");
             }
             // 店铺内分类未设置
-            if (searchValue.getShopCatStatus() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getShopCatStatus())) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", new String[]{null, ""}, "$in"));
                 result.append(",");
             }
@@ -155,13 +155,18 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 获取平台属性设置状态(是否完成)
-            if (searchValue.getPropertyStatus() != null) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
-                result.append(",");
+            if (StringUtils.isNotEmpty(searchValue.getPropertyStatus())) {
+                if ("1".equals(searchValue.getPropertyStatus())) {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
+                    result.append(",");
+                } else {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", new String[]{null, "", "0"}, "$in"));
+                    result.append(",");
+                }
             }
 
             // 查询销量范围
-            if (searchValue.getSalesType() != null && searchValue.getSalesSortType() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
                 resultPlatforms.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{" );
                 // 获取销量下限
                 if (searchValue.getSalesStart() != null) {
@@ -181,7 +186,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 获取其他检索条件
         result.append(getSearchValueForMongo(searchValue));
 
-        if (!StringUtils.isEmpty(result.toString())) {
+        if (StringUtils.isNotEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
         } else {
             return "";
@@ -195,25 +200,25 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         StringBuilder result = new StringBuilder();
 
         // 获取 feed category
-        if (searchValue.getfCatId() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getfCatId())) {
             result.append(MongoUtils.splicingValue("feed.catId", searchValue.getfCatId()));
             result.append(",");
         }
 
         // 获取 master category
-        if (searchValue.getmCatId() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
             result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getmCatId()));
             result.append(",");
         }
 
-        if (searchValue.getCreateTimeStart() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart()) || StringUtils.isNotEmpty(searchValue.getCreateTimeTo())) {
             result.append("'created':{");
             // 获取createdTime start
-            if (searchValue.getCreateTimeStart() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
                 result.append(MongoUtils.splicingValue("$gte", searchValue.getCreateTimeStart() + " 00.00.00"));
             }
             // 获取createdTime End
-            if (searchValue.getCreateTimeTo() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getCreateTimeTo())) {
                 if (searchValue.getCreateTimeStart() != null) {
                     result.append(",");
                 }
@@ -223,24 +228,23 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取inventory
-        if (searchValue.getCompareType() != null
-                && searchValue.getInventory() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getCompareType()) && searchValue.getInventory() != null) {
             result.append(MongoUtils.splicingValue("common.fields.quantity", searchValue.getInventory(), searchValue.getCompareType()));
             result.append(",");
         }
 
         // 获取brand
-        if (searchValue.getBrand() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getBrand())) {
             result.append(MongoUtils.splicingValue("common.fields.brand", searchValue.getBrand()));
             result.append(",");
         }
 
         // 获取free tag查询条件
-        if (searchValue.getFreeTags() != null && searchValue.getFreeTags().length > 0 && searchValue.getFreeTagType() != null) {
-            if ("1".equals(searchValue.getFreeTagType())) {
+        if (searchValue.getFreeTags() != null && searchValue.getFreeTags().length > 0 && searchValue.getFreeTagType() > 0) {
+            if (searchValue.getFreeTagType() == 1) {
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags()));
                 result.append(",");
-            } else if ("2".equals(searchValue.getPromotionTagType())) {
+            } else if (searchValue.getPromotionTagType() == 2) {
                 // 不在指定范围
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags(), "$nin"));
                 result.append(",");
@@ -248,26 +252,38 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取翻译状态
-        String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
-        if (transFlg != null) {
-            result.append(MongoUtils.splicingValue("common.fields.translateStatus", transFlg));
-            result.append(",");
+        if (StringUtils.isNotEmpty(searchValue.getTransStsFlg())) {
+            if ("1".equals(searchValue.getTransStsFlg())) {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", searchValue.getTransStsFlg()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取主类目完成状态
-        String mStatus = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getmCatStatus());
-        if (mStatus != null) {
-            result.append(MongoUtils.splicingValue("common.fields.categoryStatus", mStatus));
-            result.append(",");
+        if (StringUtils.isNotEmpty(searchValue.getmCatStatus())) {
+            if ("1".equals(searchValue.getmCatStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", searchValue.getmCatStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取税号设置完成状态
-        String hsStatus = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTaxNoStatus());
-        if (transFlg != null) {
-            result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", transFlg));
-            result.append(",");
+        if (StringUtils.isNotEmpty(searchValue.getTaxNoStatus())) {
+            if ("1".equals(searchValue.getTaxNoStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", searchValue.getTaxNoStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
 
         // MINI MALL 店铺时查询原始CHANNEL
-        if (searchValue.getOrgChaId() != null && !ChannelConfigEnums.Channel.NONE.getId().equals(searchValue.getOrgChaId())) {
+        if (StringUtils.isNotEmpty(searchValue.getOrgChaId()) && !ChannelConfigEnums.Channel.NONE.getId().equals(searchValue.getOrgChaId())) {
             result.append(MongoUtils.splicingValue("orgChannelId", searchValue.getOrgChaId()));
             result.append(",");
         }
@@ -398,29 +414,29 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         StringBuilder result = new StringBuilder();
 
         // 获取排序字段1
-        if (searchValue.getSortOneName() != null && searchValue.getSortOneType() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
             result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             result.append(",");
         }
 
         // 获取排序字段2
-        if (searchValue.getSortTwoName() != null && searchValue.getSortTwoType() != null) {
+        if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
             result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             result.append(",");
         }
 
         // 获取排序字段3
-        if (searchValue.getSortThreeName() != null && searchValue.getSortThreeType() != null ) {
+        if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
             result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             result.append(",");
         }
 
         // 添加platform cart
         int cartId = searchValue.getCartId();
-        if (cartId != 0 && cartId != 1) {
+        if (cartId > 1) {
             // 获取按销量排序字段
-            if (searchValue.getSalesType() != null && searchValue.getSalesSortType() != null) {
-                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesSortType(), Integer.valueOf(searchValue.getSalesType())));
+            if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
+                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
                 result.append(",");
             }
         }
@@ -501,7 +517,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
             if (skus != null) {
                 for (CmsBtProductModel_Sku skuObj : skus) {
-                    String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
+                    String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
                     if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
                         hasChg = true;
                         break;
@@ -527,7 +543,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                         List<CmsBtTagModel> tagList = cmsChannelTagService.convertToList(tagModelList);
                         List<String> tagPathStrList = new ArrayList<>();
                         tagList.forEach(tag -> tagPathStrList.add(tag.getTagPathName()));
-                        freeTagsList.add(org.apache.commons.lang3.StringUtils.join(tagPathStrList, "<br>"));
+                        freeTagsList.add(StringUtils.join(tagPathStrList, "<br>"));
                     }
                 }
 
