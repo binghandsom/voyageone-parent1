@@ -80,6 +80,13 @@
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
+        var _ = window._ || require('underscore', function () {
+            }, function () {
+                console.warn('Please add underscore to requirejs`s "paths"');
+            });
+
+        if (!_) return;
+
         find = _.find;
         any = _.some;
         all = _.every;
