@@ -19,7 +19,6 @@ define([
             this.selected = [];
             this.count = 0;
             this.selectdTagList = [];
-            this.selectdTagListValid = false;
         }
 
         popFreeTagCtl.prototype = {
@@ -98,26 +97,28 @@ define([
              */
             confirm: function () {
                 var self = this;
-                self.selectdTagListValid = false;
                 for (var j = 1; j < (self.count + 1); j++) {
                     self.selectdTagList[j] = self.selectdTagList[j - 1];
                 }
                 self.selectdTagList.push(self.tagPath);
-                //校验选择的是否有重复值
+
+                //校验选择的是否有重复值,如果有就删除
                 self.selectdTagListValid = self.selectdTagList.sort();
                 for (var i = 0; i < self.selectdTagList.length; i++) {
                     if (self.selectdTagListValid[i] == self.selectdTagListValid[i + 1]) {
-                        self.doubleValue = self.selectdTagListValid[i];
-                        self.context.selectdTagList.slice(self.selectdTagListValid[i]);
-                        console.log(self.selectdTagList);
-                        self.selectdTagListValid = true;
+                        self.selectdTagListValid.splice(i + 1, 1);
+                        self.count = self.count - 1;
                         return;
                     }
-                };
+                }
+
                 self.context = {"selectdTagList": self.selectdTagList};
             },
-            delete:function () {
-                
+            clear: function () {
+                var self = this;
+                console.log(self.selectdTagList);
+                self.count = self.count - 1;
+                self.selectdTagList.pop();
             },
             /**
              * 点击保存
