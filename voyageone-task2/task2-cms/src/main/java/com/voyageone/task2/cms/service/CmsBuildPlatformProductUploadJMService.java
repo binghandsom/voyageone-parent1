@@ -389,10 +389,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String brandName = fields.getBrand();
         String productType = fields.getProductType();
         String sizeType = fields.getSizeType();
-        //品牌图
+        //品牌图, 本单详情
         List<String> brandPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 3, 1, brandName, productType, sizeType, false);
         StringBuffer sb = new StringBuffer();
-
         for (String brandPic : brandPicUrls) {
             sb.append(String.format(IMG_HTML, brandPic));
         }
@@ -405,7 +404,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (String logiPic : logiPicUrls) {
             sb.append(String.format(IMG_HTML, logiPic));
         }
-        //物流图
+        //物流图,商品实拍
         dealInfo.setDescription_images(sb.toString());
 
         sb.setLength(0);
@@ -413,7 +412,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (String sizePic : sizePicUrls) {
             sb.append(String.format(IMG_HTML, sizePic));
         }
-
+        //尺码图,使用方法
         dealInfo.setDescription_usage(sb.toString());
         htDealUpdateRequest.setUpdate_data(dealInfo);
 
@@ -621,14 +620,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
         //物流图,商品实拍
         deal.setDescription_images(sb.toString());
-
-
         sb.setLength(0);
         List<String> sizePicUrls = sxProductService.getImageUrls(channelId, CART_ID, 2, 1, brandName, productType, sizeType, false);
         for (String sizePic : sizePicUrls) {
             sb.append(String.format(IMG_HTML, sizePic));
         }
-        //使用方法
+        //使用方法,尺码图
         deal.setDescription_usage(sb.toString());
 
 
