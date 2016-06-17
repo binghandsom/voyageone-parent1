@@ -1682,6 +1682,13 @@ public class SxProductService extends BaseService {
      *   1	Asics	All      	Men
      *   2	Asics	Shoe        All
      *   结果：根据优先顺序，选择2号规则
+     *
+     * @param imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+     * @param viewType 1:PC端 2：APP端
+     * @param brandName product.fields.brand
+     * @param productType product.fields.productType
+     * @param sizeType product.fields.sizeType
+     * @param getOriUrl true:取原图url false:取上传后平台图url
      */
     public List<String> getImageUrls(String channelId, int cartId, int imageType, int viewType, String brandName, String productType, String sizeType, boolean getOriUrl) throws Exception {
         List<String> listUrls = new ArrayList<>();
@@ -1783,6 +1790,9 @@ public class SxProductService extends BaseService {
     /**
      * 从cms_bt_size_chart(mongo)取得尺码对照数据，取得逻辑与getImageUrls相同
      *
+     * @param brandName product.fields.brand
+     * @param productType product.fields.productType
+     * @param sizeType product.fields.sizeType
      * @return Map<originalSize, adjustSize>
      */
     public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType) {
