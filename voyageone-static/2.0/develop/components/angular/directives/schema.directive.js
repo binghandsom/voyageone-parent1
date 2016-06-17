@@ -215,7 +215,7 @@ define(function (require) {
 
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
-                rules[rule.name] = new DependentRule(rule, schema);
+                rules[rule.name] = new DependentRule(rule, field, schema);
             }
 
         });
@@ -417,7 +417,10 @@ define(function (require) {
     function getFieldMap(fields) {
         var map = {};
         each(fields, function (f) {
-            map[f.id] = angular.copy(f);
+            var clone = angular.copy(f);
+            // 保存到新克隆的 field 上, 便于依赖检查
+            clone.$parentComplexValueMap = map;
+            map[f.id] = clone;
         });
         return map;
     }
@@ -447,7 +450,7 @@ define(function (require) {
      * 用于记录依赖的相关信息。便于后续计算。
      * 使用明确的类型(class), 便于后续判断(instanceOf)。
      */
-    function DependentRule(rule, schema) {
+    function DependentRule(rule, field, schema) {
 
         this.dependExpressList = getDependExpressList(rule).map(function (dependExpress) {
 
@@ -471,6 +474,7 @@ define(function (require) {
 
         this.value = rule.value;
         this.origin = rule;
+        this.field = field;
     }
 
     /**
@@ -478,9 +482,10 @@ define(function (require) {
      */
     DependentRule.prototype.checked = function () {
 
-        var self = this;
-        var dependExpressList = self.dependExpressList;
-        var currRule = self.origin;
+        var self = this,
+            dependExpressList = self.dependExpressList,
+            currRule = self.origin,
+            currentField = self.field;
 
         return all(dependExpressList, function (express) {
 
@@ -489,12 +494,27 @@ define(function (require) {
 
             var parentDisableRule;
 
-            var field = express.field;
+            // 当前字段可能是一个 multiComplex 下的字段
+            // 所以如果是的话, 那么它依赖的字段可能和它同属一个 multiComplex
+            // 因为每一组 multiComplex 的 complexValue 都是 clone 出来的
+            // 所以 express.field 所记录的 field 并不包含真正的值
+            // 所以!
+            // 如果字段包含 $parentComplexValueMap 那么就先从 valueMap 判断是否有这个字段
+            // 如果没有就原始字段, 有的话就用同组的 complexValueMap 中的字段
 
-            if (!field)
+            var targetFieldInComplex = null;
+            var targetField = express.field;
+
+            if (currentField.$parentComplexValueMap) {
+                targetFieldInComplex = currentField.$parentComplexValueMap[targetField.id];
+                if (targetFieldInComplex)
+                    targetField = targetFieldInComplex;
+            }
+
+            if (!targetField)
                 return false;
 
-            if (currRule.name === 'disableRule' && !!(parentDisableRule = field.$rules.disableRule)) {
+            if (currRule.name === 'disableRule' && !!(parentDisableRule = targetField.$rules.disableRule)) {
                 // 如果当前要检查的就是 disableRule
                 // 并且父级也有 disableRule
                 // 那么如果父级不显示, 子级自然不能显示
@@ -502,7 +522,7 @@ define(function (require) {
                     return true;
             }
 
-            var value = field.values || field.value.value || field.value;
+            var value = targetField.values || targetField.value.value || targetField.value;
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -757,7 +777,7 @@ define(function (require) {
                             })();
                             break;
                         case FIELD_TYPES.multiCheck:
-                            (function createCheckboxElements () {
+                            (function createCheckboxElements() {
 
                                 var selected, valueStringList;
                                 var requiredRule = rules.requiredRule;
