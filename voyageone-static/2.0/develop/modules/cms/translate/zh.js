@@ -78,7 +78,7 @@ define(function(){
         "TOOLS_PRODUCT_CUSTOM_IMAGES_SETTING": "商品自定义图片任务",
         "TOOLS_PRODUCT_PLATFORM_ATTRIBUTE_SETTING": "平台属性设置",
         "TOOLS_CATEGORY": "类目处理",
-        "TOOLS_CATEGORY_FEED_TO_MASTER_MAPPING": "第三方类目匹配主数据类目",
+        "TOOLS_CATEGORY_FEED_TO_MASTER_MAPPING": "Feed类目匹配主数据类目",
         "TOOLS_CATEGORY_MASTER_TO_PLATFORM_MAPPING": "主数据属性匹配平台属性",
         "TXT_MAPPING_SETTING": "匹配关系设置",
         "TXT_FEED_CONNECTION_SETTING": "Feed匹配关系设置",
