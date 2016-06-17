@@ -400,7 +400,7 @@
                 container.append(contentContainer);
 
                 // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if ((typeof content !== 'string') && 'url' in content) {
+                if ((typeof content !== 'string') && 'url' in content && !!content.url) {
                     var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
                     aTag.text(content.value);
                     contentContainer.append(aTag);
