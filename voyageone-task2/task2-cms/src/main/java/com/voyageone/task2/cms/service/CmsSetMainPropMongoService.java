@@ -1191,11 +1191,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 商品Sku信息设定 ------------------------------------------------------
             List<CmsBtProductModel_Sku> mainSkuList = new ArrayList<>();
-            List<CmsBtProductModel_Sku> commonSkuList = new ArrayList<>();
+            List<CmsBtProductModel_CommonSku> commonSkuList = new ArrayList<>();
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                 // 设置单个sku的信息
                 CmsBtProductModel_Sku mainSku = new CmsBtProductModel_Sku();
-                CmsBtProductModel_Sku commonSku = new CmsBtProductModel_Sku();
+                CmsBtProductModel_CommonSku commonSku = new CmsBtProductModel_CommonSku();
 
                 mainSku.setSkuCode(sku.getSku()); // sku
                 mainSku.setBarcode(sku.getBarcode()); // barcode
@@ -1604,12 +1604,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
                 // 遍历主数据product里的sku,看看有没有
                 boolean blnFound = false;
-                List<CmsBtProductModel_Sku> skuList = product.getCommon().getSkus();
+                List<CmsBtProductModel_CommonSku> skuList = product.getCommon().getSkus();
                 if (skuList == null) {
                     skuList = new ArrayList<>();
                     product.getCommon().setSkus(skuList);
                 }
-                for (CmsBtProductModel_Sku sku : skuList) {
+                for (CmsBtProductModel_CommonSku sku : skuList) {
                     if (feedSku.getSku().equals(sku.getSkuCode())) {
                         blnFound = true;
                         break;
@@ -1618,7 +1618,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                 if (!blnFound) {
-                    CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
+                    CmsBtProductModel_CommonSku sku = new CmsBtProductModel_CommonSku();
                     sku.setSkuCode(feedSku.getSku());
                     sku.setBarcode(feedSku.getBarcode());
                     sku.setClientSkuCode(feedSku.getClientSku());
@@ -2459,7 +2459,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private ProductPriceBean doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsProduct.getPlatforms();
-            List<CmsBtProductModel_Sku> commonSkus = cmsProduct.getCommon().getSkus();
+            List<CmsBtProductModel_CommonSku> commonSkus = cmsProduct.getCommon().getSkus();
 
             // jeff 2016/04 change end
             // 查看配置表, 看看是否要自动审批价格
@@ -2526,9 +2526,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 add end
 
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-                CmsBtProductModel_Sku commonSku = null;
+                CmsBtProductModel_CommonSku commonSku = null;
                 if (commonSkus != null) {
-                    for (CmsBtProductModel_Sku commonSkuTemp : commonSkus) {
+                    for (CmsBtProductModel_CommonSku commonSkuTemp : commonSkus) {
                         if (sku.getSku().equals(commonSkuTemp.getSkuCode())) {
                             commonSku = commonSkuTemp;
                             break;

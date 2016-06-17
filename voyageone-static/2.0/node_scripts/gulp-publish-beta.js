@@ -45,40 +45,18 @@ gulp.task(tasks.beta.statics, function () {
         .pipe(gulp.dest(publish.release.static.css));
 });
 
-// 压缩打包 schema directive 需要使用的 HTML 模板
-gulp.task('packaging-templates', function () {
-    return gulp.src("develop/components/angular/factories/templates/*/*.html")
-        .pipe(debug())
-        .pipe(minifyHtml({empty: true}))
-        .pipe(ngHtml2Js({
-            moduleName: "voyageone.angular.factories.templates",
-            prefix: "/components/angular/factories/templates/"
-        }))
-        .pipe(concat("templates.html.js"))
-        .pipe(uglify({
-            mangle: false,
-            compress: false,
-            output: {beautify: true, indent_level: 2}
-        }))
-        .pipe(gulp.dest("publish/temp/factories/"));
-});
-
 // 发布未压缩版本的 angular 工具包
-gulp.task(tasks.beta.angular, ['packaging-templates', tasks.build.angular_suff], function () {
-
-    var parentDeclare = fs.readFileSync((build.common.angular.dist + '/' + build.common.angular.footerFile), encode);
+gulp.task(tasks.beta.angular, function () {
 
     gulp.src([
-            build.common.angular.src,
-            "publish/temp/factories/templates.html.js"
+            "develop/components/angular/angular.modules.js",
+            build.common.angular.src
         ])
         .pipe(debug())
         // 追加依赖注入语法
         .pipe(ngAnnotate())
         // 合并到一个文件
         .pipe(concat(build.common.angular.concat))
-        // 追加尾部声明
-        .pipe(footer(parentDeclare))
         // 包裹整个内容
         .pipe(header(definePrefix))
         .pipe(footer(defineSuffix))

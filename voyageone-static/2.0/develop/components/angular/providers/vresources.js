@@ -8,8 +8,8 @@
  * @Date: 2015-12-10 19:32:37
  * @Version: 2.0.0
  */
-define(function () {
-    return angular.module("voyageone.angular.vresources", []).provider("$vresources", function ($provide) {
+//define(function () {
+     angular.module("voyageone.angular.vresources", []).provider("$vresources", function ($provide) {
         /**
          * @description 构建请求地址的 url
          * @param {string} root 请求的根路径
@@ -85,4 +85,4 @@ define(function () {
     }).run(function ($vresources, $actions) {
         $vresources.register(null, $actions);
     });
-});
+//});
