@@ -4,10 +4,10 @@
 <resultMap id="ResultMap" type="CmsBtJmPromotionProductModel">
 
 </resultMap>
-<select id="getByProductCodeChannelIdCmsBtJmPromotionId"  resultMap="ResultMap">
+<select id="selectByProductCodeChannelIdCmsBtJmPromotionId"  resultMap="ResultMap">
     select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
 </select>
-<select id="getListByWhere" resultType="MapModel" >
+<select id="selectListByWhere" resultType="MapModel" >
     select  *   from cms_bt_jm_promotion_product
     <where>
         <if test="id != null">
@@ -72,14 +72,14 @@
         </if>
     </where>
 </select>
-<select id="getExportInfoListByPromotionId" resultType="MapModel">
+<select id="selectExportInfoListByPromotionId" resultType="MapModel">
     SELECT a.`jm_hash_id`,a.`product_code`,a.`deal_price`,a.`market_price`,a.`discount`,a.`sku_count`,a.`quantity`,b.`product_name_cn`,`app_id`,`pc_id`
 
     FROM `cms_bt_jm_promotion_product`  AS a
     JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
     WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
 </select>
-<select id="getListCmsBtJmImportProductByPromotionId" resultType="MapModel">
+<select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">
     SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`
     FROM `cms_bt_jm_promotion_product`  AS a
     JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
@@ -108,7 +108,7 @@
 </foreach>
 </update>
     <!--jm2 begin-->
-    <select id="getPageByWhere" resultType="MapModel">
+    <select id="selectPageByWhere" resultType="MapModel">
         SELECT b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
         ,b.retail_price,a.market_price,b.msrp_rmb,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag
@@ -186,7 +186,7 @@
             LIMIT #{start}, #{length}
         </if>
     </select>
-    <select id="getCountByWhere" resultType="int">
+    <select id="selectCountByWhere" resultType="int">
         SELECT count(*)
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
@@ -256,11 +256,11 @@
       SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` limit 1
     </select>
 
-    <select id="getByProductCode"  resultMap="ResultMap">
+    <select id="selectByProductCode"  resultMap="ResultMap">
         select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
     </select>
 
-    <select id="getExportListByPromotionId" resultType="MapModel">
+    <select id="selectExportListByPromotionId" resultType="MapModel">
         SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag
         FROM `cms_bt_jm_promotion_product`  AS a
         JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`

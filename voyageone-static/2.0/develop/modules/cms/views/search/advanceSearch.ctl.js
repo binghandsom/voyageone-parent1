@@ -25,7 +25,9 @@ define([
                 promotionList: [],
                 catgoryList: [],
                 cidValue: [],
-                _selall: false
+                _selall: false,
+                promotion: {promotionTags: null},
+                free: {freeTags: null}
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -42,9 +44,7 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null},
-            promotion: {tagPathList: null},
-            free: {tagPathList: null}
+            channelInner: {catPath: null}
         };
 
         $scope.initialize = initialize;
@@ -120,7 +120,9 @@ define([
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
                 cidValue: [],
-                _selall: false
+                _selall: false,
+                promotion: {promotionTags: null},
+                free: {freeTags: null}
             };
             $scope.vm._cartType_ = '';
             getCat(null);
@@ -131,8 +133,6 @@ define([
             $scope.vm.masterCat.catPath=null;
             $scope.vm.feedCat.catPath=null;
             $scope.vm.channelInner.catPath=null;
-            $scope.vm.promotion.tagPathList=null;
-            $scope.vm.free.tagPathList=null;
         }
 
         /**
@@ -167,7 +167,7 @@ define([
                 }
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1100) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
             })
         }
 
@@ -726,7 +726,7 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.promotion.tagPathList = res.selectdTagList : $scope.vm.free.tagPathList = res.selectdTagList;
+                isPromoTag ? $scope.vm.searchInfo.promotionTags = res.selectdTagList : $scope.vm.searchInfo.freeTags = res.selectdTagList;
             });
         }
     }
