@@ -156,8 +156,13 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
             // 获取平台属性设置状态(是否完成)
             if (StringUtils.isNotEmpty(searchValue.getPropertyStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
-                result.append(",");
+                if ("1".equals(searchValue.getPropertyStatus())) {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
+                    result.append(",");
+                } else {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", new String[]{null, "", "0"}, "$in"));
+                    result.append(",");
+                }
             }
 
             // 查询销量范围
@@ -248,18 +253,33 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取翻译状态
         if (StringUtils.isNotEmpty(searchValue.getTransStsFlg())) {
-            result.append(MongoUtils.splicingValue("common.fields.translateStatus", searchValue.getTransStsFlg()));
-            result.append(",");
+            if ("1".equals(searchValue.getTransStsFlg())) {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", searchValue.getTransStsFlg()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取主类目完成状态
         if (StringUtils.isNotEmpty(searchValue.getmCatStatus())) {
-            result.append(MongoUtils.splicingValue("common.fields.categoryStatus", searchValue.getmCatStatus()));
-            result.append(",");
+            if ("1".equals(searchValue.getmCatStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", searchValue.getmCatStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取税号设置完成状态
         if (StringUtils.isNotEmpty(searchValue.getTaxNoStatus())) {
-            result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", searchValue.getTaxNoStatus()));
-            result.append(",");
+            if ("1".equals(searchValue.getTaxNoStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", searchValue.getTaxNoStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
 
         // MINI MALL 店铺时查询原始CHANNEL

@@ -720,7 +720,7 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.promotion.tagPathList = res.selectdTagList : $scope.vm.free.tagPathList = res.selectdTagList;
+                isPromoTag ? $scope.vm.searchInfo.promotionTags = res.selectdTagList : $scope.vm.searchInfo.freeTags = res.selectdTagList;
             });
         }
     }
