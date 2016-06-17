@@ -104,6 +104,7 @@ define([
                                 scope.vm.platform.pCatPath = context.selected.catPath;
                                 scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
+                                scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.platform.status = scope.vm.status =  "Pending";
                             });
                         });
@@ -122,13 +123,7 @@ define([
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
-                            angular.forEach(context.saveInfo.fullCatId,function(item,index){
-                                var cids = item.split("-");
-                                var cid = cids[cids.length-1];
-                                var cNames =  context.saveInfo.fullCNames[index].split(">");
-                                var cName = cNames[cNames.length-1];
-                                scope.vm.sellerCats.push({cid:cid,cids:cids,cName:cName,cNames:cNames});
-                            });
+                            scope.vm.sellerCats = context;
 
                     });
                 }
