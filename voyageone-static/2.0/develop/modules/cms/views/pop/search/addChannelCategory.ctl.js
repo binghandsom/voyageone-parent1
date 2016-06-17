@@ -110,15 +110,17 @@ define([
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     self.$uibModalInstance.close();
                 });*/
-                self.context.saveInfo = {
-                    "cIds": cIds,
-                    "cNames": cNames,
-                    "fullCNames": fullCNames,
-                    "fullCatId": fullCIds,
-                    "code": self.code,
-                    "cartId": self.cartId
-                };
-                self.$uibModalInstance.close(self.context);
+
+                var sellerCats = [];
+                angular.forEach(fullCIds,function(item,index){
+                    var cids = item.split("-");
+                    var cid = cids[cids.length-1];
+                    var cNames =  fullCNames[index].split(">");
+                    var cName = cNames[cNames.length-1];
+                    sellerCats.push({cid:cid,cids:cids,cName:cName,cNames:cNames});
+                });
+
+                self.$uibModalInstance.close(sellerCats);
             }
         };
         return PopAddChannelCategoryCtrl;
