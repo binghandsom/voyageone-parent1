@@ -213,7 +213,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 groupInfo.commArr = commArr;
                 var custArr = [];
@@ -286,7 +286,7 @@ define([
                     if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 productInfo.commArr = commArr;
 
@@ -308,7 +308,7 @@ define([
                     var dotIdx = selValue.indexOf(".", 6);
                     var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
                     var itemVal = null;
-                    if (itemValObj == undefined || itemVal == null) {
+                    if (itemValObj == undefined || itemValObj == null) {
                         itemVal = "0";
                     } else {
                         dotIdx = selValue.lastIndexOf(".");
@@ -443,7 +443,7 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON') + " ", object.priceMsrpSt, object.priceMsrpEd);
+            var tempMsrpDetail = _setOnePriceDetail("", object.priceMsrpSt, object.priceMsrpEd);
             if (!_.isNull(tempMsrpDetail)) {
                 result.push(tempMsrpDetail);
             } else {
@@ -451,7 +451,7 @@ define([
             }
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON') + " ", object.priceRetailSt, object.priceRetailEd);
+            var tempRetailPriceDetail = _setOnePriceDetail("", object.priceRetailSt, object.priceRetailEd);
             if (!_.isNull(tempRetailPriceDetail)) {
                 result.push(tempRetailPriceDetail);
             } else {

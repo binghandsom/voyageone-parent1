@@ -59,15 +59,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 只有选中具体的某个平台的时候,和platform相关的检索才有效
         if (cartId > 1) {
             // 设置platform检索条件
-            StringBuilder resultPlatforms = new StringBuilder();
-            resultPlatforms.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".cartId", cartId));
-            resultPlatforms.append(",");
+            result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".cartId", cartId));
+            result.append(",");
 
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
                 // 获取platform status
-                resultPlatforms.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pStatus", searchValue.getPlatformStatus()));
-                resultPlatforms.append(",");
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pStatus", searchValue.getPlatformStatus()));
+                result.append(",");
             }
 
             // 获取product status
@@ -77,19 +76,19 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart()) || StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
-                resultPlatforms.append("'" + _KeyPrefix + cartId + ".pPublishTime':{" );
+                result.append("'" + _KeyPrefix + cartId + ".pPublishTime':{" );
                 // 获取publishTime start
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
-                    resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+                    result.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
                 }
                 // 获取publishTime End
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
                     if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
-                        resultPlatforms.append(",");
+                        result.append(",");
                     }
-                    resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+                    result.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
                 }
-                resultPlatforms.append("},");
+                result.append("},");
             }
 
             // 获取price start
@@ -156,25 +155,32 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
             // 获取平台属性设置状态(是否完成)
             if (StringUtils.isNotEmpty(searchValue.getPropertyStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
-                result.append(",");
+                if ("1".equals(searchValue.getPropertyStatus())) {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", searchValue.getPropertyStatus()));
+                    result.append(",");
+                } else {
+                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pAttributeStatus", new String[]{null, "", "0"}, "$in"));
+                    result.append(",");
+                }
             }
 
             // 查询销量范围
-            if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                resultPlatforms.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{" );
-                // 获取销量下限
-                if (searchValue.getSalesStart() != null) {
-                    resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
-                }
-                // 获取销量上限
-                if (searchValue.getSalesEnd() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getSalesType())) {
+                if (searchValue.getSalesEnd() != null || searchValue.getSalesStart() != null) {
+                    result.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{");
+                    // 获取销量下限
                     if (searchValue.getSalesStart() != null) {
-                        resultPlatforms.append(",");
+                        result.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
                     }
-                    resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
+                    // 获取销量上限
+                    if (searchValue.getSalesEnd() != null) {
+                        if (searchValue.getSalesStart() != null) {
+                            result.append(",");
+                        }
+                        result.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
+                    }
+                    result.append("},");
                 }
-                resultPlatforms.append("},");
             }
         }
 
@@ -239,7 +245,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             if (searchValue.getFreeTagType() == 1) {
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags()));
                 result.append(",");
-            } else if (searchValue.getPromotionTagType() == 2) {
+            } else if (searchValue.getFreeTagType() == 2) {
                 // 不在指定范围
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags(), "$nin"));
                 result.append(",");
@@ -248,18 +254,33 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取翻译状态
         if (StringUtils.isNotEmpty(searchValue.getTransStsFlg())) {
-            result.append(MongoUtils.splicingValue("common.fields.translateStatus", searchValue.getTransStsFlg()));
-            result.append(",");
+            if ("1".equals(searchValue.getTransStsFlg())) {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", searchValue.getTransStsFlg()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.translateStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取主类目完成状态
         if (StringUtils.isNotEmpty(searchValue.getmCatStatus())) {
-            result.append(MongoUtils.splicingValue("common.fields.categoryStatus", searchValue.getmCatStatus()));
-            result.append(",");
+            if ("1".equals(searchValue.getmCatStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", searchValue.getmCatStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.categoryStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
         // 获取税号设置完成状态
         if (StringUtils.isNotEmpty(searchValue.getTaxNoStatus())) {
-            result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", searchValue.getTaxNoStatus()));
-            result.append(",");
+            if ("1".equals(searchValue.getTaxNoStatus())) {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", searchValue.getTaxNoStatus()));
+                result.append(",");
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", new String[]{null, "", "0"}, "$in"));
+                result.append(",");
+            }
         }
 
         // MINI MALL 店铺时查询原始CHANNEL
@@ -294,7 +315,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 1.  >  有输入框  eg {"a": {$gt: 123123}}
         // 2.  =  有输入框  eg {"a": 123123}}
         // 3.  <  有输入框  eg {"a": {$lt: 123123}}
-        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,''], $exists:true}}
+        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,'']}}
         // 5.  !=null(已设值) 无输入框  eg {"a": {$nin:[null,''], $exists:true}}
         // 6.  包含   有输入框  eg {"a": {$regex: "oops"}}
         // 7.  不包含 有输入框  eg {"a":{$not: {$regex: "oops"}}}
@@ -335,7 +356,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
                 // 未设值
-                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
+                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
             } else {
                 result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
             }
@@ -364,7 +385,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result = "{'" + inputOptsKey + "':{$lt:" + inputVal + "}}";
                 break;
             case 4:
-                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
+                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
                 break;
             case 5:
                 result = "{'" + inputOptsKey + "':{$nin:[null,''],$exists:true}}";
@@ -416,7 +437,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (cartId > 1) {
             // 获取按销量排序字段
             if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesSortType(), Integer.valueOf(searchValue.getSalesType())));
+                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
                 result.append(",");
             }
         }

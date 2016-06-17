@@ -42,9 +42,7 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null},
-            promotion: {tagPathList: null},
-            free: {tagPathList: null}
+            channelInner: {catPath: null}
         };
 
         $scope.initialize = initialize;
@@ -127,6 +125,10 @@ define([
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{inputVal: "", inputOpts: ""}];
+            $scope.vm.platform.catPath=null;
+            $scope.vm.masterCat.catPath=null;
+            $scope.vm.feedCat.catPath=null;
+            $scope.vm.channelInner.catPath=null;
         }
 
         /**
@@ -161,7 +163,7 @@ define([
                 }
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1100) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
             })
         }
 
@@ -710,7 +712,7 @@ define([
             openAddChannelCategoryEdit(selList).then(function (context) {
                 getGroupList();
                 getProductList();
-                $scope.vm.channelInner.catPath = context.catPath;
+                $scope.vm.channelInner.catPath = context.saveInfo.fullCNames;
             })
         }
 
@@ -720,7 +722,13 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.promotion.tagPathList = res.selectdTagList : $scope.vm.free.tagPathList = res.selectdTagList;
+                if (isPromoTag) {
+                    $scope.vm._promotionTags = res.selectdTagList;
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                } else {
+                    $scope.vm._freeTags = res.selectdTagList;
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                }
             });
         }
     }
