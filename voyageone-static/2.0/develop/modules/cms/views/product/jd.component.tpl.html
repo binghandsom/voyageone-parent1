@@ -188,6 +188,7 @@
                                 <th class="text-center ng-binding ng-scope vo_reqfield">size</th>
                                 <th class="text-right ng-binding ng-scope vo_reqfield">{{"TXT_RETAIL_PRICE"|translate}}</th>
                                 <th class="text-center ng-binding ng-scope vo_reqfield">容量/尺码</th>
+                                <th class="text-center ng-binding ng-scope vo_reqfield" ng-if="cartInfo.value == 27">规格</th>
                                 <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_SALE_PRICE"|translate}}</th>
                                 <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_BAR_CODE"|translate}}</th>
                             </tr>
@@ -200,6 +201,13 @@
                                 <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].size}}</td>
                                 <td class="text-right ng-scope">{{vm.skuTemp[entity.skuCode].priceRetail}}</td>
                                 <td class="text-center ng-scope"></td>
+                                <td class="text-center ng-scope" ng-if="cartInfo.value == 27">
+                                    <select name="" id="" ng-model="entity.property = entity.property==null?'OTHER':entity.property">
+                                        <option value="OTHER" >其他</option>
+                                        <option value="FORMAL">正装</option>
+                                        <option value="MS">中小样</option>
+                                    </select>
+                                </td>
                                 <td class="text-center ng-scope"><input class="form-control ng-number" type="number" ng-model="entity.priceSale"></td>
                                 <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                             </tr>
