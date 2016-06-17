@@ -176,7 +176,12 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     // platform status 等待上新/在售/在库
     public CmsConstants.PlatformStatus getPlatformStatus() {
-        return (platformStatus == null) ? null : CmsConstants.PlatformStatus.valueOf(platformStatus);
+        CmsConstants.PlatformStatus rs = null;
+        try {
+            rs = (platformStatus == null || platformStatus.isEmpty()) ? null : CmsConstants.PlatformStatus.valueOf(platformStatus);
+        } catch (IllegalArgumentException exp) {
+        }
+        return rs;
     }
     public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
         this.platformStatus = platformStatus.name();
@@ -184,8 +189,14 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     //"Instock"(在库)/"OnSale"(在售)
     public CmsConstants.PlatformActive getPlatformActive() {
-        return (platformActive == null) ? null : CmsConstants.PlatformActive.valueOf(platformActive);
+        CmsConstants.PlatformActive rs = null;
+        try {
+            rs = (platformActive == null || platformActive.isEmpty()) ? null : CmsConstants.PlatformActive.valueOf(platformActive);
+        } catch (IllegalArgumentException exp) {
+        }
+        return rs;
     }
+
     public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
         this.platformActive = platformActive.name();
     }

@@ -17,11 +17,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
      * @returns {boolean}
      */
     function autoRedirect(res) {
-        if (res.code != CODE_SYS_REDIRECT) {
-            return false;
-        }
-        // 如果跳转数据异常,则默认跳转登陆页
-        location.href = res.redirectTo || "/login.html";
+       
         return true;
     }
 

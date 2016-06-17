@@ -11,7 +11,7 @@ public class JmProductBean_Spus extends JmBaseBean {
 
     private String upc_code;
 
-    private String propery;
+    private String property;
 
     private String size;
 
@@ -51,12 +51,12 @@ public class JmProductBean_Spus extends JmBaseBean {
         this.upc_code = upc_code;
     }
 
-    public String getPropery() {
-        return propery;
+    public String getProperty() {
+        return property;
     }
 
-    public void setPropery(String propery) {
-        this.propery = propery;
+    public void setProperty(String propery) {
+        this.property = propery;
     }
 
     public String getSize() {

@@ -337,6 +337,16 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
+
+		<!-- overstock sdk -->
+		<dependency>
+			<groupId>com.overstock</groupId>
+			<artifactId>Ostk-Component</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>voyageone-com</finalName>
