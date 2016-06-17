@@ -886,7 +886,10 @@ public class ProductService extends BaseService {
                 param.put("channelId", product.getOrgChannelId());
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
+                if (skuInfo != null)
+                    bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
+                else
+                    bean.setInventory("0");
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
