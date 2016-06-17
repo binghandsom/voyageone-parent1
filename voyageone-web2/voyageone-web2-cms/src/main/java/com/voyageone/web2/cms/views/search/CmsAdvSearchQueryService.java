@@ -436,7 +436,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (cartId > 1) {
             // 获取按销量排序字段
             if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesSortType(), Integer.valueOf(searchValue.getSalesType())));
+                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
                 result.append(",");
             }
         }
