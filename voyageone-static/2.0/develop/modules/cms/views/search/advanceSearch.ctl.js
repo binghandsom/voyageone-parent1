@@ -129,6 +129,9 @@ define([
             $scope.vm.masterCat.catPath=null;
             $scope.vm.feedCat.catPath=null;
             $scope.vm.channelInner.catPath=null;
+            $scope.vm._shopCatValues = null;
+            $scope.vm._promotionTags = null;
+            $scope.vm._freeTags = null;
         }
 
         /**
@@ -445,6 +448,8 @@ define([
             $scope.vm.searchInfo.hasErrorFlg = null;
             $scope.vm.searchInfo.promotionTagType = null;
             $scope.vm.searchInfo.promotionTags = null;
+            $scope.vm._shopCatValues = null;
+            $scope.vm._promotionTags = null;
 
             $scope.vm.searchInfo.salesType = null;
             $scope.vm.searchInfo.salesSortType = null;
@@ -710,9 +715,8 @@ define([
                 selList = $scope.vm.productSelList.selList;
             }
             openAddChannelCategoryEdit(selList).then(function (context) {
-                getGroupList();
-                getProductList();
-                $scope.vm.channelInner.catPath = context.catPath;
+                $scope.vm._shopCatValues = context.saveInfo.fullCNames;
+                $scope.vm.searchInfo.cidValue = context.saveInfo.fullCatId;
             })
         }
 

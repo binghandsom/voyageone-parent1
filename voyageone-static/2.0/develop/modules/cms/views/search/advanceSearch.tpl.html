@@ -283,8 +283,8 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7 m-t-sm">
-                                                <textarea class="form-control inherited" style="resize: none;" ng-model="vm.searchInfo.cidValue" rows="2" ng-disabled="vm.searchInfo.shopCatStatus" ng-readonly="true"></textarea>
+                                            <div class="col-sm-7 bg-white table-bordered table-responsive" style="min-height: 40px; max-height: 160px;">
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;" ng-disabled="vm.searchInfo.shopCatStatus">{{shopCat}}</label>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
@@ -306,7 +306,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-8 bg-white table-bordered table-responsive" ng-model="vm.searchInfo.promotionTags" style=" min-height: 40px;  max-height: 160px;">
+                                            <div class="col-sm-7 bg-white table-bordered table-responsive" style=" min-height: 40px;  max-height: 160px;">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm._promotionTags" style="display: inline-block;">{{promotionTag.tagPathName}}</label>
                                             </div>
                                         </div>
