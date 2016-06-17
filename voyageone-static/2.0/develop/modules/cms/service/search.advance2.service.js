@@ -148,10 +148,11 @@ define([
         function resetSearchInfo (data) {
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
-
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
+            if (searchInfo.hasErrorFlg) {
+                searchInfo.hasErrorFlg = 1;
+            }
 
-            searchInfo.labelType = _returnKey(searchInfo.labelType);
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;
@@ -334,18 +335,20 @@ define([
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
                         } else {
-                            if (data.pStatus == 'OnSale') {
-                                cssVal = 'DeepSkyBlue';
-                            } else if (data.pStatus == 'InStock') {
-                                cssVal = 'Orange';
-                            } else if (data.pStatus == 'WaitingPublish') {
-                                if (data.status == 'Ready') {
-                                    cssVal = 'yellow';
-                                } else if (data.status == 'Approved') {
-                                    cssVal = 'YellowGreen';
+                            if (data.status == 'Approved') {
+                                if (data.pStatus == 'OnSale') {
+                                    cssVal = 'DeepSkyBlue';
+                                } else if (data.pStatus == 'InStock') {
+                                    cssVal = 'Orange';
+                                } else if (data.pStatus == 'WaitingPublish') {
+                                    cssVal = 'Chocolate';
                                 } else {
-                                    cssVal = 'DarkGray';
+                                    cssVal = 'YellowGreen';
                                 }
+                            } else if (data.status == 'Ready') {
+                                cssVal = 'yellow';
+                            } else {
+                                cssVal = 'DarkGray';
                             }
                         }
                         if (cssVal) {

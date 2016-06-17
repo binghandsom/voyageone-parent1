@@ -122,6 +122,8 @@ define([
                 cidValue: [],
                 _selall: false
             };
+            $scope.vm._cartType_ = '';
+            getCat(null);
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{inputVal: "", inputOpts: ""}];
@@ -438,22 +440,29 @@ define([
             // 清空平台相关查询条件
             $scope.vm.searchInfo.productStatus = null;
             $scope.vm.searchInfo.platformStatus = null;
-            $scope.vm.searchInfo.errorListStatus = null;
+            $scope.vm.searchInfo.hasErrorFlg = null;
+            $scope.vm.searchInfo.promotionTagType = null;
+            $scope.vm.searchInfo.promotionTags = null;
 
-            $scope.vm.searchInfo.promotionList = null;
-
-            $scope.vm.searchInfo.tags = [];
-            $scope.vm.searchInfo.priceChgFlg = '0';
-            $scope.vm.searchInfo.tagTypeSelectValue = '0';
-            $scope.vm.searchInfo.sortSales = '0';
+            $scope.vm.searchInfo.salesType = null;
             $scope.vm.searchInfo.salesSortType = null;
-            $scope.vm.searchInfo.cidValue = [];
+            $scope.vm.searchInfo.salesStart = null;
+            $scope.vm.searchInfo.salesEnd = null;
 
-            $scope.vm.searchInfo.priceEnd = '';
-            $scope.vm.searchInfo.priceStart = '';
-            $scope.vm.searchInfo.priceType = '';
-            $scope.vm.searchInfo.createTimeStart = '';
-            $scope.vm.searchInfo.createTimeTo = '';
+            $scope.vm.searchInfo.pCatId = null;
+            $scope.vm.searchInfo.pCatPath = null;
+            $scope.vm.searchInfo.pCatStatus = null;
+
+            $scope.vm.searchInfo.cidValue = [];
+            $scope.vm.searchInfo.shopCatStatus = null;
+
+            $scope.vm.searchInfo.publishTimeStart = null;
+            $scope.vm.searchInfo.publishTimeTo = null;
+            $scope.vm.searchInfo.priceEnd = null;
+            $scope.vm.searchInfo.priceStart = null;
+            $scope.vm.searchInfo.priceType = null;
+            $scope.vm.searchInfo.priceChgFlg = null;
+            $scope.vm.searchInfo.propertyStatus = null;
 
             $scope.vm.masterData.catList = [];
 
