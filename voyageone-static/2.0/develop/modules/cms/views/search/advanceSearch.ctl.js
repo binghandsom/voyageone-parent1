@@ -712,7 +712,7 @@ define([
             openAddChannelCategoryEdit(selList).then(function (context) {
                 getGroupList();
                 getProductList();
-                $scope.vm.channelInner.catPath = context.catPath;
+                $scope.vm.channelInner.catPath = context.saveInfo.fullCNames;
             })
         }
 
