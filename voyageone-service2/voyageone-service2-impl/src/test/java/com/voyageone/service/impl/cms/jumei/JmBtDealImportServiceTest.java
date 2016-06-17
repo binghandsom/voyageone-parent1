@@ -30,6 +30,14 @@ OrderChannelDao daoOrderChannelDao;
         System.out.println("end:"+new Date());
     }
     @Test
+    public void testOne()
+    {
+        System.out.println("begin:"+new Date());
+        service.importJMOne("015","1136155408");//015  001
+        System.out.println("end:"+new Date());
+
+    }
+    @Test
     public void testImportAll() {
         List<String> listChannel = new ArrayList<>();
         listChannel.add("010");

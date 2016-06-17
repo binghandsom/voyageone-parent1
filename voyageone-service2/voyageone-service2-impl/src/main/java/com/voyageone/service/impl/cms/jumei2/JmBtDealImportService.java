@@ -110,6 +110,7 @@ public class JmBtDealImportService extends BaseService {
         if (bulkProductList.size() > 0) {
             System.out.println("bulkProductList:" + bulkProductList.size() + "  " + new Date());
             daoCmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, "system", "$set");
+
             System.out.println("bulkProductList:" + bulkProductList.size() + "  " + new Date());
         }
         //CmsBtProductGroup   更新所有
@@ -142,7 +143,7 @@ public class JmBtDealImportService extends BaseService {
         insertCmsBtJmSkuModel(listModelJmBtSku, modelCmsBtProduct);
 
         //初始化CmsBtProduct更新数据
-        BulkUpdateModel modelProduct = getBulkUpdateProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku);
+        BulkUpdateModel modelProduct = getBulkUpdateProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku,modelCmsBtProduct);
         bulkProductList.add(modelProduct);
 
         //初始化CmsBtProductGroup 更新数据
@@ -300,6 +301,7 @@ public class JmBtDealImportService extends BaseService {
         updateMap.put("platformPid", modelJmBtProduct.getJumeiProductId());
         updateMap.put("publishTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         updateMap.put("onSaleTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -307,7 +309,7 @@ public class JmBtDealImportService extends BaseService {
         return model;
     }
 
-    private BulkUpdateModel getBulkUpdateProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
+    private BulkUpdateModel getBulkUpdateProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku,CmsBtProductModel modelCmsBtProduct) {
 
 //        1.pCatId未设置 处理
 //        2.pCatPath未设置     ? category_lv4_id fullPath  >  处理
@@ -317,7 +319,8 @@ public class JmBtDealImportService extends BaseService {
 //        6.pPriceMsrpSt等被覆盖成空        处理
 //        7.fields.productShortName 未空？  处理
 //        8.skus.priceMsrp等被覆盖成空     处理
-        CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+
+        CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
         platform.setpCatId(CartEnums.Cart.TM.getId());
         if(modelJmBtProduct.getCategoryLv4Id()!=0) {
@@ -342,7 +345,7 @@ public class JmBtDealImportService extends BaseService {
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
 
         //fields
-        BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
+        BaseMongoMap<String, Object> fields = platform.getFields();  // new BaseMongoMap<>();
         fields.setAttribute("productNameCn", modelJmBtProduct.getProductName());
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
@@ -354,14 +357,16 @@ public class JmBtDealImportService extends BaseService {
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
         fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
-        platform.setFields(fields);
+        //platform.setFields(fields);
 
-        List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
-        BaseMongoMap<String, Object> skuMap = null;
+        List<BaseMongoMap<String, Object>> skus = platform.getSkus(); //new ArrayList<>();
+        BaseMongoMap<String, Object> skuMap;
         for (JmBtSkuModel jmBtSkuModel : listModelJmBtSku) {
-            skuMap = new BaseMongoMap<String, Object>();
-            skus.add(skuMap);
-
+            skuMap = getMongoSku(skus, jmBtSkuModel.getSku()); //new BaseMongoMap<String, Object>();
+            if(skuMap == null) {
+                $error("code:"+modelJmBtDealImport.getProductCode()+" skuCode:" +jmBtSkuModel.getSku()+ "mongo不存在");
+                continue;
+            }
           //  skuMap.setAttribute("priceRetail", "");  //各平台的销售指导价
            // skuMap.setAttribute("priceSale", "");    //中国最终售价
            // skuMap.setAttribute("priceChgFlg", "");  //价格变更状态（U/D/XU/XD）
@@ -369,14 +374,14 @@ public class JmBtDealImportService extends BaseService {
             skuMap.setAttribute("jmSkuNo", jmBtSkuModel.getJumeiSkuNo());
             skuMap.setAttribute("property", "");
             skuMap.setAttribute("size", jmBtSkuModel.getSize());
-            skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
+            //skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
         }
-        platform.setSkus(skus);
+        //platform.setSkus(skus);
 
         // List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        BasicDBObject platformDBObj = platform.toUpdateBasicDBObject("platforms.P27.");
-        updateMap.putAll(platformDBObj);
+        updateMap.put("platforms.P27", platform);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
         //updateMap.put("platforms.P27", platform);
 
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -435,5 +440,10 @@ public class JmBtDealImportService extends BaseService {
 //            * cIds
 //            * cName
 //            * cNames
+    }
+    BaseMongoMap<String, Object> getMongoSku(  List<BaseMongoMap<String, Object>> skus,String skuCode) {
+        Stream<BaseMongoMap<String, Object>> resultList = skus.stream().filter(o -> o.getStringAttribute("skuCode").equals(skuCode));
+        BaseMongoMap<String, Object> result = resultList.findFirst().orElse(null);
+        return result;
     }
 }

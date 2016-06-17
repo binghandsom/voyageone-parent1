@@ -99,8 +99,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
 
     public BasicDBObject toUpdateBasicDBObject(String preStr) {
         BasicDBObject result = new BasicDBObject();
-        for (Object o : this.entrySet()) {
-            Map.Entry entry = (Map.Entry) o;
+        for (Map.Entry entry : this.entrySet()) {
             result.append(preStr + entry.getKey(), entry.getValue());
         }
         return result;
