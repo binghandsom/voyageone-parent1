@@ -202,8 +202,8 @@
                                 <td class="text-right ng-scope">{{vm.skuTemp[entity.skuCode].priceRetail}}</td>
                                 <td class="text-center ng-scope"></td>
                                 <td class="text-center ng-scope" ng-if="cartInfo.value == 27">
-                                    <select ng-model="entity.property = entity.property==null?'OTHER':entity.property">
-                                        <option value="OTHER">其他</option>
+                                    <select ng-model="entity.property">
+                                        <option value="OTHER" ng-selected="{{entity.property == null}}">其他</option>
                                         <option value="FORMAL">正装</option>
                                         <option value="MS">中小样</option>
                                     </select>
@@ -222,20 +222,5 @@
 
             </div>
         </div>
-<!--        <div class="panel vo_panel tab_panel">
-            <div class="row wrapper">
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            </div>
-        </div>-->
     </form>
 </div>

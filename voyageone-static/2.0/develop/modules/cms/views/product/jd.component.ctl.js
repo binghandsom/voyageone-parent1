@@ -148,7 +148,7 @@ define([
                      scope.vm.platform.pAttributeStatus = 1;
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
                      scope.vm.platform.cartId = scope.cartInfo.value;
-
+                     _.map(scope.vm.platform.skus, function(item){ return item.property = item.property == null?"OTHER":item.property;});
                     //判断价格
                     productDetailService.updateProductPlatformChk({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
