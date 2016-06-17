@@ -958,7 +958,7 @@
 
                             if (controller.canAdd) {
                                 var toolbar = angular.element('<schema-input-toolbar>');
-                                toolbar.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                                toolbar.append('<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>');
                                 container.append(toolbar);
                             }
 
@@ -1246,7 +1246,7 @@
                             schemaFieldController.remove(complexValue);
                         };
                         var toolbox = angular.element('<schema-complex-toolbox>');
-                        toolbox.append('<button class="btn btn-schema btn-default" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1">删除</button>');
+                        toolbox.append('<button class="btn btn-schema btn-danger" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>');
                         $element.append(toolbox);
                     }
 
