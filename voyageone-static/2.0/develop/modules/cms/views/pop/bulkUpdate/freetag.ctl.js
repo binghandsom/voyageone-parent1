@@ -86,7 +86,9 @@ define([
                 for (var i = 2; i >= 0; i--) {
                     var selectedVal = self.selected[i];
                     if (selectedVal !== undefined) {
+                        self.id = selectedVal.id;
                         self.tagPath = selectedVal.tagPathName;
+                        self.list = {"id":self.id ,"tagPath":self.tagPath};
                         break;
                     }
                 }
@@ -100,8 +102,7 @@ define([
                 for (var j = 1; j < (self.count + 1); j++) {
                     self.selectdTagList[j] = self.selectdTagList[j - 1];
                 }
-                self.selectdTagList.push(self.tagPath);
-
+                self.selectdTagList.push(self.list);
                 //校验选择的是否有重复值,如果有就删除
                 self.selectdTagListValid = self.selectdTagList.sort();
                 for (var i = 0; i < self.selectdTagList.length; i++) {

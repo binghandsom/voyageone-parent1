@@ -114,7 +114,7 @@
 					<td class="text-center">{{promotion.id}}</td>
 					<td class="text-left yellowLink">
 						<a ng-if="promotion.cartId != '27'" href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>
-						<a ng-if="promotion.cartId == '27'" href="#/jm/promotion_detail_list/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>
+						<a ng-if="promotion.cartId == '27'" href="#/jm/promotion_detail_list/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
 						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
 					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'? promotion.cartName:'US Joi'}}</td>
