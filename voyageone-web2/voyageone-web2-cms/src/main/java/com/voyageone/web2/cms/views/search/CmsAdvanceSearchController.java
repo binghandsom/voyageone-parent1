@@ -151,7 +151,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("groupList", currGrpList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        List[] infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), true);
+        List[] infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), params.getCartId(), true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -189,7 +189,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
         // 查询该商品是否有价格变动
-        List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
+        List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), params.getCartId(), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
         resultBean.put("freeTagsList", infoArr[2]);

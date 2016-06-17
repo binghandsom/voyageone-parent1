@@ -75,10 +75,18 @@ public final class MongoUtils {
                     String[] options = (String[]) obj;
 
                     for (int i = 0; i < options.length; i++) {
-                        if (i < options.length - 1) {
-                            result.append("\"" + options[i] + "\",");
+                        if (options[i] == null) {
+                            if (i < options.length - 1) {
+                                result.append("null,");
+                            } else {
+                                result.append("null");
+                            }
                         } else {
-                            result.append("\"" + options[i] + "\"");
+                            if (i < options.length - 1) {
+                                result.append("\"" + options[i] + "\",");
+                            } else {
+                                result.append("\"" + options[i] + "\"");
+                            }
                         }
                     }
                     result.append("]}");

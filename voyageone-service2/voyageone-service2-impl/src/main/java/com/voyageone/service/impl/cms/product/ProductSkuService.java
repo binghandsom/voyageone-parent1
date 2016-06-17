@@ -870,7 +870,7 @@ public class ProductSkuService extends BaseService {
     /**
      * 取得Sku区间
      */
-    private Map<String, Double> getPriceScope(List<CmsBtProductModel_Sku> commonSkus) {
+    private Map<String, Double> getPriceScope(List<CmsBtProductModel_CommonSku> commonSkus) {
 
         Double priceMsrpSt = null;
         Double priceMsrpEd = null;
@@ -878,7 +878,7 @@ public class ProductSkuService extends BaseService {
         Double priceRetailEd = null;
 
         Map<String, Double> result = new HashMap<>();
-        for (CmsBtProductModel_Sku commonSku : commonSkus) {
+        for (CmsBtProductModel_CommonSku commonSku : commonSkus) {
             if (priceMsrpSt == null) {
                 priceMsrpSt = commonSku.getPriceMsrp();
             } else if (priceMsrpSt > commonSku.getPriceMsrp()) {

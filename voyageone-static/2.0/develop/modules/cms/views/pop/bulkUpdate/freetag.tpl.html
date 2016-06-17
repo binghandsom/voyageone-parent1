@@ -72,18 +72,15 @@
                     </div>
                 </div>
                 <div class="col-sm-12">
-                    <div class="category_ts category_highlight" ng-show="ctrl.selectdTagListValid">
-                        <p class="text-center">Sorry! 您已重复选择了：&nbsp;&nbsp;<span> {{ ctrl.doubleValue }} </span></p>
-                    </div>
                     <div class="category_ts">
                         <p>{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}<span> {{ ctrl.tagPath }} </span>
-                            <button class="btn btn-default pull-right" ng-click="ctrl.confirm()" ng-model="ctrl.count" style="margin-top: -5px;">清除重复值</button>
-                            <button class="btn btn-default pull-right" ng-click="ctrl.delete()" ng-model="ctrl.count" style="margin-top: -5px;">确认添加此类目作为搜索条件</button>
+                            <button class="btn btn-default btn-pop pull-right m-l-xs" ng-click="ctrl.clear()" ng-model="ctrl.count" style="margin-top: -5px;"><i class="fa fa-remove"></i>&nbsp;Clear</button>
+                            <button class="btn btn-success btn-pop pull-right" ng-click="ctrl.confirm()" ng-model="ctrl.count" style="margin-top: -5px;">点击添加此类目作为搜索条件</button>
                         </p>
                     </div>
-                    <div class="category_ts">
-                        <p>您已选择了：<span> {{ ctrl.selectdTagList }} </span>
-                        </p>
+                    <div class="scroll-y custom_ts" style="max-height: 80px;">
+                        <span class="m-l-sm" style="color: #0a0a09">您已经选择了:</span>
+                        <label class="label label-info m-r-xs m-t-xs" ng-repeat=" a in ctrl.selectdTagList" style="display: inline-block;">{{a}}</label>
                     </div>
                 </div>
             </div>

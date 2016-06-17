@@ -122,9 +122,17 @@ define([
                 cidValue: [],
                 _selall: false
             };
+            $scope.vm._cartType_ = '';
+            getCat(null);
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{inputVal: "", inputOpts: ""}];
+            $scope.vm.platform.catPath=null;
+            $scope.vm.masterCat.catPath=null;
+            $scope.vm.feedCat.catPath=null;
+            $scope.vm.channelInner.catPath=null;
+            $scope.vm.promotion.tagPathList=null;
+            $scope.vm.free.tagPathList=null;
         }
 
         /**
@@ -159,7 +167,7 @@ define([
                 }
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1100) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
             })
         }
 
@@ -438,22 +446,29 @@ define([
             // 清空平台相关查询条件
             $scope.vm.searchInfo.productStatus = null;
             $scope.vm.searchInfo.platformStatus = null;
-            $scope.vm.searchInfo.errorListStatus = null;
+            $scope.vm.searchInfo.hasErrorFlg = null;
+            $scope.vm.searchInfo.promotionTagType = null;
+            $scope.vm.searchInfo.promotionTags = null;
 
-            $scope.vm.searchInfo.promotionList = null;
-
-            $scope.vm.searchInfo.tags = [];
-            $scope.vm.searchInfo.priceChgFlg = '0';
-            $scope.vm.searchInfo.tagTypeSelectValue = '0';
-            $scope.vm.searchInfo.sortSales = '0';
+            $scope.vm.searchInfo.salesType = null;
             $scope.vm.searchInfo.salesSortType = null;
-            $scope.vm.searchInfo.cidValue = [];
+            $scope.vm.searchInfo.salesStart = null;
+            $scope.vm.searchInfo.salesEnd = null;
 
-            $scope.vm.searchInfo.priceEnd = '';
-            $scope.vm.searchInfo.priceStart = '';
-            $scope.vm.searchInfo.priceType = '';
-            $scope.vm.searchInfo.createTimeStart = '';
-            $scope.vm.searchInfo.createTimeTo = '';
+            $scope.vm.searchInfo.pCatId = null;
+            $scope.vm.searchInfo.pCatPath = null;
+            $scope.vm.searchInfo.pCatStatus = null;
+
+            $scope.vm.searchInfo.cidValue = [];
+            $scope.vm.searchInfo.shopCatStatus = null;
+
+            $scope.vm.searchInfo.publishTimeStart = null;
+            $scope.vm.searchInfo.publishTimeTo = null;
+            $scope.vm.searchInfo.priceEnd = null;
+            $scope.vm.searchInfo.priceStart = null;
+            $scope.vm.searchInfo.priceType = null;
+            $scope.vm.searchInfo.priceChgFlg = null;
+            $scope.vm.searchInfo.propertyStatus = null;
 
             $scope.vm.masterData.catList = [];
 
@@ -711,7 +726,7 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.promotion.tagPathList = res.selectdTagList : $scope.vm.free.tagPathList = res.selectdTagList;
+                isPromoTag ? $scope.vm.searchInfo.promotionTags = res.selectdTagList : $scope.vm.searchInfo.freeTags = res.selectdTagList;
             });
         }
     }

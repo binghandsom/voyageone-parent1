@@ -42,8 +42,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.free.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                    <button class="btn btn-default" ng-repeat=" a in vm.free.tagPathList">{{a}}</button>&nbsp;&nbsp;
+                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.searchInfo.freeTags" style=" min-height: 40px;  max-height: 160px;">
+                                                    <label class="label label-default m-r-xs m-t-xs" ng-repeat=" a in vm.searchInfo.freeTags">{{a}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -179,8 +179,8 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_CART_NAME">{{'TXT_CART_NAME'  | translate}}</label>
                                             <div class="col-sm-7">
-                                                <select class="form-control" ng-model="_cartType_"
-                                                        ng-change="getCat(_cartType_)"
+                                                <select class="form-control" ng-model="vm._cartType_"
+                                                        ng-change="getCat(vm._cartType_)"
                                                         ng-options="cartType as cartType.name for cartType in vm.masterData.cartList">
                                                     <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                                                 </select>
@@ -215,7 +215,7 @@
                                                    translate="TXT_LIST_ERROR"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" value="1" ng-model="vm.searchInfo.hasErrorFlg"><span class="fa fa-check"></span> {{'Error'|translate}}
+                                                    <input type="checkbox" ng-model="vm.searchInfo.hasErrorFlg"><span class="fa fa-check"></span> {{'TXT_ERROR'|translate}}
                                                 </label>
                                             </div>
                                         </div>
@@ -290,13 +290,15 @@
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="btn-group">
-                                                    <div class="" style="margin-left: -17px;">
+                                                    <div>
                                                         <label class="checkbox-inline c-radio">
                                                             <input type="radio" name="promotionCategory" value="1" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Include
+                                                        </label>
+                                                        <label class="checkbox-inline c-radio">
                                                             <input type="radio" name="promotionCategory" value="2" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Exclude
                                                         </label>
                                                     </div>
-                                                    <div class="">
+                                                    <div>
                                                         <!--2 是活动标签-->
                                                         <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag('2'), true)">
                                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
@@ -304,8 +306,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.promotion.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                <button class="btn btn-default" ng-repeat=" a in vm.promotion.tagPathList">{{a}}</button>&nbsp;&nbsp;&nbsp;
+                                            <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.searchInfo.promotionTags" style=" min-height: 40px;  max-height: 160px;">
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat=" a in vm.searchInfo.promotionTags">{{a}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -319,11 +321,11 @@
                                                     <input type="text" class="form-control" uib-datepicker-popup
                                                            ng-model="vm.searchInfo.publishTimeStart"
                                                            date-model-format="yyyy-MM-dd"
-                                                           max-date="vm.searchInfo.publishTimeTo" is-open="datePicker1"
+                                                           max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3"
                                                            close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
-                                                                ng-click="datePicker1 = !datePicker1"><i
+                                                                ng-click="datePicker3 = !datePicker3"><i
                                                                 class="glyphicon glyphicon-calendar"></i></button>
 													  </span>
                                                 </div>
@@ -333,10 +335,10 @@
                                                            ng-model="vm.searchInfo.publishTimeTo"
                                                            date-model-format="yyyy-MM-dd"
                                                            min-date="vm.searchInfo.publishTimeStart"
-                                                           is-open="datePicker2" close-text="Close"/>
+                                                           is-open="datePicker4" close-text="Close"/>
 													  <span class="input-group-btn">
 														<button type="button" class="btn btn-default"
-                                                                ng-click="datePicker2 = !datePicker2"><i
+                                                                ng-click="datePicker4 = !datePicker4"><i
                                                                 class="glyphicon glyphicon-calendar"></i></button>
 													  </span>
                                                 </div>
@@ -656,10 +658,12 @@
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_INVENTORY"
                                         style="display:inline-block;width:85px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_SALE_PRICE"
+                                    <td class="text-center" translate="TXT_MSRP_WITH_COLON"
+                                        style="display:inline-block;width:150px;padding-left:8px"></td>
+                                    <td class="text-center" translate="TXT_RETAIL_PRICE_WITH_COLON"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center"
-                                        style="display:inline-block;width:150px;padding-left:8px">Sku Sale Price</td>
+                                        style="display:inline-block;width:170px;padding-left:8px">Sku Sale Price</td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
                                         style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
@@ -743,30 +747,26 @@
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            {{productInfo.priceDetail[0]}}<br>{{productInfo.priceDetail[1]}}
-                                            <label ng-if="productInfo._prodChgInfo == 1"
-                                                   style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                            {{productInfo.priceDetail[0]}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale"
+                                            {{productInfo.priceDetail[1]}}<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                        </td>
+                                        <td class="text-center" style="display:inline-block;width:170px;">
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
                                                     popover-html="showInfo({{productInfo.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
                                                     popover-placement="left" class="btn btn-default btn-xs">
                                                 {{productInfo.priceSale[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr"
-                                            style="display:inline-block;width:120px;">
-                                    <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value"
-                                                                                        direct="left"
-                                                                                        size="50"></popover-text></span>
+                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
+                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
                                         </td>
-                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr"
-                                            style="display:inline-block;width:120px;">{{prop2.value}}
+                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr"
-                                            style="display:inline-block;width:115px;">{{prop3.value}}
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl"

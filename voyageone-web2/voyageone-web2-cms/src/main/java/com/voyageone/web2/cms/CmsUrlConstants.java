@@ -435,6 +435,13 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String CLEAR = "clear";
         }
+
+        interface MQ {
+
+            String ROOT = "/cms/system/mq";
+            String INIT = "init";
+            String SEND = "send";
+        }
     }
 
     // popup页面
