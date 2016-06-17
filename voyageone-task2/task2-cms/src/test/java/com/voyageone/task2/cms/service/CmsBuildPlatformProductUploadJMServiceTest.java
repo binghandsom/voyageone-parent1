@@ -48,6 +48,11 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Test
     public void TestDate() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        String value = map.get("1");
+
+
+
         long currentTime = System.currentTimeMillis();
         System.out.println(currentTime);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

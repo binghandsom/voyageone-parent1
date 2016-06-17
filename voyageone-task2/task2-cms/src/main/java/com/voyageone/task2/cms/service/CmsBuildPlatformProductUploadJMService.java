@@ -669,10 +669,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             String sizeStr =jmSku.getStringAttribute("size");
 
             if(!StringUtils.isNullOrBlank2(sizeStr)) {
-                Map sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
-                if(sizeMap != null)
-                {
-                    String changedSize = (String)sizeMap.get(sizeStr);
+                Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
+                String changedSize = sizeMap.get(sizeStr);
+                if(changedSize != null) {
                     spu.setSize(changedSize);
                 }
                 else
@@ -684,8 +683,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             {
                 spu.setSize("NO SIZE");
             }
-
-
 
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
