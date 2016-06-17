@@ -138,10 +138,13 @@
 		  * productMediumName
 		  * productShortName
 		  * originCn
+		  * property
+		  * attribute
 		  * beforeDate
 		  * suitPeople
 		  * specialExplain
 		  * searchMetaTextCustom
+		  * userPurchaseLimit
 	  * skus[]
 		  * skuCode
           * priceMsrp   ->各平台的MSRP售价
@@ -150,8 +153,6 @@
 		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 		  * jmSpuNo
 		  * jmSkuNo
-		  * property
-		  * attribute
 		  * size
 	  * sellerCats[]
 		  * cId
