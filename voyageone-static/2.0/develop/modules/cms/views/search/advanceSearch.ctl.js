@@ -25,7 +25,9 @@ define([
                 promotionList: [],
                 catgoryList: [],
                 cidValue: [],
-                _selall: false
+                _selall: false,
+                promotion: {promotionTags: null},
+                free: {freeTags: null}
             },
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -42,9 +44,7 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null},
-            promotion: {tagPathList: null},
-            free: {tagPathList: null}
+            channelInner: {catPath: null}
         };
 
         $scope.initialize = initialize;
@@ -120,7 +120,9 @@ define([
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
                 cidValue: [],
-                _selall: false
+                _selall: false,
+                promotion: {promotionTags: null},
+                free: {freeTags: null}
             };
             $scope.vm._cartType_ = '';
             getCat(null);
@@ -131,8 +133,6 @@ define([
             $scope.vm.masterCat.catPath=null;
             $scope.vm.feedCat.catPath=null;
             $scope.vm.channelInner.catPath=null;
-            $scope.vm.promotion.tagPathList=null;
-            $scope.vm.free.tagPathList=null;
         }
 
         /**
