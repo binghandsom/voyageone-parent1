@@ -80,11 +80,15 @@
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
-        find = _.find;
-        any = _.some;
-        all = _.every;
-        each = _.each;
-        findIndex = _.findIndex;
+        if (!window._)
+            console.warn('Please import underscore !!!');
+        else {
+            find = _.find;
+            any = _.some;
+            all = _.every;
+            each = _.each;
+            findIndex = _.findIndex;
+        }
 
     })();
 
@@ -396,7 +400,7 @@
                 container.append(contentContainer);
 
                 // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if ((typeof content !== 'string') && 'url' in content) {
+                if ((typeof content !== 'string') && 'url' in content && !!content.url) {
                     var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
                     aTag.text(content.value);
                     contentContainer.append(aTag);
@@ -954,7 +958,7 @@
 
                             if (controller.canAdd) {
                                 var toolbar = angular.element('<schema-input-toolbar>');
-                                toolbar.append('<button class="btn btn-schema btn-default" ng-click="$newComplexValue()">新增</button>');
+                                toolbar.append('<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>');
                                 container.append(toolbar);
                             }
 
@@ -1242,7 +1246,7 @@
                             schemaFieldController.remove(complexValue);
                         };
                         var toolbox = angular.element('<schema-complex-toolbox>');
-                        toolbox.append('<button class="btn btn-schema btn-default" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1">删除</button>');
+                        toolbox.append('<button class="btn btn-schema btn-danger" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>');
                         $element.append(toolbox);
                     }
 
