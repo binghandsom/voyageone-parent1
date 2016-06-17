@@ -20,6 +20,14 @@ schema-field {
     align-items: flex-start;
 }
 
+schema > schema-field {
+    margin-bottom: 10px;
+}
+
+schema > schema-field:last-child {
+    margin-bottom: 0;
+}
+
 schema-field-name,
 schema-complex-name {
     width: 120px;
@@ -33,9 +41,35 @@ schema-input-container {
     flex-grow: 1;
 }
 
-schema-complex-container[multi] {
-    display: flex;
-    align-items: flex-start;
+schema-complex-container {
+    background-color: #f8f8f8;
+    border: 1px solid #ededed;
+    padding: 5px;
+    display: block;
+}
+
+schema-complex-container schema-field {
+    margin-bottom: 5px;
+}
+
+schema-complex-container schema-field:last-child {
+    margin-bottom: 0;
+}
+
+schema-complex-container schema-field-name {
+    color: #8a8a8a;
+}
+
+schema-input-toolbar {
+    display: block;
+    background-color: #ededed;
+    position: relative;
+}
+
+schema-input-toolbar .btn-schema {
+    position: absolute;
+    top: 2px;
+    right: 6px;
 }
 
 schema-complex-toolbox {
@@ -43,14 +77,16 @@ schema-complex-toolbox {
     flex-grow: 0;
 }
 
+schema-complex-container[multi] {
+    display: flex;
+    align-items: flex-start;
+}
+
 schema-complex-container[multi] schema-field {
     display: block;
     flex-grow: 1;
     width: 100%;
-}
-
-schema-complex-container schema-field-name {
-    color: #8a8a8a;
+    margin-bottom: 0;
 }
 
 schema-complex-container[multi] schema-field-name {

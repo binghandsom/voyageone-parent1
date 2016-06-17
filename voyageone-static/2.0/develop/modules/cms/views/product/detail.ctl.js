@@ -43,7 +43,7 @@ define([
                 });
             },
             cartIdFilter:function(item){
-                return item.value > 23;
+                return item.value > 23 && item.value < 900;
             }
 
         };

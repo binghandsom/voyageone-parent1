@@ -6,19 +6,19 @@
 
 
 
-            <!---------------------------------------------------天猫产品详情页面------------------------------------------------->
+            <!---------------------------------------------------天猫 产品详情页面------------------------------------------------->
             <uib-tab>
                 <tab-heading>天猫产品详情</tab-heading>
                 <tm-schema product-id="ctrl.routeParams.productId"></tm-schema>
             </uib-tab>
 
-            <!---------------------------------------------------feed产品详情页面------------------------------------------------->
+            <!---------------------------------------------------feed 产品详情页面------------------------------------------------->
             <uib-tab>
                 <tab-heading>Feed详情</tab-heading>
                 <feed-schema product-id="ctrl.routeParams.productId"></feed-schema>
             </uib-tab>
 
-            <!---------------------------------------------------京东产品详情页面------------------------------------------------->
+            <!---------------------------------------------------京东&聚美 产品详情页面------------------------------------------------->
             <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" active="active">
                 <tab-heading>{{platformType.name}}详情</tab-heading>
                 <jd-schema product-id="ctrl.routeParams.productId" cart-info="platformType"></jd-schema>

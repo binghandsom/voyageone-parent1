@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,11 +363,12 @@ public class JdWareService extends JdBase {
         // 否把当前图片设置为主图。若当前sku无主图，则此项必填true(非必须)
         request.setMainPic(isMainPic);
         // 图片数据（注意：签名时不需要添加此参数，image参数通过post 输出流方式发送）图片类型只支持：png和jpg格式，图片须800x800；不能大于1M
-        InputStream is = getImgInputStream(picUrl, MAX_RETRY_TIMES);
-        Assert.notNull(is, "inputStream为null，图片流获取失败！picUrl=" + picUrl);
+        InputStream is = null;
         String picFileName = strWareId + "-" + attrValueId + "-" + picName;
 
         try {
+            is = getImgInputStream(picUrl, MAX_RETRY_TIMES);
+            Assert.notNull(is, "inputStream为null，图片流获取失败！picUrl=" + picUrl);
             // 图片设置
             byte[] picBytes = IOUtils.toByteArray(is);
             com.jd.open.api.sdk.FileItem fileItem = new com.jd.open.api.sdk.FileItem(picFileName, picBytes);
@@ -410,6 +412,13 @@ public class JdWareService extends JdBase {
                     + ",pic_url:" + picUrl + ",errorMsg:" + ex.getMessage());
 
             throw new BusinessException(shop.getShop_name() + "京东根据商品Id，销售属性值Id增加图片失败 " + ex.getMessage());
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
 
         logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id()
