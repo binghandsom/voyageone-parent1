@@ -684,8 +684,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 spu.setSize("NO SIZE");
             }
 
-
-
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
 
