@@ -749,7 +749,7 @@ public class ProductService extends BaseService {
             resultInfo = new ProductForWmsBean();
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-            resultInfo.setChannelId(product.getChannelId());
+            resultInfo.setChannelId(product.getOrgChannelId());
             resultInfo.setCode(product.getFields().getCode());
             resultInfo.setName(product.getFields().getProductNameEn());
             resultInfo.setProductId(product.getProdId().toString());
@@ -883,7 +883,7 @@ public class ProductService extends BaseService {
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
                 Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channelId);
+                param.put("channelId", product.getOrgChannelId());
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
