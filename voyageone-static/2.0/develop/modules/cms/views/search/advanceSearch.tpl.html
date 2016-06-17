@@ -43,7 +43,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
                                                 <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.free.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                    <label class="label label-default m-r-xs m-t-xs" ng-repeat=" a in vm.free.tagPathList">{{a}}</label>
+                                                    <label class="label label-default m-r-xxs" ng-repeat=" a in vm.free.tagPathList" style="display: inline-block;">{{a}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -212,7 +212,7 @@
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"
-                                                   translate="TXT_LIST_ERROR"></label>
+                                                   translate="TXT_ERROR"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
                                                     <input type="checkbox" ng-model="vm.searchInfo.hasErrorFlg"><span class="fa fa-check"></span> {{'Error'|translate}}
@@ -307,7 +307,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.promotion.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat=" a in vm.promotion.tagPathList">{{a}}</label>
+                                                <label class="label label-default m-r-xxs" ng-repeat=" a in vm.promotion.tagPathList" style="display: inline-block;">{{a}}</label>
                                             </div>
                                         </div>
                                     </div>
