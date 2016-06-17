@@ -42,8 +42,8 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.free.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                    <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm.free.tagPathList" style="display: inline-block;">{{freeTag.tagPath}}</label>
+                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.searchInfo.freeTags" style=" min-height: 40px;  max-height: 160px;">
+                                                    <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm.searchInfo.freeTags" style="display: inline-block;">{{freeTag.tagPath}}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -306,8 +306,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.promotion.tagPathList" style=" min-height: 40px;  max-height: 160px;">
-                                                <label class="label label-default m-r-xxs" ng-repeat="promotionTag in vm.promotion.tagPathList" style="display: inline-block;">{{promotionTag.tagPath}}</label>
+                                            <div class="col-sm-8 m-t-sm bg-white table-bordered table-responsive" ng-model="vm.searchInfo.promotionTags" style=" min-height: 40px;  max-height: 160px;">
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm.searchInfo.promotionTags">{{promotionTag.tagPath}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -658,10 +658,12 @@
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_INVENTORY"
                                         style="display:inline-block;width:85px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_SALE_PRICE"
+                                    <td class="text-center" translate="TXT_MSRP_WITH_COLON"
+                                        style="display:inline-block;width:150px;padding-left:8px"></td>
+                                    <td class="text-center" translate="TXT_RETAIL_PRICE_WITH_COLON"
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center"
-                                        style="display:inline-block;width:150px;padding-left:8px">Sku Sale Price</td>
+                                        style="display:inline-block;width:170px;padding-left:8px">Sku Sale Price</td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
                                         style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
@@ -745,30 +747,26 @@
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            {{productInfo.priceDetail[0]}}<br>{{productInfo.priceDetail[1]}}
-                                            <label ng-if="productInfo._prodChgInfo == 1"
-                                                   style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                            {{productInfo.priceDetail[0]}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale"
+                                            {{productInfo.priceDetail[1]}}<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                        </td>
+                                        <td class="text-center" style="display:inline-block;width:170px;">
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
                                                     popover-html="showInfo({{productInfo.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
                                                     popover-placement="left" class="btn btn-default btn-xs">
                                                 {{productInfo.priceSale[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr"
-                                            style="display:inline-block;width:120px;">
-                                    <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value"
-                                                                                        direct="left"
-                                                                                        size="50"></popover-text></span>
+                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
+                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
                                         </td>
-                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr"
-                                            style="display:inline-block;width:120px;">{{prop2.value}}
+                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in productInfo.custArr" style="display:inline-block;width:120px;">{{prop2.value}}
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr"
-                                            style="display:inline-block;width:115px;">{{prop3.value}}
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl"

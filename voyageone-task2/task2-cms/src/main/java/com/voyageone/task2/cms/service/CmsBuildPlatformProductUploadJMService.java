@@ -198,7 +198,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 $info("保存聚美SKU成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
                             }
 
-                            //保存product到MongoDB
+                            //保存product到MongoDB,现在还没有保存jm_sku_no和jm_spu_no到mongodb
                             saveProductNumIId(channelId, product, jmProductId, jmHashId);
                             //保存group到MongoDB
                             saveGroupNumIId(channelId, productCode, jmHashId);
@@ -207,6 +207,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //如果OriginHashId存在，则修改商品属性
                         CmsBtProductModel_Field fields = product.getFields();
                         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
+                        String brandName = fields.getBrand();
+                        String productType = fields.getProductType();
+                        String sizeType = fields.getSizeType();
 
                         //查询jm_product
                         CmsBtJmProductModel jmProductModel = getCmsBtJmProductModel(channelId, productCode);
@@ -238,11 +241,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                                     htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
                                     htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("priceSale"));
-//                            htSpuUpdateRequest.setAttribute(skuMap.getStringAttribute("attribute"));
-//                            htSpuUpdateRequest.setPropery(skuMap.getStringAttribute("property"));
-//                            htSpuUpdateRequest.setProperty("OTHER"); //TODO
-                                    htSpuUpdateRequest.setSize(skuMap.getStringAttribute("size"));
-//                            htSpuUpdateRequest.setArea_code(19);//TODO
+                                    htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+                                    htSpuUpdateRequest.setProperty(jmFields.getStringAttribute("property"));
+                                    String sizeStr = skuMap.getStringAttribute("size");
+                                    htSpuUpdateRequest.setSize( getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
+//                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                                     HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
                                     if (htSpuUpdateResponse != null && htSpuUpdateResponse.is_Success()) {
@@ -258,12 +261,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 else {
                                     HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
                                     htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode"));
-                                    htSpuAddRequest.setProperty("OTHER"); //TODO
-                                    htSpuAddRequest.setSize(skuMap.getStringAttribute("size"));
+                                    String sizeStr = skuMap.getStringAttribute("size");
+                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("priceSale"));
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
-//                            htSpuAddRequest.setAttribute(skuMap.getStringAttribute("attribute"));
+
+                                    htSpuAddRequest.setProperty(jmFields.getStringAttribute("property"));
+                                    htSpuAddRequest.setAttribute(jmFields.getStringAttribute("attribute"));
+
 
                                     HtSpuAddResponse htSpuAddResponse = jumeiHtSpuService.add(shop, htSpuAddRequest);
                                     if (htSpuAddResponse != null && htSpuAddResponse.is_Success()) {
@@ -400,9 +406,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             sb.append(String.format(IMG_HTML, logiPic));
         }
         //物流图
-
         dealInfo.setDescription_images(sb.toString());
-
 
         sb.setLength(0);
         List<String> sizePicUrls = sxProductService.getImageUrls(channelId, CART_ID, 2, 1, brandName, productType, sizeType, false);
@@ -411,7 +415,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
 
         dealInfo.setDescription_usage(sb.toString());
-
         htDealUpdateRequest.setUpdate_data(dealInfo);
 
         List<String> jmSkuNoList = skuList.stream().map(CmsBtJmSkuModel::getJmSkuNo).collect(Collectors.toList());
@@ -595,20 +598,19 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         JmProductBean_DealInfo deal = new JmProductBean_DealInfo();
         deal.setPartner_deal_id(productCode + "-" + channelId + "-" + CART_ID);
 
-        deal.setUser_purchase_limit(0);
+        deal.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         String shippingId = Codes.getCode("JUMEI", channelId);
         deal.setShipping_system_id(Integer.valueOf(shippingId));
 
 
-        //品牌图
+        //品牌图,本单详情
         List<String> brandPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 3, 1, brandName, productType, sizeType, false);
         StringBuffer sb = new StringBuffer();
 
         for (String brandPic : brandPicUrls) {
             sb.append(String.format(IMG_HTML, brandPic));
         }
-
         deal.setDescription_properties(sb.toString());
 
 
@@ -617,8 +619,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (String logiPic : logiPicUrls) {
             sb.append(String.format(IMG_HTML, logiPic));
         }
-        //物流图
-
+        //物流图,商品实拍
         deal.setDescription_images(sb.toString());
 
 
@@ -627,7 +628,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (String sizePic : sizePicUrls) {
             sb.append(String.format(IMG_HTML, sizePic));
         }
-
+        //使用方法
         deal.setDescription_usage(sb.toString());
 
 
@@ -661,28 +662,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
             spu.setUpc_code(jmSku.getStringAttribute("barcode"));
-            spu.setPropery("OTHER");
-//            spu.setPropery(jmSku.getStringAttribute("property"));
-//            spu.setAttribute(jmSku.getStringAttribute("attribute"));//TODO
-//            spu.setSize(jmSku.getStringAttribute("size")); //TODO
-
+            spu.setProperty(jmFields.getStringAttribute("property")); //Code级
+            spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             String sizeStr =jmSku.getStringAttribute("size");
 
-            if(!StringUtils.isNullOrBlank2(sizeStr)) {
-                Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
-                String changedSize = sizeMap.get(sizeStr);
-                if(changedSize != null) {
-                    spu.setSize(changedSize);
-                }
-                else
-                {
-                    spu.setSize(sizeStr);
-                }
-            }
-            else
-            {
-                spu.setSize("NO SIZE");
-            }
+            spu.setSize(getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
 
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
@@ -691,7 +675,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             jmSpuSku.setPartner_sku_no(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setSale_on_this_deal("1");
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
-            jmSpuSku.setStocks("0");
+            jmSpuSku.setStocks("0"); //TODO
             jmSpuSku.setDeal_price(jmSku.getStringAttribute("priceMsrp"));
             jmSpuSku.setMarket_price(jmSku.getStringAttribute("priceSale"));
 
@@ -717,7 +701,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);
         cmsBtJmProductModel.setProductDesEn(fields.getShortDesEn());
-        cmsBtJmProductModel.setAttribute("");//TODO
+        cmsBtJmProductModel.setAttribute(jmFields.getStringAttribute("attribute"));
         cmsBtJmProductModel.setForeignLanguageName(bean.getForeign_language_name());
         cmsBtJmProductModel.setAddressOfProduce(deal.getAddress_of_produce());
         cmsBtJmProductModel.setAvailablePeriod(deal.getBefore_date());
@@ -754,6 +738,35 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setCreater(getTaskName());
 
         return bean;
+    }
+
+
+    /**
+     * 取size
+     *
+     * @param sizeStr
+     * @param channelId
+     * @param brandName
+     * @param productType
+     * @param sizeType
+     * @return
+     */
+    private String getSizeFromSizeMap(String sizeStr, String channelId, String brandName, String productType, String sizeType) {
+        if(!StringUtils.isNullOrBlank2(sizeStr)) {
+            Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
+            String changedSize = sizeMap.get(sizeStr);
+            if(changedSize != null) {
+                return changedSize;
+            }
+            else
+            {
+                return  sizeStr;
+            }
+        }
+        else
+        {
+            return "NO SIZE";
+        }
     }
 
 
