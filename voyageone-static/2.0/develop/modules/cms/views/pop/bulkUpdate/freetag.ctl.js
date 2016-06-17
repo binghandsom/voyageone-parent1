@@ -86,9 +86,8 @@ define([
                 for (var i = 2; i >= 0; i--) {
                     var selectedVal = self.selected[i];
                     if (selectedVal !== undefined) {
-                        self.id = selectedVal.id;
-                        self.tagPath = selectedVal.tagPathName;
-                        self.list = {"id":self.id ,"tagPath":self.tagPath};
+                        self.tagPathName = selectedVal.tagPathName;
+                        self.list = {"id":selectedVal.id, "tagPathName":selectedVal.tagPathName, "tagPath":selectedVal.tagPath};
                         break;
                     }
                 }
@@ -99,23 +98,22 @@ define([
              */
             confirm: function () {
                 var self = this;
-                for (var j = 1; j < (self.count + 1); j++) {
-                    self.selectdTagList[j] = self.selectdTagList[j - 1];
-                }
-                self.selectdTagList.push(self.list);
-                //校验选择的是否有重复值,如果有就删除
-                self.selectdTagListValid = self.selectdTagList.sort();
+               if(!self.selectdTagList||self.selectdTagList.length==0) self.selectdTagList.push(self.list);
+
+                // 校验选择的是否有重复值
+                var hasData = false;
                 for (var i = 0; i < self.selectdTagList.length; i++) {
-                    if (self.selectdTagListValid[i] == self.selectdTagListValid[i + 1]) {
-                        self.selectdTagListValid.splice(i + 1, 1);
-                        self.count = self.count - 1;
-                        return;
+                    if (self.selectdTagList[i].id == self.list.id) {
+                        hasData = true;
+                        break;
                     }
+                }
+                if (!hasData) {
+                    self.selectdTagList.push(self.list);
                 }
             },
             clear: function () {
                 var self = this;
-                console.log(self.selectdTagList);
                 self.count = self.count - 1;
                 self.selectdTagList.pop();
             },

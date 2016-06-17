@@ -1,6 +1,6 @@
 /**
  * @author tony-piao
- * 京东产品概述（schema）
+ * 京东 & 聚美 产品概述（schema）
  */
 define([
     'cms'
@@ -76,6 +76,11 @@ define([
                     }
                 }
 
+                /**
+                   @description 类目popup
+                 * @param productInfo
+                 * @param popupNewCategory popup实例
+                 */
                 function jdCategoryMapping(productInfo, popupNewCategory) {
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
@@ -97,12 +102,18 @@ define([
                             productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productId,catId:context.selected.catId}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
+                                scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
+                                scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.platform.status = scope.vm.status =  "Pending";
                             });
                         });
                 }
 
+                /**
+                 * @description 店铺内分类popup
+                 * @param openAddChannelCategoryEdit
+                 */
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selectedIds = {};
                     scope.vm.sellerCats.forEach(function(element){
@@ -112,17 +123,14 @@ define([
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
-                            angular.forEach(context.saveInfo.fullCatId,function(item,index){
-                                var cids = item.split("-");
-                                var cid = cids[cids.length-1];
-                                var cNames =  context.saveInfo.fullCNames[index].split(">");
-                                var cName = cNames[cNames.length-1];
-                                scope.vm.sellerCats.push({cid:cid,cids:cids,cName:cName,cNames:cNames});
-                            });
+                            scope.vm.sellerCats = context;
 
                     });
                 }
 
+                /**
+                 * 更新操作
+                 */
                 function saveProduct(){
 
                     var statusCount = 0;
@@ -147,7 +155,7 @@ define([
                      scope.vm.platform.pAttributeStatus = 1;
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
                      scope.vm.platform.cartId = scope.cartInfo.value;
-
+                     _.map(scope.vm.platform.skus, function(item){ return item.property = item.property == null?"OTHER":item.property;});
                     //判断价格
                     productDetailService.updateProductPlatformChk({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;

@@ -128,8 +128,14 @@ public final class ImgUtils {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		IOUtils.copy(inputStream, bos);
 		String result = encodeToString(bos.toByteArray());
-		bos.close();
-
+		try {
+			bos.close();
+		} catch (Exception ignored) {
+		}
+		try {
+			inputStream.close();
+		} catch (Exception ignored) {
+		}
 		return result;
 	}
 

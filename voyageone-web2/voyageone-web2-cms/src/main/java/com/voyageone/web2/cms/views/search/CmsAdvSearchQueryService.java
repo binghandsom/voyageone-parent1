@@ -165,20 +165,22 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 查询销量范围
-            if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                result.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{" );
-                // 获取销量下限
-                if (searchValue.getSalesStart() != null) {
-                    result.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
-                }
-                // 获取销量上限
-                if (searchValue.getSalesEnd() != null) {
+            if (StringUtils.isNotEmpty(searchValue.getSalesType())) {
+                if (searchValue.getSalesEnd() != null || searchValue.getSalesStart() != null) {
+                    result.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{");
+                    // 获取销量下限
                     if (searchValue.getSalesStart() != null) {
-                        result.append(",");
+                        result.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
                     }
-                    result.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
+                    // 获取销量上限
+                    if (searchValue.getSalesEnd() != null) {
+                        if (searchValue.getSalesStart() != null) {
+                            result.append(",");
+                        }
+                        result.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
+                    }
+                    result.append("},");
                 }
-                result.append("},");
             }
         }
 
@@ -243,7 +245,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             if (searchValue.getFreeTagType() == 1) {
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags()));
                 result.append(",");
-            } else if (searchValue.getPromotionTagType() == 2) {
+            } else if (searchValue.getFreeTagType() == 2) {
                 // 不在指定范围
                 result.append(MongoUtils.splicingValue("freeTags", searchValue.getFreeTags(), "$nin"));
                 result.append(",");
@@ -313,7 +315,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 1.  >  有输入框  eg {"a": {$gt: 123123}}
         // 2.  =  有输入框  eg {"a": 123123}}
         // 3.  <  有输入框  eg {"a": {$lt: 123123}}
-        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,''], $exists:true}}
+        // 4.  =null(未设值)  无输入框  eg {"a": {$in:[null,'']}}
         // 5.  !=null(已设值) 无输入框  eg {"a": {$nin:[null,''], $exists:true}}
         // 6.  包含   有输入框  eg {"a": {$regex: "oops"}}
         // 7.  不包含 有输入框  eg {"a":{$not: {$regex: "oops"}}}
@@ -354,7 +356,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
                 // 未设值
-                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
+                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
             } else {
                 result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
             }
@@ -383,7 +385,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result = "{'" + inputOptsKey + "':{$lt:" + inputVal + "}}";
                 break;
             case 4:
-                result = "{'" + inputOptsKey + "':{$in:[null,''],$exists:true}}";
+                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
                 break;
             case 5:
                 result = "{'" + inputOptsKey + "':{$nin:[null,''],$exists:true}}";

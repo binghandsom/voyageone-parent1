@@ -321,5 +321,9 @@
     <select id="selectJmHashIds" resultType="java.lang.String">
         select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and activity_end = 1 and jm_hash_id is not null
     </select>
+
+    <!--<select id="existsCode" resultType="Boolean">-->
+        <!--SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` limit 1-->
+    <!--</select>-->
     <!--jm2 end-->
 </mapper>
