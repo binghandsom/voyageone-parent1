@@ -294,13 +294,13 @@ public class JmBtDealImportService extends BaseService {
     private BulkUpdateModel getBulkUpdateProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
 
 //        1.pCatId未设置 处理
-//        2.pCatPath未设置     ? category_lv4_id fullPath  >
+//        2.pCatPath未设置     ? category_lv4_id fullPath  >  处理
 //        3.pCatStatus未设置   1 处理
 //        4.pIsMain被覆盖成空  ? 1 处理
-//        5.pAttributeSetTime未设置
-//        6.pPriceMsrpSt等被覆盖成空
+//        5.pAttributeSetTime未设置      处理
+//        6.pPriceMsrpSt等被覆盖成空        处理
 //        7.fields.productShortName 未空？  处理
-//        8.skus.priceMsrp等被覆盖成空
+//        8.skus.priceMsrp等被覆盖成空     处理
         CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
         platform.setpCatId(CartEnums.Cart.TM.getId());
@@ -314,7 +314,7 @@ public class JmBtDealImportService extends BaseService {
         }
         platform.setpCatStatus("1");
         platform.setpIsMain(1);
-        //platform.setpAttributeSetTime();
+        platform.setpAttributeSetTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         //platform.setpPriceMsrpSt();
         platform.setpBrandId(Integer.toString(modelJmBtProduct.getBrandId()));
         platform.setpBrandName(modelJmBtProduct.getBrandName());
