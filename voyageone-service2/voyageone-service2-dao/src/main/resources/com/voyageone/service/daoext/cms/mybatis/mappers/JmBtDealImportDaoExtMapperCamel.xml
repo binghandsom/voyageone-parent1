@@ -16,4 +16,7 @@
     <select id="selectListJmBtSkuModel"  resultType="com.voyageone.service.bean.cms.businessmodel.JMImportData.JmBtSkuModel">
         SELECT * from jumei.jm_bt_sku where channel_id=#{channelId} and product_code=#{productCode}
     </select>
+    <select id="selectCategoryFullPath" resultType="String">
+        SELECT fs_getCategoryFullPath(`category_id`) FROM `jm_mt_category` WHERE `category_id`=#{categoryId}
+    </select>
 </mapper>
