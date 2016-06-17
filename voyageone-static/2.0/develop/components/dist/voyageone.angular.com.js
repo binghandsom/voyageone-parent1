@@ -20,7 +20,6 @@ define(function (require) {
   require('components/angular/factories/notify.factory');
   require('components/angular/factories/pppAutoImpl.factory');
   require('components/angular/factories/selectRows.factory');
-  require('components/angular/factories/templates.factory');
   require('components/angular/factories/vpagination.factory');
   require('components/angular/providers/vresources');
   require('components/angular/services/ajax.service');
