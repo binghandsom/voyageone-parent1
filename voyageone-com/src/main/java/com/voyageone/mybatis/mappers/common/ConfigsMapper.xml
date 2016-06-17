@@ -84,7 +84,7 @@
         mt_value.lang_id,
         mt_type.comment,
         mt_value.display_order,
-        case when mt_type.id = 53 then ct_cart.cart_type else null end as isUsJoi
+        case when mt_type.id = 53 then ct_cart.cart_type else null end as cart_type
         FROM
         Synship.com_mt_value_channel mt_value
         inner join Synship.com_mt_type mt_type on mt_value.type_id = mt_type.id
