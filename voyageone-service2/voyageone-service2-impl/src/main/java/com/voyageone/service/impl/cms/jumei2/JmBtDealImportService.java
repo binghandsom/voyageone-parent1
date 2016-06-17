@@ -352,7 +352,7 @@ public class JmBtDealImportService extends BaseService {
         fields.setAttribute("originCn", modelJmBtProduct.getAddressOfProduce());
         fields.setAttribute("beforeDate", "无");
         fields.setAttribute("suitPeople", "时尚潮流人士");
-        fields.setAttribute("userPurchaseLimit", 0);
+        fields.setAttribute("userPurchaseLimit", "0");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
         fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
