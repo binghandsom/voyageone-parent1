@@ -744,8 +744,10 @@ define(function (require) {
 
                                 var requiredRule = rules.requiredRule;
 
+                                var options = field.options;
+
                                 innerElement = angular.element('<select class="form-control">');
-                                innerElement.attr('ng-options', 'option.value as option.displayName for option in field.options');
+                                innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
 
@@ -767,11 +769,17 @@ define(function (require) {
                                     }
                                 } else {
                                     // 非必填, 就创建空选项
-                                    field.options.unshift({
+                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                                    // 所以要克隆新的出来使用
+                                    options = angular.copy(options);
+                                    options.unshift({
                                         displayName: '',
                                         value: null
                                     });
                                 }
+
+                                // 最终保存到 $scope 上, 供页面绑定使用
+                                $scope.$options = options;
 
                                 innerElement.attr('title', field.name || field.id);
                             })();
