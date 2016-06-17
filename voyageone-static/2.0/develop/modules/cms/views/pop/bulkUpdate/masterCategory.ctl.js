@@ -68,6 +68,7 @@ define(['cms',
             openCategory: function (category) {
                 // 标记选中
                 this.selected = category;
+                if (!category.children || !category.children.length) return;
                 // 查询当前选中的是第几级
                 var level = 0;
                 if (this.selected.children[0].catPath.indexOf('-') > 0) this.divType = '-';
@@ -86,8 +87,6 @@ define(['cms',
                     // 如果有数据,那么当前级别和后续级别都需要清空
                     this.categoryPath.splice(level);
                 }
-
-                if (!category.children || !category.children.length) return;
 
                 this.categoryPath.push({level: level + 1, categories: category.children});
             },

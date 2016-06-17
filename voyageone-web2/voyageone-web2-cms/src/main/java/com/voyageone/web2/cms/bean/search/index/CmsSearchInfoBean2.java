@@ -30,7 +30,7 @@ public class CmsSearchInfoBean2 {
 
     private String brand;
     private String[] freeTags;
-    private String freeTagType;
+    private int freeTagType = 0;
 
     // ** 平台搜索条件 **
     private Integer cartId = -1;
@@ -56,7 +56,7 @@ public class CmsSearchInfoBean2 {
     // 价格变动查询用标志位
     private int priceChgFlg = 0;
     private String propertyStatus;
-    private int hasErrorFlg = 0;
+    private int hasErrorFlg;
 
     private String salesSortType = null;
     private String salesType = null;
@@ -353,11 +353,11 @@ public class CmsSearchInfoBean2 {
         this.freeTags = freeTags;
     }
 
-    public String getFreeTagType() {
+    public int getFreeTagType() {
         return freeTagType;
     }
 
-    public void setFreeTagType(String freeTagType) {
+    public void setFreeTagType(int freeTagType) {
         this.freeTagType = freeTagType;
     }
 
