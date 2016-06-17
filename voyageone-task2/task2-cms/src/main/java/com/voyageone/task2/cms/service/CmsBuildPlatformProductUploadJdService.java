@@ -50,9 +50,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 京东平台产品上新服务
@@ -152,7 +156,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         conditionPropValueRepo.init();
 
         // 循环所有销售渠道
-        if (channelIdList != null && channelIdList.size() > 0) {
+        if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
@@ -206,8 +210,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
-        executor.shutdown(); //并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
-//        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
     }
 
     /**
@@ -241,6 +250,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
+                sxData.setGroupId(groupId);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -331,7 +341,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 获取cms_mt_platform_skus表里渠道指定类目对应的所有颜色和尺寸信息列表
             List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList = cmcMtPlatformSkusService.getModesByAttrType(channelId, cartId, platformCategoryId, AttrType_Active_1);
-            if (cmsMtPlatformSkusList == null || cmsMtPlatformSkusList.size() == 0) {
+            if (ListUtils.isNull(cmsMtPlatformSkusList)) {
                 String errMsg = String.format("平台skus表中该商品类目对应的颜色和尺寸信息不存在！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s] [PlatformCategoryPath:%s]",
                         channelId, cartId, platformCategoryId, mainProductPlatformCart.getpCatPath());
                 $error(errMsg);
@@ -458,7 +468,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     // 删除商品
                     try {
                         // 参数：1.ware_id 2.trade_no(流水号：现在时刻)
-                        jdWareService.deleteWare(shopProp, String.valueOf(jdWareId), Long.toString(new Date().getTime()));
+                        jdWareService.deleteWare(shopProp, String.valueOf(jdWareId), DateTimeUtil.getNowTimeStamp());
                     } catch (Exception ex) {
                         String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
@@ -488,9 +498,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                      // 更新该商品下所有产品的图片
                     retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap);
                     if (!retStatus) {
-                        String errMsg = String.format("更新商品的产品5张图片设置均失败! [WareId:%s]", jdWareId);
+                        String errMsg = String.format("更新商品的产品图片失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-//                        sxData.setErrorMessage(errMsg);
                     }
                 }
             }
