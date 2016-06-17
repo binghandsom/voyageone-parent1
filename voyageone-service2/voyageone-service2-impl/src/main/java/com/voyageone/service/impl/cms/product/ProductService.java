@@ -784,10 +784,9 @@ public class ProductService extends BaseService {
             resultInfo = new ProductForWmsBean();
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-
-            resultInfo.setChannelId(product.getChannelId());
-            resultInfo.setCode(product.getCommon().getFields().getCode());
-            resultInfo.setName(product.getCommon().getFields().getProductNameEn());
+            resultInfo.setChannelId(product.getOrgChannelId());
+            resultInfo.setCode(product.getFields().getCode());
+            resultInfo.setName(product.getFields().getProductNameEn());
             resultInfo.setProductId(product.getProdId().toString());
             resultInfo.setShortDescription(product.getCommon().getFields().getShortDesEn());
             resultInfo.setLongDescription(product.getCommon().getFields().getLongDesEn());
@@ -907,8 +906,8 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getCommon().getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.get("priceSale") != null ? sku.get("priceSale").toString() : "0.00");
                 Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channelId);
-                param.put("sku", String.valueOf(sku.get("skuCode")));
+                param.put("channelId", product.getOrgChannelId());
+                param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 String imagePath = "";
