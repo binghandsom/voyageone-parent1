@@ -59,15 +59,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         // 只有选中具体的某个平台的时候,和platform相关的检索才有效
         if (cartId > 1) {
             // 设置platform检索条件
-            StringBuilder resultPlatforms = new StringBuilder();
-            resultPlatforms.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".cartId", cartId));
-            resultPlatforms.append(",");
+            result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".cartId", cartId));
+            result.append(",");
 
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
                 // 获取platform status
-                resultPlatforms.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pStatus", searchValue.getPlatformStatus()));
-                resultPlatforms.append(",");
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pStatus", searchValue.getPlatformStatus()));
+                result.append(",");
             }
 
             // 获取product status
@@ -77,19 +76,19 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart()) || StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
-                resultPlatforms.append("'" + _KeyPrefix + cartId + ".pPublishTime':{" );
+                result.append("'" + _KeyPrefix + cartId + ".pPublishTime':{" );
                 // 获取publishTime start
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
-                    resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
+                    result.append(MongoUtils.splicingValue("$gte", searchValue.getPublishTimeStart() + " 00.00.00"));
                 }
                 // 获取publishTime End
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
                     if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
-                        resultPlatforms.append(",");
+                        result.append(",");
                     }
-                    resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
+                    result.append(MongoUtils.splicingValue("$lte", searchValue.getPublishTimeTo() + " 23.59.59"));
                 }
-                resultPlatforms.append("},");
+                result.append("},");
             }
 
             // 获取price start
@@ -167,19 +166,19 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
             // 查询销量范围
             if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                resultPlatforms.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{" );
+                result.append("'sales.code_sum_" + searchValue.getSalesType() + ".cartId_" + cartId + "':{" );
                 // 获取销量下限
                 if (searchValue.getSalesStart() != null) {
-                    resultPlatforms.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
+                    result.append(MongoUtils.splicingValue("$gte", searchValue.getSalesStart()));
                 }
                 // 获取销量上限
                 if (searchValue.getSalesEnd() != null) {
                     if (searchValue.getSalesStart() != null) {
-                        resultPlatforms.append(",");
+                        result.append(",");
                     }
-                    resultPlatforms.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
+                    result.append(MongoUtils.splicingValue("$lte", searchValue.getSalesEnd()));
                 }
-                resultPlatforms.append("},");
+                result.append("},");
             }
         }
 
