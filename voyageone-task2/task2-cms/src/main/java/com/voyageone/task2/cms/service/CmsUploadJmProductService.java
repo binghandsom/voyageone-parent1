@@ -355,7 +355,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmBtSkuImportModel.getSku());
             spu.setUpc_code(jmBtSkuImportModel.getUpcCode());
-            spu.setProperty("OTHER");
+            spu.setPropery("OTHER");
             spu.setSize(jmBtSkuImportModel.getSize());
             spu.setAttribute(jmBtProductImport.getAttribute());
             spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice());

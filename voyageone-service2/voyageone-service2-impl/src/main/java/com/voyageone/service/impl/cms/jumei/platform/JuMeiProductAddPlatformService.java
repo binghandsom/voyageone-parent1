@@ -204,7 +204,7 @@ public class JuMeiProductAddPlatformService {
             JmProductBean_Spus spu = new JmProductBean_Spus();
            // spu.setPartner_spu_no(modelSku.getSkuCode());//jmBtSkuImportModel.getSku());
           //  spu.setUpc_code(modelSku.getUpc());//jmBtSkuImportModel.getUpcCode());
-            spu.setProperty("OTHER");
+            spu.setPropery("OTHER");
          //   spu.setSize(modelSku.getJmSize());//jmBtSkuImportModel.getSize());
             spu.setAttribute(modelProduct.getAttribute());//jmBtProductImport.getAttribute());
         //    spu.setAbroad_price(modelProduct.getMsrp().doubleValue());//jmBtSkuImportModel.getAbroadPrice());
