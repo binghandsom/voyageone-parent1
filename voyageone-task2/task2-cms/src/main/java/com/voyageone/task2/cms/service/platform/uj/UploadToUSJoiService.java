@@ -22,6 +22,7 @@ import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -144,6 +145,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+                    productModel.setCarts(new ArrayList<CmsBtProductModel_Carts>());
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                     ProductPriceBean priceBean = new ProductPriceBean();
@@ -285,7 +287,7 @@ public class UploadToUSJoiService extends BaseTaskService{
             return;
         }
 
-        List<CmsBtProductGroupModel> platformList = new ArrayList<>();
+
         // 循环一下
         for (TypeChannelBean shop : typeChannelBeanList) {
 
@@ -314,9 +316,21 @@ public class UploadToUSJoiService extends BaseTaskService{
                 platform.setPriceRetailEd(cmsBtProductModel.getFields().getPriceRetailEd());
                 platform.setPriceSaleSt(cmsBtProductModel.getFields().getPriceSaleSt());
                 platform.setPriceSaleEd(cmsBtProductModel.getFields().getPriceSaleEd());
+                // num iid
+                platform.setNumIId(""); // 因为没有上新, 所以不会有值
 
-                // is Main
-                // TODO 修改设置isMain属性
+                // display order
+                platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
+
+                // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
+                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
+                platform.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+
+                // qty
+                platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的
+
+                cmsBtProductGroupDao.insert(platform);
             } else {
                 platform.getProductCodes().add(cmsBtProductModel.getFields().getCode());
 
@@ -341,28 +355,13 @@ public class UploadToUSJoiService extends BaseTaskService{
                     platform.setPriceSaleEd(cmsBtProductModel.getFields().getPriceSaleEd());
                 }
 
+                cmsBtProductGroupDao.update(platform);
                 // is Main
                 // TODO 修改设置isMain属性
 //                platform.setIsMain(false);
             }
-
-            // num iid
-            platform.setNumIId(""); // 因为没有上新, 所以不会有值
-
-            // display order
-            platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
-
-            // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-            platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-            // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-            platform.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
-
-            // qty
-            platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的
-
-            platformList.add(platform);
         }
-        cmsBtProductGroupDao.insertWithList(platformList);
+
     }
 
 }

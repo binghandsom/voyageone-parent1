@@ -2,6 +2,8 @@ package com.voyageone.base.dao.mongodb;
 
 import org.bson.types.ObjectId;
 
+import java.util.Arrays;
+
 /**
  * BaseJomgoPartTemplate Query Object
  *
@@ -144,5 +146,28 @@ public class JomgoQuery extends BaseCondition {
 
     public void setObjectId(ObjectId objectId) {
         this.objectId = objectId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder rs = new StringBuilder();
+        rs.append("JomgoQuery =: { query:=");
+        rs.append(query);
+        rs.append("; parameters:=");
+        rs.append(Arrays.toString(parameters));
+        rs.append("; projection:=");
+        rs.append(projection);
+        rs.append("; sort:=");
+        rs.append(sort);
+        rs.append("; limit:=");
+        rs.append(limit);
+        rs.append("; skip:=");
+        rs.append(skip);
+        if (objectId != null) {
+            rs.append("; objectId:=");
+            rs.append(objectId.toString());
+        }
+        rs.append("; }");
+        return rs.toString();
     }
 }

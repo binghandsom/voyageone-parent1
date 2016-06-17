@@ -28,4 +28,14 @@
     <absolute-ordering>
         <name>web2</name>
     </absolute-ordering>
+
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/conf/log4j.properties</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
 </web-app>

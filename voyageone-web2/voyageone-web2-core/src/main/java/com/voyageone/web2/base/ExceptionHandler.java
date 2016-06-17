@@ -241,12 +241,14 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
 
         if (exception instanceof SystemException) {
             SystemException systemException = (SystemException) exception;
-            switch (systemException.getCode()) {
-                case BaseConstants.CODE_SEL_CHANNEL:
-                case BaseConstants.MSG_TIMEOUT:
-                case BaseConstants.MSG_DENIED:
-                    $info(String.format("Break by SystemException with [ %s ]", exception.getMessage()));
-                    return true;
+            if (systemException.getCode() != null) {
+                switch (systemException.getCode()) {
+                    case BaseConstants.CODE_SEL_CHANNEL:
+                    case BaseConstants.MSG_TIMEOUT:
+                    case BaseConstants.MSG_DENIED:
+                        $info(String.format("Break by SystemException with [ %s ]", exception.getMessage()));
+                        return true;
+                }
             }
         }
 

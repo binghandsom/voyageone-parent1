@@ -148,10 +148,11 @@ define([
         function resetSearchInfo (data) {
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
-
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
+            if (searchInfo.hasErrorFlg) {
+                searchInfo.hasErrorFlg = 1;
+            }
 
-            searchInfo.labelType = _returnKey(searchInfo.labelType);
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;
@@ -212,7 +213,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 groupInfo.commArr = commArr;
                 var custArr = [];
@@ -285,7 +286,7 @@ define([
                     if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 productInfo.commArr = commArr;
 
@@ -307,7 +308,7 @@ define([
                     var dotIdx = selValue.indexOf(".", 6);
                     var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
                     var itemVal = null;
-                    if (itemValObj == undefined || itemVal == null) {
+                    if (itemValObj == undefined || itemValObj == null) {
                         itemVal = "0";
                     } else {
                         dotIdx = selValue.lastIndexOf(".");
@@ -334,18 +335,20 @@ define([
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
                         } else {
-                            if (data.pStatus == 'OnSale') {
-                                cssVal = 'DeepSkyBlue';
-                            } else if (data.pStatus == 'InStock') {
-                                cssVal = 'Orange';
-                            } else if (data.pStatus == 'WaitingPublish') {
-                                if (data.status == 'Ready') {
-                                    cssVal = 'yellow';
-                                } else if (data.status == 'Approved') {
-                                    cssVal = 'YellowGreen';
+                            if (data.status == 'Approved') {
+                                if (data.pStatus == 'OnSale') {
+                                    cssVal = 'DeepSkyBlue';
+                                } else if (data.pStatus == 'InStock') {
+                                    cssVal = 'Orange';
+                                } else if (data.pStatus == 'WaitingPublish') {
+                                    cssVal = 'Chocolate';
                                 } else {
-                                    cssVal = 'DarkGray';
+                                    cssVal = 'YellowGreen';
                                 }
+                            } else if (data.status == 'Ready') {
+                                cssVal = 'yellow';
+                            } else {
+                                cssVal = 'DarkGray';
                             }
                         }
                         if (cssVal) {
@@ -440,7 +443,7 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON') + " ", object.priceMsrpSt, object.priceMsrpEd);
+            var tempMsrpDetail = _setOnePriceDetail("", object.priceMsrpSt, object.priceMsrpEd);
             if (!_.isNull(tempMsrpDetail)) {
                 result.push(tempMsrpDetail);
             } else {
@@ -448,7 +451,7 @@ define([
             }
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON') + " ", object.priceRetailSt, object.priceRetailEd);
+            var tempRetailPriceDetail = _setOnePriceDetail("", object.priceRetailSt, object.priceRetailEd);
             if (!_.isNull(tempRetailPriceDetail)) {
                 result.push(tempRetailPriceDetail);
             } else {

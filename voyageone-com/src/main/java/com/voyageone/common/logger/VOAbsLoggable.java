@@ -132,6 +132,10 @@ public abstract class VOAbsLoggable {
         logger.error(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
     }
 
+    public boolean $isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
+
     /**
      * logger.debug 的辅助方法
      *

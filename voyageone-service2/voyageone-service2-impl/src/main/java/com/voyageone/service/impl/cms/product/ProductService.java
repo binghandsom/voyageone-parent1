@@ -785,7 +785,7 @@ public class ProductService extends BaseService {
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
 
-            resultInfo.setChannelId(product.getChannelId());
+            resultInfo.setChannelId(product.getOrgChannelId());
             resultInfo.setCode(product.getCommon().getFields().getCode());
             resultInfo.setName(product.getCommon().getFields().getProductNameEn());
             resultInfo.setProductId(product.getProdId().toString());
@@ -907,7 +907,7 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getCommon().getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.get("priceSale") != null ? sku.get("priceSale").toString() : "0.00");
                 Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channelId);
+                param.put("channelId", product.getOrgChannelId());
                 param.put("sku", String.valueOf(sku.get("skuCode")));
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));

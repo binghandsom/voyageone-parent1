@@ -42,17 +42,17 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("fields", fields);
     }
 
-    public List<CmsBtProductModel_Sku> getSkus() {
+    public List<CmsBtProductModel_CommonSku> getSkus() {
         return getAttribute("skus");
     }
 
-    public void setSkus(List<CmsBtProductModel_Sku> skus) {
+    public void setSkus(List<CmsBtProductModel_CommonSku> skus) {
         setAttribute("skus", skus);
     }
 
-    public CmsBtProductModel_Sku getSku(String skuCode) {
+    public CmsBtProductModel_CommonSku getSku(String skuCode) {
         if (skuCode != null && getSkus() != null) {
-            for (CmsBtProductModel_Sku sku : getSkus()) {
+            for (CmsBtProductModel_CommonSku sku : getSkus()) {
                 if (skuCode.equals(sku.getSkuCode())) {
                     return sku;
                 }

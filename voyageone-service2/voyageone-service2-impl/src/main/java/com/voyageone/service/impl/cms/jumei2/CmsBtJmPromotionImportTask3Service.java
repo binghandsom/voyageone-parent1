@@ -170,6 +170,7 @@ public class CmsBtJmPromotionImportTask3Service {
         saveInfo.productModel = daoExtCmsBtJmPromotionProduct.selectByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.productModel == null) {
             saveInfo.productModel = new CmsBtJmPromotionProductModel();
+            saveInfo.productModel.setId(0);
         }
         saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
         saveInfo.productModel.setProductCode(product.getProductCode());
@@ -274,6 +275,8 @@ public class CmsBtJmPromotionImportTask3Service {
                         tagProductModel.setChannelId(model.getChannelId());
                         tagProductModel.setCmsBtTagId(tagModel.getId());
                         tagProductModel.setTagName(tagModel.getTagName());
+                        tagProductModel.setCreater("");
+                        tagProductModel.setModifier("");
                         saveInfo.tagList.add(tagProductModel);
                     }
                 }
