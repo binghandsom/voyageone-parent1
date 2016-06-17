@@ -320,7 +320,7 @@ public class JmBtDealImportService extends BaseService {
 
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
-        platform.setpCatId(CartEnums.Cart.TM.getId());
+        platform.setpCatId(String.valueOf(modelJmBtProduct.getCategoryLv4Id()));
         if(modelJmBtProduct.getCategoryLv4Id()!=0) {
             String catPath = daoExtJmBtDealImport.selectCategoryFullPath(modelJmBtProduct.getCategoryLv4Id());
             if (!StringUtils.isEmpty(catPath)) {
