@@ -309,7 +309,7 @@ public class JmBtDealImportService extends BaseService {
             if (!StringUtils.isEmpty(catPath)) {
                 platform.setpCatPath(catPath);
             } else {
-
+                $info("JmBtDealImportService.getBulkUpdateProductModel selectCategoryFullPath categoryLv4Id 未找到");
             }
         }
         platform.setpCatStatus("1");
