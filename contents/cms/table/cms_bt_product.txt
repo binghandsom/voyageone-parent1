@@ -153,7 +153,6 @@
 		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 		  * jmSpuNo
 		  * jmSkuNo
-		  * size
 	  * sellerCats[]
 		  * cId
 		  * cIds
