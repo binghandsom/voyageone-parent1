@@ -127,6 +127,12 @@ define([
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{inputVal: "", inputOpts: ""}];
+            $scope.vm.platform.catPath=null;
+            $scope.vm.masterCat.catPath=null;
+            $scope.vm.feedCat.catPath=null;
+            $scope.vm.channelInner.catPath=null;
+            $scope.vm.promotion.tagPathList=null;
+            $scope.vm.free.tagPathList=null;
         }
 
         /**
