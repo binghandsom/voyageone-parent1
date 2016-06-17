@@ -82,7 +82,7 @@ public interface CmsUrlConstants {
         interface LIST {
             interface INDEX {
                 String ROOT = "/cms/CmsBtJmPromotionImportTask/index";
-                String GET_BY_PROMOTIONID = "selectByPromotionId";
+                String GET_BY_PROMOTIONID = "getByPromotionId";
             }
         }
     }
@@ -91,7 +91,7 @@ public interface CmsUrlConstants {
         interface LIST {
             interface INDEX {
                 String ROOT = "/cms/CmsBtJmPromotionExportTask/index";
-                String GET_BY_PROMOTIONID = "selectByPromotionId";
+                String GET_BY_PROMOTIONID = "getByPromotionId";
                 String ADDEXPORT = "addExport";
             }
         }
