@@ -136,6 +136,7 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
                 superFeedShoeZooBean.setVoyageOnePurchasePrice(reader.get(i++));
                 superFeedShoeZooBean.setCountry_of_Origin(reader.get(i++));
                 superFeedShoeZooBean.setTmall_Weight(reader.get(i++));
+                superFeedShoeZooBean.setQty(reader.get(i++));
                 if (StringUtil.isEmpty(superFeedShoeZooBean.getUpc1())) {
                     continue;
                 }
