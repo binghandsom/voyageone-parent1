@@ -1,4 +1,4 @@
-define(function (require) {
+(function () {
     /*
      * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
      */
@@ -36,7 +36,7 @@ define(function (require) {
      *   maxImageSizeRule
      */
 
-    var FIELD_TYPES = require('modules/cms/enums/FieldTypes');
+    var FIELD_TYPES = require(['modules/cms/enums/FieldTypes']);
 
     var find, findIndex, each, any, all;
 
@@ -1253,4 +1253,4 @@ define(function (require) {
                 }
             };
         });
-});
+}());
