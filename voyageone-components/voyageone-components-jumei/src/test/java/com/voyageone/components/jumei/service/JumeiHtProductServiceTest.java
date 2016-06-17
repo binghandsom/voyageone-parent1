@@ -73,7 +73,7 @@ public class JumeiHtProductServiceTest {
         // 商品自带条码(可选)
         spu1.setUpc_code("111001");
         // 规格(必须): FORMAL 正装 MS 中小样 OTHER 其他
-        spu1.setPropery("MS");
+        spu1.setProperty("MS");
         // 容量/尺寸(必须)
         spu1.setSize("41");
         // 型号/颜色(可选)
@@ -119,7 +119,7 @@ public class JumeiHtProductServiceTest {
         // 商品自带条码(可选)
         spu2.setUpc_code("111002");
         // 规格(必须): FORMAL 正装 MS 中小样 OTHER 其他
-        spu2.setPropery("OTHER");
+        spu2.setProperty("OTHER");
         // 容量/尺寸(必须)
         spu2.setSize("45");
         // 型号/颜色(可选)

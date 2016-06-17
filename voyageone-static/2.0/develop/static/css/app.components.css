@@ -22,9 +22,10 @@ schema-field {
 
 schema-field-name,
 schema-complex-name {
-    width: 18%;
-    flex-grow: 1;
+    width: 120px;
+    flex-grow: 0;
     line-height: 26px;
+    font-weight: bold;
 }
 
 schema-input-container {
@@ -34,7 +35,7 @@ schema-input-container {
 
 schema-complex-container[multi] {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 schema-complex-toolbox {
@@ -45,14 +46,48 @@ schema-complex-toolbox {
 schema-complex-container[multi] schema-field {
     display: block;
     flex-grow: 1;
+    width: 100%;
 }
 
+schema-complex-container schema-field-name {
+    color: #8a8a8a;
+}
 
+schema-complex-container[multi] schema-field-name {
+    display: none;
+}
 
+schema-complex-container[multi]:first-of-type schema-field-name {
+    display: block;
+}
 
+schema-complex-container[multi] schema-complex-toolbox {
+    align-self: flex-end;
+}
+
+.schema-field-required:after {
+    content: '*';
+    color: red;
+    padding-left: 5px;
+}
+
+schema-field-tip {
+    display: block;
+    color: #ee903d;
+}
+
+schema-field-tip:before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    font-weight: bold;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    content: '\f0a2';
+    padding-right: 3px;
+}
 
 /* } schema directive 样式定义 */
-
 
 /* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
 .vo-validate.ng-invalid input,
