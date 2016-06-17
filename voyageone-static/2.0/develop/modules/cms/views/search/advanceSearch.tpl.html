@@ -284,6 +284,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
+                                                <textarea class="form-control inherited" style="resize: none;" ng-model="vm.searchInfo.cidValue" rows="2" ng-disabled="vm.searchInfo.shopCatStatus" ng-readonly="true"></textarea>
                                                 <textarea class="form-control inherited" ng-model="vm.channelInner.catPath" rows="2" ng-disabled="vm.searchInfo.shopCatStatus">
                                                     <span class="m-r-xs m-t-xs" ng-repeat="catPath in vm.channelInner.catPath">{{catPath}}</span>
                                                 </textarea>
@@ -309,7 +310,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-8 bg-white table-bordered table-responsive" ng-model="vm.searchInfo.promotionTags" style=" min-height: 40px;  max-height: 160px;">
-                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm.searchInfo.promotionTags" style="display: inline-block;">{{promotionTag.tagPath}}</label>
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm._promotionTags" style="display: inline-block;">{{promotionTag.tagPathName}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -438,11 +439,9 @@
                                 <div class="col-sm-4">
                                     <div class="form-horizontal">
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label"
-                                                   translate="TXT_FUZZY_SEARCH"></label>
-                                            <div class="col-sm-8">
-                                                    <textarea class="form-control inherited" rows="4"
-                                                              ng-model="vm.searchInfo.codeList"></textarea>
+                                            <label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
+                                                <div class="col-sm-8">
+                                                    <textarea class="form-control inherited" style="resize: none;" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
                                                 <div class="text-warnings" style="padding-left:0px">
                                                     <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
                                                 </div>

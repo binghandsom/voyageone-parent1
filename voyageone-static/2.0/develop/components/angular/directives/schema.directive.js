@@ -1,8 +1,5 @@
-define(function (require) {
-    /*
-     * !! 因为需要异步依赖枚举, 所以需要使用 require 在必要时引入
-     */
-
+(function () {
+    
     /**
      * 以下代码包含下面这些自定义标签:
      *  schema
@@ -36,7 +33,15 @@ define(function (require) {
      *   maxImageSizeRule
      */
 
-    var FIELD_TYPES = require('modules/cms/enums/FieldTypes');
+    var FIELD_TYPES = {
+        "INPUT": "INPUT",
+        "MULTI_INPUT": "MULTIINPUT",
+        "SINGLE_CHECK": "SINGLECHECK",
+        "MULTI_CHECK": "MULTICHECK",
+        "COMPLEX": "COMPLEX",
+        "MULTI_COMPLEX": "MULTICOMPLEX",
+        "LABEL": "LABEL"
+    };
 
     var find, findIndex, each, any, all;
 
@@ -87,6 +92,7 @@ define(function (require) {
         all = _.every;
         each = _.each;
         findIndex = _.findIndex;
+
     })();
 
     /**
@@ -664,7 +670,7 @@ define(function (require) {
                     var innerElement;
 
                     switch (field.type) {
-                        case FIELD_TYPES.input:
+                        case FIELD_TYPES.INPUT:
                             (function createInputElements() {
 
                                 var regexRule = rules.regexRule,
@@ -739,7 +745,7 @@ define(function (require) {
                                 }
                             })();
                             break;
-                        case FIELD_TYPES.singleCheck:
+                        case FIELD_TYPES.SINGLE_CHECK:
                             (function createSelectElements() {
 
                                 var requiredRule = rules.requiredRule;
@@ -784,7 +790,7 @@ define(function (require) {
                                 innerElement.attr('title', field.name || field.id);
                             })();
                             break;
-                        case FIELD_TYPES.multiCheck:
+                        case FIELD_TYPES.MULTI_CHECK:
                             (function createCheckboxElements() {
 
                                 var selected, valueStringList;
@@ -868,7 +874,7 @@ define(function (require) {
                                 });
                             })();
                             break;
-                        case FIELD_TYPES.complex:
+                        case FIELD_TYPES.COMPLEX:
 
                             // complex 字段, 每个 field 的值都是存在其 value 上的。
                             // 所以直接使用 fields 属性即可。
@@ -899,7 +905,7 @@ define(function (require) {
                             innerElement = angular.element('<schema-complex-container fields="$fields">');
 
                             break;
-                        case FIELD_TYPES.multiComplex:
+                        case FIELD_TYPES.MULTI_COMPLEX:
 
                             // multiComplex 字段, 其值不同于 complex 字段, 是存在于 complexValues 中。
                             // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
@@ -976,13 +982,13 @@ define(function (require) {
                     var innerElement;
 
                     switch (field.type) {
-                        case FIELD_TYPES.input:
-                        case FIELD_TYPES.singleCheck:
-                        case FIELD_TYPES.multiCheck:
+                        case FIELD_TYPES.INPUT:
+                        case FIELD_TYPES.SINGLE_CHECK:
+                        case FIELD_TYPES.MULTI_CHECK:
                             innerElement = angular.element('<schema-field-name>');
                             break;
-                        case FIELD_TYPES.complex:
-                        case FIELD_TYPES.multiComplex:
+                        case FIELD_TYPES.COMPLEX:
+                        case FIELD_TYPES.MULTI_COMPLEX:
                             innerElement = angular.element('<schema-complex-name>');
                             break;
                         default:
@@ -1034,7 +1040,7 @@ define(function (require) {
                 // 把处理好的规则保存到字段上, 便于依赖型的规则可以递归查询
                 field.$rules = rules;
 
-                isSimple = (field.type != FIELD_TYPES.complex && field.type != FIELD_TYPES.multiComplex);
+                isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
                 if (showName) {
                     // 如果需要显示名称
@@ -1047,7 +1053,7 @@ define(function (require) {
                 innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
                 container = innerElement;
-                if (field.type === FIELD_TYPES.multiComplex)
+                if (field.type === FIELD_TYPES.MULTI_COMPLEX)
                     container.attr('multi', true);
                 if (hasDisableRule)
                     container.attr('ng-if', '!$rules.disableRule.checked()');
@@ -1253,4 +1259,4 @@ define(function (require) {
                 }
             };
         });
-});
+}());

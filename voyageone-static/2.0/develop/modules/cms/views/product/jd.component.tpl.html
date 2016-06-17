@@ -31,7 +31,7 @@
                                     </span>
                                 </li>
                             </ul>
-                            <div class="text-warnings" style="padding-left:0px">
+                            <div class="text-warnings" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
                             </div>
                     </div>
@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope">
-                            <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(vm.productDetails, popupNewCategory)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(vm.productDetails, popupNewCategory)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                             </button>
                             <div class="col-md-8">
                                 <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope" ng-if="cartInfo.value != 27">
-                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><i class="fa fa-arrow-circle-right"></i>&nbsp;<span>{{cartInfo.name}}&nbsp;店铺内分类</span>
+                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                             </button>
                             <div class="col-md-8">
                                 <div class="panel panel-default">
