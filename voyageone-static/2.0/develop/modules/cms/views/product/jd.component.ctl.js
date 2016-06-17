@@ -97,6 +97,7 @@ define([
                             productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productId,catId:context.selected.catId}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
+                                scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.status = scope.vm.status =  "Pending";
                             });

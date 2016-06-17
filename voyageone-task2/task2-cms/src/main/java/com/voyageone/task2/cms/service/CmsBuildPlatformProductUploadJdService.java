@@ -162,9 +162,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 // 京东平台商品信息新增或更新(京东)
 //                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
-//                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
-//                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JGJ.getValue());
                 // 京东国际商品信息新增或更新(京东国际 悦境)
                 doProductUpload(channelId, CartEnums.Cart.JGY.getValue());
             }
