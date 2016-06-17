@@ -240,6 +240,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             image.setErrorMsg("原始Url非法");
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+            return;
         }
 
         ShopBean shopBean = null;

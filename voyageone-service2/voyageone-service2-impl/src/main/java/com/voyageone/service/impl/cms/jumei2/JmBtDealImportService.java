@@ -61,6 +61,22 @@ public class JmBtDealImportService extends BaseService {
 //    publishTime
 //            onSaleTime
     @VOTransactional
+    public Object importJMOne(String channelId,String code)
+    {
+        StringBuilder sbResult = new StringBuilder();
+        List<JMProductDealBean> listJMProductDealBean = daoExtJmBtDealImport.selectListProductDealByChannelId(channelId);
+        List<JMProductDealBean> page=new ArrayList<>();
+        for (JMProductDealBean deal:listJMProductDealBean) {
+            if(deal.getProductCode().equals(code))
+            {
+                page.add(deal);
+                break;
+            }
+        }
+        importPage(channelId, sbResult, page);
+        return null;
+    }
+    @VOTransactional
     public Object  importJM(String channelId) {
         StringBuilder sbResult = new StringBuilder();
         try {
@@ -333,10 +349,11 @@ public class JmBtDealImportService extends BaseService {
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());
         fields.setAttribute("productShortName",modelJmBtDealImport.getProductShortName());
         fields.setAttribute("originCn", modelJmBtProduct.getAddressOfProduce());
-        fields.setAttribute("beforeDate", "");
-        fields.setAttribute("suitPeople", "");
+       // fields.setAttribute("beforeDate", "");
+       // fields.setAttribute("suitPeople", "");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
+        fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
         platform.setFields(fields);
 
         List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
@@ -345,14 +362,12 @@ public class JmBtDealImportService extends BaseService {
             skuMap = new BaseMongoMap<String, Object>();
             skus.add(skuMap);
 
-            skuMap.setAttribute("priceRetail", "");  //各平台的销售指导价
-            skuMap.setAttribute("priceSale", "");    //中国最终售价
-
-            skuMap.setAttribute("priceChgFlg", "");  //价格变更状态（U/D/XU/XD）
+          //  skuMap.setAttribute("priceRetail", "");  //各平台的销售指导价
+           // skuMap.setAttribute("priceSale", "");    //中国最终售价
+           // skuMap.setAttribute("priceChgFlg", "");  //价格变更状态（U/D/XU/XD）
             skuMap.setAttribute("jmSpuNo", jmBtSkuModel.getJumeiSpuNo());
             skuMap.setAttribute("jmSkuNo", jmBtSkuModel.getJumeiSkuNo());
             skuMap.setAttribute("property", "");
-            skuMap.setAttribute("attribute", "");
             skuMap.setAttribute("size", jmBtSkuModel.getSize());
             skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
         }

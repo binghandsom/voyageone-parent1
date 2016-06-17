@@ -42,9 +42,7 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null},
-            promotion: {tagPathList: null},
-            free: {tagPathList: null}
+            channelInner: {catPath: null}
         };
 
         $scope.initialize = initialize;
@@ -131,8 +129,6 @@ define([
             $scope.vm.masterCat.catPath=null;
             $scope.vm.feedCat.catPath=null;
             $scope.vm.channelInner.catPath=null;
-            $scope.vm.promotion.tagPathList=null;
-            $scope.vm.free.tagPathList=null;
         }
 
         /**
@@ -716,7 +712,7 @@ define([
             openAddChannelCategoryEdit(selList).then(function (context) {
                 getGroupList();
                 getProductList();
-                $scope.vm.channelInner.catPath = context.catPath;
+                $scope.vm.channelInner.catPath = context.saveInfo.fullCNames;
             })
         }
 
@@ -726,7 +722,13 @@ define([
          */
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
-                isPromoTag ? $scope.vm.searchInfo.promotionTags = res.selectdTagList : $scope.vm.searchInfo.freeTags = res.selectdTagList;
+                if (isPromoTag) {
+                    $scope.vm._promotionTags = res.selectdTagList;
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                } else {
+                    $scope.vm._freeTags = res.selectdTagList;
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                }
             });
         }
     }
