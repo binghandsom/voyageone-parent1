@@ -17,6 +17,6 @@
         SELECT * from jumei.jm_bt_sku where channel_id=#{channelId} and product_code=#{productCode}
     </select>
     <select id="selectCategoryFullPath" resultType="String">
-        SELECT fs_getCategoryFullPath(`category_id`) FROM `jm_mt_category` WHERE `category_id`=#{categoryId}
+        SELECT jumei.fs_getCategoryFullPath(`category_id`) FROM jumei.`jm_mt_category` WHERE `category_id`=#{categoryId}
     </select>
 </mapper>
