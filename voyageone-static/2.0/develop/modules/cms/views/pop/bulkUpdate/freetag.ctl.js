@@ -111,8 +111,6 @@ define([
                         return;
                     }
                 }
-
-                self.context = {"selectdTagList": self.selectdTagList};
             },
             clear: function () {
                 var self = this;
@@ -125,6 +123,7 @@ define([
              */
             save: function () {
                 var self = this;
+                self.context = {"selectdTagList": self.selectdTagList};
                 self.$uibModalInstance.close(self.context);
             }
         };
