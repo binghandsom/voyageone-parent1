@@ -1,6 +1,6 @@
 /**
  * @author tony-piao
- * 京东产品概述（schema）
+ * 京东 & 聚美 产品概述（schema）
  */
 define([
     'cms'
@@ -76,6 +76,11 @@ define([
                     }
                 }
 
+                /**
+                   @description 类目popup
+                 * @param productInfo
+                 * @param popupNewCategory popup实例
+                 */
                 function jdCategoryMapping(productInfo, popupNewCategory) {
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
@@ -104,6 +109,10 @@ define([
                         });
                 }
 
+                /**
+                 * @description 店铺内分类popup
+                 * @param openAddChannelCategoryEdit
+                 */
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selectedIds = {};
                     scope.vm.sellerCats.forEach(function(element){
@@ -124,6 +133,9 @@ define([
                     });
                 }
 
+                /**
+                 * 更新操作
+                 */
                 function saveProduct(){
 
                     var statusCount = 0;
