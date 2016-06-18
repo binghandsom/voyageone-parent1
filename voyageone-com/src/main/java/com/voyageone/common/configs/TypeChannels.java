@@ -250,12 +250,6 @@ public class TypeChannels {
                     }
                 }
             }
-
-            // 增加cartType
-            for (TypeChannelBean typeChannelBean : resultList) {
-                CartBean cart = Carts.getCart(typeChannelBean.getValue());
-                typeChannelBean.setCartType(cart.getCart_type());
-            }
         }
 
         return resultList;
