@@ -354,11 +354,22 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             if (inputOpts == null) {
                 return null;
             }
-            if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
-                // 未设值
-                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+            if ("list-1".equals(inputType)) {
+                // 数字类型
+                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                    // 未设值
+                    result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+                } else {
+                    result = "{'" + inputOptsKey + "':" + inputOpts + "}";
+                }
             } else {
-                result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+                // 字符串
+                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                    // 未设值
+                    result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+                } else {
+                    result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+                }
             }
             return  result;
         }
