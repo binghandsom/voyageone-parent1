@@ -18,10 +18,12 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -54,6 +56,8 @@ public class CmsFieldEditService extends BaseAppService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CmsBtSizeChartDao cmsBtSizeChartDao;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -551,6 +555,22 @@ public class CmsFieldEditService extends BaseAppService {
                     opt.setValue(typeChannelBean.getValue());
                     options.add(opt);
                 }
+            }
+            optionsField.setOptions(options);
+        } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_SIZE_CHART.equals(field.getDataSource())) {
+            JomgoQuery queryObject = new JomgoQuery();
+            //取得收索的条件
+            queryObject.setQuery("{\"channelId\": #, \"finish\": \"1\"}");
+            queryObject.setParameters(channelId);
+            queryObject.setSort("{sizeChartId:-1}");
+            //返回数据的类型
+            List<CmsBtSizeChartModel> sizeCharList = cmsBtSizeChartDao.select(queryObject);
+            List<Option> options = new ArrayList<>();
+            for (CmsBtSizeChartModel sizeChart : sizeCharList) {
+                Option opt = new Option();
+                opt.setDisplayName(sizeChart.getSizeChartName());
+                opt.setValue(String.valueOf(sizeChart.getSizeChartId()));
+                options.add(opt);
             }
             optionsField.setOptions(options);
         }
