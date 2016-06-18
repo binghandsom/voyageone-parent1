@@ -230,16 +230,15 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion(promotion, openAddToPromotion) {
-            var selList = getSelProductList();
-            if (selList.length == 0) {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                return;
+            _chkProductSel(null, openAddToPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+
+            function _openAddPromotion(cartId, selList, context) {
+                openAddToPromotion(context.promotion, selList, context).then(function () {
+                    searchAdvanceService2.clearSelList();
+                    getGroupList();
+                    getProductList();
+                })
             }
-            openAddToPromotion(promotion, selList).then(function () {
-                searchAdvanceService2.clearSelList();
-                getGroupList();
-                getProductList();
-            })
         }
 
         /**
@@ -247,10 +246,10 @@ define([
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
-            _chkProductSel(cartId, _openAddChannelCategory);
+            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0});
 
-            function _openAddChannelCategory(cartId, selList) {
-                openAddChannelCategoryEdit(selList, cartId).then(function (res) {
+            function _openAddChannelCategory(cartId, selList, context) {
+                openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
                     var productIds = [];
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
@@ -271,11 +270,15 @@ define([
          * @param openJMActivity
          */
         function openJMActivity(promotion, openJMActivity) {
-            openJMActivity(promotion, getSelProductList()).then(function () {
-                searchAdvanceService2.clearSelList();
-                getGroupList();
-                getProductList();
-            })
+            _chkProductSel(null, openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+
+            function _openJMActivity(cartId, selList, context) {
+                openJMActivity(context.promotion, selList, context).then(function () {
+                    searchAdvanceService2.clearSelList();
+                    getGroupList();
+                    getProductList();
+                })
+            }
         }
 
         /**
@@ -283,10 +286,10 @@ define([
          * @param openFieldEdit
          */
         function openBulkUpdate(openFieldEdit) {
-            _chkProductSel(null, _openBulkUpdate);
+            _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0});
 
-            function _openBulkUpdate(cartId, selList) {
-                openFieldEdit(selList).then(function () {
+            function _openBulkUpdate(cartId, selList, context) {
+                openFieldEdit(selList, context).then(function () {
                     searchAdvanceService2.clearSelList();
                     getGroupList();
                     getProductList();

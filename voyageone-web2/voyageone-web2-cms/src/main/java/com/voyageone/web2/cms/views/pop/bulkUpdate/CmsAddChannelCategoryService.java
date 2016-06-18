@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -134,21 +135,34 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         updateMap3.put("platforms.P" + cartId + ".sellerCats", sellerCats);
         updateMap3.put("modified", DateTimeUtil.getNowTimeStamp());
         updateMap3.put("modifier", userName);
+        HashMap<String, Object> updateMap2 = new HashMap<>();
+        updateMap2.put("$set", updateMap3);
 
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        for (String code : codeList) {
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("common.fields.code", code);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap3);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-        }
-        // 批量更新product表
-        if (bulkList.size() > 0) {
-            BulkWriteResult rslt = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
-            $debug("更新店铺内分类结果：" + rslt.toString());
-        }
+        HashMap<String, Object> queryMap1 = new HashMap<>();
+        queryMap1.put("$in", codeList);
+        HashMap<String, Object> queryMap2 = new HashMap<>();
+        queryMap2.put("$exists", true);
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", queryMap1);
+        queryMap.put("platforms.P" + cartId, queryMap2); // 要过滤掉platforms.Pxx未设置的情况
+
+        WriteResult rslt = cmsBtProductDao.update(channelId, queryMap, updateMap2);
+        $debug("更新店铺内分类结果：" + rslt.toString());
+
+//        List<BulkUpdateModel> bulkList = new ArrayList<>();
+//        for (String code : codeList) {
+//            HashMap<String, Object> queryMap = new HashMap<>();
+//            queryMap.put("common.fields.code", code);
+//            BulkUpdateModel model = new BulkUpdateModel();
+//            model.setUpdateMap(updateMap3);
+//            model.setQueryMap(queryMap);
+//            bulkList.add(model);
+//        }
+//        // 批量更新product表
+//        if (bulkList.size() > 0) {
+//            BulkWriteResult rslt = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+//            $debug("更新店铺内分类结果：" + rslt.toString());
+//        }
 
         //取得approved的code插入
         insertCmsBtSxWorkload(codeList, channelId, userName, cartId);

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -87,9 +88,23 @@ public class CmsFieldEditService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId) {
+    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId, CmsSessionBean cmsSession) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
+
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        if (isSelAll == 1 && (productCodes == null || productCodes.isEmpty())) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+            $error("没有code条件 params=" + params.toString());
+            return;
+        }
+
         String prop_id = prop.get("id").toString();
         if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
             // 如果是税号更新，则另外处理
@@ -122,7 +137,8 @@ public class CmsFieldEditService extends BaseAppService {
             updObj2.put("common.fields." + prop_id, hsCode);
             updObj2.put("fields." + prop_id, hsCode);
             updObj1.put("$set", updObj2);
-            productService.updateProduct(userInfo.getSelChannelId(), quyObj, updObj1);
+            WriteResult rs = productService.updateProduct(userInfo.getSelChannelId(), quyObj, updObj1);
+            $debug("批量更新结果 " + rs.toString());
             return;
         }
 
