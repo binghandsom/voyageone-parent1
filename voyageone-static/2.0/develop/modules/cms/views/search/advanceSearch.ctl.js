@@ -364,6 +364,11 @@ define([
 
         // 当选择搜索时设置输入框
         $scope.setSelValue = function (option, custAtts) {
+            if (custAtts == null || custAtts == undefined) {
+                option.inputType = '';
+                option.inputOptsKey = '';
+                return;
+            }
             option.inputType = custAtts.valType;
             if (option.inputType == undefined) {
                 option.inputType = 'string';
