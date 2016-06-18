@@ -126,12 +126,12 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
                 result.append(",");
             }
             // 店铺内分类未设置
             if (StringUtils.isNotEmpty(searchValue.getShopCatStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", new String[]{null, ""}, "$in"));
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", new String[]{null, ""}, "$in"));
                 result.append(",");
             }
 

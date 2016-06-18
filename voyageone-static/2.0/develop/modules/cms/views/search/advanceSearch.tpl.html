@@ -284,7 +284,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 bg-white table-bordered table-responsive" style="min-height: 40px; max-height: 160px;">
-                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;" ng-disabled="vm.searchInfo.shopCatStatus">{{shopCat}}</label>
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
@@ -607,7 +607,7 @@
                             </button>
                             <ul uib-dropdown-menu>
                                 <li ng-if="cartBean.value!=27">
-                                    <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
+                                    <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="cartBean.value==27">
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>

@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -62,7 +62,7 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
-        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategory;
+        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategoryFromAdSearch;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
@@ -240,16 +240,24 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能
+         * popup出添加到CategoryEdit的功能（批量追加用）
          * @param openCategoryEdit
          */
-        function openAddChannelCategory(openAddChannelCategoryEdit) {
-            _chkProductSel(null, _openAddChannelCategory);
+        function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
+            _chkProductSel(cartId, _openAddChannelCategory);
 
             function _openAddChannelCategory(cartId, selList) {
-                openAddChannelCategoryEdit(selList, cartId).then(function () {
-                    getGroupList();
-                    getProductList();
+                openAddChannelCategoryEdit(selList, cartId).then(function (res) {
+                    var productIds = [];
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                    var params = {'sellerCats': res, 'productIds': productIds, 'cartId': cartId};
+                    params.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $addChannelCategoryService.save(params).then(function (context) {
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        $scope.search();
+                     });
                 })
             }
         }
@@ -704,7 +712,7 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能
+         * popup出店铺内分类选择框(查询用)
          * @param openCategoryEdit
          */
         function openChannelInnerCategory(openAddChannelCategoryEdit) {
@@ -714,9 +722,24 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddChannelCategoryEdit(selList).then(function (context) {
-                $scope.vm._shopCatValues = context.saveInfo.fullCNames;
-                $scope.vm.searchInfo.cidValue = context.saveInfo.fullCatId;
+            openAddChannelCategoryEdit(selList, $scope.vm.searchInfo.cartId).then(function (context) {
+                if (_.isArray(context)) {
+                    // 设置画面显示用的值
+                    var shopCatValues = [];
+                    _.forEach(context, function(catObj) {
+                        if (_.isArray(catObj.cNames)) {
+                            shopCatValues.push(catObj.cNames.join('>'));
+                        }
+                    });
+                    $scope.vm._shopCatValues = shopCatValues;
+
+                    // 设置查询用的参数
+                    var cidValue = [];
+                    _.forEach(context, function(catObj) {
+                        cidValue.push(catObj.cId);
+                    });
+                    $scope.vm.searchInfo.cidValue = cidValue;
+                }
             })
         }
 
@@ -737,6 +760,6 @@ define([
         }
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
     return searchIndex;
 });
