@@ -327,14 +327,16 @@ public class GetPlatformCategoryTreesService extends BaseTaskService {
      */
     @Transactional
     public void doRebuidPlatformBrand(List<Brand> brands, ShopBean shop, String JOB_NAME) {
-        //删除该店的所有品牌数据
-        int delCount = brandDao.delBrandsByShop(shop);
-        $info("删除该店的所有品牌数据: " + delCount + "条。");
-        //插入该店的所有品牌数据
-        if (brands != null && brands.size() > 0) {
-            $info("插入该店的所有品牌数据,CartId: " + shop.getCart_id());
-            brandDao.insertBrands(brands, shop, JOB_NAME);
-        }
+        // 20160618 貌似表被人删掉了, 不过这段确实没怎么用, 删了吧 tom START
+//        //删除该店的所有品牌数据
+//        int delCount = brandDao.delBrandsByShop(shop);
+//        $info("删除该店的所有品牌数据: " + delCount + "条。");
+//        //插入该店的所有品牌数据
+//        if (brands != null && brands.size() > 0) {
+//            $info("插入该店的所有品牌数据,CartId: " + shop.getCart_id());
+//            brandDao.insertBrands(brands, shop, JOB_NAME);
+//        }
+        // 20160618 貌似表被人删掉了, 不过这段确实没怎么用, 删了吧 tom END
     }
 
 }
