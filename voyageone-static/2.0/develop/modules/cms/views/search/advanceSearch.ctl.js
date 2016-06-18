@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -62,7 +62,7 @@ define([
         $scope.add = addCustAttribute;
         $scope.del = delCustAttribute;
         $scope.openAddPromotion = openAddPromotion;
-        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategory;
+        $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategoryFromAdSearch;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getTagList = getTagList;
@@ -129,6 +129,9 @@ define([
             $scope.vm.masterCat.catPath=null;
             $scope.vm.feedCat.catPath=null;
             $scope.vm.channelInner.catPath=null;
+            $scope.vm._shopCatValues = null;
+            $scope.vm._promotionTags = null;
+            $scope.vm._freeTags = null;
         }
 
         /**
@@ -150,6 +153,9 @@ define([
                 $scope.vm.sumCustomProps = sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.selSalesType = res.data.selSalesType;
+                if ($scope.vm.selSalesType == null || $scope.vm.selSalesType == undefined) {
+                    $scope.vm.selSalesType = [];
+                }
 
                 $scope.vm.groupList = res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -237,16 +243,24 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能
+         * popup出添加到CategoryEdit的功能（批量追加用）
          * @param openCategoryEdit
          */
-        function openAddChannelCategory(openAddChannelCategoryEdit) {
-            _chkProductSel(null, _openAddChannelCategory);
+        function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
+            _chkProductSel(cartId, _openAddChannelCategory);
 
             function _openAddChannelCategory(cartId, selList) {
-                openAddChannelCategoryEdit(selList, cartId).then(function () {
-                    getGroupList();
-                    getProductList();
+                openAddChannelCategoryEdit(selList, cartId).then(function (res) {
+                    var productIds = [];
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                    var params = {'sellerCats': res, 'productIds': productIds, 'cartId': cartId};
+                    params.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $addChannelCategoryService.save(params).then(function (context) {
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        $scope.search();
+                     });
                 })
             }
         }
@@ -445,6 +459,8 @@ define([
             $scope.vm.searchInfo.hasErrorFlg = null;
             $scope.vm.searchInfo.promotionTagType = null;
             $scope.vm.searchInfo.promotionTags = null;
+            $scope.vm._shopCatValues = null;
+            $scope.vm._promotionTags = null;
 
             $scope.vm.searchInfo.salesType = null;
             $scope.vm.searchInfo.salesSortType = null;
@@ -475,7 +491,7 @@ define([
             }
             $scope.vm._cart_display = 1;
             $scope.vm._mmmcart_display = 1;
-            if (cartObj.ismm || cartObj.value == 27) {
+            if (cartObj.cartType == 3 || cartObj.value == 27) {
                 // 如果是minimall店铺或者是聚美平台，则不显示店铺内分类
                 $scope.vm._mmmcart_display = 0;
             }
@@ -699,7 +715,7 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能
+         * popup出店铺内分类选择框(查询用)
          * @param openCategoryEdit
          */
         function openChannelInnerCategory(openAddChannelCategoryEdit) {
@@ -709,10 +725,24 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddChannelCategoryEdit(selList).then(function (context) {
-                getGroupList();
-                getProductList();
-                $scope.vm.channelInner.catPath = context.saveInfo.fullCNames;
+            openAddChannelCategoryEdit(selList, $scope.vm.searchInfo.cartId).then(function (context) {
+                if (_.isArray(context)) {
+                    // 设置画面显示用的值
+                    var shopCatValues = [];
+                    _.forEach(context, function(catObj) {
+                        if (_.isArray(catObj.cNames)) {
+                            shopCatValues.push(catObj.cNames.join('>'));
+                        }
+                    });
+                    $scope.vm._shopCatValues = shopCatValues;
+
+                    // 设置查询用的参数
+                    var cidValue = [];
+                    _.forEach(context, function(catObj) {
+                        cidValue.push(catObj.cId);
+                    });
+                    $scope.vm.searchInfo.cidValue = cidValue;
+                }
             })
         }
 
@@ -733,6 +763,6 @@ define([
         }
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
     return searchIndex;
 });

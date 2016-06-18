@@ -49,6 +49,9 @@ define([
                     self.checkedCountValid = false;
                     self.cartIdValid = false;
                     self.cartList = res.data.cartList;
+                    _.forEach(self.cartList, function(cartObj) {
+                        cartObj.value = parseInt(cartObj.value);
+                    });
                     self.cnt = res.data.cnt;
                     // 如果店铺渠道选择master或feed，不显示分类列
                     if (self.cartId == 0 || self.cartId == 1) {
@@ -117,7 +120,7 @@ define([
                     var cid = cids[cids.length-1];
                     var cNames =  fullCNames[index].split(">");
                     var cName = cNames[cNames.length-1];
-                    sellerCats.push({cid:cid,cids:cids,cName:cName,cNames:cNames});
+                    sellerCats.push({cId:cid, cIds:cids, cName:cName, cNames:cNames});
                 });
 
                 self.$uibModalInstance.close(sellerCats);

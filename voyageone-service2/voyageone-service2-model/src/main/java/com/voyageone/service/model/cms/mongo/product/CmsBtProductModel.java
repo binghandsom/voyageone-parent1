@@ -200,12 +200,18 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private final static String  PLATFORM_CART_PRE = "P";
     //platform
     public CmsBtProductModel_Platform_Cart getPlatform(int cartId) {
+        if (platforms == null) {
+            return null;
+        }
         return platforms.get(PLATFORM_CART_PRE + cartId);
     }
     public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
+        if (platforms == null) {
+            return null;
+        }
         return platforms.get(PLATFORM_CART_PRE + cartType.getId());
     }
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
