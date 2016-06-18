@@ -61,6 +61,9 @@
         <!-- SummerGuru feed 导入 cms2 -->
         <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 50 0/1 * * ?"/>
 
+        <!-- ShoeZoo feed 导入 cms2 -->
+        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+
         <!-- Target feed 导入 cms2 -->
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
