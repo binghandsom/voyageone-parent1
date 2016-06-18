@@ -309,6 +309,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
+                    // 没有设值时也要输出,不然就会错位
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
                     continue;
                 }
 
@@ -423,6 +429,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
+                    // 没有设值时也要输出,不然就会错位
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
                     continue;
                 }
                 CmsBtProductGroupModel grpModel = null;
@@ -433,6 +445,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     }
                 }
                 if (grpModel == null) {
+                    // 没有设值时也要输出,不然就会错位
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -508,10 +521,22 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 for (TypeChannelBean cartObj : cartList) {
                     CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                     if (ptfObj == null) {
+                        // 没有设值时也要输出,不然就会错位
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
                         continue;
                     }
                     List<BaseMongoMap<String, Object>> innerSkus = ptfObj.getSkus();
                     if (innerSkus == null) {
+                        // 没有设值时也要输出,不然就会错位
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
                         continue;
                     }
                     for (BaseMongoMap prop : innerSkus) {
