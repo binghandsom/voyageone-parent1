@@ -85,6 +85,10 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
             sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+            Set<String> url = new HashSet<>();
+            url.add(parseResult);
+            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
         }
 //        if (imageSet != null) {
 //            imageSet.add(parseResult);

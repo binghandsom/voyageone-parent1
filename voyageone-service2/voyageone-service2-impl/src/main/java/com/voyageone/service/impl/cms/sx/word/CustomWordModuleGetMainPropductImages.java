@@ -158,6 +158,8 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
         }
 
         return parseResult;
