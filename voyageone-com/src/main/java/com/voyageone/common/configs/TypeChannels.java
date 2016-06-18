@@ -2,6 +2,7 @@ package com.voyageone.common.configs;
 
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
+import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.TypeChannelDao;
@@ -234,7 +235,6 @@ public class TypeChannels {
         List<TypeChannelBean> resultList = new ArrayList<>();
 
         if (typeChannelBeanList != null) {
-
             for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
                 // 如果add_name1里为空, 说明这家店没有好好配置过, 所以不返回记录, 只有配置好了之后才能正常使用
                 String add_name1 = typeChannelBean.getAdd_name1();
@@ -251,6 +251,11 @@ public class TypeChannels {
                 }
             }
 
+            // 增加cartType
+            for (TypeChannelBean typeChannelBean : resultList) {
+                CartBean cart = Carts.getCart(typeChannelBean.getValue());
+                typeChannelBean.setCartType(cart.getCart_type());
+            }
         }
 
         return resultList;

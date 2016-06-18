@@ -153,6 +153,9 @@ define([
                 $scope.vm.sumCustomProps = sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
                 $scope.vm.selSalesType = res.data.selSalesType;
+                if ($scope.vm.selSalesType == null || $scope.vm.selSalesType == undefined) {
+                    $scope.vm.selSalesType = [];
+                }
 
                 $scope.vm.groupList = res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
