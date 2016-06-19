@@ -404,7 +404,10 @@
                     var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
                     aTag.text(content.value);
                     contentContainer.append(aTag);
-                } else {
+                }else if((typeof content !== 'string')){
+                    contentContainer.text(content.value);
+                }
+                else {
                     contentContainer.text(content);
                 }
             }
