@@ -7,16 +7,19 @@ define([
     'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate) {
+    angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
         $scope.vm = {"jmMasterBrandList":[]};
         $scope.editModel = {};
         $scope.datePicker = [];
         $scope.initialize  = function () {
-            console.log(context);
             if(context.id)
             {
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     $scope.editModel = res.data;
+                    $scope.editModel.model.activityStart = formatStrDate($scope.editModel.model.activityStart);
+                    $scope.editModel.model.activityEnd = formatStrDate($scope.editModel.model.activityEnd);
+                    $scope.editModel.model.prePeriodStart = formatStrDate($scope.editModel.model.prePeriodStart);
+                    $scope.editModel.model.prePeriodEnd = formatStrDate($scope.editModel.model.prePeriodEnd);
                 });
             }
             jmPromotionService.init().then(function (res) {
@@ -51,6 +54,14 @@ define([
                     context.search();
                 }
             })
-        }
+        };
+        /**
+         *
+         * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
+         * @returns {Date}
+         */
+        function formatStrDate(date){
+            return  $filter("date")(new Date(date),"yyyy-MM-dd");
+        };
     });
 });

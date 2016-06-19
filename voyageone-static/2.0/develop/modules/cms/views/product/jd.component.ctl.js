@@ -59,11 +59,10 @@ define([
                         scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
 
                     });
-                    productDetailService.getProductInfo({productId: scope.productId})
-                        .then(function (res) {
+                    productDetailService.getProductInfo({productId: scope.productId}).then(function (res) {
                             scope.vm.productDetails = res.data.productInfo;
                             scope.vm.productCode = res.data
-                        });
+                    });
 
                     switch(+scope.cartInfo.value){
                         case 26:
