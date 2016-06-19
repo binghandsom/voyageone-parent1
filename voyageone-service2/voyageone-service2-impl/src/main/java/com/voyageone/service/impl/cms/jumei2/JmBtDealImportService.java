@@ -1,6 +1,4 @@
 package com.voyageone.service.impl.cms.jumei2;
-import com.mchange.lang.DoubleUtils;
-import com.mongodb.BasicDBObject;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -345,19 +343,22 @@ public class JmBtDealImportService extends BaseService {
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
 
         //fields
-        BaseMongoMap<String, Object> fields = platform.getFields();  // new BaseMongoMap<>();
-        fields.setAttribute("productNameCn", modelJmBtProduct.getProductName());
+        BaseMongoMap<String, Object> fields = platform.getFields() == null ?  new BaseMongoMap<>() : platform.getFields();
+     // new BaseMongoMap<>();
+        fields.setAttribute("productNameCn",modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());
         fields.setAttribute("productShortName",modelJmBtDealImport.getProductShortName());
         fields.setAttribute("originCn", modelJmBtProduct.getAddressOfProduce());
-       // fields.setAttribute("beforeDate", "");
-       // fields.setAttribute("suitPeople", "");
+        fields.setAttribute("beforeDate", "无");
+        fields.setAttribute("suitPeople", "时尚潮流人士");
+        fields.setAttribute("userPurchaseLimit", "0");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
         fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
-        //platform.setFields(fields);
+        if (platform.getFields() == null)
+            platform.setFields(fields);
 
         List<BaseMongoMap<String, Object>> skus = platform.getSkus(); //new ArrayList<>();
         BaseMongoMap<String, Object> skuMap;
@@ -442,6 +443,8 @@ public class JmBtDealImportService extends BaseService {
 //            * cNames
     }
     BaseMongoMap<String, Object> getMongoSku(  List<BaseMongoMap<String, Object>> skus,String skuCode) {
+        if (skus == null)
+            return null;
         Stream<BaseMongoMap<String, Object>> resultList = skus.stream().filter(o -> o.getStringAttribute("skuCode").equals(skuCode));
         BaseMongoMap<String, Object> result = resultList.findFirst().orElse(null);
         return result;

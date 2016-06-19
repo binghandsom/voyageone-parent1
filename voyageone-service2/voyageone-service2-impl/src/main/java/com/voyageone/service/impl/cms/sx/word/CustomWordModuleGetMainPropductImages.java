@@ -115,7 +115,10 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, shopBean, user, extParameter);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
-                return null;
+                // 20160618 tom 如果padding没有内容, 不返回空, 因为返回空的话, 整个wordList都为空了 START
+//                return null;
+                return "";
+                // 20160618 tom 如果padding没有内容, 不返回空, 因为返回空的话, 整个wordList都为空了 END
             }
             String paddingImage;
             if(imageTemplate != null){
@@ -157,6 +160,8 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         }
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
             sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
         }
 

@@ -557,33 +557,42 @@ define([
          * pop出promotion选择页面,用于设置
          * @type {openAddToPromotion}
          */
-        $scope.openAddToPromotion = function (promotion, selList) {
-            if (selList && selList.length) {
-                var productIds = [];
-                _.forEach(selList, function (object) {
-                    productIds.push(object.id);
-                });
-                return openModel(popActions.bulkUpdate.addToPromotion, {
-                    "promotion": promotion,
-                    "productIds": productIds,
-                    "products": selList
-                });
+        $scope.openAddToPromotion = function (promotion, selList, context) {
+            var productIds = [];
+            if (context && context.isSelAll) {
+                // 全选
             } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                if (selList && selList.length) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.id);
+                    });
+                }
             }
+            return openModel(popActions.bulkUpdate.addToPromotion, {
+                "promotion": promotion,
+                "productIds": productIds,
+                "products": selList
+            });
         };
 
         /**
          * pop出properties变更页面,用于批量更新产品属性
          */
-        $scope.openFieldEdit = function (selList) {
-            if (selList && selList.length) {
-                var productIds = [];
-                _.forEach(selList, function (object) {
-                    productIds.push(object.code);
-                });
-                return openModel(popActions.bulkUpdate.fieldEdit, {"productIds": productIds});
+        $scope.openFieldEdit = function (selList, context) {
+            var productIds = [];
+            var params = null;
+            if (context && context.isSelAll) {
+                // 全选
+                params = {"productIds": productIds, 'isSelAll':1};
+            } else {
+                if (selList && selList.length) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                params = {"productIds": productIds};
             }
+            return openModel(popActions.bulkUpdate.fieldEdit, params);
         };
 
         //$scope.openBulkUpdate = openBulkUpdate;
@@ -688,11 +697,16 @@ define([
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
-        $scope.openAddJMActivity = function (promotion, selList) {
-            if (selList && selList.length) {
-                return openModel(popActions.search.joinJM, {promotion: promotion, products: selList});
+        $scope.openAddJMActivity = function (promotion, selList, context) {
+            if (context && context.isSelAll) {
+                // 全选
+                return openModel(popActions.search.joinJM, {promotion: promotion, products: [], 'isSelAll':1});
             } else {
-                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                if (selList && selList.length) {
+                    return openModel(popActions.search.joinJM, {promotion: promotion, products: selList});
+                } else {
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                }
             }
         };
 
@@ -1128,20 +1142,22 @@ define([
         };
 
         /**
-         * 新增advance查询页分类edit弹出
-         * */
-        $scope.openAddChannelCategoryEdit = function (selList, cartId) {
+         * advance查询，添加店铺内分类edit弹出
+         */
+        $scope.openAddChannelCategoryEdit = function (selList, cartId, context) {
             var productIds = [],data;
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
             });
-            if(selList.length > 0 && selList[0].plateSchema )
+            if (context && context.isSelAll) {
+                data = {"productIds": [], "cartId": cartId};
+            } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {"productIds": productIds,"cartId":selList[0].cartId,"selectedIds":selList[0].selectedIds,plateSchema:true};
-            else
-                data = {"productIds": productIds,"cartId":cartId};
+            } else {
+                data = {"productIds": productIds, "cartId": cartId};
+            }
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
-
 
         /**
          * 新增ChannelList页,设置操作弹出
@@ -1149,7 +1165,6 @@ define([
         $scope.openChannelSetting = function (context) {
             return openModel(popActions.system.channelsetting, context);
         };
-
 
         /**
          * 新增CartList页,设置操作弹出

@@ -65,7 +65,9 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
         }
 
         Set<String> imageSet = new HashSet<>(urls);
-        if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM) && useOriUrl) {
+        if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId()) && useOriUrl) {
+            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+        } else if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId()) && useOriUrl) {
             sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
         }
 

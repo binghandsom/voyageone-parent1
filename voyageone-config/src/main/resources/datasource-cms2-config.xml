@@ -12,9 +12,9 @@
     <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://121.41.58.229:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
-        <property name="user" value="app"/>
-        <property name="password" value="ZAQ!2wsx"/>
+                  value="jdbc:mysql://10.0.0.24:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round"/>
+        <property name="user" value="root"/>
+        <property name="password" value="sneakerhead"/>
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
         <property name="initialPoolSize" value="5"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
@@ -72,9 +72,9 @@
     <bean id="dataSourceSlave" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl"
-                  value="jdbc:mysql://121.41.58.229:3306/synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
-        <property name="user" value="app"/>
-        <property name="password" value="ZAQ!2wsx"/>
+                  value="jdbc:mysql://10.0.0.24:3306/Synship?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <property name="user" value="root"/>
+        <property name="password" value="sneakerhead"/>
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
         <property name="initialPoolSize" value="5"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
