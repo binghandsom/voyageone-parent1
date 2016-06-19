@@ -148,6 +148,9 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     throw new BusinessException(response.getZhDesc());
                 }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                throw new BusinessException(shop.getShop_name() + "新增京东商品信息失败 [京东返回应答response = null]");
             }
         } catch (Exception ex) {
             logger.error("调用京东API新增京东商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"

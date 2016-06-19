@@ -127,8 +127,18 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             }
         }
 
-        if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM)) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+        Map<String, String> map = null;
+        if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+        } else if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+        }
+        if (map != null) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (!StringUtils.isEmpty(entry.getValue())) {
+                    parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return parseResult;
