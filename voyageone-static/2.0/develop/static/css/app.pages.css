@@ -3,7 +3,7 @@
  */
 
 /* 为页面上的 schema 输入框定制样式 */
-schema-field textarea {
+schema-field textarea.form-control {
     height: 100px;
 }
 schema-field textarea.schema-field-html {
