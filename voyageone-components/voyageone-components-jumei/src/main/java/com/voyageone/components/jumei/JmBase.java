@@ -44,7 +44,10 @@ public class JmBase extends ComponentBase {
     }
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
-
+        if(shopBean==null)
+        {
+            throw  new  BusinessException("ShopBean不能为null");
+        }
         for (Object value : params.values()) {
             if (value != null) {
                 if (!(value instanceof String) && !(value instanceof NotSignString)) {
