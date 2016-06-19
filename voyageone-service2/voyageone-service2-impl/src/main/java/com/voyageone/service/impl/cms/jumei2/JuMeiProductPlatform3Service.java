@@ -74,6 +74,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
         CallResult result = new CallResult();
         try {
             if (model.getSynchStatus() == 1) {
+                //获取在售商品的model
+                CmsBtJmPromotionProductModel onSaleModel=  daoExtCmsBtJmPromotionProduct.getOnSaleByCode(model.getChannelId(),model.getProductCode());
+                if(onSaleModel!=null)
+                {
+                    model.setErrorMsg("存在在售商品JmHashId:"+onSaleModel.getJmHashId()+"不能上新");
+                    daoCmsBtJmPromotionProduct.update(model);
+                    return result;
+                }
                 // 再售
                 CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
                 List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
