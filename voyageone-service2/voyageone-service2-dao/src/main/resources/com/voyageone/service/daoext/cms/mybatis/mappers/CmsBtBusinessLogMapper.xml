@@ -8,7 +8,7 @@
 	   id,
        channel_id channelId,
        cat_id catId,
-       cart_id cartId,
+       voyageone_cms2.cms_bt_business_log.cart_id cartId,
        group_id groupId,
        group_name groupName,
        product_id productId,
@@ -22,10 +22,10 @@
        error_code errorCode,
        error_msg errorMsg,
        status,
-       created,
-       creater,
-       modified,
-       modifier
+       voyageone_cms2.cms_bt_business_log.created,
+       voyageone_cms2.cms_bt_business_log.creater,
+       voyageone_cms2.cms_bt_business_log.modified,
+       voyageone_cms2.cms_bt_business_log.modifier
 	</sql>
 
     <!-- 根据条件查询 -->
@@ -33,7 +33,9 @@
             parameterType="Map">
         select
         <include refid="fields"/>
+        ,cart.short_name as cartName
         from voyageone_cms2.cms_bt_business_log
+        LEFT JOIN synship.ct_cart cart on voyageone_cms2.cms_bt_business_log.cart_id = cart.cart_id
         where status = 0
         <if test="channelId != null and channelId != ''">
             and channel_id = #{channelId}
@@ -48,7 +50,7 @@
             and cat_id = #{catId}
         </if>
         <if test="cartId > 0">
-            and cart_id = #{cartId}
+            and voyageone_cms2.cms_bt_business_log.cart_id = #{cartId}
         </if>
         <if test="codes != null and codes.size() > 0">
             and (code in
