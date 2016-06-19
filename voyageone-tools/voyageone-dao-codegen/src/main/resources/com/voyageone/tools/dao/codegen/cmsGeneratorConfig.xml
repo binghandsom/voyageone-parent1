@@ -11,7 +11,7 @@
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/voyagenone_cms2_jumei"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/voyageone_cms2"
                         userId="root" password="sneakerhead">
         </jdbcConnection>
 
