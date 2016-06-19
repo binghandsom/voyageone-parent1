@@ -698,9 +698,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
         // 循环取得5张图片的url并分别上传到京东
         for (String picName : mainPicNameList) {
+            String picUrl = "";
             try {
                 // 取得图片url
-                String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
                 bytes = IOUtils.toByteArray(inputStream);
@@ -710,7 +711,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 String errMsg = String.format("京东取得商品主图信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s] [PicName:%s]",
                         channelId, cartId, groupId, platformCategoryId, picName);
                 $error(errMsg, ex);
-                sxData.setErrorMessage(errMsg);
+                sxData.setErrorMessage("京东取得商品主图信息失败 [图片URL:" + picUrl + "]");
                 // 继续取下一张图片
             }
         }
