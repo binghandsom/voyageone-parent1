@@ -244,7 +244,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
-                String errMsg = String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s]", channelId, groupId);
+                String errMsg = String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s] [sxData:null]", channelId, groupId);
                 $error(errMsg);
                 // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
@@ -252,7 +252,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
                 sxData.setErrorMessage(errMsg);
-                throw new BusinessException(errMsg);
+                throw new BusinessException(shopProp.getShop_name() + "取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
             // 如果取得上新对象商品信息出错时，报错
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
@@ -561,7 +561,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage("取得上新用的商品数据信息异常！请向管理员确认");
+                sxData.setErrorMessage(shopProp.getShop_name() + "取得上新用的商品数据信息异常！请向管理员确认 [上新数据为null]");
             }
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
