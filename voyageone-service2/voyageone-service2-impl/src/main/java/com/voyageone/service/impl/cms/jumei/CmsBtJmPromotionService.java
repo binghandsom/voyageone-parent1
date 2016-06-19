@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -113,8 +114,16 @@ public class CmsBtJmPromotionService {
         } else {//新增
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
-            insertModel(parameter);
-            saveCmsBtPromotion(parameter.getModel());
+            Map<String,Object> param = new HashMap<>();
+            param.put("channelId",parameter.getModel().getChannelId());
+            param.put("name",parameter.getModel().getName());
+            List<MapModel> model = getListByWhere(param);
+            if(model == null || model.size() == 0){
+                insertModel(parameter);
+                saveCmsBtPromotion(parameter.getModel());
+            }else{
+                throw new BusinessException("4000093");
+            }
         }
         return 1;
     }

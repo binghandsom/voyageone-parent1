@@ -101,7 +101,7 @@ define([
                             productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productId,catId:context.selected.catId}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
-                                scope.vm.platform.pCatId = +context.selected.catId;
+                                scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.platform.status = scope.vm.status =  "Pending";
@@ -171,7 +171,7 @@ define([
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null ? false : scope.schemaForm.$valid;
+                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
 
                 function selectAll(){

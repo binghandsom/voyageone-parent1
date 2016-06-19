@@ -50,8 +50,6 @@ define([
                 if(context.search) {
                     context.search();
                 }
-            }, function (res) {
-                alert('TXT_FAIL');
             })
         }
     });
