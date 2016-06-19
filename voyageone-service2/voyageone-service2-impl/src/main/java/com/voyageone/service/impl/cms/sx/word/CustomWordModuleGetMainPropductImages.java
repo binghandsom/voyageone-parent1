@@ -17,6 +17,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Ima
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
@@ -159,10 +160,18 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 //            }
         }
 
+        Map<String, String> map = null;
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+        }
+        if (map != null) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (!StringUtils.isEmpty(entry.getValue())) {
+                    parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return parseResult;
