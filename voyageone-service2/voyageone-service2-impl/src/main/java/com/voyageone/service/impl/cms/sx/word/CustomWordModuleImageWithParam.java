@@ -84,11 +84,17 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+            Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+            if (map != null && map.containsKey(parseResult)) {
+                parseResult = map.get(parseResult);
+            }
         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+            Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+            if (map != null && map.containsKey(parseResult)) {
+                parseResult = map.get(parseResult);
+            }
         }
 //        if (imageSet != null) {
 //            imageSet.add(parseResult);
