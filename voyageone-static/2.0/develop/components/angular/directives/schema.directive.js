@@ -874,7 +874,7 @@
                                 // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
                                 // 所以这里要单独判断
                                 if (!exists(field.value) && exists(field.defaultValue))
-                                    field.value = getInputType(field.defaultValue, field, valueTypeRule);
+                                    field.value = getInputValue(field.defaultValue, field, valueTypeRule);
 
                                 if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                     // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
