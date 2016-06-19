@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
@@ -10,7 +9,6 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtProductService;
@@ -34,18 +32,15 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
-import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -195,7 +190,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //如果OriginHashId不存在，则创建新商品
 
                         //填充JmProductBean
-                        JmProductBean bean = fillJmProductBean(channelId, product, cmsBtJmProductModel, cmsBtJmSkuModelList,expressionParser, shop, groupId);
+                        JmProductBean bean = fillJmProductBean(channelId, product, cmsBtJmProductModel, cmsBtJmSkuModelList, expressionParser, shop, groupId);
                         HtProductAddRequest htProductAddRequest = new HtProductAddRequest();
                         htProductAddRequest.setJmProduct(bean);
                         HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
@@ -272,7 +267,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                                     htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                                     String sizeStr = skuMap.getStringAttribute("size");
-                                    htSpuUpdateRequest.setSize( getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
+                                    htSpuUpdateRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                                     HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
@@ -290,7 +285,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
                                     htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode"));
                                     String sizeStr = skuMap.getStringAttribute("size");
-                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
+                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("priceSale"));
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
@@ -380,9 +375,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     throw e;
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
             $info("保存workload成功！[workId:%s]", work.getId());
@@ -391,7 +384,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
     /**
-     *
      * @param channelId
      * @param fields
      * @param jmFields
@@ -450,7 +442,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
-     *
      * @param work
      * @param result
      */
@@ -462,7 +453,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
     /**
-     *
      * @param channelId
      * @param productCode
      * @param jmHashId
@@ -479,7 +469,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
-     *
      * @param channelId
      * @param product
      * @param jmProductId
@@ -553,7 +542,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-        String productName = jmFields.getStringAttribute("productNameCn");
+        String productName = jmFields.getStringAttribute("productNameCn") + " " + fields.getCode();
         htProductUpdateRequest.setJumei_product_name(productName);
         htProductUpdateRequest.setJumei_product_id(productId);
         HtProductUpdate_ProductInfo productInfo = new HtProductUpdate_ProductInfo();
@@ -597,7 +586,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @throws Exception
      */
     private JmProductBean fillJmProductBean(String channelId, CmsBtProductModel product, CmsBtJmProductModel cmsBtJmProductModel,
-                                            List<CmsBtJmSkuModel> cmsBtJmSkuModelList , ExpressionParser expressionParser, ShopBean shopProp, Long groupId) throws Exception {
+                                            List<CmsBtJmSkuModel> cmsBtJmSkuModelList, ExpressionParser expressionParser, ShopBean shopProp, Long groupId) throws Exception {
 
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CartEnums.Cart.JM);
 
@@ -615,54 +604,22 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         bean.setProduct_spec_number(fields.getCode());
         bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
         bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
-        bean.setName(jmFields.getStringAttribute("productNameCn"));
+        bean.setName(jmFields.getStringAttribute("productNameCn") + " " +productCode);
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
-        //商品主图
-//        List<String> mainPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 1, 1, brandName, productType, sizeType, false);
+        //白底方图
+        List<String> jmMainPics = new ArrayList<>();
+        String picTemplate = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
+        for (String picUrl : picTemplate.split(",")) {
+            String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
+            jmMainPics.add(jmPicUrl);
+        }
 
-//        List<String> mainPicUrls = new ArrayList<>();
-//        List<CmsBtProductModel_Field_Image> mainImgs = fields.getImages1();
-//
-//        for (CmsBtProductModel_Field_Image img: mainImgs) {
-//            String imgName = img.getName();
-//            try {
-//                // 取得图片url
-//                String picUrl = sxProductService.resolveDict(imgName, expressionParser, shopProp, getTaskName(), null);
-//                // 读取图片
-//                InputStream inputStream = getImgInputStream(picUrl, MAX_RETRY_TIMES);
-//
-//                //上传图片
-//                JmImageFileBean fileBean = new JmImageFileBean();
-//                fileBean.setImgName(imgName);
-//                fileBean.setInputStream(inputStream);
-//                fileBean.setNeedReplace(false);
-//                fileBean.setDirName(channelId + "/" + brandName+"/");
-//                String jmPicUrl = jumeiImageFileService.imageFileUpload(shopProp, fileBean);
-//                mainPicUrls.add(jmPicUrl);
-//
-//                //保存图片
-//                CmsBtPlatformImagesModel imgModel = new CmsBtPlatformImagesModel();
-//                imgModel.setImgName(imgName);
-//                imgModel.setChannelId(channelId);
-//                imgModel.setCartId(CART_ID);
-//                imgModel.setActive(true);
-//                imgModel.setSearchId(groupId.toString());
-//                cmsBtPlatformImagesDao.insert(imgModel);
-//
-//            } catch (Exception ex) {
-//                String errMsg = String.format("上传商品主图信息失败！[ChannelId:%s] [PicName:%s]", channelId,imgName);
-//                $error(errMsg, ex);
-//                throw new BusinessException(errMsg);
-//            }
-//        }
-
-
+        bean.setNormalImage(Joiner.on(",").join(jmMainPics));
         //TEST_Code
-        List<String> mainPicUrls = new ArrayList<>();
-        mainPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/001/product/1/001001b07-ltbge/001001b07-ltbge1_1.jpeg");
-        String mainPicUrlStr = Joiner.on(",").join(mainPicUrls);
-        bean.setNormalImage(mainPicUrlStr);
-
+//        List<String> mainPicUrls = new ArrayList<>();
+//        mainPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/001/product/1/001001b07-ltbge/001001b07-ltbge1_1.jpeg");
+//        String mainPicUrlStr = Joiner.on(",").join(mainPicUrls);
+//        bean.setNormalImage(mainPicUrlStr);
 
 
         JmProductBean_DealInfo deal = new JmProductBean_DealInfo();
@@ -674,40 +631,43 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setShipping_system_id(Integer.valueOf(shippingId));
 
 
-        //品牌图,本单详情
-        List<String> brandPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 3, 1, brandName, productType, sizeType, false);
-        //TEST_Code
-        brandPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+        //本单详情
+//        List<String> brandPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 3, 1, brandName, productType, sizeType, false);
+//        //TEST_Code
+//        brandPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+//
+//        StringBuffer sb = new StringBuffer();
+//
+//        for (String brandPic : brandPicUrls) {
+//            sb.append(String.format(IMG_HTML, brandPic));
+//        }
+//        sb.setLength(0);
+//        List<String> logiPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 4, 1, brandName, productType, sizeType, false);
+//        //TEST_Code
+//        logiPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+//        for (String logiPic : logiPicUrls) {
+//            sb.append(String.format(IMG_HTML, logiPic));
+//        }
+//        //物流图,商品实拍
+//        deal.setDescription_images(sb.toString());
+//        sb.setLength(0);
+//        List<String> sizePicUrls = sxProductService.getImageUrls(channelId, CART_ID, 2, 1, brandName, productType, sizeType, false);
+//
+//        //TEST_Code
+//        sizePicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+//
+//        for (String sizePic : sizePicUrls) {
+//            sb.append(String.format(IMG_HTML, sizePic));
+//        }
+//        //使用方法,尺码图
+//        deal.setDescription_usage(sb.toString());
 
-        StringBuffer sb = new StringBuffer();
-
-        for (String brandPic : brandPicUrls) {
-            sb.append(String.format(IMG_HTML, brandPic));
-        }
-        deal.setDescription_properties(sb.toString());
-
-
-        sb.setLength(0);
-        List<String> logiPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 4, 1, brandName, productType, sizeType, false);
-        //TEST_Code
-        logiPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
-        for (String logiPic : logiPicUrls) {
-            sb.append(String.format(IMG_HTML, logiPic));
-        }
-        //物流图,商品实拍
-        deal.setDescription_images(sb.toString());
-        sb.setLength(0);
-        List<String> sizePicUrls = sxProductService.getImageUrls(channelId, CART_ID, 2, 1, brandName, productType, sizeType, false);
-
-        //TEST_Code
-        sizePicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
-
-        for (String sizePic : sizePicUrls) {
-            sb.append(String.format(IMG_HTML, sizePic));
-        }
-        //使用方法,尺码图
-        deal.setDescription_usage(sb.toString());
-
+        String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
+        deal.setDescription_properties(jmDetailTemplate);
+        String jmProductTemplate = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, getTaskName(), null);
+        deal.setDescription_images(jmProductTemplate);
+        String jmUseageTemplate = sxProductService.resolveDict("聚美使用方法", expressionParser, shopProp, getTaskName(), null);
+        deal.setDescription_usage(jmUseageTemplate);
 
         deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
         deal.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
@@ -717,10 +677,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         deal.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
         deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
-        deal.setStart_time(System.currentTimeMillis()/1000);
+        deal.setStart_time(System.currentTimeMillis() / 1000);
         Calendar rightNow = Calendar.getInstance();
         rightNow.add(Calendar.MINUTE, 30);
-        deal.setEnd_time(rightNow.getTimeInMillis()/1000);
+        deal.setEnd_time(rightNow.getTimeInMillis() / 1000);
         List<String> skuCodeList = product.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
@@ -741,9 +701,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             spu.setUpc_code(jmSku.getStringAttribute("barcode"));
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
-            String sizeStr =jmSku.getStringAttribute("size");
+            String sizeStr = jmSku.getStringAttribute("size");
 
-            spu.setSize(getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
+            spu.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
 
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
@@ -829,19 +789,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @return
      */
     private String getSizeFromSizeMap(String sizeStr, String channelId, String brandName, String productType, String sizeType) {
-        if(!StringUtils.isNullOrBlank2(sizeStr)) {
+        if (!StringUtils.isNullOrBlank2(sizeStr)) {
             Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, brandName, productType, sizeType);
             String changedSize = sizeMap.get(sizeStr);
-            if(changedSize != null) {
+            if (changedSize != null) {
                 return changedSize;
+            } else {
+                return sizeStr;
             }
-            else
-            {
-                return  sizeStr;
-            }
-        }
-        else
-        {
+        } else {
             return "NO SIZE";
         }
     }
@@ -903,24 +859,5 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
 
         return jmSkus;
-    }
-
-
-    /**
-     * 获取网络图片流，遇错重试
-     *
-     * @param url   imgUrl
-     * @param retry retrycount
-     * @return inputStream / throw Exception
-     */
-    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
-        if (--retry > 0) {
-            try {
-                return HttpUtils.getInputStream(url, null);
-            } catch (Exception e) {
-                getImgInputStream(url, retry);
-            }
-        }
-        throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 }

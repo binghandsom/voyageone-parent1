@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
                 <div class="col-sm-7 m-t-xs">
-                    <label ng-repeat="cart in cartList" class="c-radio">
+                    <label ng-repeat="cart in cartList" class="c-radio" ng-if="cart.value != 27">
                         <input type="radio" name="promotionCartId" class="form-control" ng-model="promotion.cartId" value="{{::cart.value}}" required>
                         <span class="fa fa-check"></span><b>&nbsp;{{::cart.name}}</b>
                     </label>

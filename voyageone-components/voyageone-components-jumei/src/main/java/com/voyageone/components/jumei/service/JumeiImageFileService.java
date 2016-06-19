@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class JumeiImageFileService extends JmBase {
 
-    private static final String IMAGWE_UPLOAD = "v1/img/upload";
+    private static final String IMAGWE_UPLOAD = "/v1/img/upload";
 
     /**
      * 图片上传至聚美图片空间

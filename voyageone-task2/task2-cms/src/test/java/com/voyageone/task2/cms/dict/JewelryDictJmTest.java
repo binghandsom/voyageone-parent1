@@ -63,8 +63,8 @@ public class JewelryDictJmTest {
         SxData sxData = sxProductService.getSxProductDataByGroupId("010", 20893L);
         sxData.setCartId(27);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-        ShopBean shopProp = Shops.getShop("010", "23");
-        shopProp.setCart_id("27");
+        ShopBean shopProp = Shops.getShop("010", 27);
+//        shopProp.setCart_id("27");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
         // 最终测试结果是这样的 ======================================== START
@@ -77,7 +77,7 @@ public class JewelryDictJmTest {
 // <div><img src="http://p12.jmstatic.com/open_api/gPop_131/010/2/20160617165939.jpeg" /></div>
 // =====================================
 // 字典: 聚美实拍
-// <div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW%5F20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-1" /></div><div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW%5F20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-2" /></div>
+// <div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-1" /></div><div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW%5F20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-2" /></div>
 // =====================================
 // 字典: 聚美白底方图
 // http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=010-SSG016028SDM75-1,http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=010-SSG016028SDM75-2,
@@ -107,6 +107,11 @@ public class JewelryDictJmTest {
             System.out.println("字典: 聚美白底方图");
             result = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
             System.out.println(result);
+            for (String picUrl : result.split(",")) {
+                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
+                System.out.println(jmPicUrl);
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
