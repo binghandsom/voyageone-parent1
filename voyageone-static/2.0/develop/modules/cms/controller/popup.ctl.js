@@ -337,7 +337,7 @@ define([
                     "detail": {
                         "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
-                        "controller": 'popPromotionDetailCtl',
+                        "controller": 'popJMPromotionDetailCtl',
                         "size": 'md',
                         "backdrop": "static"
                     },
