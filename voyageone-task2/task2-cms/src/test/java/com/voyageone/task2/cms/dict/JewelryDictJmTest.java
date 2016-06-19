@@ -70,17 +70,16 @@ public class JewelryDictJmTest {
         // 最终测试结果是这样的 ======================================== START
 // =====================================
 // 字典: 聚美详情
-// <div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$&$product=010-SSG016028SDM75-1&$title01=%E4%BA%A7%E5%93%81%E5%93%81%E7%89%8C&$text01=Jewelry.com&$title02=%E4%BA%A7%E5%93%81%E6%9D%90%E8%B4%A8&$text02=925%E9%93%B6&$title03=%E4%BA%A7%E5%93%81%E5%AE%9D%E7%9F%B3&$text03=%E9%92%BB%E7%9F%B3&$title04=&$text04=&$title05=&$text05=&$title06=&$text06=&$title07=&$text07=&$title08=&$text08="></div>
+// <div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/3b17329e-1af1-4e1f-adc1-e4451cfa1477.jpeg"></div>
 // =====================================
 // 字典: 聚美使用方法
-// [16-06-18 19:57:29] com.voyageone.service.impl.cms.sx.SxProductService[INFO ]:34   | 找到image_group记录!
 // <div><img src="http://p12.jmstatic.com/open_api/gPop_131/010/2/20160617165939.jpeg" /></div>
 // =====================================
 // 字典: 聚美实拍
-// <div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-1" /></div><div><img src="http://s7d5.scene7.com/is/image/sneakerhead/JW%5F20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=010-SSG016028SDM75-2" /></div>
+// <div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/5eca6152-21fb-4352-a647-9d122b63c7a1.jpeg" /></div><div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/f439cf4b-9791-45fe-9b3d-6d3960261612.jpeg" /></div>
 // =====================================
 // 字典: 聚美白底方图
-// http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=010-SSG016028SDM75-1,http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=010-SSG016028SDM75-2,
+// http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/56dbb1c0-ef09-48f6-9530-80d734653155.jpeg,http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/2ed210b5-10da-49b9-a7cf-49b1e89b9fe9.jpeg,
         // 最终测试结果是这样的 ======================================== END
 
         try {
@@ -108,8 +107,9 @@ public class JewelryDictJmTest {
             result = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
             System.out.println(result);
             for (String picUrl : result.split(",")) {
-                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
-                System.out.println(jmPicUrl);
+//                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
+//                System.out.println(jmPicUrl);
+                System.out.println(picUrl);
             }
 
 
@@ -405,7 +405,7 @@ public class JewelryDictJmTest {
             CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
 
             RuleExpression imageTemplate = new RuleExpression();
-            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F2015%%5Fx1000%%5F1000x?$jc1000_1000$&$product=%s,"));
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F2015%%5Fx1000%%5F1000x?$jc1000_1000$&$product=%s"));
             userParam.setImageTemplate(imageTemplate);
             RuleExpression imageIndex = new RuleExpression();
             imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
@@ -413,9 +413,9 @@ public class JewelryDictJmTest {
             RuleExpression img_imageType = new RuleExpression();
             img_imageType.addRuleWord(new TextWord(C_商品图片));
             userParam.setImageType(img_imageType);
-//            RuleExpression htmlTemplate = new RuleExpression();
-//            htmlTemplate.addRuleWord(new TextWord("%s,"));
-//            userParam.setHtmlTemplate(htmlTemplate);
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("%s,"));
+            userParam.setHtmlTemplate(htmlTemplate);
 //            RuleExpression paddingTemplate = new RuleExpression();
 //            paddingTemplate.addRuleWord(new TextWord(","));
 //            userParam.setPaddingExpression(paddingTemplate);
