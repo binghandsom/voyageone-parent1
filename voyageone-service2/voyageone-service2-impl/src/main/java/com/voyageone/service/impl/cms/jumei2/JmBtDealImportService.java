@@ -320,7 +320,7 @@ public class JmBtDealImportService extends BaseService {
 
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
-        platform.setpCatId(String.valueOf(modelJmBtProduct.getCategoryLv4Id()));
+        platform.setpCatId(CartEnums.Cart.TM.getId());
         if(modelJmBtProduct.getCategoryLv4Id()!=0) {
             String catPath = daoExtJmBtDealImport.selectCategoryFullPath(modelJmBtProduct.getCategoryLv4Id());
             if (!StringUtils.isEmpty(catPath)) {
@@ -344,7 +344,8 @@ public class JmBtDealImportService extends BaseService {
 
         //fields
         BaseMongoMap<String, Object> fields = platform.getFields() == null ?  new BaseMongoMap<>() : platform.getFields();
-        fields.setAttribute("productNameCn", modelJmBtProduct.getProductName());
+     // new BaseMongoMap<>();
+        fields.setAttribute("productNameCn",modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());

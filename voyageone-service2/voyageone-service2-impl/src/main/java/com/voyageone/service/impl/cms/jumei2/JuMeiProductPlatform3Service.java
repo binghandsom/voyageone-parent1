@@ -79,9 +79,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
                 String jmSkuNoList = getjmSkuNo(listSkuPrice);
                 jmHtDealCopy(model, shopBean, modelJmProduct.getOriginJmHashId());//再售
+                model.setSynchStatus(2);
+                daoCmsBtJmPromotionProduct.update(model);//在售之后先保存  避免下面调用接口失败 jmHashId丢失
+
                 jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新价格
-                model.setSynchStatus(2);
                 model.setPriceStatus(0);
                 model.setUpdateStatus(0);
                 model.setErrorMsg("");
