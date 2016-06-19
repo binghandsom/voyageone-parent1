@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -14,6 +15,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
@@ -202,7 +204,9 @@ public class CmsSearchAdvanceService extends BaseAppService {
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 获取promotion list
-        masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
+        List<CmsBtPromotionBean> cmsBtPromotions = promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null);
+        cmsBtPromotions = cmsBtPromotions.stream().filter(cmsBtPromotionBean -> cmsBtPromotionBean.getCartId() != CartEnums.Cart.JM.getValue()).collect(Collectors.toList());
+        masterData.put("promotionList", cmsBtPromotions);
 
         //add by holysky  新增一些页的聚美促销活动预加载
         masterData.put("jmPromotionList", jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));

@@ -250,6 +250,12 @@
     "controllerUrl": "modules/cms/views/product/detail.ctl",
     "controller": "productDetailController as ctrl"
   },
+  "product_detail_cart": {
+    "hash": "/product/detail/:productId/:cartId",
+    "templateUrl": "views/product/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/product/detail.ctl",
+    "controller": "productDetailController as ctrl"
+  },
   "channel_common": {
     "hash": "/channel/common",
     "templateUrl": "views/channel/common/attribute.tpl.html",
