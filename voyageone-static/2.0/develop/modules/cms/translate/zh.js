@@ -365,7 +365,7 @@ define(function(){
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
         "TXT_UN_TRANSLATION": "未分配总数",
-        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但为完成总数",
+        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但未完成总数",
         "TXT_TRANSLATED": "完成翻译总数",
         "TXT_DISTRIBUTION_RULE": "分发规则",
         "TXT_MAIN_PRODUCT": "主商品",
@@ -680,6 +680,23 @@ define(function(){
         "TXT_CLIENT_RETAIL_PRICE":"客户指导价",
         "TXT_CLIENT_MSRP_PRICE":"客户建议零售价",
         "TXT_CLIENT_PROMOTION_PRICE":"客户促销价",
+
+        "INVALID_EMAIL": "请输入正确的E-Mail地址",
+        "INVALID_URL": "请输入正确的URL地址",
+        "INVALID_DATE": "请输入正确的日期",
+        "INVALID_DATETIMELOCAL": "请输入正确的日期时间",
+        "INVALID_COLOR": "请输入正确的颜色",
+        "INVALID_RANGE": "请输入正确的排列",
+        "INVALID_MONTH": "请输入正确的月份",
+        "INVALID_TIME": "请输入正确的时间",
+        "INVALID_WEEK": "请输入正确的星期",
+        "INVALID_NUMBER": "请输入正确的数字",
+        "INVALID_REQUIRED": "请输入数据",
+        "INVALID_MAXLENGTH": "请输入的数据长度不能超过:{{value}}",
+        "INVALID_MINLENGTH": "请输入的数据长度不能短于:{{value}}",
+        "INVALID_MAX": "请输入的数据不能大于:{{value}}",
+        "INVALID_MIN": "请输入的数据不能小于:{{value}}",
+        "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
 
         /**平台schema*/
         "TXT_BAR_CODE":"条形码"
