@@ -152,7 +152,7 @@ define(function(){
         "TXT_IN_STOCK_TIME": "在库时间",
         "TXT_MSRP_WITH_COLON": "官方售价",
         "TXT_RETAIL_PRICE_WITH_COLON": "指导售价",
-        "TXT_CREATE_TIME_WITH_COLON": "创建时间",
+        "TXT_CREATE_TIME_WITH_COLON": "创建时间:",
         "TXT_PUBLISH_TIME_WITH_COLON": "发布时间:",
         "TXT_ON_SALE_TIME_WITH_COLON": "销售时间:",
         "TXT_ALERT": "温馨提示",
@@ -680,6 +680,23 @@ define(function(){
         "TXT_CLIENT_RETAIL_PRICE":"客户指导价",
         "TXT_CLIENT_MSRP_PRICE":"客户建议零售价",
         "TXT_CLIENT_PROMOTION_PRICE":"客户促销价",
+
+        "INVALID_EMAIL": "请输入正确的E-Mail地址",
+        "INVALID_URL": "请输入正确的URL地址",
+        "INVALID_DATE": "请输入正确的日期",
+        "INVALID_DATETIMELOCAL": "请输入正确的日期时间",
+        "INVALID_COLOR": "请输入正确的颜色",
+        "INVALID_RANGE": "请输入正确的排列",
+        "INVALID_MONTH": "请输入正确的月份",
+        "INVALID_TIME": "请输入正确的时间",
+        "INVALID_WEEK": "请输入正确的星期",
+        "INVALID_NUMBER": "请输入正确的数字",
+        "INVALID_REQUIRED": "请输入数据",
+        "INVALID_MAXLENGTH": "请输入的数据长度不能超过:{{value}}",
+        "INVALID_MINLENGTH": "请输入的数据长度不能短于:{{value}}",
+        "INVALID_MAX": "请输入的数据不能大于:{{value}}",
+        "INVALID_MIN": "请输入的数据不能小于:{{value}}",
+        "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
 
         /**平台schema*/
         "TXT_BAR_CODE":"条形码"
