@@ -171,7 +171,7 @@ define([
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null ? false : scope.schemaForm.$valid;
+                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
 
                 function selectAll(){
