@@ -232,10 +232,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         if(platform.get("skus") !=null ) {
             CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
-            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform(27).getSkus();
+            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform((int)platform.get("cartId")).getSkus();
 
             Map<String, Double> comPrice = new HashMap<>();
-            cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"),item.getDoubleAttribute("priceRetail")));
+            cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"), item.getDoubleAttribute("priceRetail")));
 
             for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
                 String sku = (String) stringObjectBaseMongoMap.get("skuCode");
