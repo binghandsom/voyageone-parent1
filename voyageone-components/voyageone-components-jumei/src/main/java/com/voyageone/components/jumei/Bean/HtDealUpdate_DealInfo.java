@@ -5,7 +5,7 @@ package com.voyageone.components.jumei.bean;
  */
 public class HtDealUpdate_DealInfo {
     //发货仓库
-    int shipping_system_id;
+    Integer shipping_system_id;
 
     int user_purchase_limit;//            限购数量
 
@@ -49,11 +49,11 @@ public class HtDealUpdate_DealInfo {
 //    参数范围: 注：全量覆盖; 多个sku_no以","隔开
 //}
     String jumei_sku_no;// 可选	String
-    public int getShipping_system_id() {
+    public Integer getShipping_system_id() {
         return shipping_system_id;
     }
 
-    public void setShipping_system_id(int shipping_system_id) {
+    public void setShipping_system_id(Integer shipping_system_id) {
         this.shipping_system_id = shipping_system_id;
     }
 

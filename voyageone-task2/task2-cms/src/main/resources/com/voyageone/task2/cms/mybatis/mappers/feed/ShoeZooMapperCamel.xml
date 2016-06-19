@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.ShoeZooFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    <id column="Variation_Parent_SKU" property="variationParentSku" jdbcType="VARCHAR" />
+    <result column="Auction_Title" property="auctionTitle" jdbcType="VARCHAR" />
+    <result column="Short_Description" property="shortDescription" jdbcType="VARCHAR" />
+    <result column="Picture_URLs" property="pictureUrls" jdbcType="VARCHAR" />
+    <result column="brandname" property="brandname" jdbcType="VARCHAR" />
+    <result column="swatchimageurl" property="swatchimageurl" jdbcType="VARCHAR" />
+    <result column="Feature_Bullets" property="featureBullets" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" extends="BaseResultMap" >
+    <result column="Inventory_Number" property="inventoryNumber" jdbcType="LONGVARCHAR" />
+    <result column="UPC1" property="upc1" jdbcType="LONGVARCHAR" />
+    <result column="MPN" property="mpn" jdbcType="LONGVARCHAR" />
+    <result column="Description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="Manufacturer" property="manufacturer" jdbcType="LONGVARCHAR" />
+    <result column="Brand" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="Condition" property="condition" jdbcType="LONGVARCHAR" />
+    <result column="Buy_It_Now_Price" property="buyItNowPrice" jdbcType="LONGVARCHAR" />
+    <result column="Retail_Price" property="retailPrice" jdbcType="LONGVARCHAR" />
+    <result column="TaxProductCode" property="taxproductcode" jdbcType="LONGVARCHAR" />
+    <result column="Relationship_Name" property="relationshipName" jdbcType="LONGVARCHAR" />
+    <result column="AmzRepricerAutoPrice" property="amzrepricerautoprice" jdbcType="LONGVARCHAR" />
+    <result column="categories" property="categories" jdbcType="LONGVARCHAR" />
+    <result column="closuretype" property="closuretype" jdbcType="LONGVARCHAR" />
+    <result column="colormap" property="colormap" jdbcType="LONGVARCHAR" />
+    <result column="colorname" property="colorname" jdbcType="LONGVARCHAR" />
+    <result column="departmentname" property="departmentname" jdbcType="LONGVARCHAR" />
+    <result column="ebaymaincolor" property="ebaymaincolor" jdbcType="LONGVARCHAR" />
+    <result column="ebaystorecategorytext" property="ebaystorecategorytext" jdbcType="LONGVARCHAR" />
+    <result column="externalproductid" property="externalproductid" jdbcType="LONGVARCHAR" />
+    <result column="externalproductidtype" property="externalproductidtype" jdbcType="LONGVARCHAR" />
+    <result column="feedproducttype" property="feedproducttype" jdbcType="LONGVARCHAR" />
+    <result column="gender" property="gender" jdbcType="LONGVARCHAR" />
+    <result column="generickeywords" property="generickeywords" jdbcType="LONGVARCHAR" />
+    <result column="ItemClassDisplayPath" property="itemclassdisplaypath" jdbcType="LONGVARCHAR" />
+    <result column="itemname" property="itemname" jdbcType="LONGVARCHAR" />
+    <result column="itemtype" property="itemtype" jdbcType="LONGVARCHAR" />
+    <result column="itemtypekeyword" property="itemtypekeyword" jdbcType="LONGVARCHAR" />
+    <result column="listprice" property="listprice" jdbcType="LONGVARCHAR" />
+    <result column="materialtype" property="materialtype" jdbcType="LONGVARCHAR" />
+    <result column="model" property="model" jdbcType="LONGVARCHAR" />
+    <result column="numberofitems" property="numberofitems" jdbcType="LONGVARCHAR" />
+    <result column="productdescription" property="productdescription" jdbcType="LONGVARCHAR" />
+    <result column="recommendedbrowsenodes" property="recommendedbrowsenodes" jdbcType="LONGVARCHAR" />
+    <result column="relationshiptype" property="relationshiptype" jdbcType="LONGVARCHAR" />
+    <result column="shoesizedisplay" property="shoesizedisplay" jdbcType="LONGVARCHAR" />
+    <result column="shoesizeinfants" property="shoesizeinfants" jdbcType="LONGVARCHAR" />
+    <result column="shoesizekids" property="shoesizekids" jdbcType="LONGVARCHAR" />
+    <result column="shoesizemen" property="shoesizemen" jdbcType="LONGVARCHAR" />
+    <result column="shoesizewomen" property="shoesizewomen" jdbcType="LONGVARCHAR" />
+    <result column="shoetypes" property="shoetypes" jdbcType="LONGVARCHAR" />
+    <result column="sizename" property="sizename" jdbcType="LONGVARCHAR" />
+    <result column="solematerial" property="solematerial" jdbcType="LONGVARCHAR" />
+    <result column="standardprice" property="standardprice" jdbcType="LONGVARCHAR" />
+    <result column="stylekeywords1" property="stylekeywords1" jdbcType="LONGVARCHAR" />
+    <result column="stylename" property="stylename" jdbcType="LONGVARCHAR" />
+    <result column="toestyle" property="toestyle" jdbcType="LONGVARCHAR" />
+    <result column="upc2" property="upc2" jdbcType="LONGVARCHAR" />
+    <result column="variationtheme" property="variationtheme" jdbcType="LONGVARCHAR" />
+    <result column="waterresistancelevel" property="waterresistancelevel" jdbcType="LONGVARCHAR" />
+    <result column="VoyageOnePurchasePrice" property="VoyageOnePurchasePrice" jdbcType="LONGVARCHAR" />
+    <result column="Country_of_Origin" property="Country_of_Origin" jdbcType="LONGVARCHAR" />
+    <result column="Tmall_Weight" property="Tmall_Weight" jdbcType="LONGVARCHAR" />
+    <result column="qty" property="qty" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "Variation_Parent_SKU", "Auction_Title", "Short_Description", "Picture_URLs", "brandname",
+    "swatchimageurl", "Feature_Bullets", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "Inventory_Number", "UPC1", "MPN", "Description", "Manufacturer", "Brand", "Condition",
+    "Buy_It_Now_Price", "Retail_Price", "TaxProductCode", "Relationship_Name", "AmzRepricerAutoPrice",
+    "categories", "closuretype", "colormap", "colorname", "departmentname", "ebaymaincolor",
+    "ebaystorecategorytext", "externalproductid", "externalproductidtype", "feedproducttype",
+    "gender", "generickeywords", "ItemClassDisplayPath", "itemname", "itemtype", "itemtypekeyword",
+    "listprice", "materialtype", "model", "numberofitems", "productdescription", "recommendedbrowsenodes",
+    "relationshiptype", "shoesizedisplay", "shoesizeinfants", "shoesizekids", "shoesizemen",
+    "shoesizewomen", "shoetypes", "sizename", "solematerial", "standardprice", "stylekeywords1",
+    "stylename", "toestyle", "upc2", "variationtheme", "waterresistancelevel",
+    "VoyageOnePurchasePrice","Country_of_Origin","Tmall_Weight","qty"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_shoezoo_product_temp
+    where "Variation_Parent_SKU" = #{variationParentSku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_shoezoo_product_temp
+    where "Variation_Parent_SKU" = #{variationParentSku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    insert into cms_zz_feed_shoezoo_product_temp ("Variation_Parent_SKU", "Auction_Title",
+    "Short_Description", "Picture_URLs", "brandname",
+    "swatchimageurl", "Feature_Bullets", "md5",
+    "updateFlag", "Inventory_Number", "UPC1",
+    "MPN", "Description", "Manufacturer",
+    "Brand", "Condition", "Buy_It_Now_Price",
+    "Retail_Price", "TaxProductCode", "Relationship_Name",
+    "AmzRepricerAutoPrice", "categories",
+    "closuretype", "colormap", "colorname",
+    "departmentname", "ebaymaincolor",
+    "ebaystorecategorytext", "externalproductid",
+    "externalproductidtype", "feedproducttype",
+    "gender", "generickeywords", "ItemClassDisplayPath",
+    "itemname", "itemtype", "itemtypekeyword",
+    "listprice", "materialtype", "model",
+    "numberofitems", "productdescription",
+    "recommendedbrowsenodes", "relationshiptype",
+    "shoesizedisplay", "shoesizeinfants",
+    "shoesizekids", "shoesizemen", "shoesizewomen",
+    "shoetypes", "sizename", "solematerial",
+    "standardprice", "stylekeywords1",
+    "stylename", "toestyle", "upc2",
+    "variationtheme", "waterresistancelevel",
+    "VoyageOnePurchasePrice",
+    "Country_of_Origin",
+    "Tmall_Weight",
+    "qty"
+    )
+    values (#{variationParentSku,jdbcType=VARCHAR}, #{auctionTitle,jdbcType=VARCHAR},
+    #{shortDescription,jdbcType=VARCHAR}, #{pictureUrls,jdbcType=VARCHAR}, #{brandname,jdbcType=VARCHAR},
+    #{swatchimageurl,jdbcType=VARCHAR}, #{featureBullets,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
+    #{updateflag,jdbcType=INTEGER}, #{inventoryNumber,jdbcType=LONGVARCHAR}, #{upc1,jdbcType=LONGVARCHAR},
+    #{mpn,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{manufacturer,jdbcType=LONGVARCHAR},
+    #{brand,jdbcType=LONGVARCHAR}, #{condition,jdbcType=LONGVARCHAR}, #{buyItNowPrice,jdbcType=LONGVARCHAR},
+    #{retailPrice,jdbcType=LONGVARCHAR}, #{taxproductcode,jdbcType=LONGVARCHAR}, #{relationshipName,jdbcType=LONGVARCHAR},
+    #{amzrepricerautoprice,jdbcType=LONGVARCHAR}, #{categories,jdbcType=LONGVARCHAR},
+    #{closuretype,jdbcType=LONGVARCHAR}, #{colormap,jdbcType=LONGVARCHAR}, #{colorname,jdbcType=LONGVARCHAR},
+    #{departmentname,jdbcType=LONGVARCHAR}, #{ebaymaincolor,jdbcType=LONGVARCHAR},
+    #{ebaystorecategorytext,jdbcType=LONGVARCHAR}, #{externalproductid,jdbcType=LONGVARCHAR},
+    #{externalproductidtype,jdbcType=LONGVARCHAR}, #{feedproducttype,jdbcType=LONGVARCHAR},
+    #{gender,jdbcType=LONGVARCHAR}, #{generickeywords,jdbcType=LONGVARCHAR}, #{itemclassdisplaypath,jdbcType=LONGVARCHAR},
+    #{itemname,jdbcType=LONGVARCHAR}, #{itemtype,jdbcType=LONGVARCHAR}, #{itemtypekeyword,jdbcType=LONGVARCHAR},
+    #{listprice,jdbcType=LONGVARCHAR}, #{materialtype,jdbcType=LONGVARCHAR}, #{model,jdbcType=LONGVARCHAR},
+    #{numberofitems,jdbcType=LONGVARCHAR}, #{productdescription,jdbcType=LONGVARCHAR},
+    #{recommendedbrowsenodes,jdbcType=LONGVARCHAR}, #{relationshiptype,jdbcType=LONGVARCHAR},
+    #{shoesizedisplay,jdbcType=LONGVARCHAR}, #{shoesizeinfants,jdbcType=LONGVARCHAR},
+    #{shoesizekids,jdbcType=LONGVARCHAR}, #{shoesizemen,jdbcType=LONGVARCHAR}, #{shoesizewomen,jdbcType=LONGVARCHAR},
+    #{shoetypes,jdbcType=LONGVARCHAR}, #{sizename,jdbcType=LONGVARCHAR}, #{solematerial,jdbcType=LONGVARCHAR},
+    #{standardprice,jdbcType=LONGVARCHAR}, #{stylekeywords1,jdbcType=LONGVARCHAR},
+    #{stylename,jdbcType=LONGVARCHAR}, #{toestyle,jdbcType=LONGVARCHAR}, #{upc2,jdbcType=LONGVARCHAR},
+    #{variationtheme,jdbcType=LONGVARCHAR}, #{waterresistancelevel,jdbcType=LONGVARCHAR},
+    #{VoyageOnePurchasePrice,jdbcType=LONGVARCHAR}, #{Country_of_Origin,jdbcType=LONGVARCHAR},
+    #{Country_of_Origin,jdbcType=LONGVARCHAR},#{qty,jdbcType=LONGVARCHAR}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    insert into cms_zz_feed_shoezoo_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="variationParentSku != null" >
+        Variation_Parent_SKU,
+      </if>
+      <if test="auctionTitle != null" >
+        Auction_Title,
+      </if>
+      <if test="shortDescription != null" >
+        Short_Description,
+      </if>
+      <if test="pictureUrls != null" >
+        Picture_URLs,
+      </if>
+      <if test="brandname != null" >
+        brandname,
+      </if>
+      <if test="swatchimageurl != null" >
+        swatchimageurl,
+      </if>
+      <if test="featureBullets != null" >
+        Feature_Bullets,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="inventoryNumber != null" >
+        Inventory_Number,
+      </if>
+      <if test="upc1 != null" >
+        UPC1,
+      </if>
+      <if test="mpn != null" >
+        MPN,
+      </if>
+      <if test="description != null" >
+        Description,
+      </if>
+      <if test="manufacturer != null" >
+        Manufacturer,
+      </if>
+      <if test="brand != null" >
+        Brand,
+      </if>
+      <if test="condition != null" >
+        `Condition`,
+      </if>
+      <if test="buyItNowPrice != null" >
+        Buy_It_Now_Price,
+      </if>
+      <if test="retailPrice != null" >
+        Retail_Price,
+      </if>
+      <if test="taxproductcode != null" >
+        TaxProductCode,
+      </if>
+      <if test="relationshipName != null" >
+        Relationship_Name,
+      </if>
+      <if test="amzrepricerautoprice != null" >
+        AmzRepricerAutoPrice,
+      </if>
+      <if test="categories != null" >
+        categories,
+      </if>
+      <if test="closuretype != null" >
+        closuretype,
+      </if>
+      <if test="colormap != null" >
+        colormap,
+      </if>
+      <if test="colorname != null" >
+        colorname,
+      </if>
+      <if test="departmentname != null" >
+        departmentname,
+      </if>
+      <if test="ebaymaincolor != null" >
+        ebaymaincolor,
+      </if>
+      <if test="ebaystorecategorytext != null" >
+        ebaystorecategorytext,
+      </if>
+      <if test="externalproductid != null" >
+        externalproductid,
+      </if>
+      <if test="externalproductidtype != null" >
+        externalproductidtype,
+      </if>
+      <if test="feedproducttype != null" >
+        feedproducttype,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="generickeywords != null" >
+        generickeywords,
+      </if>
+      <if test="itemclassdisplaypath != null" >
+        ItemClassDisplayPath,
+      </if>
+      <if test="itemname != null" >
+        itemname,
+      </if>
+      <if test="itemtype != null" >
+        itemtype,
+      </if>
+      <if test="itemtypekeyword != null" >
+        itemtypekeyword,
+      </if>
+      <if test="listprice != null" >
+        listprice,
+      </if>
+      <if test="materialtype != null" >
+        materialtype,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+      <if test="numberofitems != null" >
+        numberofitems,
+      </if>
+      <if test="productdescription != null" >
+        productdescription,
+      </if>
+      <if test="recommendedbrowsenodes != null" >
+        recommendedbrowsenodes,
+      </if>
+      <if test="relationshiptype != null" >
+        relationshiptype,
+      </if>
+      <if test="shoesizedisplay != null" >
+        shoesizedisplay,
+      </if>
+      <if test="shoesizeinfants != null" >
+        shoesizeinfants,
+      </if>
+      <if test="shoesizekids != null" >
+        shoesizekids,
+      </if>
+      <if test="shoesizemen != null" >
+        shoesizemen,
+      </if>
+      <if test="shoesizewomen != null" >
+        shoesizewomen,
+      </if>
+      <if test="shoetypes != null" >
+        shoetypes,
+      </if>
+      <if test="sizename != null" >
+        sizename,
+      </if>
+      <if test="solematerial != null" >
+        solematerial,
+      </if>
+      <if test="standardprice != null" >
+        standardprice,
+      </if>
+      <if test="stylekeywords1 != null" >
+        stylekeywords1,
+      </if>
+      <if test="stylename != null" >
+        stylename,
+      </if>
+      <if test="toestyle != null" >
+        toestyle,
+      </if>
+      <if test="upc2 != null" >
+        upc2,
+      </if>
+      <if test="variationtheme != null" >
+        variationtheme,
+      </if>
+      <if test="waterresistancelevel != null" >
+        waterresistancelevel,
+      </if>
+      <if test="VoyageOnePurchasePrice != null" >
+        VoyageOnePurchasePrice,
+      </if>
+      <if test="Country_of_Origin != null" >
+        Country_of_Origin,
+      </if>
+      <if test="Tmall_Weight != null" >
+        Tmall_Weight,
+      </if>
+      <if test="qty != null" >
+        qty,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="variationParentSku != null" >
+        #{variationParentSku,jdbcType=VARCHAR},
+      </if>
+      <if test="auctionTitle != null" >
+        #{auctionTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        #{shortDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureUrls != null" >
+        #{pictureUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="brandname != null" >
+        #{brandname,jdbcType=VARCHAR},
+      </if>
+      <if test="swatchimageurl != null" >
+        #{swatchimageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="featureBullets != null" >
+        #{featureBullets,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="inventoryNumber != null" >
+        #{inventoryNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc1 != null" >
+        #{upc1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn != null" >
+        #{mpn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyItNowPrice != null" >
+        #{buyItNowPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        #{retailPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxproductcode != null" >
+        #{taxproductcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipName != null" >
+        #{relationshipName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amzrepricerautoprice != null" >
+        #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categories != null" >
+        #{categories,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closuretype != null" >
+        #{closuretype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="colormap != null" >
+        #{colormap,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="colorname != null" >
+        #{colorname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="departmentname != null" >
+        #{departmentname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebaymaincolor != null" >
+        #{ebaymaincolor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebaystorecategorytext != null" >
+        #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="externalproductid != null" >
+        #{externalproductid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="externalproductidtype != null" >
+        #{externalproductidtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="feedproducttype != null" >
+        #{feedproducttype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="generickeywords != null" >
+        #{generickeywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemclassdisplaypath != null" >
+        #{itemclassdisplaypath,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemname != null" >
+        #{itemname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemtype != null" >
+        #{itemtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemtypekeyword != null" >
+        #{itemtypekeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialtype != null" >
+        #{materialtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberofitems != null" >
+        #{numberofitems,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productdescription != null" >
+        #{productdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedbrowsenodes != null" >
+        #{recommendedbrowsenodes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshiptype != null" >
+        #{relationshiptype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizedisplay != null" >
+        #{shoesizedisplay,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizeinfants != null" >
+        #{shoesizeinfants,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizekids != null" >
+        #{shoesizekids,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizemen != null" >
+        #{shoesizemen,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizewomen != null" >
+        #{shoesizewomen,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoetypes != null" >
+        #{shoetypes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizename != null" >
+        #{sizename,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="solematerial != null" >
+        #{solematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="standardprice != null" >
+        #{standardprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stylekeywords1 != null" >
+        #{stylekeywords1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stylename != null" >
+        #{stylename,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="toestyle != null" >
+        #{toestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc2 != null" >
+        #{upc2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationtheme != null" >
+        #{variationtheme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="waterresistancelevel != null" >
+        #{waterresistancelevel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="VoyageOnePurchasePrice != null" >
+        #{VoyageOnePurchasePrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="Country_of_Origin != null" >
+        #{Country_of_Origin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="Tmall_Weight != null" >
+        #{Tmall_Weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    update cms_zz_feed_shoezoo_product_temp
+    <set >
+      <if test="auctionTitle != null" >
+        "Auction_Title" = #{auctionTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        "Short_Description" = #{shortDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureUrls != null" >
+        "Picture_URLs" = #{pictureUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="brandname != null" >
+        "brandname" = #{brandname,jdbcType=VARCHAR},
+      </if>
+      <if test="swatchimageurl != null" >
+        "swatchimageurl" = #{swatchimageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="featureBullets != null" >
+        "Feature_Bullets" = #{featureBullets,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="inventoryNumber != null" >
+        "Inventory_Number" = #{inventoryNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc1 != null" >
+        "UPC1" = #{upc1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mpn != null" >
+        "MPN" = #{mpn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "Description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        "Manufacturer" = #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        "Brand" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        "Condition" = #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="buyItNowPrice != null" >
+        "Buy_It_Now_Price" = #{buyItNowPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="retailPrice != null" >
+        "Retail_Price" = #{retailPrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxproductcode != null" >
+        "TaxProductCode" = #{taxproductcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipName != null" >
+        "Relationship_Name" = #{relationshipName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="amzrepricerautoprice != null" >
+        "AmzRepricerAutoPrice" = #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categories != null" >
+        "categories" = #{categories,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closuretype != null" >
+        "closuretype" = #{closuretype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="colormap != null" >
+        "colormap" = #{colormap,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="colorname != null" >
+        "colorname" = #{colorname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="departmentname != null" >
+        "departmentname" = #{departmentname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebaymaincolor != null" >
+        "ebaymaincolor" = #{ebaymaincolor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ebaystorecategorytext != null" >
+        "ebaystorecategorytext" = #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="externalproductid != null" >
+        "externalproductid" = #{externalproductid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="externalproductidtype != null" >
+        "externalproductidtype" = #{externalproductidtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="feedproducttype != null" >
+        "feedproducttype" = #{feedproducttype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        "gender" = #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="generickeywords != null" >
+        "generickeywords" = #{generickeywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemclassdisplaypath != null" >
+        "ItemClassDisplayPath" = #{itemclassdisplaypath,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemname != null" >
+        "itemname" = #{itemname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemtype != null" >
+        "itemtype" = #{itemtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemtypekeyword != null" >
+        "itemtypekeyword" = #{itemtypekeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        "listprice" = #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialtype != null" >
+        "materialtype" = #{materialtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="model != null" >
+        "model" = #{model,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="numberofitems != null" >
+        "numberofitems" = #{numberofitems,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productdescription != null" >
+        "productdescription" = #{productdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="recommendedbrowsenodes != null" >
+        "recommendedbrowsenodes" = #{recommendedbrowsenodes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshiptype != null" >
+        "relationshiptype" = #{relationshiptype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizedisplay != null" >
+        "shoesizedisplay" = #{shoesizedisplay,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizeinfants != null" >
+        "shoesizeinfants" = #{shoesizeinfants,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizekids != null" >
+        "shoesizekids" = #{shoesizekids,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizemen != null" >
+        "shoesizemen" = #{shoesizemen,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoesizewomen != null" >
+        "shoesizewomen" = #{shoesizewomen,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoetypes != null" >
+        "shoetypes" = #{shoetypes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sizename != null" >
+        "sizename" = #{sizename,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="solematerial != null" >
+        "solematerial" = #{solematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="standardprice != null" >
+        "standardprice" = #{standardprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stylekeywords1 != null" >
+        "stylekeywords1" = #{stylekeywords1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stylename != null" >
+        "stylename" = #{stylename,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="toestyle != null" >
+        "toestyle" = #{toestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc2 != null" >
+        "upc2" = #{upc2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationtheme != null" >
+        "variationtheme" = #{variationtheme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="waterresistancelevel != null" >
+        "waterresistancelevel" = #{waterresistancelevel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="VoyageOnePurchasePrice != null" >
+        "VoyageOnePurchasePrice" = #{VoyageOnePurchasePrice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="Country_of_Origin != null" >
+        "Country_of_Origin" = #{Country_of_Origin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="Tmall_Weight != null" >
+        "Tmall_Weight" = #{Tmall_Weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="qty != null" >
+        "qty" = #{qty,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "Variation_Parent_SKU" = #{variationParentSku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    update cms_zz_feed_shoezoo_product_temp
+    set "Auction_Title" = #{auctionTitle,jdbcType=VARCHAR},
+    "Short_Description" = #{shortDescription,jdbcType=VARCHAR},
+    "Picture_URLs" = #{pictureUrls,jdbcType=VARCHAR},
+    "brandname" = #{brandname,jdbcType=VARCHAR},
+    "swatchimageurl" = #{swatchimageurl,jdbcType=VARCHAR},
+    "Feature_Bullets" = #{featureBullets,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "Inventory_Number" = #{inventoryNumber,jdbcType=LONGVARCHAR},
+    "UPC1" = #{upc1,jdbcType=LONGVARCHAR},
+    "MPN" = #{mpn,jdbcType=LONGVARCHAR},
+    "Description" = #{description,jdbcType=LONGVARCHAR},
+    "Manufacturer" = #{manufacturer,jdbcType=LONGVARCHAR},
+    "Brand" = #{brand,jdbcType=LONGVARCHAR},
+    "Condition" = #{condition,jdbcType=LONGVARCHAR},
+    "Buy_It_Now_Price" = #{buyItNowPrice,jdbcType=LONGVARCHAR},
+    "Retail_Price" = #{retailPrice,jdbcType=LONGVARCHAR},
+    "TaxProductCode" = #{taxproductcode,jdbcType=LONGVARCHAR},
+    "Relationship_Name" = #{relationshipName,jdbcType=LONGVARCHAR},
+    "AmzRepricerAutoPrice" = #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
+    "categories" = #{categories,jdbcType=LONGVARCHAR},
+    "closuretype" = #{closuretype,jdbcType=LONGVARCHAR},
+    "colormap" = #{colormap,jdbcType=LONGVARCHAR},
+    "colorname" = #{colorname,jdbcType=LONGVARCHAR},
+    "departmentname" = #{departmentname,jdbcType=LONGVARCHAR},
+    "ebaymaincolor" = #{ebaymaincolor,jdbcType=LONGVARCHAR},
+    "ebaystorecategorytext" = #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
+    "externalproductid" = #{externalproductid,jdbcType=LONGVARCHAR},
+    "externalproductidtype" = #{externalproductidtype,jdbcType=LONGVARCHAR},
+    "feedproducttype" = #{feedproducttype,jdbcType=LONGVARCHAR},
+    "gender" = #{gender,jdbcType=LONGVARCHAR},
+    "generickeywords" = #{generickeywords,jdbcType=LONGVARCHAR},
+    "ItemClassDisplayPath" = #{itemclassdisplaypath,jdbcType=LONGVARCHAR},
+    "itemname" = #{itemname,jdbcType=LONGVARCHAR},
+    "itemtype" = #{itemtype,jdbcType=LONGVARCHAR},
+    "itemtypekeyword" = #{itemtypekeyword,jdbcType=LONGVARCHAR},
+    "listprice" = #{listprice,jdbcType=LONGVARCHAR},
+    "materialtype" = #{materialtype,jdbcType=LONGVARCHAR},
+    "model" = #{model,jdbcType=LONGVARCHAR},
+    "numberofitems" = #{numberofitems,jdbcType=LONGVARCHAR},
+    "productdescription" = #{productdescription,jdbcType=LONGVARCHAR},
+    "recommendedbrowsenodes" = #{recommendedbrowsenodes,jdbcType=LONGVARCHAR},
+    "relationshiptype" = #{relationshiptype,jdbcType=LONGVARCHAR},
+    "shoesizedisplay" = #{shoesizedisplay,jdbcType=LONGVARCHAR},
+    "shoesizeinfants" = #{shoesizeinfants,jdbcType=LONGVARCHAR},
+    "shoesizekids" = #{shoesizekids,jdbcType=LONGVARCHAR},
+    "shoesizemen" = #{shoesizemen,jdbcType=LONGVARCHAR},
+    "shoesizewomen" = #{shoesizewomen,jdbcType=LONGVARCHAR},
+    "shoetypes" = #{shoetypes,jdbcType=LONGVARCHAR},
+    "sizename" = #{sizename,jdbcType=LONGVARCHAR},
+    "solematerial" = #{solematerial,jdbcType=LONGVARCHAR},
+    "standardprice" = #{standardprice,jdbcType=LONGVARCHAR},
+    "stylekeywords1" = #{stylekeywords1,jdbcType=LONGVARCHAR},
+    "stylename" = #{stylename,jdbcType=LONGVARCHAR},
+    "toestyle" = #{toestyle,jdbcType=LONGVARCHAR},
+    "upc2" = #{upc2,jdbcType=LONGVARCHAR},
+    "variationtheme" = #{variationtheme,jdbcType=LONGVARCHAR},
+    "waterresistancelevel" = #{waterresistancelevel,jdbcType=LONGVARCHAR},
+    "VoyageOnePurchasePrice" = #{VoyageOnePurchasePrice,jdbcType=LONGVARCHAR},
+    "Country_of_Origin" = #{Country_of_Origin,jdbcType=LONGVARCHAR},
+    "Tmall_Weight" = #{Tmall_Weight,jdbcType=LONGVARCHAR},
+    "qty" = #{qty,jdbcType=LONGVARCHAR}
+    where "Variation_Parent_SKU" = #{variationParentSku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeZooBean" >
+    update cms_zz_feed_shoezoo_product_temp
+    set "Auction_Title" = #{auctionTitle,jdbcType=VARCHAR},
+    "Short_Description" = #{shortDescription,jdbcType=VARCHAR},
+    "Picture_URLs" = #{pictureUrls,jdbcType=VARCHAR},
+    "brandname" = #{brandname,jdbcType=VARCHAR},
+    "swatchimageurl" = #{swatchimageurl,jdbcType=VARCHAR},
+    "Feature_Bullets" = #{featureBullets,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "Variation_Parent_SKU" = #{variationParentSku,jdbcType=VARCHAR}
+  </update>
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_shoezoo_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoShoeZooModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_shoezoo_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `Inventory_Number` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_shoezoo_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_shoezoo_product_temp where `Inventory_Number` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_shoezoo_product_full
+    where `Inventory_Number` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>

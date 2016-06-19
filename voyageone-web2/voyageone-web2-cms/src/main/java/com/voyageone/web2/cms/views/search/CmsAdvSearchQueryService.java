@@ -126,12 +126,12 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", searchValue.getCidValue().toArray(new String[searchValue.getCidValue().size()])));
                 result.append(",");
             }
             // 店铺内分类未设置
             if (StringUtils.isNotEmpty(searchValue.getShopCatStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cIds", new String[]{null, ""}, "$in"));
+                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", new String[]{null, ""}, "$in"));
                 result.append(",");
             }
 
@@ -354,11 +354,22 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             if (inputOpts == null) {
                 return null;
             }
-            if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
-                // 未设值
-                result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+            if ("list-1".equals(inputType)) {
+                // 数字类型
+                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                    // 未设值
+                    result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+                } else {
+                    result = "{'" + inputOptsKey + "':" + inputOpts + "}";
+                }
             } else {
-                result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+                // 字符串
+                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                    // 未设值
+                    result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
+                } else {
+                    result = "{'" + inputOptsKey + "':'" + inputOpts + "'}";
+                }
             }
             return  result;
         }

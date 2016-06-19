@@ -347,7 +347,7 @@ public class SxProductService extends BaseService {
     // delete by morse.lu 2016/06/14 end
 
     /**
-     * 上传图片到天猫图片空间
+     * 上传图片到天猫(或聚美)图片空间
      *
      * @param channelId   渠道id
      * @param cartId      平台id
@@ -380,15 +380,23 @@ public class SxProductService extends BaseService {
                     // 上传后,更新cms_bt_platform_images
                     String destUrl = "";
                     String pictureId = "";
-                    Picture picture = uploadImageByUrl(srcUrl, shopBean);
-                    // test用 start
+
+                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                        Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                        // test用 start
 //                    Picture picture = new Picture();
 //                    picture.setPicturePath("456.jgp");
 //                    picture.setPictureId(Long.valueOf("456"));
-                    // test用 end
-                    if (picture != null) {
-                        destUrl = picture.getPicturePath();
-                        pictureId = String.valueOf(picture.getPictureId());
+                        // test用 end
+                        if (picture != null) {
+                            destUrl = picture.getPicturePath();
+                            pictureId = String.valueOf(picture.getPictureId());
+                        }
+                    } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+                        String picture = uploadImageByUrl_JM(srcUrl, shopBean);
+                        if (!StringUtils.isEmpty(picture)) {
+                            destUrl = picture;
+                        }
                     }
                     retUrls.put(srcUrl, destUrl);
 
@@ -406,15 +414,22 @@ public class SxProductService extends BaseService {
                 // 上传后, 插入cms_bt_platform_images
                 String destUrl = "";
                 String pictureId = "";
-                Picture picture = uploadImageByUrl(srcUrl, shopBean);
-                // test用 start
+                if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                    Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                    // test用 start
 //                Picture picture = new Picture();
 //                picture.setPicturePath("123.jgp");
 //                picture.setPictureId(Long.valueOf("123"));
-                // test用 end
-                if (picture != null) {
-                    destUrl = picture.getPicturePath();
-                    pictureId = String.valueOf(picture.getPictureId());
+                    // test用 end
+                    if (picture != null) {
+                        destUrl = picture.getPicturePath();
+                        pictureId = String.valueOf(picture.getPictureId());
+                    }
+                } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+                    String picture = uploadImageByUrl_JM(srcUrl, shopBean);
+                    if (!StringUtils.isEmpty(picture)) {
+                        destUrl = picture;
+                    }
                 }
                 retUrls.put(srcUrl, destUrl);
 
@@ -519,6 +534,11 @@ public class SxProductService extends BaseService {
         $info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
 
         return picture;
+    }
+
+    private String uploadImageByUrl_JM(String url, ShopBean shopBean) throws Exception {
+
+        return "";
     }
 
     public String decodeImageUrl(String encodedValue) {

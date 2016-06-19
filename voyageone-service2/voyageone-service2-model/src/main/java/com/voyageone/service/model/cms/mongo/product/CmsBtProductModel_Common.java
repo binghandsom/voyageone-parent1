@@ -83,14 +83,14 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         if (SKUS.equals(key)) {
             if (value != null) {
                 List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
-                List<CmsBtProductModel_Sku> skus = new ArrayList<>();
+                List<CmsBtProductModel_CommonSku> skus = new ArrayList<>();
                 for (Map<String, Object> map : imageMaps) {
                     if (map != null) {
-                        CmsBtProductModel_Sku sku;
-                        if (map instanceof CmsBtProductModel_Sku) {
-                            sku = (CmsBtProductModel_Sku) map;
+                        CmsBtProductModel_CommonSku sku;
+                        if (map instanceof CmsBtProductModel_CommonSku) {
+                            sku = (CmsBtProductModel_CommonSku) map;
                         } else {
-                            sku = new CmsBtProductModel_Sku();
+                            sku = new CmsBtProductModel_CommonSku();
                             sku.putAll(map);
                         }
                         skus.add(sku);

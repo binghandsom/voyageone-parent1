@@ -2,12 +2,15 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtProductService;
@@ -16,26 +19,33 @@ import com.voyageone.components.jumei.JumeiHtSpuService;
 import com.voyageone.components.jumei.bean.*;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
+import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
+import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,6 +64,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
+    private static final int MAX_RETRY_TIMES = 3;
+
+
     @Autowired
     CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
 
@@ -90,6 +103,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     @Autowired
     CmsBtJmSkuDao cmsBtJmSkuDao;
 
+    @Autowired
+    JumeiImageFileService jumeiImageFileService;
+
+    @Autowired
+    CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
+
+    @Autowired
+    ProductGroupService productGroupService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -158,6 +179,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         throw new Exception(String.format("获取到店铺信息失败! [ChannelId:%s] [CartId:%s]", channelId, CART_ID));
                     }
 
+                    ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
                     //对聚美来说所有的商品都是主商品
                     CmsBtProductModel product = sxData.getMainProduct();
                     String productCode = product.getFields().getCode();
@@ -172,7 +195,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //如果OriginHashId不存在，则创建新商品
 
                         //填充JmProductBean
-                        JmProductBean bean = fillJmProductBean(channelId, product, cmsBtJmProductModel, cmsBtJmSkuModelList);
+                        JmProductBean bean = fillJmProductBean(channelId, product, cmsBtJmProductModel, cmsBtJmSkuModelList,expressionParser, shop, groupId);
                         HtProductAddRequest htProductAddRequest = new HtProductAddRequest();
                         htProductAddRequest.setJmProduct(bean);
                         HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
@@ -201,7 +224,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             //保存product到MongoDB,现在还没有保存jm_sku_no和jm_spu_no到mongodb
                             saveProductNumIId(channelId, product, jmProductId, jmHashId);
                             //保存group到MongoDB
-                            saveGroupNumIId(channelId, productCode, jmHashId);
+//                            saveGroupNumIId(channelId, productCode, jmHashId);
+                            sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                            sxData.getPlatform().setModifier(getTaskName());
+                            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                         }
                     } else {
                         //如果OriginHashId存在，则修改商品属性
@@ -242,7 +269,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
                                     htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("priceSale"));
                                     htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
-                                    htSpuUpdateRequest.setProperty(jmFields.getStringAttribute("property"));
+                                    htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuUpdateRequest.setSize( getSizeFromSizeMap(sizeStr, channelId ,brandName, productType, sizeType ));
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
@@ -267,7 +294,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
 
-                                    htSpuAddRequest.setProperty(jmFields.getStringAttribute("property"));
+                                    htSpuAddRequest.setProperty(skuMap.getStringAttribute("property"));
                                     htSpuAddRequest.setAttribute(jmFields.getStringAttribute("attribute"));
 
 
@@ -568,7 +595,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @return
      * @throws Exception
      */
-    private JmProductBean fillJmProductBean(String channelId, CmsBtProductModel product, CmsBtJmProductModel cmsBtJmProductModel, List<CmsBtJmSkuModel> cmsBtJmSkuModelList) throws Exception {
+    private JmProductBean fillJmProductBean(String channelId, CmsBtProductModel product, CmsBtJmProductModel cmsBtJmProductModel,
+                                            List<CmsBtJmSkuModel> cmsBtJmSkuModelList , ExpressionParser expressionParser, ShopBean shopProp, Long groupId) throws Exception {
 
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CartEnums.Cart.JM);
 
@@ -589,9 +617,51 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         bean.setName(jmFields.getStringAttribute("productNameCn"));
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         //商品主图
-        List<String> mianPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 1, 1, brandName, productType, sizeType, false);
-        String mainPicUrlStr = Joiner.on(",").join(mianPicUrls);
+//        List<String> mainPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 1, 1, brandName, productType, sizeType, false);
+
+//        List<String> mainPicUrls = new ArrayList<>();
+//        List<CmsBtProductModel_Field_Image> mainImgs = fields.getImages1();
+//
+//        for (CmsBtProductModel_Field_Image img: mainImgs) {
+//            String imgName = img.getName();
+//            try {
+//                // 取得图片url
+//                String picUrl = sxProductService.resolveDict(imgName, expressionParser, shopProp, getTaskName(), null);
+//                // 读取图片
+//                InputStream inputStream = getImgInputStream(picUrl, MAX_RETRY_TIMES);
+//
+//                //上传图片
+//                JmImageFileBean fileBean = new JmImageFileBean();
+//                fileBean.setImgName(imgName);
+//                fileBean.setInputStream(inputStream);
+//                fileBean.setNeedReplace(false);
+//                fileBean.setDirName(channelId + "/" + brandName+"/");
+//                String jmPicUrl = jumeiImageFileService.imageFileUpload(shopProp, fileBean);
+//                mainPicUrls.add(jmPicUrl);
+//
+//                //保存图片
+//                CmsBtPlatformImagesModel imgModel = new CmsBtPlatformImagesModel();
+//                imgModel.setImgName(imgName);
+//                imgModel.setChannelId(channelId);
+//                imgModel.setCartId(CART_ID);
+//                imgModel.setActive(true);
+//                imgModel.setSearchId(groupId.toString());
+//                cmsBtPlatformImagesDao.insert(imgModel);
+//
+//            } catch (Exception ex) {
+//                String errMsg = String.format("上传商品主图信息失败！[ChannelId:%s] [PicName:%s]", channelId,imgName);
+//                $error(errMsg, ex);
+//                throw new BusinessException(errMsg);
+//            }
+//        }
+
+
+        //TEST_Code
+        List<String> mainPicUrls = new ArrayList<>();
+        mainPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/001/product/1/001001b07-ltbge/001001b07-ltbge1_1.jpeg");
+        String mainPicUrlStr = Joiner.on(",").join(mainPicUrls);
         bean.setNormalImage(mainPicUrlStr);
+
 
 
         JmProductBean_DealInfo deal = new JmProductBean_DealInfo();
@@ -605,6 +675,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         //品牌图,本单详情
         List<String> brandPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 3, 1, brandName, productType, sizeType, false);
+        //TEST_Code
+        brandPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+
         StringBuffer sb = new StringBuffer();
 
         for (String brandPic : brandPicUrls) {
@@ -615,6 +688,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         sb.setLength(0);
         List<String> logiPicUrls = sxProductService.getImageUrls(channelId, CART_ID, 4, 1, brandName, productType, sizeType, false);
+        //TEST_Code
+        logiPicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
         for (String logiPic : logiPicUrls) {
             sb.append(String.format(IMG_HTML, logiPic));
         }
@@ -622,6 +697,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setDescription_images(sb.toString());
         sb.setLength(0);
         List<String> sizePicUrls = sxProductService.getImageUrls(channelId, CART_ID, 2, 1, brandName, productType, sizeType, false);
+
+        //TEST_Code
+        sizePicUrls.add("http://p12.jmstatic.com/open_api/gPop_131/012/product/2/12137BMA-001/12137BMA-0012_2.jpeg");
+
         for (String sizePic : sizePicUrls) {
             sb.append(String.format(IMG_HTML, sizePic));
         }
@@ -644,7 +723,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         List<String> skuCodeList = product.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
-        deal.setRebate_ratio("10");
+        deal.setRebate_ratio("1");
         bean.setDealInfo(deal);
 
 
@@ -659,7 +738,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
             spu.setUpc_code(jmSku.getStringAttribute("barcode"));
-            spu.setProperty(jmFields.getStringAttribute("property")); //Code级
+            spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             String sizeStr =jmSku.getStringAttribute("size");
 
@@ -673,8 +752,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             jmSpuSku.setSale_on_this_deal("1");
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setStocks("0"); //TODO
-            jmSpuSku.setDeal_price(jmSku.getStringAttribute("priceMsrp"));
-            jmSpuSku.setMarket_price(jmSku.getStringAttribute("priceSale"));
+            jmSpuSku.setDeal_price(jmSku.getStringAttribute("priceSale"));
+            jmSpuSku.setMarket_price(jmSku.getStringAttribute("priceMsrp"));
 
             spu.setSkuInfo(jmSpuSku);
             spus.add(spu);
@@ -823,5 +902,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
 
         return jmSkus;
+    }
+
+
+    /**
+     * 获取网络图片流，遇错重试
+     *
+     * @param url   imgUrl
+     * @param retry retrycount
+     * @return inputStream / throw Exception
+     */
+    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
+        if (--retry > 0) {
+            try {
+                return HttpUtils.getInputStream(url, null);
+            } catch (Exception e) {
+                getImgInputStream(url, retry);
+            }
+        }
+        throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 }

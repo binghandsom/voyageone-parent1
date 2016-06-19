@@ -98,9 +98,7 @@ define([
              */
             confirm: function () {
                 var self = this;
-                for (var j = 1; j < (self.count + 1); j++) {
-                    self.selectdTagList[j] = self.selectdTagList[j - 1];
-                }
+               if(!self.selectdTagList||self.selectdTagList.length==0) self.selectdTagList.push(self.list);
 
                 // 校验选择的是否有重复值
                 var hasData = false;
@@ -116,7 +114,6 @@ define([
             },
             clear: function () {
                 var self = this;
-                console.log(self.selectdTagList);
                 self.count = self.count - 1;
                 self.selectdTagList.pop();
             },

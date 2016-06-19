@@ -83,12 +83,12 @@
         mt_value.add_name2,
         mt_value.lang_id,
         mt_type.comment,
-        mt_value.display_order
+        mt_value.display_order,
+        case when mt_type.id = 53 then ct_cart.cart_type else null end as cartType
         FROM
-        Synship.com_mt_value_channel mt_value,
-        Synship.com_mt_type mt_type
-        WHERE
-        mt_value.type_id = mt_type.id
+        Synship.com_mt_value_channel mt_value
+        inner join Synship.com_mt_type mt_type on mt_value.type_id = mt_type.id
+        left join synship.ct_cart ct_cart on mt_value.value = ct_cart.cart_id and mt_value.type_id = 53
         ORDER BY
         mt_value.type_id,
         mt_value.display_order,

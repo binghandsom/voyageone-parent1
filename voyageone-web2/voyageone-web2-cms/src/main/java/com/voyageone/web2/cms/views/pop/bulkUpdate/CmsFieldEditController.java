@@ -57,7 +57,7 @@ public class CmsFieldEditController extends CmsController {
             }
         }
         int cartId = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
-        propChangeService.setProductFields(params, getUser(), cartId);
+        propChangeService.setProductFields(params, getUser(), cartId, cmsSession);
         return success(true);
     }
 }

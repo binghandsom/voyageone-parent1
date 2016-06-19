@@ -55,6 +55,8 @@ public class UserController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.USER.SELECT_CHANNEL)
     public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
+
+        getSession().setAttribute("voyageone.session.cms", null);
         userService.setSelectChannel(getUser(),params.get("channelId").toString(),params.get("applicationId").toString(),params.get("application").toString());
         // 只要不报异常就是ok
         return success(true);
