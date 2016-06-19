@@ -30,7 +30,6 @@ define([
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
             $scope.modelUpdateDealEndTime.isBatch = true;
-            $scope.modelAllUpdateDealEndTime.promotionId = $routeParams.parentId;
         };
         $scope.clear = function () {
             $scope.searchInfo = {};

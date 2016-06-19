@@ -7,9 +7,11 @@ import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
 import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateRequest;
 import org.junit.Test;
@@ -45,6 +47,22 @@ public class JumeiHtDealServiceTest {
       // dealInfo.setShipping_system_id(2813);
         request.setUpdate_data(dealInfo);
         HtDealUpdateResponse response = htDealService.update(shopBean, request);
+        //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
+    }
+    @Test
+    public void updateDealEndTime() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
+        HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
+        request.setJumei_hash_id("ht1464949112p222551364");
+        request.setEnd_time(DateTimeUtil.addMinutes(new Date(),1));
+
+        // dealInfo.setShipping_system_id(2813);
+
+        HtDealUpdateDealEndTimeResponse response = htDealService.updateDealEndTime(shopBean, request);
         //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
     }
     @Test

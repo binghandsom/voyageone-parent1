@@ -6,7 +6,7 @@
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
         `market_price`, `deal_price`, `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, 
         `sku_count`, `quantity`, `activity_start`, `activity_end`, `synch_status`, `update_status`, 
-        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`
+        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`,deal_end_time_status
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

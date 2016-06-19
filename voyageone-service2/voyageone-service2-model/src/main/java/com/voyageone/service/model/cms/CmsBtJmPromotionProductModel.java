@@ -105,6 +105,15 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected Integer priceStatus;
 
+    public Integer getDealEndTimeStatus() {
+        return dealEndTimeStatus;
+    }
+
+    public void setDealEndTimeStatus(Integer dealEndTimeStatus) {
+        this.dealEndTimeStatus = dealEndTimeStatus;
+    }
+
+    protected  Integer dealEndTimeStatus;
     /**
      * 专场标签（以|分隔）
      */

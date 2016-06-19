@@ -4,17 +4,20 @@ define([
 ], function (angularAMD) {
     angularAMD.controller('popDealExtensionCtl', function ($scope,jmPromotionDetailService,context,$routeParams) {
         $scope.model={};
+        $scope.modelPromotion={};
         $scope.initialize = function () {
-            $scope.model.promotionId=context.promotionId;
+            $scope.model.promotionId=context.id;
+            $scope.modelPromotion=context;
+            console.log(context);
         };
 
         $scope.ok=function() {
-            if (context.isBatch) {
-                updateDealEndTime();
-            }
-            else {
+            //if (context.isBatch) {
+            //    updateDealEndTime();
+            //}
+            //else {
                 updateDealEndTimeAll();
-            }
+            //}
         }
         var updateDealEndTime=function() {
             $scope.model.productIdList = context.getSelectedProductIdList();
