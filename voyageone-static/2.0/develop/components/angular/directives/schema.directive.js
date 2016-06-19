@@ -43,7 +43,7 @@
         "LABEL": "LABEL"
     };
 
-    var find, findIndex, each, any, all, exists;
+    var find, findIndex, each, any, all, exists, is;
 
     /**
      * 已知的 valueType 包含的值
@@ -80,6 +80,12 @@
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
+        is = {};
+
+        exists = function (target) {
+            return target !== null && target !== undefined;
+        };
+
         if (!window._)
             console.warn('Please import underscore !!!');
         else {
@@ -88,12 +94,10 @@
             all = _.every;
             each = _.each;
             findIndex = _.findIndex;
+
+            is.string = _.isString;
+            is.array = _.isArray;
         }
-
-        exists = function (target) {
-            return target !== null && target !== undefined;
-        };
-
     })();
 
     /**
@@ -403,7 +407,7 @@
                 container.append(contentContainer);
 
                 // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if ((typeof content !== 'string')) {
+                if (!is.string(content)) {
 
                     if ('url' in content && !!content.url) {
                         var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
@@ -430,10 +434,22 @@
             return null;
         }
 
+        var options = field.options;
+
         var result = tryGetDefault('defaultValue');
         if (!exists(result)) {
             result = tryGetDefault('defaultValues');
             if (!exists(result) || !result.length) return;
+        }
+
+        if (exists(options) && options.length) {
+            result = !is.array(result) ? find(options, function(o) {
+                return o.value == result;
+            }).displayName : result.map(function (r) {
+                return find(options, function (o) {
+                    return o.value == r;
+                }).displayName;
+            });
         }
 
         var contentContainer = angular.element('<schema-field-tip>');
