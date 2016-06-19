@@ -62,13 +62,15 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     List<CmsBtJmPromotionProductModel> selectJMCopyList(int promotionId);
 
-
     /**
      * 获取jm_hash_id
+     *
      * @param productCode
      * @param channelId
      * @return
      */
-    List<String> selectJmHashIds (@Param("channelId") String channelId, @Param("productCode") String productCode);
+    List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    //是否存在在销售的商品
+    CmsBtJmPromotionProductModel getOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
     //jm2 end
 }

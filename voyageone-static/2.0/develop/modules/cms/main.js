@@ -18,7 +18,7 @@ require.config({
         'angular': 'libs/angular.js/1.5.6/angular',
         'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
         'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
+        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
         'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
         'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
         'angularAMD': 'libs/angularAMD/0.2.1/angularAMD.min',

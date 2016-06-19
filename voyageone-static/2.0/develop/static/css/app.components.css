@@ -2,13 +2,6 @@
  * 项目自定义通用样式,比如angular的自定义directive
  */
 
-/* 为 schema-item directive 的输入控件提供错误样式 */
-schema-item .ng-invalid input,
-schema-item .ng-invalid select,
-schema-item .ng-invalid .c-checkbox span {
-    border: 1px solid red;
-}
-
 /* schema directive 样式定义 { */
 
 schema {
@@ -26,6 +19,10 @@ schema > schema-field {
 
 schema > schema-field:last-child {
     margin-bottom: 0;
+}
+
+schema-field vo-message {
+    margin-top: 5px;
 }
 
 schema-field-name,
@@ -137,9 +134,6 @@ vo-message {
     font-weight: bold;
     display: inline-block;
     padding: 2px 6px 3px 8px;
-    border-left: 6px solid #E67E22;
-    border-radius: 4px;
-    box-shadow: 1px 2px 7px #9E9C9C;
-    color: #fff;
-    background: #E04825;
+    border-left: 2px solid #E04825;
+    color: #E04825;
 }

@@ -1,10 +1,7 @@
 <div class="wrapper-md" ng-init="ctrl.initialize()">
 
     <div>
-
         <uib-tabset class="tab-container vo_nav-tabs">
-
-
 
             <!---------------------------------------------------天猫 产品详情页面------------------------------------------------->
             <uib-tab>
@@ -19,11 +16,10 @@
             </uib-tab>
 
             <!---------------------------------------------------京东&聚美 产品详情页面------------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" active="active">
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
                 <tab-heading>{{platformType.name}}详情</tab-heading>
                 <jd-schema product-id="ctrl.routeParams.productId" cart-info="platformType"></jd-schema>
             </uib-tab>
-
         </uib-tabset>
     </div>
 

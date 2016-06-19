@@ -19,11 +19,14 @@ import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
+import com.voyageone.components.jumei.bean.JmImageFileBean;
+import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -69,6 +72,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -134,6 +138,8 @@ public class SxProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    JumeiImageFileService jumeiImageFileService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -536,10 +542,45 @@ public class SxProductService extends BaseService {
         return picture;
     }
 
-    private String uploadImageByUrl_JM(String url, ShopBean shopBean) throws Exception {
+//    private String getImageName(String picUrl) throws MalformedURLException {
+//        URL url = new URL(picUrl);
+//        String path = url.getPath();
+//        String[] urlStr = path.split("/");
+//        String filename = urlStr[urlStr.length -1 ];
+//        return filename;
+//    }
+    
+    
+    public String uploadImageByUrl_JM(String picUrl, ShopBean shopBean) throws Exception {
 
-        return "";
+        // 读取图片
+        InputStream inputStream = getImgInputStream(picUrl, 3);
+
+        //上传图片
+        JmImageFileBean fileBean = new JmImageFileBean();
+        //用UUID命名
+        fileBean.setImgName(UUID.randomUUID().toString());
+        fileBean.setInputStream(inputStream);
+        fileBean.setNeedReplace(false);
+        fileBean.setDirName(shopBean.getOrder_channel_id());
+        fileBean.setExtName("jpg");
+        String jmPicUrl = jumeiImageFileService.imageFileUpload(shopBean, fileBean);
+//        mainPicUrls.add(jmPicUrl);
+//
+//        //保存图片
+//        CmsBtPlatformImagesModel imgModel = new CmsBtPlatformImagesModel();
+//        imgModel.setImgName(imgName);
+//        imgModel.setChannelId(channelId);
+//        imgModel.setCartId(CART_ID);
+//        imgModel.setActive(true);
+//        imgModel.setSearchId(groupId.toString());
+//        cmsBtPlatformImagesDao.insert(imgModel);
+
+        return jmPicUrl;
     }
+
+
+
 
     public String decodeImageUrl(String encodedValue) {
         return encodedValue.substring(0, encodedValue.length() - 2);
@@ -2172,6 +2213,25 @@ public class SxProductService extends BaseService {
         String firstPropName = propName.substring(0, separatorPos);
         String leftPropName = propName.substring(separatorPos + 1);
         return getPropValue((Map<String, Object>) evaluationContext.get(firstPropName), leftPropName);
+    }
+
+
+    /**
+     * 获取网络图片流，遇错重试
+     *
+     * @param url   imgUrl
+     * @param retry retrycount
+     * @return inputStream / throw Exception
+     */
+    public static InputStream getImgInputStream(String url, int retry) throws BusinessException {
+        if (--retry > 0) {
+            try {
+                return HttpUtils.getInputStream(url, null);
+            } catch (Exception e) {
+                getImgInputStream(url, retry);
+            }
+        }
+        throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
 }

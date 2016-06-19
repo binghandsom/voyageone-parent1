@@ -7,7 +7,7 @@ define([
     'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate) {
+    angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate) {
         $scope.vm = {"jmMasterBrandList":[]};
         $scope.editModel = {};
         $scope.datePicker = [];
