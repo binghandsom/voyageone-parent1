@@ -777,8 +777,8 @@
                                 // 但是其依赖的字段可能还没有被渲染, 所以结果不一定正确。
                                 // 所以这里只能处理简单规则
                                 // 如果需要必填, 并且没有填值, 并且有默认值, 那么就使用默认值
-                                if (requiredRule === true && !field.value && field.defaultValue !== null)
-                                    field.value = field.defaultValue;
+                                if (requiredRule === true && field.value !== null && field.defaultValue !== null)
+                                    field.value = getInputType(field.defaultValue, field, valueTypeRule);
 
                                 if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                     // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
@@ -829,7 +829,7 @@
                                 if (requiredRule === true) {
                                     // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
                                     if (!field.value.value && field.defaultValue !== null) {
-                                        field.value.value = field.defaultValue;
+                                        field.value.value = getInputValue(field.defaultValue, field);
                                     }
                                 } else {
                                     // 非必填, 就创建空选项
