@@ -72,7 +72,6 @@ define([
                         case 27:
                             scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
-
                     }
                 }
 
@@ -169,8 +168,6 @@ define([
                              });
                         });
                     });
-
-
                 }
 
                 function validSchema(){
@@ -183,6 +180,11 @@ define([
                     });
                 }
 
+                /**
+                 * 右侧导航栏
+                 * @param index div的index
+                 * @param speed 导航速度 ms为单位
+                 */
                 function pageAnchor(index,speed){
                     var offsetTop = 0;
                     if(index != 1)
