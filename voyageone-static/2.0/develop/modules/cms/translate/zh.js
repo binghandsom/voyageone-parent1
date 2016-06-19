@@ -365,7 +365,7 @@ define(function(){
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
         "TXT_UN_TRANSLATION": "未分配总数",
-        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但为完成总数",
+        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但未完成总数",
         "TXT_TRANSLATED": "完成翻译总数",
         "TXT_DISTRIBUTION_RULE": "分发规则",
         "TXT_MAIN_PRODUCT": "主商品",

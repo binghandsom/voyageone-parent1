@@ -159,6 +159,7 @@ public class TranslationService extends BaseAppService {
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(userInfo.getSelChannelId()));
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(userInfo.getSelChannelId(), userInfo.getUserName()));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(userInfo.getSelChannelId()));
+        translateTaskBean.setTotalDistributeUndoneCount(this.getTotalDistributionUndoneCount(userInfo.getSelChannelId()));
         return translateTaskBean;
     }
 
