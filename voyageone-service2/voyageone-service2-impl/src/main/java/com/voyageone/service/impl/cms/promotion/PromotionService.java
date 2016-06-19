@@ -4,9 +4,11 @@
 
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -141,7 +143,17 @@ public class PromotionService extends BaseService {
                 }
             });
         } else {
-            result = cmsBtPromotionDaoExt.insert(insertTagsAndGetNewModel(cmsBtPromotionBean));
+            Map<String,Object> param = new HashMap<>();
+            param.put("channelId",cmsBtPromotionBean.getChannelId());
+            param.put("cartId",cmsBtPromotionBean.getCartId());
+            param.put("promotionName",cmsBtPromotionBean.getPromotionName());
+            List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
+            if(promotions == null || promotions.size() == 0){
+                result = cmsBtPromotionDaoExt.insert(insertTagsAndGetNewModel(cmsBtPromotionBean));
+            }else{
+                throw new BusinessException("4000093");
+            }
+
         }
         return result;
     }
