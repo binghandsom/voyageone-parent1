@@ -27,8 +27,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">专场主品牌</label>
                 <div class="col-sm-8" >
-                    <select ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId"
-                            ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList">
+                    <select chosen ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId"
+                            ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList" width="'100%'">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         <!--<option ng-repeat="brand in vm.jmMasterBrandList" value={{brand}}>{{brand.name}}</option>-->
                     </select>

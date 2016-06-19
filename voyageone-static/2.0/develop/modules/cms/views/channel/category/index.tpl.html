@@ -14,7 +14,7 @@
                                    <div class="col-sm-3">
                                         <select class="form-control"ng-model="ctrl.cartInfo.cart"
                                                 ng-change="ctrl.loadCategories()"
-                                                ng-options="v.value as v.name for v in ctrl.carts">
+                                                ng-options="v.value as v.name for v in ctrl.carts | filter:ctrl.platform()">
                                         </select>
                                     </div>
                                     <!--<label class="col-sm-2 control-label" style="width: 150px;">店铺:&nbsp;{{ctrl.carts[0].name}}</label>-->

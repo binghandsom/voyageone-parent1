@@ -269,7 +269,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String jmSpuNo = oldSku.getJmSpuNo();
                                     HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                                     htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
-                                    htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("priceSale"));
+                                    htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
                                     htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                                     htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                                     String sizeStr = skuMap.getStringAttribute("size");
@@ -292,7 +292,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
 
-                                    htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("priceSale"));
+                                    htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
 
