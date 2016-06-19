@@ -62,7 +62,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-                updateJm(model, shopBean);
+                updateJm(modelCmsBtJmPromotion, model, shopBean);
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
@@ -70,7 +70,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         LOG.info(promotionId + " 聚美上新end");
     }
-    public CallResult updateJm(CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    public CallResult updateJm( CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         CallResult result = new CallResult();
         try {
             if (model.getSynchStatus() == 1) {
@@ -78,7 +78,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
                 List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
                 String jmSkuNoList = getjmSkuNo(listSkuPrice);
-                jmHtDealCopy(model, shopBean, modelJmProduct.getOriginJmHashId());//再售
+                jmHtDealCopy(modelCmsBtJmPromotion, model, shopBean, modelJmProduct.getOriginJmHashId());//再售
+                model.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
+                model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
                 model.setSynchStatus(2);
                 daoCmsBtJmPromotionProduct.update(model);//在售之后先保存  避免下面调用接口失败 jmHashId丢失
 
@@ -88,11 +90,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 model.setUpdateStatus(0);
                 model.setErrorMsg("");
                 daoCmsBtJmPromotionProduct.update(model);
-            }
-            else if (model.getPriceStatus() == 1) //更新价格
+            } else if (model.getPriceStatus() == 1) //更新价格
             {
                 List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);
+                String jmSkuNoList = getjmSkuNo(listSkuPrice);
+                jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
                 model.setPriceStatus(2);
                 model.setErrorMsg("");
                 daoCmsBtJmPromotionProduct.update(model);
@@ -128,10 +131,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
     }
 
     //再售
-    private void jmHtDealCopy(CmsBtJmPromotionProductModel model, ShopBean shopBean, String originJmHashId) throws Exception {
+    private void jmHtDealCopy(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean, String originJmHashId) throws Exception {
         HtDealCopyDealRequest request = new HtDealCopyDealRequest();
-        request.setStart_time(model.getActivityStart());
-        request.setEnd_time(model.getActivityEnd());
+        request.setStart_time(modelCmsBtJmPromotion.getActivityStart());
+        request.setEnd_time(modelCmsBtJmPromotion.getActivityEnd());
         request.setJumei_hash_id(originJmHashId);//原始jmHashId
         HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(shopBean, request);
         if (response.is_Success()) {

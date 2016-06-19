@@ -225,6 +225,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             saveProductNumIId(channelId, product, jmProductId, jmHashId);
                             //保存group到MongoDB
 //                            saveGroupNumIId(channelId, productCode, jmHashId);
+                            sxData.getPlatform().setNumIId(jmHashId);
                             sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                             sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
                             sxData.getPlatform().setModifier(getTaskName());
