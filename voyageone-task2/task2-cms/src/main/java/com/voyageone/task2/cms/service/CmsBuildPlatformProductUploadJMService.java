@@ -542,7 +542,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-        String productName = jmFields.getStringAttribute("productNameCn");
+        String productName = jmFields.getStringAttribute("productNameCn") + " " + fields.getCode();
         htProductUpdateRequest.setJumei_product_name(productName);
         htProductUpdateRequest.setJumei_product_id(productId);
         HtProductUpdate_ProductInfo productInfo = new HtProductUpdate_ProductInfo();
@@ -604,7 +604,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         bean.setProduct_spec_number(fields.getCode());
         bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
         bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
-        bean.setName(jmFields.getStringAttribute("productNameCn"));
+        bean.setName(jmFields.getStringAttribute("productNameCn") + " " +productCode);
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         //白底方图
         List<String> jmMainPics = new ArrayList<>();
