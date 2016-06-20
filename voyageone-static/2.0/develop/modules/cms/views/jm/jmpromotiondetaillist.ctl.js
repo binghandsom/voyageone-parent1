@@ -7,7 +7,7 @@ define([
 ], function (angularAMD) {
     function detailController($scope, popups,jmPromotionService,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
 
-        popups($scope);
+        //($scope);
 
         $scope.datePicker = [];
         $scope.vm = {
@@ -15,7 +15,7 @@ define([
             modelList: [],
             cmsBtJmPromotionImportTaskList: [],
             cmsBtJmPromotionExportTaskList: [],
-            tagList:[]
+            tagList: []
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
         $scope.parentModel = {};
@@ -39,8 +39,8 @@ define([
         };
         $scope.search = function () {
             // console.log("searchInfo");
-             console.log($scope.searchInfo);
-           // loadSearchInfo();
+            console.log($scope.searchInfo);
+            // loadSearchInfo();
             var data = getSearchInfo();
 
             goPage(1, 10)
@@ -59,6 +59,7 @@ define([
             }
             return data;
         }
+
         function goPage(pageIndex, size) {
             var data = getSearchInfo();
             data.start = (pageIndex - 1) * size;
@@ -193,11 +194,7 @@ define([
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel", angular.toJson({id: id}));
         }
-        $scope.openJmProductDetail = function (object, openJmProductDetail) {
-            openJmProductDetail(object).then(function () {
-                $scope.search();
-            });
-        }
+
 
         function ExportExcel(action, source)//导出excel方法
         {
@@ -231,6 +228,7 @@ define([
                 $scope.searchInfo.synchStateList.push(4)
             }
         }
+
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
@@ -257,10 +255,10 @@ define([
             return listPromotionProductId;
         }
         $scope.updateJM = function (promotionProductId) {
-            var listPromotionProductId =[promotionProductId];
-            var parameter={};
-            parameter.promotionId= $scope.vm.promotionId;
-            parameter.listPromotionProductId=listPromotionProductId;
+            var listPromotionProductId = [promotionProductId];
+            var parameter = {};
+            parameter.promotionId = $scope.vm.promotionId;
+            parameter.listPromotionProductId = listPromotionProductId;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -275,9 +273,9 @@ define([
         };
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
-            var parameter={};
-            parameter.promotionId= $scope.vm.promotionId;
-            parameter.listPromotionProductId=listPromotionProductId;
+            var parameter = {};
+            parameter.promotionId = $scope.vm.promotionId;
+            parameter.listPromotionProductId = listPromotionProductId;
             jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -290,9 +288,8 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
         }
-        $scope.synchAllPrice=function()
-        {
-            jmPromotionDetailService.synchAllPrice( $scope.vm.promotionId).then(function (res) {
+        $scope.synchAllPrice = function () {
+            jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('TXT_SUCCESS'));
@@ -306,9 +303,9 @@ define([
         }
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
-            var parameter={};
-            parameter.promotionId= $scope.vm.promotionId;
-            parameter.listPromotionProductId=listPromotionProductId;
+            var parameter = {};
+            parameter.promotionId = $scope.vm.promotionId;
+            parameter.listPromotionProductId = listPromotionProductId;
             jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -321,8 +318,8 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
         }
-        $scope.copyDealAll=function() {
-            jmPromotionDetailService.copyDealAll( $scope.vm.promotionId).then(function (res) {
+        $scope.copyDealAll = function () {
+            jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('TXT_SUCCESS'));
@@ -335,12 +332,16 @@ define([
             });
         }
 
-        $scope.batchDeleteProduct=function(){
+        $scope.batchDeleteProduct = function () {
             //已再售的不删除
             var listPromotionProductId = $scope.getSelectedProductIdList();
-            var parameter={};
-            parameter.promotionId= $scope.vm.promotionId;
-            parameter.listPromotionProductId=listPromotionProductId;
+            var parameter = {};
+            parameter.promotionId = $scope.vm.promotionId;
+            parameter.listPromotionProductId = listPromotionProductId;
+            if (listPromotionProductId.length == 0) {
+                alert("请选择删除的商品!");
+                return;
+            }
             jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -354,9 +355,8 @@ define([
             });
         }
 
-        $scope.deleteAllProduct=function()
-        {//已再售的不删除
-            jmPromotionDetailService.deleteAllProduct( $scope.vm.promotionId).then(function (res) {
+        $scope.deleteAllProduct = function () {//已再售的不删除
+            jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
                     alert($translate.instant('TXT_SUCCESS'));
@@ -371,21 +371,29 @@ define([
         $scope.selectAll = function ($event) {
             var checkbox = $event.target;
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
-               // if ($scope.vm.modelList[i].isChecked) {
-                    $scope.vm.modelList[i].isChecked=checkbox.checked;
+                // if ($scope.vm.modelList[i].isChecked) {
+                $scope.vm.modelList[i].isChecked = checkbox.checked;
                 //}
             }
         };
-        $scope.openPriceModifyWin = function ()
-        {
+        $scope.openPriceModifyWin = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
-            if(listPromotionProductId.length==0)
-            {
+            if (listPromotionProductId.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
             }
-
-            $scope.openPriceModify({search: $scope.search, listPromotionProductId: listPromotionProductId})
+            popups.openPriceModify({search: $scope.search, listPromotionProductId: listPromotionProductId})
+        }
+        $scope.openProductDetailWin = function (object) {
+            popups.openJmProductDetail(object).then(function () {
+                $scope.search();
+            });
+        }
+        $scope.openJmPromotionProductImportWin = function () {
+            popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
+        }
+        $scope.openJmPromotionDetailWin = function (parameter) {
+            popups.openJmPromotionDetail(parameter);
         }
     }
     detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
