@@ -704,8 +704,6 @@ define([
             } else {
                 if (selList && selList.length) {
                     return openModel(popActions.search.joinJM, {promotion: promotion, products: selList});
-                } else {
-                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             }
         };
