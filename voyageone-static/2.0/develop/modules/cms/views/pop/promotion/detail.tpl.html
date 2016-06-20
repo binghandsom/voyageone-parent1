@@ -17,7 +17,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionName" class="vo-message-warning"></vo-message>
+                    <vo-message target="promotionForm.promotionName" class="text-center"></vo-message>
                 </div>
             </div>
             <div class="form-group">
@@ -151,7 +151,7 @@
                 <tr ng-repeat="tag in promotion.tagList">
                     <td>
                         <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required>
-                        <vo-message target="tagListForm['tagName' + $index]" class="m-t-sm"></vo-message>
+                        <vo-message target="tagListForm['tagName' + $index]"></vo-message>
                     </td>
                     <td class="mfb-xs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(promotion.tagList,tag)"><i class="fa fa-trash-o"></i></button></td>
                 </tr>
