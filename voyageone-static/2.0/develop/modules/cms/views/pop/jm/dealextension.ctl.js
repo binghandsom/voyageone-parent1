@@ -4,17 +4,27 @@ define([
 ], function (angularAMD) {
     angularAMD.controller('popDealExtensionCtl', function ($scope,jmPromotionDetailService,context,$routeParams) {
         $scope.model={};
+        $scope.modelPromotion={};
+        $scope.selectMinDate=null;
         $scope.initialize = function () {
-            $scope.model.promotionId=context.promotionId;
+            $scope.model.promotionId=context.id;
+            $scope.modelPromotion=context;
+            var myDate = new Date(context.activityEnd);
+            myDate.setDate(myDate.getDate() + 1);//日期默认为昨天
+            $scope.selectMinDate=myDate;
+           // var Year = myDate.getFullYear();   //获取完整的年份(4位,1970-????)
+          //  var Month = myDate.getMonth() + 1;      //获取当前月份(0-11,0代表1月)
+          //  var Day = myDate.getDate();
+            console.log(context);
         };
 
         $scope.ok=function() {
-            if (context.isBatch) {
-                updateDealEndTime();
-            }
-            else {
+            //if (context.isBatch) {
+            //    updateDealEndTime();
+            //}
+            //else {
                 updateDealEndTimeAll();
-            }
+            //}
         }
         var updateDealEndTime=function() {
             $scope.model.productIdList = context.getSelectedProductIdList();

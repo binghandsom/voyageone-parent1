@@ -148,7 +148,7 @@ public class CmsBtJmPromotionImportTask3Service {
             daoCmsBtJmPromotionProduct.update(info.productModel);
         }
         //CmsBtJmPromotionSku
-        for (CmsBtJmPromotionSkuModel sku : info.skuList) {
+            for (CmsBtJmPromotionSkuModel sku : info.skuList) {
             sku.setCmsBtJmPromotionProductId(info.productModel.getId());
             if (sku.getId() == null || sku.getId() == 0) {
                 daoCmsBtJmPromotionSku.insert(sku);
@@ -190,6 +190,7 @@ public class CmsBtJmPromotionImportTask3Service {
         saveInfo.productModel.setDiscount(new BigDecimal(0));;
         saveInfo.productModel.setSkuCount(0);
         saveInfo.productModel.setQuantity(0);
+        saveInfo.productModel.setDealEndTimeStatus(0);
         saveInfo.productModel.setModifier("system");
         saveInfo.productModel.setCreater("system");
         saveInfo.productModel.setCreated(new Date());

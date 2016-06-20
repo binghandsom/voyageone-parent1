@@ -44,17 +44,17 @@
                 <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
                 <div class="col-sm-8 form-inline">
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="editModel.model.activityStart" name="activityStart" required
+                        <input type="text" class="form-control" readonly  datepicker-popup ng-model="editModel.model.activityStart" name="activityStart" required
                                max-date="model.activityStart" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" ng-disabled="editModel.model.status!=0"  class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>&nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="editModel.model.activityEnd" name="activityEnd" required
+                        <input type="text" class="form-control" readonly datepicker-popup ng-model="editModel.model.activityEnd" name="activityEnd" required
                                max-date="model.activityEnd" date-model-format="yyyy-MM-dd" is-open="datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" ng-disabled="editModel.model.status!=0" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>
                 </div>

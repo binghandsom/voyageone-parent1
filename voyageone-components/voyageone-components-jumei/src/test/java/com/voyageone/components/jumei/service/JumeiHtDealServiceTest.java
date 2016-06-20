@@ -7,9 +7,11 @@ import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
 import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateRequest;
 import org.junit.Test;
@@ -19,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +48,22 @@ public class JumeiHtDealServiceTest {
       // dealInfo.setShipping_system_id(2813);
         request.setUpdate_data(dealInfo);
         HtDealUpdateResponse response = htDealService.update(shopBean, request);
+        //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
+    }
+    @Test
+    public void updateDealEndTime() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
+        HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
+        request.setJumei_hash_id("ht1464949112p222551364");
+        request.setEnd_time(DateTimeUtil.addMinutes(new Date(),1));
+
+        // dealInfo.setShipping_system_id(2813);
+
+        HtDealUpdateDealEndTimeResponse response = htDealService.updateDealEndTime(shopBean, request);
         //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
     }
     @Test
@@ -98,5 +117,19 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
      //   {"error_code":"302","reason":"error","response":{"successCount":0,"errorList":[{"jumei_sku_no":"701506467","error_code":505,"error_message":"hash_id: ht1464949112p222551364, sku_no:701506467的修改价格申请还在审核，不能重复提交申请!"}]}}
     }
+    @Test
+    public void getTime()  {
+        long result=0;
+        Date d=new Date();
+        Calendar now = Calendar.getInstance();
+        // 取得系统时间和格林威治时间之间的偏移值
+        int diffsecond = now.getTimeZone().getRawOffset();
 
+        DateTimeUtil.getLocalTime(d,8);
+        if(diffsecond == 0){
+            result= d.getTime() / 1000 - 8 * 3600;
+        }else{
+            result= d.getTime() / 1000;
+        }
+    }
 }

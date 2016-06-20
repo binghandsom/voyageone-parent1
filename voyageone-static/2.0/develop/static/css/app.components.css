@@ -130,16 +130,10 @@ schema-field-tip:before {
 }
 
 vo-message {
-    float: left;
-    position: absolute;
-    margin-top: -50px;
-    margin-left: -5px;
+    width: 100%;
     font-weight: bold;
     display: inline-block;
-    padding: 1px 4px 2px 4px;
-    border-radius: 4px;
-    box-shadow: 1px 2px 7px #9E9C9C;
-    color: #fff;
-    background: black;
-    z-index: 999;
+    padding: 2px 6px 3px 8px;
+    border-left: 2px solid #E04825;
+    color: #E04825;
 }

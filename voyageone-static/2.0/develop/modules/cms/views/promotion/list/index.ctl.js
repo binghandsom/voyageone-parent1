@@ -43,7 +43,7 @@ define([
         };
 
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.promotionName).result.then(function () {
+            confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.promotionName)).result.then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
                 promotionService.delPromotion(data).then(function () {
                     $scope.vm.promotionList.splice(index, 1);

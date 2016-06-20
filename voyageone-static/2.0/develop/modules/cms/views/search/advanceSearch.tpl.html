@@ -821,8 +821,6 @@
                                         | translate}}&nbsp;</label>
                                         <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
                                     </th>
-                                    <th class="text-center" translate="TXT_INVENTORY"
-                                        style="display:inline-block;width:85px;padding-left:8px"></th>
                                     <th class="text-center" translate="TXT_SALE_PRICE"
                                         style="display:inline-block;width:150px;padding-left:8px"></th>
                                     <th class="text-left" translate="TXT_BRAND"
@@ -900,12 +898,6 @@
                                                                                                       alt=""/>&nbsp;</a>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td class="text-center" style="display:inline-block;width:85px;">
-                                            <!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
-                                            <!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
-                                                    class="btn btn-default btn-xs">{{groupInfo.groupBean.inventory || 0}}</button>-->
-                                            {{groupInfo.groupBean.qty || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
                                             <button ng-controller="showPopoverCtrl"

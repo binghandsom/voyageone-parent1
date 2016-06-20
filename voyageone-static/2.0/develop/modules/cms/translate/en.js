@@ -458,6 +458,7 @@ define(function(){
         "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
         "TXT_MSG_UNVALID_CONDITION": "无效的条件.",
         "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
+        "TXT_MSG_PROMOTION_DELETE": "您确定要删除活动[%s]吗？",
         "TXT_MSG_DO_DELETE": "您确定要删除 ",
         "TXT_MSG_DO_SEPARATE": "您确定要隔离 ",
         "TXT_MSG_DO_INCREASE": "您确定要增量 ",

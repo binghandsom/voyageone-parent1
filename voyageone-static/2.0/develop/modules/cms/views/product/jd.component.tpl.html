@@ -186,36 +186,36 @@
                             <tr>
 
                                 <th><input class="sku_check" type="checkbox" ng-click="selectAll()">All</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">skuCode</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_SKU_INVENTORY"|translate}}</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">size</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">容量/尺码</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield" ng-if="cartInfo.value == 27">规格</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
-                                <th class="text-center ng-binding ng-scope vo_reqfield">{{"TXT_BAR_CODE"|translate}}</th>
+                                <th class="text-center">skuCode</th>
+                                <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
+                                <th class="text-center">size</th>
+                                <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
+                                <th class="text-center">容量/尺码</th>
+                                <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
+                                <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
                                 <th><input class="sku_check" type="checkbox" ng-model="entity.isSale"></th>
-                                <td class="text-center ng-scope">{{entity.skuCode}}</td>
-                                <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].qty}}</td>
-                                <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                <td class="text-center ng-scope"><input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"></td>
-                                <td class="text-center ng-scope">{{entity.priceRetail}}</td>
-                                <td class="text-center ng-scope"></td>
-                                <td class="text-center ng-scope" ng-if="cartInfo.value == 27">
-                                    <select ng-model="entity.property">
+                                <td class="text-center">{{entity.skuCode}}</td>
+                                <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
+                                <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                <td class="text-center"><input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"></td>
+                                <td class="text-center">{{entity.priceRetail}}</td>
+                                <td class="text-center"></td>
+                                <td class="text-center" ng-if="cartInfo.value == 27">
+                                    <select ng-model="entity.property" class="form-control">
                                         <option value="OTHER" ng-selected="{{entity.property == null}}">其他</option>
                                         <option value="FORMAL">正装</option>
                                         <option value="MS">中小样</option>
                                     </select>
                                 </td>
-                                <td class="text-center ng-scope">
+                                <td class="text-center">
                                     <input class="form-control ng-number" type="number" ng-model="entity.priceSale"></td>
-                                <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                             </tr>
                             </tbody>
                         </table>

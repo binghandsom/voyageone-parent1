@@ -1372,12 +1372,12 @@ define([
         //    });
         //
         //};
-    }).factory('popups', function ($controller) {
-        return function ($scope) {
-            if (!$scope.$$popups) {
-                $scope.$$popups = $controller('popupCtrl', {$scope: $scope});
-            }
-            return $scope.$$popups;
-        };
+    }).factory('popups', function ($controller, $rootScope) {
+
+        var popupScope = $rootScope.$new();
+
+        popupScope.$controller = $controller('popupCtrl', {$scope: popupScope});
+
+        return popupScope;
     });
 });
