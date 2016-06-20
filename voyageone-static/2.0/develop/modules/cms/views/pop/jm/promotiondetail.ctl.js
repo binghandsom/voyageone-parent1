@@ -9,7 +9,7 @@ define([
 ], function (angularAMD) {
     angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
         $scope.vm = {"jmMasterBrandList":[]};
-        $scope.editModel = {};
+        $scope.editModel = {model:{}};
         $scope.datePicker = [];
         $scope.initialize  = function () {
             if(context.id)
@@ -21,6 +21,10 @@ define([
                     $scope.editModel.model.prePeriodStart = formatStrDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatStrDate($scope.editModel.model.prePeriodEnd);
                 });
+            }
+            else
+            {
+                $scope.editModel.model.status=0;
             }
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
