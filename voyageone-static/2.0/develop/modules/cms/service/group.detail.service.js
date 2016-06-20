@@ -73,7 +73,8 @@ define([
 				productInfo.priceSale = _setPriceSale(productInfo.fields);
 
 				// 设置time detail
-				productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
+				if(productInfo.groups)
+					productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 			});
 
 			var tempProductIds = [];
@@ -166,10 +167,10 @@ define([
 				result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
 			var platforms = product.groups;
-			if(!_.isEmpty(platforms.publishTime))
+			if(platforms.publishTime && !_.isEmpty(platforms.publishTime))
 				result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
-			if(!_.isEmpty(platforms.inStockTime))
+			if(platforms.inStockTime && !_.isEmpty(platforms.inStockTime))
 				result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.inStockTime.substring(0, 19));
 
 			return result;
