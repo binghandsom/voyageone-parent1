@@ -204,7 +204,7 @@
                                 <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                 <td class="text-center ng-scope">{{vm.skuTemp[entity.skuCode].size}}</td>
                                 <td class="text-center ng-scope"><input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"></td>
-                                <td class="text-center ng-scope"><input class="form-control ng-number" type="number" ng-model="entity.priceRetail"></td>
+                                <td class="text-center ng-scope">{{entity.priceRetail}}</td>
                                 <td class="text-center ng-scope"></td>
                                 <td class="text-center ng-scope" ng-if="cartInfo.value == 27">
                                     <select ng-model="entity.property">
