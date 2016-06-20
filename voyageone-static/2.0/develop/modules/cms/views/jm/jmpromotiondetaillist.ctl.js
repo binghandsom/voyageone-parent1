@@ -277,22 +277,29 @@ define([
         };
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
-            var parameter = {};
-            parameter.promotionId = $scope.vm.promotionId;
-            parameter.listPromotionProductId = listPromotionProductId;
-            jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            if (listPromotionProductId.length == 0) {
+                alert("请选择同步价格的商品!");
+                return;
+            }
+            confirm("是否同步选中商品的价格?").result.then(function () {
+                var parameter = {};
+                parameter.promotionId = $scope.vm.promotionId;
+                parameter.listPromotionProductId = listPromotionProductId;
+                jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
-        }
+        };
         $scope.synchAllPrice = function () {
+            confirm("是否同步全部商品价格?").result.then(function () {
             jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
@@ -303,10 +310,15 @@ define([
                 }
             }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
-            });
+            });});
         }
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
+            if (listPromotionProductId.length == 0) {
+                alert("请选择再售的商品!");
+                return;
+            }
+            confirm("选中的商品是否全部再售?").result.then(function () {
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
@@ -320,19 +332,22 @@ define([
                 }
             }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
-            });
+            });});
         }
         $scope.copyDealAll = function () {
-            jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            confirm("是否全部再售?").result.then(function () {
+
+                jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
         }
 
