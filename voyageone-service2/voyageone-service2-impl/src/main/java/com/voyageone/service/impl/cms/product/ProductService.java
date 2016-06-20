@@ -402,12 +402,6 @@ public class ProductService extends BaseService {
         }
 
         /**
-         * platforms
-         */
-        Map<String, CmsBtProductModel_Platform_Cart> platforms = productModel.getPlatforms();
-        updateMap.put("platforms", platforms);
-
-        /**
          * Feed
          */
         CmsBtProductModel_Feed feed = productModel.getFeed();

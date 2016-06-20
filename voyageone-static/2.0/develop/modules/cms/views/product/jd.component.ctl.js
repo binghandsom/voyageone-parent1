@@ -59,11 +59,10 @@ define([
                         scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
 
                     });
-                    productDetailService.getProductInfo({productId: scope.productId})
-                        .then(function (res) {
+                    productDetailService.getProductInfo({productId: scope.productId}).then(function (res) {
                             scope.vm.productDetails = res.data.productInfo;
                             scope.vm.productCode = res.data
-                        });
+                    });
 
                     switch(+scope.cartInfo.value){
                         case 26:
@@ -72,7 +71,6 @@ define([
                         case 27:
                             scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
-
                     }
                 }
 
@@ -81,7 +79,7 @@ define([
                  * @param productInfo
                  * @param popupNewCategory popup实例
                  */
-                function jdCategoryMapping(productInfo, popupNewCategory) {
+                function jdCategoryMapping(popupNewCategory) {
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
                             if (!res.data || !res.data.length) {
@@ -102,7 +100,7 @@ define([
                             productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productId,catId:context.selected.catId}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
-                                scope.vm.platform.pCatId = +context.selected.catId;
+                                scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.platform.status = scope.vm.status =  "Pending";
@@ -124,7 +122,6 @@ define([
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
                             scope.vm.sellerCats = context;
-
                     });
                 }
 
@@ -138,20 +135,21 @@ define([
                          statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                      }
 
-                    if(scope.vm.platform.status == "Ready" && scope.vm.platform.pBrandName == null){
+                    if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
                         notify.danger("请先确认是否在京东后台申请过相应品牌");
                         return;
                     }
 
                     switch (scope.vm.status){
                         case "Pending":
-                                scope.vm.platform.status = scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.platform.status;
+                                scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
                                 break;
                         case "Ready":
-                                scope.vm.platform.status = scope.vm.status = "Approved";
+                                scope.vm.status = "Approved";
                                 break;
                     }
 
+                     scope.vm.platform.status = scope.vm.status;
                      scope.vm.platform.pAttributeStatus = 1;
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
                      scope.vm.platform.cartId = +scope.cartInfo.value;
@@ -169,12 +167,10 @@ define([
                              });
                         });
                     });
-
-
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null ? false : scope.schemaForm.$valid;
+                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
 
                 function selectAll(){
@@ -183,6 +179,11 @@ define([
                     });
                 }
 
+                /**
+                 * 右侧导航栏
+                 * @param index div的index
+                 * @param speed 导航速度 ms为单位
+                 */
                 function pageAnchor(index,speed){
                     var offsetTop = 0;
                     if(index != 1)

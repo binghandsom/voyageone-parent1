@@ -148,6 +148,10 @@ public class JdWareService extends JdBase {
                     // 京东返回失败的场合
                     throw new BusinessException(response.getZhDesc());
                 }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("[京东返回应答为空(response = null)]");
             }
         } catch (Exception ex) {
             logger.error("调用京东API新增京东商品信息失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
@@ -376,30 +380,36 @@ public class JdWareService extends JdBase {
 
             boolean result = false;
             // 如果新增图片返回为null时重试
-            for (int retryTimes = 1; retryTimes <= MAX_RETRY_TIMES; retryTimes++) {
+//            for (int retryTimes = 1; retryTimes <= MAX_RETRY_TIMES; retryTimes++) {
                 // 调用京东根据商品Id，销售属性值Id增加图片API(360buy.ware.propimg.add)
                 WarePropimgAddResponse response = reqApi(shop, request);
 
                 // response=null时重试
                 if (response == null) {
-                    logger.error("调用京东API根据商品Id，销售属性值Id增加图片第(" + retryTimes + "/" + MAX_RETRY_TIMES
-                            + ")次失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+//                    logger.error("调用京东API根据商品Id，销售属性值Id增加图片第(" + retryTimes + "/" + MAX_RETRY_TIMES
+//                            + ")次失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+//                            + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId
+//                            + ",pic_url:" + picUrl + ",response=null");
+//                    continue;
+                    logger.error("调用京东API根据商品Id，销售属性值Id增加图片失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
                             + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId
                             + ",pic_url:" + picUrl + ",response=null");
-                    continue;
+                    throw new BusinessException("[京东返回应答为空(response = null)]");
                 } else {
                     result = true;
                     // 京东返回正常的场合
-                    String strReturnCode = response.getCode();
-                    if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(strReturnCode)) {
+                    if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                         // 返回上传图片成功,跳出循环，返回true
-                        break;
+                        logger.error("调用京东API根据商品Id，销售属性值Id增加图片成功 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                                + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId
+                                + ",pic_url:" + picUrl);
+//                        break;
                     } else {
                         // 京东返回失败的场合
                         throw new BusinessException(response.getZhDesc());
                     }
                 }
-            }
+//            }
 
             if (result) {
                 // 返回上传图片成功

@@ -46,6 +46,7 @@ define([
                     self.cartInfo.maxTag = res.data.MAX_SELLER_CAT_CNT;
                 }).then(function(){
                     self.sellerCatService.getCat({"cartId":+self.cartInfo.cart}).then(function(res) {
+
                         self.source = res.data.catTree;
                         self.search(0);
                         switch(+self.cartInfo.level){
@@ -150,6 +151,13 @@ define([
                             self.search(0);
                         });
                     }
+            },
+            /**平台过滤器，主要针对聚美*/
+            platform:function(){
+                return function(item){
+                    if(item.value != 27)
+                        return true;
+                };
             }
 
         };

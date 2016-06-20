@@ -448,7 +448,8 @@
 										&nbsp;{{groupInfo.cartBean.platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-sm" ng-if="groupInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="{{$root.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank"  ng-bind="groupInfo.groupBean.numIId"></a>
+										<a ng-href="{{$root.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank"  ng-bind="groupInfo.groupBean.numIId" ng-if="$root.platformType.cartId != 27"></a>
+										<a ng-href="{{$root.productUrl}}{{groupInfo.groupBean.numIId}}.html" target="_blank"  ng-bind="groupInfo.groupBean.numIId" ng-if="$root.platformType.cartId == 27"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
 										<a ng-if="groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}" title="{{groupInfo.fields.longTitle}}"
@@ -564,7 +565,8 @@
 										<span class="label label-danger m-t-xs m-r-sm m-l-sm" ng-if="productInfo.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
 										<span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
 									    <span class="m-r-sm" ng-if="productInfo.groupBean.numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-									    	<a ng-href="{{$root.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank"  ng-bind="productInfo.groupBean.numIId"></a>
+									    	<a ng-href="{{$root.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank"  ng-bind="productInfo.groupBean.numIId" ng-if="$root.platformType.cartId != 27"></a>
+											<a ng-href="{{$root.productUrl}}{{productInfo.groupBean.numIId}}.html" target="_blank"  ng-bind="productInfo.groupBean.numIId" ng-if="$root.platformType.cartId == 27"></a>
 									    </span>&nbsp;
 										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
 											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.fields.code"></a>

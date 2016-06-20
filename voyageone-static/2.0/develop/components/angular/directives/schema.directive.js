@@ -1,5 +1,5 @@
 (function () {
-    
+
     /**
      * 以下代码包含下面这些自定义标签:
      *  schema
@@ -43,7 +43,7 @@
         "LABEL": "LABEL"
     };
 
-    var find, findIndex, each, any, all;
+    var find, findIndex, each, any, all, exists, is;
 
     /**
      * 已知的 valueType 包含的值
@@ -80,6 +80,12 @@
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
+        is = {};
+
+        exists = function (target) {
+            return target !== null && target !== undefined;
+        };
+
         if (!window._)
             console.warn('Please import underscore !!!');
         else {
@@ -88,8 +94,10 @@
             all = _.every;
             each = _.each;
             findIndex = _.findIndex;
-        }
 
+            is.string = _.isString;
+            is.array = _.isArray;
+        }
     })();
 
     /**
@@ -300,13 +308,18 @@
         var parsedValue = null;
         var valueType = field.fieldValueType;
 
+        if (!exists(value))
+            return null;
+
         // 如果字段上有具体的值类型声明
         // 就使用支持的类型进行转换
         switch (valueType) {
             case 'INT':
-                return parseInt(value);
             case 'DOUBLE':
-                return parseFloat(value);
+                // 因为 js 的数字只有 number 类型, 所以 parseInt 和 parseFloat 所输出的是否带有小数点, 只取决于输入值
+                // 所以这里不用特意为 int 使用 parseInt, 因为即使传入 1.0, parseFloat 输出的依然是 1
+                parsedValue = parseFloat(value);
+                return isNaN(parsedValue) ? null : parsedValue;
         }
 
         // 否则, 按 valueTypeRule 来转换
@@ -318,24 +331,17 @@
             case VALUE_TYPES.HTML:
             case VALUE_TYPES.TEXTAREA:
             case VALUE_TYPES.URL:
+
                 return value;
+
             case VALUE_TYPES.INTEGER:
             case VALUE_TYPES.LONG:
-
-                parsedValue = parseInt(value);
-
-                if (isNaN(parsedValue))
-                    return 0;
-
-                return parsedValue;
-
             case VALUE_TYPES.DECIMAL:
 
+                // 这里的逻辑同上一段
                 parsedValue = parseFloat(value);
-
                 if (isNaN(parsedValue))
-                    return 0;
-
+                    return null;
                 return parsedValue;
 
             case VALUE_TYPES.DATE:
@@ -346,7 +352,7 @@
 
                 parsedValue = new Date(value);
 
-                if (isNaN(parsedValue.getDate))
+                if (isNaN(parsedValue.getDate()))
                     throw '日期(时间)格式不正确';
 
                 return parsedValue;
@@ -386,6 +392,7 @@
 
     /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
+     * 2016-06-19 18:01:39 追加认为默认值也需要作为 tip 显示出来
      */
     function bindTipRule(container, rules) {
 
@@ -400,12 +407,15 @@
                 container.append(contentContainer);
 
                 // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if ((typeof content !== 'string') && 'url' in content && !!content.url) {
-                    var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
-                    aTag.text(content.value);
-                    contentContainer.append(aTag);
-                }else if((typeof content !== 'string')){
-                    contentContainer.text(content.value);
+                if (!is.string(content)) {
+
+                    if ('url' in content && !!content.url) {
+                        var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
+                        aTag.text(content.value);
+                        contentContainer.append(aTag);
+                    } else {
+                        contentContainer.text(content.value);
+                    }
                 }
                 else {
                     contentContainer.text(content);
@@ -414,28 +424,37 @@
         });
     }
 
-    function getFieldKeySet(fields) {
-        return fields.map(function (f) {
-            return f.id;
-        });
-    }
+    function bindDefaultValueTip(container, field) {
 
-    function getFieldMap(fields) {
-        var map = {};
-        each(fields, function (f) {
-            var clone = angular.copy(f);
-            // 保存到新克隆的 field 上, 便于依赖检查
-            clone.$parentComplexValueMap = map;
-            map[f.id] = clone;
-        });
-        return map;
-    }
+        function tryGetDefault(defaultPropName) {
+            var value = field[defaultPropName];
+            if (defaultPropName in field && exists(value)) {
+                return value;
+            }
+            return null;
+        }
 
-    function createComplexValue(fields) {
-        return {
-            fieldKeySet: getFieldKeySet(fields),
-            fieldMap: getFieldMap(fields)
-        };
+        var options = field.options;
+
+        var result = tryGetDefault('defaultValue');
+        if (!exists(result)) {
+            result = tryGetDefault('defaultValues');
+            if (!exists(result) || !result.length) return;
+        }
+
+        if (exists(options) && options.length) {
+            result = !is.array(result) ? find(options, function(o) {
+                return o.value == result;
+            }).displayName : result.map(function (r) {
+                return find(options, function (o) {
+                    return o.value == r;
+                }).displayName;
+            });
+        }
+
+        var contentContainer = angular.element('<schema-field-tip>');
+        contentContainer.text('该字段包含默认值: ' + angular.toJson(result));
+        container.append(contentContainer);
     }
 
     function resetValue(valueObj, fieldObj) {
@@ -450,6 +469,132 @@
             return false;
         });
     }
+
+    /**
+     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 schema-field 中 $render 里的切换逻辑
+     * @param {object} field
+     * @param {Array.<String>} valueKeys 需要切换的属性名
+     * @param {bool} fromPrivate 标识切换方向, true = from private, false = to private
+     */
+    function switchPrivateValue(field, valueKeys, fromPrivate) {
+
+        if (field.type === FIELD_TYPES.COMPLEX) {
+            each(field.fields, function (childField) {
+                switchPrivateValue(childField, valueKeys, fromPrivate);
+            });
+            return;
+        }
+
+        if (fromPrivate) {
+            // 如果启用了就尝试移回去
+            any(valueKeys, function (key) {
+
+                var privateKey = '$' + key;
+
+                var privateValueObj = field[privateKey];
+
+                if (privateKey in field) {
+                    // 值有就保存, 木有就不保存
+                    if (exists(privateValueObj)) {
+                        field[key] = privateValueObj;
+                    }
+                    field[privateKey] = null;
+                    // 只要找到其中一个属性就不用继续了
+                    return true;
+                }
+
+                return false;
+            })
+        } else {
+            // 禁用了就保存值到缓存字段
+            // 并移除现有的值
+            any(valueKeys, function (key) {
+
+                var valueObj = field[key];
+
+                if (key in field) {
+                    // 值有就保存, 木有就不保存
+                    if (exists(valueObj)) {
+                        field['$' + key] = valueObj;
+                    }
+                    field[key] = null;
+                    // 只要找到其中一个属性就不用继续了
+                    return true;
+                }
+
+                return false;
+            });
+        }
+    }
+
+    /**
+     * @class 为 multiComplex 字段的 values 提供包装
+     */
+    function ComplexValue(fields) {
+        // 生成 id 用来标记缓存
+        this.$id = '$ComplexValue' + random();
+        // 追加属性
+        this.fieldMap = {};
+        this.fieldKeySet = [];
+        // 存入缓存
+        ComplexValue.Caches[this.$id] = this;
+        // 如果 fields 存在, 就自动生成相应的字段
+        this.putAll(fields);
+    }
+
+    ComplexValue.Caches = {};
+
+    ComplexValue.prototype.get = function (field) {
+        return this.fieldMap[field.id || field];
+    };
+
+    ComplexValue.prototype.put = function (field) {
+        this.fieldKeySet.push(field.id);
+        this.fieldMap[field.id] = field;
+        // 为 field 记录当前 value 组的 id, 便于在依赖计算时查找
+        field.$parentComplexValueId = this.$id;
+
+        return this;
+    };
+
+    ComplexValue.prototype.putAll = function (fields) {
+        var self = this;
+
+        each(fields, function (f) {
+            self.put(angular.copy(f));
+        });
+
+        return self;
+    };
+
+    ComplexValue.prototype.copyFrom = function (originComplexValue, field) {
+        var self = this;
+        var fieldMap = originComplexValue.fieldMap || (originComplexValue.fieldMap = {});
+
+        each(field.fields, function (childField) {
+
+            var mapItem = fieldMap[childField.id];
+
+            if (!mapItem) {
+                // 没有, 创建新的进行字段补全
+                // 否则画面上显示的都不是全部的字段
+                mapItem = angular.copy(childField);
+            } else {
+                // 如果已经存在, 只要补全属性就可以了
+                // 这里没有使用 angular.copy 完整的 field 来覆盖 complexValues 内的 field。
+                // 是为了减少可能存在的影响。
+                // 只选择把后续需要的属性进行了赋值(引用)
+                mapItem.rules = childField.rules;
+                mapItem.name = childField.name;
+                mapItem.options = childField.options;
+                mapItem.fieldValueType = childField.fieldValueType;
+            }
+
+            self.put(mapItem);
+        });
+
+        return self;
+    };
 
     /**
      * @class 依赖型规则
@@ -480,8 +625,15 @@
 
         this.value = rule.value;
         this.origin = rule;
-        this.field = field;
+
+        // 因为 field 上回存储 $rules 便于访问
+        // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
+        // 所以需要通过第三方存储来保存相互的关系
+        this.$fieldId = field.id;
+        DependentRule.fieldCache[field.id] = field;
     }
+
+    DependentRule.fieldCache = {};
 
     /**
      * 获取依赖结果
@@ -491,34 +643,39 @@
         var self = this,
             dependExpressList = self.dependExpressList,
             currRule = self.origin,
-            currentField = self.field;
+            currentField = DependentRule.fieldCache[self.$fieldId],
+            forceTrue = false;
 
-        return all(dependExpressList, function (express) {
+        var result = all(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
 
-            var parentDisableRule;
+            var parentDisableRule, parentComplexValue;
 
             // 当前字段可能是一个 multiComplex 下的字段
             // 所以如果是的话, 那么它依赖的字段可能和它同属一个 multiComplex
             // 因为每一组 multiComplex 的 complexValue 都是 clone 出来的
             // 所以 express.field 所记录的 field 并不包含真正的值
             // 所以!
-            // 如果字段包含 $parentComplexValueMap 那么就先从 valueMap 判断是否有这个字段
+            // 如果字段包含 $parentComplexValueId 那么就先从 valueMap 判断是否有这个字段
             // 如果没有就原始字段, 有的话就用同组的 complexValueMap 中的字段
 
             var targetFieldInComplex = null;
             var targetField = express.field;
 
-            if (currentField.$parentComplexValueMap) {
-                targetFieldInComplex = currentField.$parentComplexValueMap[targetField.id];
-                if (targetFieldInComplex)
-                    targetField = targetFieldInComplex;
+            if (currentField.$parentComplexValueId) {
+                parentComplexValue = ComplexValue.Caches[currentField.$parentComplexValueId];
+                if (parentComplexValue) {
+                    targetFieldInComplex = parentComplexValue.get(targetField);
+                    if (targetFieldInComplex)
+                        targetField = targetFieldInComplex;
+                }
             }
 
+            // 如果依赖的目标字段不存在, 则规则强制生效
             if (!targetField)
-                return false;
+                return !(forceTrue = true);
 
             if (currRule.name === 'disableRule' && !!(parentDisableRule = targetField.$rules.disableRule)) {
                 // 如果当前要检查的就是 disableRule
@@ -528,7 +685,17 @@
                     return true;
             }
 
-            var value = targetField.values || targetField.value.value || targetField.value;
+            // 严格的逻辑应该根据 switch 判断 field 类型来取值
+            // 这里只进行简单处理, 逐个尝试获取值内容
+
+            var value = targetField.values || targetField.value;
+
+            if (value && 'value' in value)
+                value = value.value;
+
+            // 如果最终获取的值内容为空, 那么认为计算失败, 则规则强制生效
+            if (value === null)
+                return !(forceTrue = true);
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -543,6 +710,8 @@
                     return false;
             }
         });
+
+        return forceTrue || result;
     };
 
     /**
@@ -717,12 +886,11 @@
                                 // 根据类型转换值类型, 并填值
                                 field.value = getInputValue(field.value, field, valueTypeRule);
 
-                                // 如果必填是依赖型, 那么理论上应该计算结果的。
-                                // 但是其依赖的字段可能还没有被渲染, 所以结果不一定正确。
-                                // 所以这里只能处理简单规则
-                                // 如果需要必填, 并且没有填值, 并且有默认值, 那么就使用默认值
-                                if (requiredRule === true && !field.value && field.defaultValue !== null)
-                                    field.value = field.defaultValue;
+                                // 没有填值, 并且有默认值, 那么就使用默认值
+                                // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
+                                // 所以这里要单独判断
+                                if (!exists(field.value) && exists(field.defaultValue))
+                                    field.value = getInputValue(field.defaultValue, field, valueTypeRule);
 
                                 if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                     // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
@@ -748,6 +916,8 @@
                         case FIELD_TYPES.SINGLE_CHECK:
                             (function createSelectElements() {
 
+                                var nullValueObj;
+
                                 var requiredRule = rules.requiredRule;
 
                                 var options = field.options;
@@ -768,20 +938,25 @@
                                     field.value.value = getInputValue(field.value.value, field);
                                 }
 
-                                if (requiredRule === true) {
-                                    // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                    if (!field.value.value && field.defaultValue !== null) {
-                                        field.value.value = field.defaultValue;
-                                    }
-                                } else {
+                                // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
+                                if (!exists(field.value.value) && exists(field.defaultValue)) {
+                                    field.value.value = getInputValue(field.defaultValue, field);
+                                }
+
+                                if (!requiredRule) {
                                     // 非必填, 就创建空选项
                                     // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
                                     // 所以要克隆新的出来使用
                                     options = angular.copy(options);
-                                    options.unshift({
+                                    options.unshift(nullValueObj = {
                                         displayName: '',
                                         value: null
                                     });
+
+                                    // 如果当前的选中值也木有, 就用这个默认的
+                                    if (!field.value.value) {
+                                        field.value = nullValueObj;
+                                    }
                                 }
 
                                 // 最终保存到 $scope 上, 供页面绑定使用
@@ -915,35 +1090,11 @@
 
                             if (!complexValues.length) {
                                 // 如果获取的值里没有内容, 就创建一套默认
-                                complexValues.push(createComplexValue(field.fields));
+                                complexValues.push(new ComplexValue(field.fields));
                             } else {
-                                // 否则就为 complexValues 里的 field 补全属性
-                                // 如果有遗漏 field 就补全 field
-                                each(complexValues, function (complexValue) {
-                                    // 这里没有使用 angular.copy 完整的 field 来覆盖 complexValues 内的 field。
-                                    // 是为了减少可能存在的影响。
-                                    // 只选择把后续需要的属性进行了赋值(引用)
-                                    var fieldKeySet = complexValue.fieldKeySet || (complexValue.fieldKeySet = []);
-                                    var fieldMap = complexValue.fieldMap || (complexValue.fieldMap = {});
-
-                                    each(field.fields, function (field) {
-                                        // 如果 keySet 里没有这个字段的 key 就补上
-                                        if (fieldKeySet.indexOf(field.id) < 0)
-                                            fieldKeySet.push(field.id);
-
-                                        var mapItem = fieldMap[field.id];
-
-                                        if (!mapItem) {
-                                            // 如果这个字段也没在 map 里, 就新创建一个
-                                            fieldMap[field.id] = angular.copy(field);
-                                        } else {
-                                            // 如果已经存在, 只要补全属性就可以了
-                                            mapItem.rules = field.rules;
-                                            mapItem.name = field.name;
-                                            mapItem.options = field.options;
-                                            mapItem.fieldValueType = field.fieldValueType;
-                                        }
-                                    });
+                                // 包装原有的 value, 便于后续使用
+                                complexValues = complexValues.map(function (complexValueObj) {
+                                    return new ComplexValue().copyFrom(complexValueObj, field);
                                 });
                             }
 
@@ -956,7 +1107,7 @@
                             // multiComplex 字段, 有多个 complexValue
                             // 所以需要创建工具栏和按钮, 来新建 complexValue
                             $scope.$newComplexValue = function () {
-                                complexValues.push(createComplexValue(field.fields));
+                                complexValues.push(new ComplexValue(field.fields));
                             };
 
                             if (controller.canAdd) {
@@ -1030,7 +1181,7 @@
                     disableRule = rules.disableRule,
                     hasDisableRule = (disableRule && disableRule instanceof DependentRule);
 
-                var innerElement, nameElement, isSimple;
+                var innerElement, nameElement, isSimple, enabledExpression;
 
                 // 放到 scope 上, 供画面绑定使用
                 // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
@@ -1053,10 +1204,21 @@
                 innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
                 container = innerElement;
+
                 if (field.type === FIELD_TYPES.MULTI_COMPLEX)
                     container.attr('multi', true);
-                if (hasDisableRule)
-                    container.attr('ng-if', '!$rules.disableRule.checked()');
+
+                if (hasDisableRule) {
+
+                    enabledExpression = '!$rules.disableRule.checked()';
+
+                    container.attr('ng-if', enabledExpression);
+
+                    // 还要为 disableRule 处理值得移除和补回
+                    $scope.$watch(enabledExpression, function (enabled) {
+                        switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
+                    });
+                }
 
                 // 创建输入元素
                 // 根据需要处理规则
@@ -1069,6 +1231,7 @@
                 else
                     container.append(innerElement);
 
+                bindDefaultValueTip(container, field);
                 bindTipRule(container, rules);
 
                 // 根据需要创建 vo-message
