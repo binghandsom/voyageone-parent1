@@ -1019,10 +1019,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
 //        1.  = 出现搜索出入栏 -》 完全匹配 搜索输入栏输入的内容 eg {"a": "123123"}
 //        2.  != 出现搜索出入栏 -》 不等于 搜索输入栏输入的内容 eg {"a": {$ne: "123123"}}
-//        3.  = null   不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$in:[null],$exists:true}}
-//        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
-        //inputOptsKey: "",inputOpts: "",inputVal
-//        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+//        3.  = null   不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$in:[null,'']}}
+//        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null,'']}}
         //自定义查询  sunpt
         List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
         if (custAttrMap != null && custAttrMap.size() > 0) {
@@ -1030,8 +1028,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 String inputOptsKey = map.get("inputOptsKey");//条件字段
                 String inputOpts = map.get("inputOpts");//操作符
                 String inputVal = map.get("inputVal");//值
-                String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
-                if(!StringUtil.isEmpty(optsWhere)) {
+                String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOpts, inputVal);
+                if (!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
                     result.append(",");
                 }
@@ -1040,23 +1038,35 @@ public class CmsSearchAdvanceService extends BaseAppService {
         return result.toString();
     }
 
-    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
-    {
+    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal) {
         //自定义查询  sunpt
-        if(StringUtil.isEmpty(inputOptsKey)) return "";
-        String result="";
+        if (StringUtil.isEmpty(inputOptsKey)) return "";
+        String result = "";
         switch (inputOpts) {
             case "=":
-                result=MongoUtils.splicingValue(inputOptsKey, inputVal);
+                // 字符型和数字要分开比较
+                if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                    String qStr = "'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                } else {
+                    String qStr = "'{0}':'{1}'";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                }
                 break;
             case "!=":
-                result="\""+inputOptsKey+"\": { $ne:\"" + inputVal + "\"}}";
+                if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                    String qStr = "'$and':[{'{0}':{'$type':1},'{0}':{$ne:{1}}},{'{0}':{'$type':16},'{0}':{$ne:{1}}},{'{0}':{'$type':18},'{0}':{$ne:{1}}},{'{0}':{'$type':2},'{0}':{$ne:'{1}'}}]";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                } else {
+                    String qStr = "'{0}':{$ne:'{1}'}";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                }
                 break;
             case "=null":
-                result="\""+inputOptsKey+"\":{$in:[null,\"\"],$exists:true}";
+                result = "'" + inputOptsKey + "':{$in:[null,'']}";
                 break;
             case "!=null":
-                result="$and:[{\""+inputOptsKey+"\": { $ne: null }},{\""+inputOptsKey +"\": { $ne: \"\" }}]";
+                result = "'" + inputOptsKey + "':{$ne:[null,'']}";
                 break;
         }
         return  result;
