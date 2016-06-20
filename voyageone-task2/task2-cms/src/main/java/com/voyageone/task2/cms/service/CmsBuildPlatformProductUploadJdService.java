@@ -420,13 +420,16 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
                 // 京东要求图片必须是5张，商品主图的第一张已经在前面的共通属性里面设置了，这里最多只需要设置4张非主图
                 for (String picName : mainPicNameList) {
+                    String picUrl = "";
                     try {
                         // 取得图片URL
-                        String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                        picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
                         // 上传主产品的其余4张非主图片
                         jdWareService.addWarePropimg(shopProp, String.valueOf(jdWareId), ColorId_MinPic, picUrl, picName, false);
                     } catch (Exception ex) {
-                        $error("京东上传主商品非主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", jdWareId, ColorId_MinPic, picName);
+                        // 有可能是因为新增商品时，如果该类目最少5张图片，京东自动的把上传的第一张图片复制成5张图，
+                        // 则传后续4张图时只有第2张能正常上传，后面都会报超过6张图片的错误
+                        $error("京东上传主商品非主图失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", jdWareId, ColorId_MinPic, picName, picUrl);
                         $error(ex);
                         // 继续上传下一张图片
                     }
@@ -459,6 +462,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
+                        sxData.setErrorMessage(errMsg);
                     }
                 }
 
@@ -472,7 +476,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     } catch (Exception ex) {
                         String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage("新增商品后设置SKU信息失败之后，删除该新增商品失败");
+                        sxData.setErrorMessage(ex.getMessage());
                         throw ex;
                     }
 
@@ -500,6 +504,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     if (!retStatus) {
                         String errMsg = String.format("更新商品的产品图片失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
+                        // 如果上新数据中的errorMessage为空
+                        if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                            sxData.setErrorMessage(errMsg);
+                        }
                     }
                 }
             }
@@ -532,7 +540,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 $error(errMsg);
                 // 如果上新数据中的errorMessage为空
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                    sxData.setErrorMessage(errMsg);
+                    sxData.setErrorMessage("京东单个商品新增或更新信息失败！请向管理员确认 [WareId:" + jdWareId + "]" );
                 }
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
@@ -1259,9 +1267,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 循环取得5张图片的url并分别上传到京东
             for (String picName : productPicNameList) {
+                String picUrl = "";
                 try {
                     // 取得图片URL(TODO 这里的解析字典不能知道现在到底是哪个颜色产品的图片，目前每个商品都只有一个product，暂时没问题)
-                    String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
+                    picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
 
                     // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
                     boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
@@ -1271,11 +1280,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 } catch (Exception ex) {
                     // 如果5张图片里面有一张上传成功的时候
                     if (uploadProductPicResult) {
-                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
                     } else {
-                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
                     }
                     $error(ex);
+                    sxData.setErrorMessage(ex.getMessage());
                     // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
                 }
 
