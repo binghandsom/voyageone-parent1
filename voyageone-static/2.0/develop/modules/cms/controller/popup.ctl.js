@@ -1372,5 +1372,12 @@ define([
         //    });
         //
         //};
+    }).factory('popups', function ($controller) {
+        return function ($scope) {
+            if (!$scope.$$popups) {
+                $scope.$$popups = $controller('popupCtrl', {$scope: $scope});
+            }
+            return $scope.$$popups;
+        };
     });
 });
