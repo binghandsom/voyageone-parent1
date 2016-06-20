@@ -1178,45 +1178,6 @@
                     return innerElement;
                 }
 
-                /**
-                 * 名称显示元素创建过程
-                 */
-                function createNameElement(field, name) {
-
-                    var innerElement;
-
-                    switch (field.type) {
-                        case FIELD_TYPES.INPUT:
-                        case FIELD_TYPES.SINGLE_CHECK:
-                        case FIELD_TYPES.MULTI_CHECK:
-                            innerElement = angular.element('<schema-field-name>');
-                            break;
-                        case FIELD_TYPES.COMPLEX:
-                        case FIELD_TYPES.MULTI_COMPLEX:
-                            innerElement = angular.element('<schema-complex-name>');
-                            break;
-                        default:
-                            console.error('不支持其他类型');
-                            return null;
-                    }
-
-                    innerElement.attr('for', name);
-                    innerElement.text(field.name || field.id);
-
-                    if (rules.requiredRule) {
-                        // 如果这个字段是需要必填的
-                        // 就加个红星
-                        // 如果是依赖型的必填, 那就给红星 class 加成 ng-class
-                        if (rules.requiredRule instanceof DependentRule) {
-                            innerElement.attr('ng-class', '{"schema-field-required":rules.requiredRule.checked()}');
-                        } else {
-                            innerElement.addClass('schema-field-required');
-                        }
-                    }
-
-                    return innerElement;
-                }
-
                 var controller = this,
                     $element = controller.$element,
                     $scope = controller.$scope,
@@ -1240,12 +1201,8 @@
 
                 isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
-                if (showName) {
-                    // 如果需要显示名称
-                    // 就创建专用的名称元素
-                    nameElement = createNameElement(field, fieldElementName);
-                    container.append(nameElement);
-                }
+                if (showName)
+                    container.append(angular.element('<schema-field-name>'));
 
                 // 创建一个专门的输入元素容器便于控制外观
                 innerElement = angular.element('<schema-input-container>');
@@ -1330,6 +1287,56 @@
                 },
                 controller: SchemaFieldController
             };
+        })
+
+        .directive('schemaFieldName', function () {
+            return {
+                restrict: 'E',
+                require: ['^^schemaField'],
+                scope: false,
+                link: function (scope, element, attrs, requiredControllers) {
+
+                    var schemaFieldController = requiredControllers[0];
+
+                    schemaFieldController.getField().then(function (field) {
+
+                        var rules = getRules(field),
+                            required = rules.requiredRule,
+                            requiredClass = 'schema-field-required';
+
+                        switch (field.type) {
+                            case FIELD_TYPES.INPUT:
+                            case FIELD_TYPES.SINGLE_CHECK:
+                            case FIELD_TYPES.MULTI_CHECK:
+                                element.addClass('simple');
+                                break;
+                            case FIELD_TYPES.COMPLEX:
+                                element.addClass('complex');
+                                break;
+                            case FIELD_TYPES.MULTI_COMPLEX:
+                                element.addClass('complex multi');
+                                break;
+                        }
+
+                        element.text(field.name || field.id);
+
+                        if (required) {
+                            // 如果这个字段是需要必填的
+                            // 就加个红星
+                            // 如果是依赖型的必填, 那就要动态变更
+                            if (required instanceof DependentRule) {
+                                scope.$watch(function () {
+                                    return required.checked();
+                                }, function (required) {
+                                    element[required ? 'addClass' : 'removeClass'](requiredClass);
+                                });
+                            } else {
+                                element.addClass(requiredClass);
+                            }
+                        }
+                    });
+                }
+            }
         })
 
         .directive('schemaComplex', function ($compile) {

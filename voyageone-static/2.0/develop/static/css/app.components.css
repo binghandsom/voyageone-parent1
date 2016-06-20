@@ -25,8 +25,7 @@ schema-field vo-message {
     margin-top: 5px;
 }
 
-schema-field-name,
-schema-complex-name {
+schema-field-name {
     width: 120px;
     flex-grow: 0;
     line-height: 26px;
@@ -53,7 +52,7 @@ schema-complex schema-field:last-child {
     margin-bottom: 0;
 }
 
-schema-complex schema-field-name {
+schema-complex schema-field-name.simple {
     color: #8a8a8a;
 }
 
@@ -86,11 +85,11 @@ schema-complex[multi] schema-field {
     margin-bottom: 0;
 }
 
-schema-complex[multi] schema-field-name {
+schema-complex[multi] schema-field-name.simple {
     display: none;
 }
 
-schema-complex[multi]:first-of-type schema-field-name {
+schema-complex[multi]:first-of-type schema-field-name.simple {
     display: block;
 }
 
