@@ -323,13 +323,13 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (custList != null && custList.size() > 0) {
             List<String> inputList = new ArrayList<>();
             for (Map<String, Object> item : custList) {
-                String inputOptsKey = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputOptsKey"));//条件字段
+                String inputOptsKey = StringUtils.trimToNull((String) item.get("inputOptsKey"));//条件字段
                 if (inputOptsKey == null) {
                     continue;
                 }
                 Object inputOptsObj = item.get("inputOpts");//操作符
-                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputVal"));//值
-                String inputType = org.apache.commons.lang3.StringUtils.trimToNull((String) item.get("inputType"));//输入类型 list/string/number
+                String inputVal = StringUtils.trimToNull((String) item.get("inputVal"));//值
+                String inputType = StringUtils.trimToNull((String) item.get("inputType"));//输入类型 list/string/number
                 String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOptsObj, inputVal, inputType);
                 if (!StringUtil.isEmpty(optsWhere)) {
                     inputList.add(optsWhere);
@@ -356,7 +356,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             if ("list-1".equals(inputType)) {
                 // 数字类型
-                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                if (inputOpts instanceof String && StringUtils.trimToNull((String) inputOpts) == null) {
                     // 未设值
                     result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
                 } else {
@@ -364,7 +364,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 }
             } else {
                 // 字符串
-                if (inputOpts instanceof String && org.apache.commons.lang3.StringUtils.trimToNull((String) inputOpts) == null) {
+                if (inputOpts instanceof String && StringUtils.trimToNull((String) inputOpts) == null) {
                     // 未设值
                     result = "{'" + inputOptsKey + "':{$in:[null,'']}}";
                 } else {
@@ -373,7 +373,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             return  result;
         }
-        if (inputOpts == null) {
+        if (inputOpts == null || (inputOpts instanceof String && StringUtils.isEmpty((String) inputOpts))) {
             return null;
         }
         switch ((Integer) inputOpts) {
