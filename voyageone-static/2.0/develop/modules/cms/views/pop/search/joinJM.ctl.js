@@ -44,7 +44,7 @@ define([
                 self.jmPromotionProductAddService.add(data)
                     .then(function() {
                         self.notify.success (self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        self.$uibModalInstance.$uibModalInstance.$dismiss();
+                        self.$uibModalInstance.close();
                     });
             }
         };

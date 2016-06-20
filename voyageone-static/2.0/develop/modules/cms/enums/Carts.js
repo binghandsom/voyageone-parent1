@@ -23,7 +23,7 @@ define(['underscore'], function (_) {
         /**
          * 天猫
          */
-        TM: new Cart('TM', 20, '天猫', 'https://detail.tmall.hk/hk/item.htm?id='),
+        TM: new Cart('TM', 20, '天猫', ''),
 
         /**
          * 淘宝
@@ -43,7 +43,7 @@ define(['underscore'], function (_) {
         /**
          * 京东
          */
-        JD: new Cart('JD', 24, '京东', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+        JD: new Cart('JD', 24, '京东', ''),
 
         /**
          * 独立域名
@@ -56,9 +56,9 @@ define(['underscore'], function (_) {
         JG: new Cart('JG', 26, '京东国际', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
-         * 聚美优品
+         * 聚美优品 (注意：聚美的产品url后缀要添加'.html')
          */
-        JM: new Cart('JM', 27, '聚美优品', ''),
+        JM: new Cart('JM', 27, '聚美优品', 'http://item.jumeiglobal.com/'),
 
         /**
          * 京东匠心界

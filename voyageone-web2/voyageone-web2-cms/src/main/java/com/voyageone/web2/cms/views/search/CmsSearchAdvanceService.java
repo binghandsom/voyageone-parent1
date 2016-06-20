@@ -1019,10 +1019,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
 //        1.  = 出现搜索出入栏 -》 完全匹配 搜索输入栏输入的内容 eg {"a": "123123"}
 //        2.  != 出现搜索出入栏 -》 不等于 搜索输入栏输入的内容 eg {"a": {$ne: "123123"}}
-//        3.  = null   不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$in:[null],$exists:true}}
-//        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null]}}
-        //inputOptsKey: "",inputOpts: "",inputVal
-//        long count = dao.countByQuery("{\"imageTemplateName\":\"" + ImageTemplateName + "\"" + ",\"imageTemplateId\": { $ne:" + ImageTemplateId + "}}");
+//        3.  = null   不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$in:[null,'']}}
+//        4.  != null  不出现搜索输入栏 -》搜索输入栏 不可编辑，检索条件为 eg {"a":{$ne:[null,'']}}
         //自定义查询  sunpt
         List<Map<String, String>> custAttrMap = searchValue.getCustAttrMap();
         if (custAttrMap != null && custAttrMap.size() > 0) {
@@ -1030,8 +1028,8 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 String inputOptsKey = map.get("inputOptsKey");//条件字段
                 String inputOpts = map.get("inputOpts");//操作符
                 String inputVal = map.get("inputVal");//值
-                String optsWhere=getCustAttrOptsWhere(inputOptsKey,inputOpts,inputVal);
-                if(!StringUtil.isEmpty(optsWhere)) {
+                String optsWhere = getCustAttrOptsWhere(inputOptsKey, inputOpts, inputVal);
+                if (!StringUtil.isEmpty(optsWhere)) {
                     result.append(optsWhere);
                     result.append(",");
                 }
@@ -1040,23 +1038,35 @@ public class CmsSearchAdvanceService extends BaseAppService {
         return result.toString();
     }
 
-    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal)
-    {
+    public String getCustAttrOptsWhere( String inputOptsKey ,String inputOpts, String inputVal) {
         //自定义查询  sunpt
-        if(StringUtil.isEmpty(inputOptsKey)) return "";
-        String result="";
+        if (StringUtil.isEmpty(inputOptsKey)) return "";
+        String result = "";
         switch (inputOpts) {
             case "=":
-                result=MongoUtils.splicingValue(inputOptsKey, inputVal);
+                // 字符型和数字要分开比较
+                if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                    String qStr = "'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                } else {
+                    String qStr = "'{0}':'{1}'";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                }
                 break;
             case "!=":
-                result="\""+inputOptsKey+"\": { $ne:\"" + inputVal + "\"}}";
+                if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                    String qStr = "'$and':[{'{0}':{'$type':1},'{0}':{$ne:{1}}},{'{0}':{'$type':16},'{0}':{$ne:{1}}},{'{0}':{'$type':18},'{0}':{$ne:{1}}},{'{0}':{'$type':2},'{0}':{$ne:'{1}'}}]";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                } else {
+                    String qStr = "'{0}':{$ne:'{1}'}";
+                    result = com.voyageone.common.util.StringUtils.format(qStr, inputOptsKey, inputVal);
+                }
                 break;
             case "=null":
-                result="\""+inputOptsKey+"\":{$in:[null,\"\"],$exists:true}";
+                result = "'" + inputOptsKey + "':{$in:[null,'']}";
                 break;
             case "!=null":
-                result="$and:[{\""+inputOptsKey+"\": { $ne: null }},{\""+inputOptsKey +"\": { $ne: \"\" }}]";
+                result = "'" + inputOptsKey + "':{$ne:[null,'']}";
                 break;
         }
         return  result;
@@ -1065,6 +1075,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private void  writeHead (Workbook book,CmsSessionBean cmsSession){
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
+        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_selSalesType");
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0);
 
@@ -1083,6 +1094,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")) + "(en)");
             }
         }
+
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
+            }
+        }
     }
 
     /**
@@ -1098,6 +1115,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         boolean isContinueOutput = true;
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
+        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.getAttribute("_adv_search_selSalesType");
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
             /*
@@ -1132,22 +1150,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
-
-            if(item.getGroupBean() != null && item.getGroupBean().getGroupId() != null){
-                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
-            }else{
-                index++;
-            }
-
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
-
-            if(item.getGroupBean() != null && item.getGroupBean().getNumIId() != null){
+            if (item.getGroupBean() != null && item.getGroupBean().getNumIId() != null) {
                 FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
-            }else{
+            } else {
                 index++;
             }
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getBrand());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getProductType());
@@ -1175,6 +1183,21 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                }
+            }
+
+            if (salesProps != null) {
+                CmsBtProductModel_Sales salesData = item.getSales();
+                String key = null;
+                for (Map<String, Object> prop : salesProps) {
+                    key = (String) prop.get("value");
+                    key = key.substring(6);
+                    Integer salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+                    if (salesVal == null) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    } else {
+                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal);
+                    }
                 }
             }
             startRowIndex = startRowIndex + 1;
