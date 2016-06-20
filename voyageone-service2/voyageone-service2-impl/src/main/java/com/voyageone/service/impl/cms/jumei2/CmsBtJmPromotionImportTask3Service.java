@@ -110,6 +110,10 @@ public class CmsBtJmPromotionImportTask3Service {
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
         }
+        if(listProductImport.size()==0)
+        {
+            modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
+        }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
     }
     //check
