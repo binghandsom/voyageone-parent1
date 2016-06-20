@@ -18,7 +18,6 @@ define([
         };
 
         $scope.initialize = initialize;
-        //$scope.getProductList = getProductList;
         $scope.setMainProduct = setMainProduct;
         $scope.openCategoryMapping = openCategoryMapping;
         $scope.openBulkUpdate = openBulkUpdate;
@@ -38,21 +37,6 @@ define([
                     $scope.vm.groupInfo = res.data.groupInfo;
                 });
         }
-
-        ///**
-        // * 获取该group下的productList数据,主要用于翻页
-        // */
-        //function getProductList () {
-        //
-        //    groupDetailService.getProductList($routeParams.id)
-        //        .then(function (res) {
-        //            $scope.vm.productList = res.data.productList;
-        //            $scope.vm.productListCopy = angular.copy($scope.vm.productList);
-        //            //$scope.vm.productPageOption.total = res.data.productListTotal;
-        //            $scope.vm.productIds = res.data.productIds;
-        //            $scope.vm.groupInfo = res.data.groupInfo;
-        //        });
-        //}
 
         /**
          * 设置group的主商品
