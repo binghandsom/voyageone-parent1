@@ -395,6 +395,9 @@ define([
         $scope.openJmPromotionDetailWin = function (parameter) {
             popups.openJmPromotionDetail(parameter);
         }
+        $scope.openDealExtensionWin=function(){
+            popups.openDealExtension($scope.parentModel);
+        }
     }
     detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
