@@ -211,7 +211,7 @@
 
     <div class="box">
         <div class="form-inline pull-right m-b-xs" >
-            <button class="btn btn-default" ng-click="openJmPromotionProductImport(parentModel,selectImport)"><i class="fa fa-reply-all"></i>&nbsp;导入
+            <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()"><i class="fa fa-reply-all"></i>&nbsp;导入
             </button>
             <div class="btn-group dropdown" uib-dropdown="">
                 <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
@@ -252,7 +252,7 @@
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;专场变更&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                    <li><a href="" ng-click="openJmPromotionDetail({id:parentModel.id})">编辑专场</a></li>
+                    <li><a href="" ng-click="openJmPromotionDetailWin({id:parentModel.id})">编辑专场</a></li>
 
                 </ul>
             </div>
@@ -291,7 +291,7 @@
                                                                                                                    ng-model="model.isChecked"><span
                                             class="fa fa-check"></span></label></td>
                                     <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="$parent.openJmProductDetail({promotionProductId:model.id},openJmProductDetail)">
+                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
                                         {{model.productLongName}}  </a>
                                     </td>
                                     <td class="text-left">{{model.promotionTag}}</td>
@@ -333,7 +333,7 @@
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
                                         </button>
                                         <button title="编辑" class="btn btn-success btn-xs"
-                                                ng-click="$parent.openJmProductDetail({promotionProductId:model.id},openJmProductDetail)">
+                                                ng-click="openProductDetailWin({promotionProductId:model.id})">
                                             <i class="fa fa-pencil"></i></button>
                                         <!--<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs" ng-click="updateDealPrice(model);"><i-->
                                                 <!--class="glyphicon glyphicon-floppy-disk"></i></button>-->
