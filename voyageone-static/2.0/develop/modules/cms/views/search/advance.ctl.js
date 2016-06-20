@@ -190,7 +190,12 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion (promotion, openAddToPromotion) {
-            openAddToPromotion(promotion, getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openAddToPromotion(promotion, selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
@@ -208,6 +213,10 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
             openAddChannelCategoryEdit(selList).then(function () {
                 getGroupList();
                 getProductList();
@@ -220,7 +229,12 @@ define([
          * @param openJMActivity
          */
         function openJMActivity (promotion, openJMActivity) {
-            openJMActivity(promotion, getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openJMActivity(promotion, selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
@@ -232,7 +246,12 @@ define([
          * @param openFieldEdit
          */
         function openBulkUpdate (openFieldEdit) {
-            openFieldEdit(getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openFieldEdit(selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();

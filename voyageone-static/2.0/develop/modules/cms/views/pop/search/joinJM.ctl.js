@@ -9,7 +9,7 @@ define([
 
     return cms.controller('popJoinJMCtl', (function () {
 
-        function popJoinJMCtl($translate, jmPromotionProductAddService, notify, context, $uibModalInstance) {
+        function popJoinJMCtl($translate, jmPromotionProductAddService, notify, context, alert,$uibModalInstance) {
 
             this.jmPromotionProductAddService = jmPromotionProductAddService;
             this.$uibModalInstance = $uibModalInstance;
@@ -17,7 +17,7 @@ define([
             this.$translate = $translate;{}
             this.promotion = context.promotion;
             this.products = context.products;
-
+            this.alert = alert;
             this.hasDiscount = true;
             this.priceType = "1";
         }
@@ -42,9 +42,17 @@ define([
                 data.priceType = self.priceType;
                 data.discount = self.hasDiscount ? self.discount / 10 : null;
                 self.jmPromotionProductAddService.add(data)
-                    .then(function() {
-                        self.notify.success (self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        self.$uibModalInstance.$uibModalInstance.$dismiss();
+                    .then(function(data) {
+                        if(data.data.errlist.length == 0) {
+                            self.notify.success(self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            self.$uibModalInstance.close();
+                        }else{
+                            var message = "";
+                            _.each(data.data.errlist,function(item){
+                                message+=item+","
+                            })
+                            self.alert("以下code没有在聚美上新过不能加入promotion\n"+message);
+                        }
                     });
             }
         };

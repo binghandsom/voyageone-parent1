@@ -10,6 +10,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
@@ -105,6 +106,9 @@ public class CmsBtJmPromotionProductService {
 
     //所有未上心商品上新
     public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
+        daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
         return daoExt.updateDealEndTimeAll(parameter);
     }
 

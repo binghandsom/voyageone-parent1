@@ -81,6 +81,11 @@
             <artifactId>voyageone-components-ftp</artifactId>
             <version>${voyageone.components.ftp.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-overstock</artifactId>
+            <version>${voyageone.components.overstock.version}</version>
+        </dependency>
 
     </dependencies>
     <build>

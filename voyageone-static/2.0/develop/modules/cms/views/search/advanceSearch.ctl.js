@@ -157,6 +157,7 @@ define([
                     $scope.vm.selSalesType = [];
                 }
 
+                $scope.vm.productUrl = res.data.productUrl;
                 $scope.vm.groupList = res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
@@ -230,7 +231,7 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion(promotion, openAddToPromotion) {
-            _chkProductSel(null, openAddToPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+            _chkProductSel(null, _openAddPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotion(context.promotion, selList, context).then(function () {
@@ -270,7 +271,7 @@ define([
          * @param openJMActivity
          */
         function openJMActivity(promotion, openJMActivity) {
-            _chkProductSel(null, openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+            _chkProductSel(null, _openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openJMActivity(cartId, selList, context) {
                 openJMActivity(context.promotion, selList, context).then(function () {
@@ -457,7 +458,7 @@ define([
          */
         function getCat(cartObj) {
             if (cartObj == null || cartObj == undefined || cartObj == '') {
-                $scope.vm.searchInfo.cartId = -1;
+                $scope.vm.searchInfo.cartId = 0;
             } else {
                 $scope.vm.searchInfo.cartId = parseInt(cartObj.value);
             }
@@ -492,7 +493,7 @@ define([
 
             $scope.vm.masterData.catList = [];
 
-            if ($scope.vm.searchInfo.cartId == -1) {
+            if ($scope.vm.searchInfo.cartId == 0) {
                 $scope.vm._cart_display = 0;
                 $scope.vm._mmmcart_display = 0;
                 return;

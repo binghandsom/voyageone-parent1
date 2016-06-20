@@ -148,7 +148,7 @@ public class CmsBtJmPromotionImportTask3Service {
             daoCmsBtJmPromotionProduct.update(info.productModel);
         }
         //CmsBtJmPromotionSku
-        for (CmsBtJmPromotionSkuModel sku : info.skuList) {
+            for (CmsBtJmPromotionSkuModel sku : info.skuList) {
             sku.setCmsBtJmPromotionProductId(info.productModel.getId());
             if (sku.getId() == null || sku.getId() == 0) {
                 daoCmsBtJmPromotionSku.insert(sku);
