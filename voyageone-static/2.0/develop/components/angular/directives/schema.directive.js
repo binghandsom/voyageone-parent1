@@ -43,7 +43,7 @@
         "LABEL": "LABEL"
     };
 
-    var find, findIndex, each, any, all;
+    var find, findIndex, each, any, all, exists, is;
 
     /**
      * 已知的 valueType 包含的值
@@ -80,6 +80,12 @@
         // 解耦包装帮主函数
         // 便于后续脱离第三方库时, 进行自定义实现
 
+        is = {};
+
+        exists = function (target) {
+            return target !== null && target !== undefined;
+        };
+
         if (!window._)
             console.warn('Please import underscore !!!');
         else {
@@ -88,8 +94,10 @@
             all = _.every;
             each = _.each;
             findIndex = _.findIndex;
-        }
 
+            is.string = _.isString;
+            is.array = _.isArray;
+        }
     })();
 
     /**
@@ -300,7 +308,7 @@
         var parsedValue = null;
         var valueType = field.fieldValueType;
 
-        if (value === undefined || value === null)
+        if (!exists(value))
             return null;
 
         // 如果字段上有具体的值类型声明
@@ -344,7 +352,7 @@
 
                 parsedValue = new Date(value);
 
-                if (isNaN(parsedValue.getDate))
+                if (isNaN(parsedValue.getDate()))
                     throw '日期(时间)格式不正确';
 
                 return parsedValue;
@@ -384,6 +392,7 @@
 
     /**
      * tip 只是简单的显示, 默认应该不会是依赖规则。如果某天真的是了... 请修改这里
+     * 2016-06-19 18:01:39 追加认为默认值也需要作为 tip 显示出来
      */
     function bindTipRule(container, rules) {
 
@@ -398,7 +407,7 @@
                 container.append(contentContainer);
 
                 // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if ((typeof content !== 'string')) {
+                if (!is.string(content)) {
 
                     if ('url' in content && !!content.url) {
                         var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
@@ -415,6 +424,39 @@
         });
     }
 
+    function bindDefaultValueTip(container, field) {
+
+        function tryGetDefault(defaultPropName) {
+            var value = field[defaultPropName];
+            if (defaultPropName in field && exists(value)) {
+                return value;
+            }
+            return null;
+        }
+
+        var options = field.options;
+
+        var result = tryGetDefault('defaultValue');
+        if (!exists(result)) {
+            result = tryGetDefault('defaultValues');
+            if (!exists(result) || !result.length) return;
+        }
+
+        if (exists(options) && options.length) {
+            result = !is.array(result) ? find(options, function(o) {
+                return o.value == result;
+            }).displayName : result.map(function (r) {
+                return find(options, function (o) {
+                    return o.value == r;
+                }).displayName;
+            });
+        }
+
+        var contentContainer = angular.element('<schema-field-tip>');
+        contentContainer.text('该字段包含默认值: ' + angular.toJson(result));
+        container.append(contentContainer);
+    }
+
     function resetValue(valueObj, fieldObj) {
 
         ['value', 'values', 'complexValue', 'complexValues'].some(function (key) {
@@ -426,6 +468,63 @@
 
             return false;
         });
+    }
+
+    /**
+     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 schema-field 中 $render 里的切换逻辑
+     * @param {object} field
+     * @param {Array.<String>} valueKeys 需要切换的属性名
+     * @param {bool} fromPrivate 标识切换方向, true = from private, false = to private
+     */
+    function switchPrivateValue(field, valueKeys, fromPrivate) {
+
+        if (field.type === FIELD_TYPES.COMPLEX) {
+            each(field.fields, function (childField) {
+                switchPrivateValue(childField, valueKeys, fromPrivate);
+            });
+            return;
+        }
+
+        if (fromPrivate) {
+            // 如果启用了就尝试移回去
+            any(valueKeys, function (key) {
+
+                var privateKey = '$' + key;
+
+                var privateValueObj = field[privateKey];
+
+                if (privateKey in field) {
+                    // 值有就保存, 木有就不保存
+                    if (exists(privateValueObj)) {
+                        field[key] = privateValueObj;
+                    }
+                    field[privateKey] = null;
+                    // 只要找到其中一个属性就不用继续了
+                    return true;
+                }
+
+                return false;
+            })
+        } else {
+            // 禁用了就保存值到缓存字段
+            // 并移除现有的值
+            any(valueKeys, function (key) {
+
+                var valueObj = field[key];
+
+                if (key in field) {
+                    // 值有就保存, 木有就不保存
+                    if (exists(valueObj)) {
+                        field['$' + key] = valueObj;
+                    }
+                    field[key] = null;
+                    // 只要找到其中一个属性就不用继续了
+                    return true;
+                }
+
+                return false;
+            });
+        }
     }
 
     /**
@@ -544,9 +643,10 @@
         var self = this,
             dependExpressList = self.dependExpressList,
             currRule = self.origin,
-            currentField = DependentRule.fieldCache[self.$fieldId];
+            currentField = DependentRule.fieldCache[self.$fieldId],
+            forceTrue = false;
 
-        return all(dependExpressList, function (express) {
+        var result = all(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
@@ -573,8 +673,9 @@
                 }
             }
 
+            // 如果依赖的目标字段不存在, 则规则强制生效
             if (!targetField)
-                return false;
+                return !(forceTrue = true);
 
             if (currRule.name === 'disableRule' && !!(parentDisableRule = targetField.$rules.disableRule)) {
                 // 如果当前要检查的就是 disableRule
@@ -584,7 +685,17 @@
                     return true;
             }
 
-            var value = targetField.values || targetField.value.value || targetField.value;
+            // 严格的逻辑应该根据 switch 判断 field 类型来取值
+            // 这里只进行简单处理, 逐个尝试获取值内容
+
+            var value = targetField.values || targetField.value;
+
+            if (value && 'value' in value)
+                value = value.value;
+
+            // 如果最终获取的值内容为空, 那么认为计算失败, 则规则强制生效
+            if (value === null)
+                return !(forceTrue = true);
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -599,6 +710,8 @@
                     return false;
             }
         });
+
+        return forceTrue || result;
     };
 
     /**
@@ -773,12 +886,11 @@
                                 // 根据类型转换值类型, 并填值
                                 field.value = getInputValue(field.value, field, valueTypeRule);
 
-                                // 如果必填是依赖型, 那么理论上应该计算结果的。
-                                // 但是其依赖的字段可能还没有被渲染, 所以结果不一定正确。
-                                // 所以这里只能处理简单规则
-                                // 如果需要必填, 并且没有填值, 并且有默认值, 那么就使用默认值
-                                if (requiredRule === true && field.value !== null && field.defaultValue !== null)
-                                    field.value = getInputType(field.defaultValue, field, valueTypeRule);
+                                // 没有填值, 并且有默认值, 那么就使用默认值
+                                // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
+                                // 所以这里要单独判断
+                                if (!exists(field.value) && exists(field.defaultValue))
+                                    field.value = getInputValue(field.defaultValue, field, valueTypeRule);
 
                                 if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
                                     // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
@@ -826,12 +938,12 @@
                                     field.value.value = getInputValue(field.value.value, field);
                                 }
 
-                                if (requiredRule === true) {
-                                    // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                    if (!field.value.value && field.defaultValue !== null) {
-                                        field.value.value = getInputValue(field.defaultValue, field);
-                                    }
-                                } else {
+                                // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
+                                if (!exists(field.value.value) && exists(field.defaultValue)) {
+                                    field.value.value = getInputValue(field.defaultValue, field);
+                                }
+
+                                if (!requiredRule) {
                                     // 非必填, 就创建空选项
                                     // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
                                     // 所以要克隆新的出来使用
@@ -1069,7 +1181,7 @@
                     disableRule = rules.disableRule,
                     hasDisableRule = (disableRule && disableRule instanceof DependentRule);
 
-                var innerElement, nameElement, isSimple;
+                var innerElement, nameElement, isSimple, enabledExpression;
 
                 // 放到 scope 上, 供画面绑定使用
                 // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
@@ -1092,10 +1204,21 @@
                 innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
                 container = innerElement;
+
                 if (field.type === FIELD_TYPES.MULTI_COMPLEX)
                     container.attr('multi', true);
-                if (hasDisableRule)
-                    container.attr('ng-if', '!$rules.disableRule.checked()');
+
+                if (hasDisableRule) {
+
+                    enabledExpression = '!$rules.disableRule.checked()';
+
+                    container.attr('ng-if', enabledExpression);
+
+                    // 还要为 disableRule 处理值得移除和补回
+                    $scope.$watch(enabledExpression, function (enabled) {
+                        switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
+                    });
+                }
 
                 // 创建输入元素
                 // 根据需要处理规则
@@ -1108,6 +1231,7 @@
                 else
                     container.append(innerElement);
 
+                bindDefaultValueTip(container, field);
                 bindTipRule(container, rules);
 
                 // 根据需要创建 vo-message
