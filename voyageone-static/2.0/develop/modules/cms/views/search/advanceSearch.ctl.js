@@ -231,7 +231,7 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion(promotion, openAddToPromotion) {
-            _chkProductSel(null, openAddToPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+            _chkProductSel(null, _openAddPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotion(context.promotion, selList, context).then(function () {
@@ -271,7 +271,7 @@ define([
          * @param openJMActivity
          */
         function openJMActivity(promotion, openJMActivity) {
-            _chkProductSel(null, openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
+            _chkProductSel(null, _openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openJMActivity(cartId, selList, context) {
                 openJMActivity(context.promotion, selList, context).then(function () {
