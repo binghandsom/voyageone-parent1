@@ -346,31 +346,34 @@ define([
                 alert("请选择删除的商品!");
                 return;
             }
-
-            jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+                jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
         }
 
         $scope.deleteAllProduct = function () {//已再售的不删除
-            jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+                jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
         }
         $scope.selectAll = function ($event) {
