@@ -94,6 +94,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 model.setSynchStatus(2);
                 daoCmsBtJmPromotionProduct.update(model);//在售之后先保存  避免下面调用接口失败 jmHashId丢失
 
+                if(modelCmsBtJmPromotion.getStatus()==null||modelCmsBtJmPromotion.getStatus()==0) {//更新互动zhuang
+              modelCmsBtJmPromotion.setStatus(1);
+                    daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
+                }
+
                 jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
                 jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新价格
                 model.setPriceStatus(0);

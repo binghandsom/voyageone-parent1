@@ -21,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -116,5 +117,19 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
      //   {"error_code":"302","reason":"error","response":{"successCount":0,"errorList":[{"jumei_sku_no":"701506467","error_code":505,"error_message":"hash_id: ht1464949112p222551364, sku_no:701506467的修改价格申请还在审核，不能重复提交申请!"}]}}
     }
+    @Test
+    public void getTime()  {
+        long result=0;
+        Date d=new Date();
+        Calendar now = Calendar.getInstance();
+        // 取得系统时间和格林威治时间之间的偏移值
+        int diffsecond = now.getTimeZone().getRawOffset();
 
+        DateTimeUtil.getLocalTime(d,8);
+        if(diffsecond == 0){
+            result= d.getTime() / 1000 - 8 * 3600;
+        }else{
+            result= d.getTime() / 1000;
+        }
+    }
 }
