@@ -1143,7 +1143,9 @@
                             // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
                             // 所以需要根据每个 complexValues 来创建 container
 
-                            var complexValues = field.complexValues || (field.complexValues = []);
+                            var complexValues = field.complexValues;
+
+                            if (!complexValues) complexValues = [];
 
                             if (!complexValues.length) {
                                 // 如果获取的值里没有内容, 就创建一套默认
@@ -1154,6 +1156,8 @@
                                     return new ComplexValue().copyFrom(complexValueObj, field);
                                 });
                             }
+
+                            field.complexValues = complexValues;
 
                             $scope.$complexValues = complexValues;
 
