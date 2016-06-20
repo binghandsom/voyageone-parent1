@@ -38,22 +38,22 @@ schema-input-container {
     flex-grow: 1;
 }
 
-schema-complex-container {
+schema-complex {
     background-color: #f8f8f8;
     border: 1px solid #ededed;
     padding: 5px;
     display: block;
 }
 
-schema-complex-container schema-field {
+schema-complex schema-field {
     margin-bottom: 5px;
 }
 
-schema-complex-container schema-field:last-child {
+schema-complex schema-field:last-child {
     margin-bottom: 0;
 }
 
-schema-complex-container schema-field-name {
+schema-complex schema-field-name {
     color: #8a8a8a;
 }
 
@@ -74,27 +74,27 @@ schema-complex-toolbox {
     flex-grow: 0;
 }
 
-schema-complex-container[multi] {
+schema-complex[multi] {
     display: flex;
     align-items: flex-start;
 }
 
-schema-complex-container[multi] schema-field {
+schema-complex[multi] schema-field {
     display: block;
     flex-grow: 1;
     width: 100%;
     margin-bottom: 0;
 }
 
-schema-complex-container[multi] schema-field-name {
+schema-complex[multi] schema-field-name {
     display: none;
 }
 
-schema-complex-container[multi]:first-of-type schema-field-name {
+schema-complex[multi]:first-of-type schema-field-name {
     display: block;
 }
 
-schema-complex-container[multi] schema-complex-toolbox {
+schema-complex[multi] schema-complex-toolbox {
     align-self: flex-end;
 }
 

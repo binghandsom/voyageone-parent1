@@ -6,7 +6,7 @@
      *  schema-field
      *  schema-field-name
      *  schema-complex-name
-     *  schema-complex-container
+     *  schema-complex
      *  schema-input-container
      *  schema-field-tip
      *  schema-input-toolbar
@@ -1077,7 +1077,7 @@
 
                             $scope.$fields = field.fields;
 
-                            innerElement = angular.element('<schema-complex-container fields="$fields">');
+                            innerElement = angular.element('<schema-complex fields="$fields">');
 
                             break;
                         case FIELD_TYPES.MULTI_COMPLEX:
@@ -1100,7 +1100,7 @@
 
                             $scope.$complexValues = complexValues;
 
-                            innerElement = angular.element('<schema-complex-container multi="true" fields="complexValue.fieldMap">');
+                            innerElement = angular.element('<schema-complex multi="true" fields="complexValue.fieldMap">');
 
                             innerElement.attr('ng-repeat', 'complexValue in $complexValues');
 
@@ -1257,7 +1257,7 @@
 
             return {
                 restrict: 'E',
-                require: ['^^?schema', '^^?form', '^^?schemaComplexContainer'],
+                require: ['^^?schema', '^^?form', '^^?schemaComplex'],
                 scope: true,
                 controllerAs: '$ctrl',
                 link: function ($scope, $element, $attrs, controllers) {
@@ -1385,7 +1385,7 @@
             };
         })
 
-        .directive('schemaComplexContainer', function ($compile) {
+        .directive('schemaComplex', function ($compile) {
 
             return {
                 restrict: 'E',
