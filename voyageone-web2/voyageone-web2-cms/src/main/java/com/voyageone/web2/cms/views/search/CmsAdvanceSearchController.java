@@ -9,6 +9,7 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -43,6 +44,8 @@ public class CmsAdvanceSearchController extends CmsController {
     private CmsAdvSearchCustColumnService advSearchCustColumnService;
     @Autowired
     private CmsAdvSearchExportFileService advSearchExportFileService;
+    @Autowired
+    PlatformService platformService;
 
     /**
      * 初始化,获取master数据
@@ -85,7 +88,10 @@ public class CmsAdvanceSearchController extends CmsController {
         // 查询该商品是否有价格变动
         Integer cartId = params.getCartId();
         if (cartId == null) {
-            cartId = (Integer) cmsSession.getPlatformType().get("cartId");
+            cartId = 0;
+            resultBean.put("productUrl", "");
+        } else {
+            resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
         }
         List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
         resultBean.put("prodChgInfoList", infoArr[0]);
@@ -93,7 +99,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("freeTagsList", infoArr[2]);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession, cartId);
         endIdx = params.getGroupPageSize();
         int groupListTotal = groupCodeList.size();
         if (endIdx > groupListTotal) {
@@ -118,6 +124,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
         resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
         resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
+
         // 返回用户信息
         return success(resultBean);
     }
@@ -132,12 +139,16 @@ public class CmsAdvanceSearchController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();
+        Integer cartId = params.getCartId();
+        if (cartId == null) {
+            cartId = 0;
+        }
 
         // 获取product列表
         List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession, cartId);
         int staIdx = (params.getGroupPageNum() - 1) * params.getGroupPageSize();
         int endIdx = staIdx + params.getGroupPageSize();
         int groupListTotal = groupCodeList.size();
