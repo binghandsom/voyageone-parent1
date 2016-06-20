@@ -1065,6 +1065,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
     private void  writeHead (Workbook book,CmsSessionBean cmsSession){
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
+        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_selSalesType");
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0);
 
@@ -1083,6 +1084,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")) + "(en)");
             }
         }
+
+        if (salesProps != null) {
+            for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
+            }
+        }
     }
 
     /**
@@ -1098,6 +1105,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         boolean isContinueOutput = true;
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
+        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.getAttribute("_adv_search_selSalesType");
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
             /*
@@ -1132,22 +1140,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
 
             // 内容输出
             FileUtils.cell(row, index++, unlock).setCellValue(startRowIndex);
-
-            if(item.getGroupBean() != null && item.getGroupBean().getGroupId() != null){
-                FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getGroupId());
-            }else{
-                index++;
-            }
-
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getProdId());
-
-            if(item.getGroupBean() != null && item.getGroupBean().getNumIId() != null){
+            if (item.getGroupBean() != null && item.getGroupBean().getNumIId() != null) {
                 FileUtils.cell(row, index++, unlock).setCellValue(item.getGroupBean().getNumIId());
-            }else{
+            } else {
                 index++;
             }
-
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getCode());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getBrand());
             FileUtils.cell(row, index++, unlock).setCellValue(item.getFields().getProductType());
@@ -1175,6 +1173,21 @@ public class CmsSearchAdvanceService extends BaseAppService {
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
                     value = item.getFeed().getOrgAtts().getAttribute(prop.get("feed_prop_original"));
                     FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                }
+            }
+
+            if (salesProps != null) {
+                CmsBtProductModel_Sales salesData = item.getSales();
+                String key = null;
+                for (Map<String, Object> prop : salesProps) {
+                    key = (String) prop.get("value");
+                    key = key.substring(6);
+                    Integer salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+                    if (salesVal == null) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    } else {
+                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal);
+                    }
                 }
             }
             startRowIndex = startRowIndex + 1;

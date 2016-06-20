@@ -186,7 +186,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 groupInfo.commArr = commArr;
                 var custArr = [];
@@ -259,7 +259,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 productInfo.commArr = commArr;
 

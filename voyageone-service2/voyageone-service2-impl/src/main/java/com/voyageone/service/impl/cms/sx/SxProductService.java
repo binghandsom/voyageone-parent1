@@ -565,18 +565,9 @@ public class SxProductService extends BaseService {
         fileBean.setDirName(shopBean.getOrder_channel_id());
         fileBean.setExtName("jpg");
         String jmPicUrl = jumeiImageFileService.imageFileUpload(shopBean, fileBean);
-//        mainPicUrls.add(jmPicUrl);
-//
-//        //保存图片
-//        CmsBtPlatformImagesModel imgModel = new CmsBtPlatformImagesModel();
-//        imgModel.setImgName(imgName);
-//        imgModel.setChannelId(channelId);
-//        imgModel.setCartId(CART_ID);
-//        imgModel.setActive(true);
-//        imgModel.setSearchId(groupId.toString());
-//        cmsBtPlatformImagesDao.insert(imgModel);
 
         return jmPicUrl;
+
     }
 
 
