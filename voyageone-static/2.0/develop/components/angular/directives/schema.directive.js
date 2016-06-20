@@ -747,6 +747,51 @@
         return this.checked() ? this.value : null;
     };
 
+    function transField(field, schema, parentScope, compileCallback) {
+
+        // 一次性解析字段的所有 rule
+        var rules = getRules(field, schema),
+            disableRule = rules.disableRule,
+            disabledExpression,
+            fieldElement,
+            fieldScope;
+        // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
+        // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
+        // 如果为 false 或不存在的话, 只需创建单纯的 schema-field 即可
+        if (disableRule === true)
+            return;
+
+        fieldElement = angular.element('<schema-field>');
+        // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
+        fieldScope = parentScope.$new();
+        // 显式注册 attr, 并把 field 保存到 scope 上
+        fieldScope.field = field;
+        fieldElement.attr('field', 'field');
+
+        if (disableRule instanceof DependentRule) {
+            // 为 disableRule 的访问创建简写访问
+            // 并注册 ng-if
+            // 同时为值切换提供支持
+
+            fieldScope.disabled = disableRule;
+            disabledExpression = '!disabled.checked()';
+
+            fieldElement.attr('ng-if', disabledExpression);
+
+            fieldScope.$watch(disabledExpression, function (enabled) {
+                switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
+            });
+        }
+
+        compileCallback(fieldElement, fieldScope);
+    }
+
+    function transFieldList(fieldList, schema, parentScope, compileCallback) {
+        each(fieldList, function (field) {
+            transField(field, schema, parentScope, compileCallback);
+        });
+    }
+
     angular.module('voyageone.angular.directives')
 
         .directive('schema', function ($compile, $q) {
@@ -796,36 +841,7 @@
                     $scope = controller.$scope;
 
                 controller.getSchema().then(function (schema) {
-                    // 遍历 schema 中的所有字段
-                    each(schema, function (field) {
-                        // 一次性解析字段的所有 rule
-                        var rules = getRules(field, schema),
-                            disableRule = rules.disableRule,
-                            fieldElement,
-                            fieldScope;
-                        // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
-                        // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
-                        // 如果为 false 或不存在的话, 只需创建单纯的 schema-field 即可
-                        if (disableRule === true)
-                            return;
-
-                        fieldElement = angular.element('<schema-field>');
-                        // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
-                        fieldScope = $scope.$new();
-                        // 显式注册 attr, 并把 field 保存到 scope 上
-                        fieldScope.field = field;
-                        fieldElement.attr('field', 'field');
-
-                        if (disableRule instanceof DependentRule) {
-                            // 为 disableRule 的访问创建简写访问
-                            // 并注册 ng-if
-                            // 提供简写方式也便于 schema-field 检查
-                            // 具体参见 schema-field 内的逻辑
-                            fieldScope.disabled = disableRule;
-                            fieldElement.attr('ng-if', '!disabled.checked()');
-                        }
-
-                        // 输出并编译
+                    transFieldList(schema, schema, $scope, function (fieldElement, fieldScope) {
                         $element.append(fieldElement);
                         $compile(fieldElement)(fieldScope);
                     });
@@ -835,9 +851,9 @@
             return {
                 restrict: 'E',
                 scope: true,
-                controllerAs: '$ctrl',
+                controllerAs: 'schemaController',
                 link: function ($scope, $element) {
-                    $scope.$ctrl.$render($element);
+                    $scope.schemaController.$render($element);
                 },
                 controller: SchemaController
             }
@@ -1217,9 +1233,7 @@
                     fieldElementName = 'field_' + random(),
                     hasValidate = !!formController && hasValidateRule(field);
 
-                var rules = getRules(field),
-                    hasDisabled = !!$scope.disabled,
-                    disabledExpression = '!disabled.checked()';
+                var rules = getRules(field);
 
                 var innerElement, nameElement, isSimple;
 
@@ -1244,13 +1258,6 @@
 
                 if (field.type === FIELD_TYPES.MULTI_COMPLEX)
                     container.attr('multi', true);
-
-                if (hasDisabled) {
-                    // 还要为 disableRule 处理值得移除和补回
-                    $scope.$watch(disabledExpression, function (enabled) {
-                        switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
-                    });
-                }
 
                 // 创建输入元素
                 // 根据需要处理规则
@@ -1318,9 +1325,9 @@
                 restrict: 'E',
                 require: ['^^?form'],
                 scope: true,
-                controllerAs: '$ctrl',
+                controllerAs: 'schemaFieldController',
                 link: function ($scope, $element, $attrs, requiredControllers) {
-                    var controller = $scope.$ctrl;
+                    var controller = $scope.schemaFieldController;
                     // 保存 formController, 用于在后面检查, 是否需要渲染 vo-message 包括一系列的 form 验证
                     controller.formController = requiredControllers[0];
                     controller.$render();
@@ -1342,64 +1349,30 @@
                     fields = controller.fields,
                     $scope = controller.$scope;
 
-                each(fields, function (field) {
-
-                    var rules = getRules(field, schema),
-                        disableRule = rules.disableRule,
-                        fieldElement,
-                        fieldScope;
-
-                    if (disableRule === true)
-                        return;
-
-                    fieldElement = angular.element('<schema-field>');
-
-                    fieldScope = $scope.$new();
-
-                    fieldScope.field = field;
-
-                    fieldElement.attr('field', 'field');
-
-                    if (disableRule instanceof DependentRule) {
-                        // 为 disableRule 的访问创建简写访问
-                        // 并注册 ng-if
-                        // 提供简写方式也便于 schema-field 检查
-                        // 具体参见 schema-field 内的逻辑
-                        fieldScope.disabled = disableRule;
-                        fieldElement.attr('ng-if', '!disabled.checked()');
-                    }
-
-                    // 输出并编译
+                transFieldList(fields, schema, $scope, function (fieldElement, fieldScope) {
                     $element.append(fieldElement);
                     $compile(fieldElement)(fieldScope);
                 });
 
                 if (isMulti) {
                     var toolbox = angular.element('<schema-complex-toolbox>');
-                    toolbox.append('<button class="btn btn-schema btn-danger" ng-click="$ctrl.$remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>');
                     $element.append(toolbox);
                     $compile(toolbox)($scope);
                 }
-            };
-
-            SchemaComplexController.prototype.$remove = function (complexValue) {
-                this.schemaFieldController.remove(complexValue);
             };
 
             return {
                 restrict: 'E',
                 scope: true,
                 require: ['^^?schema', '^^schemaField'],
-                controllerAs: '$ctrl',
+                controllerAs: 'schemaComplexController',
                 link: function ($scope, $element, $attrs, requiredControllers) {
 
-                    var controller = $scope.$ctrl;
+                    var controller = $scope.schemaComplexController;
 
                     var isMulti = ($attrs.multi === 'true');
 
                     var schemaController = requiredControllers[0];
-
-                    controller.schemaFieldController = requiredControllers[1];
 
                     if (schemaController) {
                         schemaController.getSchema().then(function (schema) {
@@ -1410,6 +1383,15 @@
                     }
                 },
                 controller: SchemaComplexController
+            };
+        })
+
+        .directive('schemaComplexToolbox', function () {
+            return {
+                restrict: 'E',
+                require: ['^^schemaField', '^^schemaComplex'],
+                template: '<button class="btn btn-schema btn-danger" ng-click="schemaFieldController.remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>',
+                scope: false
             };
         });
 }());
