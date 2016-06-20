@@ -1161,16 +1161,8 @@
 
                             innerElement.attr('ng-repeat', 'complexValue in $complexValues');
 
-                            // multiComplex 字段, 有多个 complexValue
-                            // 所以需要创建工具栏和按钮, 来新建 complexValue
-                            $scope.$newComplexValue = function () {
-                                complexValues.push(new ComplexValue(field.fields));
-                            };
-
                             if (controller.canAdd) {
-                                var toolbar = angular.element('<schema-input-toolbar>');
-                                toolbar.append('<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>');
-                                container.append(toolbar);
+                                container.append(angular.element('<schema-input-toolbar>'));
                             }
 
                             break;
@@ -1383,6 +1375,20 @@
                     }
                 },
                 controller: SchemaComplexController
+            };
+        })
+
+        .directive('schemaInputToolbar', function () {
+            return {
+                restrict: 'E',
+                require: ['^^schemaField'],
+                template: '<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>',
+                scope: false,
+                link: function ($scope) {
+                    $scope.$newComplexValue = function () {
+                        $scope.$complexValues.push(new ComplexValue($scope.field.fields));
+                    };
+                }
             };
         })
 
