@@ -5,7 +5,10 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function detailController($scope, jmPromotionService,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
+    function detailController($scope, popups,jmPromotionService,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
+
+        popups($scope);
+
         $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.parentId,
@@ -365,7 +368,26 @@ define([
                 alert($translate.instant('TXT_FAIL'));
             });
         }
+        $scope.selectAll = function ($event) {
+            var checkbox = $event.target;
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+               // if ($scope.vm.modelList[i].isChecked) {
+                    $scope.vm.modelList[i].isChecked=checkbox.checked;
+                //}
+            }
+        };
+        $scope.openPriceModifyWin = function ()
+        {
+            var listPromotionProductId = $scope.getSelectedProductIdList();
+            if(listPromotionProductId.length==0)
+            {
+                alert("请选择修改价格的商品!");
+                return;
+            }
+
+            $scope.openPriceModify({search: $scope.search, listPromotionProductId: listPromotionProductId})
+        }
     }
-    detailController.$inject = ['$scope', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
+    detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
 });

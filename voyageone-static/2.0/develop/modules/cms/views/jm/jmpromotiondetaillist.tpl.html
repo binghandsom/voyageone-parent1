@@ -197,7 +197,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
+                        <div class="col-sm-12 text-center m-b-xs" >
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
                                 <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
@@ -210,7 +210,7 @@
     </div>
 
     <div class="box">
-        <div class="form-inline pull-right m-b-xs" ng-controller="popupCtrl">
+        <div class="form-inline pull-right m-b-xs" >
             <button class="btn btn-default" ng-click="openJmPromotionProductImport(parentModel,selectImport)"><i class="fa fa-reply-all"></i>&nbsp;导入
             </button>
             <div class="btn-group dropdown" uib-dropdown="">
@@ -244,10 +244,10 @@
                     <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
                     <!--<li><a href="">批量变更属性</a></li>-->
-                    <li><a href="" ng-click="openPriceModify({search:search,listPromotionProductId:getSelectedProductIdList()})">批量变更价格</a></li>
+                    <li><a href="" ng-click="openPriceModifyWin()">批量变更价格</a></li>
                 </ul>
             </div>
-            <div class="btn-group dropdown" uib-dropdown="" ng-controller="popupCtrl">
+            <div class="btn-group dropdown" uib-dropdown="" >
                 <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;专场变更&nbsp;<span class="caret"></span>
                 </button>
@@ -266,7 +266,8 @@
                             <table class="table table-hover-new vo_table dropdown_table_main" style="margin-bottom:0px;table-layout: fixed;">
                                 <thead>
                                 <tr>
-                                    <th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"/><span
+                                    <th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-click="selectAll($event)"  ng-true-value="true"
+                                                                                                                   ng-false-value="false"   /><span
                                             class="fa fa-check"></span></label> </th>
                                     <th class="text-left">Product Image</th>
                                     <th class="text-left">聚美商品名称</th>
@@ -283,7 +284,7 @@
                                 </tr>
                                 </thead>
                                 <tbody ng-if="vm.modelList.length">
-                                <tr ng-repeat="model in vm.modelList" ng-controller="popupCtrl">
+                                <tr ng-repeat="model in vm.modelList" >
                                     <td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"
                                                                                                                    ng-true-value="true"
                                                                                                                    ng-false-value="false"
