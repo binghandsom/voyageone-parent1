@@ -197,7 +197,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
+                        <div class="col-sm-12 text-center m-b-xs" >
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
                                 <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
@@ -210,8 +210,8 @@
     </div>
 
     <div class="box">
-        <div class="form-inline pull-right m-b-xs" ng-controller="popupCtrl">
-            <button class="btn btn-default" ng-click="openJmPromotionProductImport(parentModel,selectImport)"><i class="fa fa-reply-all"></i>&nbsp;导入
+        <div class="form-inline pull-right m-b-xs" >
+            <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()"><i class="fa fa-reply-all"></i>&nbsp;导入
             </button>
             <div class="btn-group dropdown" uib-dropdown="">
                 <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
@@ -231,7 +231,7 @@
                     <li><a href="" ng-click="deleteAllProduct();">全量清空</a></li>
                     <li><a href="" ng-click="copyDealAll()">全量再售</a></li>
                     <li><a href="" ng-click="synchAllPrice()">全量同步价格</a></li>
-                    <!--<li><a href="" ng-click="openDealExtension(modelAllUpdateDealEndTime)">全量Deal延期</a></li>-->
+                    <li><a href="" ng-click="openDealExtension(parentModel)">全量Deal延期</a></li>
                 </ul>
             </div>
             <div class="btn-group dropdown" uib-dropdown="">
@@ -244,15 +244,15 @@
                     <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
                     <!--<li><a href="">批量变更属性</a></li>-->
-                    <li><a href="" ng-click="openPriceModify({search:search,listPromotionProductId:getSelectedProductIdList()})">批量变更价格</a></li>
+                    <li><a href="" ng-click="openPriceModifyWin()">批量变更价格</a></li>
                 </ul>
             </div>
-            <div class="btn-group dropdown" uib-dropdown="" ng-controller="popupCtrl">
+            <div class="btn-group dropdown" uib-dropdown="" >
                 <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;专场变更&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                    <li><a href="" ng-click="openJmPromotionDetail({id:parentModel.id})">编辑专场</a></li>
+                    <li><a href="" ng-click="openJmPromotionDetailWin({id:parentModel.id})">编辑专场</a></li>
 
                 </ul>
             </div>
@@ -266,7 +266,8 @@
                             <table class="table table-hover-new vo_table dropdown_table_main" style="margin-bottom:0px;table-layout: fixed;">
                                 <thead>
                                 <tr>
-                                    <th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"/><span
+                                    <th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-click="selectAll($event)"  ng-true-value="true"
+                                                                                                                   ng-false-value="false"   /><span
                                             class="fa fa-check"></span></label> </th>
                                     <th class="text-left">Product Image</th>
                                     <th class="text-left">聚美商品名称</th>
@@ -283,14 +284,14 @@
                                 </tr>
                                 </thead>
                                 <tbody ng-if="vm.modelList.length">
-                                <tr ng-repeat="model in vm.modelList" ng-controller="popupCtrl">
+                                <tr ng-repeat="model in vm.modelList" >
                                     <td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"
                                                                                                                    ng-true-value="true"
                                                                                                                    ng-false-value="false"
                                                                                                                    ng-model="model.isChecked"><span
                                             class="fa fa-check"></span></label></td>
                                     <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="$parent.openJmProductDetail({promotionProductId:model.id},openJmProductDetail)">
+                                    <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
                                         {{model.productLongName}}  </a>
                                     </td>
                                     <td class="text-left">{{model.promotionTag}}</td>
@@ -332,7 +333,7 @@
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
                                         </button>
                                         <button title="编辑" class="btn btn-success btn-xs"
-                                                ng-click="$parent.openJmProductDetail({promotionProductId:model.id},openJmProductDetail)">
+                                                ng-click="openProductDetailWin({promotionProductId:model.id})">
                                             <i class="fa fa-pencil"></i></button>
                                         <!--<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs" ng-click="updateDealPrice(model);"><i-->
                                                 <!--class="glyphicon glyphicon-floppy-disk"></i></button>-->

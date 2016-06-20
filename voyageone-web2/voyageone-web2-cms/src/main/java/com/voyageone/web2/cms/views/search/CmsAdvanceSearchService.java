@@ -313,11 +313,11 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 返回当前页的group列表
      */
-    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int cartId) {
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
         StringBuilder resultPlatforms = new StringBuilder();
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cartId));
         resultPlatforms.append(",");
         resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
 

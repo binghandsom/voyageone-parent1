@@ -15,14 +15,12 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
-import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.util.MapModel;
@@ -55,6 +53,8 @@ public class CmsBtJmPromotionService {
     CmsBtTagDao daoCmsBtTag;
     @Autowired
     CmsBtPromotionDao daoCmsBtPromotion;
+    @Autowired
+    CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
@@ -272,7 +272,7 @@ public class CmsBtJmPromotionService {
      * @param channelId
      * @param creater   创建人
      */
-    public void addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
+    public List<String> addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
                                          Double discount,
                                          Integer priceType,
                                          String tagName,
@@ -281,16 +281,43 @@ public class CmsBtJmPromotionService {
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
-            return;
+            return null;
         }
         List<CmsBtProductModel> orginProducts = productDao.selectProductByIds(productIds, channelId);
+        List<CmsBtProductModel> products = new ArrayList<>();
+
+
+        // 检查之前有没有上新到聚美上面
+        List<String> errCodes = new ArrayList();
+        List<String>productCodes = new ArrayList<>();
+        orginProducts.forEach(item -> productCodes.add(item.getFields().getCode()));
+        List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
+        if(cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size())
+        {
+            for(CmsBtProductModel orginProduct :orginProducts){
+                boolean flg =false;
+                for(CmsBtJmProductModel cmsBtJmProductModel :cmsBtJmProductModels){
+                    if(orginProduct.getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())){
+                        flg = true;
+                        products.add(orginProduct);
+                        break;
+                    }
+                }
+                if(!flg){
+                    errCodes.add(orginProduct.getFields().getCode());
+                }
+            }
+        }else{
+            products = orginProducts;
+        }
+
         List<ProductImportBean > listProductImport = new ArrayList<>();
         List< SkuImportBean > listSkuImport = new ArrayList<>();
 
         // 设置批量更新product的tag
         List<BulkUpdateModel> bulkList = new ArrayList<>();
 
-        orginProducts.stream().forEach(product -> { //pal
+        products.stream().forEach(product -> { //pal
             ProductImportBean productImportBean = buildProductFrom(product, promotion);
             productImportBean.setPromotionTag(tagName);
             listProductImport.add(productImportBean);
@@ -307,6 +334,7 @@ public class CmsBtJmPromotionService {
         if (bulkList.size() > 0) {
             productDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", true);
         }
+        return errCodes;
     }
 
 
@@ -358,7 +386,11 @@ public class CmsBtJmPromotionService {
 
 
         HashMap<String, Object> bulkQueryMap = new HashMap<>();
-        bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
+        if(model.getCommon() != null && model.getCommon().size() >0) {
+            bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
+        }else{
+            bulkQueryMap.put("common.fields.code", model.getFields().getCode());
+        }
 
         // 设置更新值
         HashMap<String, Object> bulkUpdateMap = new HashMap<>();

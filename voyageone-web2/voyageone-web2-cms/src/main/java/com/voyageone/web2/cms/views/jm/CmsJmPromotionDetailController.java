@@ -126,7 +126,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     public int updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdateDealEndTimeJob, map);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
         return serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
     }
 
