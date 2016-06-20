@@ -194,11 +194,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         htProductAddRequest.setJmProduct(bean);
                         HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
 
-//                        HtProductAddResponse htProductAddResponse = new HtProductAddResponse();
-//                        htProductAddResponse.setIs_Success(true);
-//                        htProductAddResponse.setJm_hash_id("ht1466336541p800000025");
-//                        htProductAddResponse.setJumei_Product_Id("800000025");
-
                         if (htProductAddResponse != null && htProductAddResponse.getIs_Success()) {
                             $info("新增产品成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
                             // 新增产品成功
@@ -230,6 +225,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
                             sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                             sxData.getPlatform().setModifier(getTaskName());
+                            sxData.getPlatform().setNumIId(jmHashId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                         }
                     } else {
