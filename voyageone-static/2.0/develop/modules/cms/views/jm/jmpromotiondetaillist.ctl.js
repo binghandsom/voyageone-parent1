@@ -30,7 +30,6 @@ define([
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
             $scope.modelUpdateDealEndTime.isBatch = true;
-            $scope.modelAllUpdateDealEndTime.promotionId = $routeParams.parentId;
         };
         $scope.clear = function () {
             $scope.searchInfo = {};
@@ -229,11 +228,16 @@ define([
                 $scope.searchInfo.synchStateList.push(4)
             }
         }
-
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
-            if (model.synchStatus == 1 || model.updateStatus == 1 || model.priceStatus == 1) {
+            if (model.synchStatus == 1) {
+                return "待再售";
+            }
+            else if (model.updateStatus == 1 || model.priceStatus == 1) {
                 return "待更新";
+            }
+            else if (model.dealEndTimeStatus == 1) {
+                return "待延期";
             }
             else if (model.synchStatus == 0) {
                 return "未更新";
