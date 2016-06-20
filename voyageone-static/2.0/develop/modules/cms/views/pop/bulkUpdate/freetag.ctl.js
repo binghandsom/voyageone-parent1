@@ -66,7 +66,6 @@ define([
                             continue;
                         }
                     }
-
                     if (!selected[index]) {
                         selected[index] = tree[index][0];
                     } else if (_.isString(selected[index])) {
@@ -83,11 +82,16 @@ define([
                             selected[index] = tree[index][0];
                     }
                 }
+                if (selected[1] == undefined) selected[2] = undefined;
                 for (var i = 2; i >= 0; i--) {
                     var selectedVal = self.selected[i];
                     if (selectedVal !== undefined) {
                         self.tagPathName = selectedVal.tagPathName;
-                        self.list = {"id":selectedVal.id, "tagPathName":selectedVal.tagPathName, "tagPath":selectedVal.tagPath};
+                        self.list = {
+                            "id": selectedVal.id,
+                            "tagPathName": selectedVal.tagPathName,
+                            "tagPath": selectedVal.tagPath
+                        };
                         break;
                     }
                 }
@@ -98,7 +102,7 @@ define([
              */
             confirm: function () {
                 var self = this;
-               if(!self.selectdTagList||self.selectdTagList.length==0) self.selectdTagList.push(self.list);
+                if (!self.selectdTagList || self.selectdTagList.length == 0) self.selectdTagList.push(self.list);
 
                 // 校验选择的是否有重复值
                 var hasData = false;
