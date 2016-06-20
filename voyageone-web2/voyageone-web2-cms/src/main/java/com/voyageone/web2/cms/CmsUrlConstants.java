@@ -517,6 +517,8 @@ public interface CmsUrlConstants {
 
             String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
 
+            String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
+
         }
 
     }
