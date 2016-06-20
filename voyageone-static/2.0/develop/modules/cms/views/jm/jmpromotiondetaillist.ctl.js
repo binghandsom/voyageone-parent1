@@ -145,9 +145,13 @@ define([
             })
         }
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productCode).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).result.then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
-                data.isDelete = 1;
+               if(data.synchStatus==2)
+               {
+                   alert("已经上新,不能删除!");
+                   return
+               }
                 jmPromotionDetailService.delete(data.id).then(function () {
                     $scope.vm.modelList.splice(index, 1);
                 }, function (res) {
@@ -342,6 +346,7 @@ define([
                 alert("请选择删除的商品!");
                 return;
             }
+
             jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();

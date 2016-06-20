@@ -70,6 +70,11 @@ public class CmsBtJmPromotionProductService {
     }
 
     public int delete(int id) {
+      CmsBtJmPromotionProductModel modelProduct=dao.select(id);
+        if(modelProduct.getSynchStatus()==2)
+        {
+            return 0;
+        }
         return dao.delete(id);
     }
 
