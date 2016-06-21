@@ -282,7 +282,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                         // added by morse.lu 2016/06/08 start
                     } else {
                         // 更新产品
-                        uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                        if (!sxData.isDarwin()) {
+                            uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                        }
                         // added by morse.lu 2016/06/08 end
                     }
 
@@ -311,7 +313,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 // added by morse.lu 2016/06/08 start
             } else {
                 // 更新产品
-                uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                if (!sxData.isDarwin()) {
+                    uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                }
                 // added by morse.lu 2016/06/08 end
             }
 
