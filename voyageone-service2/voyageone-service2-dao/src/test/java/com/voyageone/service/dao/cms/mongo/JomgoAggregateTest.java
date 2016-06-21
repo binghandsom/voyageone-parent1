@@ -44,7 +44,7 @@ public class JomgoAggregateTest {
         aggregateList.add(new JomgoAggregate("{ $limit:#}", 10));
         aggregateList.add(new JomgoAggregate("{ $project : { \"_id\" : 0, \"color\" : 1, \"code\" : 1,  \"skus\" : \"$skus\" } }"));
 
-        List<Map<String, Object>> maps = cmsBtFeedInfoDao.aggregateToMap("016",  (JomgoAggregate[])aggregateList.toArray(new JomgoAggregate[aggregateList.size()]));
+        List<Map<String, Object>> maps = cmsBtFeedInfoDao.aggregateToMap("016",  aggregateList);
         for (Map<String, Object> map : maps) {
             System.out.println(JacksonUtil.bean2Json(map));
         }
@@ -64,7 +64,7 @@ public class JomgoAggregateTest {
         aggregateList.add(new JomgoAggregate("{ $unwind : \"$skus\" }"));
         aggregateList.add(new JomgoAggregate("{ $match : { \"color\":#, \"skus.qty\":# } }", "Black", 1));
         aggregateList.add(new JomgoAggregate("{ $group : { _id : 0, count: { $sum : 1 } } }"));
-        List<Map<String, Object>> maps = cmsBtFeedInfoDao.aggregateToMap("016",  (JomgoAggregate[])aggregateList.toArray(new JomgoAggregate[aggregateList.size()]));
+        List<Map<String, Object>> maps = cmsBtFeedInfoDao.aggregateToMap("016", aggregateList);
         for (Map<String, Object> map : maps) {
             System.out.println(JacksonUtil.bean2Json(map));
         }
