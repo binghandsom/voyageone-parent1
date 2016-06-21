@@ -69,6 +69,7 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    private String cartId = null;
     private List<String>  cidValue;
 
     public List<String> getCidValue() {
@@ -389,4 +390,13 @@ public class CmsSearchInfoBean {
     public void setSortSales(String sortSales) {
         this.sortSales = sortSales;
     }
+
+    public String getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
+    }
+
 }
