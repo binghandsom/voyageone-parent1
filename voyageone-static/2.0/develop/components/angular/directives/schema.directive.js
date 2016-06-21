@@ -8,7 +8,7 @@
      *  schema-complex-name
      *  schema-complex
      *  schema-input-container
-     *  schema-field-tip
+     *  schema-tip
      *  schema-input-toolbar
      *  schema-complex-toolbox
      *
@@ -424,7 +424,7 @@
             if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                 return;
 
-            var contentContainer = angular.element('<schema-field-tip>');
+            var contentContainer = angular.element('<schema-tip>');
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
@@ -472,7 +472,7 @@
             });
         }
 
-        var contentContainer = angular.element('<schema-field-tip>');
+        var contentContainer = angular.element('<schema-tip>');
         contentContainer.text('该字段包含默认值: ' + angular.toJson(result));
         container.append(contentContainer);
     }

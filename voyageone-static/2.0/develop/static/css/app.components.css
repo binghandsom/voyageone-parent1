@@ -105,12 +105,13 @@ schema-complex[multi] schema-complex-toolbox {
     padding-left: 5px;
 }
 
-schema-field-tip {
+schema-tip {
     display: block;
     color: #ee903d;
+    margin-left: 120px;
 }
 
-schema-field-tip:before {
+schema-tip:before {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
