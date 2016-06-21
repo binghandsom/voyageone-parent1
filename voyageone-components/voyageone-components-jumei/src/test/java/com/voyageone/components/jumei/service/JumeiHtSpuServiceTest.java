@@ -40,7 +40,7 @@ public class JumeiHtSpuServiceTest {
         // 型号/颜色(可选)
         request.setAttribute("C22");
         // 海外官网价(必须)
-        request.setAbroad_price("130.50");    // float 小数点后不能只有一个0,必须是2个或2个以上0
+        request.setAbroad_price(130.50);    // float 小数点后不能只有一个0,必须是2个或2个以上0
         // 货币符号Id(必须)
         request.setArea_code("2223602");     // 2223602:RMB:中国币
 
