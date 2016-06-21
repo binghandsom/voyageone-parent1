@@ -328,7 +328,7 @@ public class CmsProductDetailService extends BaseAppService {
         productModel.setProdId(productId);
         productModel.setCatPath(categoryFullPath);
         productModel.setFields(masterFieldsValue);
-        productModel.setFeed(feedModel);
+//        productModel.setFeed(feedModel);
         productModel.setSkus(skuValues);
         productModel.setModified(modified);
 
