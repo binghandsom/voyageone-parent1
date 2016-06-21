@@ -24,8 +24,6 @@ schema > s-field:last-child {
 
 s-field vo-message {
     margin-top: 5px;
-    margin-left: 120px;
-    width: 100%;
 }
 
 s-header {
@@ -35,7 +33,7 @@ s-header {
     font-weight: bold;
 }
 
-s-container {
+.s-wrapper {
     width: 82%;
     flex-grow: 1;
 }
@@ -100,11 +98,6 @@ s-complex[multi] s-toolbox {
     align-self: flex-end;
 }
 
-s-complex[multi] vo-message,
-s-complex[multi] s-tip {
-    margin-left: 0;
-}
-
 .s-required:after {
     content: '*';
     color: red;
@@ -114,8 +107,6 @@ s-complex[multi] s-tip {
 s-tip {
     display: block;
     color: #ee903d;
-    margin-left: 120px;
-    width: 100%;
 }
 
 s-tip:before {

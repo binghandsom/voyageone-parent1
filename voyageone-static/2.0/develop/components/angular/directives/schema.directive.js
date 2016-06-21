@@ -908,6 +908,11 @@
                 if (showName)
                     container.append(angular.element('<s-header>'));
 
+                // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
+                innerElement = angular.element('<div class="s-wrapper">');
+                container.append(innerElement);
+                container = innerElement;
+
                 innerElement = angular.element('<s-container>');
                 container.append(innerElement);
 
