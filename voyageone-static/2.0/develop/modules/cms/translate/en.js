@@ -700,6 +700,12 @@ define(function(){
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
 
         /**平台schema*/
-        "TXT_BAR_CODE":"条形码"
+        "TXT_BAR_CODE":"条形码",
+
+        /**上下架*/
+        "TXT_COMMIT_ERROR": "提交请求时出现错误",
+        "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
+        "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
     };
 });
