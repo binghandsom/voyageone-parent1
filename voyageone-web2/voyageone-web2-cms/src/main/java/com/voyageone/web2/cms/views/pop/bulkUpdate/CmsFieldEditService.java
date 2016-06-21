@@ -152,10 +152,23 @@ public class CmsFieldEditService extends BaseAppService {
             CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
 
             // 处理如果是批量更新status,如果该产品以前就是approved,则不做处理
-            if ("status".equals(prop_id)
-                    && com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(productModel.getFields().getStatus()))
-                break;
-
+            // TODO -- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须改正
+            if (cmsSession.getAttribute("_isNewAdvSearch") != null) {
+                if (productModel.getCommon() == null) {
+                    continue;
+                }
+                CmsBtProductModel_Field prodField = productModel.getCommon().getFields();
+                if (prodField == null) {
+                    continue;
+                }
+                if ("status".equals(prop_id) && com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(prodField.getStatus())) {
+                    break;
+                }
+            } else {
+                if ("status".equals(prop_id) && com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(productModel.getFields().getStatus())) {
+                    break;
+                }
+            }
 
             // 如果更新的是platformActive,则更新cms_bt_product_groups表
             if ("platformActive".equals(prop_id)) {
@@ -175,46 +188,114 @@ public class CmsFieldEditService extends BaseAppService {
                 CmsBtProductGroupModel.setModifier(userInfo.getUserName());
 
                 productGroupService.updateGroupsPlatformActiveBympCode(CmsBtProductGroupModel);
+
+                CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+                // TODO -- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须改正
+                if (cmsSession.getAttribute("_isNewAdvSearch") != null) {
+                    if (newProduct.getCommon() == null) {
+                        continue;
+                    }
+                    CmsBtProductModel_Field prodField = newProduct.getCommon().getFields();
+                    if (prodField == null || prodField.getStatus() == null) {
+                        continue;
+                    }
+                    //执行product上新
+                    if (prodField.getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                        // 插入上新程序
+                        productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+                    }
+                } else {
+                    //执行product上新
+                    if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                        // 插入上新程序
+                        productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+                    }
+                }
+
             } else {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
-            }
 
-            ProductUpdateBean updateRequest = new ProductUpdateBean();
-            updateRequest.setProductModel(productModel);
-            updateRequest.setIsCheckModifed(false);
-            updateRequest.setModifier(userInfo.getUserName());
+                ProductUpdateBean updateRequest = new ProductUpdateBean();
+                updateRequest.setProductModel(productModel);
+                updateRequest.setIsCheckModifed(false);
+                updateRequest.setModifier(userInfo.getUserName());
 
-            //执行product的carts更新
-            if(updateRequest.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                // 执行product的carts更新
+                // TODO -- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须改正
+                if (cmsSession.getAttribute("_isNewAdvSearch") != null) {
+                    // 这里只需要更新 'platforms.Pxx.status', 'platforms.Pxx.pStatus'
+                    List<CmsBtProductModel_Carts> carts = productModel.getCarts();
+                    CmsBtProductModel_Field prodField = productModel.getCommon().getFields();
 
-                // 执行carts更新
-                List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
-                updateRequest.getProductModel().setCarts(carts);
-            }
+                    List<String> strList = new ArrayList<>();
+                    List<Integer> updCartList = new ArrayList<>();
+                    for (Integer cartIdVal : productModel.getCartIdList()) {
+                        // 如果该产品以前就是approved,则不做处理
+                        updCartList.add(cartIdVal);
+                        strList.add("'platforms.P" + cartIdVal + ".status':'" + field[1] + "','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
 
-            productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
+                        if (carts != null && carts.size() > 0) {
+                            for (CmsBtProductModel_Carts cart : carts) {
+                                if (Objects.equals(cartIdVal, cart.getCartId())) {
+                                    cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                                }
+                            }
+                        }
+                    }
 
+                    if (strList.isEmpty()) {
+                        $debug("产品未更新 code=" + code);
+                        continue;
+                    }
+                    String updStr = "{$set:{";
+                    updStr += StringUtils.join(strList, ',');
+                    if (carts != null && carts.size() > 0) {
+                        updStr += ",'carts':#";
+                    }
+                    updStr += ",'modified':#,'modifier':#}}";
+                    JomgoUpdate updObj = new JomgoUpdate();
+                    updObj.setQuery("{'common.fields.code':#}");
+                    updObj.setQueryParameters(code);
+                    updObj.setUpdate(updStr);
+                    if (carts != null && carts.size() > 0) {
+                        updObj.setUpdateParameters(carts, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+                    } else {
+                        updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+                    }
 
+                    //执行product的pStatus更新及group的publishStatus更新
+                    WriteResult rs = cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());
+                    $debug("update status result:=" + rs.toString());
 
-            CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+                    if (field[1].equals(CmsConstants.ProductStatus.Approved.name())) {
+                        updObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#}}");
+                        updObj.setQueryParameters(code, userInfo.getSelChannelId(), updCartList);
+                        updObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+                        rs = cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+                        $debug("update group status result:=" + rs.toString());
+                    }
 
-            //执行product上新
-            if(newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                    CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+                    //执行product上新
+                    if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                        // 插入上新程序
+                        productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+                    }
+                } else {
+                    // 执行carts更新
+                    List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
+                    updateRequest.getProductModel().setCarts(carts);
 
-                // 插入上新程序
-                productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+                    productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
 
-                // TODO 插入全店特价宝
-//                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
-//                cmsBtPromotionCodesBean.setProductId(newProduct.getProdId());
-//                cmsBtPromotionCodesBean.setProductCode(newProduct.getFields().getCode());
-//                cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
-//                cmsBtPromotionCodesBean.setPromotionId(0);
-//                cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
-//                cmsBtPromotionCodesBean.setChannelId(channelId);
-//                cmsBtPromotionCodesBean.setCartId(23);
-//                cmsBtPromotionCodesBean.setModifier(userName);
-//                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+                    CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
+                    //执行product上新
+                    if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                        // 插入上新程序
+                        productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
+                    }
+                }
             }
         }
     }
@@ -264,30 +345,51 @@ public class CmsFieldEditService extends BaseAppService {
             cartList.add(cartId);
         }
 
-        for (String code : productCodes) {
-            // 获取产品的信息
-            JomgoUpdate updObj = new JomgoUpdate();
-            updObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#},'platformActive':{$ne:#}}");
-            updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
-            // 设置platformActive的状态
-            if ("1".equals(prop_id)) {
-                updObj.setQueryParameters(code, userInfo.getSelChannelId(), cartList, com.voyageone.common.CmsConstants.PlatformActive.ToOnSale);
-                updObj.setUpdateParameters(com.voyageone.common.CmsConstants.PlatformActive.ToOnSale, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            } else if ("0".equals(prop_id)) {
-                updObj.setQueryParameters(code, userInfo.getSelChannelId(), cartList, com.voyageone.common.CmsConstants.PlatformActive.ToInStock);
-                updObj.setUpdateParameters(com.voyageone.common.CmsConstants.PlatformActive.ToInStock, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+        // 获取产品的信息
+        JomgoUpdate updObj = new JomgoUpdate();
+        updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#},'platformActive':{$ne:#}}");
+        updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
+
+        // 设置platformActive的状态
+        CmsConstants.PlatformActive statusVal = null;
+        if ("1".equals(prop_id)) {
+            statusVal = com.voyageone.common.CmsConstants.PlatformActive.ToOnSale;
+        } else if ("0".equals(prop_id)) {
+            statusVal = com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
+        }
+
+        updObj.setQueryParameters(productCodes, userInfo.getSelChannelId(), cartList, statusVal);
+        updObj.setUpdateParameters(statusVal, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+        WriteResult rs = cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+        $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
+
+        for (Integer cartIdVal : cartList) {
+            // 这里需要确认更新成功后再记录上新操作表
+            JomgoQuery qurObj = new JomgoQuery();
+            qurObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#.status':#}");
+            qurObj.setParameters(productCodes, cartIdVal, CmsConstants.ProductStatus.Approved);
+            qurObj.setProjection("{'common.fields.code':1,'_id':0}");
+
+            List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), qurObj);
+            List<String> codeList = new ArrayList<>(prodList.size());
+            for (CmsBtProductModel prodObj : prodList) {
+                if (prodObj.getCommon() == null) {
+                    continue;
+                }
+                CmsBtProductModel_Field field = prodObj.getCommon().getFields();
+                if (field != null && field.getCode() != null) {
+                    codeList.add(field.getCode());
+                }
             }
 
-            cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
-
-            // 这里需要确认更新成功后再记录上新操作表
-            CmsBtProductModel newProduct = productService.getProductByCode(userInfo.getSelChannelId(), code);
-            // 执行product上新
-            if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+            if (codeList.size() > 0) {
                 // 插入上新程序
-                productService.insertSxWorkLoad(userInfo.getSelChannelId(), code, cartList, userInfo.getUserName());
+                List<Integer> cartIdList = new ArrayList<>(1);
+                cartIdList.add(cartIdVal);
+                productService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdList, userInfo.getUserName());
             }
         }
+
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -418,18 +520,18 @@ public class CmsFieldEditService extends BaseAppService {
         for (String code : productCodes) {
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
+            if (productModel.getCommon() == null) {
+                continue;
+            }
+            CmsBtProductModel_Field field = productModel.getCommon().getFields();
+            if (field == null) {
+                continue;
+            }
             List<CmsBtProductModel_Carts> carts = productModel.getCarts();
 
             List<String> strList = new ArrayList<>();
             List<Integer> updCartList = new ArrayList<>();
             for (Integer cartIdVal : cartList) {
-                if (productModel.getCommon() == null) {
-                    continue;
-                }
-                CmsBtProductModel_Field field = productModel.getCommon().getFields();
-                if (field == null) {
-                    continue;
-                }
                 // 如果该产品以前就是approved,则不做处理
                 if (com.voyageone.common.CmsConstants.ProductStatus.Approved.name().equals(field.getStatus())) {
                     break;
@@ -448,7 +550,7 @@ public class CmsFieldEditService extends BaseAppService {
 
             if (strList.isEmpty()) {
                 $debug("产品未更新 code=" + code);
-                break;
+                continue;
             }
             String updStr = "{$set:{";
             updStr += StringUtils.join(strList, ',');
@@ -480,7 +582,9 @@ public class CmsFieldEditService extends BaseAppService {
             // 执行product上新
             if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 // 插入上新程序
-                productService.insertSxWorkLoad(userInfo.getSelChannelId(), code, cartList, userInfo.getUserName());
+                List<String> codeList = new ArrayList<>(1);
+                codeList.add(code);
+                productService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartList, userInfo.getUserName());
             }
         }
         rsMap.put("ecd", 0);
