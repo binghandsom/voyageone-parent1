@@ -110,6 +110,10 @@ public class CmsBtJmPromotionImportTask3Service {
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
         }
+        if(listProductImport.size()==0)
+        {
+            modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
+        }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
     }
     //check
@@ -190,6 +194,7 @@ public class CmsBtJmPromotionImportTask3Service {
         saveInfo.productModel.setDiscount(new BigDecimal(0));;
         saveInfo.productModel.setSkuCount(0);
         saveInfo.productModel.setQuantity(0);
+        saveInfo.productModel.setDealEndTimeStatus(0);
         saveInfo.productModel.setModifier("system");
         saveInfo.productModel.setCreater("system");
         saveInfo.productModel.setCreated(new Date());

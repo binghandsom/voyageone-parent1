@@ -462,12 +462,12 @@ schema-field textarea.schema-field-html {
     border-left: 1px solid #ADCAE2;
 }
 
-.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container button {
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
     margin-top: 23px;
     align-self: auto;
 }
 
-.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container label {
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex label {
     text-indent: 1em;
 }
 
