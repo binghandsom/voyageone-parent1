@@ -410,7 +410,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
                                             $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute("skuCode"));
 
-                                            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap);
+                                            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                             cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
                                             cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
                                             cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
@@ -795,7 +795,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             spus.add(spu);
 
             //填写CmsBtJMSku
-            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku);
+            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
             cmsBtJmSkuModelList.add(cmsBtJmSkuModel);
 
         }
@@ -805,7 +805,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         //填充cmsBtJmProductModel
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
-        cmsBtJmProductModel.setOrigin(deal.getAddress_of_produce());
+        cmsBtJmProductModel.setOrigin(fields.getOrigin());
         cmsBtJmProductModel.setProductNameCn(bean.getName());
         cmsBtJmProductModel.setVoBrandName("");//TODO
         cmsBtJmProductModel.setVoCategoryName("");//TODO
@@ -886,15 +886,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @param jmSku
      * @return
      */
-    private CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> jmSku) {
+    private CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> jmSku, String sizeStr ) {
         CmsBtJmSkuModel cmsBtJmSkuModel = new CmsBtJmSkuModel();
         cmsBtJmSkuModel.setChannelId(channelId);
         cmsBtJmSkuModel.setProductCode(productCode);
         cmsBtJmSkuModel.setSkuCode(jmSku.getStringAttribute("skuCode"));
         cmsBtJmSkuModel.setUpc(jmSku.getStringAttribute("barcode"));
-        cmsBtJmSkuModel.setCmsSize("");//TODO
-        cmsBtJmSkuModel.setFormat("");//TODO
-        cmsBtJmSkuModel.setJmSize(jmSku.getStringAttribute("size"));
+        cmsBtJmSkuModel.setCmsSize(jmSku.getStringAttribute("size"));
+        cmsBtJmSkuModel.setFormat(jmSku.getStringAttribute("property"));
+        cmsBtJmSkuModel.setJmSize(sizeStr);
+
 
         cmsBtJmSkuModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")));
         cmsBtJmSkuModel.setMsrpRmb(new BigDecimal(jmSku.getStringAttribute("priceMsrp")));
