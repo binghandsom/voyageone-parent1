@@ -1362,7 +1362,9 @@
                     $compile(fieldElement)(fieldScope);
                 });
 
-                if (isMulti) {
+                // 这里偷个懒, 直接在 scope 找
+                // schemaFieldController.canAdd
+                if (isMulti && $scope.schemaFieldController.canAdd) {
                     var toolbox = angular.element('<s-toolbox>');
                     $element.append(toolbox);
                     $compile(toolbox)($scope);
