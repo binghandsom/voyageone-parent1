@@ -11,6 +11,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.jumei.bean.JMErrorResult;
 import com.voyageone.components.jumei.bean.NotSignString;
+import com.voyageone.components.jumei.bean.ServerErrorException;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -114,26 +115,48 @@ public class JmBase extends ComponentBase {
         if (result != null && result.contains("\"error\"")) {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
             if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
-                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
+                Map<String, Object> codes = (Map<String, Object>)resultMap.get("error");
+                if ( !(codes != null && (
+                        codes.get("code").toString().contains("109902") ||
+                        codes.get("code").toString().contains("103087") ||
+                        codes.get("code").toString().contains("500") ||
+                        codes.get("code").toString().contains("501"))) )
+                {
+                    throw new BusinessException("调用聚美API错误：" + result);
+                }
+                else if(codes != null &&  (codes.get("code").toString().contains("500") ||  codes.get("code").toString().contains("501")))
+                {
+                    throw new ServerErrorException("调用聚美API错误：" + result);
+                }
+
             }
         }
         else if (result != null && result.contains("\"error_code\""))
         {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code"))) {
-                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
+            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code")) &&
+                    !resultMap.get("error_code").toString().contains("109902") &&
+                    !resultMap.get("error_code").toString().contains("103087") &&
+                    !resultMap.get("error_code").toString().contains("500") &&
+                    !resultMap.get("error_code").toString().contains("501")
+                    ) {
+                throw new BusinessException("调用聚美API错误：" + result);
+            }
+            else if(resultMap.containsKey("error_code") &&  (resultMap.get("error_code").toString().contains("500")  || resultMap.get("error_code").toString().contains("501")))
+            {
+                throw new ServerErrorException("调用聚美API错误：" + result);
             }
         }
-        else {
-            JMErrorResult res;
-            try {
-                res = JsonUtil.jsonToBean(result, JMErrorResult.class);
-                if (res.getCode() != null) {
-                    throw new BusinessException("调用聚美API错误：" +  result+post_url+parm_url);
-                }
-            } catch (JsonSyntaxException ignored) {
+
+        JMErrorResult res;
+        try {
+            res = JsonUtil.jsonToBean(result, JMErrorResult.class);
+            if (res.getCode() != null) {
+                throw new BusinessException("调用聚美API错误：" +  result);
             }
+        } catch (JsonSyntaxException ignored) {
         }
+
 
 
         return result;
