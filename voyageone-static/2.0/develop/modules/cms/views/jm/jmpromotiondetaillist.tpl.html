@@ -229,7 +229,7 @@
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="deleteAllProduct();">全量清空</a></li>
-                    <li><a href="" ng-click="copyDealAll()">全量再售</a></li>
+                    <li><a href="" ng-click="copyDealAll()">全量上传</a></li>
                     <li><a href="" ng-click="synchAllPrice()">全量同步价格</a></li>
                     <li><a href="" ng-click="openDealExtensionWin()">全量Deal延期</a></li>
                 </ul>
@@ -240,7 +240,7 @@
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
-                    <li><a href="" ng-click="batchCopyDeal()">批量再售</a></li>
+                    <li><a href="" ng-click="batchCopyDeal()">批量上传</a></li>
                     <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
                     <!--<li><a href="">批量变更属性</a></li>-->
@@ -270,6 +270,7 @@
                                                                                                                    ng-false-value="false"   /><span
                                             class="fa fa-check"></span></label> </th>
                                     <th class="text-left">Product Image</th>
+                                    <th class="text-left">商品代码</th>
                                     <th class="text-left">聚美商品名称</th>
                                     <th class="text-left">Tag Name</th>
                                     <th class="text-left">Color</th>
@@ -291,6 +292,7 @@
                                                                                                                    ng-model="model.isChecked"><span
                                             class="fa fa-check"></span></label></td>
                                     <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
+                                    <td>{{model.productCode}}</td>
                                     <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
                                         {{model.productLongName}}  </a>
                                     </td>
