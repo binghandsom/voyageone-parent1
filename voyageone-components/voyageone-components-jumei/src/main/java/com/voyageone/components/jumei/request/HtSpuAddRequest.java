@@ -3,6 +3,7 @@ package com.voyageone.components.jumei.request;
 import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class HtSpuAddRequest implements BaseJMRequest {
     private String property;//	String 规格 :FORMAL 正装 MS 中小样 OTHER 其他
     private String size;//	String     容量/尺寸 /
     private String attribute;// 可选	String 型号/颜色
-    private double abroad_price;//float  海外价格
+    private String abroad_price;//float  海外价格
     private String area_code;//	;Number 货币符号Id
     private String abroad_url;// 可选	String   海外地址(可不传)
     // 白底方图 参数范围: 注：可不传,最多10张，1000*1000格式jpg,jpeg,单张不超过1m，多张图片以","隔开
@@ -78,11 +79,11 @@ public class HtSpuAddRequest implements BaseJMRequest {
         this.attribute = attribute;
     }
 
-    public double getAbroad_price() {
+    public String getAbroad_price() {
         return abroad_price;
     }
 
-    public void setAbroad_price(double abroad_price) {
+    public void setAbroad_price(String abroad_price) {
         this.abroad_price = abroad_price;
     }
 
@@ -126,7 +127,13 @@ public class HtSpuAddRequest implements BaseJMRequest {
         if (!StringUtils.isEmpty(getProperty()))         params.put("property", this.getProperty());
         if (!StringUtils.isEmpty(getSize()))             params.put("size", this.getSize());
         if (!StringUtils.isEmpty(getAttribute()))        params.put("attribute", this.getAttribute());
-        params.put("abroad_price", this.getAbroad_price());
+        if (!StringUtils.isEmpty(getAbroad_price())) {
+
+            DecimalFormat formatter1 = new DecimalFormat();
+            formatter1.applyPattern("#0.00");
+            String clientMsrpPrice = formatter1.format(Double.valueOf(this.getAbroad_price()));
+            params.put("abroad_price", clientMsrpPrice);
+        }
         if (!StringUtils.isEmpty(getArea_code()))        params.put("area_code", this.getArea_code());
         if (!StringUtils.isEmpty(getAbroad_url()))       params.put("abroad_url", this.getAbroad_url());
         if (!StringUtils.isEmpty(getNormalImage()))      params.put("normalImage", this.getNormalImage());
