@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -382,9 +383,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
 
-                                    int i = skuMap.getIntAttribute("clientMsrpPrice");
+                                    htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
 
-                                    htSpuAddRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
 

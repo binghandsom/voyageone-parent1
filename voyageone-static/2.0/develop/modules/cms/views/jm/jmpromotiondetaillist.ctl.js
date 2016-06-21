@@ -236,7 +236,7 @@ define([
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
-                return "待再售";
+                return "待上传";
             }
             else if (model.updateStatus == 1 || model.priceStatus == 1) {
                 return "待更新";

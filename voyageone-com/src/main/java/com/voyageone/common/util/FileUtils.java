@@ -404,7 +404,7 @@ public final class FileUtils {
         String[] paths = path.split("/");
         StringBuilder fullPath = new StringBuilder();
         for (String path1 : paths) {
-            fullPath.append(path1).append("\\");
+            fullPath.append(path1).append("/");
             File file = new File(fullPath.toString());
             if (!file.exists()) {
                 file.mkdir();
