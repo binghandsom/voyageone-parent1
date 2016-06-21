@@ -138,7 +138,6 @@
 		  * productMediumName
 		  * productShortName
 		  * originCn
-		  * property
 		  * attribute
 		  * beforeDate
 		  * suitPeople
@@ -151,6 +150,7 @@
           * priceRetail ->各平台的销售指导价
 		  * priceSale   ->各平台的中国最终售价
 		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
+		  * property
 		  * jmSpuNo
 		  * jmSkuNo
 	  * sellerCats[]

@@ -24,6 +24,7 @@
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="cartName" property="cartName" jdbcType="VARCHAR"/>
         <result column="promotion_id" property="promotionId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
         <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel">
             <id column="tag_id" property="id" jdbcType="INTEGER"/>
             <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
@@ -85,6 +86,7 @@
     <select id="select_cms_bt_promotion_by_condtion" resultMap="PromotionMap" parameterType="Map">
         select
         <include refid="promotion_fields"/>
+        d.status,
         b.name as cartName,
         c.id as tag_id,
         c.channel_id as tag_channel_id,
@@ -101,6 +103,7 @@
             or c.channel_id = #{orgChannelId}
         </if>
         )
+        left join voyageone_cms2.cms_bt_jm_promotion d on a.promotion_id = d.id and a.channel_id = d.channel_id
         where
         a.active = 1
         and (a.channel_id = #{channelId}
