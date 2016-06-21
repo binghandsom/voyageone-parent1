@@ -314,7 +314,7 @@
                                     </td>
                                     <td class="text-left">{{model.jmHashId}}</td>
                                     <td class="text-right">{{model.dealPrice}}</td>
-                                    <td class="text-center">{{model.discount}}</td>
+                                    <td class="text-center">{{model.discount == 0?'':model.discount * 10 + '折'}}</td>
                                     <td class="text-center">
                                         {{model.skuCount}}
                                     </td>
