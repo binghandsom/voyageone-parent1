@@ -4,10 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.jumei.bean.JMErrorResult;
 import com.voyageone.components.jumei.bean.NotSignString;
@@ -112,39 +109,42 @@ public class JmBase extends ComponentBase {
         logger.info("result：" + result);
 
         //转换错误信息
-        if (result != null && result.contains("\"error\"")) {
-            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
-                Map<String, Object> codes = (Map<String, Object>)resultMap.get("error");
-                if ( !(codes != null && (
-                        codes.get("code").toString().contains("109902") ||
-                        codes.get("code").toString().contains("103087") ||
-                        codes.get("code").toString().contains("500") ||
-                        codes.get("code").toString().contains("501"))) )
-                {
-                    throw new BusinessException("调用聚美API错误：" + result);
-                }
-                else if(codes != null &&  (codes.get("code").toString().contains("500") ||  codes.get("code").toString().contains("501")))
-                {
+        String  code = "";
+        String codes = "";
+
+        Map<String, Object> map = JacksonUtil.jsonToMap(result);
+        if (map.containsKey("error")) {
+            Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
+            if (errorMap.containsKey("code")) {
+                code = (String.valueOf(errorMap.get("code")));
+                if (code.equals("500") || code.equals("501")) {
                     throw new ServerErrorException("调用聚美API错误：" + result);
                 }
 
             }
-        }
-        else if (result != null && result.contains("\"error_code\""))
-        {
-            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code")) &&
-                    !resultMap.get("error_code").toString().contains("109902") &&
-                    !resultMap.get("error_code").toString().contains("103087") &&
-                    !resultMap.get("error_code").toString().contains("500") &&
-                    !resultMap.get("error_code").toString().contains("501")
-                    ) {
+            if (errorMap.containsKey("codes")) {
+                Map<String, Object> codesMap = (Map<String, Object>) errorMap.get("codes");
+                codes = (codesMap.keySet()).toString();
+                if (codes.equals("500") || codes.equals("501")) {
+                    throw new ServerErrorException("调用聚美API错误：" + result);
+                }
+            }
+
+            if (!(code.equals("0") || code.contains("109902") ||  code.contains("103087")  ||
+                    codes.equals("0") || codes.contains("109902") ||  codes.contains("103087")  ) )
+            {
                 throw new BusinessException("调用聚美API错误：" + result);
             }
-            else if(resultMap.containsKey("error_code") &&  (resultMap.get("error_code").toString().contains("500")  || resultMap.get("error_code").toString().contains("501")))
-            {
+        }
+        else if (map.containsKey("error_code"))
+        {
+            String  error_code = map.get("error_code").toString();
+            if (error_code.equals("500") || error_code.equals("501")) {
                 throw new ServerErrorException("调用聚美API错误：" + result);
+            }
+            else if (!(error_code.equals("0")))
+            {
+                throw new BusinessException("调用聚美API错误：" + result);
             }
         }
 
@@ -156,8 +156,6 @@ public class JmBase extends ComponentBase {
             }
         } catch (JsonSyntaxException ignored) {
         }
-
-
 
         return result;
     }
