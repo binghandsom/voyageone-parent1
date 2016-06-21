@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * Created by Ethan Shi on 2016/6/13.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:context-cms-test.xml")
 public class CmsBuildPlatformProductUploadJMServiceTest {
 
 
