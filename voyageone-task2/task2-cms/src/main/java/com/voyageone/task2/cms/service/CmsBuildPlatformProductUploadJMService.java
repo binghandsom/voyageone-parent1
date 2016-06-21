@@ -382,7 +382,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
 
-                                    htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
+                                    int i = skuMap.getIntAttribute("clientMsrpPrice");
+
+                                    htSpuAddRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
 
