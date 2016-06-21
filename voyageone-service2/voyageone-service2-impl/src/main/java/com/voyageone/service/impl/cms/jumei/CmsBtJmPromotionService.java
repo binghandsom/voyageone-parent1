@@ -320,6 +320,7 @@ public class CmsBtJmPromotionService {
         products.stream().forEach(product -> { //pal
             ProductImportBean productImportBean = buildProductFrom(product, promotion);
             productImportBean.setPromotionTag(tagName);
+            productImportBean.setDiscount(discount);
             listProductImport.add(productImportBean);
             listSkuImport.addAll(buildSkusFrom(product, discount, priceType));
 
@@ -361,7 +362,7 @@ public class CmsBtJmPromotionService {
      */
     private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
 
-        final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
+
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
         return model.getSkus().stream().map(oldSku -> {
@@ -369,8 +370,15 @@ public class CmsBtJmPromotionService {
             bean.setProductCode(model.getFields().getCode());
             bean.setSkuCode(oldSku.getSkuCode());
             bean.setMarketPrice(oldSku.getPriceMsrp());
-            Double finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getPriceSale() * discountCopy));
+            Double finalPrice;
+            if (discount != null) {
+                final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
+                finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getPriceSale() * discountCopy));
+            } else {
+                finalPrice = oldSku.getPriceSale();
+            }
             bean.setDealPrice(finalPrice);
+            bean.setDiscount(discount);
             return bean;
         }).collect(Collectors.toList());
     }

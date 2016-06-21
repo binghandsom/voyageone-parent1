@@ -9,6 +9,7 @@ public class ProductImportBean {
     int limit;
     String promotionTag;
     String errorMsg;
+    Double discount;
 
     public String getProductCode() {
         return productCode;
@@ -56,5 +57,13 @@ public class ProductImportBean {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
     }
 }

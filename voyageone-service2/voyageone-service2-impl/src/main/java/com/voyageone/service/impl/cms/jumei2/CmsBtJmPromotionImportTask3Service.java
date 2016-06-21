@@ -247,10 +247,10 @@ public class CmsBtJmPromotionImportTask3Service {
             skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));
             skuModel.setChannelId(saveInfo.productModel.getChannelId());
             skuModel.setSkuCode(skuImportBean.getSkuCode());
-            skuModel.setDiscount(new BigDecimal(0));
+            skuModel.setDiscount(skuImportBean.getDiscount() == null?new BigDecimal(0):new BigDecimal(skuImportBean.getDiscount()));
             skuModel.setModified(new Date());
             skuModel.setModifier("system");
             skuModel.setCreated(new Date());
