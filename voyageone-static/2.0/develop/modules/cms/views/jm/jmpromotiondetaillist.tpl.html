@@ -319,14 +319,14 @@
                                         {{model.skuCount}}
                                     </td>
                                     <td>
-                                        <small ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
+                                        <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
                                                 popover-placement="left" class="ng-scope">
                                             <div class="table_main">
                                                 <ul>
-                                                    <li>{{model.errorMsg.substr(0,30)}}...</li>
+                                                    <li>{{getErrorMsg(model.errorMsg)}}</li>
                                                 </ul>
                                             </div>
-                                        </small>
+                                        </a>
                                     </td>
                                     <td >{{getStatus(model)}}</td>
                                     <td class="text-center">
@@ -358,11 +358,11 @@
                         <thead>
                         <tr>
                             <th class="text-left">导出文件名</th>
-                            <th class="text-center">成功件数</th>
-                            <th class="text-center">失败件数</th>
+                            <th class="text-center" style="width:100px">成功件数</th>
+                            <th class="text-center" style="width:100px">失败件数</th>
                             <th class="text-left">导入开始时间</th>
                             <th class="text-left">导入结束时间</th>
-                            <th class="text-left">异常信息</th>
+                            <th class="text-left" style="width:300px">异常信息</th>
                             <th class="text-left">失败文件</th>
                             <th class="text-center">操作</th>
                         </tr>
@@ -374,7 +374,16 @@
                             <td class="text-center">{{model.failuresRows}}</td>
                             <td class="text-left">{{model.beginTime}}</td>
                             <td class="text-left">{{model.endTime}}</td>
-                            <td class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>
+                            <td class="text-left">
+                                <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
+                                       popover-placement="left" class="ng-scope">
+                                    <div class="table_main">
+                                        <ul>
+                                            <li>{{getErrorMsg(model.errorMsg)}}</li>
+                                        </ul>
+                                    </div>
+                                </a>
+                                <!--<textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>-->
                             </td>
                             <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
                             <td class="text-center">
@@ -394,7 +403,7 @@
                         <tr>
                             <th class="text-left">导出模板类型</th>
                             <th class="text-left">导出文件名</th>
-                            <th class="text-center">成功件数</th>
+                            <th class="text-center" style="width:100px">成功件数</th>
                             <th class="text-left">导出开始时间</th>
                             <th class="text-left">导出结束时间</th>
                             <th class="text-center">异常信息</th>
@@ -410,7 +419,16 @@
                             <td class="text-center">{{model.successRows}}</td>
                             <td class="text-left">{{model.beginTime}}</td>
                             <td class="text-left">{{model.endTime}}</td>
-                            <td class="text-center"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>
+                            <td class="text-center">
+                                <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
+                                       popover-placement="left" class="ng-scope">
+                                    <div class="table_main">
+                                        <ul>
+                                            <li>{{getErrorMsg(model.errorMsg)}}</li>
+                                        </ul>
+                                    </div>
+                                </a>
+                                <!--<textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>-->
                             </td>
                             <td class="text-center">
                                 <button title="下载" ng-disabled="!model.isExport" ng-click="downloadExportExcel(model.id);"
