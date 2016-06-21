@@ -32,5 +32,11 @@ define([
               alert(res);
             })
         }
+        $scope.mnumberKeydown=function(e){
+            var ss=window.event||e;
+            if(!((ss.keyCode>47&&ss.keyCode<58)||(ss.keyCode>64&&ss.keyCode<91)||(ss.keyCode>95&&ss.keyCode<106))){
+                ss.preventDefault();
+            }
+        }
     });
 });

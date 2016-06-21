@@ -155,7 +155,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             $error(e);
             issueLog.log(e, ErrorType.BatchJob, getSubSystem(), jmBtProductImport.getChannelId() + "  " + jmBtProductImport.getProductCode());
 
-            if(e.getMessage().contains("产品审核失败") || e.getMessage().contains("jumei_hash_id不正确")){
+            if(e.getMessage().contains("审核失败") || e.getMessage().contains("jumei_hash_id不正确")){
                 jmBtProductImport.setSynFlg("1");
             }else{
                 jmBtProductImport.setSynFlg("3");
