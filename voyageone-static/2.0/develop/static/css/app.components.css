@@ -11,6 +11,7 @@ schema {
 schema-field {
     display: flex;
     align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 schema > schema-field {
@@ -23,6 +24,7 @@ schema > schema-field:last-child {
 
 schema-field vo-message {
     margin-top: 5px;
+    margin-left: 120px;
 }
 
 schema-field-name {

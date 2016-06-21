@@ -881,14 +881,13 @@
                 controller.showName = (!$attrs.showName || $attrs.showName === 'true');
                 controller.canAdd = $attrs.add !== 'false';
 
-                controller.getField().then(function () {
+                controller.getField().then(function (field) {
+                    field.$name = field.id.replace(/\.|->/g, '/');
                     controller.$doRender();
                 })
             };
 
             SchemaFieldController.prototype.$doRender = function () {
-
-
 
                 var controller = this,
                     $element = controller.$element,
@@ -899,54 +898,29 @@
                 var field = controller.field;
 
                 var container = $element,
-                    fieldElementName = 'field_' + random(),
                     hasValidate = !!formController && hasValidateRule(field);
 
                 var rules = getRules(field);
 
                 var innerElement, isSimple;
 
-                // 放到 scope 上, 供画面绑定使用
-                // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
-                $scope.field = field;
-                $scope.rules = rules;
-
                 isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
                 if (showName)
                     container.append(angular.element('<schema-field-name>'));
 
-                // 创建一个专门的输入元素容器便于控制外观
-                innerElement = angular.element('<schema-input-contaanguiner>');
+                innerElement = angular.element('<schema-input-container>');
                 container.append(innerElement);
-                container = innerElement;
-
-                if (field.type === FIELD_TYPES.MULTI_COMPLEX)
-                    container.attr('multi', true);
-
-                // 创建输入元素
-                // 根据需要处理规则
-                innerElement = createElement(field, fieldElementName);
-
-                if (innerElement instanceof Array)
-                    each(innerElement, function (element) {
-                        container.append(element);
-                    });
-                else
-                    container.append(innerElement);
-
-                bindDefaultValueTip(container, field);
-                bindTipRule(container, rules);
 
                 // 根据需要创建 vo-message
                 if (hasValidate && isSimple) {
-
                     var formName = formController.$name;
-
-                    var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
-
+                    var voMessage = angular.element('<vo-message target="' + formName + '.' + field.$name + '"></vo-message>');
                     container.append(voMessage);
                 }
+
+                bindDefaultValueTip(container, field);
+                bindTipRule(container, rules);
 
                 // 最终编译
                 $compile($element.contents())($scope);
@@ -965,7 +939,7 @@
 
                 var $scope, $attrs, deferred, deregister;
 
-                var promise = controller.getField.promise;
+                var promise = controller.$getFieldPromise;
 
                 if (promise)
                     return promise;
@@ -975,7 +949,7 @@
 
                 deferred = $q.defer();
                 promise = deferred.promise;
-                controller.getField.promise = promise;
+                controller.$getFieldPromise = promise;
 
                 deregister = $scope.$watch($attrs.field, function (field) {
 
@@ -989,12 +963,6 @@
                 });
 
                 return promise;
-            };
-
-            SchemaFieldController.prototype.getName = function () {
-                return this.getField().then(function (field) {
-                    return field.id;
-                });
             };
 
             return {
@@ -1062,7 +1030,7 @@
             }
         })
 
-        .directive('schemaInputContainer', function () {
+        .directive('schemaInputContainer', function ($compile) {
             return {
                 restrict: 'E',
                 scope: false,
@@ -1071,8 +1039,14 @@
 
                     var schemaFieldController = requiredControllers[0];
 
-                    schemaFieldController.getField().then(function () {
+                    schemaFieldController.getField().then(function (field) {
+
                         var innerElement;
+
+                        var rules = getRules(field), name = field.$name;
+
+                        scope.field = field;
+                        scope.rules = rules;
 
                         switch (field.type) {
                             case FIELD_TYPES.INPUT:
@@ -1158,14 +1132,6 @@
 
                                     var options = field.options;
 
-                                    innerElement = angular.element('<select class="form-control">');
-                                    innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
-                                    innerElement.attr('name', name);
-                                    innerElement.attr('ng-model', 'field.value.value');
-
-                                    bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-                                    bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
                                     if (!field.value)
                                         field.value = {value: null};
                                     else {
@@ -1196,9 +1162,16 @@
                                     }
 
                                     // 最终保存到 $scope 上, 供页面绑定使用
-                                    $scope.$options = options;
+                                    scope.$options = options;
 
+                                    innerElement = angular.element('<select class="form-control">');
+                                    innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
+                                    innerElement.attr('name', name);
+                                    innerElement.attr('ng-model', 'field.value.value');
                                     innerElement.attr('title', field.name || field.id);
+
+                                    bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
+                                    bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
                                 })();
                                 break;
                             case FIELD_TYPES.MULTI_CHECK:
@@ -1211,10 +1184,10 @@
                                     innerElement = [];
 
                                     // 创建用于记录每个多选框选中状态的对象
-                                    selected = $scope.selected = [];
+                                    selected = scope.selected = [];
 
                                     // 通过事件触发 update 来操作 field 的 values 数组
-                                    $scope.update = function (index) {
+                                    scope.update = function (index) {
 
                                         // 获取选中值
                                         var selectedValue = field.options[index].value;
@@ -1224,7 +1197,7 @@
                                             return valueObj.value == selectedValue;
                                         });
 
-                                        if ($scope.selected[index]) {
+                                        if (scope.selected[index]) {
                                             // 当前选中选中, 并且不在集合中的
                                             if (selectedIndex < 0)
                                                 field.values.push({value: selectedValue});
@@ -1311,7 +1284,7 @@
                                     }
                                 }
 
-                                $scope.$fields = field.fields;
+                                scope.$fields = field.fields;
 
                                 innerElement = angular.element('<schema-complex fields="$fields">');
 
@@ -1338,21 +1311,30 @@
 
                                 field.complexValues = complexValues;
 
-                                $scope.$complexValues = complexValues;
+                                scope.$complexValues = complexValues;
 
                                 innerElement = angular.element('<schema-complex multi="true" fields="complexValue.fieldMap">');
 
                                 innerElement.attr('ng-repeat', 'complexValue in $complexValues');
 
-                                if (controller.canAdd) {
-                                    container.append(angular.element('<schema-input-toolbar>'));
+                                if (schemaFieldController.canAdd) {
+                                    element.append(angular.element('<schema-input-toolbar>'));
                                 }
 
                                 break;
                             default:
-                                console.error('不支持其他类型');
-                                return null;
+                                element.text('不支持的类型');
+                                break;
                         }
+
+                        if (innerElement instanceof Array)
+                            each(innerElement, function (childElement) {
+                                element.append(childElement);
+                            });
+                        else
+                            element.append(innerElement);
+
+                        $compile(element.contents())(scope);
                     });
                 }
             }
