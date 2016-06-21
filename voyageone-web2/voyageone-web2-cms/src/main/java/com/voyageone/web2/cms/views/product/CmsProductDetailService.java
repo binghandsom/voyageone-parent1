@@ -398,6 +398,7 @@ public class CmsProductDetailService extends BaseAppService {
     public Map<String, Object> updateProductFeedInfo(String channelId, String userName, Map requestMap) {
 
         Long productId = Long.valueOf(requestMap.get("productId").toString());
+        String modified = requestMap.get("modified").toString();
 
         Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
 
@@ -407,6 +408,8 @@ public class CmsProductDetailService extends BaseAppService {
 
         productModel.setProdId(productId);
         productModel.setFeed(feedModel);
+        productModel.setModified(modified);
+        productModel.setModifier(userName);
 
         ProductUpdateBean productUpdateBean = new ProductUpdateBean();
         productUpdateBean.setProductModel(productModel);
@@ -419,7 +422,7 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
 
         //执行product上新
-        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+        if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 插入上新程序
             productService.insertSxWorkLoad(channelId, newProduct, userName);
