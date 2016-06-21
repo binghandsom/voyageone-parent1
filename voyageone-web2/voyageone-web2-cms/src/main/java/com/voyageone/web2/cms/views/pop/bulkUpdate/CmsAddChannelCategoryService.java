@@ -149,56 +149,10 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         WriteResult rslt = cmsBtProductDao.update(channelId, queryMap, updateMap2);
         $debug("更新店铺内分类结果：" + rslt.toString());
 
-//        List<BulkUpdateModel> bulkList = new ArrayList<>();
-//        for (String code : codeList) {
-//            HashMap<String, Object> queryMap = new HashMap<>();
-//            queryMap.put("common.fields.code", code);
-//            BulkUpdateModel model = new BulkUpdateModel();
-//            model.setUpdateMap(updateMap3);
-//            model.setQueryMap(queryMap);
-//            bulkList.add(model);
-//        }
-//        // 批量更新product表
-//        if (bulkList.size() > 0) {
-//            BulkWriteResult rslt = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
-//            $debug("更新店铺内分类结果：" + rslt.toString());
-//        }
-
         //取得approved的code插入
-        insertCmsBtSxWorkload(codeList, channelId, userName, cartId);
-    }
-
-    /**
-     * 取得approved的code插入
-     */
-    private void insertCmsBtSxWorkload(List<String> allCodeList, String channelId, String userName, int cartId) {
-        //根据allCodeList在cms_bt_product取得已经approved的code
-        String[] codeArr = new String[allCodeList.size()];
-        codeArr = allCodeList.toArray(codeArr);
-
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "," + MongoUtils.splicingValue("platforms.P" + cartId + ".status", "Approved") + "}");
-        List<CmsBtProductModel> rst = productService.getList(channelId, queryObject);
-
-        //根据rst的code在cms_bt_product_group获取所有的可上新的平台group信息
-        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-        for(CmsBtProductModel cmsBtProductModel:rst){
-            //循环取得allCode
-            String code = cmsBtProductModel.getFields().getCode();
-            CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, code, cartId);
-            CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-            model.setChannelId(groupModel.getChannelId());
-            model.setGroupId(groupModel.getGroupId());
-            model.setCartId(cartId);
-            model.setPublishStatus(0);
-            model.setModifier(userName);
-            model.setCreater(userName);
-            models.add(model);
-        }
-
-        if (models.size() > 0) {
-            productService.addtSxWorkloadModels(models);
-        }
+        List<Integer> cartIdList = new ArrayList<>(1);
+        cartIdList.add(cartId);
+        productService.insertSxWorkLoad(channelId, codeList, cartIdList, userName);
     }
 
     /**
