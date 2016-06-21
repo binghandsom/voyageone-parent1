@@ -160,6 +160,10 @@ define([
                         scope.vm.platform.modified = resp.data.modified;
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     },function(resp){
+                        if(resp.code == 5){
+                            alert("系统异常错误！");
+                            return;
+                        }
                         confirm(resp.message + ",是否强制上新").result.then(function () {
                              productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
                              scope.vm.platform.modified = resp.data.modified;
