@@ -1136,7 +1136,7 @@ public class TmallProductService {
 		// 20160607 可能现在天猫改规则了, 要更新产品试试看 START
         StringBuffer failCause = new StringBuffer();
         String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
-        if (!StringUtils.isEmpty(productCode)) {
+        if (!StringUtils.isEmpty(productCode) && !tmallUploadRunState.is_darwin()) {
             // 获取更新产品的规则的schema
             String updateProductSchema;
             try {

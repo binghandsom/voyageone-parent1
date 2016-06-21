@@ -12,10 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.util.BeanUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -554,7 +551,8 @@ public class ProductService extends BaseService {
             if (productId != null) {
                 CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-                BeanUtil.copy(productModel, logModel);
+                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),logModel.getClass());
+//                BeanUtil.copy(productModel, logModel);
                 logModel.set_id(null);
                 cmsBtProductLogDao.insert(logModel);
             }
