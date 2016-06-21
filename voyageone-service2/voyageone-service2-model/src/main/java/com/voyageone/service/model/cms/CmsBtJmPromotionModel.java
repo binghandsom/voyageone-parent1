@@ -75,6 +75,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     protected Integer refTagId;
 
+    /**
+     * 1:有商品上新
+     */
+    protected Integer status;
+
     public String getChannelId() {
         return channelId;
     }
@@ -185,5 +190,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setRefTagId(Integer refTagId) {
         this.refTagId = refTagId;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

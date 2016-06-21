@@ -8,108 +8,113 @@ schema {
     display: block;
 }
 
-schema-field {
+s-field {
     display: flex;
     align-items: flex-start;
+    flex-wrap: wrap;
 }
 
-schema > schema-field {
+schema > s-field {
     margin-bottom: 10px;
 }
 
-schema > schema-field:last-child {
+schema > s-field:last-child {
     margin-bottom: 0;
 }
 
-schema-field vo-message {
+s-field vo-message {
     margin-top: 5px;
 }
 
-schema-field-name,
-schema-complex-name {
+s-header {
     width: 120px;
     flex-grow: 0;
     line-height: 26px;
     font-weight: bold;
 }
 
-schema-input-container {
+.s-wrapper {
     width: 82%;
     flex-grow: 1;
 }
 
-schema-complex-container {
+s-complex {
     background-color: #f8f8f8;
     border: 1px solid #ededed;
     padding: 5px;
     display: block;
 }
 
-schema-complex-container schema-field {
+s-complex s-field {
     margin-bottom: 5px;
 }
 
-schema-complex-container schema-field:last-child {
+s-complex s-field:last-child {
     margin-bottom: 0;
 }
 
-schema-complex-container schema-field-name {
+s-complex s-header.simple {
     color: #8a8a8a;
 }
 
-schema-input-toolbar {
+s-toolbar {
     display: block;
     background-color: #ededed;
     position: relative;
 }
 
-schema-input-toolbar .btn-schema {
+s-toolbar .btn-schema {
     position: absolute;
     top: 2px;
     right: 6px;
 }
 
-schema-complex-toolbox {
+s-toolbox {
     display: block;
     flex-grow: 0;
 }
 
-schema-complex-container[multi] {
+s-complex[multi] {
     display: flex;
     align-items: flex-start;
 }
 
-schema-complex-container[multi] schema-field {
+s-complex[multi] s-field {
     display: block;
     flex-grow: 1;
     width: 100%;
     margin-bottom: 0;
+    margin-right: 5px;
 }
 
-schema-complex-container[multi] schema-field-name {
+s-complex[multi] .s-wrapper {
+    width: 100%;
+}
+
+s-complex[multi] s-header.simple {
     display: none;
 }
 
-schema-complex-container[multi]:first-of-type schema-field-name {
+s-complex[multi]:first-of-type s-header.simple {
     display: block;
 }
 
-schema-complex-container[multi] schema-complex-toolbox {
+s-complex[multi] s-toolbox {
     align-self: flex-end;
 }
 
-.schema-field-required:after {
+.s-required:after {
     content: '*';
     color: red;
     padding-left: 5px;
 }
 
-schema-field-tip {
+s-tip {
     display: block;
     color: #ee903d;
 }
 
-schema-field-tip:before {
+s-tip:before {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
@@ -130,16 +135,10 @@ schema-field-tip:before {
 }
 
 vo-message {
-    float: left;
-    position: absolute;
-    margin-top: -50px;
-    margin-left: -5px;
+    width: 100%;
     font-weight: bold;
     display: inline-block;
-    padding: 1px 4px 2px 4px;
-    border-radius: 4px;
-    box-shadow: 1px 2px 7px #9E9C9C;
-    color: #fff;
-    background: black;
-    z-index: 999;
+    padding: 2px 6px 3px 8px;
+    border-left: 2px solid #E04825;
+    color: #E04825;
 }

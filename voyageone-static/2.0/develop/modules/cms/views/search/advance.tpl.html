@@ -422,7 +422,6 @@
 								<span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
 							</th>
-							<th class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:85px;padding-left:8px"></th>
 							<th class="text-center" translate="TXT_SALE_PRICE" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
 							<th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
@@ -465,20 +464,15 @@
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;height: 110px">
 										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)"><img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r" /></a>
-									<div class="table_main pull-left" style="width:60%">
-										<ul>
+									<div class="table_main" style="width:100%">
+										<ul style="max-height: 68px; overflow: auto;word-break: break-all; border-bottom: 1px solid #EFEFEF;">
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn" target="_blank"></a></li>
 										</ul>
 										<div class="form-inline" ng-if="groupInfo.grpImgList.length > 0" >
-											<a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xs m-b-xs" image="{{prop2.value}}" alt=""/>&nbsp;</a>
+											<a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-b-xs" image="{{prop2.value}}" alt=""/>&nbsp;</a>
 										</div>
 									</div>
-								</td>
-								<td class="text-center" style="display:inline-block;width:85px;"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
-									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
-											class="btn btn-default btn-xs">{{groupInfo.groupBean.inventory || 0}}</button>-->
-									{{groupInfo.groupBean.qty || 0}}
 								</td>
 								<td class="text-center" style="display:inline-block;width:150px;">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groupBean.priceDetail}})"

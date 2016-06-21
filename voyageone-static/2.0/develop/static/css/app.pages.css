@@ -3,10 +3,10 @@
  */
 
 /* 为页面上的 schema 输入框定制样式 */
-schema-field textarea.form-control {
+s-field textarea.form-control {
     height: 100px;
 }
-schema-field textarea.schema-field-html {
+s-field textarea.schema-field-html {
     height: 200px;
 }
 
@@ -462,12 +462,12 @@ schema-field textarea.schema-field-html {
     border-left: 1px solid #ADCAE2;
 }
 
-.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container button {
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
     margin-top: 23px;
     align-self: auto;
 }
 
-.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex-container label {
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex label {
     text-indent: 1em;
 }
 

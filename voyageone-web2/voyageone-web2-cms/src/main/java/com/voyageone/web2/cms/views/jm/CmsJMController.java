@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.jm;
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmProductService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +40,6 @@ public class CmsJMController extends CmsController {
     private static final Logger log = LoggerFactory.getLogger(CmsJMController.class);
     @Resource
     CmsBtJmPromotionService service;
-
     @Autowired
     private TagService tagService;
 
@@ -118,13 +119,14 @@ public class CmsJMController extends CmsController {
 
         UserSessionBean user = getUser();
         try {
-            service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
+            Map<String,Object> response = new HashMap<>();
+            response.put("errlist",service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
                     param.discount,
                     param.priceType,
                     param.tagName,
                     param.tagId,
-                    user.getUserName());
-            return success(true);
+                    user.getUserName()));
+            return success(response);
         } catch (Exception e) {
             log.error("LOG00030:添加产品到聚美活动失败:参数"+new Gson().toJson(param), e);
             throw new BusinessException("添加产品到聚美活动失败,原因为:"+e.getMessage(), e);

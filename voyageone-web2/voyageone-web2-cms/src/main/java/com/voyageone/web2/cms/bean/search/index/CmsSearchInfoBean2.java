@@ -33,7 +33,7 @@ public class CmsSearchInfoBean2 {
     private int freeTagType = 0;
 
     // ** 平台搜索条件 **
-    private Integer cartId = -1;
+    private Integer cartId = 0;
     private String[] productStatus;
     private String[] platformStatus;
 

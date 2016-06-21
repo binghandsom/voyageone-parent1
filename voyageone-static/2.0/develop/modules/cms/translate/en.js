@@ -23,7 +23,7 @@ define(function(){
         "TXT_IMAGE_SIZE_CHART_LIST": "尺码对照表一览",
         "TXT_IMAGE_PRODUCT_LABEL_LIST": "自定义标签一览",
         "TXT_CHANNEL_MANAGER": "店铺管理",
-        "TXT_CHANNEL_CART_CATEGORY_LIST":"店铺内类目一览",
+        "TXT_CHANNEL_CART_CATEGORY_LIST":"店铺内分类一览",
         "TXT_CHANNEL_SALE_INFO_LIST": "店铺销售情况一览",
         "TXT_SEARCH": "检索",
         "TXT_ADVANCE_SEARCH": "高级检索",
@@ -458,6 +458,7 @@ define(function(){
         "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
         "TXT_MSG_UNVALID_CONDITION": "无效的条件.",
         "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
+        "TXT_MSG_PROMOTION_DELETE": "您确定要删除活动[%s]吗？",
         "TXT_MSG_DO_DELETE": "您确定要删除 ",
         "TXT_MSG_DO_SEPARATE": "您确定要隔离 ",
         "TXT_MSG_DO_INCREASE": "您确定要增量 ",
@@ -699,6 +700,12 @@ define(function(){
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
 
         /**平台schema*/
-        "TXT_BAR_CODE":"条形码"
+        "TXT_BAR_CODE":"条形码",
+
+        /**上下架*/
+        "TXT_COMMIT_ERROR": "提交请求时出现错误",
+        "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
+        "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
     };
 });
