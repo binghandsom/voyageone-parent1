@@ -102,7 +102,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         for (CmsBtSxWorkloadModel work : workloadList) {
 //            work.setGroupId(27214L);
 //            work.setGroupId(39342L);
-            work.setGroupId(29590L);
+            work.setGroupId(31230L);
 
 
             cmsBuildPlatformProductUploadJMService.updateProduct(work);
