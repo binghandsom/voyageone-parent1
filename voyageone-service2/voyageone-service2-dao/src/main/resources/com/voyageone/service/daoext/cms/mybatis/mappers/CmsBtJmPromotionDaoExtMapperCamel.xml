@@ -53,5 +53,6 @@
         select a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
         where a.channel_id=#{channelId}
           and   a.activity_end >= now()
+          and a.active = 1
     </select>
 </mapper>
