@@ -23,7 +23,7 @@ define(function(){
         "TXT_IMAGE_SIZE_CHART_LIST": "尺码对照表一览",
         "TXT_IMAGE_PRODUCT_LABEL_LIST": "自定义标签一览",
         "TXT_CHANNEL_MANAGER": "店铺管理",
-        "TXT_CHANNEL_CART_CATEGORY_LIST":"店铺内类目一览",
+        "TXT_CHANNEL_CART_CATEGORY_LIST":"店铺内分类一览",
         "TXT_CHANNEL_SALE_INFO_LIST": "店铺销售情况一览",
         "TXT_SEARCH": "检索",
         "TXT_ADVANCE_SEARCH": "高级检索",

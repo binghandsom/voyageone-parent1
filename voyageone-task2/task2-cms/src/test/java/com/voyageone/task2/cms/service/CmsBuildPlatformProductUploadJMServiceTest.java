@@ -42,16 +42,19 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Autowired
     CmsBtJmSkuDao cmsBtJmSkuDao;
 
-    @Autowired
-    CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
+
+    @Test
+    public void TestPrice() throws Exception {
+
+
+    }
+
 
 
     @Test
     public void TestDate() throws Exception {
         Map<String, String> map = new HashMap<>();
         String value = map.get("1");
-
-
 
         long currentTime = System.currentTimeMillis();
         System.out.println(currentTime);
@@ -67,6 +70,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         rightNow.add(Calendar.MINUTE, 30);
         System.out.println(rightNow.getTimeInMillis());
         Date date1 = new Date(rightNow.getTimeInMillis());
+        date1.getTime();
         String date1Str = formatter.format(date1);
         System.out.println(date1Str);
 

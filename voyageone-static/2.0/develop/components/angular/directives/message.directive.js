@@ -40,8 +40,6 @@ angular.module("voyageone.angular.directives")
             },
             link: function (scope, elem, attrs, formController) {
 
-                var fieldName, formName, targetElement;
-
                 function show(message) {
                     scope.$message = message;
                     elem.fadeIn();
@@ -50,6 +48,11 @@ angular.module("voyageone.angular.directives")
                 function hide() {
                     elem.fadeOut();
                 }
+                
+                var fieldName, formName, targetElement;
+
+                // 初始化时保持隐藏
+                elem.hide();
 
                 if (!scope.target) {
                     console.error('target undefined');

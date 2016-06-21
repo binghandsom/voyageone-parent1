@@ -2,11 +2,10 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.configs.Enums.CartEnums;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
@@ -226,4 +225,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.sales = sales;
     }
 
+    /**
+     * TODO-- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须删除
+     */
+    @Deprecated
+    public List<Integer> getCartIdList() {
+        if (platforms == null || platforms.isEmpty()) {
+            return new ArrayList<>(0);
+        }
+        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).collect(Collectors.toList());
+    }
 }

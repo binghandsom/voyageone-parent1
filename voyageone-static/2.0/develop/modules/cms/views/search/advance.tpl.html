@@ -464,13 +464,13 @@
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}">
 								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;height: 110px">
 										<a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)"><img image="{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r" /></a>
-									<div class="table_main pull-left" style="width:60%">
-										<ul>
+									<div class="table_main" style="width:100%">
+										<ul style="max-height: 68px; overflow: auto;word-break: break-all; border-bottom: 1px solid #EFEFEF;">
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn" target="_blank"></a></li>
 										</ul>
 										<div class="form-inline" ng-if="groupInfo.grpImgList.length > 0" >
-											<a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xs m-b-xs" image="{{prop2.value}}" alt=""/>&nbsp;</a>
+											<a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-b-xs" image="{{prop2.value}}" alt=""/>&nbsp;</a>
 										</div>
 									</div>
 								</td>

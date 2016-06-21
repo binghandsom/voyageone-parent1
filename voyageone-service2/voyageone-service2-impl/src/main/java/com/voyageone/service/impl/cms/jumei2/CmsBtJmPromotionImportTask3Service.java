@@ -12,6 +12,9 @@ import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.model.cms.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -78,37 +81,55 @@ public class CmsBtJmPromotionImportTask3Service {
         String filePath = importPath + "/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
         File excelFile = new File(filePath);
         InputStream fileInputStream = null;
+        Workbook book = null;
         fileInputStream = new FileInputStream(excelFile);
-        HSSFWorkbook book =  new HSSFWorkbook(fileInputStream);
-
+        if (modelCmsBtJmPromotionImportTask.getFileName().indexOf(".xlsx") > 0) {
+            book = new XSSFWorkbook(fileInputStream);
+        }
+        else if (modelCmsBtJmPromotionImportTask.getFileName().indexOf(".xls") > 0) {
+            book = new HSSFWorkbook(fileInputStream);
+        }  else {
+            throw new Exception("导入文件格式不对");
+        }
         //读取product
-        HSSFSheet productSheet = book.getSheet("Product");
+        Sheet productSheet = book.getSheet("Product");
+        if(productSheet==null)
+        {
+            throw new Exception("导入模板不对,请检查");
+        }
         List<ProductImportBean> listProductImport = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
         List<ExcelColumn> listProductColumn = getProductImportColumn();//配置列信息
         ExcelImportUtil.importSheet(productSheet, listProductColumn, listProductImport, listProducctErrorMap, ProductImportBean.class);
 
         //读取sku
-        HSSFSheet skuSheet = book.getSheet("Sku");
+        Sheet skuSheet = book.getSheet("Sku");
+        if(skuSheet==null)
+        {
+            throw new Exception("导入模板不对,请检查");
+        }
         List<SkuImportBean> listSkuImport = new ArrayList<>();
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();
         List<ExcelColumn> listSkuColumn = getSkuImportColumn();
         ExcelImportUtil.importSheet(skuSheet, listSkuColumn, listSkuImport, listSkuErrorMap, SkuImportBean.class);
 
         //check
-        check(modelCmsBtJmPromotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap);//check 移除不能导入的product
+        check(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap);//check 移除不能导入的product
 
         //save
-        saveImport(modelCmsBtJmPromotion,listProductImport,listSkuImport);
+        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport);
 
         //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
             String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
-            String errorfilePath = importPath+"/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
-            serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap,true);
+            String errorfilePath = importPath + "/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
+            serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
             modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
+        }
+        if (listProductImport.size() == 0) {
+            modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
         }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
     }
@@ -190,6 +211,7 @@ public class CmsBtJmPromotionImportTask3Service {
         saveInfo.productModel.setDiscount(new BigDecimal(0));;
         saveInfo.productModel.setSkuCount(0);
         saveInfo.productModel.setQuantity(0);
+        saveInfo.productModel.setDealEndTimeStatus(0);
         saveInfo.productModel.setModifier("system");
         saveInfo.productModel.setCreater("system");
         saveInfo.productModel.setCreated(new Date());

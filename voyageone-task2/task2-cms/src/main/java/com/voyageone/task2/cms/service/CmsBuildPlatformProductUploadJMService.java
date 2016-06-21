@@ -313,8 +313,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         htSkuAddRequest.setSale_on_this_deal("1");
                                         htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
                                         htSkuAddRequest.setStocks("1");
-                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceMsrp"));
-                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceSale"));
+                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceSale"));
+                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceMsrp"));
                                         htSkuAddRequest.setJumei_hash_id(originHashId);
                                         htSkuAddRequest.setJumei_spu_no(htSpuAddResponse.getJumei_spu_no());
                                         HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
