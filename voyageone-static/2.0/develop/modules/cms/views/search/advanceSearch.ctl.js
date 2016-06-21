@@ -24,9 +24,9 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: [],
-                _selall: false
+                cidValue: []
             },
+            _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
             groupList: [],
@@ -117,9 +117,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                cidValue: [],
-                _selall: false
+                cidValue: []
             };
+            $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
             getCat(null);
             $scope.vm.masterData.tagList = [];
