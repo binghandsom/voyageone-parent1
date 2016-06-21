@@ -421,6 +421,15 @@ define([
         $scope.openDealExtensionWin=function(){
             popups.openDealExtension($scope.parentModel);
         }
+
+        $scope.getErrorMsg=function(errorMsg)
+        {
+         if(!errorMsg)
+         {
+             return"";
+         }
+            return errorMsg.substr(0,30)+"...";
+        }
     }
     detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
