@@ -111,7 +111,7 @@
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
         ,b.retail_price,a.market_price,b.msrp_rmb,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
-        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag
+        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -268,7 +268,7 @@
     </select>
 
     <update id="batchUpdateDealPrice">
-                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice}
+                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice},discount=deal_Price/market_price
                  WHERE    id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">

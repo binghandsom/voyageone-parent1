@@ -2144,19 +2144,19 @@ public class CmsTaskStockService extends BaseAppService {
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
             // Model必须输入且长度小于50
-            throw new BusinessException("7000028", new String[]{"Model", "50"});
+            throw new BusinessException("7000028", "Model", "50");
         }
 
         // Code输入check
         if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
             // Code必须输入且长度小于50
-            throw new BusinessException("7000028", new String[]{"Code", "50"});
+            throw new BusinessException("7000028", "Code", "50");
         }
 
         // Sku输入check
         if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
             // Sku必须输入且长度小于50
-            throw new BusinessException("7000028", new String[]{"Sku", "50"});
+            throw new BusinessException("7000028", "Sku", "50");
         }
 
         // 可用库存输入check
@@ -2174,7 +2174,7 @@ public class CmsTaskStockService extends BaseAppService {
             // 属性输入check
             if (!StringUtils.isEmpty(value) && value.getBytes().length > 500) {
                 // [属性]长度必须小于500
-                throw new BusinessException("7000075", new String[]{name, "500"});
+                throw new BusinessException("7000075",name, "500");
             }
         }
 
@@ -2963,17 +2963,17 @@ public class CmsTaskStockService extends BaseAppService {
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
             // Model必须输入且长度小于50.Sku=[出错的sku]
-            throw new BusinessException("7000042", new String[]{"Model", "50", sku});
+            throw new BusinessException("7000042", "Model", "50", sku);
         }
         // Code输入check
         if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
             // Code必须输入且长度小于50.Sku=[出错的sku]
-            throw new BusinessException("7000042", new String[]{"Code", "50", sku});
+            throw new BusinessException("7000042", "Code", "50", sku);
         }
         // Sku输入check
         if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
             // Sku必须输入且长度小于50.Sku=[出错的sku]
-            throw new BusinessException("7000042", new String[]{"Sku", "50", sku});
+            throw new BusinessException("7000042", "Sku", "50", sku);
         }
 
         if (listExcelSku.contains(sku)) {
@@ -2988,7 +2988,7 @@ public class CmsTaskStockService extends BaseAppService {
             String property = getCellValue(row, index);
             if (!StringUtils.isEmpty(property) && property.getBytes().length > 500) {
                 // [属性]长度必须小于500.Sku=[出错的sku]
-                throw new BusinessException("7000078", new String[]{getCellValue(rowHeader, index), "500", sku});
+                throw new BusinessException("7000078", getCellValue(rowHeader, index), "500", sku);
             }
         }
 
@@ -3014,7 +3014,7 @@ public class CmsTaskStockService extends BaseAppService {
             } else {
                 if (StringUtils.isEmpty(separate_qty) || !StringUtils.isDigit(separate_qty) || separate_qty.getBytes().length > 9) {
                     // 隔离库存必须输入小于10位的整数,或者输入Dynamic.Sku = [出错的sku]
-                    throw new BusinessException("7000045", new String[]{DYNAMIC, sku});
+                    throw new BusinessException("7000045", DYNAMIC, sku);
                 }
                 stockCnt++;
             }
@@ -3068,15 +3068,15 @@ public class CmsTaskStockService extends BaseAppService {
                 }
                 if (!model.equals(beanInDB.getProductModel())) {
                     // 变更方式导入时,Model不能变更.Sku = [出错的sku]
-                    throw new BusinessException("7000049", new String[]{"Model", sku});
+                    throw new BusinessException("7000049", "Model", sku);
                 }
                 if (!code.equals(beanInDB.getProductCode())) {
                     // 变更方式导入时,Code不能变更.Sku = [出错的sku]
-                    throw new BusinessException("7000049", new String[]{"Code", sku});
+                    throw new BusinessException("7000049","Code", sku);
                 }
                 if (!sku.equals(beanInDB.getSku())) {
                     // 变更方式导入时,Sku不能变更.Sku = [出错的sku]
-                    throw new BusinessException("7000049", new String[]{"Sku", sku});
+                    throw new BusinessException("7000049", "Sku", sku);
                 }
 
                 for (int c = 3; c <= colPlatform[0] - 2; c++) {
@@ -3085,7 +3085,7 @@ public class CmsTaskStockService extends BaseAppService {
                     String property = getCellValue(row, c);
                     if (!property.equals(beanInDB.getProperty(propertyNa))) {
                         // 变更方式导入时,[属性]不能变更.Sku = [出错的sku]
-                        throw new BusinessException("7000049", new String[]{getCellValue(rowHeader, c), sku});
+                        throw new BusinessException("7000049", getCellValue(rowHeader, c), sku);
                     }
                 }
 

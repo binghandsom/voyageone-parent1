@@ -9,7 +9,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -217,9 +217,17 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            openAddChannelCategoryEdit(selList).then(function () {
-                getGroupList();
-                getProductList();
+            openAddChannelCategoryEdit(selList).then(function (res) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.code);
+                });
+                var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
+                params.isSelAll = $scope.vm._selall ? 1 : 0;
+                $addChannelCategoryService.save(params).then(function (context) {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.search();
+                });
             })
         }
 
@@ -426,6 +434,6 @@ define([
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList,'search':'master'});
         }
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

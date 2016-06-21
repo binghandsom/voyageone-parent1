@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -44,7 +44,7 @@ define([
                         scope.vm.platform = resp.data.platform;
 
                         if(scope.vm.platform != null){
-                            scope.vm.platform.status = scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
+                            scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
                             scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
@@ -103,7 +103,7 @@ define([
                                 scope.vm.platform.pCatId = context.selected.catId;
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.pStatus == 'WaitingPublish';
-                                scope.vm.platform.status = scope.vm.status =  "Pending";
+                                scope.vm.status =  "Pending";
                             });
                         });
                 }
@@ -121,7 +121,7 @@ define([
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
-                            scope.vm.sellerCats = context;
+                            scope.vm.sellerCats = context.sellerCats;
                     });
                 }
 
@@ -129,17 +129,17 @@ define([
                  * 更新操作
                  */
                 function saveProduct(){
-
-                    var statusCount = 0;
+                     var statusCount = 0,preStatus;
                      for(var attr in scope.vm.checkFlag){
                          statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                      }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
-                        notify.danger("请先确认是否在京东后台申请过相应品牌");
+                        notify.danger("请先确认是否在后台申请过相应品牌");
                         return;
                     }
 
+                    preStatus = angular.copy(scope.vm.status);
                     switch (scope.vm.status){
                         case "Pending":
                                 scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
@@ -148,7 +148,6 @@ define([
                                 scope.vm.status = "Approved";
                                 break;
                     }
-
                      scope.vm.platform.status = scope.vm.status;
                      scope.vm.platform.pAttributeStatus = 1;
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
@@ -160,17 +159,21 @@ define([
                         scope.vm.platform.modified = resp.data.modified;
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     },function(resp){
+                        if(resp.code != "4000091" && resp.code != "4000092"){
+                            scope.vm.status = preStatus;
+                            return;
+                        }
                         confirm(resp.message + ",是否强制上新").result.then(function () {
                              productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
-                             scope.vm.platform.modified = resp.data.modified;
-                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                 scope.vm.platform.modified = resp.data.modified;
+                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                              });
                         });
                     });
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid;
+                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
 
                 function selectAll(){

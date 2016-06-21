@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 京东平台产品上新服务
@@ -424,6 +425,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     try {
                         // 取得图片URL
                         picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                        if (StringUtils.isEmpty(picUrl)) continue;
                         // 上传主产品的其余4张非主图片
                         jdWareService.addWarePropimg(shopProp, String.valueOf(jdWareId), ColorId_MinPic, picUrl, picName, false);
                     } catch (Exception ex) {
@@ -710,6 +712,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             try {
                 // 取得图片url
                 picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), null);
+                if (StringUtils.isEmpty(picUrl)) continue;
                 // 读取图片
                 InputStream inputStream = jdWareService.getImgInputStream(picUrl, 3);
                 bytes = IOUtils.toByteArray(inputStream);
@@ -1126,10 +1129,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 循环取得5张图片的url并分别上传到京东
             for (String picName : productPicNameList) {
+                String picUrl = "";
                 try {
                     // 取得图片URL
-                    String picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
-
+                    picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
+                    if (StringUtils.isEmpty(picUrl)) continue;
                     // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
                     boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
 
@@ -1138,9 +1142,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 } catch (Exception ex) {
                     // 如果5张图片里面有一张上传成功的时候
                     if (uploadProductPicResult) {
-                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
                     } else {
-                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s]", wareId, colorId, picName);
+                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
                     }
                     $error(ex);
                     // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
@@ -1271,7 +1275,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 try {
                     // 取得图片URL(TODO 这里的解析字典不能知道现在到底是哪个颜色产品的图片，目前每个商品都只有一个product，暂时没问题)
                     picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
-
+                    if (StringUtils.isEmpty(picUrl)) continue;
                     // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
                     boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
 
@@ -1291,19 +1295,28 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
                 // 删除第一张图片(及时上传失败，也要删除老的图片，如果报必须大于3张/1张的错误，只能让运营把图片改好)
                 if (delImageCnt < intOldImageCnt) {
-                    // 调用API【删除商品图片】批量删除该商品该颜色的第一张图片
-                    jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+                    try {
+                        // 调用API【删除商品图片】批量删除该商品该颜色的第一张图片
+                        boolean delPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+                        // 京东平台上该颜色已经删除的图片件数
+                        if (delPicResult) delImageCnt++;
+                    } catch (Exception ex) {
+                        // 如果报"图片张数必须多余N张"的异常，则继续上传下一张图片，否则抛出异常
+                        if (ex.getMessage().contains("图片张数必须多于")) {
+                            continue;
+                        } else {
+                            throw new BusinessException(ex.getMessage());
+                        }
+                    }
                 }
-
-                // 京东平台上该颜色已经删除的图片件数
-                delImageCnt++;
             }
 
             // 删除剩余的图片
-//            for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
-//                // 调用删除图片API（指定删除第一张）
-//                jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
-//            }
+            for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+                // 调用删除图片API（指定删除第一张）
+                // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
+                jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+            }
 
             // 该产品5张图片全部上传失败的时候
             if (!uploadProductPicResult) {
@@ -1364,17 +1377,19 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
-            // 获取京东平台前台展示的商家自定义店内分类
-            // 2016/06/17暂时用外面的部分平台的SellerCats，以后改成分平台里面的sellerCats
-            if (sxData.getMainProduct().getSellerCats() != null && sxData.getMainProduct().getSellerCats().size() > 0) {
-                if (sxData.getCartId().equals(sxData.getMainProduct().getSellerCats().getCartId())) {
-                    // 取得
-                    List<String> sellerCatList = sxData.getMainProduct().getSellerCats().getFullCIds();
-                    for (String sellerCat : sellerCatList ) {
-                        // 里面的数据是“1233797770-1233809821”样式的
-                        sbbuilder.append(sellerCat);
-                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+            // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
+            CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
+            if (productPlatformCart != null && ListUtils.notNull(productPlatformCart.getSellerCats())) {
+                // 取得
+                List<CmsBtProductModel_SellerCat> sellerCatList = productPlatformCart.getSellerCats();
+                // 里面的数据是“1233797770-1233809821;1233797771-1233809822”样式的
+                for (CmsBtProductModel_SellerCat sellerCat : sellerCatList ) {
+                    if (sellerCat == null || ListUtils.isNull(sellerCat.getcIds())) {
+                        continue;
                     }
+                    // 用连字符("-")连接 (1233797770-1233809821)
+                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
+                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了

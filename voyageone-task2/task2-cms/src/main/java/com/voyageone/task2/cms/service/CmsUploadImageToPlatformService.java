@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -135,7 +136,15 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
             return;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ignored) {
+            }
         }
+
         ShopBean shopBean = null;
         String imageName = "";
         TaobaoResponse uploadResponse = null;
@@ -280,10 +289,19 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                 } else if (errMsg.lastIndexOf("}") > -1) {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf("}") + 1);
                 }
+                image.setErrorMsg(errMsg);
+            }
+           else if(errMsg.indexOf("response code: 413")>0)
+            {
+                image.setErrorMsg("");
+            }
+            else
+            {
+                image.setErrorMsg(errMsg);
             }
             $error(errMsg);
             // 设置返回的错误信息
-            image.setErrorMsg(errMsg);
+
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }

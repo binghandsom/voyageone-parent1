@@ -187,8 +187,8 @@
                 <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                     <thead>
                     <tr>
-                        <th class="text-right" style="width:40px">No.</th>
-                        <th class="text-left" style="width:60px;padding-left:0px"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                        <th class="text-right" style="width:38px">No.</th>
+                        <th class="text-left" style="width:66px;padding-left:0px"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                             <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label></th>
                         <th class="text-center mfb-x">图片</th>
@@ -219,11 +219,13 @@
                     <tr><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
                     <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
                         <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
-                        <td style="overflow: hidden;;padding-left:0px" class="text-left"><label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
-                            <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(feedInfo._id, vm.feedSelList)">
-                            <span class="fa fa-check"></span>
-                        </label></td>
+                        <td style="overflow: hidden;padding-left:0px" class="text-left">
+                            <label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
+                                <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(feedInfo._id, vm.feedSelList)">
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </td>
                         <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
                             <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                         </td>

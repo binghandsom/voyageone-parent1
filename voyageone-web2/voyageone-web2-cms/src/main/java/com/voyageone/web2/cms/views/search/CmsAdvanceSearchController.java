@@ -54,6 +54,7 @@ public class CmsAdvanceSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.INIT)
     public AjaxResponse init() throws Exception {
         CmsSessionBean cmsSession = getCmsSession();
+        cmsSession.putAttribute("_isNewAdvSearch", "Y");
         UserSessionBean userInfo = getUser();
         advSearchCustColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
         return success(searchIndexService.getMasterData(userInfo, cmsSession, getLang()));
@@ -89,7 +90,7 @@ public class CmsAdvanceSearchController extends CmsController {
         Integer cartId = params.getCartId();
         if (cartId == null) {
             cartId = 0;
-            resultBean.put("productUrl", "");
+            resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
         } else {
             resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
         }

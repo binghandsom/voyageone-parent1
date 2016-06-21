@@ -75,7 +75,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 7天销售sku数据
             Object[] params = new Object[]{begDate1, endDate, cartList2, channelId, skuCodeList};
-            List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
+            List<Map<String, Object>> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3));
             if (!amt7days.isEmpty()) {
                 for (Map hisInfo : amt7days) {
                     int qty = ((Number) hisInfo.get("count")).intValue();
@@ -91,7 +91,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 30天销售sku数据
             params = new Object[]{begDate2, endDate, cartList2, channelId, skuCodeList};
-            List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3, null));
+            List<Map<String, Object>> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr, params), new JomgoAggregate(queryStr3));
             if (!amt30days.isEmpty()) {
                 for (Map hisInfo : amt30days) {
                     int qty = ((Number) hisInfo.get("count")).intValue();
@@ -107,7 +107,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 所有销售sku数据
             params = new Object[]{cartList2, channelId, skuCodeList};
-            List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr2, params), new JomgoAggregate(queryStr3, null));
+            List<Map<String, Object>> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryStr2, params), new JomgoAggregate(queryStr3));
             if (amtall.isEmpty()) {
                 $debug(String.format("CmsFindProdOrdersInfoService 该产品无销售数据！ + channel_id=%s, code=%s", channelId, prodCode));
                 for (String skuCode : skuCodeList) {
@@ -164,7 +164,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             // 再统计产品code级别的数据，由于是多维度的统计，由上面的sku数据合并较复杂，不如直接统计
             // 7天销售code数据
             params = new Object[]{begDate1, endDate, cartList2, channelId, prodCode};
-            amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3, null));
+            amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3));
             if (!amt7days.isEmpty()) {
                 Map<String, Object> sum7Map = new HashMap<>();
                 int sum7 = 0;
@@ -180,7 +180,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 30天销售code数据
             params = new Object[]{begDate2, endDate, cartList2, channelId, prodCode};
-            amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3, null));
+            amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr, params), new JomgoAggregate(queryCodeStr3));
             if (!amt30days.isEmpty()) {
                 Map<String, Object> sum30Map = new HashMap<>();
                 int sum30 = 0;
@@ -196,7 +196,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 所有销售code数据
             params = new Object[]{cartList2, channelId, prodCode};
-            amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr2, params), new JomgoAggregate(queryCodeStr3, null));
+            amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCodeStr2, params), new JomgoAggregate(queryCodeStr3));
             if (amtall.isEmpty()) {
                 Map<String, Object> sumallMap = new HashMap<>();
                 for (Integer cartItem : cartList2) {

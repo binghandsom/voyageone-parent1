@@ -123,7 +123,7 @@ define([
                     sellerCats.push({cId:cid, cIds:cids, cName:cName, cNames:cNames});
                 });
 
-                self.$uibModalInstance.close(sellerCats);
+                self.$uibModalInstance.close({sellerCats:sellerCats, cartId:self.cartId});
             }
         };
         return PopAddChannelCategoryCtrl;
