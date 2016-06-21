@@ -32,6 +32,7 @@ define([
                 $scope.$close();
                 return;
             }
+            $scope.model.dealEndTime=formatToStr(dealEndTime);
             jmPromotionDetailService.updateDealEndTime($scope.model).then(function () {
                 $scope.$close();
             }, function (res) {
@@ -48,6 +49,12 @@ define([
                 $scope.$close();
             }, function (res) {
             })
+        };
+        function formatToDate(date){
+            return new Date(date) ;//$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+        };
+        function formatToStr(date){
+            return $filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
         };
     });
 });

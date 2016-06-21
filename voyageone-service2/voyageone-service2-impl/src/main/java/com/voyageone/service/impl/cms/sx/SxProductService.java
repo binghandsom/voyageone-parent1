@@ -1519,31 +1519,43 @@ public class SxProductService extends BaseService {
                         String numIId = sxData.getPlatform().getNumIId();
                         if (!StringUtils.isEmpty(numIId)) {
                             // 更新
-                            try {
-                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numIId, shopBean);
-                                String strXml = response.getUpdateItemResult();
-                                // 读入的属性列表
-                                List<Field> fieldList = SchemaReader.readXmlForList(strXml);
-                                List<String> defaultValues = null;
-                                for (Field fd : fieldList) {
-                                    if (sellerCategoryPropId.equals(fd.getId())) {
-                                        MultiCheckField multiCheckField = (MultiCheckField) fd;
-                                        defaultValues = multiCheckField.getDefaultValues();
-                                        break;
-                                    }
+                            // modified by morse.lu 2016/06/21 start
+                            // 改成从表里取cid
+//                            try {
+//                                TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numIId, shopBean);
+//                                String strXml = response.getUpdateItemResult();
+//                                // 读入的属性列表
+//                                List<Field> fieldList = SchemaReader.readXmlForList(strXml);
+//                                List<String> defaultValues = null;
+//                                for (Field fd : fieldList) {
+//                                    if (sellerCategoryPropId.equals(fd.getId())) {
+//                                        MultiCheckField multiCheckField = (MultiCheckField) fd;
+//                                        defaultValues = multiCheckField.getDefaultValues();
+//                                        break;
+//                                    }
+//                                }
+//                                if (defaultValues != null) {
+//                                    MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+//                                    multiCheckField.setId(sellerCategoryPropId);
+//                                    for (String defaultValue : defaultValues) {
+//                                        multiCheckField.addValue(defaultValue);
+//                                    }
+//
+//                                    retMap.put(sellerCategoryPropId, multiCheckField);
+//                                }
+//                            } catch (TopSchemaException | ApiException e) {
+//                                $error(e.getMessage(), e);
+//                            }
+                            List<CmsBtProductModel_SellerCat> defaultValues = mainSxProduct.getPlatform(sxData.getCartId()).getSellerCats();
+                            if (defaultValues != null && !defaultValues.isEmpty()) {
+                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                multiCheckField.setId(sellerCategoryPropId);
+                                for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
+                                    multiCheckField.addValue(defaultValue.getcId());
                                 }
-                                if (defaultValues != null) {
-                                    MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
-                                    multiCheckField.setId(sellerCategoryPropId);
-                                    for (String defaultValue : defaultValues) {
-                                        multiCheckField.addValue(defaultValue);
-                                    }
-
-                                    retMap.put(sellerCategoryPropId, multiCheckField);
-                                }
-                            } catch (TopSchemaException | ApiException e) {
-                                $error(e.getMessage(), e);
+                                retMap.put(sellerCategoryPropId, multiCheckField);
                             }
+                            // modified by morse.lu 2016/06/21 end
                         }
                     }
                     break;

@@ -90,7 +90,7 @@ public class CmsAdvanceSearchController extends CmsController {
         Integer cartId = params.getCartId();
         if (cartId == null) {
             cartId = 0;
-            resultBean.put("productUrl", "");
+            resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
         } else {
             resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
         }
