@@ -149,7 +149,7 @@ define([
                 var index = _.indexOf($scope.vm.modelList, data);
                if(data.synchStatus==2)
                {
-                   alert("已经上新,不能删除!");
+                   alert("该商品已上传，禁止删除!");
                    return
                }
                 jmPromotionDetailService.delete(data.id).then(function () {
@@ -236,7 +236,7 @@ define([
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
-                return "待再售";
+                return "待上传";
             }
             else if (model.updateStatus == 1 || model.priceStatus == 1) {
                 return "待更新";
@@ -259,20 +259,22 @@ define([
             return listPromotionProductId;
         }
         $scope.updateJM = function (promotionProductId) {
-            var listPromotionProductId = [promotionProductId];
-            var parameter = {};
-            parameter.promotionId = $scope.vm.promotionId;
-            parameter.listPromotionProductId = listPromotionProductId;
-            jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            confirm("是否同步选中商品的价格?").result.then(function () {
+                var listPromotionProductId = [promotionProductId];
+                var parameter = {};
+                parameter.promotionId = $scope.vm.promotionId;
+                parameter.listPromotionProductId = listPromotionProductId;
+                jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
         };
         $scope.batchSynchPrice = function () {
@@ -281,14 +283,14 @@ define([
                 alert("请选择同步价格的商品!");
                 return;
             }
-            confirm("是否同步选中商品的价格?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").result.then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
                 jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
-                        alert($translate.instant('TXT_SUCCESS'));
+                        alert("请稍后几分钟刷新页面，查看最新上传结果");
                     }
                     else {
                         alert($translate.instant('TXT_FAIL'));
@@ -315,10 +317,10 @@ define([
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedProductIdList();
             if (listPromotionProductId.length == 0) {
-                alert("请选择再售的商品!");
+                alert("请选择上传的商品!");
                 return;
             }
-            confirm("选中的商品是否全部再售?").result.then(function () {
+            confirm("选中的商品是否全部上传?").result.then(function () {
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
@@ -335,7 +337,7 @@ define([
             });});
         }
         $scope.copyDealAll = function () {
-            confirm("是否全部再售?").result.then(function () {
+            confirm("是否全部上传?").result.then(function () {
 
                 jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
@@ -361,6 +363,12 @@ define([
                 alert("请选择删除的商品!");
                 return;
             }
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].isChecked&&$scope.vm.modelList[i].synchStatus==2) {
+                    alert("勾选范围内存在商品已完成上传，禁止删除!");
+                    return;
+                }
+            }
             confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
                 jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                     if (res.data.result) {
@@ -377,6 +385,12 @@ define([
         }
 
         $scope.deleteAllProduct = function () {//已再售的不删除
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].synchStatus==2) {
+                    alert("该专场内存在商品已完成上传，禁止删除!");
+                    return;
+                }
+            }
             confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
                 jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {

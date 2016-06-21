@@ -94,7 +94,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope" ng-if="cartInfo.value != 27">
-                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
+                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                             </button>
                             <div class="col-md-8">
                                 <div class="panel panel-default">
@@ -170,6 +170,7 @@
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
 
                 <div class="container-fluid" id="{{cartInfo.name}}2">
+
                     <div class="col-sm-7">
                         <ng-form name="schemaForm" novalidate>
                             <schema data="vm.platform.schemaFields"></schema>
@@ -203,7 +204,10 @@
                                     <td class="text-center">{{entity.skuCode}}</td>
                                     <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                     <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                    <td class="text-center"><input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required></td>
+                                    <td class="text-center">
+                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                        <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
+                                    </td>
                                     <td class="text-center">{{entity.priceRetail}}</td>
                                     <td class="text-center"></td>
                                     <td class="text-center" ng-if="cartInfo.value == 27">
@@ -214,6 +218,7 @@
                                         </select>
                                     </td>
                                     <td class="text-center">
+                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
                                         <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required></td>
                                     <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                 </tr>

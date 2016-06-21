@@ -131,13 +131,10 @@
                 #{item}
             </foreach>)
             </if>
-            <if test="synchStateList.size()!=0">
-                and  a.synch_state in
-                <foreach item="item" index="i" collection="synchStateList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
+            <if test="synchStatus!=null">
+                and a.synch_status=#{synchStatus}
             </if>
+
             <if test="beginDiscount!=null">
                 and a.discount>=#{beginDiscount}
             </if>
