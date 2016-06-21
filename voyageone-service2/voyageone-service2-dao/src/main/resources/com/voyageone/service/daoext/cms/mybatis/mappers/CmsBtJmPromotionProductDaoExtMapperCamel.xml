@@ -268,7 +268,7 @@
     </select>
 
     <update id="batchUpdateDealPrice">
-                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice}
+                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice},discount=deal_Price/market_price
                  WHERE    id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">

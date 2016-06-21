@@ -274,7 +274,7 @@ public class CmsBtJmPromotionImportTask3Service {
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));
             skuModel.setChannelId(saveInfo.productModel.getChannelId());
             skuModel.setSkuCode(skuImportBean.getSkuCode());
-            skuModel.setDiscount(skuImportBean.getDiscount() == null?new BigDecimal(0):new BigDecimal(skuImportBean.getDiscount()));
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier("system");
             skuModel.setCreated(new Date());
