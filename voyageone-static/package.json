@@ -21,7 +21,6 @@
     "gulp-minify-css": "",
     "gulp-minify-html": "",
     "gulp-ng-annotate": "",
-    "gulp-ng-html2js": "",
     "gulp-rename": "",
     "gulp-replace": "",
     "gulp-sourcemaps": "",
