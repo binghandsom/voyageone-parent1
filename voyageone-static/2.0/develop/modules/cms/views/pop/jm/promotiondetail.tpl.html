@@ -43,16 +43,17 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
                 <div class="col-sm-8 form-inline">
+                    <!--ng-readonly="editModel.model.status!=0"-->
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" readonly  datepicker-popup ng-model="editModel.model.activityStart" name="activityStart" required
-                               max-date="model.activityStart" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />
+                        <input  type="datetime-local" class="form-control"   datepicker-popup ng-model="editModel.model.activityStart" name="activityStart" required
+                               max-date="model.activityStart" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" ng-disabled="editModel.model.status!=0"  class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>&nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" readonly datepicker-popup ng-model="editModel.model.activityEnd" name="activityEnd" required
-                               max-date="model.activityEnd" date-model-format="yyyy-MM-dd" is-open="datePicker2" ng-required="true" close-text="Close" />
+                        <input  type="datetime-local" class="form-control"  datepicker-popup ng-model="editModel.model.activityEnd" name="activityEnd" required
+                               max-date="model.activityEnd" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" ng-disabled="editModel.model.status!=0" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -68,15 +69,15 @@
                 <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
                 <div class="col-sm-8 form-inline">
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
-                               max-date="model.prePeriodStart" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />
+                        <input  type="datetime-local" class="form-control" datepicker-popup ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
+                               max-date="model.prePeriodStart" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker3" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>&nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup ng-model="editModel.model.prePeriodEnd" name="prePeriodEnd" required
-                               max-date="mdoel.prePeriodEnd" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
+                        <input  type="datetime-local" class="form-control" datepicker-popup ng-model="editModel.model.prePeriodEnd" name="prePeriodEnd" required
+                               max-date="mdoel.prePeriodEnd" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker4" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
