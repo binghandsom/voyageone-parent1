@@ -115,7 +115,7 @@ define([
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selectedIds = {};
                     scope.vm.sellerCats.forEach(function(element){
-                        selectedIds[element.cid]=true;
+                        selectedIds[element.cId]=true;
                     });
                     var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
