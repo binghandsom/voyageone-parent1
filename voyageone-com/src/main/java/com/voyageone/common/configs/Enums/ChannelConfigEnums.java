@@ -558,6 +558,11 @@ public class ChannelConfigEnums {
         DFO("022"),
 
         /**
+         * ShoeZoo
+         */
+        ShoeZoo("023"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
@@ -622,6 +627,7 @@ public class ChannelConfigEnums {
                 case "020": return EDCSKINCARE;
                 case "021": return BHFO_MINIMALL;
                 case "022": return DFO;
+                case "023": return ShoeZoo;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
