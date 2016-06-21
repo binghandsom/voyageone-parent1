@@ -114,7 +114,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
             result = (Integer)input;
         } else {
             if(!StringUtil.isEmpty(input.toString())){
-                result = Integer.parseInt(input.toString());
+                result = Double.valueOf(input.toString()).intValue();
             }
         }
         return result;

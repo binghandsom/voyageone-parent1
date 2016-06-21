@@ -16,10 +16,10 @@ define([
             {
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     $scope.editModel = res.data;
-                    $scope.editModel.model.activityStart = formatStrDate($scope.editModel.model.activityStart);
-                    $scope.editModel.model.activityEnd = formatStrDate($scope.editModel.model.activityEnd);
-                    $scope.editModel.model.prePeriodStart = formatStrDate($scope.editModel.model.prePeriodStart);
-                    $scope.editModel.model.prePeriodEnd = formatStrDate($scope.editModel.model.prePeriodEnd);
+                    $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
+                    $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
+                    $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
+                    $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
                 });
             }
             else
@@ -52,6 +52,10 @@ define([
             if (!$scope.promotionForm.$valid)
                 return;
             $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
+            $scope.editModel.model.activityStart = formatToStr($scope.editModel.model.activityStart);
+            $scope.editModel.model.activityEnd = formatToStr($scope.editModel.model.activityEnd);
+            $scope.editModel.model.prePeriodStart = formatToStr($scope.editModel.model.prePeriodStart);
+            $scope.editModel.model.prePeriodEnd = formatToStr($scope.editModel.model.prePeriodEnd);
             jmPromotionService.saveModel($scope.editModel).then(function (res) {
                     $scope.$close();
                 if(context.search) {
@@ -64,8 +68,11 @@ define([
          * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
          * @returns {Date}
          */
-        function formatStrDate(date){
-            return  $filter("date")(new Date(date),"yyyy-MM-dd");
+        function formatToDate(date){
+             return new Date(date) ;//$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+        };
+        function formatToStr(date){
+            return $filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
         };
     });
 });

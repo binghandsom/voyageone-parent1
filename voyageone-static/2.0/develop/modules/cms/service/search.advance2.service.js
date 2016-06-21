@@ -490,7 +490,7 @@ define([
             }
             if (object) {
                 _.forEach(object, function (data) {
-                    if (data == null || data == undefined) {
+                    if (data == null || data == undefined || data.skus == null || data.skus == undefined) {
                         return;
                     }
                     var priceItem = '';

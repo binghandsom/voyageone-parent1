@@ -115,6 +115,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
+        if (cartId <= 0) {
+            cartId = (Integer) cmsSession.getPlatformType().get("cartId");
+        }
         saveChannelCategory(params, codeList, cartId);
         return null;
     }

@@ -12,10 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.util.BeanUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -554,7 +551,8 @@ public class ProductService extends BaseService {
             if (productId != null) {
                 CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-                BeanUtil.copy(productModel, logModel);
+                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),logModel.getClass());
+//                BeanUtil.copy(productModel, logModel);
                 logModel.set_id(null);
                 cmsBtProductLogDao.insert(logModel);
             }
@@ -1123,10 +1121,9 @@ public class ProductService extends BaseService {
     }
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, Boolean isModifiedChk){
 
-
+        CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if(isModifiedChk){
-            CmsBtProductModel cmsBtProduct = getProductById(channelId, prodId);
-            CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProduct.getPlatform(platformModel.getCartId());
+            CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
             String oldModified = null;
             if(cmsBtProductModel_platform_cart !=null) {
                 oldModified = cmsBtProductModel_platform_cart.getModified();
@@ -1154,6 +1151,20 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         if(CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())){
+            if(oldProduct.getCarts().stream().filter(cart->cart.getCartId() == platformModel.getCartId()).collect(Collectors.toList()).size() == 0)
+            {
+                CmsBtProductModel_Carts cmsBtProductModel_carts = new CmsBtProductModel_Carts();
+                cmsBtProductModel_carts.setCartId(platformModel.getCartId());
+                cmsBtProductModel_carts.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                updateMap = new HashMap<>();
+                updateMap.put("carts" , cmsBtProductModel_carts);
+                model = new BulkUpdateModel();
+                model.setUpdateMap(updateMap);
+                model.setQueryMap(queryMap);
+                bulkList = new ArrayList<>();
+                bulkList.add(model);
+                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$addToSet",true);
+            }
             CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
             if(group != null){
                 CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();

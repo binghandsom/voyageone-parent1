@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -239,6 +240,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
             for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
                 String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                if(stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())){
+                    throw new BusinessException("价格不能为空");
+                }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
                     return "4000091";

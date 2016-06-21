@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by lewis on 15-12-16.
@@ -345,6 +346,11 @@ public class CmsProductDetailService extends BaseAppService {
         if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 执行carts更新
+            productUpdateBean.getProductModel().getSkus().forEach(sku -> {
+                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s->s==23).collect(Collectors.toList());
+                sku.setSkuCarts(newCarts);
+            });
+
             List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), oldProduct.getCarts());
             productUpdateBean.getProductModel().setCarts(carts);
         }
