@@ -3,14 +3,13 @@
     /**
      * 以下代码包含下面这些自定义标签:
      *  schema
-     *  schema-field
-     *  schema-field-name
-     *  schema-complex-name
-     *  schema-complex
-     *  schema-input-container
-     *  schema-tip
-     *  schema-input-toolbar
-     *  schema-complex-toolbox
+     *  s-field
+     *  s-header
+     *  s-complex
+     *  s-container
+     *  s-tip
+     *  s-toolbar
+     *  s-toolbox
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
      *
@@ -424,7 +423,7 @@
             if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                 return;
 
-            var contentContainer = angular.element('<schema-tip>');
+            var contentContainer = angular.element('<s-tip>');
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
@@ -472,7 +471,7 @@
             });
         }
 
-        var contentContainer = angular.element('<schema-tip>');
+        var contentContainer = angular.element('<s-tip>');
         contentContainer.text('该字段包含默认值: ' + angular.toJson(result));
         container.append(contentContainer);
     }
@@ -491,7 +490,7 @@
     }
 
     /**
-     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 schema-field 中 $render 里的切换逻辑
+     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 s-field 中 $render 里的切换逻辑
      * @param {object} field
      * @param {Array.<String>} valueKeys 需要切换的属性名
      * @param {bool} fromPrivate 标识切换方向, true = from private, false = to private
@@ -757,11 +756,11 @@
             fieldScope;
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
-        // 如果为 false 或不存在的话, 只需创建单纯的 schema-field 即可
+        // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
         if (disableRule === true)
             return;
 
-        fieldElement = angular.element('<schema-field>');
+        fieldElement = angular.element('<s-field>');
         // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
         fieldScope = parentScope.$new();
         // 显式注册 attr, 并把 field 保存到 scope 上
@@ -859,7 +858,7 @@
             }
         })
 
-        .directive('schemaField', function ($compile, $q) {
+        .directive('sField', function ($compile, $q) {
 
             function SchemaFieldController($scope, $element, $attrs) {
                 this.$scope = $scope;
@@ -907,9 +906,9 @@
                 isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
                 if (showName)
-                    container.append(angular.element('<schema-field-name>'));
+                    container.append(angular.element('<s-header>'));
 
-                innerElement = angular.element('<schema-input-container>');
+                innerElement = angular.element('<s-container>');
                 container.append(innerElement);
 
                 // 根据需要创建 vo-message
@@ -980,10 +979,10 @@
             };
         })
 
-        .directive('schemaFieldName', function () {
+        .directive('sHeader', function () {
             return {
                 restrict: 'E',
-                require: ['^^schemaField'],
+                require: ['^^sField'],
                 scope: false,
                 link: function (scope, element, attrs, requiredControllers) {
 
@@ -993,7 +992,7 @@
 
                         var rules = getRules(field),
                             required = rules.requiredRule,
-                            requiredClass = 'schema-field-required';
+                            requiredClass = 's-required';
 
                         switch (field.type) {
                             case FIELD_TYPES.INPUT:
@@ -1030,11 +1029,11 @@
             }
         })
 
-        .directive('schemaInputContainer', function ($compile) {
+        .directive('sContainer', function ($compile) {
             return {
                 restrict: 'E',
                 scope: false,
-                require: ['^^schemaField'],
+                require: ['^^sField'],
                 link: function (scope, element, attrs, requiredControllers) {
 
                     var schemaFieldController = requiredControllers[0];
@@ -1286,7 +1285,7 @@
 
                                 scope.$fields = field.fields;
 
-                                innerElement = angular.element('<schema-complex fields="$fields">');
+                                innerElement = angular.element('<s-complex fields="$fields">');
 
                                 break;
                             case FIELD_TYPES.MULTI_COMPLEX:
@@ -1313,12 +1312,12 @@
 
                                 scope.$complexValues = complexValues;
 
-                                innerElement = angular.element('<schema-complex multi="true" fields="complexValue.fieldMap">');
+                                innerElement = angular.element('<s-complex multi="true" fields="complexValue.fieldMap">');
 
                                 innerElement.attr('ng-repeat', 'complexValue in $complexValues');
 
                                 if (schemaFieldController.canAdd) {
-                                    element.append(angular.element('<schema-input-toolbar>'));
+                                    element.append(angular.element('<s-toolbar>'));
                                 }
 
                                 break;
@@ -1340,7 +1339,7 @@
             }
         })
 
-        .directive('schemaComplex', function ($compile) {
+        .directive('sComplex', function ($compile) {
 
             function SchemaComplexController($scope, $attrs) {
                 this.$scope = $scope;
@@ -1359,7 +1358,7 @@
                 });
 
                 if (isMulti) {
-                    var toolbox = angular.element('<schema-complex-toolbox>');
+                    var toolbox = angular.element('<s-toolbox>');
                     $element.append(toolbox);
                     $compile(toolbox)($scope);
                 }
@@ -1368,7 +1367,7 @@
             return {
                 restrict: 'E',
                 scope: true,
-                require: ['^^?schema', '^^schemaField'],
+                require: ['^^?schema', '^^sField'],
                 controllerAs: 'schemaComplexController',
                 link: function ($scope, $element, $attrs, requiredControllers) {
 
@@ -1390,10 +1389,10 @@
             };
         })
 
-        .directive('schemaInputToolbar', function () {
+        .directive('sToolbar', function () {
             return {
                 restrict: 'E',
-                require: ['^^schemaField'],
+                require: ['^^sField'],
                 template: '<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>',
                 scope: false,
                 link: function ($scope) {
@@ -1404,10 +1403,10 @@
             };
         })
 
-        .directive('schemaComplexToolbox', function () {
+        .directive('sToolbox', function () {
             return {
                 restrict: 'E',
-                require: ['^^schemaField', '^^schemaComplex'],
+                require: ['^^sField', '^^sComplex'],
                 template: '<button class="btn btn-schema btn-danger" ng-click="schemaFieldController.remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>',
                 scope: false
             };
