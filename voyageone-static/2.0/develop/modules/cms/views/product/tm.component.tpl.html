@@ -11,18 +11,7 @@
                                 {{vm.productDetails.categoryFullPath}}</span>
 
                             <div class="form-inline pull-right" ng-controller="popupCtrl">
-                                <!-- TODO 暂时未实现 -->
-                                <!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
-<!--                                <button type="button" class="btn btn-default"
-                                        ng-click="openHistoryPromotion('lg', vm.productDetails.productCode)"><i
-                                        class="fa fa-rotate-left"></i>&nbsp;{{'BTN_PROMOTION_HISTORY' | translate}}
-                                </button>
-                                <button type="button" class="btn btn-default"
-                                        ng-click="openHistoryPrice('lg', vm.productDetails.productCode, 'code')"><i
-                                        class="fa fa-jpy"></i>&nbsp;{{'BTN_PRICE_HISTORY' | translate}}
-                                </button>-->
                                 <button class="btn btn-default" ng-click="openCategoryMapping(vm.productDetails, popupNewCategory)">&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
-
                             </div>
                         </div>
                         <div class="col-sm-8 form-inline pull-left m-b-xs m-r-sm">
@@ -50,10 +39,8 @@
                         </div>
                         <div class="pull-right m-r-xs">
                             <div class="form-inline text-center">
-                                <button type="submit" class="btn btn-default ng-binding" ng-click="cancelProductDetail()"><i class="fa fa-remove"></i> 取消
-                                </button>
-                                <button type="submit" class="btn btn-vo ng-binding" ng-click="updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存
-                                </button>
+                                <button type="submit" class="btn btn-default ng-binding" ng-click="cancelProductDetail()"><i class="fa fa-remove"></i>取消</button>
+                                <button type="submit" class="btn btn-vo ng-binding" ng-click="updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i>保存</button>
                             </div>
                             <!-- .form-inline -->
                         </div>
@@ -279,13 +266,4 @@
                 </div>
     </div>
 
-<!--    <div style="width:80%" ng-show="!ctrl.showInfoFlag">
-        &lt;!&ndash; TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) &ndash;&gt;
-
-        <div class="text-center text-hs ng-binding ng-scope" id="noData">
-            <h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_REMINDER_WITH_COLON' |
-                translate}}</h4>
-            {{!ctrl.productDetails.productDataIsReady ? ('TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate) : ctrl.errorMsg}}
-        </div>
-    </div>-->
 </div>
