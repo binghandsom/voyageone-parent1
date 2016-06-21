@@ -118,7 +118,7 @@ public class JmBase extends ComponentBase {
             if (errorMap.containsKey("code")) {
                 code = (String.valueOf(errorMap.get("code")));
                 if (code.equals("500") || code.equals("501")) {
-                    throw new ServerErrorException("调用聚美API错误：" + result);
+                    throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
                 }
 
             }
@@ -126,25 +126,25 @@ public class JmBase extends ComponentBase {
                 Map<String, Object> codesMap = (Map<String, Object>) errorMap.get("codes");
                 codes = (codesMap.keySet()).toString();
                 if (codes.equals("500") || codes.equals("501")) {
-                    throw new ServerErrorException("调用聚美API错误：" + result);
+                    throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
                 }
             }
 
             if (!(code.equals("0") || code.contains("109902") ||  code.contains("103087")  ||
                     codes.equals("0") || codes.contains("109902") ||  codes.contains("103087")  ) )
             {
-                throw new BusinessException("调用聚美API错误：" + result);
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
             }
         }
         else if (map.containsKey("error_code"))
         {
             String  error_code = map.get("error_code").toString();
             if (error_code.equals("500") || error_code.equals("501")) {
-                throw new ServerErrorException("调用聚美API错误：" + result);
+                throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
             }
             else if (!(error_code.equals("0")))
             {
-                throw new BusinessException("调用聚美API错误：" + result);
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
             }
         }
 
@@ -152,7 +152,7 @@ public class JmBase extends ComponentBase {
         try {
             res = JsonUtil.jsonToBean(result, JMErrorResult.class);
             if (res.getCode() != null) {
-                throw new BusinessException("调用聚美API错误：" +  result);
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
             }
         } catch (JsonSyntaxException ignored) {
         }
