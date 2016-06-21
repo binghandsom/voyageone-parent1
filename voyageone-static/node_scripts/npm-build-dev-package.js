@@ -7,7 +7,7 @@ var angularPackage = common.angular.dist + '/' + common.angular.concat;
 var commonFiles = common.native.src;
 var commonPackage = common.native.dist + '/' + common.native.concat;
 
-glob('develop/components/angular/*/*.js', function (err, files) {
+glob('src/components/angular/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
@@ -24,7 +24,7 @@ glob('develop/components/angular/*/*.js', function (err, files) {
 
     code += '  require(\'components/angular/angular.modules\');\n';
 
-    files.map(file => file.replace('develop/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
     
@@ -48,7 +48,7 @@ glob(commonFiles, function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    files.map(file => file.replace('develop/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
     

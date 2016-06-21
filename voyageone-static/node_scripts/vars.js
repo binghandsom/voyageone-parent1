@@ -13,46 +13,46 @@ var versions = {
 var build = {
     version: versions.statics,
     actions: {
-        src: 'develop/modules/*/actions.json'
+        src: 'src/modules/*/actions.json'
     },
     common: {
         angular: {
-            src: 'develop/components/angular/*/*.js',
-            dist: 'develop/components/dist',
+            src: 'src/components/angular/*/*.js',
+            dist: 'src/components/dist',
             footerFile: 'voyageone.angular.suffix',
             concat: 'voyageone.angular.com.js',
             version: versions.angularCom
         },
         native: {
-            src: 'develop/components/js/*/*.js',
-            dist: 'develop/components/dist',
+            src: 'src/components/js/*/*.js',
+            dist: 'src/components/dist',
             concat: 'voyageone.com.js',
             map: 'voyageone.com.js.map',
             version: versions.com
         },
         appCss: {
             src: [
-                'develop/static/css/twitter-bootstrap/local/css/bootstrap.css',
-                'develop/static/css/animate.css',
-                'develop/static/css/font-awesome/css/font-awesome.css',
-                'develop/static/css/simple-line-icons/css/simple-line-icons.css',
-                'develop/static/css/glyphicons-regular/css/font.css',
-                'develop/static/css/app.reset.css',
-                'develop/static/css/app.bootstrap.custom.css',
-                'develop/static/css/app.old.css',
-                'develop/static/css/app.custom.css',
-                'develop/static/css/app.components.css',
-                'develop/static/css/app.pages.css'
+                'src/static/css/twitter-bootstrap/local/css/bootstrap.css',
+                'src/static/css/animate.css',
+                'src/static/css/font-awesome/css/font-awesome.css',
+                'src/static/css/simple-line-icons/css/simple-line-icons.css',
+                'src/static/css/glyphicons-regular/css/font.css',
+                'src/static/css/app.reset.css',
+                'src/static/css/app.bootstrap.custom.css',
+                'src/static/css/app.old.css',
+                'src/static/css/app.custom.css',
+                'src/static/css/app.components.css',
+                'src/static/css/app.pages.css'
             ],
-            dist: 'develop/static/css/',
+            dist: 'src/static/css/',
             concat: 'app.min.css'
         },
         loginCss: {
             src: [
-                'develop/static/css/login.css',
-                'develop/static/css/font-awesome/css/font-awesome.css'
+                'src/static/css/login.css',
+                'src/static/css/font-awesome/css/font-awesome.css'
             ],
-            dist: 'develop/static/css/',
+            dist: 'src/static/css/',
             concat: 'login.min.css'
         }
     }
@@ -62,15 +62,15 @@ var publish = {
     static: {
         path: 'publish/static/' + versions.statics,
         fonts: {
-            src: 'develop/static/**/fonts/*',
+            src: 'src/static/**/fonts/*',
             dist: 'publish/static/' + versions.statics + '/fonts'
         },
         img: {
-            src: 'develop/static/img/**',
+            src: 'src/static/img/**',
             dist: 'publish/static/' + versions.statics + '/img'
         },
         css: {
-            src: 'develop/static/css/*.min.css',
+            src: 'src/static/css/*.min.css',
             dist: 'publish/static/' + versions.statics + '/css'
         }
     },
@@ -83,16 +83,16 @@ var publish = {
         }
     },
     libs: {
-        src: ['develop/libs/**/*.js', 'develop/libs/**/*.css', 'develop/libs/**/*.png']
+        src: ['src/libs/**/*.js', 'src/libs/**/*.css', 'src/libs/**/*.png']
     },
     loginAndChannel: {
-        js: 'develop/*.js',
-        html: 'develop/*.html'
+        js: 'src/*.js',
+        html: 'src/*.html'
     },
     modules: {
-        js: 'develop/modules/**/*.js',
-        html: 'develop/modules/**/*.html',
-        json: 'develop/modules/**/*.json'
+        js: 'src/modules/**/*.js',
+        html: 'src/modules/**/*.html',
+        json: 'src/modules/**/*.json'
     },
     release: {
         static: {

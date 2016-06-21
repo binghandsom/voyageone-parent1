@@ -49,7 +49,7 @@ gulp.task(tasks.beta.statics, function () {
 gulp.task(tasks.beta.angular, function () {
 
     gulp.src([
-            "develop/components/angular/angular.modules.js",
+            "src/components/angular/angular.modules.js",
             build.common.angular.src
         ])
         .pipe(debug())

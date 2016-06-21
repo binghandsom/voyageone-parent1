@@ -20,7 +20,7 @@ var build = vars.build;
 var tasks = vars.tasks;
 
 var searchMin = [
-    'develop',
+    'src',
     'publish/release/' + vars.versions.publish
 ];
 
@@ -79,7 +79,7 @@ gulp.task(tasks.publish.modules, function () {
         .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
-    gulp.src([publish.modules.js, '!develop/modules/**/*.doc.js'])
+    gulp.src([publish.modules.js, '!src/modules/**/*.doc.js'])
         .pipe(requireMin(searchMin))
         .pipe(ngAnnotate())
         .pipe(uglify())
