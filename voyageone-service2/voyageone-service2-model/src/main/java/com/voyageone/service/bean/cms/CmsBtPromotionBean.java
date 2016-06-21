@@ -9,6 +9,8 @@ public class CmsBtPromotionBean extends CmsBtPromotionModel {
 
     private String cartName;
 
+    private String status;
+
     private List<CmsBtTagModel> tagList;
 
 
@@ -26,5 +28,13 @@ public class CmsBtPromotionBean extends CmsBtPromotionModel {
 
     public void setTagList(List<CmsBtTagModel> tagList) {
         this.tagList = tagList;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

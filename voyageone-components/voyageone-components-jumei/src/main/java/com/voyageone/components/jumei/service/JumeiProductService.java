@@ -26,7 +26,7 @@ import java.util.Map;
 @Service
 public class JumeiProductService extends JmBase {
 
-    private static final String PRODUCT_NEW = "v1/htProduct/addProductAndDeal";
+    private static final String PRODUCT_NEW = "/v1/htProduct/addProductAndDeal";
 
     /**
      * 创建商品并同时创建Deal
@@ -131,7 +131,7 @@ public class JumeiProductService extends JmBase {
     }
 
 
-    private static String PRODUCT_GET = "v1/htProduct/getProductByIdOrName";
+    private static String PRODUCT_GET = "/v1/htProduct/getProductByIdOrName";
     /**
      * 取得商品
      */
@@ -161,31 +161,14 @@ public class JumeiProductService extends JmBase {
 //        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
 //        return resultBean;
     }
+
     public JmGetProductInfoRes getProductByName(ShopBean shopBean, String productName) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("product_name", productName);
-        params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage,hash_ids,category_v3_4,spus");
+        params.put("fields", "product_id,name,foreign_language_name,brand_id,brand_name,function_ids,hash_ids,spus,category_v3_4");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
         return JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
 
-//        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
-//        resultBean.setName((String) getValue(resultMap, "name"));
-//        resultBean.setForeign_language_name((String) getValue(resultMap, "foreign_language_name"));
-//        resultBean.setBrand_id( Integer.parseInt(getValue(resultMap, "brand_id").toString()));
-//        resultBean.setHash_ids((String) getValue(resultMap, "hash_ids"));
-//
-//        @SuppressWarnings("unchecked")
-//        List<Map<String, Object>> categorys = (List<Map<String, Object>>)getValue(resultMap, "categorys");
-//        if (categorys != null && categorys.size()>0) {
-//            Map<String, Object> categoryMap = categorys.get(categorys.size()-1);
-//            resultBean.setCategory_v3_4_id((int)categoryMap.get("category_id"));
-//        }
-//
-//        //resultBean.setFunction_ids(function_ids);
-//        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
-//        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
-//        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
-//        return resultBean;
     }
 }

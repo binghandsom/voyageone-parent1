@@ -97,4 +97,28 @@ public class JmGetProductInfo_Spus extends JmBaseBean {
     public void setSku_list(List<JmGetProductInfo_Spus_Sku> sku_list) {
         this.sku_list = sku_list;
     }
+
+    public String getSku_no()
+    {
+        if(sku_list != null && sku_list.size() > 0)
+        {
+            return sku_list.get(0).getSku_no();
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    public String getBusinessman_code()
+    {
+        if(sku_list != null && sku_list.size() > 0)
+        {
+            return sku_list.get(0).getBusinessman_code();
+        }
+        else
+        {
+            return "";
+        }
+    }
 }
