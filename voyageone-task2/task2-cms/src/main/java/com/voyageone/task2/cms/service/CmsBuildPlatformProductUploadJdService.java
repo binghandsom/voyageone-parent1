@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 京东平台产品上新服务
@@ -1307,7 +1308,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                             throw new BusinessException(ex.getMessage());
                         }
                     }
-
                 }
             }
 
@@ -1377,17 +1377,19 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
-            // 获取京东平台前台展示的商家自定义店内分类
-            // 2016/06/17暂时用外面的部分平台的SellerCats，以后改成分平台里面的sellerCats
-            if (sxData.getMainProduct().getSellerCats() != null && sxData.getMainProduct().getSellerCats().size() > 0) {
-                if (sxData.getCartId().equals(sxData.getMainProduct().getSellerCats().getCartId())) {
-                    // 取得
-                    List<String> sellerCatList = sxData.getMainProduct().getSellerCats().getFullCIds();
-                    for (String sellerCat : sellerCatList ) {
-                        // 里面的数据是“1233797770-1233809821”样式的
-                        sbbuilder.append(sellerCat);
-                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+            // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
+            CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
+            if (productPlatformCart != null && ListUtils.notNull(productPlatformCart.getSellerCats())) {
+                // 取得
+                List<CmsBtProductModel_SellerCat> sellerCatList = productPlatformCart.getSellerCats();
+                // 里面的数据是“1233797770-1233809821;1233797771-1233809822”样式的
+                for (CmsBtProductModel_SellerCat sellerCat : sellerCatList ) {
+                    if (sellerCat == null || ListUtils.isNull(sellerCat.getcIds())) {
+                        continue;
                     }
+                    // 用连字符("-")连接 (1233797770-1233809821)
+                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
+                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了
