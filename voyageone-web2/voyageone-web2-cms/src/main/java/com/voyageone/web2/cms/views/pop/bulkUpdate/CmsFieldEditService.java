@@ -7,8 +7,10 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -468,6 +470,14 @@ public class CmsFieldEditService extends BaseAppService {
             if (startIdx == null) {
                 startIdx = 0;
             }
+
+            // 阀值
+            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+            Double breakThreshold = null;
+            if (cmsChannelConfigBean != null) {
+                breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
+            }
+
             int idx = 0;
             for (String code : productCodes) {
                 if (idx < startIdx) {
@@ -477,15 +487,20 @@ public class CmsFieldEditService extends BaseAppService {
                 idx ++;
                 // 获取产品的信息
                 CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
-                // 阈值价格 TODO-- 暂无
-                double priceLimit = 999;
                 List<Map<String, Object>> prodInfoList = new ArrayList<>();
+                double priceLimit = 0;
 
                 for (Integer cartIdVal : cartList) {
                     qryStr.append("'platforms.P" + cartIdVal + ".status':{$ne:'Ready',$ne:'Approved'},");
                     CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdVal);
+                    if (ptmObj == null) {
+                        continue;
+                    }
                     String cartName = Carts.getCart(cartIdVal).getName();
                     List<BaseMongoMap<String, Object>> skuObjList = ptmObj.getSkus();
+                    if (skuObjList == null) {
+                        continue;
+                    }
                     for (BaseMongoMap<String, Object> skuObj : skuObjList) {
                         double priceSale = skuObj.getDoubleAttribute("priceSale");
                         double priceRetail = skuObj.getDoubleAttribute("priceRetail");
@@ -493,10 +508,13 @@ public class CmsFieldEditService extends BaseAppService {
                         if (priceSale < priceRetail) {
                             priceInfo.put("priceRetail", priceRetail);
                         }
-                        if (priceRetail > priceLimit) {
+                        if (breakThreshold != null) {
+                            priceLimit = priceRetail * breakThreshold;
+                        }
+                        if (breakThreshold != null && priceSale > priceLimit) {
                             priceInfo.put("priceLimit", priceLimit);
                         }
-                        if (priceSale < priceRetail || priceRetail > priceLimit) {
+                        if (priceSale < priceRetail || (breakThreshold != null && priceSale > priceLimit)) {
                             priceInfo.put("priceSale", priceSale);
                             priceInfo.put("skuCode", skuObj.get("skuCode"));
                             priceInfo.put("cartName", cartName);

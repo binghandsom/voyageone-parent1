@@ -16,23 +16,26 @@ import java.io.File;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class JumeiImageFileServiceTest {
-
+    String Client_id="110";
+    String Client_key="f06e250dd5d30ab9db3e24c362438c69";
+    String Sign="6dbc6df2c67634192e01c2311cab4372575eebeb";
+    String url="http://openapi.ext.jmrd.com:8823";
     @Autowired
     private JumeiImageFileService imageFileService;
 
     @Test
     public void testGet() throws Exception {
         ShopBean shopBean = new ShopBean();
-        shopBean.setAppKey("72");
-        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
-        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
-        shopBean.setApp_url("http://182.138.102.82:8868/");
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
 
         JmImageFileBean fileBean = new JmImageFileBean();
         fileBean.setDirName("test01");
         fileBean.setImgName("test019");
         fileBean.setNeedReplace(true);
-        File file  = new File("c:/1453180056.8779.jpg");
+        File file  = new File("d:/jmtest.jpg");
         fileBean.setFile(file);
 
         String url = imageFileService.imageFileUpload(shopBean, fileBean);
