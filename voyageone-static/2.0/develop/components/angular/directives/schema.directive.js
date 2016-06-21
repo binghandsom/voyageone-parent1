@@ -881,7 +881,7 @@
                 controller.canAdd = $attrs.add !== 'false';
 
                 controller.getField().then(function (field) {
-                    field.$name = field.id.replace(/\.|->/g, '/');
+                    field.$name = 'f' + random();
                     controller.$doRender();
                 })
             };
