@@ -13,9 +13,9 @@
                         <div class="input-group">
                             <span class="input-group-addon">价格</span>
                               <span class="input-group-addon">
-                                <input type="radio" value="1" name="priceValueType" ng-model="model.priceValueType" aria-label="...">
+                                <input type="radio" value="1" name="priceValueType"   ng-model="model.priceValueType" aria-label="...">
                               </span>
-                            <input type="text" value="2" class="form-control"  ng-disabled="model.priceValueType!=1"  ng-model="model.price" aria-label="...">
+                            <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}"  value="2" class="form-control"  ng-disabled="model.priceValueType!=1"  ng-model="model.price" aria-label="...">
                         </div>
                     </div>
                  </div>

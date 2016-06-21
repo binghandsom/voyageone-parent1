@@ -161,6 +161,7 @@ define([
                     },function(resp){
                         if(resp.code != "4000091" && resp.code != "4000092"){
                             scope.vm.status = preStatus;
+                            alert("系统异常错误！");
                             return;
                         }
                         confirm(resp.message + ",是否强制上新").result.then(function () {
