@@ -136,7 +136,7 @@ define([
                      }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
-                        notify.danger("请先确认是否在京东后台申请过相应品牌");
+                        notify.danger("请先确认是否在后台申请过相应品牌");
                         return;
                     }
 
