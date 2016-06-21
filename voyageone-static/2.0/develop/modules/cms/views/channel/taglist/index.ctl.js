@@ -28,7 +28,13 @@ define([
             //默认选中店铺类分类
             channelTagService.init({tagTypeSelectValue: $scope.vm.tagTypeSelectValue}).then(function (res) {
                 $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                $scope.vm.tagTypeList= res.data.tagTypeList;
+                if(res.data.tagTypeList) {
+                    for (var i = 0; i < res.data.tagTypeList.length; i++) {
+                        if (res.data.tagTypeList[i].value == "4") {
+                            $scope.vm.tagTypeList.push(res.data.tagTypeList[i]);
+                        }
+                    }
+                }
                 $scope.search(0);
             });
         };

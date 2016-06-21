@@ -23,6 +23,7 @@ define([
 		this.changePlatformCategory =  changePlatformCategory;
 		this.updateProductPlatformChk = updateProductPlatformChk;
 		this.updateProductPlatform = updateProductPlatform;
+		this.updateProductFeed = updateProductFeed;
 
 		/**
 		 * 获取页面产品信息
@@ -109,6 +110,43 @@ define([
 			$productDetailService.updateProductAllInfo(data).then(function (res) {
 
 				defer.resolve(res.data);
+			});
+			return defer.promise;
+		}
+
+		/**
+		 * 保存feed产品编辑页信息
+		 * @param formData
+         */
+		function updateProductFeed(formData){
+			var temp = {customIds: [], customIdsCn: []};
+			_.forEach(formData.feedInfoModel, function (feedInfo) {
+
+				if (feedInfo.selected) {
+					temp.customIds.push(feedInfo.enKey);
+					temp.customIdsCn.push(feedInfo.cnKey);
+				}
+
+				if(feedInfo.enKey) {
+					formData.customAttributes.cnAtts[feedInfo.enKey] = feedInfo.cnValue;
+					if (feedInfo.enKey == feedInfo.key)
+						formData.customAttributes.orgAtts[feedInfo.enKey] = feedInfo.value;
+				}
+			});
+			formData.customAttributes.customIds = temp.customIds;
+			formData.customAttributes.customIdsCn = temp.customIdsCn;
+
+			var data = {
+				productId: formData.productId,
+				modified: formData.modified,
+				customAttributes: formData.customAttributes,
+			};
+
+			var defer = $q.defer();
+			$productDetailService.updateProductFeed(data).then(function (res) {
+				defer.resolve(res.data);
+			},function(res){
+				defer.reject(res.data);
 			});
 			return defer.promise;
 		}

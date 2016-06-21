@@ -280,10 +280,19 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                 } else if (errMsg.lastIndexOf("}") > -1) {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf("}") + 1);
                 }
+                image.setErrorMsg(errMsg);
+            }
+           else if(errMsg.indexOf("response code: 413")>0)
+            {
+                image.setErrorMsg("");
+            }
+            else
+            {
+                image.setErrorMsg(errMsg);
             }
             $error(errMsg);
             // 设置返回的错误信息
-            image.setErrorMsg(errMsg);
+
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }
