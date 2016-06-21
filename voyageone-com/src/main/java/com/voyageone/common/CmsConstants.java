@@ -138,6 +138,8 @@ public class CmsConstants {
         String OPTION_DATA_SOURCE = "optConfig";
 
         String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+
+        String OPTION_DATA_SOURCE_SIZE_CHART = "sizeChartConfigChannel";
     }
 
     public interface CellNum {

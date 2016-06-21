@@ -13,4 +13,9 @@ public class BigDecimalUtil {
         }
         return b1.divide(b2, scale, BigDecimal.ROUND_HALF_EVEN);
     }
+    public static BigDecimal getValue(Double value)
+    {
+        if(value==null) return  new BigDecimal(0);
+        return new BigDecimal(value);
+    }
 }

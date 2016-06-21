@@ -5868,12 +5868,6 @@ a.text-black:hover {
     width: 40px;
     display: inline-block;
 }
-
-.thumb-sm-search {
-    /*width: 80px;*/
-    height:80px;
-    display: inline-block;
-}
 .thumb-xs {
     width: 34px;
     display: inline-block;
@@ -5882,10 +5876,6 @@ a.text-black:hover {
     width: 34px;
     height:34px;
     margin-top:24px;
-    display: inline-block;
-}
-.thumb-xxs {
-    width: 30px;
     display: inline-block;
 }
 .thumb-wrapper {

@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -35,8 +36,6 @@ import java.util.Map;
  */
 @Service
 public class CategorySchemaService extends BaseService {
-
-    private static final String optionDataSource = "optConfig";
 
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
@@ -142,7 +141,7 @@ public class CategorySchemaService extends BaseService {
 
         for (Field field : fields) {
 
-            if (optionDataSource.equals(field.getDataSource())) {
+            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 

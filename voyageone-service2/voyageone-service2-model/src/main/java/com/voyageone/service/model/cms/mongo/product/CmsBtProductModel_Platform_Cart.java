@@ -14,6 +14,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
 
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
+    public final static String SELLER_CATS = "sellerCats";
 
     public CmsBtProductModel_Platform_Cart(){
 
@@ -271,6 +272,28 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
                 value = skus;
             }
         }
+
+        //sellerCats
+        if (SELLER_CATS.equals(key)) {
+            if (value != null) {
+                List<Map<String, Object>> maps = (List<Map<String, Object>>) value;
+                List<CmsBtProductModel_SellerCat> sellerCatMaps = new ArrayList<>();
+                for (Map<String, Object> map : maps) {
+                    if (map != null) {
+                        CmsBtProductModel_SellerCat sellerCat;
+                        if (map instanceof CmsBtProductModel_SellerCat) {
+                            sellerCat = (CmsBtProductModel_SellerCat) map;
+                        } else {
+                            sellerCat = new CmsBtProductModel_SellerCat();
+                            sellerCat.putAll(map);
+                        }
+                        sellerCatMaps.add(sellerCat);
+                    }
+                }
+                value = sellerCatMaps;
+            }
+        }
+
         return super.put(key, value);
     }
 }

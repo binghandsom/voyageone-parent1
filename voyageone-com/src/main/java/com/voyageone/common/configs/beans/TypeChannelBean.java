@@ -15,6 +15,7 @@ public class TypeChannelBean {
     private String lang_id;
     private int display_order;
     private String comment;
+    private String cartType;
 
     public int getId() {
         return id;
@@ -102,5 +103,13 @@ public class TypeChannelBean {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getCartType() {
+        return cartType;
+    }
+
+    public void setCartType(String cartType) {
+        this.cartType = cartType;
     }
 }

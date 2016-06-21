@@ -3,10 +3,8 @@
  * 天猫产品概述（schema）
  */
 define([
-    'cms',
-    'underscore',
-    'modules/cms/enums/FieldTypes'
-],function(cms , _ , FieldTypes) {
+    'cms'
+],function(cms) {
     cms.directive("tmSchema", function ($routeParams, $rootScope, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
         return {
             restrict: "E",
@@ -17,7 +15,7 @@ define([
             scope: {
                 productId: "=productId"
             },
-            link: function (scope,element) {
+            link: function (scope) {
 
                 scope.vm = {
                     productDetails : null,
@@ -60,31 +58,21 @@ define([
                 // 保存所有的变更
                 scope.updateProductDetail = updateProductDetail;
                 function updateProductDetail () {
-                    // 尝试检查商品的 field 验证
-                    var invalidNames = validSchema(scope.vm.productDetails);
 
-                    if (invalidNames.length && scope.vm.productDetails.productStatus.approveStatus == 'Approved') {
-                        return alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
+                    if (!validSchema()&& scope.vm.productDetails.productStatus.approveStatus == 'Approved') {
+                        return alert("保存失败，请查看schema的属性是否填写正确！");
                     }
 
-                    // 推算产品状态
-                    //// 如果该产品以前不是approve,这次变成approve的
-                    //if (self.productDetails.productStatus.statusInfo.isApproved
-                    //    && !self.productDetailsCopy.productStatus.statusInfo.isApproved)
-                    //    self.productDetails.productStatus.approveStatus = Status.APPROVED;
-                    //// 变成ready,或者以前是approve这次数据发生变化的
-                    //else if (self.productDetails.productStatus.statusInfo.isWaitingApprove
-                    //    || (self.productDetails.productStatus.statusInfo.isApproved
-                    //    && self.productDetailsCopy.productStatus.statusInfo.isApproved
-                    //    && self.productDetails != self.productDetailsCopy))
-                    //    self.productDetails.productStatus.approveStatus = Status.READY;
+                    /**推算产品状态
+                       如果该产品以前不是approve,这次变成approve的
+                       变成ready,或者以前是approve这次数据发生变化的*/
+
 
                     productDetailService.updateProductDetail(scope.vm.productDetails)
                         .then(function (res) {
                             scope.vm.productDetails.modified = res.modified;
                             scope.vm.productDetails.productStatus.approveStatus = res.approveStatus;
                             scope.vm.productDetails.productStatus.isApproved = res.isApproved;
-                            //self.productDetailService._setProductStatus(self.productDetails.productStatus);
                             scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         });
@@ -132,19 +120,6 @@ define([
                                     notify("有商品处于上新状态,不能切换类目");
                             })
                         });
-
-                    // TODO 弹出新的popup画面,展示主类目预览
-                    //this.feedMappingService.setMapping({
-                    //    from: context.from,
-                    //    to: context.selected.catPath
-                    //}).then(function (res) {
-                    //    // 从后台获取更新后的 mapping
-                    //    // 刷新数据
-                    //    var feedCategoryBean = this.findCategory(context.from);
-                    //    feedCategoryBean.mapping = _.find(res.data, function (m) {
-                    //        return m.defaultMapping === 1;
-                    //    });
-                    //}.bind(this));
                 }
 
                 scope.openProImageSetting = openProImageSetting;
@@ -160,7 +135,6 @@ define([
                     scope.vm.tempImage[context.imageType].push(context.base64);
 
                     scope.vm.productDetails = context.productInfo;
-                    //self.productDetailService._setProductStatus(self.productDetails.productStatus);
                     scope.vm._orgChaName = context.orgChaName;
                     scope.vm._isminimall = context.isminimall;
                     scope.vm._isMain = context.isMain;
@@ -169,49 +143,16 @@ define([
                     scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady
                 }
 
-                /**
-                 * 验证一组字段, 是否通过了 ng-form 验证
-                 * @param {object|Array} fields
-                 * @returns Array.<Field>
-                 */
-                function validFields(fields) {
-                    return _.filter(fields, function (field) {
-                        if (field.form && field.type === FieldTypes.multiComplex) {
-                            return !field.complexValues.some(function (value) {
-                                if (!value.fieldMap) return false;
-                                return !validFields(value.fieldMap).length;
-                            });
-                        }
-                        // 如果是复杂类型, 并且启用了检查, 那么就递归
-                        if (field.form && field.type === FieldTypes.complex)
-                            return validFields(field.fields).length;
-                        // 简单类型就直接检查
-                        return field.$valid === false;
-                    });
+                scope.pageAnchor = pageAnchor;
+                function pageAnchor(index,speed){
+                    var offsetTop = 0;
+                    if(index != 1)
+                        offsetTop = ($("#tm"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
                 }
 
-                /**
-                 * 验证商品 Schema, 返回无效的属性名
-                 * @param schema
-                 * @returns Array.<String>
-                 */
-                function validSchema(schema) {
-                    var skuValues = schema.skuFields.complexValues;
-                    var hasSkuValues = skuValues && skuValues.length;
-                    var invalid = [];
-
-                    if (hasSkuValues) invalid = skuValues.reduce(function(arr, value) {
-                        if (!value.fieldMap) return;
-                        return arr.concat(validFields(value.fieldMap));
-                    }, invalid);
-
-                    invalid = invalid.concat(validFields(schema.masterFields));
-
-                    return invalid.reduce(function (arr, item) {
-                        if (arr.indexOf(item.name) < 0)
-                            arr.push(item.name);
-                        return arr;
-                    }, []);
+                function validSchema(){
+                    return scope.vm.productDetails == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
             }
         };

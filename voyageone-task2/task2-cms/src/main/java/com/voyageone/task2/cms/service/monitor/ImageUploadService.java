@@ -328,24 +328,35 @@ public class ImageUploadService extends AbstractFileMonitoService {
             CmsBtProductModel_Field fields = model.getFields();
             code = fields.getCode();
 
-            /* change fileds.images */
+            /* change fields.images */
             List<Map<String, Object>> images = new CopyOnWriteArrayList<>();
             if (!ObjectUtils.isEmpty(fields.get(modifyDirName))) {
                 images = new CopyOnWriteArrayList<>(JacksonUtil.jsonToMapList(fields.get(modifyDirName).toString()));
 
                 // 只有一张图片,并且该图片的值为空的时候,删除其对应的图片信息
-                if (images.size() == 1)
-                    for (Map<String, Object> image : images) {
-                        if (StringUtils.isEmpty(String.valueOf(image.get(modifyDirName.replace("s", "")))))
-                            images.remove(image);
+                // 修改为 如果Map的Value值为空 删除其对应的图片信息 liang
+                for (Map<String, Object> imageMap : images) {
+                    boolean isNeedRemove = true;
+                    if (imageMap != null && !imageMap.isEmpty()) {
+                        for (Map.Entry entry : imageMap.entrySet()) {
+                            if (entry.getValue() != null && !StringUtils.isEmpty(((String) entry.getValue()).trim())) {
+                                isNeedRemove = false;
+                                break;
+                            }
+                        }
                     }
-
+                    if (isNeedRemove) {
+                        images.remove(imageMap);
+                    }
+                }
             }
+
             // 图片存在，返回
             for (Map<String, Object> img : images) {
                 if (uploadFileName.equals(img.get(modifyDirName)))
                     return;
             }
+
             //加入图片
             images.add(new HashMap<String, Object>() {{
                 put(modifyDirName.replace("s", ""), uploadFileName.split("\\.")[0]);
@@ -363,6 +374,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
                     }
                 }
             }
+
             //去除重复
             Set<Map<String, Object>> sets = new HashSet<>();
             for (Map<String, Object> map : images) {

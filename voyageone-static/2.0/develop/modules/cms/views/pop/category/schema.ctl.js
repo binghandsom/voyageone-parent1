@@ -99,7 +99,7 @@ define([
                     context.field[key] = $scope.vm.schema[key];
                 }
             } else if ($scope.addOrEditFlg == 0) {
-                if(context.field.fields[context.field.fields.length-1].name == "SKU" || context.field.fields[context.field.fields.length-1].name == "sku"){
+                if(context.field.fields.length > 0 && (context.field.fields[context.field.fields.length-1].name == "SKU" || context.field.fields[context.field.fields.length-1].name == "sku")){
                     context.field.fields.splice(context.field.fields.length-2,0,$scope.vm.schema);
                 }else{
                     context.field.fields.push($scope.vm.schema);

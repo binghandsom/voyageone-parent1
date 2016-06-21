@@ -2,9 +2,6 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +42,23 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("fields", fields);
     }
 
-    public List<CmsBtProductModel_Sku> getSkus() {
+    public List<CmsBtProductModel_CommonSku> getSkus() {
         return getAttribute("skus");
     }
 
-    public void setSkus(List<CmsBtProductModel_Sku> skus) {
+    public void setSkus(List<CmsBtProductModel_CommonSku> skus) {
         setAttribute("skus", skus);
+    }
+
+    public CmsBtProductModel_CommonSku getSku(String skuCode) {
+        if (skuCode != null && getSkus() != null) {
+            for (CmsBtProductModel_CommonSku sku : getSkus()) {
+                if (skuCode.equals(sku.getSkuCode())) {
+                    return sku;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -75,14 +83,14 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         if (SKUS.equals(key)) {
             if (value != null) {
                 List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
-                List<CmsBtProductModel_Sku> skus = new ArrayList<>();
+                List<CmsBtProductModel_CommonSku> skus = new ArrayList<>();
                 for (Map<String, Object> map : imageMaps) {
                     if (map != null) {
-                        CmsBtProductModel_Sku sku;
-                        if (map instanceof CmsBtProductModel_Sku) {
-                            sku = (CmsBtProductModel_Sku) map;
+                        CmsBtProductModel_CommonSku sku;
+                        if (map instanceof CmsBtProductModel_CommonSku) {
+                            sku = (CmsBtProductModel_CommonSku) map;
                         } else {
-                            sku = new CmsBtProductModel_Sku();
+                            sku = new CmsBtProductModel_CommonSku();
                             sku.putAll(map);
                         }
                         skus.add(sku);

@@ -110,6 +110,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected String promotionTag;
 
+    /**
+     * 延期状态:   0:未更新 1：待更新  2：已经更新 3：更新失败
+     */
+    protected Integer dealEndTimeStatus;
+
     public String getChannelId() {
         return channelId;
     }
@@ -260,5 +265,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setPromotionTag(String promotionTag) {
         this.promotionTag = promotionTag == null ? null : promotionTag.trim();
+    }
+
+    public Integer getDealEndTimeStatus() {
+        return dealEndTimeStatus;
+    }
+
+    public void setDealEndTimeStatus(Integer dealEndTimeStatus) {
+        this.dealEndTimeStatus = dealEndTimeStatus;
     }
 }

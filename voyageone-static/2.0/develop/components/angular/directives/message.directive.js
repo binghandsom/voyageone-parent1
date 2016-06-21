@@ -40,8 +40,6 @@ angular.module("voyageone.angular.directives")
             },
             link: function (scope, elem, attrs, formController) {
 
-                var fieldName, formName, targetElement;
-
                 function show(message) {
                     scope.$message = message;
                     elem.fadeIn();
@@ -50,18 +48,13 @@ angular.module("voyageone.angular.directives")
                 function hide() {
                     elem.fadeOut();
                 }
-
-                if (!scope.target) {
-                    console.error('target undefined');
-                    return;
-                }
-
-                fieldName = scope.target.$name;
-                formName = formController.$name;
                 
-                // 这一步可能获取的并不准确
-                // 因为元素的 name 有可能重复
-                targetElement = $('form[name="' + formName + '"] [name="' + fieldName + '"]');
+                var formName;
+
+                // 初始化时保持隐藏
+                elem.hide();
+
+                formName = formController.$name;
 
                 // 对指定 form 下字段的错误信息进行监视
                 // 如果有变动, 就显示第一个错误的提示信息
@@ -69,10 +62,19 @@ angular.module("voyageone.angular.directives")
 
                     function ($error) {
 
+                        if (!$error) return;
+
                         // 取所有错误的 angular 错误名称, 如 required
                         var errorKeys = Object.keys($error);
+
+                        var elementName = scope.target.$name;
+
+                        // 这一步可能获取的并不准确
+                        // 因为元素的 name 有可能重复
+                        var targetElement = $('form[name="' + formName + '"] [name="' + elementName + '"]');
+
                         // 如果有友好名称的话, 就用友好的
-                        var translateParam = {field: targetElement.attr('title') || fieldName};
+                        var translateParam = {field: targetElement.attr('title') || elementName};
 
                         // 取第一个
                         var error = errorKeys[0];
@@ -84,8 +86,8 @@ angular.module("voyageone.angular.directives")
                         }
 
                         // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'max', 'min'].indexOf(error) > -1) {
-                            translateParam.length = targetElement.attr(error);
+                        if (['maxlength', 'minlength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                            translateParam.value = targetElement.attr(error);
                         }
 
                         // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes

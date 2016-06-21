@@ -148,10 +148,11 @@ define([
         function resetSearchInfo (data) {
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
-
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
+            if (searchInfo.hasErrorFlg) {
+                searchInfo.hasErrorFlg = 1;
+            }
 
-            searchInfo.labelType = _returnKey(searchInfo.labelType);
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;
@@ -212,7 +213,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 groupInfo.commArr = commArr;
                 var custArr = [];
@@ -282,10 +283,10 @@ define([
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = productInfo.common.fields[data.propId];
-                    if (itemVal == undefined) {
+                    if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 productInfo.commArr = commArr;
 
@@ -293,7 +294,7 @@ define([
                 _.forEach(customProps, function (data) {
                     var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
                     var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined) {
+                    if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
                     custArr.push({value: itemVal});
@@ -307,12 +308,12 @@ define([
                     var dotIdx = selValue.indexOf(".", 6);
                     var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
                     var itemVal = null;
-                    if (itemValObj == undefined) {
+                    if (itemValObj == undefined || itemValObj == null) {
                         itemVal = "0";
                     } else {
                         dotIdx = selValue.lastIndexOf(".");
                         itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined) {
+                        if (itemVal == undefined || itemVal == null) {
                             itemVal = "0";
                         }
                     }
@@ -334,18 +335,20 @@ define([
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
                         } else {
-                            if (data.pStatus == 'OnSale') {
-                                cssVal = 'DeepSkyBlue';
-                            } else if (data.pStatus == 'InStock') {
-                                cssVal = 'Orange';
-                            } else if (data.pStatus == 'WaitingPublish') {
-                                if (data.status == 'Ready') {
-                                    cssVal = 'yellow';
-                                } else if (data.status == 'Approved') {
-                                    cssVal = 'YellowGreen';
+                            if (data.status == 'Approved') {
+                                if (data.pStatus == 'OnSale') {
+                                    cssVal = 'DeepSkyBlue';
+                                } else if (data.pStatus == 'InStock') {
+                                    cssVal = 'Orange';
+                                } else if (data.pStatus == 'WaitingPublish') {
+                                    cssVal = 'Chocolate';
                                 } else {
-                                    cssVal = 'DarkGray';
+                                    cssVal = 'YellowGreen';
                                 }
+                            } else if (data.status == 'Ready') {
+                                cssVal = 'yellow';
+                            } else {
+                                cssVal = 'DarkGray';
                             }
                         }
                         if (cssVal) {
@@ -366,7 +369,11 @@ define([
                             if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
                                 data._purl = '';
                             } else {
-                                data._purl = cartInfo.pUrl + data.numiid;
+                                if (data.cartId == 27) {
+                                    data._purl = cartInfo.pUrl + data.numiid + '.html';
+                                } else {
+                                    data._purl = cartInfo.pUrl + data.numiid;
+                                }
                             }
                             data._pname = cartInfo.name;
                         }
@@ -440,7 +447,7 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON') + " ", object.priceMsrpSt, object.priceMsrpEd);
+            var tempMsrpDetail = _setOnePriceDetail("", object.priceMsrpSt, object.priceMsrpEd);
             if (!_.isNull(tempMsrpDetail)) {
                 result.push(tempMsrpDetail);
             } else {
@@ -448,7 +455,7 @@ define([
             }
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON') + " ", object.priceRetailSt, object.priceRetailEd);
+            var tempRetailPriceDetail = _setOnePriceDetail("", object.priceRetailSt, object.priceRetailEd);
             if (!_.isNull(tempRetailPriceDetail)) {
                 result.push(tempRetailPriceDetail);
             } else {
@@ -483,7 +490,7 @@ define([
             }
             if (object) {
                 _.forEach(object, function (data) {
-                    if (data == null || data == undefined) {
+                    if (data == null || data == undefined || data.skus == null || data.skus == undefined) {
                         return;
                     }
                     var priceItem = '';

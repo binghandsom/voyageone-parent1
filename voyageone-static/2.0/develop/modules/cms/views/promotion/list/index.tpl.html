@@ -74,6 +74,7 @@
 							<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 							<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_PROMOTION' | translate}}</button>
+							<button class="btn btn-success" ng-click="openJmPromotionDetail({search:search})"><i class="fa fa-plus"></i>&nbsp;新增聚美专场</button>
 							<button class="btn btn-primary" ng-click="openMrbStock('lg',vm.groupSelList)"><i class="fa fa-plus"></i>&nbsp;{{'TXT_SEPARATE_NEW_TASK'|translate}}</button>
 						</div><!-- .form-inline -->
 					</div>
@@ -88,9 +89,9 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
-					<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-						{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
-					</th>
+					<!--<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">-->
+						<!--{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>-->
+					<!--</th>-->
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
 					<th class="text-left" translate="TXT_STATUS"></th>
@@ -104,16 +105,19 @@
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : 0}">
-					<td class="text-left mfb-x">
-						<label class="checkbox-inline c-checkbox">
-							<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
-							<span class="fa fa-check"></span>
-						</label>
-					</td>
+					<!--<td class="text-left mfb-x">-->
+						<!--<label class="checkbox-inline c-checkbox">-->
+							<!--<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">-->
+							<!--<span class="fa fa-check"></span>-->
+						<!--</label>-->
+					<!--</td>-->
 					<td class="text-center">{{promotion.id}}</td>
-					<td class="text-left yellowLink"><a href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
+					<td class="text-left yellowLink">
+						<a ng-if="promotion.cartId != '27'" href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>
+						<a ng-if="promotion.cartId == '27'" href="#/jm/promotion_detail_list/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
+						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
-					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'?promotion.cartName:'US Joi'}}</td>
+					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'? promotion.cartName:'US Joi'}}</td>
 					<td class="text-left">{{promotion.activityStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.activityEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.preSaleStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.preSaleEnd | date:'yyyy-MM-dd'}}</td>
@@ -132,9 +136,14 @@
 						</div>
 					</td>
 					<td class="text-center" ng-controller="popupCtrl">
-						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i></button>
+						<button ng-if="promotion.cartId != '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
+								ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i>
+						</button>
+						<button ng-if = "promotion.cartId == '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
+								ng-click="openJmPromotionDetail({id:promotion.promotionId,search:search})"><i class="fa fa-pencil"></i>
+						</button>
 						<button ng-if = "currentChannelId == '997' || promotion.channelId != '997'" ng-disabled="promotion.promotionStatus" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
+						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-danger btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
 					</td>
 				</tr>
 				</tbody>

@@ -70,6 +70,9 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findById(id, entityClass, getCollectionName(channelId));
     }
 
+    /**
+     * 使用此方法时必须注意，此处只会更新符合条件的第一条数据
+     */
     public T findAndModify(JomgoUpdate updateObject, String channelId) {
         return mongoTemplate.findAndModify(updateObject, entityClass, getCollectionName(channelId));
     }
@@ -103,8 +106,16 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(channelId));
     }
 
+    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateFirst(updObj, getCollectionName(channelId));
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateMulti(updObj, getCollectionName(channelId));
+    }
+
     /**
-     * 根据条件更新指定值
+     * 根据条件更新指定值 （推荐使用updateFirst()/updateMulti()）
      * @param channelId String
      * @param paraMap 更新条件
      * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
@@ -159,7 +170,9 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
                 if ("$set".equals(key)) {
                     updateContent.putAll(modifierObj.toMap());
                 } else {
-                    updateObj.append("$set", modifierObj);
+                    if (!modifierObj.isEmpty()) {
+                        updateObj.append("$set", modifierObj);
+                    }
                 }
                 updateObj.append(key, updateContent);
 
@@ -186,5 +199,32 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         BasicDBObject result = new BasicDBObject();
         result.putAll(map);
         return result;
+    }
+
+    /**
+     * 聚合查询
+     * @return List<Map> 返回的Map数据结构和aggregate语句对应
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToMap(channelId, aggregates);
+    }
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(String channelId, JomgoAggregate... aggregates) {
+        return (List<Map<String, Object>>) aggregateToObj(Map.class, getCollectionName(channelId), aggregates);
+    }
+
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(String channelId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToObj(channelId, aggregates);
+    }
+    public List<T> aggregateToObj(String channelId, JomgoAggregate... aggregates) {
+        return aggregateToObj(entityClass, getCollectionName(channelId), aggregates);
     }
 }

@@ -80,27 +80,29 @@
 					<thead>
 					<tr>
 						<th class="mfb-xt text-center" translate="TXT_SEQ"></th>
-						<th class="mfb-xxs text-left" translate="TXT_PRODUCT_NAME"></th>
+						<th class="mfb-xt text-left" translate="TXT_CART_NAME"></th>
+						<th class="mfb-xt text-left" translate="TXT_PRODUCT_NAME"></th>
 						<th class="mfb-xxs text-left" translate="TXT_ERROR_MESSAGE"></th>
-						<th class="mfb-xxx text-left" translate="TXT_ERROR_CREATE_TIME"></th>
-						<th class="mfb-x text-center" translate="TXT_ERROR_IS_FIX"></th>
+						<th class="mfb-xt text-left" translate="TXT_ERROR_CREATE_TIME"></th>
+						<th class="mfb-xt text-center" translate="TXT_ERROR_IS_FIX"></th>
 					</tr>
 					</thead>
 					<tbody ng-if="vm.errorList.length">
 					<tr ng-repeat="errorInfo in vm.errorList track by errorInfo.id">
 						<td class="mfb-xt text-center" ng-bind="::errorInfo.id"></td>
-						<td class="mfb-xxs text-left text-u-l">
+						<th class="mfb-xt text-left" ng-bind="::errorInfo.cartName"></th>
+						<td class="mfb-xt text-left text-u-l">
 							<a target='cms-error-detail'
 							   ng-if="errorInfo.productId"
-							   ng-href="#/product/detail/{{::errorInfo.productId}}">
+							   ng-href="#/product/detail/{{::errorInfo.productId}}{{errorInfo.cartId?'/'+errorInfo.cartId:''}}">
 								<span ng-bind="::errorInfo.code"></span><br/><span ng-bind="::errorInfo.productName"></span>
 							</a>
 						</td>
 						<td class="mfb-xxs text-left">
                             <span ng-bind="::errorInfo.errorCode"></span><br/><span ng-bind="::errorInfo.errorMsg"></span>
                         </td>
-						<td class="mfb-xxx text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
-						<td class="mfb-x text-left">
+						<td class="mfb-xt text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
+						<td class="mfb-xt text-left">
 							<div class="onoffswitch">
 								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{errorInfo.id}}"
                                        ng-change="updateFinishStatus(errorInfo.id)"

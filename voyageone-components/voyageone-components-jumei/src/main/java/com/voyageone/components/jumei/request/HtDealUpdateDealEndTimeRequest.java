@@ -1,6 +1,11 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.DateTimeUtil;
+
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +20,7 @@ public class HtDealUpdateDealEndTimeRequest implements BaseJMRequest {
 
     private String url = "/v1/htDeal/updateDealEndTime";
     private String jumei_hash_id;
-    private long end_time;//Number 售卖结束时间    参数范围: 注:
+    private Date end_time;//Number 售卖结束时间    参数范围: 注:
 
     @Override
     public String getUrl() {
@@ -34,11 +39,11 @@ public class HtDealUpdateDealEndTimeRequest implements BaseJMRequest {
         this.jumei_hash_id = jumei_hash_id;
     }
 
-    public long getEnd_time() {
+    public Date getEnd_time() {
         return end_time;
     }
 
-    public void setEnd_time(long end_time) {
+    public void setEnd_time(Date end_time) {
         this.end_time = end_time;
     }
 
@@ -46,7 +51,22 @@ public class HtDealUpdateDealEndTimeRequest implements BaseJMRequest {
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_hash_id", jumei_hash_id);
-        params.put("end_time", Long.toString(end_time));
+        params.put("end_time", Long.toString(getTime(end_time)));//DateTimeUtil.format(end_time,"yyyy-MM-dd HH:mm:ss"));//DateTimeUtil.format(end_time,"yyyy-MM-dd HH:mm:ss"));
         return params;
+    }
+
+    private static Long getTime(Date d) {
+        return d.getTime() / 1000;// - 8 * 3600;
+        //Calendar now = Calendar.getInstance();
+        // 取得系统时间和格林威治时间之间的偏移值
+       // int diffsecond = now.getTimeZone().getRawOffset();
+        // d.getTime() currentTimeMillis
+        // Returns the number of milliseconds since January 1, 1970, 00:00:00 GMT represented by this Date object.
+        //  DateTimeUtil.getLocalTime(d,8);
+       // if (diffsecond == 0) {
+           // return d.getTime() / 1000;// - 8 * 3600;
+//        } else {
+//            return d.getTime() / 1000;
+//        }
     }
 }

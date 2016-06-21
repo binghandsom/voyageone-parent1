@@ -8,28 +8,21 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/Status',
-    'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
     './tm.component.ctl',
     './feed.component.ctl'
-], function (cms, _, Status, FieldTypes) {
+], function (cms) {
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $rootScope, $translate, productDetailService, feedMappingService, notify, confirm, alert , menuService) {
+        function ProductDetailController($routeParams, $translate, menuService) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
-            this.$rootScope = $rootScope;
-            this.productDetailService = productDetailService;
-            this.feedMappingService = feedMappingService;
-            this.notify = notify;
-            this.confirm = confirm;
-            this.alert = alert;
             this.menuService = menuService;
+            this.defaultCartId = 0;
             this.platformTypes = null;
         }
 
@@ -41,9 +34,11 @@ define([
                 self.menuService.getPlatformType().then(function(resp){
                     self.platformTypes = resp;
                 });
+
+                this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
-                return item.value > 23;
+                return item.value > 23 && item.value < 900;
             }
 
         };

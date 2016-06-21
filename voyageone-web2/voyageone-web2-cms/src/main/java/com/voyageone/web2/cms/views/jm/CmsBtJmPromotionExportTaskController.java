@@ -40,8 +40,8 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
     @Autowired
     private MqSender sender;
 
-    ///cms/CmsBtJmPromotionExportTask/index/getByPromotionId
-    //  @RequestMapping( value = "/cms/CmsBtJmPromotionExportTask/index/getByPromotionId", method = RequestMethod.POST)//CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
+    ///cms/CmsBtJmPromotionExportTask/index/selectByPromotionId
+    //  @RequestMapping( value = "/cms/CmsBtJmPromotionExportTask/index/selectByPromotionId", method = RequestMethod.POST)//CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
     // @ResponseBody
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
     @ResponseBody

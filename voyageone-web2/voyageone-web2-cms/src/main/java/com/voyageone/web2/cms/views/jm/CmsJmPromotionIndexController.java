@@ -3,6 +3,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
+import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -63,5 +64,16 @@ public class CmsJmPromotionIndexController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetTagListByPromotionId)
     public AjaxResponse getTagListByPromotionId(@RequestBody int promotionId) {
         return success(service3.getTagListByPromotionId(promotionId));
+    }
+
+    @Autowired
+    JmBtDealImportService serviceJmBtDealImport;
+
+    //"/cms/jmpromotion/index/importJM"
+    @RequestMapping(value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ImportJM, method = RequestMethod.GET)
+    public Object importChannel(@RequestParam("channelId") String channelId) {
+        // return success(service3.getTagListByPromotionId(promotionId));
+        return serviceJmBtDealImport.importJM(channelId);
+        // return "true";
     }
 }

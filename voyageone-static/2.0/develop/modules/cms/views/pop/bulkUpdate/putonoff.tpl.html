@@ -11,12 +11,12 @@
                 <div class="col-sm-12">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <div class="col-sm-8 col-sm-offset-2">
+                            <div class="col-sm-8 col-sm-offset-2 text-center">
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="choice" value="1" ng-model="ctrl.choose.putOn"><span class="fa fa-check"></span> &nbsp;{{'TXT_PUT_ON'|translate}}
+                                    <input type="radio" name="choice" value="1" ng-model="vm.property.putFlg"><span class="fa fa-check"></span> &nbsp;{{'TXT_PUT_ON'|translate}}
                                 </label>
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="choice" value="-1" ng-model="ctrl.choose.putOff"><span class="fa fa-check"></span> &nbsp;{{'TXT_PUT_OFF'|translate}}
+                                    <input type="radio" name="choice" value="0" ng-model="vm.property.putFlg"><span class="fa fa-check"></span> &nbsp;{{'TXT_PUT_OFF'|translate}}
                                 </label>
                             </div>
                         </div>

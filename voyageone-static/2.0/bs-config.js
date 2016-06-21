@@ -20,6 +20,8 @@ module.exports = {
                 }
 
                 req.pipe(request(proxy + req.url)).pipe(res);
+
+                console.log((proxy + req.url));
             },
             /**
              * 如果 index 设置无效, 最终会通过该中间件跳转

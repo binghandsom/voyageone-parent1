@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsFieldEditService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import net.minidev.json.JSONArray;
@@ -44,7 +45,7 @@ public class CmsPropChangeServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
         userInfo.setUserName("test");
-        cmsPropChangeService.setProductFields(params, userInfo, 1);
+        cmsPropChangeService.setProductFields(params, userInfo, 1, new CmsSessionBean());
         assert true;
     }
 

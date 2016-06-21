@@ -2,11 +2,10 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.configs.Enums.CartEnums;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
@@ -163,9 +162,11 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
 
     //carts
+    @Deprecated
     public List<CmsBtProductModel_Carts> getCarts() {
         return carts;
     }
+    @Deprecated
     public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
         this.carts = productCarts;
     }
@@ -198,12 +199,18 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private final static String  PLATFORM_CART_PRE = "P";
     //platform
     public CmsBtProductModel_Platform_Cart getPlatform(int cartId) {
+        if (platforms == null) {
+            return null;
+        }
         return platforms.get(PLATFORM_CART_PRE + cartId);
     }
     public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
+        if (platforms == null) {
+            return null;
+        }
         return platforms.get(PLATFORM_CART_PRE + cartType.getId());
     }
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
@@ -218,4 +225,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.sales = sales;
     }
 
+    /**
+     * TODO-- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须删除
+     */
+    @Deprecated
+    public List<Integer> getCartIdList() {
+        if (platforms == null || platforms.isEmpty()) {
+            return new ArrayList<>(0);
+        }
+        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).collect(Collectors.toList());
+    }
 }

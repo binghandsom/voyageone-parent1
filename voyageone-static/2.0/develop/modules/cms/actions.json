@@ -71,7 +71,8 @@
         "getProductPlatform":"getProductPlatform",
         "changePlatformCategory":"changePlatformCategory",
         "updateProductPlatform":"updateProductPlatform",
-        "updateProductPlatformChk":"updateProductPlatformChk"
+        "updateProductPlatformChk":"updateProductPlatformChk",
+        "updateProductFeed":"updateProductFeed"
       }
     },
     "mapping": {
@@ -155,14 +156,14 @@
       },
       "jmPromotionProductAddService": {
         "root": "/cms/jm/promotion/product/",
-        "add": "add"
+        "add": "add",
+        "getPromotionTags": "getPromotionTags"
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
         "delete": "delete",
-        "updateDealPrice": "updateDealPrice",
         "deleteByPromotionId": "deleteByPromotionId",
         "deleteByProductIdList": "deleteByProductIdList",
         "jmNewUpdateAll": "jmNewUpdateAll",

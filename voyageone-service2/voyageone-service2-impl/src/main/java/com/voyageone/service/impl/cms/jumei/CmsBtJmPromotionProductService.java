@@ -15,16 +15,12 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
-import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,18 +58,23 @@ public class CmsBtJmPromotionProductService {
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
-        return daoExt.getListByWhere(map);
+        return daoExt.selectListByWhere(map);
     }
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        return daoExt.getPageByWhere(map);
+        return daoExt.selectPageByWhere(map);
     }
 
     public int getCountByWhere(Map<String, Object> map) {
-        return daoExt.getCountByWhere(map);
+        return daoExt.selectCountByWhere(map);
     }
 
     public int delete(int id) {
+      CmsBtJmPromotionProductModel modelProduct=dao.select(id);
+        if(modelProduct.getSynchStatus()==2)
+        {
+            return 0;
+        }
         return dao.delete(id);
     }
 
@@ -110,6 +111,9 @@ public class CmsBtJmPromotionProductService {
 
     //所有未上心商品上新
     public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
+        daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
         return daoExt.updateDealEndTimeAll(parameter);
     }
 

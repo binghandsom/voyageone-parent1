@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("feedSchema", function ($routeParams, $rootScope, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
+    cms.directive("feedSchema", function ($routeParams, $rootScope, $translate, productDetailService, notify) {
         return {
             restrict: "E",
             replace: false,
@@ -48,6 +48,13 @@ define([
                         })
                 }
 
+                scope.updateFeed = updateFeed;
+                function updateFeed(){
+                    productDetailService.updateProductFeed(scope.vm.productDetails).then(function(res){
+                        scope.vm.productDetails.modified = res.modified;
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    });
+                }
             }
         };
     });

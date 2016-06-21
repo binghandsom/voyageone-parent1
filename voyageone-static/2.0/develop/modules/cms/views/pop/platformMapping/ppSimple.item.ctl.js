@@ -307,6 +307,9 @@ define([
                 var word = null;
                 var value = this.selected.value;
 
+                if (!value)
+                    return null;
+
                 // 再根据类型加载
                 switch (this.selected.valueFrom) {
                     case froms.MASTER:
@@ -347,11 +350,17 @@ define([
             },
 
             ok: function () {
-                this.$modal.close(
-                    this.selected.fixedValue
-                        ? this.getTextWord()
-                        : this.getWordByFrom()
-                );
+
+                var word = this.selected.fixedValue
+                    ? this.getTextWord()
+                    : this.getWordByFrom();
+
+                if (!word || !word.value) {
+                    this.alert('TXT_NO_DATA');
+                    return;
+                }
+
+                this.$modal.close(word);
             },
 
             cancel: function () {

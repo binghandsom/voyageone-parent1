@@ -3,34 +3,26 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;{{'TXT_TAG_FREE'|translate}}&nbsp;</span></h5>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;{{'TXT_TAG_MANAGEMENT'|translate}}&nbsp;</span></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal m-b-md ng-pristine ng-valid">
             <div class="form-group">
                 <div class="col-sm-12">
-                    <div class="box" ng-controller="popupCtrl">
+                    <div class="box">
                     <!---------------------------------------Tag one-------------------------------------->
                     <div class="category_drag col-sm-4">
                         <div class="category_drag_main">
                             <p class="text-center text-vo font-bold" translate="TXT_TAG_ONE"></p>
-
                             <div class="form-inline m-l-xs">
-
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[0]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(0)"><i class="fa fa-search"></i></button>
-                                <button type="submit" class="btn btn-success btn-xxs"
-                                        ng-click="newIndex.value = 0;openNewTag({first:true,tagSelectObject:selected[0],tagInfo:vm,save:save})">
-                                    <i class="fa fa-plus"></i></button>
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(0)"><i class="fa fa-search"></i></button>
                             </div>
                             <div class="category_drag_list_dp" style="height:260px;">
                                 <ul>
-                                    <li ng-repeat="tag1 in tree[0]">
-                                        <a href="javascript:void(0)" ng-click="selected[0] = tag1;search(1);" ng-class="{indexSelected:selected[0] == tag1}">
+                                    <li ng-repeat="tag1 in ctrl.tree[0]">
+                                        <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
                                             <span>{{tag1.tagChildrenName}}</span>
-                                            <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                                    ng-show = tag1.isLeaf ng-click="delTag(tag1)">
-                                                <i class="fa  fa-trash-o"></i></button>
                                         </a>
                                     </li>
                                 </ul>
@@ -44,20 +36,14 @@
 
                             <div class="form-inline m-l-xs">
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[1]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(1)"><i class="fa fa-search"></i></button>
-                                <button type="submit" class="btn btn-success btn-xxs"
-                                        ng-click="newIndex.value = 1; openNewTag({first:false,tagSelectObject:selected[0],tagInfo:vm,save:save})">
-                                    <i class="fa fa-plus"></i></button>
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
-                                <li ng-repeat="tag2 in tree[1]">
-                                    <a href="javascript:void(0)" ng-click="selected[1] = tag2;search(2)"  ng-class="{indexSelected:selected[1] == tag2}">
+                                <li ng-repeat="tag2 in ctrl.tree[1]">
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"  ng-class="{indexSelected:ctrl.selected[1] == tag2}">
                                         <span>{{tag2.tagChildrenName}}</span>
-                                        <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                                ng-show = tag2.isLeaf ng-show="tagTwo.children.length" ng-click="delTag(tag2)">
-                                            <i class="fa  fa-trash-o"></i></button>
                                     </a>
                                 </li>
                             </ul>
@@ -70,33 +56,38 @@
 
                             <div class="form-inline m-l-xs">
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search(2)"><i class="fa fa-search"></i></button>
-                                <button type="submit" class="btn btn-success btn-xxs"
-                                        ng-click="newIndex.value = 2; openNewTag({first:false,tagSelectObject:selected[1],tagInfo:vm,save:save})">
-                                    <i class="fa fa-plus"></i></button>
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
                         <div class="category_drag_list_dp" style="height:260px;">
                             <ul>
-                                <li ng-repeat="tag3 in tree[2]">
-                                    <a href="javascript:void(0)" ng-click="selected[2] = tag3"  ng-class="{indexSelected:selected[2] == tag3}">
+                                <li ng-repeat="tag3 in ctrl.tree[2]">
+                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(2)"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
                                         <span>{{ tag3.tagChildrenName }}</span>
-                                        <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                                ng-show = tag3.isLeaf ng-click="delTag(tag3)">
-                                            <i class="fa  fa-trash-o"></i></button>
                                     </a>
                                 </li>
-
                             </ul>
                         </div>
                     </div>
+                    </div>
                 </div>
+                <div class="col-sm-12">
+                    <div class="category_ts">
+                        <p>{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}<span> {{ ctrl.tagPathName }} </span>
+                            <button class="btn btn-default btn-pop pull-right m-l-xs" ng-click="ctrl.clear()" ng-model="ctrl.count" style="margin-top: -5px;"><i class="fa fa-remove"></i>&nbsp;Clear</button>
+                            <button class="btn btn-success btn-pop pull-right" ng-click="ctrl.confirm()" ng-model="ctrl.count" style="margin-top: -5px;">点击添加此类目作为搜索条件</button>
+                        </p>
+                    </div>
+                    <div class="scroll-y custom_ts" style="max-height: 80px;">
+                        <span class="m-l-sm" style="color: #0a0a09">您已经选择了:</span>
+                        <label class="label label-info m-r-xs m-t-xs" ng-repeat=" selected in ctrl.selectdTagList" style="display: inline-block;">{{selected.tagPathName}}</label>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div><!-- .vo_modal -->

@@ -2,6 +2,8 @@ package com.voyageone.web2.cms.views.jm;
 
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmProductService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -9,12 +11,14 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,13 +40,34 @@ public class CmsJMController extends CmsController {
     private static final Logger log = LoggerFactory.getLogger(CmsJMController.class);
     @Resource
     CmsBtJmPromotionService service;
+    @Autowired
+    private TagService tagService;
 
     public static final class AddPromotionParam {
+
+
         CmsBtJmPromotionModel promotion = new CmsBtJmPromotionModel();
         List<Map<String, String>> products;
         Double discount=1.0; //正折扣不是 xxx% off
         Integer priceType=1; //默认用官方销售价计算
+        String tagName;
+        String tagId;
 
+        public String getTagName() {
+            return tagName;
+        }
+
+        public void setTagName(String tagName) {
+            this.tagName = tagName;
+        }
+
+        public String getTagId() {
+            return tagId;
+        }
+
+        public void setTagId(String tagId) {
+            this.tagId = tagId;
+        }
 
         public void setPriceType(Integer priceType) {
             this.priceType = priceType;
@@ -51,7 +76,6 @@ public class CmsJMController extends CmsController {
         public void setPromotion(CmsBtJmPromotionModel p) {
             this.promotion = p;
         }
-
 
         public Boolean hasDiscount() {
             return discount != null;
@@ -86,10 +110,7 @@ public class CmsJMController extends CmsController {
                 return Long.valueOf(bean.get("id"));
             }).collect(Collectors.toList());
         }
-//
-//        public void setDiscount(BigDecimal discount) {
-//            this.discount = discount;
-//        }
+
     }
 
 
@@ -98,11 +119,14 @@ public class CmsJMController extends CmsController {
 
         UserSessionBean user = getUser();
         try {
-            service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
+            Map<String,Object> response = new HashMap<>();
+            response.put("errlist",service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
                     param.discount,
                     param.priceType,
-                    user.getUserName());
-            return success(true);
+                    param.tagName,
+                    param.tagId,
+                    user.getUserName()));
+            return success(response);
         } catch (Exception e) {
             log.error("LOG00030:添加产品到聚美活动失败:参数"+new Gson().toJson(param), e);
             throw new BusinessException("添加产品到聚美活动失败,原因为:"+e.getMessage(), e);
@@ -113,6 +137,15 @@ public class CmsJMController extends CmsController {
     @RequestMapping("discounts")
     public AjaxResponse getDiscount() {
         return success(true);
+    }
+
+    @RequestMapping("promotion/product/getPromotionTags")
+    public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params){
+
+        //fix error by holysky
+        int tag_id = Integer.parseInt(String.valueOf(params.get("refTagId")));
+
+        return success(tagService.getListByParentTagId(tag_id));
     }
 
 }

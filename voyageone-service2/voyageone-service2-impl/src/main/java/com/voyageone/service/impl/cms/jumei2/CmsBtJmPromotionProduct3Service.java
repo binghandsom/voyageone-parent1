@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -45,11 +46,11 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        return daoExt.getPageByWhere(map);
+        return daoExt.selectPageByWhere(map);
     }
 
     public int getCountByWhere(Map<String, Object> map) {
-        return daoExt.getCountByWhere(map);
+        return daoExt.selectCountByWhere(map);
     }
 
     public int delete(int id) {
@@ -84,6 +85,7 @@ public class CmsBtJmPromotionProduct3Service {
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
             price = Double.toString(parameter.getPrice());
+            //parameter.setDiscount(BigDecimalUtil.divide(price));
         } else//折扣 0：市场价 1：团购价
         {
             if (parameter.getPriceType() == 1)//团购价 deal_price
@@ -138,10 +140,10 @@ public class CmsBtJmPromotionProduct3Service {
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
         CmsBtJmPromotionProductModel modelPromotionProduct = dao.select(promotionProductId);
-        CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.getByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
+        CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
         productViewBean.setModelJmPromotionProduct(modelPromotionProduct);
         productViewBean.setModelJmProduct(modelProduct);
-        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.getViewListByPromotionProductId(promotionProductId);
+        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId);
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }

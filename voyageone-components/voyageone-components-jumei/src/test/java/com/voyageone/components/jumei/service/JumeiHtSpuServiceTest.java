@@ -69,7 +69,7 @@ public class JumeiHtSpuServiceTest {
         // 商品自带条码(可选)
         request.setUpc_code("111021");
         // 规格(可选): FORMAL 正装 MS 中小样 OTHER 其他
-        request.setPropery("OTHER");
+        request.setProperty("OTHER");
         // 容量/尺寸(可选)
         request.setSize("45");
         // 型号/颜色(可选)

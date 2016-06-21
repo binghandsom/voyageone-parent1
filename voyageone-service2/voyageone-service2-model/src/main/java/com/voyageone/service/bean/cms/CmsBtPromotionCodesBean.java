@@ -3,6 +3,7 @@ package com.voyageone.service.bean.cms;
 import com.taobao.api.internal.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,15 +60,22 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private List<CmsBtPromotionSkuBean> skus;
 
-    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator) {
+    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
         super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());
         this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
 //        this.setProductName(productInfo.getFields().getProductNameEn());
-        this.setSalePrice(productInfo.getFields().getPriceSaleEd());
-        this.setRetailPrice(productInfo.getFields().getPriceRetailEd());
-        this.setMsrp(productInfo.getFields().getPriceMsrpEd());
+        CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(cartId);
+        if (ptfObj == null) {
+            return;
+        }
+        if (ptfObj.getSkus() == null || ptfObj.getSkus().isEmpty()) {
+            return;
+        }
+        this.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
+        this.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
+        this.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));
     }
 
     public CmsBtPromotionCodesBean() {

@@ -15,6 +15,7 @@ public final class MongoUtils {
      * @param compareType
      * @return
      */
+    @Deprecated //此方法有待完善，推荐使用jongo的模板查询方式
     public static String splicingValue(String itemName, Object obj, String... compareType) {
 
         // 如果obj不为空才执行判断
@@ -70,15 +71,43 @@ public final class MongoUtils {
                         }
                     }
                     result.append("]");
+                } else if (compareType.length > 0 && "$nin".equals(compareType[0])) {
+                    result.append("{$nin:[");
+                    String[] options = (String[]) obj;
+
+                    for (int i = 0; i < options.length; i++) {
+                        if (options[i] == null) {
+                            if (i < options.length - 1) {
+                                result.append("null,");
+                            } else {
+                                result.append("null");
+                            }
+                        } else {
+                            if (i < options.length - 1) {
+                                result.append("\"" + options[i] + "\",");
+                            } else {
+                                result.append("\"" + options[i] + "\"");
+                            }
+                        }
+                    }
+                    result.append("]}");
                 } else {
                     result.append("{$in:[");
                     String[] options = (String[]) obj;
 
                     for (int i = 0; i < options.length; i++) {
-                        if (i < options.length - 1) {
-                            result.append("\"" + options[i] + "\",");
+                        if (options[i] == null) {
+                            if (i < options.length - 1) {
+                                result.append("null,");
+                            } else {
+                                result.append("null");
+                            }
                         } else {
-                            result.append("\"" + options[i] + "\"");
+                            if (i < options.length - 1) {
+                                result.append("\"" + options[i] + "\",");
+                            } else {
+                                result.append("\"" + options[i] + "\"");
+                            }
                         }
                     }
                     result.append("]}");

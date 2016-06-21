@@ -69,7 +69,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;sales;platforms;" +
-            "common.fields.longTitle;common.fields.productNameEn;common.fields.brand;common.fields.status;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+            "common.fields.productNameEn;common.fields.brand;common.fields.status;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceSaleSt;common.fields.priceSaleEd;common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
@@ -152,6 +152,9 @@ public class CmsAdvanceSearchService extends BaseAppService {
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
+        if ($isDebugEnabled()) {
+            $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", userInfo.getSelChannelId(), queryObject.toString()));
+        }
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
         if (prodList == null || prodList.isEmpty()) {
             $warn("CmsSearchAdvanceService.getProductCodeList prodList为空");
@@ -310,11 +313,11 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 返回当前页的group列表
      */
-    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int cartId) {
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
         StringBuilder resultPlatforms = new StringBuilder();
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cartId));
         resultPlatforms.append(",");
         resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
 

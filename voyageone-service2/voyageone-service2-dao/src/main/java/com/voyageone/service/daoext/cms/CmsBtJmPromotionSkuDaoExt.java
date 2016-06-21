@@ -13,30 +13,30 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionSkuDaoExt {
 
-    CmsBtJmPromotionSkuModel getBySkuCodeChannelIdCmsBtJmPromotionId(@Param("skuCode") String skuCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int CmsBtJmPromotionId);
+    CmsBtJmPromotionSkuModel selectBySkuCodeChannelIdCmsBtJmPromotionId(@Param("skuCode") String skuCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int CmsBtJmPromotionId);
 
-    List<Map<String, Object>> getJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
+    List<Map<String, Object>> selectJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
 
     int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
 
-    List getListCmsBtJmImportSkuByPromotionId(int promotionId);
+    List selectListCmsBtJmImportSkuByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
     int deleteByProductIdListInfo(ProductIdListInfo parameter);
 
     //jm2 begin                                                                                                                       cms_bt_jm_promotion_product_id
-    CmsBtJmPromotionSkuModel getBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId);
+    CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId);
 
-    List getExportListByPromotionId(int promotionId);
+    List selectExportListByPromotionId(int promotionId);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
-    List<SkuPriceBean> getJmSkuPriceInfoListByPromotionProductId(int promotionProductId);
+    List<SkuPriceBean> selectJmSkuPriceInfoListByPromotionProductId(int promotionProductId);
 
     int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
-    List getViewListByPromotionProductId(int promotionProductId);
+    List selectViewListByPromotionProductId(int promotionProductId);
     //jm2 end
 }

@@ -19,6 +19,10 @@ import java.util.TreeMap;
 
 /**
  * Created by sn3 on 2015-07-16.
+ *
+ * @author Ethan Shi
+ * @version 2.0.1
+ *
  */
 public class JmBase extends ComponentBase {
 
@@ -40,7 +44,10 @@ public class JmBase extends ComponentBase {
     }
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
-
+        if(shopBean==null)
+        {
+            throw  new  BusinessException("ShopBean不能为null");
+        }
         for (Object value : params.values()) {
             if (value != null) {
                 if (!(value instanceof String) && !(value instanceof NotSignString)) {
@@ -109,7 +116,15 @@ public class JmBase extends ComponentBase {
             if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
                 throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
             }
-        } else {
+        }
+        else if (result != null && result.contains("\"error_code\""))
+        {
+            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
+            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code"))) {
+                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
+            }
+        }
+        else {
             JMErrorResult res;
             try {
                 res = JsonUtil.jsonToBean(result, JMErrorResult.class);

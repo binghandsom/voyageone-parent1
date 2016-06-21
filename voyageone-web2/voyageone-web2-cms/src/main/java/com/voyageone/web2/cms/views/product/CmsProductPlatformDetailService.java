@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -134,8 +135,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         cmsBtProduct.getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null?0:skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
 
         if (cmsBtProduct.getCommon().getFields() != null) {
-            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus", cmsBtProduct.getCommon().getFields().getHsCodeStatus());
+            mastData.put("translateStatus", cmsBtProduct.getFields().getTranslateStatus());
+            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getFields().getHsCodePrivate())?0:1);
         }
         mastData.put("images", images);
         return mastData;
@@ -232,11 +233,16 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         if(platform.get("skus") !=null ) {
             CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
-            List<CmsBtProductModel_Sku> cmsBtProductModel_skus = cmsBtProduct.getSkus();
-            Map<String, Double> comPrice = cmsBtProductModel_skus.stream().
-                    collect(Collectors.toMap(CmsBtProductModel_Sku::getSkuCode, CmsBtProductModel_Sku::getPriceRetail));
+            List<BaseMongoMap<String, Object>> cmsBtProductModel_skus = cmsBtProduct.getPlatform((int)platform.get("cartId")).getSkus();
+
+            Map<String, Double> comPrice = new HashMap<>();
+            cmsBtProductModel_skus.forEach(item -> comPrice.put(item.getStringAttribute("skuCode"), item.getDoubleAttribute("priceRetail")));
+
             for (Map stringObjectBaseMongoMap : (List<Map<String, Object>>) platform.get("skus")) {
                 String sku = (String) stringObjectBaseMongoMap.get("skuCode");
+                if(stringObjectBaseMongoMap.get("priceSale") == null || StringUtil.isEmpty(stringObjectBaseMongoMap.get("priceSale").toString())){
+                    throw new BusinessException("价格不能为空");
+                }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
                     return "4000091";

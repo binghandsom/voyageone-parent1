@@ -17,6 +17,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Ima
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
@@ -115,7 +116,10 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             RuleExpression paddingExpression = customModuleUserParamGetMainPrductImages.getPaddingExpression();
             String paddingImageKey = expressionParser.parse(paddingExpression, shopBean, user, extParameter);
             if (paddingImageKey == null || "".equalsIgnoreCase(paddingImageKey)) {
-                return null;
+                // 20160618 tom 如果padding没有内容, 不返回空, 因为返回空的话, 整个wordList都为空了 START
+//                return null;
+                return "";
+                // 20160618 tom 如果padding没有内容, 不返回空, 因为返回空的话, 整个wordList都为空了 END
             }
             String paddingImage;
             if(imageTemplate != null){
@@ -156,8 +160,18 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
 //            }
         }
 
+        Map<String, String> map = null;
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, new HashSet<>(imageUrlList), user);
+        }
+        if (map != null) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (!StringUtils.isEmpty(entry.getValue())) {
+                    parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return parseResult;

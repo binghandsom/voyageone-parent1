@@ -19,6 +19,12 @@
         <!-- 上新 -->
         <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 京东上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 聚美上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -58,6 +64,9 @@
         <!-- SummerGuru feed 导入 cms2 -->
         <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 50 0/1 * * ?"/>
 
+        <!-- ShoeZoo feed 导入 cms2 -->
+        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+
         <!-- Target feed 导入 cms2 -->
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
@@ -67,7 +76,7 @@
         <!-- Gilt feed 导入 cms2 -->
         <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!-- Gilt feed 导入 cms2 -->
+        <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
         <!-- 产品数据上新到USJoi -->
@@ -89,7 +98,10 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 0/2 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
+
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
 
     </task:scheduled-tasks>

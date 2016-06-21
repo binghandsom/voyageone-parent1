@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,5 +63,26 @@ public class CmsBtProductDaoTest {
         String strUpdate = "{\"$set\":{\"fields.translator\":\"liangchuanyu1\", \"fields.translateTime\":\"2016-01-07 16:26:36\"}}";
         WriteResult isresult = cmsBtProductDao.updateFirst(queryStr, strUpdate, "013");
         System.out.println(isresult);
+    }
+
+    @Test
+    public void testDeleteSellerCat() throws Exception {
+
+        CmsBtSellerCatModel football = new CmsBtSellerCatModel("018", 27, "201", "足球鞋1", "运动鞋1>足球鞋1", "101", "101-201", 0, new ArrayList<CmsBtSellerCatModel>());
+
+        cmsBtProductDao.deleteSellerCat("018", football, 27);
+
+    }
+
+    @Test
+    public void testUpdateSellerCat() throws Exception {
+        CmsBtSellerCatModel football = new CmsBtSellerCatModel("018", 27, "201", "足球鞋1", "运动鞋1>足球鞋1", "101", "101-201", 0, new ArrayList<CmsBtSellerCatModel>());
+        CmsBtSellerCatModel shoe = new CmsBtSellerCatModel("018", 27, "101", "运动鞋1", "运动鞋1", "101", "101", 1, new ArrayList<CmsBtSellerCatModel>());
+
+        ArrayList<CmsBtSellerCatModel> list = new ArrayList<CmsBtSellerCatModel>();
+        list.add(shoe);
+        list.add(football);
+        cmsBtProductDao.updateSellerCat("018", list, 27);
+
     }
 }
