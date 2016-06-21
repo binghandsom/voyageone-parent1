@@ -236,7 +236,7 @@ define([
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
-                return "待再售";
+                return "待上传";
             }
             else if (model.updateStatus == 1 || model.priceStatus == 1) {
                 return "待更新";
@@ -259,20 +259,22 @@ define([
             return listPromotionProductId;
         }
         $scope.updateJM = function (promotionProductId) {
-            var listPromotionProductId = [promotionProductId];
-            var parameter = {};
-            parameter.promotionId = $scope.vm.promotionId;
-            parameter.listPromotionProductId = listPromotionProductId;
-            jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
-                if (res.data.result) {
-                    $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
-                }
-                else {
+            confirm("是否同步选中商品的价格?").result.then(function () {
+                var listPromotionProductId = [promotionProductId];
+                var parameter = {};
+                parameter.promotionId = $scope.vm.promotionId;
+                parameter.listPromotionProductId = listPromotionProductId;
+                jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
-                }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
+                });
             });
         };
         $scope.batchSynchPrice = function () {
@@ -281,14 +283,14 @@ define([
                 alert("请选择同步价格的商品!");
                 return;
             }
-            confirm("是否同步选中商品的价格?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").result.then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
                 jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
-                        alert($translate.instant('TXT_SUCCESS'));
+                        alert("请稍后几分钟刷新页面，查看最新上传结果");
                     }
                     else {
                         alert($translate.instant('TXT_FAIL'));
