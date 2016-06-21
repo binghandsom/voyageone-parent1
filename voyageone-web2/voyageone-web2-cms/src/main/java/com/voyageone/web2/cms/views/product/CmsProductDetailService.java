@@ -395,6 +395,48 @@ public class CmsProductDetailService extends BaseAppService {
         return result;
     }
 
+    public Map<String, Object> updateProductFeedInfo(String channelId, String userName, Map requestMap) {
+
+        Long productId = Long.valueOf(requestMap.get("productId").toString());
+
+        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
+
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+
+        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
+
+        productModel.setProdId(productId);
+        productModel.setFeed(feedModel);
+
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(productModel);
+        productUpdateBean.setModifier(userName);
+        String newModified = DateTimeUtil.getNowTimeStamp();
+        productUpdateBean.setModified(newModified);
+
+        productService.updateProduct(channelId, productUpdateBean);
+
+        CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
+
+        //执行product上新
+        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+            // 插入上新程序
+            productService.insertSxWorkLoad(channelId, newProduct, userName);
+
+        }
+
+        // 设置返回值
+        Map<String, Object> result = new HashMap<>();
+        // 设置返回新的时间戳
+        result.put("modified", newModified);
+        // 设置返回approve状态
+        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+        // 设置返回status状态
+        result.put("approveStatus", newProduct.getFields().getStatus());
+        return result;
+    }
+
     /**
      * 获取被切换类目的schema.
      */
