@@ -936,7 +936,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
-        cmsBtJmProductModel.setProductNameCn(fields.getProductNameCn() + " " + productCode);
+        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + productCode);
         cmsBtJmProductModel.setVoBrandName("");//TODO
         cmsBtJmProductModel.setVoCategoryName("");//TODO
         cmsBtJmProductModel.setBrandName(brandName);
