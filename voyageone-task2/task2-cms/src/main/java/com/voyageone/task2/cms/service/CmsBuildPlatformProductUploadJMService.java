@@ -198,7 +198,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     $info("主商品[Code:%s]! ", productCode);
 
 
-
                     CmsBtJmProductModel cmsBtJmProductModel = null;
                     List<CmsBtJmSkuModel> cmsBtJmSkuModelList = new ArrayList<>();
 
@@ -263,12 +262,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                             sxData.getPlatform().setModifier(getTaskName());
                             sxData.getPlatform().setNumIId(jmHashId);
+                            sxData.getPlatform().setPlatformPid(jmProductId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
-                            if(originHashId.endsWith("p0"))
+                            if(jmHashId.endsWith("p0"))
                             {
-                                String erorrMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
-                                $error(erorrMsg);
-                                new BusinessException(erorrMsg);
+                                String errorMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
+                                $error(errorMsg);
+                                new BusinessException(errorMsg);
                             }
 
                         }
@@ -326,13 +326,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         sku.setStringAttribute("jmSkuNo", spu.getSku_no());
                                     }
                                 }
-                                jmCart.setpProductId(jmGetProductInfoRes.getProduct_id());
+                                jmCart.setpProductId(jmProductId);
                                 jmCart.setpNumIId(originHashId);
                                 saveProductPlatform(channelId, product);
 
-                                sxData.getPlatform().setNumIId(originHashId);
+
                                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                                sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                                 sxData.getPlatform().setModifier(getTaskName());
+                                sxData.getPlatform().setNumIId(originHashId);
+                                sxData.getPlatform().setPlatformPid(jmProductId);
+
                                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
 
                             }
@@ -525,6 +530,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                         sxData.getPlatform().setModifier(getTaskName());
+
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                     }
 
@@ -542,12 +548,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
-                    if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                        sxData.setErrorMessage(e.getMessage());
+                    if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
+                        if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                            sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                        }
+                        else
+                        {
+                            sxData.setErrorMessage(e.getMessage());
+                        }
                     }
                     sxProductService.insertBusinessLog(sxData, getTaskName());
                     throw e;
                 }
+            }
+            else
+            {
+                String errorMsg = String.format("取SxData失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
+                $error(errorMsg);
+                new BusinessException(errorMsg);
             }
         }
         catch (ServerErrorException se) {
@@ -561,6 +579,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
+
     }
 
 
@@ -674,6 +693,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         rsMap.put("platforms.P" + CART_ID + ".skus", newJmSkus);
         rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
         rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
+
 
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("$set", rsMap);
@@ -937,8 +957,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
         cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + productCode);
-        cmsBtJmProductModel.setVoBrandName("");//TODO
-        cmsBtJmProductModel.setVoCategoryName("");//TODO
+        cmsBtJmProductModel.setVoBrandName(product.getCatId());
+        cmsBtJmProductModel.setVoCategoryName(product.getCatPath());
         cmsBtJmProductModel.setBrandName(brandName);
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);

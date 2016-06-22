@@ -21,6 +21,7 @@ import java.util.Map;
  */
 @Service
 public class CmsChannelTagService extends BaseAppService {
+
     @Autowired
     private TagService tagService;
 

@@ -84,10 +84,10 @@
                 #{name,jdbcType=VARCHAR},
             </if>
             <if test="activityPcId != null" >
-                #{activityPcId,jdbcType=VARCHAR},
+                #{activityPcId,jdbcType=BIGINT},
             </if>
             <if test="activityAppId != null" >
-                #{activityAppId,jdbcType=VARCHAR},
+                #{activityAppId,jdbcType=BIGINT},
             </if>
             <if test="cmsBtJmMasterBrandId != null" >
                 #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
@@ -156,10 +156,10 @@
                 `name` = #{name,jdbcType=VARCHAR},
             </if>
             <if test="activityPcId != null" >
-                `activity_pc_id` = #{activityPcId,jdbcType=VARCHAR},
+                `activity_pc_id` = #{activityPcId,jdbcType=BIGINT},
             </if>
             <if test="activityAppId != null" >
-                `activity_app_id` = #{activityAppId,jdbcType=VARCHAR},
+                `activity_app_id` = #{activityAppId,jdbcType=BIGINT},
             </if>
             <if test="cmsBtJmMasterBrandId != null" >
                 `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
@@ -230,10 +230,10 @@
                 and `name` = #{name,jdbcType=VARCHAR}
             </if>
             <if test="activityPcId != null" >
-                and `activity_pc_id` = #{activityPcId,jdbcType=VARCHAR}
+                and `activity_pc_id` = #{activityPcId,jdbcType=BIGINT}
             </if>
             <if test="activityAppId != null" >
-                and `activity_app_id` = #{activityAppId,jdbcType=VARCHAR}
+                and `activity_app_id` = #{activityAppId,jdbcType=BIGINT}
             </if>
             <if test="cmsBtJmMasterBrandId != null" >
                 and `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER}
@@ -295,10 +295,10 @@
                 and `name` = #{name,jdbcType=VARCHAR}
             </if>
             <if test="activityPcId != null" >
-                and `activity_pc_id` = #{activityPcId,jdbcType=VARCHAR}
+                and `activity_pc_id` = #{activityPcId,jdbcType=BIGINT}
             </if>
             <if test="activityAppId != null" >
-                and `activity_app_id` = #{activityAppId,jdbcType=VARCHAR}
+                and `activity_app_id` = #{activityAppId,jdbcType=BIGINT}
             </if>
             <if test="cmsBtJmMasterBrandId != null" >
                 and `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER}

@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.jumei.UpdateSkuDealPriceParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
@@ -38,6 +39,7 @@ public class CmsBtJmPromotionSku3Service {
        CmsBtJmPromotionSkuModel model = dao.select(parameter.getPromotionSkuId());
        model.setDealPrice(new BigDecimal(parameter.getDealPrice()));
        model.setMarketPrice(new BigDecimal(parameter.getMarketPrice()));
+       model.setDiscount(BigDecimalUtil.divide(model.getDealPrice(),model.getMarketPrice(),4));
        model.setModifier(modifier);
        return update(model);
    }

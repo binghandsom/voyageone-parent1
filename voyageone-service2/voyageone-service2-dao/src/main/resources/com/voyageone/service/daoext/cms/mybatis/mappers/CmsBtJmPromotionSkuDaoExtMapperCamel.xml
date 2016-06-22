@@ -48,7 +48,7 @@
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_sku  AS a
         JOIN `cms_bt_jm_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code` AND a.`sku_code`=b.sku_code
-        SET a.deal_Price=${dealPrice},`discount`=a.deal_Price/a.`market_price`
+        SET a.deal_Price=${dealPrice},a.`discount`=a.deal_Price/a.`market_price`
         WHERE   a.cms_bt_jm_promotion_product_id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
