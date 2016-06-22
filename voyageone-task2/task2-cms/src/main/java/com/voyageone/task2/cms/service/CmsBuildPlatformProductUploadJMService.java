@@ -565,7 +565,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             {
                 String errorMsg = String.format("取SxData失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                 $error(errorMsg);
-                new BusinessException(errorMsg);
+                throw new BusinessException(errorMsg);
             }
         }
         catch (ServerErrorException se) {
@@ -577,7 +577,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
-
         }
 
     }
