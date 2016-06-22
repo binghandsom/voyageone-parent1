@@ -20,7 +20,7 @@ define([
         };
         $scope.ok = function () {
             $scope.model.listPromotionProductId =listPromotionProductId;
-            $scope.model.discount ? $scope.model.discount * 0.1 : 1;
+            $scope.model.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
             if(listPromotionProductId.length==0)
             {
                 alert("请选择修改价格的商品!");
