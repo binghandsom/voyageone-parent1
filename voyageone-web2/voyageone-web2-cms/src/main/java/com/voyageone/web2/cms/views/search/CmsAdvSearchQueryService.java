@@ -108,7 +108,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result.append(",");
             }
             // 平台类目是否未设置
-            if (StringUtils.isNotEmpty(searchValue.getPCatStatus())) {
+            if (searchValue.getPCatStatus() == 1) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatStatus", new String[]{null, "", "0"}, "$in"));
                 result.append(",");
             }
@@ -130,9 +130,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result.append(",");
             }
             // 店铺内分类未设置
-            if (StringUtils.isNotEmpty(searchValue.getShopCatStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", new String[]{null, ""}, "$in"));
-                result.append(",");
+            if (searchValue.getShopCatStatus() == 1) {
+                result.append("$or:[{'"+ _KeyPrefix + cartId + ".sellerCats':{$size:0}},{'" + _KeyPrefix + cartId + ".sellerCats':{$in:[null,'']}}],");
             }
 
             // 查询产品上新错误
