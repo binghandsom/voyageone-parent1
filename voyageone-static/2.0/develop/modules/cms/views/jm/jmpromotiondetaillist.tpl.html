@@ -361,7 +361,7 @@
                     <table class="table table-hover-new vo_table" style="table-layout: fixed;">
                         <thead>
                         <tr>
-                            <th class="text-left">导出文件名</th>
+                            <th class="text-left">导入文件</th>
                             <th class="text-center" style="width:100px">成功件数</th>
                             <th class="text-center" style="width:100px">失败件数</th>
                             <th class="text-left">导入开始时间</th>
@@ -373,7 +373,7 @@
                         </thead>
                         <tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
                         <tr ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
-                            <td class="text-left">{{model.fileName}}</td>
+                            <td class="text-left"><a ng-click="downloadImportExcel(model.id)">{{model.fileName}}</a></td>
                             <td class="text-center">{{model.successRows}}</td>
                             <td class="text-center">{{model.failuresRows}}</td>
                             <td class="text-left">{{model.beginTime}}</td>
