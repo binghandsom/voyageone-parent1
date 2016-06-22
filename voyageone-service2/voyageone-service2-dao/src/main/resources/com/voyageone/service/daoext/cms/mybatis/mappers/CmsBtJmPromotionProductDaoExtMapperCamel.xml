@@ -255,7 +255,7 @@
     </select>
 
     <select id="existsCode" resultType="Boolean">
-      SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` limit 1
+      SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
 
     <select id="selectByProductCode"  resultMap="ResultMap">
