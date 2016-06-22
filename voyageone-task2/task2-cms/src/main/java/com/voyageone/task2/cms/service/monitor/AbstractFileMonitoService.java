@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.monitor;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -128,6 +129,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while (true) {
                 String line = reader.readLine();
+                if(StringUtil.isEmpty(line)) continue;
                 String[] result = line.split(":");
 
                 if (result.length != 3) {
