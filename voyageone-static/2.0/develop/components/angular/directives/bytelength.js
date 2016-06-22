@@ -4,19 +4,18 @@
  */
 (function () {
     /**
-     * 原理参见来源: http://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+     * 抄自聚美后台 js
      */
-    function lengthInUtf8Bytes(str) {
-        // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
-        var m = encodeURIComponent(str).match(/%[89ABab]/g);
-        return str.length + (m ? m.length : 0);
+    function sizeof(str) {
+        var regex = str.match(/[^\x00-\xff]/g);
+        return (str.length + (!regex ? 0 : regex.length));
     }
 
     /**
      * 第三方函数包装
      */
     function getByteLength(str) {
-        return lengthInUtf8Bytes(str);
+        return sizeof(str);
     }
 
     /**
