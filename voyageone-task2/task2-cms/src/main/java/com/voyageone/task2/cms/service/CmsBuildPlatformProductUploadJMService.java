@@ -198,7 +198,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     $info("主商品[Code:%s]! ", productCode);
 
 
-
                     CmsBtJmProductModel cmsBtJmProductModel = null;
                     List<CmsBtJmSkuModel> cmsBtJmSkuModelList = new ArrayList<>();
 
@@ -264,7 +263,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setModifier(getTaskName());
                             sxData.getPlatform().setNumIId(jmHashId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
-                            if(originHashId.endsWith("p0"))
+                            if(jmHashId.endsWith("p0"))
                             {
                                 String erorrMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
                                 $error(erorrMsg);
