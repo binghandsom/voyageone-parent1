@@ -208,7 +208,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取 master category
         if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
-            result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getmCatId()));
+            result.append(MongoUtils.splicingValue("common.catId", searchValue.getmCatId()));
             result.append(",");
         }
 
