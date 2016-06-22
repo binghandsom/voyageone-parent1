@@ -110,7 +110,7 @@
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
-        ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
+        ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,
         (SELECT MAX(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxDealPrice,
         (SELECT min(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minDealPrice,

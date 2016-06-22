@@ -1,11 +1,9 @@
 package com.voyageone.common.util.excel;
 
 import com.voyageone.common.util.DateTimeUtil;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.SheetUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -129,6 +127,10 @@ public class ExportFileExcelUtil {
         for (int i = 0; i < listColumn.size(); i++) {
             HSSFCell xh = hssfRow.createCell(i);
             xh.setCellValue(listColumn.get(i).getText());
+            //xh.setCellStyle();
+            //HSSFCellStyle cellStyle =sheet.cre.createCellStyle();
+         // cellStyle.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);//  设置背景色的代码
+           // cell.setStyle(cellStyle);//再将想要设置背景色的单元格
         }
         if (info.isDisplayColumnName()) {
             hssfRow = sheet.createRow(rowNo++);

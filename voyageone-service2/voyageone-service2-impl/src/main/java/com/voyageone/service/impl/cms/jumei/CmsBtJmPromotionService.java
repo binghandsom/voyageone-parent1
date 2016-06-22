@@ -83,7 +83,7 @@ public class CmsBtJmPromotionService {
         CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
         CmsBtJmPromotionModel model = dao.select(id);
         info.setModel(model);
-        if (model.getRefTagId() != 0) {
+        if (model.getRefTagId()!=null&&model.getRefTagId() != 0) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("parentTagId", model.getRefTagId());
             map.put("active", 1);

@@ -347,7 +347,7 @@ public class CmsProductDetailService extends BaseAppService {
 
             // 执行carts更新
             productUpdateBean.getProductModel().getSkus().forEach(sku -> {
-                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s->s==23).collect(Collectors.toList());
+                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929)).collect(Collectors.toList());
                 sku.setSkuCarts(newCarts);
             });
 

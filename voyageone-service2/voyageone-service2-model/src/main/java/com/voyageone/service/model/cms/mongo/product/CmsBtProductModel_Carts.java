@@ -48,4 +48,12 @@ public class CmsBtProductModel_Carts extends BaseMongoMap<String, Object> {
         setAttribute("cartId", cartId);
     }
 
+    public String getNumIid() {
+        return getStringAttribute("numIId");
+    }
+
+    public void setNumIid(String numIid) {
+        setStringAttribute("numIId", numIid);
+    }
+
 }
