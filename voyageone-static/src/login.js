@@ -49,17 +49,8 @@ require([
         return;
       }
       $scope.errorMessage = '';
-      $ajax.post('/core/access/user/login', {
-        username: $scope.username,
-        password: $scope.password,
 
-
-        timezone: -(new Date().getTimezoneOffset() / 60)
-      }).then(function(){
-        location.href = 'channel.html';
-      }, function(res) {
-        $scope.errorMessage = res.message || ('登录失败(' + (res.code || '?') + ')');
-      });
+      location.href = '/app/app.html';
     };
   });
   return angular.bootstrap(document, ['voyageone.cms.login']);
