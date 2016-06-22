@@ -387,6 +387,22 @@
         }
     }
 
+    function bindInputLengthRule(element, rules) {
+
+        var minRule = rules.minLengthRule,
+            maxRule = rules.maxLengthRule;
+
+        if (isByteUnit(minRule))
+            bindLengthRule(innerElement, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
+        else
+            bindLengthRule(innerElement, minRule, 'minLengthRule', 'minlength');
+
+        if (isByteUnit(maxRule))
+            bindLengthRule(innerElement, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
+        else
+            bindLengthRule(innerElement, maxRule, 'maxLengthRule', 'maxlength');
+    }
+
     /**
      * 为 required 和 readonly 规则提供支持
      */
@@ -478,6 +494,10 @@
 
             return false;
         });
+    }
+
+    function isByteUnit(rule) {
+        return rule.unit === 'byte';
     }
 
     /**
@@ -1051,8 +1071,6 @@
                                         valueTypeRule = rules.valueTypeRule,
                                         requiredRule = rules.requiredRule,
                                         readOnlyRule = rules.readOnlyRule,
-                                        minLengthRule = rules.minLengthRule,
-                                        maxLengthRule = rules.maxLengthRule,
                                         type = getInputType(valueTypeRule);
 
                                     if (type === 'textarea') {
@@ -1070,8 +1088,7 @@
                                     bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                     bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
 
-                                    bindLengthRule(innerElement, minLengthRule, 'minLengthRule', 'minlength');
-                                    bindLengthRule(innerElement, maxLengthRule, 'maxLengthRule', 'maxlength');
+                                    bindInputLengthRule(innerElement, rules);
 
                                     // 处理正则规则
                                     if (regexRule) {
