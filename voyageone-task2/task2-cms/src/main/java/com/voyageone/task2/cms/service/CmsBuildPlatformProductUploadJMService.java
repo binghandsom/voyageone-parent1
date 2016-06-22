@@ -265,9 +265,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                             if(jmHashId.endsWith("p0"))
                             {
-                                String erorrMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
-                                $error(erorrMsg);
-                                new BusinessException(erorrMsg);
+                                String errorMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
+                                $error(errorMsg);
+                                new BusinessException(errorMsg);
                             }
 
                         }
@@ -548,6 +548,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     throw e;
                 }
             }
+            else
+            {
+                String errorMsg = String.format("取SxDate失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
+                $error(errorMsg);
+                new BusinessException(errorMsg);
+            }
         }
         catch (ServerErrorException se) {
             //需要重试
@@ -560,6 +566,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
+
     }
 
 
@@ -673,6 +680,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         rsMap.put("platforms.P" + CART_ID + ".skus", newJmSkus);
         rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
         rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
+
 
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("$set", rsMap);
