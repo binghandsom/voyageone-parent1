@@ -194,6 +194,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     String productCode = product.getFields().getCode();
                     $info("主商品[Code:%s]! ", productCode);
 
+                    saveProductPlatform(channelId, product);
+
                     CmsBtJmProductModel cmsBtJmProductModel = new CmsBtJmProductModel();
                     List<CmsBtJmSkuModel> cmsBtJmSkuModelList = new ArrayList<>();
 
@@ -566,17 +568,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     private void saveProductPlatform(String channelId, CmsBtProductModel product) {
         Map<String, Object> rsMap = new HashMap<>();
 
-        rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
-        rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
+
         List<BaseMongoMap<String, Object>>   jmSkus  = product.getPlatform(CART_ID).getSkus();
         List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
         for (BaseMongoMap<String, Object> sku : jmSkus)
         {
             BaseMongoMap<String, Object> newSku = new  BaseMongoMap<String, Object>();
             newSku.setStringAttribute("skuCode", sku.getStringAttribute("skuCode"));
-            newSku.setStringAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
-            newSku.setStringAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
-            newSku.setStringAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
+            newSku.setAttribute("priceMsrp", sku.getDoubleAttribute("priceMsrp"));
+            newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
+            newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
             newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
@@ -588,6 +589,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         queryMap.put("prodId", product.getProdId());
 
         rsMap.put("platforms.P" + CART_ID + ".skus", newJmSkus);
+        rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
+        rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
 
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("$set", rsMap);

@@ -8,7 +8,8 @@ define([
         function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
-            this.tagTypeSelectValue = context;
+            this.tagTypeSelectValue = context.tagTypeSel;
+            this.cartId = context.cartId;
             this.tagTree = null;
             this.id = "";
             this.parentTagId = "";
@@ -27,9 +28,7 @@ define([
              */
             init: function () {
                 var self = this;
-                //默认选中店铺类分类
-
-                self.channelTagService.init({tagTypeSelectValue: self.tagTypeSelectValue}).then(function (res) {
+                self.channelTagService.init({tagTypeSelectValue: self.tagTypeSelectValue, 'cartId':self.cartId}).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
                     self.tagTypeList = res.data.tagTypeList[3];
                     self.search(0);

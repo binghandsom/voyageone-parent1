@@ -104,9 +104,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(1, "010", 27);
 
         for (CmsBtSxWorkloadModel work : workloadList) {
-            work.setGroupId(27214L);
+//            work.setGroupId(27214L);
 //            work.setGroupId(39342L);
-//            work.setGroupId(34402L);
+            work.setGroupId(21878L);
 
 
             cmsBuildPlatformProductUploadJMService.updateProduct(work);

@@ -10,6 +10,7 @@ import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -186,8 +187,15 @@ public class TagService extends BaseService {
     /**
      * 根据ChannelId 和 tagType 检索Tags
      */
-    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType) {
-        return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId, tagType);
+    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType, Integer cartId) {
+        if ("4".equals(tagType)) {
+            // 查询自由标签
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId);
+        } else if ("2".equals(tagType)) {
+            // 查询Promotion标签
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType2(channelId, cartId);
+        }
+        return new ArrayList<>(0);
     }
 
     public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
