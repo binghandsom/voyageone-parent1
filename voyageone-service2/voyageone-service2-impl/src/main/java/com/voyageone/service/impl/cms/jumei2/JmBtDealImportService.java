@@ -300,6 +300,7 @@ public class JmBtDealImportService extends BaseService {
         updateMap.put("publishTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         updateMap.put("onSaleTime", DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        updateMap.put("platformStatus", CmsConstants.PlatformStatus.InStock.name());
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -357,6 +358,7 @@ public class JmBtDealImportService extends BaseService {
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
         fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
+        fields.setAttribute("pStatus", CmsConstants.PlatformStatus.InStock.name());
         if (platform.getFields() == null)
             platform.setFields(fields);
 
