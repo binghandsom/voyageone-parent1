@@ -30,6 +30,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
@@ -44,7 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -115,6 +115,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
     @Autowired
     JumeiProductService jumeiProductService;
+
+    @Autowired
+    ProductService productService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -194,18 +197,29 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     String productCode = product.getFields().getCode();
                     $info("主商品[Code:%s]! ", productCode);
 
-                    saveProductPlatform(channelId, product);
 
-                    CmsBtJmProductModel cmsBtJmProductModel = new CmsBtJmProductModel();
+
+                    CmsBtJmProductModel cmsBtJmProductModel = null;
                     List<CmsBtJmSkuModel> cmsBtJmSkuModelList = new ArrayList<>();
 
                     CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CART_ID);
                     String originHashId = jmCart.getpNumIId();
+
+                    //取库存
+                    Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+
                     if (StringUtils.isNullOrBlank2(originHashId)) {
                         //如果OriginHashId不存在，则创建新商品
 
+                        //填充cmsBtJmProductModel
+                        cmsBtJmProductModel = fillCmsBtJmProductModel(cmsBtJmProductModel, product);
+                        //填充cmsBtJmSkuModelList
+                        cmsBtJmSkuModelList = fillCmsBtJmSkuModelList(cmsBtJmSkuModelList, product);
+
+
                         //填充JmProductBean
-                        JmProductBean bean = fillJmProductBean(channelId, product, cmsBtJmProductModel, cmsBtJmSkuModelList, expressionParser, shop, groupId);
+                        JmProductBean bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap);
+
                         HtProductAddRequest htProductAddRequest = new HtProductAddRequest();
                         htProductAddRequest.setJmProduct(bean);
                         HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
@@ -219,7 +233,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             cmsBtJmProductModel.setJumeiProductId(jmProductId);
                             cmsBtJmProductModel.setOriginJmHashId(jmHashId);
                             cmsBtJmProductDao.insert(cmsBtJmProductModel);
-                            $info("保存jm_product_id成功！[JM_PRODUCT_ID:%s],[ProductId:%s], [ChannelId:%s], [CartId:%s]", jmProductId, product.getProdId(), channelId, CART_ID);
+                            $info("新增CmsBtJmProduct成功！[JM_PRODUCT_ID:%s],[ProductId:%s], [ChannelId:%s], [CartId:%s]", jmProductId, product.getProdId(), channelId, CART_ID);
 
                             //保存jm_sku_no, jm_spu_no
                             List<HtProductAddResponse_Spu> spus = htProductAddResponse.getSpus();
@@ -228,7 +242,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 jmsku.setJmSkuNo(spu.getJumei_sku_no());
                                 jmsku.setJmSpuNo(spu.getJumei_spu_no());
                                 cmsBtJmSkuDao.insert(jmsku);
-                                $info("保存聚美SKU成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
+                                $info("新增CmsBtJmSku成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
                             }
 
                             List<BaseMongoMap<String, Object>> productJmSku = jmCart.getSkus();
@@ -250,19 +264,25 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setModifier(getTaskName());
                             sxData.getPlatform().setNumIId(jmHashId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                            if(originHashId.endsWith("p0"))
+                            {
+                                String erorrMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
+                                $error(erorrMsg);
+                                new BusinessException(erorrMsg);
+                            }
+
                         }
                         //如果JM中已经有该商品了，则读取商品信息，补全本地库的内容
                         else if(htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
                                 htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME))
                         {
+                            needRetry = true;
+
                             JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shop, bean.getName() );
                             if(jmGetProductInfoRes != null)
                             {
                                 originHashId = jmGetProductInfoRes.getHash_ids();
-                                jmGetProductInfoRes.getSpus();
                                 String jmProductId = jmGetProductInfoRes.getProduct_id();
-
-
 
                                 //查找Product,并保存到数据库
                                 CmsBtJmProductModel  productModel = getCmsBtJmProductModel(channelId, productCode);
@@ -321,10 +341,21 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 $error("读取产品失败！[ProductId:%s], [ChannelId:%s], [CartId:%s]\", product.getProdId(), channelId, CART_ID");
                                 throw  new BusinessException("读取产品失败！[ProductId:%s], [ChannelId:%s], [CartId:%s]\", product.getProdId(), channelId, CART_ID");
                             }
-                            needRetry = true;
 
                         }
                     } else {
+                        //先去聚美查一下product
+                        JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+                        List<JmGetProductInfo_Spus> remoteSpus = null;
+                        if(jmGetProductInfoRes != null)
+                        {
+                            remoteSpus = jmGetProductInfoRes.getSpus();
+                        }
+                        if(remoteSpus == null)
+                        {
+                            remoteSpus = new ArrayList<>();
+                        }
+
                         //如果OriginHashId存在，则修改商品属性
                         CmsBtProductModel_Field fields = product.getFields();
                         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
@@ -334,31 +365,46 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         //查询jm_product
                         CmsBtJmProductModel jmProductModel = getCmsBtJmProductModel(channelId, productCode);
-                        HtProductUpdateRequest htProductUpdateRequest = fillHtProductUpdateRequest(product, jmProductModel, expressionParser, shop);
+                        boolean needAdd = false;
+                        if(jmProductModel == null)
+                        {
+                            needAdd =  true;
+                        }
+                        jmProductModel = fillCmsBtJmProductModel(jmProductModel, product);
+
+                        HtProductUpdateRequest htProductUpdateRequest = fillHtProductUpdateRequest(product, expressionParser, shop);
                         HtProductUpdateResponse htProductUpdateResponse = jumeiHtProductService.update(shop, htProductUpdateRequest);
 
                         if (htProductUpdateResponse != null && htProductUpdateResponse.getIs_Success()) {
                             $info("更新产品成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
 
                             //回写数据库
-                            if (jmProductModel != null) {
+                            if (!needAdd) {
                                 cmsBtJmProductDao.update(jmProductModel);
                             }
+                            else
+                            {
+                                jmProductModel.setJumeiProductId(jmCart.getpProductId());
+                                jmProductModel.setOriginJmHashId(jmCart.getpNumIId());
+                                cmsBtJmProductDao.insert(jmProductModel);
+                            }
 
-                            //查询SPU
+                            //查询MySQL库SPU
                             List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode);
 
                             List<BaseMongoMap<String, Object>> newSkuList = jmCart.getSkus();
                             List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
                             newSkuList = mergeSkuAttr(newSkuList, commonSkus);
 
+
+
                             for (BaseMongoMap<String, Object> skuMap : newSkuList) {
 
                                 String skuCode = skuMap.getStringAttribute("skuCode");
                                 //旧SPU需要更新
-                                if (skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0) {
-                                    CmsBtJmSkuModel oldSku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
-                                    String jmSpuNo = oldSku.getJmSpuNo();
+                                if (remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).count() > 0) {
+                                    JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
+                                    String jmSpuNo = oldSku.getSpu_no();
                                     HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                                     htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
                                     htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
@@ -372,11 +418,52 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
                                     if (htSpuUpdateResponse != null && htSpuUpdateResponse.is_Success()) {
                                         $info("更新Spu成功！[ProductId:%s], [JmSpuNo:%s]", product.getProdId(), jmSpuNo);
-                                        oldSku.setJmSize(sizeStr);
-                                        oldSku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
-                                        cmsBtJmSkuDao.update(oldSku);
+                                        //如果mysql库中有这条sku
+                                        if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
+                                        {
+                                            CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
+                                            mySku.setJmSize(sizeStr);
+                                            mySku.setCmsSize(skuMap.getStringAttribute("size"));
+                                            mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                                            mySku.setModifier(getTaskName());
+                                            cmsBtJmSkuDao.update(mySku);
+                                        }
+                                        else
+                                        {
+                                            //如果MySQL库中没有这条SPU,则新增一条
+                                            CmsBtJmSkuModel mySku = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                            mySku.setJmSpuNo(oldSku.getSpu_no());
+                                            mySku.setJmSkuNo(oldSku.getSku_no());
+                                            mySku.setModifier(getTaskName());
+                                            mySku.setModifier(getTaskName());
+                                            cmsBtJmSkuDao.insert(mySku);
+                                        }
                                     }
-
+                                    //检查Remote SPU是否有sku属性，如果没有，则添加SKU
+                                    if(StringUtils.isNullOrBlank2(oldSku.getSku_no()))
+                                    {
+                                        //需要增加SKU
+                                        HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
+                                        htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute("skuCode"));
+                                        htSkuAddRequest.setSale_on_this_deal("1");
+                                        htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
+                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute("skuCode"))));
+                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceSale"));
+                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceMsrp"));
+                                        htSkuAddRequest.setJumei_hash_id(originHashId);
+                                        htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
+                                        HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
+                                        if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
+                                            $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute("skuCode"));
+                                            if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
+                                            {
+                                                CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
+                                                mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+                                                mySku.setModifier(getTaskName());
+                                                cmsBtJmSkuDao.update(mySku);
+                                            }
+                                        }
+                                    }
                                 }
                                 //新SPU需要增加
                                 else {
@@ -384,12 +471,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode"));
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
-
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
-
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
-
                                     htSpuAddRequest.setProperty(skuMap.getStringAttribute("property"));
                                     htSpuAddRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                                     HtSpuAddResponse htSpuAddResponse = jumeiHtSpuService.add(shop, htSpuAddRequest);
@@ -398,12 +482,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         $info("新增Spu成功！[ProductId:%s], [JmSpuNo:%s]", product.getProdId(), htSpuAddResponse.getJumei_spu_no());
                                         skuMap.setStringAttribute("jmSpuNo", htSpuAddResponse.getJumei_spu_no());
 
-
                                         HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
                                         htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute("skuCode"));
                                         htSkuAddRequest.setSale_on_this_deal("1");
                                         htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
-                                        htSkuAddRequest.setStocks("1");
+                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute("skuCode"))));
                                         htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceSale"));
                                         htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceMsrp"));
                                         htSkuAddRequest.setJumei_hash_id(originHashId);
@@ -427,11 +510,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(productCode, channelId);
                             jmHashIdList.add(originHashId);
 
-                            //重新读一次
-                            skuList = getCmsBtJmSkuModels(channelId, productCode);
 
                             for (String hashId : jmHashIdList) {
-                                HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(channelId, jmFields, skuList, hashId, expressionParser, shop);
+                                HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                                 HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                                 if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
                                     $info("更新Deal成功！[ProductId:%s]", product.getProdId());
@@ -452,11 +533,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     {
                         //需要重试
                         delayWorkload(work);
-                        $info("保存workload成功！[workId:%s]", work.getId());
+                        $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
                     }
                     else {
                         saveWorkload(work, WORK_LOAD_SUCCESS);
-                        $info("保存workload成功！[workId:%s]", work.getId());
+                        $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
                     }
                 } catch (Exception e) {
                     //保存错误log
@@ -472,28 +553,28 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         catch (ServerErrorException se) {
             //需要重试
             delayWorkload(work);
+            $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
         }
         catch (Exception e) {
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
-            $error("workload上新失败！[workId:%s]", work.getId());
+            $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
     }
 
 
     /**
-     * @param channelId
-     * @param jmFields
-     * @param skuList
      * @param hashId
      * @param expressionParser
      * @param shopProp
      * @return
      * @throws Exception
      */
-    private HtDealUpdateRequest fillHtDealUpdateRequest(String channelId, BaseMongoMap<String, Object> jmFields,
-                                                        List<CmsBtJmSkuModel> skuList, String hashId, ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
+    private HtDealUpdateRequest fillHtDealUpdateRequest(CmsBtProductModel product, String hashId, ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
+        String channelId = product.getChannelId();
+        BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
+
         HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
         htDealUpdateRequest.setJumei_hash_id(hashId);
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
@@ -506,7 +587,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         dealInfo.setSuit_people(jmFields.getStringAttribute("suitPeople"));
         dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
-        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
+//        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
 
         String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
         dealInfo.setDescription_properties(jmDetailTemplate);
@@ -515,7 +596,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String jmUseageTemplate = sxProductService.resolveDict("聚美使用方法", expressionParser, shopProp, getTaskName(), null);
         dealInfo.setDescription_usage(jmUseageTemplate);
 
-        List<String> jmSkuNoList = skuList.stream().map(CmsBtJmSkuModel::getJmSkuNo).collect(Collectors.toList());
+        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+
+        List<String> jmSkuNoList = skuList.stream().map(w->w.getStringAttribute("jmSkuNo")).collect(Collectors.toList());
         dealInfo.setJumei_sku_no(Joiner.on(",").join(jmSkuNoList));
         htDealUpdateRequest.setUpdate_data(dealInfo);
         return htDealUpdateRequest;
@@ -640,13 +723,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * 填充HtProductUpdateRequest
      *
      * @param product
-     * @param cmsBtJmProductModel
      * @param expressionParser
      * @param shopProp
      * @return
      * @throws Exception
      */
-    private HtProductUpdateRequest fillHtProductUpdateRequest(CmsBtProductModel product, CmsBtJmProductModel cmsBtJmProductModel,
+    private HtProductUpdateRequest fillHtProductUpdateRequest(CmsBtProductModel product,
                                                               ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
 
         CmsBtProductModel_Field fields = product.getFields();
@@ -673,21 +755,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
         htProductUpdateRequest.setUpdate_data(productInfo);
 
-        if (cmsBtJmProductModel != null) {
-            cmsBtJmProductModel.setProductNameCn(productName);
-            cmsBtJmProductModel.setForeignLanguageName(jmFields.get("productNameEn").toString());
-            cmsBtJmProductModel.setImage1(fields.getImages1().get(0).getName());
-            cmsBtJmProductModel.setModified(DateTimeUtil.getDate());
-            cmsBtJmProductModel.setModifier(getTaskName());
-            cmsBtJmProductModel.setProductLongName(jmFields.getStringAttribute("productLongName"));
-            cmsBtJmProductModel.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
-            cmsBtJmProductModel.setProductShortName(jmFields.getStringAttribute("productShortName"));
-            cmsBtJmProductModel.setAvailablePeriod(jmFields.getStringAttribute("beforeDate"));
-            cmsBtJmProductModel.setApplicableCrowd(jmFields.getStringAttribute("suitPeople"));
-            cmsBtJmProductModel.setSpecialnote(jmFields.getStringAttribute("specialExplain"));
-            cmsBtJmProductModel.setSearchMetaTextCustom(jmFields.getStringAttribute("searchMetaTextCustom"));
-        }
-
 
         return htProductUpdateRequest;
     }
@@ -696,16 +763,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     /**
      * 填充JmProductBean
      *
-     * @param channelId
      * @param product
-     * @param cmsBtJmProductModel
-     * @param cmsBtJmSkuModelList
      * @return
      * @throws Exception
      */
-    private JmProductBean fillJmProductBean(String channelId, CmsBtProductModel product, CmsBtJmProductModel cmsBtJmProductModel,
-                                            List<CmsBtJmSkuModel> cmsBtJmSkuModelList, ExpressionParser expressionParser, ShopBean shopProp, Long groupId) throws Exception {
+    private JmProductBean fillJmProductBean(CmsBtProductModel product,ExpressionParser expressionParser, ShopBean shopProp, Map<String, Integer> skuLogicQtyMap) throws Exception {
 
+        String channelId = product.getChannelId();
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CartEnums.Cart.JM);
 
         JmProductBean bean = new JmProductBean();
@@ -773,15 +837,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         jmSkus = mergeSkuAttr(jmSkus, commonSkus);
 
         List<JmProductBean_Spus> spus = new ArrayList<>();
+
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
             spu.setUpc_code(jmSku.getStringAttribute("barcode"));
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
-            String sizeStr = jmSku.getStringAttribute("size");
-
-            spu.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
+            String size = jmSku.getStringAttribute("size");
+            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
+            spu.setSize(sizeStr);
 
             spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
             spu.setArea_code("19"); //TODO
@@ -790,26 +855,88 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             jmSpuSku.setPartner_sku_no(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setSale_on_this_deal("1");
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
-            jmSpuSku.setStocks("1"); //TODO
+            Integer stock = skuLogicQtyMap.get(jmSku.getStringAttribute("skuCode"));
+            jmSpuSku.setStocks(String.valueOf(stock));
+
             jmSpuSku.setDeal_price(jmSku.getStringAttribute("priceSale"));
             jmSpuSku.setMarket_price(jmSku.getStringAttribute("priceMsrp"));
 
             spu.setSkuInfo(jmSpuSku);
             spus.add(spu);
-
-            //填写CmsBtJMSku
-            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
-            cmsBtJmSkuModelList.add(cmsBtJmSkuModel);
-
         }
+
+
+
         bean.setSpus(spus);
 
 
+        return bean;
+    }
+
+
+    private List<CmsBtJmSkuModel> fillCmsBtJmSkuModelList(List<CmsBtJmSkuModel> list, CmsBtProductModel product)
+    {
+        String channelId =  product.getChannelId();
+        CmsBtProductModel_Field fields =  product.getFields();
+        String productCode = fields.getCode();
+        String brandName = fields.getBrand();
+        String productType = fields.getProductType();
+        String sizeType = fields.getSizeType();
+
+        if(list == null)
+        {
+            list  = new ArrayList<>();
+        }
+
+        List<BaseMongoMap<String, Object>> jmSkus = product.getPlatform(CART_ID).getSkus();
+        List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+
+        //合并Common和平台的Sku属性
+        jmSkus = mergeSkuAttr(jmSkus, commonSkus);
+
+
+        for (BaseMongoMap<String, Object> jmSku : jmSkus) {
+            //填写CmsBtJMSku
+            String size = jmSku.getStringAttribute("size");
+            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
+            CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
+            list.add(cmsBtJmSkuModel);
+        }
+
+        return list;
+    }
+
+
+    /**
+     * 填充CmsBtJmProductModel
+     *
+     * @param cmsBtJmProductModel
+     * @param product
+     * @return
+     */
+    private  CmsBtJmProductModel fillCmsBtJmProductModel(CmsBtJmProductModel cmsBtJmProductModel, CmsBtProductModel product)
+    {
+        if(cmsBtJmProductModel == null)
+        {
+            cmsBtJmProductModel = new CmsBtJmProductModel();
+            cmsBtJmProductModel.setCreated(new Date());
+            cmsBtJmProductModel.setModifier(getTaskName());
+            cmsBtJmProductModel.setCreater(getTaskName());
+        }
+
         //填充cmsBtJmProductModel
+        String channelId =  product.getChannelId();
+        CmsBtProductModel_Field fields =  product.getFields();
+        String productCode = fields.getCode();
+        String brandName = fields.getBrand();
+        String productType = fields.getProductType();
+        String sizeType = fields.getSizeType();
+        BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
+
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
-        cmsBtJmProductModel.setProductNameCn(bean.getName());
+        cmsBtJmProductModel.setProductNameCn(fields.getProductNameCn() + " " + productCode);
         cmsBtJmProductModel.setVoBrandName("");//TODO
         cmsBtJmProductModel.setVoCategoryName("");//TODO
         cmsBtJmProductModel.setBrandName(brandName);
@@ -817,27 +944,34 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setSizeType(sizeType);
         cmsBtJmProductModel.setProductDesEn(fields.getShortDesEn());
         cmsBtJmProductModel.setAttribute(jmFields.getStringAttribute("attribute"));
-        cmsBtJmProductModel.setForeignLanguageName(bean.getForeign_language_name());
-        cmsBtJmProductModel.setAddressOfProduce(deal.getAddress_of_produce());
-        cmsBtJmProductModel.setAvailablePeriod(deal.getBefore_date());
+        cmsBtJmProductModel.setForeignLanguageName(jmFields.getStringAttribute("productNameEn"));
+        cmsBtJmProductModel.setAddressOfProduce(jmFields.getStringAttribute("originCn"));
+        cmsBtJmProductModel.setAvailablePeriod(jmFields.getStringAttribute("beforeDate"));
         cmsBtJmProductModel.setProductDesCn(fields.getLongDesCn());
-        cmsBtJmProductModel.setApplicableCrowd(deal.getSuit_people());
-        cmsBtJmProductModel.setSpecialnote(deal.getSpecial_explain());
+        cmsBtJmProductModel.setApplicableCrowd(jmFields.getStringAttribute("suitPeople"));
+        cmsBtJmProductModel.setSpecialnote(jmFields.getStringAttribute("specialExplain"));
         cmsBtJmProductModel.setColorEn(fields.getColor());
         cmsBtJmProductModel.setImage1(fields.getImages1().get(0).getName());
-        cmsBtJmProductModel.setProductLongName(deal.getProduct_long_name());
-        cmsBtJmProductModel.setProductMediumName(deal.getProduct_medium_name());
-        cmsBtJmProductModel.setProductShortName(deal.getProduct_short_name());
-        cmsBtJmProductModel.setSearchMetaTextCustom(deal.getSearch_meta_text_custom());
+        cmsBtJmProductModel.setProductLongName(jmFields.getStringAttribute("productLongName"));
+        cmsBtJmProductModel.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
+        cmsBtJmProductModel.setProductShortName(jmFields.getStringAttribute("productShortName"));
+        cmsBtJmProductModel.setSearchMetaTextCustom(jmFields.getStringAttribute("searchMetaTextCustom"));
         cmsBtJmProductModel.setMaterialEn(fields.getMaterialEn());
         cmsBtJmProductModel.setMaterialCn(fields.getMaterialCn());
 
-        if (cmsBtJmSkuModelList.size() > 0) {
-            cmsBtJmProductModel.setMsrpUsd(cmsBtJmSkuModelList.get(0).getMsrpUsd());
-            cmsBtJmProductModel.setMsrpRmb(cmsBtJmSkuModelList.get(0).getMsrpRmb());
-            cmsBtJmProductModel.setRetailPrice(cmsBtJmSkuModelList.get(0).getRetailPrice());
-            cmsBtJmProductModel.setSalePrice(cmsBtJmSkuModelList.get(0).getSalePrice());
+        List<BaseMongoMap<String, Object>> jmSkus = product.getPlatform(CART_ID).getSkus();
+        List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+
+        //合并Common和平台的Sku属性
+        jmSkus = mergeSkuAttr(jmSkus, commonSkus);
+        if (jmSkus.size() > 0) {
+            BaseMongoMap<String, Object> jmSku = jmSkus.get(0);
+            cmsBtJmProductModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")));
+            cmsBtJmProductModel.setMsrpRmb(new BigDecimal(jmSku.getStringAttribute("priceMsrp")));
+            cmsBtJmProductModel.setRetailPrice(new BigDecimal(jmSku.getStringAttribute("priceSale")));
+            cmsBtJmProductModel.setSalePrice(new BigDecimal(jmSku.getStringAttribute("priceRetail")));
         }
+
         String hscode = fields.getHsCodePrivate();
         if (!StringUtils.isNullOrBlank2(hscode)) {
             String[] hscodeArray = hscode.split(",");
@@ -845,14 +979,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             cmsBtJmProductModel.setHsName(hscodeArray[1]);
             cmsBtJmProductModel.setHsUnit(hscodeArray[2]);
         }
-
-
-        cmsBtJmProductModel.setModified(DateTimeUtil.getDate());
-        cmsBtJmProductModel.setCreated(DateTimeUtil.getDate());
-        cmsBtJmProductModel.setModifier(getTaskName());
-        cmsBtJmProductModel.setCreater(getTaskName());
-
-        return bean;
+        cmsBtJmProductModel.setModified(new Date());
+        return cmsBtJmProductModel;
     }
 
 
