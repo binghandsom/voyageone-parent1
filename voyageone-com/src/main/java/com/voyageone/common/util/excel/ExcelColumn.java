@@ -1,6 +1,7 @@
 package com.voyageone.common.util.excel;
 
 import com.voyageone.common.util.CamelUtil;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.springframework.util.StringUtils;
 
 /**
@@ -16,6 +17,8 @@ public class ExcelColumn<T> {
     int orderIndex;
     FunctionFormatter<Object, T, Integer, Object> formatter;
     double columnWidth;
+    HSSFCellStyle cellStyle;
+
     public ExcelColumn()
     {
 
@@ -124,5 +127,13 @@ public class ExcelColumn<T> {
 
     public void setColumnWidth(double columnWidth) {
         this.columnWidth = columnWidth;
+    }
+
+    public HSSFCellStyle getCellStyle() {
+        return cellStyle;
+    }
+
+    public void setCellStyle(HSSFCellStyle cellStyle) {
+        this.cellStyle = cellStyle;
     }
 }

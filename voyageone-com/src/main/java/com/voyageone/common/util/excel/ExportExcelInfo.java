@@ -1,4 +1,5 @@
 package com.voyageone.common.util.excel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class ExportExcelInfo<TRow> {
         this.getListColumn().add(column);
         return column;
     }
-    public ExcelColumn<TRow> addExcelColumn(String text, String columnName,String tableName) {
+    public ExcelColumn<TRow> addExcelColumn(String text, String columnName, String tableName) {
         ExcelColumn<TRow> column = new ExcelColumn<TRow>();
         column.setText(text);
         column.setColumnName(columnName);
