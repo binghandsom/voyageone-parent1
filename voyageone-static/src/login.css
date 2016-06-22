@@ -1,12 +1,10 @@
-@import "static/css/simple-line-icons/css/simple-line-icons.css";
-
 html {
     height: 100%;
 }
 
 body {
     height: 100%;
-    background: #eeeded;
+    background: #fbfbfb;
     font-family: "Microsoft Yahei", sans-serif;
 }
 
@@ -22,7 +20,7 @@ body {
     border-radius: 6px;
     border: 1px solid #eeeded;
     overflow: hidden;
-    box-shadow: #FFFFFF 0 0 3px;
+    box-shadow: #eeeeee 0 0 3px;
 }
 
 .login-main {
@@ -70,11 +68,11 @@ body {
 }
 
 .login-user {
-    background: url(../img/user.png) no-repeat 8px 2px;
+    background: url(static/img/user.png) no-repeat 8px 2px;
 }
 
 .login-lock {
-    background: url(../img/lock.png) no-repeat 8px 2px;
+    background: url(static/img/lock.png) no-repeat 8px 2px;
 }
 
 .login-submit button {
@@ -87,13 +85,13 @@ body {
     margin: 0;
     width: 100%;
     border: none;
-    background: #ffa300;
+    background: #6bb2e2;
     transition: 200ms ease-in;
 }
 
 .login-submit button:hover {
     color: #FFFFFF;
-    background: #ed9005;
+    background: #5289ad;
 }
 
 .loginSign {
