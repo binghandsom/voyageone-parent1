@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="initialize()" ng-controller="popupCtrl">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -7,94 +7,101 @@
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <!--<div class="col-sm-4">-->
-                            <!--<div class="form-horizontal">-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_NAME"></label>-->
-
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<input type="text" class="form-control" ng-model="parentModel.name" disabled>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="col-sm-4">-->
-                            <!--<div class="form-horizontal">-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>-->
-
-                                    <!--<div class="col-sm-8 form-inline">-->
-                                        <!--<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="parentModel.activityStart"-->
-                                                                                 <!--disabled></div>-->
-                                        <!--&nbsp;~&nbsp;-->
-                                        <!--<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="parentModel.activityEnd"-->
-                                                                                 <!--disabled></div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>-->
-
-                                    <!--<div class="col-sm-8 form-inline">-->
-                                        <!--<div class="input-group col-sm-4"><input type="text" class="form-control"-->
-                                                                                 <!--ng-model="parentModel.prePeriodStart" disabled></div>-->
-                                        <!--&nbsp;~&nbsp;-->
-                                        <!--<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="parentModel.prePeriodEnd"-->
-                                                                                 <!--disabled></div>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="col-sm-4">-->
-                            <!--<div class="form-horizontal">-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_PC_ID"></label>-->
-
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<input type="text" class="form-control" ng-model="parentModel.activityPcId" disabled/>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_APP_ID"></label>-->
-
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<input type="text" class="form-control" ng-model="parentModel.activityAppId" disabled>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="col-sm-12">-->
-                            <!--<hr>-->
-                        <!--</div>-->
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">聚美类目</label>
-
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.voCategoryName">
+                                    <label class="col-sm-3 control-label" translate="TXT_JM_PROMOTION_NAME"></label>
+                                    <div class="col-sm-8 yellowLink m-t-xs">
+                                        <button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-pop btn-xs"
+                                                ng-click="openJmPromotionDetail({id:parentModel.id,search:search})"><i class="fa fa-pencil"></i>
+                                            {{parentModel.name}}
+                                        </button>
                                     </div>
                                 </div>
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label">状态</label>-->
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JM_PROMOTION_CHANGED_COUNT"></label>
+                                    <div class="col-sm-7">
+                                       <inpuut type="number" class="form-control" readonly>12</inpuut>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_PRESALE_TIME"></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" ng-model="parentModel.prePeriodStart" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close" max-date="vm.promotion.activityEnd" readonly><!-- ngIf: isOpen -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_START_TIME"></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" ng-model="parentModel.activityStart" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close" max-date="vm.promotion.activityEnd" readonly><!-- ngIf: isOpen -->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_END_TIME"></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" ng-model="parentModel.activityEnd" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close" min-date="vm.promotion.activityStart" readonly><!-- ngIf: isOpen -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">商品名称</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="searchInfo.productNameCn"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_JOIN_JM_CODE_SKU_SEARCH"></label>
+                                    <div class="col-sm-8">
+                                        <textarea type="text" rows="4" class="form-control" ng-model="searchInfo.voCategoryName"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-3 text-right">
+                                        <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)">
+                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;聚美类目
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="searchInfo.pCatPath" ng-readonly="true">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">颜色</label>
 
-                                    <!--<div class="col-sm-8" style="padding-left:0px">-->
-                                        <!--<label class="checkbox-inline c-checkbox" style="margin-left:4px">-->
-                                            <!--<input type="checkbox" name="synchState0" value="0" ng-model="searchInfo.synchState0"/>-->
-                                            <!--<span class="fa fa-check"></span>&nbsp;导入成功&nbsp;</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox">-->
-                                            <!--<input type="checkbox" name="synchState1" value="1" ng-model="searchInfo.synchState1"/>-->
-                                            <!--<span class="fa fa-check"></span>&nbsp;待上传&nbsp;</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox">-->
-                                            <!--<input type="checkbox" name="synchState2" value="2" ng-model="searchInfo.synchState2"/>-->
-                                            <!--<span class="fa fa-check"></span>&nbsp;上传成功&nbsp;</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox">-->
-                                            <!--<input type="checkbox" name="synchState3" value="3" ng-model="searchInfo.synchState3"/>-->
-                                            <!--<span class="fa fa-check"></span>&nbsp;更新成功&nbsp;</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox">-->
-                                            <!--<input type="checkbox" name="synchState4" value="4" ng-model="searchInfo.synchState4">-->
-                                            <!--<span class="fa fa-check"></span>&nbsp;上传异常&nbsp;</label>-->
-                                    <!--</div>-->
-                                <!--</div>-->
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="searchInfo.colorEn">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">品牌</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="searchInfo.brandName">
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">折扣</label>
 
@@ -106,19 +113,22 @@
                                                                                  placeholder="to"></div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">价格</label>
-
                                     <div class="col-sm-8" style="padding-left:0px">
                                         <label class="checkbox-inline c-radio" style="margin-left:4px">
                                             <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span
                                                 class="fa fa-check"></span>&nbsp;MSRP</label>
                                         <!--<label class="checkbox-inline c-radio">-->
-                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
-                                                <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
+                                        <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
+                                        <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
                                         <!--<label class="checkbox-inline c-radio">-->
-                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
-                                                <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
+                                        <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
+                                        <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
 
                                         <label class="checkbox-inline c-radio">
                                             <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span
@@ -126,66 +136,35 @@
                                         <label class="checkbox-inline c-radio">
                                             <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span
                                                 class="fa fa-check"></span>&nbsp;中国最终售价</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label"></label>
-
-                            <div class="col-sm-8 form-inline">
-                                <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginPrice"
-                                                                         placeholder="from"/></div>
-                                &nbsp;~&nbsp;
-                                <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endPrice"
-                                                                         placeholder="to"/></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">商品名称</label>
-
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" ng-model="searchInfo.productNameCn"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                                    <label class="col-sm-3 control-label">是否上传</label>
-
-                                    <div class="col-sm-8">
-                                        <select class="form-control" ng-model="searchInfo.synchStatus">
-                                            <option value="">全部</option>
-                                            <option value="2">已上传</option>
-                                            <option value="1">待上传</option>
-                                            <option value="0">未上传</option>
-                                            <option value="3">上传失败</option>
-                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">品牌</label>
-
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.brandName">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="input-group col-sm-4">
+                                            <input type="text" class="form-control" ng-model="searchInfo.beginPrice" placeholder="from"/>
+                                        </div>
+                                        &nbsp;~&nbsp;
+                                        <div class="input-group col-sm-4">
+                                            <input type="text" class="form-control" ng-model="searchInfo.endPrice" placeholder="to"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">颜色</label>
-
+                                    <label class="col-sm-3 control-label" translate="TXT_PROMOTION_PRODUCT_STATUS"></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.colorEn">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">product code</label>
-
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.productCode"/>
+                                        <label class="checkbox-inline c-checkbox">
+                                            <input type="checkbox" value="0">
+                                            <span class="fa fa-check"></span> 未上传
+                                        </label>
+                                        <label class="checkbox-inline c-checkbox">
+                                            <input type="checkbox" value="2">
+                                            <span class="fa fa-check"></span> 已上传
+                                        </label>
+                                        <label class="checkbox-inline c-checkbox">
+                                            <input type="checkbox" value="3">
+                                            <span class="fa fa-check"></span> 上传失败
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -195,7 +174,16 @@
                                                 ng-options="m.id as m.tagName for m in vm.tagList">
                                         </select>
                                     </div>
-
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">产品变更标签</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control">
+                                            <option value="" translate="TXT_SELECT_NO_VALUE"></option>
+                                            <option value="">有变更</option>
+                                            <option value="">无变更</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,17 +256,19 @@
                             <table class="table table-hover-new vo_table dropdown_table_main" style="margin-bottom:0px;table-layout: fixed;">
                                 <thead>
                                 <tr>
-                                    <th class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-click="selectAll($event)"  ng-true-value="true"
-                                                                                                                   ng-false-value="false"   /><span
-                                            class="fa fa-check"></span></label> </th>
+                                    <th class="mfb-xt3 text-left">
+                                        <label class="checkbox-inline c-checkbox">
+                                            <input type="checkbox"  ng-click="selectAll($event)" ng-true-value="true" ng-false-value="false"/>
+                                            <span class="fa fa-check"></span></label>
+                                    </th>
                                     <th class="text-left">Product Image</th>
                                     <th class="text-left">商品代码</th>
                                     <th class="text-left">聚美商品名称</th>
                                     <th class="text-left">Tag Name</th>
                                     <th class="text-left">Color</th>
                                     <th class="text-right">Price</th>
-                                    <th class="text-left">聚美Hash ID</th>
                                     <th class="text-right">聚美价格</th>
+                                    <th class="text-left">聚美Hash ID</th>
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
@@ -298,7 +288,12 @@
                                     <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
                                         {{model.productLongName}}  </a>
                                     </td>
-                                    <td class="text-left">{{model.promotionTag}}</td>
+                                    <td>
+                                        <select multiple chosen class="form-control" ng-model="searchInfo.tagIdList"
+                                                ng-options="m.id as m.tagName for m in vm.tagList">
+                                        </select>
+                                    </td>
+                                    <!--<td class="text-left">{{model.promotionTag}}</td>-->
                                     <td class="text-left">
                                         <div class="table_main">
                                             <ul>
@@ -317,7 +312,6 @@
                                             </ul>
                                         </div>
                                     </td>
-                                    <td class="text-left">{{model.jmHashId}}</td>
                                     <td class="text-right">
                                         <div class="table_main">
                                         <ul>
@@ -326,7 +320,8 @@
                                         </ul>
                                         </div>
                                     </td>
-                                    <td class="text-center">{{model.discount == 0?'':(model.discount*10).toFixed(1) + '折'}}</td>
+                                    <td class="text-left">{{model.jmHashId}}</td>
+                                    <td class="text-center">{{model.discount == 0?'':(model.discount*10).toFixed(2) + '折'}}</td>
                                     <td class="text-center">
                                         {{model.skuCount}}
                                     </td>

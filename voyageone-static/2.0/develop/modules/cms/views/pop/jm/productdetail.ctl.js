@@ -16,7 +16,9 @@ define([
             this.alert = alert;
             this.context = context;
             this.masterData = {};
-            this.model={};
+            this.model = {};
+            this.product_status = true;
+            this.deal_status = true;
         }
         JmProductDetailController.prototype = {
             initialize: function () {
