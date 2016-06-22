@@ -557,7 +557,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
             else
             {
-                String errorMsg = String.format("取SxDate失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
+                String errorMsg = String.format("取SxData失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                 $error(errorMsg);
                 new BusinessException(errorMsg);
             }
