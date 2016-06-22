@@ -235,7 +235,6 @@
                 else
                     rules[rule.name] = rule.value;
 
-
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
                 rules[rule.name] = new DependentRule(rule, field, schema);
@@ -1060,6 +1059,8 @@
                                         valueTypeRule = rules.valueTypeRule,
                                         requiredRule = rules.requiredRule,
                                         readOnlyRule = rules.readOnlyRule,
+                                        minLengthRule = rules.minLengthRule,
+                                        maxLengthRule = rules.maxLengthRule,
                                         type = getInputType(valueTypeRule);
 
                                     if (type === 'textarea') {
@@ -1077,8 +1078,8 @@
                                     bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                     bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
 
-                                    bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
-                                    bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
+                                    bindLengthRule(innerElement, minLengthRule, 'minLengthRule', 'minlength');
+                                    bindLengthRule(innerElement, maxLengthRule, 'maxLengthRule', 'maxlength');
 
                                     // 处理正则规则
                                     if (regexRule) {
