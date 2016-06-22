@@ -2,9 +2,11 @@ define(function (require) {
   require('components/angular/angular.modules');
   require('components/angular/controllers/selectRows.ctrl');
   require('components/angular/controllers/showPopover.ctrl');
+  require('components/angular/directives/bytelength');
   require('components/angular/directives/dateModelFormat.directive');
   require('components/angular/directives/enterClick.directive');
   require('components/angular/directives/filestyle.directive');
+  require('components/angular/directives/goTop.directive');
   require('components/angular/directives/ifNoRows.directive');
   require('components/angular/directives/image.directive');
   require('components/angular/directives/message.directive');

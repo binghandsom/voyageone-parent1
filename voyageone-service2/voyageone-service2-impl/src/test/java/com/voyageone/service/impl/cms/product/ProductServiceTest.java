@@ -100,7 +100,7 @@ public class ProductServiceTest {
 
         platformCart.setSellerCats(sellerCats);
 
-        productService.updateProductPlatform("010", 2522623L, platformCart);
+        productService.updateProductPlatform("010", 2522623L, platformCart,"test");
 
 
 
