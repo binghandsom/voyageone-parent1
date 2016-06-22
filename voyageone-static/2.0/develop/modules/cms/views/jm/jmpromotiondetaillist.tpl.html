@@ -215,8 +215,8 @@
         <div class="form-inline pull-right m-b-xs" >
             <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()"><i class="fa fa-reply-all"></i>&nbsp;导入
             </button>
-            <div class="btn-group dropdown" uib-dropdown=""  ng-disabled="!vm.modelList.length">
-                <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+            <div class="btn-group dropdown" uib-dropdown="">
+                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
@@ -225,8 +225,8 @@
                     <!--<li><a href="" ng-click="addExport(2)">按专场模板</a></li>-->
                 </ul>
             </div>
-            <div class="btn-group dropdown" uib-dropdown=""  ng-disabled="!vm.modelList.length">
-                <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+            <div class="btn-group dropdown" uib-dropdown="">
+                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
@@ -236,8 +236,8 @@
                     <li><a href="" ng-click="openDealExtensionWin()">全量Deal延期</a></li>
                 </ul>
             </div>
-            <div class="btn-group dropdown" uib-dropdown=""  ng-disabled="!vm.modelList.length">
-                <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+            <div class="btn-group dropdown" uib-dropdown="" >
+                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;批量操作&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
