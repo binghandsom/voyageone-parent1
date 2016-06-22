@@ -4,11 +4,13 @@ import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -29,7 +31,7 @@ import java.util.*;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsBtJmPromotionImportTask3Service {
+public class CmsBtJmPromotionImportTask3Service extends BaseService {
     @Autowired
     CmsBtJmPromotionImportTaskDao cmsBtJmPromotionImportTaskDao;
     @Autowired
@@ -61,11 +63,17 @@ public class CmsBtJmPromotionImportTask3Service {
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         try {
             cmsBtJmPromotionImportTaskDao.update(modelCmsBtJmPromotionImportTask);
-            importExcel(modelCmsBtJmPromotionImportTask, importPath);
+           CallResult result= importExcel(modelCmsBtJmPromotionImportTask, importPath);
+            if(!result.isResult())
+            {
+                modelCmsBtJmPromotionImportTask.setErrorMsg(result.getMsg());
+                modelCmsBtJmPromotionImportTask.setErrorCode(1);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
+            $error("CmsBtJmPromotionImportTask3Service.importFile",ex);
             modelCmsBtJmPromotionImportTask.setErrorCode(1);
-            modelCmsBtJmPromotionImportTask.setErrorMsg(ex.getMessage() + ex.getStackTrace());
+            modelCmsBtJmPromotionImportTask.setErrorMsg(ex.getMessage());
             if (ex.getStackTrace().length > 0) {
                 modelCmsBtJmPromotionImportTask.setErrorMsg(modelCmsBtJmPromotionImportTask.getErrorMsg() + ex.getStackTrace()[0].toString());
             }
@@ -75,7 +83,8 @@ public class CmsBtJmPromotionImportTask3Service {
         cmsBtJmPromotionImportTaskDao.update(modelCmsBtJmPromotionImportTask);
     }
 
-    private void importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, String importPath) throws Exception {
+    private CallResult importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, String importPath) throws Exception {
+        CallResult result=new CallResult();
         boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
@@ -90,12 +99,18 @@ public class CmsBtJmPromotionImportTask3Service {
         } else if (modelCmsBtJmPromotionImportTask.getFileName().indexOf(".xls") > 0) {
             book = new HSSFWorkbook(fileInputStream);
         } else {
-            throw new Exception("导入文件格式不对");
+            result.setResult(false);
+            result.setMsg("导入文件格式不对");
+            return  result;
+           // throw new Exception("导入文件格式不对");
         }
         //读取product
         Sheet productSheet = book.getSheet("Product");
         if (productSheet == null) {
-            throw new Exception("导入模板不对,请检查");
+            result.setResult(false);
+            result.setMsg("导入模板不对,请检查");
+            return  result;
+           // throw new Exception("导入模板不对,请检查");
         }
         List<ProductImportBean> listProductImport = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
@@ -105,7 +120,9 @@ public class CmsBtJmPromotionImportTask3Service {
         //读取sku
         Sheet skuSheet = book.getSheet("Sku");
         if (skuSheet == null) {
-            throw new Exception("导入模板不对,请检查");
+            result.setResult(false);
+            result.setMsg("导入模板不对,请检查");
+            return  result;
         }
         List<SkuImportBean> listSkuImport = new ArrayList<>();
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();
@@ -131,13 +148,14 @@ public class CmsBtJmPromotionImportTask3Service {
             modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
         }
         modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
+        return  result;
     }
 
     //check
     public void check(CmsBtJmPromotionModel model, List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap) throws IllegalAccessException {
         List<ProductImportBean> listErroProduct = new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
+            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getId(),model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
                 product.setErrorMsg("活动日期有重叠");
                 listErroProduct.add(product);
             }
@@ -274,7 +292,7 @@ public class CmsBtJmPromotionImportTask3Service {
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));
             skuModel.setChannelId(saveInfo.productModel.getChannelId());
             skuModel.setSkuCode(skuImportBean.getSkuCode());
-            skuModel.setDiscount(skuImportBean.getDiscount() == null?new BigDecimal(0):new BigDecimal(skuImportBean.getDiscount()));
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier("system");
             skuModel.setCreated(new Date());

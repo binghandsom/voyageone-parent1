@@ -76,7 +76,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     public CallResult updateJm( CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         CallResult result = new CallResult();
         try {
-            if (model.getSynchStatus() == 1) {
+            if (model.getSynchStatus() == 1||model.getSynchStatus() == 0) {
                 //获取在售商品的model
                 CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.getOnSaleByCode(model.getChannelId(), model.getProductCode());
                 if (onSaleModel != null) {

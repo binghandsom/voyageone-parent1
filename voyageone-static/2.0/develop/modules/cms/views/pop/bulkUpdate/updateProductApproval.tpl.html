@@ -16,7 +16,7 @@
                             </div>
                             <div class="text-center" ng-repeat="info in vm.retInfo.infoList">
                                 <label class="control-label" ng-if="info.priceRetail">{{info.cartName}}:  (sku:{{info.skuCode}})   最终售价[{{info.priceSale}}] < 销售指导价[{{info.priceRetail}}]</label>
-                                <label class="control-label" ng-if="info.priceLimit">{{info.cartName}}:  (sku:{{info.skuCode}})   最终售价[{{info.priceSale}}] > 阈值价格[{{info.priceLimit}}]</label>
+                                <label class="control-label" ng-if="info.priceLimit">{{info.cartName}}:  (sku:{{info.skuCode}})   最终售价[{{info.priceSale}}] > 阈值价格[{{ info.priceLimit | number : 2 }}]</label>
                             </div>
                         </div>
                     </div>

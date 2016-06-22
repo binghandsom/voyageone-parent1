@@ -124,10 +124,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public int updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
+       int result= serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        return serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
+        return result;
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)
@@ -247,16 +248,16 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
-    public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
-//        BatchSynchPriceParameter parameter=new BatchSynchPriceParameter();
-//        service3.batchSynchPrice(parameter);
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        map.put("id", parameter.getPromotionId());
-//        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-//        CallResult result = new CallResult();
-        return success(null);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
+//    public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {
+////        BatchSynchPriceParameter parameter=new BatchSynchPriceParameter();
+////        service3.batchSynchPrice(parameter);
+////        Map<String, Object> map = new HashMap<String, Object>();
+////        map.put("id", parameter.getPromotionId());
+////        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+////        CallResult result = new CallResult();
+//        return success(null);
+//    }
 
     //jm2 begin
     //批量更新价格

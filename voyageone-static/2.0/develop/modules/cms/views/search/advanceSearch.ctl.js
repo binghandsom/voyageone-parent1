@@ -24,7 +24,9 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: []
+                cidValue: [],
+                promotionTagType: 1,
+                freeTagType: 1
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -117,7 +119,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                cidValue: []
+                cidValue: [],
+                promotionTagType: 1,
+                freeTagType: 1
             };
             $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
@@ -275,9 +279,7 @@ define([
 
             function _openJMActivity(cartId, selList, context) {
                 openJMActivity(context.promotion, selList, context).then(function () {
-                    searchAdvanceService2.clearSelList();
-                    getGroupList();
-                    getProductList();
+                    $scope.search();
                 })
             }
         }
@@ -286,14 +288,25 @@ define([
          * popup出批量修改产品的field属性
          * @param openFieldEdit
          */
-        function openBulkUpdate(openFieldEdit) {
-            _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0});
+        function openBulkUpdate(openFieldEdit, cartId) {
+            _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0, "cartId": parseInt(cartId)});
 
             function _openBulkUpdate(cartId, selList, context) {
-                openFieldEdit(selList, context).then(function () {
-                    searchAdvanceService2.clearSelList();
-                    getGroupList();
-                    getProductList();
+                openFieldEdit(selList, context).then(function (res) {
+                    if (res.data.ecd == null || res.data.ecd == undefined) {
+                        alert("提交请求时出现错误");
+                        return;
+                    }
+                    if (res.data.ecd == 1) {
+                        alert("未选择商品，请选择后再操作。");
+                        return;
+                    }
+                    if (res.data.ecd == 4) {
+                        alert("下列商品不在 " + res.data.cartStr + " 上销售，无法继续操作，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
+                        return;
+                    }
+
+                    $scope.search();
                 })
             }
         }
@@ -466,7 +479,7 @@ define([
             $scope.vm.searchInfo.productStatus = null;
             $scope.vm.searchInfo.platformStatus = null;
             $scope.vm.searchInfo.hasErrorFlg = null;
-            $scope.vm.searchInfo.promotionTagType = null;
+            $scope.vm.searchInfo.promotionTagType = 1;
             $scope.vm.searchInfo.promotionTags = null;
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
@@ -591,7 +604,7 @@ define([
 
         // 商品上下架
         $scope._openPutOnOff = function (openPutOnOffFnc, cartId) {
-            _chkProductSel(cartId, __openPutOnOff);
+            _chkProductSel(parseInt(cartId), __openPutOnOff);
 
             function __openPutOnOff(cartId, _selProdList) {
                 var productIds = [];
@@ -611,7 +624,7 @@ define([
 
         // 商品审批
         function openApproval(openUpdateApprovalFnc, cartId) {
-            _chkProductSel(cartId, __openApproval);
+            _chkProductSel(parseInt(cartId), __openApproval);
 
             function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).result
@@ -635,7 +648,6 @@ define([
                                 return;
                             }
                             if (res.data.ecd == 1) {
-                                // 存在未ready状态
                                 alert("未选择商品，请选择后再操作。");
                                 return;
                             }

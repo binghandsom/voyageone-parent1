@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -25,7 +26,7 @@ import static org.junit.Assert.*;
  * Created by Ethan Shi on 2016/6/13.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:context-cms-test.xml")
 public class CmsBuildPlatformProductUploadJMServiceTest {
 
 
@@ -53,6 +54,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Test
     public void TestDate() throws Exception {
+
+
+
         Map<String, String> map = new HashMap<>();
         String value = map.get("1");
 
@@ -102,7 +106,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         for (CmsBtSxWorkloadModel work : workloadList) {
 //            work.setGroupId(27214L);
 //            work.setGroupId(39342L);
-            work.setGroupId(29590L);
+            work.setGroupId(20962L);
 
 
             cmsBuildPlatformProductUploadJMService.updateProduct(work);

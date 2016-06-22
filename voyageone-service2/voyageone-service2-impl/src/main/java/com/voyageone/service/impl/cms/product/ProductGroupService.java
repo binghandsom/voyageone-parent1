@@ -197,7 +197,7 @@ public class ProductGroupService extends BaseService {
             List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, model.getChannelId());
             Map<String, Boolean> isPublishedProducts = new HashMap<>();
             for(CmsBtProductModel product : products) {
-                isPublishedProducts.put(product.getFields().getCode(),
+                isPublishedProducts.put(product.getCommon().getFields().getCode(),
                         product.getCarts().size() > 0 && !StringUtils.isEmpty(product.getCarts().get(0).getPublishTime()));
             }
 
@@ -218,21 +218,22 @@ public class ProductGroupService extends BaseService {
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap2 = new HashMap<>();
                 bulkQueryMap2.put("common.fields.code", code);
-                bulkQueryMap2.put("platform.P"+model.getCartId() + ".cartId", model.getCartId());
+                bulkQueryMap2.put("platforms.P"+model.getCartId() + ".cartId", model.getCartId());
 
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 HashMap<String, Object> bulkUpdateMap2 = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
                     bulkUpdateMap.put("carts.$.platformStatus", model.getPlatformStatus().name());
-                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 if (!isPublishedProducts.get(code)) {
                     bulkUpdateMap.put("carts.$.publishTime", model.getPublishTime());
                     bulkUpdateMap.put("carts.$.numIId", model.getNumIId());
 
-                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".publishTime", model.getPublishTime());
-                    bulkUpdateMap2.put("platform.P"+model.getCartId() + ".numIId", model.getNumIId());
+                    bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pPublishTime", model.getPublishTime());
+                    bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pNumIId", model.getNumIId());
+                    bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pProductId", model.getPlatformPid());
                 }
 
                 // 设定批量更新条件和值

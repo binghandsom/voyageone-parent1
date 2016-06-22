@@ -3,6 +3,7 @@ package com.voyageone.components.jumei.request;
 import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,7 +127,13 @@ public class HtSpuAddRequest implements BaseJMRequest {
         if (!StringUtils.isEmpty(getProperty()))         params.put("property", this.getProperty());
         if (!StringUtils.isEmpty(getSize()))             params.put("size", this.getSize());
         if (!StringUtils.isEmpty(getAttribute()))        params.put("attribute", this.getAttribute());
-        if (!StringUtils.isEmpty(getAbroad_price()))     params.put("abroad_price", this.getAbroad_price());
+        if (!StringUtils.isEmpty(getAbroad_price())) {
+
+            DecimalFormat formatter1 = new DecimalFormat();
+            formatter1.applyPattern("#0.00");
+            String clientMsrpPrice = formatter1.format(Double.valueOf(this.getAbroad_price()));
+            params.put("abroad_price", clientMsrpPrice);
+        }
         if (!StringUtils.isEmpty(getArea_code()))        params.put("area_code", this.getArea_code());
         if (!StringUtils.isEmpty(getAbroad_url()))       params.put("abroad_url", this.getAbroad_url());
         if (!StringUtils.isEmpty(getNormalImage()))      params.put("normalImage", this.getNormalImage());
