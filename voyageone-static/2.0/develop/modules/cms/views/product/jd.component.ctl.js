@@ -178,7 +178,7 @@ define([
 
                 function selectAll(){
                     scope.vm.platform.skus.forEach(function(element){
-                        element.isSale = $(".table-responsive thead .sku_check").prop('checked');
+                        element.isSale = scope.vm.skuFlag;
                     });
                 }
 
