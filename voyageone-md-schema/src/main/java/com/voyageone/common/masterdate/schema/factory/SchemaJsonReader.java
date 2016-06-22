@@ -52,6 +52,17 @@ public class SchemaJsonReader {
     }
 
     /**
+     * readJsonForObject
+     */
+    public static Field readJsonForObject(Map<String, Object> map) {
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        mapList.add(map);
+
+        List<Field> result = readJsonForList(mapList);
+        return (result == null || result.isEmpty()) ? null: result.get(0);
+    }
+
+    /**
      * readJsonForMap
      */
     public static Map<String, Field> readJsonForMap(List<Map<String, Object>> rootList) {
