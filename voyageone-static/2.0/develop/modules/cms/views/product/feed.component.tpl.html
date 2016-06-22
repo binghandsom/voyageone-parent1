@@ -5,14 +5,20 @@
         <div class="panel-group">
         <div class="panel panel-default">
             <div class="container-fluid m-t-sm m-l-xs m-r-xs">
-                <div class="col-sm-12">
-                        <div class="col-sm-12  m-b-sm font-bold text-vo">
+                <div class="row">
+                        <div class="col-md-8  m-b-sm font-bold text-vo">
                             <span class="label label-danger m-r-sm pull-left" ng-if="vm._isMain == 1">&nbsp;M&nbsp;</span>
                             <span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}{{vm.productDetails.categoryFullPath}}</span>
-                            <div class="form-inline pull-right" ng-controller="popupCtrl">
-                                <button type="button" class="btn btn-vo ng-binding" ng-click="updateFeed()"><i class="glyphicon glyphicon-floppy-disk"></i>保存</button>
-                            </div>
                         </div>
+                         <div class="col-md-4">
+                             <div class="form-inline pull-right" ng-controller="popupCtrl">
+                                 <button type="button" class="btn btn-vo ng-binding" ng-click="updateFeed()"><i class="glyphicon glyphicon-floppy-disk"></i>保存</button>
+                             </div>
+                             <br><br>
+                             <div class="text-warnings pull-right" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
+                                 <i class="icon fa fa-bell-o"></i>&nbsp;如果平台已经Approved,点击保存后各个平台将触发上新操作<br>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>
