@@ -450,6 +450,12 @@ define([
 
             return m.maxDealPrice + "~" + m.minDealPrice;
         }
+        $scope.getMarketPrice=function(m) {
+            if (m.maxMarketPrice==m.minMarketPrice)
+                return m.maxMarketPrice;
+
+            return m.maxMarketPrice + "~" + m.minMarketPrice;
+        }
     }
     detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;

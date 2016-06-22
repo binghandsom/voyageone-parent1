@@ -68,6 +68,7 @@ define([
                 var parameter={};
                 parameter.promotionSkuId=skuInfo.id;
                 parameter.dealPrice=skuInfo.dealPrice;
+                parameter.marketPrice=skuInfo.marketPrice;
                 self.jmPromotionDetailService.updateDealPrice(parameter).then(function (res) {
                     skuInfo.isSave=false;
                     self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
