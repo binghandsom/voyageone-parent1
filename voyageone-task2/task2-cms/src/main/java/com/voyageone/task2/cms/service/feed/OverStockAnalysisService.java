@@ -10,7 +10,6 @@ import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
@@ -71,12 +70,14 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         while (true) {
             request.setOffset(offset);
             request.setLimit(200);
+            String sku ="";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
                 $info(JacksonUtil.bean2Json(result));
                 int statusCode = result.getStatusCode();
                 ProductsType productsType = result.getEntity();
                 List<ProductType> productTypeList = productsType.getProduct();
+
                 if (statusCode == 200) {
                     if (productTypeList.size() == 0) {
                         $info("产品取得结束");
@@ -93,6 +94,10 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setModel(getValue(variationType.getFullSku().split("-")[0]));
                                     superFeedverStockBean.setClientmodel(getValue(product.getSku()));
                                     superFeedverStockBean.setSku(getValue(variationType.getFullSku()));
+                                    sku=variationType.getFullSku();
+                                    if(sku.equals("10328044-000-000")){
+                                        $info("10328044-000-000");
+                                    }
                                     superFeedverStockBean.setClientsku(getValue(variationType.getSku()));
                                     superFeedverStockBean.setTitle(getValue(variationType.getProduct().getTitle()));
                                     superFeedverStockBean.setBrand(getValue(variationType.getProduct().getBrand()));
@@ -234,17 +239,15 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     }
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
+                                    count++;
+                                    $info("SKU:"+count+"---"+sku);
+                                    if (superfeed.size() > 1000) {
+                                        transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
+                                        superfeed.clear();
+                                    }
                                 }
                             }
-                        }
-                        if (superfeed.size() > 1000) {
-                            transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
-                            superfeed.clear();
-                        }
-                        $info(DateTimeUtil.getNow());
-                        count = count + productTypeList.size();
-                        if(count==1){
-                            break;
+
                         }
                     }
                 } else {
@@ -252,12 +255,13 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     break;
                 }
                 offset = offset + 1;
-                if(count==1000){
-                    break;
-                }
             } catch (Exception e) {
-                $info(e.getMessage()+"111"+count);
+                $info(e.getMessage()+"111"+count+sku);
             }
+        }
+        if (superfeed.size() >0) {
+            transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
+            superfeed.clear();
         }
         $info("OverStock产品api调用结束");
         $info("OverStock产品个数为:" + count);
