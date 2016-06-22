@@ -2,6 +2,7 @@ package com.voyageone.components.jumei.service;
 
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.UnicodeUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -108,13 +109,14 @@ public class JumeiHtDealServiceTest {
         HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
         List<HtDeal_UpdateDealPriceBatch_UpdateData> list=new ArrayList<>();
         HtDeal_UpdateDealPriceBatch_UpdateData updateData=new HtDeal_UpdateDealPriceBatch_UpdateData();
-        updateData.setJumei_hash_id("ht1464949112p222551364");
-        updateData.setJumei_sku_no("701506467");
+        updateData.setJumei_hash_id("ht1466394293p800000031");
+        updateData.setJumei_sku_no("701506664");
         updateData.setMarket_price(400);
         updateData.setDeal_price(200);
         list.add(updateData);
         request.setUpdate_data(list);
         HtDealUpdateDealPriceBatchResponse response = htDealService.updateDealPriceBatch(shopBean, request);
+        System.out.println(JsonUtil.bean2Json(response));
      //   {"error_code":"302","reason":"error","response":{"successCount":0,"errorList":[{"jumei_sku_no":"701506467","error_code":505,"error_message":"hash_id: ht1464949112p222551364, sku_no:701506467的修改价格申请还在审核，不能重复提交申请!"}]}}
     }
     @Test

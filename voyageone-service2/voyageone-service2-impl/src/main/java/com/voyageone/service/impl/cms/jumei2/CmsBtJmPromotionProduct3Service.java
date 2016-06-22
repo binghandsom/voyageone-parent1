@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -84,6 +85,7 @@ public class CmsBtJmPromotionProduct3Service {
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
             price = Double.toString(parameter.getPrice());
+            //parameter.setDiscount(BigDecimalUtil.divide(price));
         } else//折扣 0：市场价 1：团购价
         {
             if (parameter.getPriceType() == 1)//团购价 deal_price

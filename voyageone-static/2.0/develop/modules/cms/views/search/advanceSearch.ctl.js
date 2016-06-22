@@ -24,9 +24,9 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: [],
-                _selall: false
+                cidValue: []
             },
+            _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
             groupList: [],
@@ -117,9 +117,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                cidValue: [],
-                _selall: false
+                cidValue: []
             };
+            $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
             getCat(null);
             $scope.vm.masterData.tagList = [];
@@ -255,12 +255,12 @@ define([
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
                     });
-                    var params = {'sellerCats': res, 'productIds': productIds, 'cartId': cartId};
+                    var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
                     params.isSelAll = $scope.vm._selall ? 1 : 0;
                     $addChannelCategoryService.save(params).then(function (context) {
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         $scope.search();
-                     });
+                    });
                 })
             }
         }
@@ -735,10 +735,10 @@ define([
                 selList = $scope.vm.productSelList.selList;
             }
             openAddChannelCategoryEdit(selList, $scope.vm.searchInfo.cartId).then(function (context) {
-                if (_.isArray(context)) {
+                if (_.isArray(context.sellerCats)) {
                     // 设置画面显示用的值
                     var shopCatValues = [];
-                    _.forEach(context, function(catObj) {
+                    _.forEach(context.sellerCats, function(catObj) {
                         if (_.isArray(catObj.cNames)) {
                             shopCatValues.push(catObj.cNames.join('>'));
                         }
@@ -747,7 +747,7 @@ define([
 
                     // 设置查询用的参数
                     var cidValue = [];
-                    _.forEach(context, function(catObj) {
+                    _.forEach(context.sellerCats, function(catObj) {
                         cidValue.push(catObj.cId);
                     });
                     $scope.vm.searchInfo.cidValue = cidValue;

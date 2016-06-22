@@ -91,6 +91,16 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_FEED)
+    public AjaxResponse doUpdateProductFeedInfo(@RequestBody Map requestMap) {
+
+        String channelId = getUser().getSelChannelId();
+        String userName = getUser().getUserName();
+
+        return success(productPropsEditService.updateProductFeedInfo(channelId, userName, requestMap));
+
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap) {
 

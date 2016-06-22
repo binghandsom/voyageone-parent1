@@ -507,6 +507,8 @@ public interface CmsUrlConstants {
 
             String UPDATE_PRODUCT_ALL_INFO = "updateProductAllInfo";
 
+            String UPDATE_PRODUCT_FEED = "updateProductFeed";
+
             String CHANGE_CATEGORY = "changeCategory";
 
             String GET_PRODUCT_PLATFORM ="getProductPlatform";

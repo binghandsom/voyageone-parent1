@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -25,7 +26,7 @@ import static org.junit.Assert.*;
  * Created by Ethan Shi on 2016/6/13.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:context-cms-test.xml")
 public class CmsBuildPlatformProductUploadJMServiceTest {
 
 
@@ -42,16 +43,22 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Autowired
     CmsBtJmSkuDao cmsBtJmSkuDao;
 
-    @Autowired
-    CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
+
+    @Test
+    public void TestPrice() throws Exception {
+
+
+    }
+
 
 
     @Test
     public void TestDate() throws Exception {
+
+
+
         Map<String, String> map = new HashMap<>();
         String value = map.get("1");
-
-
 
         long currentTime = System.currentTimeMillis();
         System.out.println(currentTime);
@@ -67,6 +74,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         rightNow.add(Calendar.MINUTE, 30);
         System.out.println(rightNow.getTimeInMillis());
         Date date1 = new Date(rightNow.getTimeInMillis());
+        date1.getTime();
         String date1Str = formatter.format(date1);
         System.out.println(date1Str);
 
@@ -98,7 +106,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         for (CmsBtSxWorkloadModel work : workloadList) {
 //            work.setGroupId(27214L);
 //            work.setGroupId(39342L);
-            work.setGroupId(29590L);
+            work.setGroupId(21878L);
 
 
             cmsBuildPlatformProductUploadJMService.updateProduct(work);

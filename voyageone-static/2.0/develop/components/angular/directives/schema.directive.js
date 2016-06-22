@@ -3,14 +3,13 @@
     /**
      * 以下代码包含下面这些自定义标签:
      *  schema
-     *  schema-field
-     *  schema-field-name
-     *  schema-complex-name
-     *  schema-complex-container
-     *  schema-input-container
-     *  schema-field-tip
-     *  schema-input-toolbar
-     *  schema-complex-toolbox
+     *  s-field
+     *  s-header
+     *  s-complex
+     *  s-container
+     *  s-tip
+     *  s-toolbar
+     *  s-toolbox
      *
      * 后续如有增加新的自定义标签, 请在这里追加。方便控制外观自定义。
      *
@@ -189,10 +188,23 @@
      *   readOnlyRule : string | Object | null
      * }}
      */
-    function doRule(field, schema) {
+    function getRules(field, schema) {
 
-        // 规则的简单结果
-        var rules = {};
+        var withSchema = !!schema;
+        var rules = field.$rules;
+
+        // 存在上次生成的 rule map
+        // 并且上次生成的有依赖 schema
+        // 那么直接返回
+        // 如果上次生成的没有依赖 schema, 并且这次有
+        // 那么就需要重新生成
+
+        if (rules) {
+            if (!withSchema || rules.$withSchema)
+                return rules;
+        } else {
+            rules = {};
+        }
 
         // 没啥可用的信息就算了
         if (!field || !field.rules)
@@ -230,6 +242,9 @@
             }
 
         });
+
+        rules.$withSchema = withSchema;
+        field.$rules = rules;
 
         return rules;
     }
@@ -370,7 +385,7 @@
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, '$rules.' + name + '.getLength()');
+            element.attr('ng-' + attr, 'rules.' + name + '.getLength()');
         } else {
             element.attr(attr, rule);
         }
@@ -384,7 +399,7 @@
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, '$rules.' + name + '.checked()');
+            element.attr('ng-' + attr, 'rules.' + name + '.checked()');
         } else if (rule) {
             element.attr(attr, true);
         }
@@ -401,25 +416,29 @@
         // 所以也作为 tip 显示
 
         each(rules, function (content, key) {
-            if (key === 'tipRule' || key.indexOf('Rule') < 0) {
 
-                var contentContainer = angular.element('<schema-field-tip>');
-                container.append(contentContainer);
+            if (key.indexOf('$') === 0)
+                return;
 
-                // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-                if (!is.string(content)) {
+            if (key.indexOf('Rule') > 0 && key !== 'tipRule')
+                return;
 
-                    if ('url' in content && !!content.url) {
-                        var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
-                        aTag.text(content.value);
-                        contentContainer.append(aTag);
-                    } else {
-                        contentContainer.text(content.value);
-                    }
+            var contentContainer = angular.element('<s-tip>');
+            container.append(contentContainer);
+
+            // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
+            if (!is.string(content)) {
+
+                if ('url' in content && !!content.url) {
+                    var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
+                    aTag.text(content.value);
+                    contentContainer.append(aTag);
+                } else {
+                    contentContainer.text(content.value);
                 }
-                else {
-                    contentContainer.text(content);
-                }
+            }
+            else {
+                contentContainer.text(content);
             }
         });
     }
@@ -443,7 +462,7 @@
         }
 
         if (exists(options) && options.length) {
-            result = !is.array(result) ? find(options, function(o) {
+            result = !is.array(result) ? find(options, function (o) {
                 return o.value == result;
             }).displayName : result.map(function (r) {
                 return find(options, function (o) {
@@ -452,7 +471,7 @@
             });
         }
 
-        var contentContainer = angular.element('<schema-field-tip>');
+        var contentContainer = angular.element('<s-tip>');
         contentContainer.text('该字段包含默认值: ' + angular.toJson(result));
         container.append(contentContainer);
     }
@@ -471,7 +490,7 @@
     }
 
     /**
-     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 schema-field 中 $render 里的切换逻辑
+     * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 s-field 中 $render 里的切换逻辑
      * @param {object} field
      * @param {Array.<String>} valueKeys 需要切换的属性名
      * @param {bool} fromPrivate 标识切换方向, true = from private, false = to private
@@ -626,7 +645,6 @@
         this.value = rule.value;
         this.origin = rule;
 
-        // 因为 field 上回存储 $rules 便于访问
         // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
         // 所以需要通过第三方存储来保存相互的关系
         this.$fieldId = field.id;
@@ -677,7 +695,7 @@
             if (!targetField)
                 return !(forceTrue = true);
 
-            if (currRule.name === 'disableRule' && !!(parentDisableRule = targetField.$rules.disableRule)) {
+            if (currRule.name === 'disableRule' && !!(parentDisableRule = getRules(targetField).disableRule)) {
                 // 如果当前要检查的就是 disableRule
                 // 并且父级也有 disableRule
                 // 那么如果父级不显示, 子级自然不能显示
@@ -728,33 +746,85 @@
         return this.checked() ? this.value : null;
     };
 
+    function transField(field, schema, parentScope, compileCallback) {
+
+        // 一次性解析字段的所有 rule
+        var rules = getRules(field, schema),
+            disableRule = rules.disableRule,
+            disabledExpression,
+            fieldElement,
+            fieldScope;
+        // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
+        // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
+        // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
+        if (disableRule === true)
+            return;
+
+        fieldElement = angular.element('<s-field>');
+        // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
+        fieldScope = parentScope.$new();
+        // 显式注册 attr, 并把 field 保存到 scope 上
+        fieldScope.field = field;
+        fieldElement.attr('field', 'field');
+
+        if (disableRule instanceof DependentRule) {
+            // 为 disableRule 的访问创建简写访问
+            // 并注册 ng-if
+            // 同时为值切换提供支持
+
+            fieldScope.disabled = disableRule;
+            disabledExpression = '!disabled.checked()';
+
+            fieldElement.attr('ng-if', disabledExpression);
+
+            fieldScope.$watch(disabledExpression, function (enabled) {
+                switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
+            });
+        }
+
+        compileCallback(fieldElement, fieldScope);
+    }
+
+    function transFieldList(fieldList, schema, parentScope, compileCallback) {
+        each(fieldList, function (field) {
+            transField(field, schema, parentScope, compileCallback);
+        });
+    }
+
     angular.module('voyageone.angular.directives')
 
-        .directive('schema', function ($compile) {
+        .directive('schema', function ($compile, $q) {
 
-            function SchemaController($scope, $attrs, $q) {
+            function SchemaController($scope, $attrs) {
 
                 var controller = this;
 
                 controller.$attrs = $attrs;
                 controller.$scope = $scope;
-                controller.$q = $q;
             }
 
-            SchemaController.prototype.$watchSchema = function () {
+            SchemaController.prototype.getSchema = function () {
 
                 var controller = this,
                     $attrs = controller.$attrs,
-                    $scope = controller.$scope,
-                    $q = controller.$q;
+                    $scope = controller.$scope;
 
                 var deferred = $q.defer();
 
+                if (controller.schema) {
+                    // 数据已存在, 直接下一步
+                    deferred.resolve(controller.schema);
+                    return deferred.promise;
+                }
+
+                // 数据不存在, 监视表达式, 等待初次赋值
                 var disposeDataWatcher = $scope.$watch($attrs.data, function (data) {
 
+                    // 没有就继续等待
                     if (!data)
                         return;
 
+                    // 有了就保存, 然后触发下一步
                     deferred.resolve(controller.schema = data);
 
                     disposeDataWatcher();
@@ -767,405 +837,56 @@
             SchemaController.prototype.$render = function ($element) {
 
                 var controller = this,
-                    $scope = controller.$scope,
-                    schema = controller.schema;
+                    $scope = controller.$scope;
 
-                each(schema, function (field) {
-
-                    var fieldElement = angular.element('<schema-field>');
-
-                    fieldElement.attr('field-id', field.id);
-
-                    $element.append(fieldElement);
+                controller.getSchema().then(function (schema) {
+                    transFieldList(schema, schema, $scope, function (fieldElement, fieldScope) {
+                        $element.append(fieldElement);
+                        $compile(fieldElement)(fieldScope);
+                    });
                 });
-
-                $compile($element.contents())($scope);
             };
 
             return {
                 restrict: 'E',
-                transclude: true,
                 scope: true,
-                controllerAs: '$ctrl',
-                link: function ($scope, $element, $attrs, ctrl, transclude) {
-
-                    var controller = $scope.$ctrl;
-
-                    // 自己处理 transclude 来保证内部的 vo-message 可以访问到上层 scope 的 formController
-                    // 处理之前, 先等待 schema 数据
-                    controller.$watchSchema().then(function () {
-
-                        // 拿到 schema 之后
-                        // 如果 schema directive 内部有 field 子元素
-                        // 就直接用子元素
-                        // 否则需要展开所有字段
-
-                        transclude($scope, function (clone) {
-
-                            var fieldElements = clone.filter('schema-field');
-
-                            var hasFieldElements = !!fieldElements.length;
-
-                            if (!hasFieldElements) {
-                                // 如果元素内为空, 或内部没有元素, 就展开所有 field
-                                controller.$render($element);
-                                return;
-                            }
-
-                            $element.append(fieldElements);
-                        });
-
-                    });
-
+                controllerAs: 'schemaController',
+                link: function ($scope, $element) {
+                    $scope.schemaController.$render($element);
                 },
                 controller: SchemaController
             }
         })
 
-        .directive('schemaField', function ($compile, $q) {
+        .directive('sField', function ($compile, $q) {
 
-            function SchemaFieldController($scope, $element) {
+            function SchemaFieldController($scope, $element, $attrs) {
                 this.$scope = $scope;
                 this.$element = $element;
+                this.$attrs = $attrs;
             }
 
-            SchemaFieldController.prototype.$render = function (field, schema) {
-
-                /**
-                 * 元素创建过程
-                 */
-                function createElement(field, name) {
-
-                    var innerElement;
-
-                    switch (field.type) {
-                        case FIELD_TYPES.INPUT:
-                            (function createInputElements() {
-
-                                var regexRule = rules.regexRule,
-                                    valueTypeRule = rules.valueTypeRule,
-                                    requiredRule = rules.requiredRule,
-                                    readOnlyRule = rules.readOnlyRule,
-                                    type = getInputType(valueTypeRule);
-
-                                if (type === 'textarea') {
-                                    innerElement = angular.element('<textarea class="form-control">');
-                                    // 如果是 html 就加个特殊样式用来便于外观控制
-                                    if (valueTypeRule === VALUE_TYPES.HTML)
-                                        innerElement.addClass('schema-field-html');
-                                } else {
-                                    innerElement = angular.element('<input class="form-control">').attr('type', type);
-                                }
-
-                                innerElement.attr('name', name);
-                                innerElement.attr('ng-model', 'field.value');
-
-                                bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
-                                bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-
-                                bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
-                                bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
-
-                                // 处理正则规则
-                                if (regexRule) {
-
-                                    if (regexRule instanceof DependentRule) {
-                                        // 如果是依赖类型
-                                        // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
-                                        innerElement.attr('ng-pattern', '$rules.regexRule.getRegex()');
-
-                                    } else if (regexRule !== 'yyyy-MM-dd') {
-                                        // 如果是日期格式验证就不需要了
-                                        // type=date 时 angular 会验证的
-                                        innerElement.attr('pattern', regexRule);
-                                    }
-                                }
-
-                                innerElement.attr('title', field.name || field.id);
-
-                                // 根据类型转换值类型, 并填值
-                                field.value = getInputValue(field.value, field, valueTypeRule);
-
-                                // 没有填值, 并且有默认值, 那么就使用默认值
-                                // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
-                                // 所以这里要单独判断
-                                if (!exists(field.value) && exists(field.defaultValue))
-                                    field.value = getInputValue(field.defaultValue, field, valueTypeRule);
-
-                                if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
-                                    // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
-                                    // 并且 readonly 时, 要把这个按钮隐藏掉
-                                    var inputGroup = angular.element('<div class="input-group">');
-                                    var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
-
-                                    innerElement.attr('uib-datepicker-popup', '');
-                                    innerElement.attr('date-model-format', (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
-                                    innerElement.attr('is-open', '$opened');
-
-                                    if (readOnlyRule instanceof DependentRule) {
-                                        inputGroupBtn.attr('ng-if', '!$rules.readOnlyRule.checked()')
-                                    }
-
-                                    inputGroup.append(innerElement);
-                                    inputGroup.append(inputGroupBtn);
-
-                                    innerElement = inputGroup;
-                                }
-                            })();
-                            break;
-                        case FIELD_TYPES.SINGLE_CHECK:
-                            (function createSelectElements() {
-
-                                var nullValueObj;
-
-                                var requiredRule = rules.requiredRule;
-
-                                var options = field.options;
-
-                                innerElement = angular.element('<select class="form-control">');
-                                innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
-                                innerElement.attr('name', name);
-                                innerElement.attr('ng-model', 'field.value.value');
-
-                                bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-                                bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
-                                if (!field.value)
-                                    field.value = {value: null};
-                                else {
-                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
-                                    // 所以这一步做额外的处理
-                                    field.value.value = getInputValue(field.value.value, field);
-                                }
-
-                                // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                if (!exists(field.value.value) && exists(field.defaultValue)) {
-                                    field.value.value = getInputValue(field.defaultValue, field);
-                                }
-
-                                if (!requiredRule) {
-                                    // 非必填, 就创建空选项
-                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
-                                    // 所以要克隆新的出来使用
-                                    options = angular.copy(options);
-                                    options.unshift(nullValueObj = {
-                                        displayName: '',
-                                        value: null
-                                    });
-
-                                    // 如果当前的选中值也木有, 就用这个默认的
-                                    if (!field.value.value) {
-                                        field.value = nullValueObj;
-                                    }
-                                }
-
-                                // 最终保存到 $scope 上, 供页面绑定使用
-                                $scope.$options = options;
-
-                                innerElement.attr('title', field.name || field.id);
-                            })();
-                            break;
-                        case FIELD_TYPES.MULTI_CHECK:
-                            (function createCheckboxElements() {
-
-                                var selected, valueStringList;
-                                var requiredRule = rules.requiredRule;
-                                var defaultValues = field.defaultValues;
-
-                                innerElement = [];
-
-                                // 创建用于记录每个多选框选中状态的对象
-                                selected = $scope.selected = [];
-
-                                // 通过事件触发 update 来操作 field 的 values 数组
-                                $scope.update = function (index) {
-
-                                    // 获取选中值
-                                    var selectedValue = field.options[index].value;
-
-                                    // 获取选中的值, 在选中值集合里的位置
-                                    var selectedIndex = findIndex(field.values, function (valueObj) {
-                                        return valueObj.value == selectedValue;
-                                    });
-
-                                    if ($scope.selected[index]) {
-                                        // 当前选中选中, 并且不在集合中的
-                                        if (selectedIndex < 0)
-                                            field.values.push({value: selectedValue});
-                                    } else {
-                                        // 没选中, 并且在集合中的
-                                        if (selectedIndex > -1)
-                                            field.values.splice(selectedIndex, 1);
-                                    }
-                                };
-
-                                if (!field.values)
-                                    field.values = [];
-
-                                // 先把 values 里的选中值取出, 便于后续判断
-                                valueStringList = field.values.map(function (valueObj) {
-                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
-                                    // 所以这一步做额外的处理
-                                    return (valueObj.value = getInputValue(valueObj.value, field).toString());
-                                });
-
-                                each(field.options, function (option, index) {
-
-                                    var label = angular.element('<label></label>'),
-                                        checkbox = angular.element('<input type="checkbox">');
-
-                                    checkbox.attr('ng-model', 'selected[' + index + ']');
-
-                                    checkbox.attr('name', name);
-
-                                    checkbox.attr('title', field.name || field.id);
-
-                                    checkbox.attr('ng-change', 'update(' + index + ')');
-
-                                    // checkbox 的必填比较特殊
-                                    if (requiredRule) {
-                                        if (requiredRule instanceof DependentRule) {
-                                            checkbox.attr('ng-required', '$rules.requiredRule.checked() && !field.values.length');
-                                        } else {
-                                            checkbox.attr('ng-required', '!field.values.length');
-                                        }
-                                    }
-
-                                    bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
-                                    // 如果有原值, 就使用原值
-                                    // 如果没有, 看下是不是必填字段
-                                    // 如果是必填字段, 看看是不是有默认值
-                                    // 如果有就把默认值放上去
-                                    if (valueStringList.length) {
-                                        selected[index] = !(valueStringList.indexOf(option.value) < 0);
-                                    } else if (requiredRule === true && !!defaultValues.length) {
-                                        selected[index] = !(defaultValues.indexOf(option.value) < 0);
-                                    }
-
-                                    label.append(checkbox, '&nbsp;', option.displayName);
-
-                                    innerElement.push(label);
-                                });
-                            })();
-                            break;
-                        case FIELD_TYPES.COMPLEX:
-
-                            // complex 字段, 每个 field 的值都是存在其 value 上的。
-                            // 所以直接使用 fields 属性即可。
-                            // 还原 complexValue 中的原始值到 field 上
-
-                            var fieldValueMap,
-                                complexValue = field.complexValue;
-
-                            if (complexValue) {
-
-                                fieldValueMap = complexValue.fieldMap;
-
-                                if (fieldValueMap) {
-
-                                    each(field.fields, function (childField) {
-
-                                        var valueObj = fieldValueMap[childField.id];
-
-                                        if (!valueObj) return;
-
-                                        resetValue(valueObj, childField);
-                                    });
-                                }
-                            }
-
-                            $scope.$fields = field.fields;
-
-                            innerElement = angular.element('<schema-complex-container fields="$fields">');
-
-                            break;
-                        case FIELD_TYPES.MULTI_COMPLEX:
-
-                            // multiComplex 字段, 其值不同于 complex 字段, 是存在于 complexValues 中。
-                            // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
-                            // 所以需要根据每个 complexValues 来创建 container
-
-                            var complexValues = field.complexValues || (field.complexValues = []);
-
-                            if (!complexValues.length) {
-                                // 如果获取的值里没有内容, 就创建一套默认
-                                complexValues.push(new ComplexValue(field.fields));
-                            } else {
-                                // 包装原有的 value, 便于后续使用
-                                complexValues = complexValues.map(function (complexValueObj) {
-                                    return new ComplexValue().copyFrom(complexValueObj, field);
-                                });
-                            }
-
-                            $scope.$complexValues = complexValues;
-
-                            innerElement = angular.element('<schema-complex-container multi="true" fields="complexValue.fieldMap">');
-
-                            innerElement.attr('ng-repeat', 'complexValue in $complexValues');
-
-                            // multiComplex 字段, 有多个 complexValue
-                            // 所以需要创建工具栏和按钮, 来新建 complexValue
-                            $scope.$newComplexValue = function () {
-                                complexValues.push(new ComplexValue(field.fields));
-                            };
-
-                            if (controller.canAdd) {
-                                var toolbar = angular.element('<schema-input-toolbar>');
-                                toolbar.append('<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>');
-                                container.append(toolbar);
-                            }
-
-                            break;
-                        default:
-                            console.error('不支持其他类型');
-                            return null;
-                    }
-
-                    return innerElement;
-                }
-
-                /**
-                 * 名称显示元素创建过程
-                 */
-                function createNameElement(field, name) {
-
-                    var innerElement;
-
-                    switch (field.type) {
-                        case FIELD_TYPES.INPUT:
-                        case FIELD_TYPES.SINGLE_CHECK:
-                        case FIELD_TYPES.MULTI_CHECK:
-                            innerElement = angular.element('<schema-field-name>');
-                            break;
-                        case FIELD_TYPES.COMPLEX:
-                        case FIELD_TYPES.MULTI_COMPLEX:
-                            innerElement = angular.element('<schema-complex-name>');
-                            break;
-                        default:
-                            console.error('不支持其他类型');
-                            return null;
-                    }
-
-                    innerElement.attr('for', name);
-                    innerElement.text(field.name || field.id);
-
-                    if (rules.requiredRule) {
-                        // 如果这个字段是需要必填的
-                        // 就加个红星
-                        // 如果是依赖型的必填, 那就给红星 class 加成 ng-class
-                        if (rules.requiredRule instanceof DependentRule) {
-                            innerElement.attr('ng-class', '{"schema-field-required":$rules.requiredRule.checked()}');
-                        } else {
-                            innerElement.addClass('schema-field-required');
-                        }
-                    }
-
-                    if (hasDisableRule)
-                        innerElement.attr('ng-if', '!$rules.disableRule.checked()');
-
-                    return innerElement;
-                }
+            SchemaFieldController.prototype.$render = function () {
+
+                var controller = this,
+                    $attrs = controller.$attrs,
+                    $element = controller.$element;
+
+                // 如果木有设置, 那说个屁啊
+                if (!$attrs.field)
+                    $element.text('请提供 field 属性。');
+
+                // 保存配置
+                controller.showName = (!$attrs.showName || $attrs.showName === 'true');
+                controller.canAdd = $attrs.add !== 'false';
+
+                controller.getField().then(function (field) {
+                    field.$name = 'f' + random();
+                    controller.$doRender();
+                })
+            };
+
+            SchemaFieldController.prototype.$doRender = function () {
 
                 var controller = this,
                     $element = controller.$element,
@@ -1173,76 +894,37 @@
                     formController = controller.formController,
                     showName = controller.showName;
 
+                var field = controller.field;
+
                 var container = $element,
-                    fieldElementName = 'field_' + random(),
                     hasValidate = !!formController && hasValidateRule(field);
 
-                var rules = doRule(field, schema),
-                    disableRule = rules.disableRule,
-                    hasDisableRule = (disableRule && disableRule instanceof DependentRule);
+                var rules = getRules(field);
 
-                var innerElement, nameElement, isSimple, enabledExpression;
-
-                // 放到 scope 上, 供画面绑定使用
-                // 创建元素时, ngModel 会直接指向到 field.value 或 values 等
-                $scope.field = field;
-                $scope.$rules = rules;
-
-                // 把处理好的规则保存到字段上, 便于依赖型的规则可以递归查询
-                field.$rules = rules;
+                var innerElement, isSimple;
 
                 isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
-                if (showName) {
-                    // 如果需要显示名称
-                    // 就创建专用的名称元素
-                    nameElement = createNameElement(field, fieldElementName);
-                    container.append(nameElement);
-                }
+                if (showName)
+                    container.append(angular.element('<s-header>'));
 
-                // 创建一个专门的输入元素容器便于控制外观
-                innerElement = angular.element('<schema-input-container>');
+                // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
+                innerElement = angular.element('<div class="s-wrapper">');
                 container.append(innerElement);
                 container = innerElement;
 
-                if (field.type === FIELD_TYPES.MULTI_COMPLEX)
-                    container.attr('multi', true);
-
-                if (hasDisableRule) {
-
-                    enabledExpression = '!$rules.disableRule.checked()';
-
-                    container.attr('ng-if', enabledExpression);
-
-                    // 还要为 disableRule 处理值得移除和补回
-                    $scope.$watch(enabledExpression, function (enabled) {
-                        switchPrivateValue(field, ['value', 'values', 'complexValues'], enabled);
-                    });
-                }
-
-                // 创建输入元素
-                // 根据需要处理规则
-                innerElement = createElement(field, fieldElementName);
-
-                if (innerElement instanceof Array)
-                    each(innerElement, function (element) {
-                        container.append(element);
-                    });
-                else
-                    container.append(innerElement);
-
-                bindDefaultValueTip(container, field);
-                bindTipRule(container, rules);
+                innerElement = angular.element('<s-container>');
+                container.append(innerElement);
 
                 // 根据需要创建 vo-message
                 if (hasValidate && isSimple) {
-
                     var formName = formController.$name;
-
-                    var voMessage = angular.element('<vo-message target="' + formName + '.' + fieldElementName + '"></vo-message>');
-
+                    var voMessage = angular.element('<vo-message target="' + formName + '.' + field.$name + '"></vo-message>');
                     container.append(voMessage);
                 }
+
+                bindDefaultValueTip(container, field);
+                bindTipRule(container, rules);
 
                 // 最终编译
                 $compile($element.contents())($scope);
@@ -1255,171 +937,485 @@
                 list.splice(index, 1);
             };
 
+            SchemaFieldController.prototype.getField = function () {
+
+                var controller = this;
+
+                var $scope, $attrs, deferred, deregister;
+
+                var promise = controller.$getFieldPromise;
+
+                if (promise)
+                    return promise;
+
+                $scope = controller.$scope;
+                $attrs = controller.$attrs;
+
+                deferred = $q.defer();
+                promise = deferred.promise;
+                controller.$getFieldPromise = promise;
+
+                deregister = $scope.$watch($attrs.field, function (field) {
+
+                    if (!field)
+                        return;
+
+                    deferred.resolve(controller.field = field);
+
+                    deregister();
+                    deregister = null;
+                });
+
+                return promise;
+            };
+
             return {
                 restrict: 'E',
-                require: ['^^?schema', '^^?form', '^^?schemaComplexContainer'],
+                require: ['^^?form'],
                 scope: true,
-                controllerAs: '$ctrl',
-                link: function ($scope, $element, $attrs, controllers) {
-
-                    var controller = $scope.$ctrl,
-                        schemaController = controllers[0],
-                        parentController = controllers[2];
-
-                    controller.formController = controllers[1];
-                    controller.showName = (!$attrs.showName || $attrs.showName === 'true');
-                    controller.canAdd = $attrs.add !== 'false';
-
-                    // 如果为 field 设置了什么, 就尝试获取 field 上的内容
-                    if ($attrs.field) {
-
-                        watchField().then(function (field) {
-
-                            if (schemaController) {
-
-                                watchSchema().then(function (schema) {
-
-                                    tryRender(field, schema);
-
-                                });
-
-                            } else {
-
-                                tryRender(field, null);
-
-                            }
-
-                        });
-
-                    } else if ($attrs.fieldId) {
-                        // 否则就尝试根据 fieldId 并配合外层的 schema 来获取 field。
-
-                        // 但是没有外层 schema 的话。就只能...
-                        if (!schemaController && !parentController) {
-                            $element.text('如果设置了 field-id 就必须在外层提供 schema。但好像并没有。');
-                            return;
-                        }
-
-                        if (parentController) {
-
-                            var fieldFromParent = find(parentController.fields, function (field) {
-                                return field.id === $attrs.fieldId;
-                            });
-
-                            if (!schemaController) {
-                                tryRender(fieldFromParent, null);
-                                return;
-                            }
-
-                            watchSchema().then(function (schema) {
-                                tryRender(fieldFromParent, schema);
-                            });
-
-                        } else {
-                            watchSchema().then(function (schema) {
-
-                                var fieldFromSchema = find(schema, function (field) {
-                                    return field.id === $attrs.fieldId;
-                                });
-
-                                tryRender(fieldFromSchema, schema);
-                            });
-                        }
-                    } else {
-
-                        // 如果两个都没设置, 或者没有外层 schema 那就....
-                        $element.text('请提供 field 或者 field-id 属性。');
-                    }
-
-                    function watchSchema() {
-
-                        return $q(function (resolve) {
-
-                            // 如果有父级就从父级查找
-                            var disposeWatcher = $scope.$watch(function () {
-
-                                return schemaController.schema;
-
-                            }, function (schema) {
-
-                                if (!schema)
-                                    return;
-
-                                resolve(schema);
-
-                                disposeWatcher();
-                                disposeWatcher = null;
-                            });
-                        });
-                    }
-
-                    function watchField() {
-
-                        return $q(function (resolve) {
-
-                            var disposeWatcher = $scope.$watch($attrs.field, function (field) {
-
-                                if (!field)
-                                    return;
-
-                                resolve(field);
-
-                                disposeWatcher();
-                                disposeWatcher = null;
-                            });
-                        });
-                    }
-
-                    /**
-                     * 元素创建与编译前的检查
-                     */
-                    function tryRender(field, schema) {
-
-                        if (!field)
-                            $element.text('在 schema 上没有找到目标属性。');
-                        else
-                            controller.$render(field, schema);
-                    }
+                controllerAs: 'schemaFieldController',
+                link: function ($scope, $element, $attrs, requiredControllers) {
+                    var controller = $scope.schemaFieldController;
+                    // 保存 formController, 用于在后面检查, 是否需要渲染 vo-message 包括一系列的 form 验证
+                    controller.formController = requiredControllers[0];
+                    controller.$render();
                 },
                 controller: SchemaFieldController
             };
         })
 
-        .directive('schemaComplexContainer', function ($compile) {
+        .directive('sHeader', function () {
+            return {
+                restrict: 'E',
+                require: ['^^sField'],
+                scope: false,
+                link: function (scope, element, attrs, requiredControllers) {
+
+                    var schemaFieldController = requiredControllers[0];
+
+                    schemaFieldController.getField().then(function (field) {
+
+                        var rules = getRules(field),
+                            required = rules.requiredRule,
+                            requiredClass = 's-required';
+
+                        switch (field.type) {
+                            case FIELD_TYPES.INPUT:
+                            case FIELD_TYPES.SINGLE_CHECK:
+                            case FIELD_TYPES.MULTI_CHECK:
+                                element.addClass('simple');
+                                break;
+                            case FIELD_TYPES.COMPLEX:
+                                element.addClass('complex');
+                                break;
+                            case FIELD_TYPES.MULTI_COMPLEX:
+                                element.addClass('complex multi');
+                                break;
+                        }
+
+                        element.text(field.name || field.id);
+
+                        if (required) {
+                            // 如果这个字段是需要必填的
+                            // 就加个红星
+                            // 如果是依赖型的必填, 那就要动态变更
+                            if (required instanceof DependentRule) {
+                                scope.$watch(function () {
+                                    return required.checked();
+                                }, function (required) {
+                                    element[required ? 'addClass' : 'removeClass'](requiredClass);
+                                });
+                            } else {
+                                element.addClass(requiredClass);
+                            }
+                        }
+                    });
+                }
+            }
+        })
+
+        .directive('sContainer', function ($compile) {
+            return {
+                restrict: 'E',
+                scope: false,
+                require: ['^^sField'],
+                link: function (scope, element, attrs, requiredControllers) {
+
+                    var schemaFieldController = requiredControllers[0];
+
+                    schemaFieldController.getField().then(function (field) {
+
+                        var innerElement;
+
+                        var rules = getRules(field), name = field.$name;
+
+                        scope.field = field;
+                        scope.rules = rules;
+
+                        switch (field.type) {
+                            case FIELD_TYPES.INPUT:
+                                (function createInputElements() {
+
+                                    var regexRule = rules.regexRule,
+                                        valueTypeRule = rules.valueTypeRule,
+                                        requiredRule = rules.requiredRule,
+                                        readOnlyRule = rules.readOnlyRule,
+                                        type = getInputType(valueTypeRule);
+
+                                    if (type === 'textarea') {
+                                        innerElement = angular.element('<textarea class="form-control">');
+                                        // 如果是 html 就加个特殊样式用来便于外观控制
+                                        if (valueTypeRule === VALUE_TYPES.HTML)
+                                            innerElement.addClass('schema-field-html');
+                                    } else {
+                                        innerElement = angular.element('<input class="form-control">').attr('type', type);
+                                    }
+
+                                    innerElement.attr('name', name);
+                                    innerElement.attr('ng-model', 'field.value');
+
+                                    bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
+                                    bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
+
+                                    bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
+                                    bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
+
+                                    // 处理正则规则
+                                    if (regexRule) {
+
+                                        if (regexRule instanceof DependentRule) {
+                                            // 如果是依赖类型
+                                            // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
+                                            innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
+
+                                        } else if (regexRule !== 'yyyy-MM-dd') {
+                                            // 如果是日期格式验证就不需要了
+                                            // type=date 时 angular 会验证的
+                                            innerElement.attr('pattern', regexRule);
+                                        }
+                                    }
+
+                                    innerElement.attr('title', field.name || field.id);
+
+                                    // 根据类型转换值类型, 并填值
+                                    field.value = getInputValue(field.value, field, valueTypeRule);
+
+                                    // 没有填值, 并且有默认值, 那么就使用默认值
+                                    // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
+                                    // 所以这里要单独判断
+                                    if (!exists(field.value) && exists(field.defaultValue))
+                                        field.value = getInputValue(field.defaultValue, field, valueTypeRule);
+
+                                    if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
+                                        // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
+                                        // 并且 readonly 时, 要把这个按钮隐藏掉
+                                        var inputGroup = angular.element('<div class="input-group">');
+                                        var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
+
+                                        innerElement.attr('uib-datepicker-popup', '');
+                                        innerElement.attr('date-model-format', (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
+                                        innerElement.attr('is-open', '$opened');
+
+                                        if (readOnlyRule instanceof DependentRule) {
+                                            inputGroupBtn.attr('ng-if', '!rules.readOnlyRule.checked()')
+                                        }
+
+                                        inputGroup.append(innerElement);
+                                        inputGroup.append(inputGroupBtn);
+
+                                        innerElement = inputGroup;
+                                    }
+                                })();
+                                break;
+                            case FIELD_TYPES.SINGLE_CHECK:
+                                (function createSelectElements() {
+
+                                    var nullValueObj;
+
+                                    var requiredRule = rules.requiredRule;
+
+                                    var options = field.options;
+
+                                    if (!field.value)
+                                        field.value = {value: null};
+                                    else {
+                                        // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                        // 所以这一步做额外的处理
+                                        field.value.value = getInputValue(field.value.value, field);
+                                    }
+
+                                    // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
+                                    if (!exists(field.value.value) && exists(field.defaultValue)) {
+                                        field.value.value = getInputValue(field.defaultValue, field);
+                                    }
+
+                                    if (!requiredRule) {
+                                        // 非必填, 就创建空选项
+                                        // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                                        // 所以要克隆新的出来使用
+                                        options = angular.copy(options);
+                                        options.unshift(nullValueObj = {
+                                            displayName: '',
+                                            value: null
+                                        });
+
+                                        // 如果当前的选中值也木有, 就用这个默认的
+                                        if (!field.value.value) {
+                                            field.value = nullValueObj;
+                                        }
+                                    }
+
+                                    // 最终保存到 $scope 上, 供页面绑定使用
+                                    scope.$options = options;
+
+                                    innerElement = angular.element('<select class="form-control">');
+                                    innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
+                                    innerElement.attr('name', name);
+                                    innerElement.attr('ng-model', 'field.value.value');
+                                    innerElement.attr('title', field.name || field.id);
+
+                                    bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
+                                    bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+                                })();
+                                break;
+                            case FIELD_TYPES.MULTI_CHECK:
+                                (function createCheckboxElements() {
+
+                                    var selected, valueStringList;
+                                    var requiredRule = rules.requiredRule;
+                                    var defaultValues = field.defaultValues;
+
+                                    innerElement = [];
+
+                                    // 创建用于记录每个多选框选中状态的对象
+                                    selected = scope.selected = [];
+
+                                    // 通过事件触发 update 来操作 field 的 values 数组
+                                    scope.update = function (index) {
+
+                                        // 获取选中值
+                                        var selectedValue = field.options[index].value;
+
+                                        // 获取选中的值, 在选中值集合里的位置
+                                        var selectedIndex = findIndex(field.values, function (valueObj) {
+                                            return valueObj.value == selectedValue;
+                                        });
+
+                                        if (scope.selected[index]) {
+                                            // 当前选中选中, 并且不在集合中的
+                                            if (selectedIndex < 0)
+                                                field.values.push({value: selectedValue});
+                                        } else {
+                                            // 没选中, 并且在集合中的
+                                            if (selectedIndex > -1)
+                                                field.values.splice(selectedIndex, 1);
+                                        }
+                                    };
+
+                                    if (!field.values)
+                                        field.values = [];
+
+                                    // 先把 values 里的选中值取出, 便于后续判断
+                                    valueStringList = field.values.map(function (valueObj) {
+                                        // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                        // 所以这一步做额外的处理
+                                        return (valueObj.value = getInputValue(valueObj.value, field).toString());
+                                    });
+
+                                    each(field.options, function (option, index) {
+
+                                        var label = angular.element('<label></label>'),
+                                            checkbox = angular.element('<input type="checkbox">');
+
+                                        checkbox.attr('ng-model', 'selected[' + index + ']');
+
+                                        checkbox.attr('name', name);
+
+                                        checkbox.attr('title', field.name || field.id);
+
+                                        checkbox.attr('ng-change', 'update(' + index + ')');
+
+                                        // checkbox 的必填比较特殊
+                                        if (requiredRule) {
+                                            if (requiredRule instanceof DependentRule) {
+                                                checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
+                                            } else {
+                                                checkbox.attr('ng-required', '!field.values.length');
+                                            }
+                                        }
+
+                                        bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+
+                                        // 如果有原值, 就使用原值
+                                        // 如果没有, 看下是不是必填字段
+                                        // 如果是必填字段, 看看是不是有默认值
+                                        // 如果有就把默认值放上去
+                                        if (valueStringList.length) {
+                                            selected[index] = !(valueStringList.indexOf(option.value) < 0);
+                                        } else if (requiredRule === true && !!defaultValues.length) {
+                                            selected[index] = !(defaultValues.indexOf(option.value) < 0);
+                                        }
+
+                                        label.append(checkbox, '&nbsp;', option.displayName);
+
+                                        innerElement.push(label);
+                                    });
+                                })();
+                                break;
+                            case FIELD_TYPES.COMPLEX:
+
+                                // complex 字段, 每个 field 的值都是存在其 value 上的。
+                                // 所以直接使用 fields 属性即可。
+                                // 还原 complexValue 中的原始值到 field 上
+
+                                var fieldValueMap,
+                                    complexValue = field.complexValue;
+
+                                if (complexValue) {
+
+                                    fieldValueMap = complexValue.fieldMap;
+
+                                    if (fieldValueMap) {
+
+                                        each(field.fields, function (childField) {
+
+                                            var valueObj = fieldValueMap[childField.id];
+
+                                            if (!valueObj) return;
+
+                                            resetValue(valueObj, childField);
+                                        });
+                                    }
+                                }
+
+                                scope.$fields = field.fields;
+
+                                innerElement = angular.element('<s-complex fields="$fields">');
+
+                                break;
+                            case FIELD_TYPES.MULTI_COMPLEX:
+
+                                // multiComplex 字段, 其值不同于 complex 字段, 是存在于 complexValues 中。
+                                // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
+                                // 所以需要根据每个 complexValues 来创建 container
+
+                                var complexValues = field.complexValues;
+
+                                if (!complexValues) complexValues = [];
+
+                                if (!complexValues.length) {
+                                    // 如果获取的值里没有内容, 就创建一套默认
+                                    complexValues.push(new ComplexValue(field.fields));
+                                } else {
+                                    // 包装原有的 value, 便于后续使用
+                                    complexValues = complexValues.map(function (complexValueObj) {
+                                        return new ComplexValue().copyFrom(complexValueObj, field);
+                                    });
+                                }
+
+                                field.complexValues = complexValues;
+
+                                scope.$complexValues = complexValues;
+
+                                innerElement = angular.element('<s-complex multi="true" fields="complexValue.fieldMap">');
+
+                                innerElement.attr('ng-repeat', 'complexValue in $complexValues');
+
+                                if (schemaFieldController.canAdd) {
+                                    element.append(angular.element('<s-toolbar>'));
+                                }
+
+                                break;
+                            default:
+                                element.text('不支持的类型');
+                                break;
+                        }
+
+                        if (innerElement instanceof Array)
+                            each(innerElement, function (childElement) {
+                                element.append(childElement);
+                            });
+                        else
+                            element.append(innerElement);
+
+                        $compile(element.contents())(scope);
+                    });
+                }
+            }
+        })
+
+        .directive('sComplex', function ($compile) {
+
+            function SchemaComplexController($scope, $attrs) {
+                this.$scope = $scope;
+                this.fields = $scope.$eval($attrs.fields);
+            }
+
+            SchemaComplexController.prototype.$render = function (schema, isMulti, $element) {
+
+                var controller = this,
+                    fields = controller.fields,
+                    $scope = controller.$scope;
+
+                transFieldList(fields, schema, $scope, function (fieldElement, fieldScope) {
+                    $element.append(fieldElement);
+                    $compile(fieldElement)(fieldScope);
+                });
+
+                // 这里偷个懒, 直接在 scope 找
+                // schemaFieldController.canAdd
+                if (isMulti && $scope.schemaFieldController.canAdd) {
+                    var toolbox = angular.element('<s-toolbox>');
+                    $element.append(toolbox);
+                    $compile(toolbox)($scope);
+                }
+            };
 
             return {
                 restrict: 'E',
                 scope: true,
-                require: '^^schemaField',
-                controllerAs: '$ctrl',
-                link: function ($scope, $element, $attrs, schemaFieldController) {
+                require: ['^^?schema', '^^sField'],
+                controllerAs: 'schemaComplexController',
+                link: function ($scope, $element, $attrs, requiredControllers) {
+
+                    var controller = $scope.schemaComplexController;
 
                     var isMulti = ($attrs.multi === 'true');
 
-                    var fields = $scope.$eval($attrs.fields);
+                    var schemaController = requiredControllers[0];
 
-                    $scope.$ctrl.fields = fields;
-
-                    each(fields, function (field) {
-
-                        var child = angular.element('<schema-field field-id="' + field.id + '">');
-
-                        $element.append(child);
-                    });
-
-                    if (isMulti) {
-                        $scope.$remove = function (complexValue) {
-                            schemaFieldController.remove(complexValue);
-                        };
-                        var toolbox = angular.element('<schema-complex-toolbox>');
-                        toolbox.append('<button class="btn btn-schema btn-danger" ng-click="$remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>');
-                        $element.append(toolbox);
+                    if (schemaController) {
+                        schemaController.getSchema().then(function (schema) {
+                            controller.$render(schema, isMulti, $element);
+                        })
+                    } else {
+                        controller.$render(null, isMulti, $element);
                     }
-
-                    $compile($element.contents())($scope);
                 },
-                controller: function SchemaComplexController() {
+                controller: SchemaComplexController
+            };
+        })
+
+        .directive('sToolbar', function () {
+            return {
+                restrict: 'E',
+                require: ['^^sField'],
+                template: '<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>',
+                scope: false,
+                link: function ($scope) {
+                    $scope.$newComplexValue = function () {
+                        $scope.$complexValues.push(new ComplexValue($scope.field.fields));
+                    };
                 }
+            };
+        })
+
+        .directive('sToolbox', function () {
+            return {
+                restrict: 'E',
+                require: ['^^sField', '^^sComplex'],
+                template: '<button class="btn btn-schema btn-danger" ng-click="schemaFieldController.remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>',
+                scope: false
             };
         });
 }());

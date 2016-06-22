@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -135,7 +136,15 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
             return;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ignored) {
+            }
         }
+
         ShopBean shopBean = null;
         String imageName = "";
         TaobaoResponse uploadResponse = null;
@@ -280,10 +289,21 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                 } else if (errMsg.lastIndexOf("}") > -1) {
                     errMsg = errMsg.substring(0, errMsg.lastIndexOf("}") + 1);
                 }
+                image.setErrorMsg(errMsg);
+            }
+           else if(errMsg.indexOf("response code: 413")>0) {
+                image.setErrorMsg("1.图片不要使用中国模特，如有代言人必须是当年的。\n" +
+                        "2.PC端上传图片宽660 - 790px（推荐790px），高度660 - 1000px。\n" +
+                        "3.APP端上传图片宽750-1200px（推荐750px），高度750-1200px。\n" +
+                        "4.聚美优品用图片，单张体积必须小于457KB。");
+            }
+            else
+            {
+                image.setErrorMsg(errMsg);
             }
             $error(errMsg);
             // 设置返回的错误信息
-            image.setErrorMsg(errMsg);
+
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }

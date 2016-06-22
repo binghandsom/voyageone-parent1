@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by lewis on 15-12-16.
@@ -328,7 +329,7 @@ public class CmsProductDetailService extends BaseAppService {
         productModel.setProdId(productId);
         productModel.setCatPath(categoryFullPath);
         productModel.setFields(masterFieldsValue);
-        productModel.setFeed(feedModel);
+//        productModel.setFeed(feedModel);
         productModel.setSkus(skuValues);
         productModel.setModified(modified);
 
@@ -345,6 +346,11 @@ public class CmsProductDetailService extends BaseAppService {
         if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
             // 执行carts更新
+            productUpdateBean.getProductModel().getSkus().forEach(sku -> {
+                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s->s==23).collect(Collectors.toList());
+                sku.setSkuCarts(newCarts);
+            });
+
             List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), oldProduct.getCarts());
             productUpdateBean.getProductModel().setCarts(carts);
         }
@@ -383,6 +389,51 @@ public class CmsProductDetailService extends BaseAppService {
             updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
             productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
         }
+
+        // 设置返回值
+        Map<String, Object> result = new HashMap<>();
+        // 设置返回新的时间戳
+        result.put("modified", newModified);
+        // 设置返回approve状态
+        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+        // 设置返回status状态
+        result.put("approveStatus", newProduct.getFields().getStatus());
+        return result;
+    }
+
+    public Map<String, Object> updateProductFeedInfo(String channelId, String userName, Map requestMap) {
+
+        Long productId = Long.valueOf(requestMap.get("productId").toString());
+        String modified = requestMap.get("modified").toString();
+
+        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
+
+        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+
+        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
+
+        productModel.setProdId(productId);
+        productModel.setFeed(feedModel);
+        productModel.setModified(modified);
+        productModel.setModifier(userName);
+
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(productModel);
+        productUpdateBean.setModifier(userName);
+        String newModified = DateTimeUtil.getNowTimeStamp();
+        productUpdateBean.setModified(newModified);
+
+        productService.updateProduct(channelId, productUpdateBean);
+
+        CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
+
+        //执行product上新
+//        if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+
+            // 插入上新程序
+            productService.insertSxWorkLoad(channelId, newProduct, userName);
+
+//        }
 
         // 设置返回值
         Map<String, Object> result = new HashMap<>();

@@ -47,6 +47,9 @@ public class SpringContext implements ApplicationContextAware {
      * @throws BeansException
      */
     public static Object getBean(String name) throws BeansException {
+        if (applicationContext == null) {
+            return null;
+        }
         return applicationContext.getBean(name);
     }
 
@@ -58,13 +61,41 @@ public class SpringContext implements ApplicationContextAware {
      * @throws BeansException
      */
     public static <T> T getBean(Class<T> cls) throws BeansException {
+        if (applicationContext == null) {
+            return null;
+        }
         return applicationContext.getBean(cls);
+    }
+
+    /**
+     * 获取对象
+     *
+     * @param type Class
+     * @param name String
+     * @param <T>  Class
+     * @return Object
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getBean(Class<T> type, String name) {
+        if (applicationContext == null) {
+            return null;
+        }
+        if (applicationContext.containsBean(name)) {
+            Object bean = applicationContext.getBean(name);
+            if (type.isInstance(bean)) {
+                return (T) bean;
+            }
+        }
+        return null;
     }
 
     /**
      * 获取对象 Map
      */
     public static Map<String, Object> getBeansWithAnnotationMap(Class<? extends Annotation> cls) {
+        if (applicationContext == null) {
+            return null;
+        }
         return applicationContext.getBeansWithAnnotation(cls);
     }
 }

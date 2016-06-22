@@ -5,8 +5,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ExcelImportUtil {
-    public static <TModel> void importSheet(HSSFSheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass) throws Exception {
+    public static <TModel> void importSheet(Sheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass) throws Exception {
         importSheet(productSheet, listProductColumn, listTModel, listErrorMap, entityClass, 1);
     }
 
@@ -28,7 +30,7 @@ public class ExcelImportUtil {
      * @param listErrorMap 导入错误集合
      * @throws Exception
      */
-    public static <TModel> void importSheet(HSSFSheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass, int columnRowIndex) throws Exception {
+    public static <TModel> void importSheet(Sheet productSheet, List<ExcelColumn> listProductColumn, List<TModel> listTModel, List<Map<String, Object>> listErrorMap, Class<TModel> entityClass, int columnRowIndex) throws Exception {
         int LastCellNum = productSheet.getRow(0).getLastCellNum();//列数量
         Row rowColumn = productSheet.getRow(columnRowIndex);//excel列所在行
         Map<String, Integer> mapExcelColumn = new HashMap<>();//excel 列名字和列索引对应  key:excel列名字 value:excel列索引
@@ -41,7 +43,7 @@ public class ExcelImportUtil {
         TModel model;
         String errorMsg;
         for (int i = columnRowIndex + 1; i <= LastRowNum; i++) {
-            HSSFRow row = productSheet.getRow(i);//获取行
+            Row row = productSheet.getRow(i);//获取行
             model = entityClass.newInstance();
             errorMsg = rowToModel(mapExcelColumn, listProductColumn, row, model, mapFiled);//行转model
             if (!StringUtils.isEmpty(errorMsg)) {//转换失败   保存错误行
@@ -66,7 +68,7 @@ public class ExcelImportUtil {
     /**
      * 行转model
      */
-    static <TModel> String rowToModel(Map<String, Integer> mapExcelColumn, List<ExcelColumn> listEnumColumn, HSSFRow row, TModel model, Map<String, Field> mapFiled) throws Exception {
+    static <TModel> String rowToModel(Map<String, Integer> mapExcelColumn, List<ExcelColumn> listEnumColumn, Row row, TModel model, Map<String, Field> mapFiled) throws Exception {
         String errorMsg = "";
         for (ExcelColumn column : listEnumColumn) {
             if (mapExcelColumn.containsKey(column.getCamelColumnName())) {
@@ -92,16 +94,16 @@ public class ExcelImportUtil {
         return errorMsg;
     }
 
-    static Map<String, Object> getErrorMap(HSSFRow row, Map<String, Integer> mapExcelColumn) {
+    static Map<String, Object> getErrorMap(Row row, Map<String, Integer> mapExcelColumn) {
         Map<String, Object> map = new HashMap<>();
         for (String key : mapExcelColumn.keySet()) {
-            HSSFCell cell = row.getCell(mapExcelColumn.get(key));
+            Cell cell = row.getCell(mapExcelColumn.get(key));
             map.put(key, getString(cell));
         }
         return map;
     }
 
-    static String getString(HSSFCell cell) {
+    static String getString(Cell cell) {
         String result = "";
         if (cell == null) return result;
         switch (cell.getCellType()) {

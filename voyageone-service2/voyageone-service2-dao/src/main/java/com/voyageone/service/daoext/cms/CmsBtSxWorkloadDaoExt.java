@@ -47,8 +47,8 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         insert("cms_insert_sx_workload", model);
     }
 
-    public void insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
-        insert("cms_insert_sx_workloads", models);
+    public int insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
+        return insert("cms_insert_sx_workloads", models);
     }
 
     /**
@@ -71,6 +71,10 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
 
     public int updatePublishStatus(CmsBtSxWorkloadModel model) {
         return update("update_publish_status", model);
+    }
+
+    public int delayWorkload(CmsBtSxWorkloadModel model) {
+        return update("delay_work_load", model);
     }
 
 }

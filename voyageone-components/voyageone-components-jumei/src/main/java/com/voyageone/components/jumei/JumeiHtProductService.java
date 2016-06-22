@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+/**
+ * @author Ethan Shi
+ * @version 2.1.0
+ *
+ */
+
 @Service
 public class JumeiHtProductService extends JmBase {
 

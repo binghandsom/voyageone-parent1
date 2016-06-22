@@ -136,7 +136,7 @@ public class ProductGroupServiceTest {
 
     @Test
     public void testUpdateGroupsPlatformStatus() throws Exception {
-        CmsBtProductGroupModel model = service.getProductGroupByGroupId("018", 493765L);
+        CmsBtProductGroupModel model = service.getProductGroupByGroupId("010", 20809L);
         model.setNumIId("1234567890");
         model.setPlatformPid("0987654321");
         model.setPublishTime("2016-04-25 11:11:11");
@@ -145,8 +145,7 @@ public class ProductGroupServiceTest {
         model.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
 
         List<String> productCodes = new ArrayList<>();
-        productCodes.add("14218727-ELIXER");
-        productCodes.add("14218727-CHROME");
+        productCodes.add("16189");
         model.setProductCodes(productCodes);
 
         model = service.updateGroupsPlatformStatus(model);
