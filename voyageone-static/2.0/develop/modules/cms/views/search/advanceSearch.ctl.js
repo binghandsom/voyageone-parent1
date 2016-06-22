@@ -24,7 +24,9 @@ define([
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
-                cidValue: []
+                cidValue: [],
+                promotionTagType: 1,
+                freeTagType: 1
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -117,7 +119,9 @@ define([
                 priceChgFlg: '0',
                 priceDiffFlg: '0',
                 tagTypeSelectValue: '0',
-                cidValue: []
+                cidValue: [],
+                promotionTagType: 1,
+                freeTagType: 1
             };
             $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
@@ -466,7 +470,7 @@ define([
             $scope.vm.searchInfo.productStatus = null;
             $scope.vm.searchInfo.platformStatus = null;
             $scope.vm.searchInfo.hasErrorFlg = null;
-            $scope.vm.searchInfo.promotionTagType = null;
+            $scope.vm.searchInfo.promotionTagType = 1;
             $scope.vm.searchInfo.promotionTags = null;
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
