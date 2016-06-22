@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Tag Service
@@ -193,7 +194,21 @@ public class TagService extends BaseService {
             return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId);
         } else if ("2".equals(tagType)) {
             // 查询Promotion标签
-            return cmsBtTagDaoExt.selectListByChannelIdAndTagType2(channelId, cartId);
+            List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(channelId, cartId);
+            if (categoryList == null || categoryList.isEmpty()) {
+                return categoryList;
+            }
+            // 再查询一遍，检查是否有子节点
+            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(channelId, categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
+            if (categoryList2 != null && categoryList2.size() > 0) {
+                for (CmsBtTagBean tagBean : categoryList2) {
+                    if (categoryList.indexOf(tagBean) >= 0) {
+                        continue;
+                    }
+                    categoryList.add(tagBean);
+                }
+            }
+            return categoryList;
         }
         return new ArrayList<>(0);
     }

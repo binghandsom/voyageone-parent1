@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms;
 
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 
 import java.util.List;
@@ -35,5 +36,21 @@ public class CmsBtTagBean extends CmsBtTagModel {
 
     public void setTagChildrenName(String tagChildrenName) {
         this.tagChildrenName = tagChildrenName;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.bean2Json(this);
+    }
+
+    @Override
+    public boolean equals(Object cbb) {
+        if (!(cbb instanceof CmsBtTagBean) || cbb == null) {
+            return false;
+        }
+        if (this.id == null) {
+            return false;
+        }
+        return this.id.equals(((CmsBtTagBean) cbb).getId());
     }
 }
