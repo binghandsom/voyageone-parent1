@@ -581,7 +581,11 @@ define([
                         productIds.push(object.code);
                     });
                 }
-                params = {"productIds": productIds, "cartId": context.cartId};
+                if (context) {
+                    params = {"productIds": productIds, "cartId": context.cartId};
+                } else {
+                    params = {"productIds": productIds, "cartId": null};
+                }
             }
             return openModel(popActions.bulkUpdate.fieldEdit, params);
         };
