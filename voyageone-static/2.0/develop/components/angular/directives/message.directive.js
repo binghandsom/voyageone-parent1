@@ -36,7 +36,7 @@ angular.module("voyageone.angular.directives")
         return {
             restrict: "E",
             template: '{{$message}}',
-            require: '^form',
+            require: '^^form',
             scope: {
                 'target': '='
             },
@@ -73,7 +73,7 @@ angular.module("voyageone.angular.directives")
 
                         // 这一步可能获取的并不准确
                         // 因为元素的 name 有可能重复
-                        var targetElement = $('form[name="' + formName + '"] [name="' + elementName + '"]');
+                        var targetElement = $('[name="' + formName + '"] [name="' + elementName + '"]');
 
                         // 如果有友好名称的话, 就用友好的
                         var translateParam = {field: targetElement.attr('title') || elementName};
