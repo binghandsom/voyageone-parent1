@@ -1,4 +1,5 @@
 var proxy = require('http-proxy-middleware');
+var morgan = require('morgan');
 var proxyMiddleware = proxy('http://localhost:8080');
 
 module.exports = {
@@ -7,9 +8,9 @@ module.exports = {
         index: "login.html"
     },
     browser: "google chrome",
-    logLevel: "debug",
     notify: false,
     middleware: [
+        morgan('dev'),
         function (req, res, next) {
             if (req.method !== 'POST') {
                 next();

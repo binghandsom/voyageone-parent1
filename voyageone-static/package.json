@@ -6,7 +6,7 @@
     "build-dev-pkg": "node node_scripts/npm/pakcaging-components.js",
     "build-css-pkg": "node node_scripts/npm/npm-build-css-package.js",
     "server": "browser-sync start -c bs-config.js",
-    "i-server": "npm i http-proxy-middleware browser-sync"
+    "i-server": "npm i http-proxy-middleware browser-sync morgan"
   },
   "author": "VoyageOne",
   "license": "ISC",
@@ -28,7 +28,8 @@
     "gulp-util": "",
     "through2": "",
     "http-proxy-middleware": "",
-    "browser-sync": ""
+    "browser-sync": "",
+    "morgan": ""
   },
   "dependencies": {
     "chart.js": "^2.1.4"
