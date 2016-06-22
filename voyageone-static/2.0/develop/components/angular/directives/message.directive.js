@@ -15,6 +15,8 @@ var errorTypes = {
     required: 'INVALID_REQUIRED',
     maxlength: 'INVALID_MAXLENGTH',
     minlength: 'INVALID_MINLENGTH',
+    minbytelength: 'INVALID_MAXLENGTH',
+    maxbytelength: 'INVALID_MINLENGTH',
     max: 'INVALID_MAX',
     min: 'INVALID_MIN',
     pattern: 'INVALID_PATTERN'
@@ -48,7 +50,7 @@ angular.module("voyageone.angular.directives")
                 function hide() {
                     elem.fadeOut();
                 }
-                
+
                 var formName;
 
                 // 初始化时保持隐藏
@@ -86,7 +88,7 @@ angular.module("voyageone.angular.directives")
                         }
 
                         // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                        if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
                             translateParam.value = targetElement.attr(error);
                         }
 

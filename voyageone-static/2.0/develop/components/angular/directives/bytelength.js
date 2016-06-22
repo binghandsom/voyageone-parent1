@@ -31,7 +31,7 @@
                     var length = attrs[attrName];
                     if (!length) return;
                     ngModelController.$parsers.push(function (viewValue) {
-                        ngModelController.$setValidity('maxbytelength', checkLength(getByteLength(viewValue), length));
+                        ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
                         return viewValue;
                     });
                 }
