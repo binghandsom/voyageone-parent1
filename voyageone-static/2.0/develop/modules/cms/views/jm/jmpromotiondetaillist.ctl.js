@@ -22,9 +22,12 @@ define([
         $scope.modelUpdateDealEndTime = {};
         $scope.modelAllUpdateDealEndTime = {};
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
-        $scope.initialize = function () {
+        $scope.initialize = function (){
+        console.log("aa");
+            console.log($routeParams);
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                 $scope.parentModel = res.data;
+                console.log($scope.parentModel);
             });
             jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.tagList = res.data;
@@ -429,8 +432,9 @@ define([
         $scope.openJmPromotionProductImportWin = function () {
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
-        $scope.openJmPromotionDetailWin = function (parameter) {
-            popups.openJmPromotionDetail(parameter);
+        $scope.openJmPromotionDetailWin = function () {
+           // console.log(parameter);
+            popups.openJmPromotionDetail({id: $routeParams.parentId});
         }
         $scope.openDealExtensionWin=function(){
             popups.openDealExtension($scope.parentModel);
