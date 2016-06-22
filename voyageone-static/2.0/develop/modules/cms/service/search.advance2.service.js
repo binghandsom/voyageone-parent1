@@ -151,6 +151,18 @@ define([
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
             if (searchInfo.hasErrorFlg) {
                 searchInfo.hasErrorFlg = 1;
+            } else {
+                searchInfo.hasErrorFlg = 0;
+            }
+            if (searchInfo.shopCatStatus) {
+                searchInfo.shopCatStatus = 1;
+            } else {
+                searchInfo.shopCatStatus = 0;
+            }
+            if (searchInfo.pCatStatus) {
+                searchInfo.pCatStatus = 1;
+            } else {
+                searchInfo.pCatStatus = 0;
             }
 
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
