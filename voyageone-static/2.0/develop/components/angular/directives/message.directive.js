@@ -15,8 +15,8 @@ var errorTypes = {
     required: 'INVALID_REQUIRED',
     maxlength: 'INVALID_MAXLENGTH',
     minlength: 'INVALID_MINLENGTH',
-    minbytelength: 'INVALID_MAXLENGTH',
-    maxbytelength: 'INVALID_MINLENGTH',
+    minbytelength: 'INVALID_MINLENGTH',
+    maxbytelength: 'INVALID_MAXLENGTH',
     max: 'INVALID_MAX',
     min: 'INVALID_MIN',
     pattern: 'INVALID_PATTERN'
