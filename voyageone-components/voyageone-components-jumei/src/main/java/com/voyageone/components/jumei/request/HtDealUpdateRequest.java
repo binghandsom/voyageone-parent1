@@ -4,6 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +24,6 @@ public class HtDealUpdateRequest implements BaseJMRequest {
     @Override
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getJumei_hash_id() {

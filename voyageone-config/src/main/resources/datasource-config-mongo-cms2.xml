@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init ="false"
-        xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd">
@@ -12,9 +12,9 @@
     <!-- Default bean name is 'mongo' -->
     <mongo:mongo-client id="mongo" host="10.0.0.59" port="27017">
         <mongo:client-options
-                       connect-timeout="100000"
-                       socket-timeout="100000"
-                       max-wait-time="150000"/>
+                connect-timeout="100000"
+                socket-timeout="100000"
+                max-wait-time="150000"/>
     </mongo:mongo-client>
 
     <!--<mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" dbname="cms"/>-->
@@ -22,12 +22,12 @@
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongo" ref="mongo"/>
-        <constructor-arg name="databaseName" value="cms2_new"/>
+        <constructor-arg name="databaseName" value="cms2"/>
     </bean>
 
     <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
-        <constructor-arg ref="mongoTemplate" />
+        <constructor-arg ref="mongoTemplate"/>
     </bean>
 
-    <context:annotation-config />
+    <context:annotation-config/>
 </beans>

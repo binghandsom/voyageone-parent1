@@ -33,11 +33,11 @@ public class CmsMtMasterInfoService {
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
-        return daoExt.getListByWhere(map);
+        return daoExt.selectListByWhere(map);
     }
 
     public Integer getCountByWhere(Map<String, Object> map) {
-        return daoExt.getCountByWhere(map);
+        return daoExt.selectCountByWhere(map);
     }
 
 

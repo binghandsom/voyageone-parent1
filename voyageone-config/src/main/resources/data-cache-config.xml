@@ -39,18 +39,18 @@
     </bean>
 
     <!-- define CmsBtImageTemplate cache -->
-    <bean id="cachingCmsBtImageTemplateKeyGenerator"
-          class="com.voyageone.service.impl.cms.imagecreate.VOImageCreateTemplateCacheKeyGenerator"/>
-    <cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager"
-                  key-generator="cachingCmsBtImageTemplateKeyGenerator">
-        <cache:caching cache="DATA_KEY_cachingCmsBtImageTemplateDao">
-            <cache:cacheable method="selectByTemplateId"/>
-            <cache:cache-evict method="update"/>
-        </cache:caching>
-    </cache:advice>
-    <aop:config>
-        <aop:advisor advice-ref="cachingCmsBtImageTemplateDao"
-                     pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>
-    </aop:config>
+    <!--<bean id="cachingCmsBtImageTemplateKeyGenerator"-->
+          <!--class="com.voyageone.service.impl.cms.imagecreate.VOImageCreateTemplateCacheKeyGenerator"/>-->
+    <!--<cache:advice id="cachingCmsBtImageTemplateDao" cache-manager="cacheManager"-->
+                  <!--key-generator="cachingCmsBtImageTemplateKeyGenerator">-->
+        <!--<cache:caching cache="DATA_KEY_cachingCmsBtImageTemplateDao">-->
+            <!--<cache:cacheable method="selectByTemplateId"/>-->
+            <!--<cache:cache-evict method="update"/>-->
+        <!--</cache:caching>-->
+    <!--</cache:advice>-->
+    <!--<aop:config>-->
+        <!--<aop:advisor advice-ref="cachingCmsBtImageTemplateDao"-->
+                     <!--pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>-->
+    <!--</aop:config>-->
 
 </beans>

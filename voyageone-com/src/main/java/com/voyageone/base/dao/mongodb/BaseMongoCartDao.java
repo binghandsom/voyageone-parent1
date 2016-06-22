@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BaseMongoChannelDao
@@ -101,5 +102,32 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
 
     public WriteResult upsertFirst(String strQuery, String strUpdate, int cartId) {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(cartId));
+    }
+
+    /**
+     * 聚合查询
+     * @return List<Map> 返回的Map数据结构和aggregate语句对应
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(int cartId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToMap(cartId, aggregates);
+    }
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(int cartId, JomgoAggregate... aggregates) {
+        return (List<Map<String, Object>>) aggregateToObj(Map.class, getCollectionName(cartId), aggregates);
+    }
+
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(int cartId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToObj(cartId, aggregates);
+    }
+    public List<T> aggregateToObj(int cartId, JomgoAggregate... aggregates) {
+        return aggregateToObj(entityClass, getCollectionName(cartId), aggregates);
     }
 }

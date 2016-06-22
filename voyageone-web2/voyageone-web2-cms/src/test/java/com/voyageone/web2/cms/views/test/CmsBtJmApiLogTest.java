@@ -59,7 +59,7 @@ public class CmsBtJmApiLogTest {
     @Test
     public void testGetPage() {
 
-       // List<Map<String,Object>> list = service.getPage();
+       // List<Map<String,Object>> list = service.selectPage();
 
     }
 }

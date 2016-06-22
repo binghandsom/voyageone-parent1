@@ -90,6 +90,10 @@ public class CmsConstants {
 
         String IMAGE_UPLOAD_SERVICE = "IMAGE_UPLOAD_SERVICE";
 
+        // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
+        String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
+
+
         // 价格相关
         String PRICE = "PRICE";
         String PRICE_SX_PRICE = ".sx_price";
@@ -134,6 +138,8 @@ public class CmsConstants {
         String OPTION_DATA_SOURCE = "optConfig";
 
         String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+
+        String OPTION_DATA_SOURCE_SIZE_CHART = "sizeChartConfigChannel";
     }
 
     public interface CellNum {

@@ -49,12 +49,26 @@
     <select id="select_cms_mt_common_prop_cust_cols" parameterType="HashMap" resultType="HashMap">
         select
         prop_id AS propId,
-        prop_name AS propName
+        prop_name AS propName,
+        value_type AS valType
         from voyageone_cms2.cms_mt_common_prop
         where
         action_type = 0
         AND is_comm = 1
         AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
+    </select>
+
+    <!-- 查询排序用的自定义列(高级检索画面) -->
+    <select id="select_cms_mt_common_prop_cust_cols_sort" parameterType="HashMap" resultType="HashMap">
+        select
+        prop_id AS propId,
+        prop_name AS propName,
+        value_type AS valType
+        from voyageone_cms2.cms_mt_common_prop
+        where
+        action_type = 0
+        AND is_comm = 1
+        AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
     </select>
 
     <!-- 查询用户可显示的自定义列(高级检索画面) -->

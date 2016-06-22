@@ -167,14 +167,14 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             } else {
                 cmsBtJmProductDao.update(saveInfo.getProductModel());
             }
-            saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
+         //   saveInfo.getPromotionProductModel().setCmsBtJmProductId(saveInfo.getProductModel().getId());
             if (saveInfo.getPromotionProductModel().getId() == 0) {
                 cmsBtJmPromotionProductDao.insert(saveInfo.getPromotionProductModel());
             } else {
                 cmsBtJmPromotionProductDao.update(saveInfo.getPromotionProductModel());
             }
             for (CmsBtJmSkuModel skuModel : saveInfo.getListSkuModel()) {
-                skuModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
+               // skuModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
                 if (skuModel.getId() == 0) {
                     cmsBtJmSkuDao.insert(skuModel);
                 } else {
@@ -183,10 +183,10 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 mapSkuCodeId.put(skuModel.getSkuCode(), skuModel.getId());
             }
             for (CmsBtJmPromotionSkuModel skuPromotionModel : saveInfo.getListPromotionSkuModel()) {
-                skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
-                if(skuPromotionModel.getCmsBtJmSkuId()==0) {
-                    skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
-                }
+               // skuPromotionModel.setCmsBtJmProductId(saveInfo.getProductModel().getId());
+//                if(skuPromotionModel.getCmsBtJmSkuId()==0) {
+//                    skuPromotionModel.setCmsBtJmSkuId(mapSkuCodeId.get(skuPromotionModel.getSkuCode()));
+//                }
                 if (skuPromotionModel.getId() == 0) {
                     cmsBtJmPromotionSkuDao.insert(skuPromotionModel);
                 } else {
@@ -228,17 +228,17 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         for (CmsBtJmImportProduct importProductModel : listProductModel) {
             saveInfo = new CmsBtJmProductImportSaveInfo();
             //商品
-            oldProductModel = cmsBtJmProductDaoExt.getByProductCodeChannelId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId());
+            oldProductModel = cmsBtJmProductDaoExt.selectByProductCodeChannelId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId());
             importProductModel.setChannelId(modelCmsBtJmPromotion.getChannelId());
             if (oldProductModel != null) {
-                if (oldProductModel.getState() == 0) {//未上新 全覆盖
-                    importProductModel.setId(oldProductModel.getId());
-                    saveInfo.setProductModel(importProductModel);//商品
-                } else //已上新   待确认?
-                {
+//                if (oldProductModel.getState() == 0) {//未上新 全覆盖
+//                    importProductModel.setId(oldProductModel.getId());
+//                    saveInfo.setProductModel(importProductModel);//商品
+//                } else //已上新   待确认?
+//                {
                     loadOldProductModel(oldProductModel, importProductModel);//处理需要覆盖的字段
                     saveInfo.setProductModel(oldProductModel);
-                }
+                //}
             } else {
                 saveInfo.setProductModel(importProductModel);//商品
             }
@@ -289,38 +289,38 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         if (!StringUtils.isEmpty(importProductModel.getApplicableCrowd())) {
             oldProductModel.setApplicableCrowd(importProductModel.getApplicableCrowd());
         }
-        if (!StringUtils.isEmpty(importProductModel.getSearchMetaTextCustom())) {
-            oldProductModel.setSearchMetaTextCustom(importProductModel.getSearchMetaTextCustom());
-        }
-        if (!StringUtils.isEmpty(importProductModel.getSpecialNote())) {
-            oldProductModel.setSpecialNote(importProductModel.getSpecialNote());
-        }
-        if (!StringUtils.isEmpty(importProductModel.getHsCode())) {
-            oldProductModel.setHsCode(importProductModel.getHsCode());
-        }
-        if (!StringUtils.isEmpty(importProductModel.getHsName())) {
-            oldProductModel.setHsName(importProductModel.getHsName());
-        }
-        if (!StringUtils.isEmpty(importProductModel.getHsUnit())) {
-            oldProductModel.setHsUnit(importProductModel.getHsUnit());
-        }
+//        if (!StringUtils.isEmpty(importProductModel.getSearchMetaTextCustom())) {
+//            oldProductModel.setSearchMetaTextCustom(importProductModel.getSearchMetaTextCustom());
+//        }
+//        if (!StringUtils.isEmpty(importProductModel.getSpecialNote())) {
+//            oldProductModel.setSpecialNote(importProductModel.getSpecialNote());
+//        }
+//        if (!StringUtils.isEmpty(importProductModel.getHsCode())) {
+//            oldProductModel.setHsCode(importProductModel.getHsCode());
+//        }
+//        if (!StringUtils.isEmpty(importProductModel.getHsName())) {
+//            oldProductModel.setHsName(importProductModel.getHsName());
+//        }
+//        if (!StringUtils.isEmpty(importProductModel.getHsUnit())) {
+//            oldProductModel.setHsUnit(importProductModel.getHsUnit());
+//        }
     }
     private void loadSavePromotionProductInfoByImportModel(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmProductModel oldProductModel, CmsBtJmImportProduct importProductModel) {
         CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct;
-        modelCmsBtJmPromotionProduct = cmsBtJmPromotionProductDaoExt.getByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
+        modelCmsBtJmPromotionProduct = cmsBtJmPromotionProductDaoExt.selectByProductCodeChannelIdCmsBtJmPromotionId(importProductModel.getProductCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (modelCmsBtJmPromotionProduct == null) {
             modelCmsBtJmPromotionProduct = new CmsBtJmPromotionProductModel();
             modelCmsBtJmPromotionProduct.setActivityStart(modelCmsBtJmPromotion.getActivityStart());
             modelCmsBtJmPromotionProduct.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
         }
 
-        if (modelCmsBtJmPromotionProduct.getSynchState() == 2)//已经上传
+        if (modelCmsBtJmPromotionProduct.getSynchStatus() == 2)//已经上传
         {
             modelCmsBtJmPromotionProduct.setLimit(importProductModel.getLimit());
         } else {
-            if (oldProductModel != null) {
-                modelCmsBtJmPromotionProduct.setState(oldProductModel.getState());
-            }
+//            if (oldProductModel != null) {
+//                modelCmsBtJmPromotionProduct.setSynchStatus(oldProductModel.getSynchStatus());
+//            }
             modelCmsBtJmPromotionProduct.setProductCode(importProductModel.getProductCode());
             if (!StringUtils.isEmpty(importProductModel.getAppId())) {
                 modelCmsBtJmPromotionProduct.setAppId(importProductModel.getAppId());
@@ -352,11 +352,11 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 * */
         //特殊说明 data_type=3
 
-        CmsMtMasterInfoModel specialNote = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 3);
+        CmsMtMasterInfoModel specialNote = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 3);
         //  CmsMtMasterInfoModel specialNote = new CmsMtMasterInfoModel();
         if (specialNote == null) {
             specialNote = new CmsMtMasterInfoModel();
-            specialNote.setValue1(importProductModel.getSpecialNote());
+           // specialNote.setValue1(importProductModel.getSpecialNote());
             specialNote.setDataType(3);
             specialNote.setPlatformId(PlatformId);
             specialNote.setChannelId(modelCmsBtJmPromotion.getChannelId());
@@ -365,7 +365,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(specialNote);//特殊说明 data_type=3
         }
         //品牌故事图data_type=4
-        CmsMtMasterInfoModel model4 = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 4);
+        CmsMtMasterInfoModel model4 = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 4);
         if (model4 == null) {
             model4 = new CmsMtMasterInfoModel();
             model4.setDataType(4);
@@ -377,7 +377,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(model4);//品牌故事图data_type=4
         }
         //尺码图data_type=5
-        CmsMtMasterInfoModel model5 = cmsMtMasterInfoDaoExt.getByKeySizeType(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 5, importProductModel.getSizeType());
+        CmsMtMasterInfoModel model5 = cmsMtMasterInfoDaoExt.selectByKeySizeType(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 5, importProductModel.getSizeType());
         if (model5 == null) {
             model5 = new CmsMtMasterInfoModel();
             model5.setDataType(5);
@@ -390,7 +390,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             saveImportInfo.add(model5);//尺码图data_type=5
         }
         //物流介绍data_type=6
-        CmsMtMasterInfoModel model6 = cmsMtMasterInfoDaoExt.getByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 6);
+        CmsMtMasterInfoModel model6 = cmsMtMasterInfoDaoExt.selectByKey(PlatformId, modelCmsBtJmPromotion.getChannelId(), importProductModel.getBrandName(), importProductModel.getProductType(), 6);
         if (model6 == null) {
             model6 = new CmsMtMasterInfoModel();
             model6.setDataType(6);
@@ -466,7 +466,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private void addPropertyImage(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, String propertyImage1, String productCode, int imageType, int imageIndex) {
         if (StringUtils.isEmpty(propertyImage1)) return;  //为空 不覆盖
-        CmsBtJmProductImagesModel propertyImageModel = cmsBtJmProductImagesDaoExt.getByKey(modelCmsBtJmPromotion.getChannelId(), productCode, imageType, imageIndex);
+        CmsBtJmProductImagesModel propertyImageModel = cmsBtJmProductImagesDaoExt.selectByKey(modelCmsBtJmPromotion.getChannelId(), productCode, imageType, imageIndex);
         if (propertyImageModel == null) {
             propertyImageModel = new CmsBtJmProductImagesModel();
         }
@@ -498,7 +498,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
     private void addImageByProductImageUrlKey(String ProductImageUrlKey, CmsBtJmImportSpecialImage specialImageModel, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, List<CmsMtTemplateImagesModel> listCmsMtTemplateImages, int imageIndex) {
         if (StringUtils.isEmpty(ProductImageUrlKey)) return; //为空 不覆盖
         for (CmsMtTemplateImagesModel templateImage : listCmsMtTemplateImages) {
-            CmsBtJmProductImagesModel productImage = cmsBtJmProductImagesDaoExt.getByKey(modelCmsBtJmPromotion.getChannelId(), specialImageModel.getProductCode(), templateImage.getTemplateType(), imageIndex);
+            CmsBtJmProductImagesModel productImage = cmsBtJmProductImagesDaoExt.selectByKey(modelCmsBtJmPromotion.getChannelId(), specialImageModel.getProductCode(), templateImage.getTemplateType(), imageIndex);
             if (productImage == null) {
                 productImage = new CmsBtJmProductImagesModel();
             }
@@ -528,12 +528,12 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private void loadPromotionSku(String Creater, CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmSkuModel oldSkuModel, CmsBtJmImportSku importSkuModel) {
         CmsBtJmPromotionSkuModel promotionSkuModel;
-        promotionSkuModel = cmsBtJmPromotionSkuDaoExt.getBySkuCodeChannelIdCmsBtJmPromotionId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
+        promotionSkuModel = cmsBtJmPromotionSkuDaoExt.selectBySkuCodeChannelIdCmsBtJmPromotionId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId(), modelCmsBtJmPromotion.getId());
         if (promotionSkuModel == null) {
             promotionSkuModel = new CmsBtJmPromotionSkuModel();
         }
-        promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
-        if (promotionSkuModel.getSynchState() == 2) {//已上传
+      //  promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
+        if (promotionSkuModel.getSynchStatus() == 2) {//已上传
             if (importSkuModel.getDealPrice() != 0) {
                 promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
             }
@@ -541,9 +541,9 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
                 promotionSkuModel.setMarketPrice(new BigDecimal(importSkuModel.getMarketPrice()));
             }
         } else {
-            if (oldSkuModel != null) {
-                promotionSkuModel.setState(oldSkuModel.getState());
-            }
+//            if (oldSkuModel != null) {
+//                promotionSkuModel.setState(oldSkuModel.getState());
+//            }
             promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
             promotionSkuModel.setMarketPrice(new BigDecimal(importSkuModel.getMarketPrice()));
             promotionSkuModel.setDiscount(BigDecimalUtil.divide( promotionSkuModel.getDealPrice(), promotionSkuModel.getMarketPrice(),2));
@@ -554,7 +554,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
             //promotionSkuModel.setCmsBtJmSkuId();
             promotionSkuModel.setCreated(new Date());
             promotionSkuModel.setCreater(Creater);
-            promotionSkuModel.setJmSize(importSkuModel.getJmSize());
+           // promotionSkuModel.setJmSize(importSkuModel.getJmSize());
             promotionSkuModel.setModifier(Creater);
             saveInfo.getListPromotionSkuModel().add(promotionSkuModel);//加入活动规格
         }
@@ -562,17 +562,17 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private CmsBtJmSkuModel loadSku(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmImportSku importSkuModel) {
         CmsBtJmSkuModel oldSkuModel;
-        oldSkuModel = cmsBtJmSkuDaoExt.getBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
+        oldSkuModel = cmsBtJmSkuDaoExt.selectBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
         importSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());//渠道
         if (oldSkuModel != null) {
             importSkuModel.setId(oldSkuModel.getId());
-            if (oldSkuModel.getState() == 0)//未上新 全覆盖
-            {
-                saveInfo.getListSkuModel().add(importSkuModel);//加入保存规格
-            } else //已上新
-            {
-
-            }
+//            if (oldSkuModel.getState() == 0)//未上新 全覆盖
+//            {
+//                saveInfo.getListSkuModel().add(importSkuModel);//加入保存规格
+//            } else //已上新
+//            {
+//
+//            }
         } else {
             saveInfo.getListSkuModel().add(importSkuModel);//加入保存规格
         }
@@ -598,7 +598,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
         return result;
     }
     public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
-        return cmsBtJmPromotionImportTaskDaoExt.getByPromotionId(promotionId);
+        return cmsBtJmPromotionImportTaskDaoExt.selectByPromotionId(promotionId);
     }
 
     @VOTransactional

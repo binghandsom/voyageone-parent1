@@ -4,7 +4,9 @@ import com.mongodb.BasicDBObject;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JsonUtil;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +24,38 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         } else {
             return (T) super.get(key);
         }
+    }
+
+    /**
+     * 取得子节点的值
+     * @param complexKey 节点路径，如 xx.yy.zz, 则调用时为：getSubNode(xx, yy, zz);
+     */
+    public Object getSubNode(String... complexKey) {
+        if (complexKey == null) {
+            return null;
+        }
+        int keyLvl = complexKey.length;
+        Object subNode = null;
+
+        for (int i = 0; i < keyLvl; i ++) {
+            if (i == 0) {
+                subNode = get(complexKey[0]);
+            } else {
+                if (subNode == null) {
+                    return null;
+                }
+                if (subNode instanceof Map) {
+                    subNode = ((Map) subNode).get(complexKey[i]);
+                } else {
+                    return null;
+                }
+            }
+        }
+        return subNode;
+    }
+
+    public int getIntAttribute(K key) {
+        return convertToInt(getAttribute(key));
     }
 
     public double getDoubleAttribute(K key) {
@@ -65,9 +99,23 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
 
     public BasicDBObject toUpdateBasicDBObject(String preStr) {
         BasicDBObject result = new BasicDBObject();
-        for (Object o : this.entrySet()) {
-            Map.Entry entry = (Map.Entry) o;
+        for (Map.Entry entry : this.entrySet()) {
             result.append(preStr + entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+    private int convertToInt(Object input) {
+        int result = 0;
+        if (input == null) {
+            return result;
+        }
+        if (input instanceof Integer) {
+            result = (Integer)input;
+        } else {
+            if(!StringUtil.isEmpty(input.toString())){
+                result = Double.valueOf(input.toString()).intValue();
+            }
         }
         return result;
     }

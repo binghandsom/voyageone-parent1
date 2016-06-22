@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.bean.platform;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 //import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -20,7 +21,7 @@ public class SxData {
 	private int promotionId;										// 活动id (目前只有聚美用到, 由cms进行管理)
 	private int publishStatus;										// 上新状态
 
-	private List<CmsBtProductModel> productList; // 单个group中, 包含的所有product列表, 里面虽然有platform和sku信息(但是里面的内容是包含其他group的数据的)
+	private List<CmsBtProductBean> productList; // 单个group中, 包含的所有product列表, 里面虽然有platform和sku信息(但是里面的内容是包含其他group的数据的)
 	private List<CmsBtProductGroupModel> platformList;	// 只包含当前group中, 允许使用的platform信息
 	private List<CmsBtProductModel_Sku> skuList;					// 只包含当前group中, 允许使用的sku信息
 	private Map<String, Integer> qtyList;							// 只包含当前group中, 允许使用的库存信息
@@ -91,11 +92,11 @@ public class SxData {
 		this.publishStatus = publishStatus;
 	}
 
-	public List<CmsBtProductModel> getProductList() {
+	public List<CmsBtProductBean> getProductList() {
 		return productList;
 	}
 
-	public void setProductList(List<CmsBtProductModel> productList) {
+	public void setProductList(List<CmsBtProductBean> productList) {
 		this.productList = productList;
 	}
 

@@ -4,10 +4,10 @@
     <resultMap id="ResultMap" type="CmsBtJmPromotionModel">
 
     </resultMap>
-    <select id="getListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
+    <select id="selectListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
           <where>
-              is_delete=0
+              active=1
               <if test="id != null">
                  AND id =  #{id}
               </if>
@@ -46,11 +46,14 @@
               )
               </if>
           </where>
-    </select>
-    <select id="getActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
-        select *  from cms_bt_jm_promotion
-        where is_delete=0 and channel_id=#{channelId}
-        and activity_start &lt; now() and activity_end &gt; now()
 
+        order by id desc
+    </select>
+
+    <select id="selectActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
+        select a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
+        where a.channel_id=#{channelId}
+          and   a.activity_end >= now()
+          and b.active = 1
     </select>
 </mapper>

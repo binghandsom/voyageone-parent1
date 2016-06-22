@@ -2,6 +2,8 @@ package com.voyageone.common.util;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * @author Jonas, 12/11/15
  * @version 1.3.0
@@ -10,7 +12,7 @@ import org.junit.Test;
 public class HttpUtilsTest {
 
     @Test
-    public void testPost() {
+    public void testPost() throws IOException {
 
         String cont = HttpUtils.post("https://120.26.219.17/jc.asia.dev/devicom_apps/catalog_request.php", null);
 

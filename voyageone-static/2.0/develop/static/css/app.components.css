@@ -2,11 +2,132 @@
  * 项目自定义通用样式,比如angular的自定义directive
  */
 
-/* 为 schema-item directive 的输入控件提供错误样式
- * 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
-schema-item .ng-invalid input,
-schema-item .ng-invalid select,
-schema-item .ng-invalid .c-checkbox span,
+/* schema directive 样式定义 { */
+
+schema {
+    display: block;
+}
+
+s-field {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+schema > s-field {
+    margin-bottom: 10px;
+}
+
+schema > s-field:last-child {
+    margin-bottom: 0;
+}
+
+s-field vo-message {
+    margin-top: 5px;
+}
+
+s-header {
+    width: 120px;
+    flex-grow: 0;
+    line-height: 26px;
+    font-weight: bold;
+}
+
+.s-wrapper {
+    width: 82%;
+    flex-grow: 1;
+}
+
+s-complex {
+    background-color: #f8f8f8;
+    border: 1px solid #ededed;
+    padding: 5px;
+    display: block;
+}
+
+s-complex s-field {
+    margin-bottom: 5px;
+}
+
+s-complex s-field:last-child {
+    margin-bottom: 0;
+}
+
+s-complex s-header.simple {
+    color: #8a8a8a;
+}
+
+s-toolbar {
+    display: block;
+    background-color: #ededed;
+    position: relative;
+}
+
+s-toolbar .btn-schema {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+}
+
+s-toolbox {
+    display: block;
+    flex-grow: 0;
+}
+
+s-complex[multi] {
+    display: flex;
+    align-items: flex-start;
+}
+
+s-complex[multi] s-field {
+    display: block;
+    flex-grow: 1;
+    width: 100%;
+    margin-bottom: 0;
+    margin-right: 5px;
+}
+
+s-complex[multi] .s-wrapper {
+    width: 100%;
+}
+
+s-complex[multi] s-header.simple {
+    display: none;
+}
+
+s-complex[multi]:first-of-type s-header.simple {
+    display: block;
+}
+
+s-complex[multi] s-toolbox {
+    align-self: flex-end;
+}
+
+.s-required:after {
+    content: '*';
+    color: red;
+    padding-left: 5px;
+}
+
+s-tip {
+    display: block;
+    color: #ee903d;
+}
+
+s-tip:before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    font-weight: bold;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    content: '\f0a2';
+    padding-right: 3px;
+}
+
+/* } schema directive 样式定义 */
+
+/* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */
 .vo-validate.ng-invalid input,
 .vo-validate.ng-invalid select,
 .vo-validate.ng-invalid .c-checkbox span {
@@ -18,9 +139,6 @@ vo-message {
     font-weight: bold;
     display: inline-block;
     padding: 2px 6px 3px 8px;
-    border-left: 6px solid #E67E22;
-    border-radius: 4px;
-    box-shadow: 1px 2px 7px #9E9C9C;
-    color: #fff;
-    background: #E04825;
+    border-left: 2px solid #E04825;
+    color: #E04825;
 }

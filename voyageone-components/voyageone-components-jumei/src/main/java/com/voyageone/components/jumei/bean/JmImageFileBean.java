@@ -9,7 +9,7 @@ import java.io.InputStream;
 
 /**
  * 商家图片文件结构。
- *
+ * <p>
  * Created on 2015-12-14
  *
  * @author chuanyu.liang
@@ -105,13 +105,22 @@ public class JmImageFileBean extends JmBaseBean {
         String result = null;
         if (this.file != null && this.file.exists()) {
             result = ImgUtils.encodeToString(file);
-        }else if(this.inputStream!=null ){
-            result =ImgUtils.encodeToString(inputStream, extName);
+        } else if (this.inputStream != null) {
+            try {
+                result = ImgUtils.encodeToString(inputStream, extName);
+            } finally {
+                try {
+                    this.inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
         return result;
     }
 
-    /** 图片流 */
+    /**
+     * 图片流
+     */
     private transient InputStream inputStream;
 
     public InputStream getInputStream() {

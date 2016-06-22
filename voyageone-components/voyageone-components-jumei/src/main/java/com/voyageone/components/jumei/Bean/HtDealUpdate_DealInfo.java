@@ -5,16 +5,16 @@ package com.voyageone.components.jumei.bean;
  */
 public class HtDealUpdate_DealInfo {
     //发货仓库
-    String shipping_system_id;
+    Integer shipping_system_id;
 
-    String user_purchase_limit;//            限购数量
+    int user_purchase_limit;//            限购数量
 
     String product_long_name;//可选 产品长标题  参数范围: 注：130　用于详情页显示，商品名+功效特点描述，不能出现价格及促销信息
 
     String product_medium_name;// 可选String  产品中标题    参数范围: 注：35字　用于首页、列表页显示，填写商品名+功效的一句话描述，不能出现价格及促销信息
     String product_short_name;// 可选	String    产品短标题    参数范围: 注：15字　用于购物车、移动客户端等，填写产品名如果字数超过，需酌情删减部分信息
 
-    String attribute;//可选	String 生产地区  参数范围: 注：150字以内
+//    String attribute;//可选	String 生产地区  参数范围: 注：150字以内
 
     String before_date;// 可选	String   保质期限   参数范围: 注：150字以内
     String suit_people;// 可选	String    适用人群    参数范围: 注：150字以内
@@ -49,19 +49,19 @@ public class HtDealUpdate_DealInfo {
 //    参数范围: 注：全量覆盖; 多个sku_no以","隔开
 //}
     String jumei_sku_no;// 可选	String
-    public String getShipping_system_id() {
+    public Integer getShipping_system_id() {
         return shipping_system_id;
     }
 
-    public void setShipping_system_id(String shipping_system_id) {
+    public void setShipping_system_id(Integer shipping_system_id) {
         this.shipping_system_id = shipping_system_id;
     }
 
-    public String getUser_purchase_limit() {
+    public int getUser_purchase_limit() {
         return user_purchase_limit;
     }
 
-    public void setUser_purchase_limit(String user_purchase_limit) {
+    public void setUser_purchase_limit(int user_purchase_limit) {
         this.user_purchase_limit = user_purchase_limit;
     }
 
@@ -89,13 +89,13 @@ public class HtDealUpdate_DealInfo {
         this.product_short_name = product_short_name;
     }
 
-    public String getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
+//    public String getAttribute() {
+//        return attribute;
+//    }
+//
+//    public void setAttribute(String attribute) {
+//        this.attribute = attribute;
+//    }
 
     public String getBefore_date() {
         return before_date;

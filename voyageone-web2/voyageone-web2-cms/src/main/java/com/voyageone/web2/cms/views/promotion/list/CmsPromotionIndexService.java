@@ -85,11 +85,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 //    }
 
     public int addOrUpdate(CmsBtPromotionBean cmsBtPromotionBean) {
-        try {
-            return promotionService.saveOrUpdate(cmsBtPromotionBean);
-        } catch (Exception e) {
-            throw new BusinessException("addOrUpdate", e);
-        }
+        return promotionService.saveOrUpdate(cmsBtPromotionBean);
     }
 
     public int delete(CmsBtPromotionBean cmsBtPromotionBean) {

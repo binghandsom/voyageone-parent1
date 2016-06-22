@@ -1,0 +1,76 @@
+<div class="wrapper-md product-shema-detail">
+
+    <div ng-if="vm.showInfoFlag">
+                <!-- Products table and controls -->
+        <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="container-fluid m-t-sm m-l-xs m-r-xs">
+                <div class="row">
+                        <div class="col-md-8  m-b-sm font-bold text-vo">
+                            <span class="label label-danger m-r-sm pull-left" ng-if="vm._isMain == 1">&nbsp;M&nbsp;</span>
+                            <span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}{{vm.productDetails.categoryFullPath}}</span>
+                        </div>
+                         <div class="col-md-4">
+                             <div class="form-inline pull-right" ng-controller="popupCtrl">
+                                 <button type="button" class="btn btn-vo ng-binding" ng-click="updateFeed()"><i class="glyphicon glyphicon-floppy-disk"></i>保存</button>
+                             </div>
+                             <br><br>
+                             <div class="text-warnings pull-right" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
+                                 <i class="icon fa fa-bell-o"></i>&nbsp;如果平台已经Approved,点击保存后各个平台将触发上新操作。<br>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div>
+            <form class="form-horizontal" name="productCustomForm">
+                <div class="panel vo_panel tab_panel">
+                    <div class="row wrapper">
+                        <div class="container-fluid" ng-repeat="feedAttr in vm.productDetails.feedInfoModel">
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" ng-bind="feedAttr.key"></label>
+
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" ng-model="feedAttr.value" readonly
+                                               ng-if="feedAttr.value.length < 50">
+                                        <textarea rows="3" class="form-control no-resize" ng-model="feedAttr.value"
+                                                  readonly ng-if="feedAttr.value.length >= 50"></textarea>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label class="i-checks-sm m-b-none"><input type="checkbox"
+                                                                                   ng-model="feedAttr.exists"
+                                                                                   disabled></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---------------------------------------显示中文区域------------------------------------------->
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" ng-bind="feedAttr.cnKey"></label>
+
+                                    <div class="col-sm-6" ng-show="feedAttr.cnKey">
+                                        <input type="text" class="form-control" ng-model="feedAttr.cnValue"
+                                               ng-if="feedAttr.value.length < 50">
+                                        <textarea rows="3" class="form-control no-resize"
+                                                  ng-model="feedAttr.cnValue"
+                                                  ng-if="feedAttr.value.length >= 50"></textarea>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <label class="i-checks-sm m-b-none">
+                                            <input type="checkbox" ng-model="feedAttr.selected" ng-if="feedAttr.cnKey">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</div>

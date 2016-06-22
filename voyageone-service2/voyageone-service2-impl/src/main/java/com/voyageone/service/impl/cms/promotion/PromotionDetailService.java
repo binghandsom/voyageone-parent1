@@ -61,7 +61,7 @@ public class PromotionDetailService extends BaseService {
     private ProductTagService productTagService;
 
     /**
-     * 添加
+     * 添加商品到promotion
      */
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean) {
@@ -102,7 +102,7 @@ public class PromotionDetailService extends BaseService {
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
         // 插入cms_bt_promotion_code表
-        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier);
+        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier, cartId);
         cmsBtPromotionCodesBean.setNumIid(numIId);
         cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
@@ -177,8 +177,13 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setModifier(modifier);
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
 
+            // 删除旧的的TAG 插入新的TAG
             CmsBtTagModel modelTag = daoTag.select(oldPromotionCodesModel.getTagId());//获取修改前的tag
-            updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
+            if(modelTag == null){
+                updateCmsBtProductTags(promotionCodeModel, null,modifier);//更新商品Tags
+            }else{
+                updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
+            }
         }
     }
     /**
@@ -191,12 +196,14 @@ public class PromotionDetailService extends BaseService {
             List<String> tags = productModel.getTags();
             int size = tags.size();
             boolean isUpdate = false;
-            for (int i = 0; i < size; i++) {
-                if (oldTagPath.equals(tags.get(i))) {
-                    //存在替换
-                    tags.set(i, promotionCodeModel.getTagPath());
-                    isUpdate = true;
-                    break;
+            if(!StringUtil.isEmpty(oldTagPath)) {
+                for (int i = 0; i < size; i++) {
+                    if (oldTagPath.equals(tags.get(i))) {
+                        //存在替换
+                        tags.set(i, promotionCodeModel.getTagPath());
+                        isUpdate = true;
+                        break;
+                    }
                 }
             }
             if (!isUpdate)//没有更新 就添加

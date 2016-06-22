@@ -132,6 +132,11 @@
     "templateUrl": "views/search/advance.tpl.html",
     "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
+  "search_advance_new": {
+    "hash": "/search/advanceSearch",
+    "templateUrl": "views/search/advanceSearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
+  },
   "search_advance_param": {
     "url": "/search/advance/",
     "hash": "/search/advance/:type/:value/:catType",
@@ -245,6 +250,12 @@
     "controllerUrl": "modules/cms/views/product/detail.ctl",
     "controller": "productDetailController as ctrl"
   },
+  "product_detail_cart": {
+    "hash": "/product/detail/:productId/:cartId",
+    "templateUrl": "views/product/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/product/detail.ctl",
+    "controller": "productDetailController as ctrl"
+  },
   "channel_common": {
     "hash": "/channel/common",
     "templateUrl": "views/channel/common/attribute.tpl.html",
@@ -268,12 +279,12 @@
   "tools_product":{
     "hash": "/tools/product",
     "templateUrl": "views/tools/product/hsCodeList.tpl.html",
-    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl"
+    "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl",
+    "controller":"HsCodeController as ctrl"
   },
   "system_cache_set": {
     "hash": "/system/cache/index",
-    "templateUrl": "views/system/cache/index.tpl.html",
-    "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+    "templateUrl": "views/system/cache/index.tpl.html"
   },
   "system_category_setting": {
     "hash": "/system/categorysetting/:type",

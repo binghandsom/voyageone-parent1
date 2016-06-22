@@ -120,10 +120,11 @@ public abstract class BaseController extends BaseAppComponent {
      * 辅助方法，返回一个 AjaxResponse
      */
     public AjaxResponse success(Object data) {
-
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        $debug(JacksonUtil.bean2Json(response));
+        if ($isDebugEnabled()) {
+            $debug(String.format("当前请求url=%s 响应结果response=:%s", request.getServletPath(), JacksonUtil.bean2Json(response)));
+        }
         return response;
     }
 
@@ -131,7 +132,6 @@ public abstract class BaseController extends BaseAppComponent {
      * 辅助方法，返回一个 AjaxResponse
      */
     public AjaxResponse redirectTo(String path) {
-
         AjaxResponse response = new AjaxResponse();
         response.setRedirectTo(path);
         return response;

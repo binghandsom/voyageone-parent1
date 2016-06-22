@@ -19,6 +19,12 @@
         <!-- 上新 -->
         <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 京东上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 聚美上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 取得平台类目:手动batch -->
         <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -93,6 +99,9 @@
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
         <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
+
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
 
     </task:scheduled-tasks>

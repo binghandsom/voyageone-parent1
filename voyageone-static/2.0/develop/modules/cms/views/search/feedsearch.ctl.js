@@ -12,7 +12,7 @@ define([
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: [],
-            feedSelList: { selList: []}
+            feedSelList: {selList: []}
         };
 
         $scope.initialize = initialize;
@@ -32,14 +32,14 @@ define([
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
             }
             $feedSearchService.init()
-            .then(function (res) {
-                $scope.vm.masterData = res.data;
-            })
-            .then(function() {
-                if ($routeParams.type == "1") {
-                    search();
-                }
-            })
+                .then(function (res) {
+                    $scope.vm.masterData = res.data;
+                })
+                .then(function () {
+                    if ($routeParams.type == "1") {
+                        search();
+                    }
+                })
         }
 
         /**
@@ -57,7 +57,7 @@ define([
             if (feedObj.hasImgFlg > 0) {
                 var picList = [];
                 picList[0] = feedObj.image;
-                var para = {'mainPic': feedObj.image[0], 'picList': picList, 'hostUrl':0,'search':'feed'};
+                var para = {'mainPic': feedObj.image[0], 'picList': picList, 'hostUrl': 0, 'search': 'feed'};
                 return this.openImagedetail(para);
             }
         };
@@ -74,8 +74,8 @@ define([
         /**
          * 检索
          */
-        function search(page,flg) {
-            if(flg === true && tempFeedSelect){
+        function search(page, flg) {
+            if (flg === true && tempFeedSelect) {
                 // 默认设置成第一页
                 $scope.vm.feedPageOption.curr = 1;
                 tempFeedSelect = null;
@@ -105,7 +105,7 @@ define([
                     } else {
                         feedInfo.skusCnt = skusList.length;
                         _.forEach(skusList, function (skuInfo) {
-                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.priceClientMsrp)  + ', ' + $.trim(skuInfo.priceClientRetail) + ', ' + $.trim(skuInfo.priceNet)
+                            var skuDesc = $.trim(skuInfo.sku) + ':' + $.trim(skuInfo.size) + ' -> ' + $.trim(skuInfo.priceClientMsrp) + ', ' + $.trim(skuInfo.priceClientRetail) + ', ' + $.trim(skuInfo.priceNet)
                                 + ', ' + $.trim(skuInfo.priceMsrp) + ', ' + $.trim(skuInfo.priceCurrent);
                             feedInfo._popSkuInfo.push(skuDesc);
                         });
@@ -124,7 +124,7 @@ define([
                     var attsList = [];
                     if (attsMap != undefined) {
                         var d = attsMap['StoneColor'];
-                        angular.forEach(attsMap, function(value, key) {
+                        angular.forEach(attsMap, function (value, key) {
                             var attsObj = {'aKey': key, 'aValue': value.join('; ')};
                             attsList.push(attsObj);
                         });
@@ -143,7 +143,7 @@ define([
         /**
          * 修改feed状态
          */
-        $scope.updateFeedStatus = function() {
+        $scope.updateFeedStatus = function () {
             var selList = $scope.vm.feedSelList.selList;
             if (selList && selList.length == 0) {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
@@ -161,6 +161,6 @@ define([
         };
     };
 
-    searchIndex.$inject = ['$scope','$routeParams','$feedSearchService','$translate','selectRowsFactory','confirm','alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', 'selectRowsFactory', 'confirm', 'alert'];
     return searchIndex;
 });

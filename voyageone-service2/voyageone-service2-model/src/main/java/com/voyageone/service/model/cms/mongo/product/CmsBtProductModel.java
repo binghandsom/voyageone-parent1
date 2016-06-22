@@ -1,11 +1,11 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.common.configs.Enums.CartEnums;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link CmsBtProductModel} 的商品Model
@@ -20,34 +20,32 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private String catId;
     private String catPath;
     private String orgChannelId;
+    //商品lock
+    private String lock = "";
+    //商品注释
+    private String comment = "";
 
+    //fields
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
-    private CmsBtProductGroupModel groups = new CmsBtProductGroupModel();
+    //SKU
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
+    //标签
     private List<String> tags = new ArrayList<>();
+    //品牌方标签
     private List<String> freeTags = new ArrayList<>();
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
+    //品牌方数据
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
+    //在售平台
     private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
+    //店铺内类目
     private CmsBtProductModel_SellerCats sellerCats = new CmsBtProductModel_SellerCats();
-    public CmsBtProductModel_SellerCats getSellerCats() {
-        return sellerCats;
-    }
-
-    public void setSellerCats(CmsBtProductModel_SellerCats sellerCats) {
-        this.sellerCats = sellerCats;
-    }
-    private Map sales = new HashMap<>();
-
-    private CmsBtProductModel_Platform platform = new CmsBtProductModel_Platform();
-
-    public String getOrgChannelId() {
-        return orgChannelId == null ? this.channelId : orgChannelId;
-    }
-
-    public void setOrgChannelId(String orgChannelId) {
-        this.orgChannelId = orgChannelId;
-    }
+    //共通属性
+    private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
+    //平台属性Map
+    private Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+    //销售数据统计
+    private CmsBtProductModel_Sales sales = new CmsBtProductModel_Sales();
 
     public CmsBtProductModel() {
     }
@@ -56,62 +54,69 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         super(channelId);
     }
 
-    public String getCatId() {
-        return catId;
-    }
-
-    public void setCatId(String catId) {
-        this.catId = catId;
-    }
-
-    public String getCatPath() {
-        return catPath;
-    }
-
-    public void setCatPath(String catIdPath) {
-        this.catPath = catIdPath;
-    }
-
+    //prodId
     public Long getProdId() {
         return prodId;
     }
-
     public void setProdId(Long prodId) {
         this.prodId = prodId;
     }
 
+    //catId
+    public String getCatId() {
+        return catId;
+    }
+    public void setCatId(String catId) {
+        this.catId = catId;
+    }
+
+    //catPath
+    public String getCatPath() {
+        return catPath;
+    }
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
+    }
+
+    //orgChannelId
+    public String getOrgChannelId() {
+        return orgChannelId == null ? this.channelId : orgChannelId;
+    }
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
+    }
+
+    //lock商品
+    public String getLock() {
+        return lock;
+    }
+    public void setLock(String lock) {
+        this.lock = lock;
+    }
+
+    //comment
+    public String getComment() {
+        return comment;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    //fields
     public CmsBtProductModel_Field getFields() {
         return fields;
     }
-
     public void setFields(CmsBtProductModel_Field fields) {
         this.fields = fields;
     }
 
-    /**
-     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
-     */
-    @Deprecated
-    public CmsBtProductGroupModel getGroups() {
-        return groups;
-    }
-
-    /**
-     * @see com.voyageone.service.bean.cms.product.CmsBtProductBean
-     */
-    @Deprecated
-    public void setGroups(CmsBtProductGroupModel groups) {
-        this.groups = groups;
-    }
-
+    //skus
     public List<CmsBtProductModel_Sku> getSkus() {
         return skus;
     }
-
     public void setSkus(List<CmsBtProductModel_Sku> skus) {
         this.skus = skus;
     }
-
     public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && this.skus != null) {
             for (CmsBtProductModel_Sku sku : skus) {
@@ -123,14 +128,15 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         return null;
     }
 
+    //tags
     public List<String> getTags() {
         return tags;
     }
-
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
+    //freeTags
     public List<String> getFreeTags() {
         return freeTags;
     }
@@ -139,44 +145,99 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.freeTags = freeTags;
     }
 
+    //batchField
     public CmsBtProductModel_BatchField getBatchField() {
         return batchField;
     }
-
     public void setBatchField(CmsBtProductModel_BatchField batchField) {
         this.batchField = batchField;
     }
 
+    //feed
     public CmsBtProductModel_Feed getFeed() {
         return feed;
     }
-
     public void setFeed(CmsBtProductModel_Feed feed) {
         this.feed = feed;
     }
 
-    //code 产品code
+    //carts
+    @Deprecated
     public List<CmsBtProductModel_Carts> getCarts() {
         return carts;
     }
-
+    @Deprecated
     public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
         this.carts = productCarts;
     }
 
-    public Map getSales() {
+    //sellerCats
+    public CmsBtProductModel_SellerCats getSellerCats() {
+        return sellerCats;
+    }
+    public void setSellerCats(CmsBtProductModel_SellerCats sellerCats) {
+        this.sellerCats = sellerCats;
+    }
+
+    //common
+    public CmsBtProductModel_Common getCommon() {
+        return common;
+    }
+    public void setCommon(CmsBtProductModel_Common common) {
+        this.common = common;
+    }
+
+    //platforms
+    public Map<String, CmsBtProductModel_Platform_Cart> getPlatforms() {
+        return platforms;
+    }
+    public void setPlatforms(Map<String, CmsBtProductModel_Platform_Cart> platforms) {
+        this.platforms = platforms;
+    }
+
+
+    private final static String  PLATFORM_CART_PRE = "P";
+    //platform
+    public CmsBtProductModel_Platform_Cart getPlatform(int cartId) {
+        if (platforms == null) {
+            return null;
+        }
+        return platforms.get(PLATFORM_CART_PRE + cartId);
+    }
+    public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
+        cart.setCartId(cartId);
+        platforms.put(PLATFORM_CART_PRE + cartId, cart);
+    }
+    public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
+        if (platforms == null) {
+            return null;
+        }
+        return platforms.get(PLATFORM_CART_PRE + cartType.getId());
+    }
+    public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
+        platforms.put(PLATFORM_CART_PRE + cartType.getId(), cart);
+    }
+
+    public void platformClear(){
+        platforms = new HashMap<>();
+    }
+
+    public CmsBtProductModel_Sales getSales() {
         return sales;
     }
 
-    public void setSales(Map sales) {
+    public void setSales(CmsBtProductModel_Sales sales) {
         this.sales = sales;
     }
 
-    public CmsBtProductModel_Platform getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(CmsBtProductModel_Platform platform) {
-        this.platform = platform;
+    /**
+     * TODO-- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须删除
+     */
+    @Deprecated
+    public List<Integer> getCartIdList() {
+        if (platforms == null || platforms.isEmpty()) {
+            return new ArrayList<>(0);
+        }
+        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).collect(Collectors.toList());
     }
 }

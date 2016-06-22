@@ -9,7 +9,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, confirm, $translate, notify, alert, sellerCatService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService) {
 
         $scope.vm = {
             searchInfo: {
@@ -149,6 +149,10 @@ define([
          * 数据导出
          */
         function exportFile () {
+            if ($scope.vm.productPageOption.total == 0) {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+                return;
+            }
             searchAdvanceService.exportFile($scope.vm.searchInfo);
         }
 
@@ -186,7 +190,12 @@ define([
          * @param openAddToPromotion
          */
         function openAddPromotion (promotion, openAddToPromotion) {
-            openAddToPromotion(promotion, getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openAddToPromotion(promotion, selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
@@ -204,9 +213,21 @@ define([
             } else {
                 selList = $scope.vm.productSelList.selList;
             }
-            openAddChannelCategoryEdit(selList).then(function () {
-                getGroupList();
-                getProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openAddChannelCategoryEdit(selList).then(function (res) {
+                var productIds = [];
+                _.forEach(selList, function (object) {
+                    productIds.push(object.code);
+                });
+                var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
+                params.isSelAll = $scope.vm._selall ? 1 : 0;
+                $addChannelCategoryService.save(params).then(function (context) {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.search();
+                });
             })
         }
 
@@ -216,7 +237,12 @@ define([
          * @param openJMActivity
          */
         function openJMActivity (promotion, openJMActivity) {
-            openJMActivity(promotion, getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openJMActivity(promotion, selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
@@ -228,7 +254,12 @@ define([
          * @param openFieldEdit
          */
         function openBulkUpdate (openFieldEdit) {
-            openFieldEdit(getSelProductList()).then(function () {
+            var selList = getSelProductList();
+            if (selList == null || selList == undefined || selList.length == 0) {
+                alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                return;
+            }
+            openFieldEdit(selList).then(function () {
                 searchAdvanceService.clearSelList();
                 getGroupList();
                 getProductList();
@@ -403,6 +434,6 @@ define([
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList,'search':'master'});
         }
     }
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService'];
     return searchIndex;
 });

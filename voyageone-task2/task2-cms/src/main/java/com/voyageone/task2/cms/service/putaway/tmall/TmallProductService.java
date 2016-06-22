@@ -31,6 +31,7 @@ import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.*;
 import com.voyageone.task2.cms.bean.tcb.*;
@@ -1133,12 +1134,13 @@ public class TmallProductService {
         // modified by morse.lu 2016/05/15 end
 
 		// 20160607 可能现在天猫改规则了, 要更新产品试试看 START
+        StringBuffer failCause = new StringBuffer();
         String productCode = workLoadBean.getMainProduct().getCmsBtProductModelGroupPlatform().getPlatformPid();
-        if (!StringUtils.isEmpty(productCode)) {
+        if (!StringUtils.isEmpty(productCode) && !tmallUploadRunState.is_darwin()) {
             // 获取更新产品的规则的schema
             String updateProductSchema;
             try {
-                updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean);
+                updateProductSchema = tbProductService.getProductUpdateSchema(Long.parseLong(productCode), shopBean, failCause);
             } catch (ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
@@ -1168,7 +1170,8 @@ public class TmallProductService {
             // 更新产品
             try {
                 String schema = SchemaWriter.writeParamXmlString(updateFields);
-                String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean);
+                failCause.setLength(0);
+                String result = tbProductService.updateProduct(Long.parseLong(productCode), schema, shopBean, failCause);
                 System.out.println(result);
             } catch (TopSchemaException | ApiException e) {
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
@@ -1582,7 +1585,7 @@ public class TmallProductService {
                     }
                     SingleCheckField priceField = (SingleCheckField) processFields.get(0);
                     List<PriceSectionBuilder.PriceOption> priceOptions = PriceSectionBuilder.transferFromTmall(priceField.getOptions());
-                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroups().getPriceSaleSt();
+                    double usePrice = mainSxProduct.getCmsBtProductModel().getGroupBean().getPriceSaleSt();
 
                     String priceSectionValue = priceSectionBuilder.autoDetectOptionValue(priceOptions, usePrice);
                     priceField.setValue(priceSectionValue);
@@ -1782,20 +1785,28 @@ public class TmallProductService {
 //                                    }
 //                                }
                                 // 改成从product表里取
-                                List<String> defaultValues = mainSxProduct.getCmsBtProductModel().getSellerCats().getFullCIds();
+                                // modified by morse.lu 2016/06/21 start
+//                                List<String> defaultValues = mainSxProduct.getCmsBtProductModel().getSellerCats().getFullCIds();
+                                List<CmsBtProductModel_SellerCat> defaultValues = mainSxProduct.getCmsBtProductModel().getPlatform(workLoadBean.getCart_id()).getSellerCats();
+                                // modified by morse.lu 2016/06/21 end
                                 // modified by morse.lu 2016/06/03 end
                                 if (defaultValues != null && !defaultValues.isEmpty()) {
                                     MultiCheckField field = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                     field.setId(sellerCategoryPropId);
-                                    for (String defaultValue : defaultValues) {
-                                        // modified by morse.lu 2016/06/03 start
-//                                        field.addValue(defaultValue);
-                                        // 数据库里存放的内容是： 父节点-子节点  或者 父子节点（只有一层）
-                                        // 所以， 要根据-来分割， 取"-"后面的内容，没有"-"直接用它就可以了
-                                        String[] sp = defaultValue.split("-");
-                                        field.addValue(sp[sp.length - 1]);
-                                        // modified by morse.lu 2016/06/03 end
+                                    // modified by morse.lu 2016/06/21 start
+//                                    for (String defaultValue : defaultValues) {
+//                                        // modified by morse.lu 2016/06/03 start
+////                                        field.addValue(defaultValue);
+//                                        // 数据库里存放的内容是： 父节点-子节点  或者 父子节点（只有一层）
+//                                        // 所以， 要根据-来分割， 取"-"后面的内容，没有"-"直接用它就可以了
+//                                        String[] sp = defaultValue.split("-");
+//                                        field.addValue(sp[sp.length - 1]);
+//                                        // modified by morse.lu 2016/06/03 end
+//                                    }
+                                    for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
+                                        field.addValue(defaultValue.getcId());
                                     }
+                                    // modified by morse.lu 2016/06/21 end
                                     contextBuildFields.addCustomField(field);
                                 }
 //                            } catch (TopSchemaException | ApiException e) {

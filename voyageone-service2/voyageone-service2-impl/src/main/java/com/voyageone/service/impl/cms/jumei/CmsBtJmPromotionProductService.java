@@ -3,11 +3,14 @@ package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
@@ -38,6 +41,10 @@ public class CmsBtJmPromotionProductService {
     CmsMtJmConfigService serviceCmsMtJmConfig;
     @Autowired
     JMShopBeanService serviceJMShopBean;
+   @Autowired
+    CmsBtJmPromotionDao daoCmsBtJmPromotion;
+    @Autowired
+    CmsBtTagDao daoCmsBtTag;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -51,18 +58,23 @@ public class CmsBtJmPromotionProductService {
     }
 
     public List<MapModel> getListByWhere(Map<String, Object> map) {
-        return daoExt.getListByWhere(map);
+        return daoExt.selectListByWhere(map);
     }
 
-    public List<MapModel> getPromotionProductInfoListByWhere(Map<String, Object> map) {
-        return daoExt.getPromotionProductInfoListByWhere(map);
+    public List<MapModel> getPageByWhere(Map<String, Object> map) {
+        return daoExt.selectPageByWhere(map);
     }
-    public int getPromotionProductInfoCountByWhere(Map<String, Object> map)
-    {
-        return  daoExt.getPromotionProductInfoCountByWhere(map);
+
+    public int getCountByWhere(Map<String, Object> map) {
+        return daoExt.selectCountByWhere(map);
     }
 
     public int delete(int id) {
+      CmsBtJmPromotionProductModel modelProduct=dao.select(id);
+        if(modelProduct.getSynchStatus()==2)
+        {
+            return 0;
+        }
         return dao.delete(id);
     }
 
@@ -96,26 +108,34 @@ public class CmsBtJmPromotionProductService {
     public int jmNewByProductIdListInfo(ProductIdListInfo parameter) {
         return daoExt.jmNewByProductIdListInfo(parameter);
     }
+
     //所有未上心商品上新
     public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
+        daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
         return daoExt.updateDealEndTimeAll(parameter);
     }
+
     //部分商品上新
     public int updateDealEndTime(ParameterUpdateDealEndTime parameter) {
         return daoExt.updateDealEndTime(parameter);
     }
+
     // 根据条件检索出promoiton的product数据
     public CmsBtJmPromotionProductModel selectOne(Map<String, Object> param) {
         return dao.selectOne(param);
     }
+
     public CallResult updateJM(@RequestBody int promotionProductId) throws Exception {
         CmsBtJmPromotionProductModel model = dao.select(promotionProductId);
         int ShippingSystemId = serviceCmsMtJmConfig.getShippingSystemId(model.getChannelId());
         ShopBean shopBean = serviceJMShopBean.getShopBean(model.getChannelId());
         // if (model.getSynchState() == 0 || model.getSynchState() == 1 || model.getSynchState() == 4) {
-        CallResult     result=   serviceJuMeiProductPlatform.updateJm(model, shopBean, ShippingSystemId);
+        CallResult result = serviceJuMeiProductPlatform.updateJm(model, shopBean, ShippingSystemId);
         // }
         return result;
     }
+
 }
 

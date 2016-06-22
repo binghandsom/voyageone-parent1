@@ -14,8 +14,7 @@ import com.voyageone.task2.cms.dao.ProductPublishDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 从oms系统导入产品前90天订单信息
@@ -37,15 +36,17 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-    private final static int PAGE_LIMIT = 5000;
+    private final static int PAGE_LIMIT = 1000;
 
     /**
      * 导入产品订单信息
      */
-    public void copyOrdersInfo(String taskName) {
+    public Map<String, Set<String>> copyOrdersInfo(String modifier) {
+        $info("copyOrdersInfo start");
         long oIdx = 0;
-        List<Map> rs = null;
+        List<Map> rs;
         DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
+        Map<String, Set<String>> prodCodeChannelMap = new HashMap<>();
 
         JomgoQuery prodQryObj = new JomgoQuery();
         prodQryObj.setQuery("{'skus.skuCode':#}");
@@ -61,31 +62,43 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
 
             for (Map orderObj : rs) {
                 BasicDBObject queryObj = new BasicDBObject();
+                String channelId = (String)orderObj.get("channel_id");
                 queryObj.put("cart_id", orderObj.get("cart_id"));
-                queryObj.put("channel_id", orderObj.get("channel_id"));
+                queryObj.put("channel_id", channelId);
                 queryObj.put("sku", orderObj.get("sku"));
                 queryObj.put("date", orderObj.get("date"));
 
                 BasicDBObject updateValue = new BasicDBObject();
                 updateValue.putAll(orderObj);
-                updateValue.put("modifier", taskName);
+                updateValue.put("modifier", modifier);
                 updateValue.put("modified", DateTimeUtil.getNow());
 
                 // 根据sku找出其产品code（暂不考虑sku重复的情况）
                 prodQryObj.setParameters(orderObj.get("sku"));
                 CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, (String) orderObj.get("channel_id"));
                 if (prodModel != null) {
-                    updateValue.put("prodCode", prodModel.getFields().getCode());
+                    String productCode = prodModel.getFields().getCode();
+                    updateValue.put("prodCode", productCode);
+                    // add prodCode
+                    if (!prodCodeChannelMap.containsKey(channelId)) {
+                        prodCodeChannelMap.put(channelId, new HashSet<>());
+                    }
+                    prodCodeChannelMap.get(channelId).add(productCode);
                 }
                 BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
 
                 bbulkOpe.find(queryObj).upsert().update(updateObj);
             }
-            if (rs.size() > 0) {
+            if (!rs.isEmpty()) {
                 BulkWriteResult rslt = bbulkOpe.execute();
-                $debug(rslt.toString());
+                $debug(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
+                $info(String.format("copyOrdersInfo excute rows:%s", oIdx * PAGE_LIMIT));
             }
         } while (rs.size() == PAGE_LIMIT);
+
+        $info("copyOrdersInfo end");
+
+        return prodCodeChannelMap;
     }
 
 }

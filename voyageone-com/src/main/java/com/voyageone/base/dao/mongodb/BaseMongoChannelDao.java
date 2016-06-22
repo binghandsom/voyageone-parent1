@@ -2,6 +2,7 @@ package com.voyageone.base.dao.mongodb;
 
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.util.DateTimeUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -69,6 +70,9 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findById(id, entityClass, getCollectionName(channelId));
     }
 
+    /**
+     * 使用此方法时必须注意，此处只会更新符合条件的第一条数据
+     */
     public T findAndModify(JomgoUpdate updateObject, String channelId) {
         return mongoTemplate.findAndModify(updateObject, entityClass, getCollectionName(channelId));
     }
@@ -102,8 +106,16 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(channelId));
     }
 
+    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateFirst(updObj, getCollectionName(channelId));
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+        return mongoTemplate.updateMulti(updObj, getCollectionName(channelId));
+    }
+
     /**
-     * 根据条件更新指定值
+     * 根据条件更新指定值 （推荐使用updateFirst()/updateMulti()）
      * @param channelId String
      * @param paraMap 更新条件
      * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
@@ -141,26 +153,37 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         //modifierObj.append("modified", DateTimeUtil.getNowTimeStamp());
 
         for (BulkUpdateModel model: bulkList){
-
-            //生成更新对象
-            BasicDBObject updateObj = new BasicDBObject();
-            BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
-
-            //设置更新者和更新时间
-            if ("$set".equals(key)) {
-                updateContent.putAll(modifierObj.toMap());
+            if (model.getQueryMap() == null) {
+                // 如果没有查询条件，则认为是插入数据
+                BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
+                updateContent.put("modifier", modifier);
+                updateContent.put("modified", DateTimeUtil.getNowTimeStamp());
+                updateContent.put("creater", modifier);
+                updateContent.put("created", DateTimeUtil.getNowTimeStamp());
+                bwo.insert(updateContent);
             } else {
-                updateObj.append("$set", modifierObj);
-            }
-            updateObj.append(key, updateContent);
+                //生成更新对象
+                BasicDBObject updateObj = new BasicDBObject();
+                BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
 
-            //生成查询对象
-            BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+                //设置更新者和更新时间
+                if ("$set".equals(key)) {
+                    updateContent.putAll(modifierObj.toMap());
+                } else {
+                    if (!modifierObj.isEmpty()) {
+                        updateObj.append("$set", modifierObj);
+                    }
+                }
+                updateObj.append(key, updateContent);
 
-            if (isUpsert) {
-                bwo.find(queryObj).upsert().update(updateObj);
-            } else {
-                bwo.find(queryObj).update(updateObj);
+                //生成查询对象
+                BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+
+                if (isUpsert) {
+                    bwo.find(queryObj).upsert().update(updateObj);
+                } else {
+                    bwo.find(queryObj).update(updateObj);
+                }
             }
         }
         //最终批量运行
@@ -176,5 +199,32 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         BasicDBObject result = new BasicDBObject();
         result.putAll(map);
         return result;
+    }
+
+    /**
+     * 聚合查询
+     * @return List<Map> 返回的Map数据结构和aggregate语句对应
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToMap(channelId, aggregates);
+    }
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> aggregateToMap(String channelId, JomgoAggregate... aggregates) {
+        return (List<Map<String, Object>>) aggregateToObj(Map.class, getCollectionName(channelId), aggregates);
+    }
+
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(String channelId, List<JomgoAggregate> aggregateList) {
+        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+        return aggregateToObj(channelId, aggregates);
+    }
+    public List<T> aggregateToObj(String channelId, JomgoAggregate... aggregates) {
+        return aggregateToObj(entityClass, getCollectionName(channelId), aggregates);
     }
 }

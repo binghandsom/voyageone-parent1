@@ -91,11 +91,31 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_FEED)
+    public AjaxResponse doUpdateProductFeedInfo(@RequestBody Map requestMap) {
+
+        String channelId = getUser().getSelChannelId();
+        String userName = getUser().getUserName();
+
+        return success(productPropsEditService.updateProductFeedInfo(channelId, userName, requestMap));
+
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap) {
 
         Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getLang());
 
         return success(resultMap);
+    }
+
+    public AjaxResponse doGetMastProductInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+
     }
 }

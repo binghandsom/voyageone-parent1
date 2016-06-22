@@ -1,0 +1,190 @@
+* _id
+* created
+* creater
+* modified
+* modifier
+* channelId    ->channelId
+* orgChannelId ->原始channelId
+* prodId    ->产品Id
+* catId     ->暂时保留（用于天猫国际类目，以后删除）
+* catPath   ->暂时保留（用于天猫国际类目，以后删除）
+* fields    ->暂时保留（用于TG上新）
+* skus      ->暂时保留（用于TG上新）
+* lock    ->锁住该产品，不能进行任何操作(暂时功能不开放)
+* comment   ->添加产品注释(暂时功能不开放)
+* common    ->共通属性
+  * catId    ->新的主类目Id
+  * catPath  ->新的主类目完整路径
+  * fields
+    * model
+    * code
+    * brand
+    * isMasterMain    ->是否为默认主商品
+    * sizeChart       ->选择的尺码对照
+    * productNameEn
+    * originalTitleCn
+    * shortDesEn
+    * shortDesCn
+    * longDesEn
+    * longDesCn
+    * materialEn
+    * materialCn
+    * color
+    * origin
+    * productType
+    * sizeType
+    * hsCodeCrop
+    * hsCodePrivate
+    * quantity
+    * clientProductUrl
+    * images1
+    * images2
+    * images3
+    * images4
+    * images5
+    * images6
+    * images7
+    * images8
+    * priceMsrpSt
+    * priceMsrpEd
+    * priceRetailSt
+    * priceRetailEd
+    * categoryStatus
+    * categorySetter
+    * categorySetTime
+    * translateStatus
+    * translator
+    * translateTime
+    * hsCodeStatus
+    * hsCodeSetter
+    * hsCodeSetTime
+  * skus[]
+    * skuCode
+    * barcode
+    * clientSku
+    * clientSize
+    * size
+    * clientMsrpPrice     ->客户建议零售价
+    * clientRetailPrice   ->客户指导价
+    * clientNetPrice      ->客户成本价
+    * priceMsrp           ->中国建议零售价
+    * priceRetail         ->中国指导价
+* platforms    ->平台属性
+  * P23  ->天猫国际
+    * cartId
+    * status
+    * pCatId
+    * pCatPath
+    * pCatStatus
+    * pIsMain   ->是否是该平台主商品
+    * pProductId
+    * pNumIId
+    * pStatus
+    * pPublishError  ->表示平台上新是否失败，用于高级检索
+    * pBrandId      ->平台品牌Id
+    * pBrandName    ->平台品牌名称
+    * pPublishTime
+    * pAttributeStatus
+    * pAttributeSetter
+    * pAttributeSetTime
+    * pPriceMsrpSt
+    * pPriceMsrpEd
+    * pPriceRetailSt
+    * pPriceRetailEd
+    * pPriceSaleSt
+    * pPriceSaleEd
+    * fields
+      * 平台特有fields属性
+    * skus[]
+      * 平台特有sku属性
+      * skuCode
+      * priceMsrp   ->各平台的MSRP售价
+      * priceRetail ->各平台的销售指导价
+      * priceSale   ->各平台的最终售价
+      * priceChgFlg ->价格变更状态（U/D/XU/XD）
+      * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
+    * sellerCats[]  ->店铺内分类
+      * cId
+      * cIds
+      * cName
+      * cNames
+  * P26  ->京东国际
+  * P27  ->聚美
+	  * cartId
+	  * pCatId
+	  * pCatPath
+	  * pCatStatus
+	  * status
+	  * pIsMain
+	  * pProductId
+	  * pNumIId
+	  * pStatus
+	  * pPublishError
+	  * pBrandId
+	  * pBrandName
+	  * pPublishTime
+	  * pAttributeStatus
+	  * pAttributeSetter
+	  * pAttributeSetTime
+      * pPriceMsrpSt
+      * pPriceMsrpEd
+      * pPriceRetailSt
+      * pPriceRetailEd
+      * pPriceSaleSt
+      * pPriceSaleEd
+	  * fields
+		  * productNameCn
+		  * productNameEn
+		  * productLongName
+		  * productMediumName
+		  * productShortName
+		  * originCn
+		  * attribute
+		  * beforeDate
+		  * suitPeople
+		  * specialExplain
+		  * searchMetaTextCustom
+		  * userPurchaseLimit
+	  * skus[]
+		  * skuCode
+          * priceMsrp   ->各平台的MSRP售价
+          * priceRetail ->各平台的销售指导价
+		  * priceSale   ->各平台的中国最终售价
+		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
+		  * property
+		  * jmSpuNo
+		  * jmSkuNo
+	  * sellerCats[]
+		  * cId
+		  * cIds
+		  * cName
+		  * cNames
+* batchField ->暂时保留(用于原来的fields和skus重新生成)
+  * switchCategory ->是否切换了主类目
+* feed    ->品牌方数据
+  * catId     ->第三方类目Id
+  * catPath   ->第三方类目名称
+  * orgAtts
+  * cnAtts
+  * customIds
+  * customIdsCn
+* carts[]   ->平台销售
+  * cartId
+  * numIId
+  * platformStatus
+  * publishTime
+* sellerCats    ->暂时保留
+* sales   ->销售数据统计
+  * skus[]
+    * cartId
+    * skuCode
+    * codeSum7
+    * codeSum30
+    * codeSumAll
+  * codeSum7
+    * cartIdxx
+  * codeSum30
+    * cartIdxx
+  * codeSumAll
+    * cartIdxx
+* tags[]  ->标签

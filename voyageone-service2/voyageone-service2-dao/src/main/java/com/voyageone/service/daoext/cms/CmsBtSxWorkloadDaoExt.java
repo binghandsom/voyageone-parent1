@@ -8,6 +8,9 @@ import java.util.List;
 
 /**
  * Created by Leo on 15-12-7.
+ *
+ * @version 2.0.1
+ * @author Ethan Shi
  */
 @Repository
 public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
@@ -28,6 +31,10 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId, "cartId", cartId));
     }
 
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannelIdCartIdGroupBy(int recordCount, String channelId, int cartId) {
+        return selectList("cms_select_sx_workload_groupby", parameters("record_count", recordCount, "channel_id", channelId, "cartId", cartId));
+    }
+
     public void updateSxWorkloadModel(CmsBtSxWorkloadModel model) {
         update("cms_update_sx_workload", parameters("id", model.getId(), "publish_status", model.getPublishStatus()));
     }
@@ -40,8 +47,8 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         insert("cms_insert_sx_workload", model);
     }
 
-    public void insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
-        insert("cms_insert_sx_workloads", models);
+    public int insertSxWorkloadModels(List<CmsBtSxWorkloadModel> models) {
+        return insert("cms_insert_sx_workloads", models);
     }
 
     /**
@@ -61,4 +68,13 @@ public class CmsBtSxWorkloadDaoExt extends ServiceBaseDao {
         ));
         return result.size();
     }
+
+    public int updatePublishStatus(CmsBtSxWorkloadModel model) {
+        return update("update_publish_status", model);
+    }
+
+    public int delayWorkload(CmsBtSxWorkloadModel model) {
+        return update("delay_work_load", model);
+    }
+
 }

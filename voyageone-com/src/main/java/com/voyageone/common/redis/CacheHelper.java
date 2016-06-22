@@ -78,7 +78,7 @@ public class CacheHelper {
         return getHashOperation().values(key);
     }
 
-    /* SSB表示缓存数据类型为<String,String,Bean>  */
+    /* SSB表示缓存数据类型为<String,String,bean>  */
     public static void reFreshSSB(String key, Map refreshMap) {
         callCache(key, refreshMap);
     }

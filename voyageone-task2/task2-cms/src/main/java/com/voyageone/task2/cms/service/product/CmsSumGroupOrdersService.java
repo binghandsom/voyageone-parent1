@@ -8,6 +8,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,42 +55,42 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 continue;
             }
 
-            Map salesMap = new HashMap<>();
+            Map<String, Object> salesMap = new HashMap<>();
 
             // 7天销售group级数据
             Object[] params = new Object[]{begDate1, endDate, grpObj.getCartId(), channelId, codeList};
-            List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3, null));
+            List<Map<String, Object>> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3));
             if (amt7days.isEmpty()) {
-                salesMap.put("code_sum_7", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, 0);
             } else {
                 int qty = ((Number) amt7days.get(0).get("count")).intValue();
-                salesMap.put("code_sum_7", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, qty);
             }
 
             // 30天销售group级数据
             params = new Object[]{begDate2, endDate, grpObj.getCartId(), channelId, codeList};
-            List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3, null));
+            List<Map<String, Object>> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr, params), new JomgoAggregate(queryGrpStr3));
             if (amt30days.isEmpty()) {
-                salesMap.put("code_sum_30", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, 0);
             } else {
                 int qty = ((Number) amt30days.get(0).get("count")).intValue();
-                salesMap.put("code_sum_30", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, qty);
             }
 
             // 所有销售group级数据
             params = new Object[]{grpObj.getCartId(), channelId, codeList};
-            List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr2, params), new JomgoAggregate(queryGrpStr3, null));
+            List<Map<String, Object>> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryGrpStr2, params), new JomgoAggregate(queryGrpStr3));
             if (amtall.isEmpty()) {
                 $debug(String.format("CmsFindProdOrdersInfoService 该产品group无销售数据！ + channel_id=%s, cart_id=%d, groupId=%d", channelId, grpObj.getCartId(), grpObj.getGroupId()));
-                salesMap.put("code_sum_all", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             } else {
                 int qty = ((Number) amtall.get(0).get("count")).intValue();
-                salesMap.put("code_sum_all", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, qty);
             }
 
-            Map queryMap = new HashMap<>();
+            Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("groupId", grpObj.getGroupId());
-            Map updateMap = new HashMap<>();
+            Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("sales", salesMap);
             updateMap.put("modifier", taskName);
             updateMap.put("modified", DateTimeUtil.getNow());
@@ -125,42 +126,42 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
                 continue;
             }
 
-            Map salesMap = new HashMap<>();
+            Map<String, Object> salesMap = new HashMap<>();
 
             // 7天销售group级数据
             Object[] params = new Object[] { begDate1, endDate, channelId, codeList };
-            List<Map> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr, params), new JomgoAggregate(queryCartStr3, null));
+            List<Map<String, Object>> amt7days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr, params), new JomgoAggregate(queryCartStr3));
             if (amt7days.isEmpty()) {
-                salesMap.put("code_sum_7", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, 0);
             } else {
                 int qty = ((Number) amt7days.get(0).get("count")).intValue();
-                salesMap.put("code_sum_7", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, qty);
             }
 
             // 30天销售group级数据
             params = new Object[] { begDate2, endDate, channelId, codeList };
-            List<Map> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr, params), new JomgoAggregate(queryCartStr3, null));
+            List<Map<String, Object>> amt30days = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr, params), new JomgoAggregate(queryCartStr3));
             if (amt30days.isEmpty()) {
-                salesMap.put("code_sum_30", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, 0);
             } else {
                 int qty = ((Number) amt30days.get(0).get("count")).intValue();
-                salesMap.put("code_sum_30", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, qty);
             }
 
             // 所有销售group级数据
             params = new Object[] { channelId, codeList };
-            List<Map> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr2, params), new JomgoAggregate(queryCartStr3, null));
+            List<Map<String, Object>> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JomgoAggregate(queryCartStr2, params), new JomgoAggregate(queryCartStr3));
             if (amtall.isEmpty()) {
                 $debug(String.format("CmsFindProdOrdersInfoService 该产品group无销售数据！ + channel_id=%s, groupId=%d", channelId, grpObj.getGroupId()));
-                salesMap.put("code_sum_all", 0);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             } else {
                 int qty = ((Number) amtall.get(0).get("count")).intValue();
-                salesMap.put("code_sum_all", qty);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, qty);
             }
 
-            Map queryMap = new HashMap<>();
+            Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("groupId", grpObj.getGroupId());
-            Map updateMap = new HashMap<>();
+            Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("sales", salesMap);
             updateMap.put("modifier", taskName);
             updateMap.put("modified", DateTimeUtil.getNow());

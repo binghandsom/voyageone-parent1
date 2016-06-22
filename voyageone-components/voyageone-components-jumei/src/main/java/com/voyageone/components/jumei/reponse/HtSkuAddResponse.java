@@ -81,8 +81,8 @@ public class HtSkuAddResponse extends BaseJMResponse {
             }
             if (map.containsKey("response")) {
                 Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
-                if (mapSesponse.containsKey("jumei_sku_no")) {
-                    this.setJumei_sku_no(mapSesponse.get("jumei_sku_no").toString());
+                if (mapSesponse.containsKey("sku_no")) {
+                    this.setJumei_sku_no(mapSesponse.get("sku_no").toString());
                 }
             }
             if ("0".equals(this.error_code)) {

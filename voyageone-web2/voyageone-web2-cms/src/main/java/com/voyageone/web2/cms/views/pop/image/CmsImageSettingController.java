@@ -54,13 +54,18 @@ public class CmsImageSettingController extends CmsController {
 
         InputStream input = file.getInputStream();
         Map<String,Object> response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));
+        if(response == null){
+            throw new BusinessException("图片上传失败");
+        }
 
         int cartId = (int) getCmsSession().getPlatformType().get("cartId");
         Map productInfo = productPropsEditService.getProductInfo(getUser().getSelChannelId(), productId, cartId, getLang());
         CmsProductInfoBean cmsProductInfoBean = (CmsProductInfoBean) productInfo.get("productInfo");
 
         List<CmsBtProductModel_Field_Image> images = cmsProductInfoBean.getProductImages().get(imageType);
-        images.remove(images.size() - 1);
+        if(images.size() > 0){
+            images.remove(images.size() - 1);
+        }
         response.put("productInfo", productInfo.get("productInfo"));
         productInfo.remove("productInfo");
         input.close();

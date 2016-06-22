@@ -186,7 +186,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 groupInfo.commArr = commArr;
                 var custArr = [];
@@ -259,7 +259,7 @@ define([
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
-                    commArr.push({value: itemVal});
+                    commArr.push({value: itemVal.toString()});
                 });
                 productInfo.commArr = commArr;
 
@@ -301,7 +301,11 @@ define([
                             if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
                                 data._purl = '';
                             } else {
-                                data._purl = cartInfo.pUrl + data.numiid;
+                                if (data.cartId == 27) {
+                                    data._purl = cartInfo.pUrl + data.numiid + '.html';
+                                } else {
+                                    data._purl = cartInfo.pUrl + data.numiid;
+                                }
                             }
                             data._pname = cartInfo.name;
                         } else {

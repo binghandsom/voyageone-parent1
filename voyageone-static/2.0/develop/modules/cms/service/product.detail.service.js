@@ -10,7 +10,7 @@ define([
 	'cms',
 	'underscore',
 	'modules/cms/enums/Status'
-],function (cms, _, Status) {
+],function (cms, _) {
 
 	cms.service("productDetailService", productDetailService);
 
@@ -19,7 +19,11 @@ define([
 		this.getProductInfo = getProductInfo;
 		this.updateProductDetail = updateProductDetail;
 		this.changeCategory = changeCategory;
-		//this._setProductStatus = _setProductStatus;
+		this.getProductPlatform =  getProductPlatform;
+		this.changePlatformCategory =  changePlatformCategory;
+		this.updateProductPlatformChk = updateProductPlatformChk;
+		this.updateProductPlatform = updateProductPlatform;
+		this.updateProductFeed = updateProductFeed;
 
 		/**
 		 * 获取页面产品信息
@@ -49,11 +53,6 @@ define([
 							});
 							sku.SelSkuCarts = SelSkuCarts;
 						});
-
-						// 设置产品状态
-						//if (result.data.productInfo.productStatus) {
-						//	_setProductStatus(result.data.productInfo.productStatus);
-						//}
 
 						defer.resolve(result);
 					});
@@ -86,13 +85,6 @@ define([
 			formData.customAttributes.customIds = temp.customIds;
 			formData.customAttributes.customIdsCn = temp.customIdsCn;
 
-			// 设定status
-			//var status = formData.productStatus.approveStatus;
-			//if (formData.productStatus.statusInfo.isApproved)
-			//	status = Status.APPROVED;
-			//else if (formData.productStatus.statusInfo.isWaitingApprove)
-			//	status = Status.READY;
-
 			var data = {
 				categoryId: formData.categoryId,
 				categoryFullPath: formData.categoryFullPath,
@@ -118,6 +110,43 @@ define([
 			$productDetailService.updateProductAllInfo(data).then(function (res) {
 
 				defer.resolve(res.data);
+			});
+			return defer.promise;
+		}
+
+		/**
+		 * 保存feed产品编辑页信息
+		 * @param formData
+         */
+		function updateProductFeed(formData){
+			var temp = {customIds: [], customIdsCn: []};
+			_.forEach(formData.feedInfoModel, function (feedInfo) {
+
+				if (feedInfo.selected) {
+					temp.customIds.push(feedInfo.enKey);
+					temp.customIdsCn.push(feedInfo.cnKey);
+				}
+
+				if(feedInfo.enKey) {
+					formData.customAttributes.cnAtts[feedInfo.enKey] = feedInfo.cnValue;
+					if (feedInfo.enKey == feedInfo.key)
+						formData.customAttributes.orgAtts[feedInfo.enKey] = feedInfo.value;
+				}
+			});
+			formData.customAttributes.customIds = temp.customIds;
+			formData.customAttributes.customIdsCn = temp.customIdsCn;
+
+			var data = {
+				productId: formData.productId,
+				modified: formData.modified,
+				customAttributes: formData.customAttributes,
+			};
+
+			var defer = $q.defer();
+			$productDetailService.updateProductFeed(data).then(function (res) {
+				defer.resolve(res.data);
+			},function(res){
+				defer.reject(res.data);
 			});
 			return defer.promise;
 		}
@@ -176,39 +205,66 @@ define([
 			return newResult;
 		}
 
-		///**
-		// * 转换成画面上能用项目
-		// * @param productStatus
-		// * @private
-		// */
-		//function _setProductStatus (productStatus) {
-        //
-		//	switch (productStatus.approveStatus) {
-		//		case Status.NEW:
-		//		case Status.PENDING:
-		//			productStatus.statusInfo = {
-		//				isWaitingApprove: false,
-		//				isApproved: false,
-		//				isDisable: false
-		//			};
-		//			break;
-		//		case Status.READY:
-		//			productStatus.statusInfo = {
-		//				isWaitingApprove: true,
-		//				isApproved: false,
-		//				isDisable: false
-		//			};
-		//			break;
-		//		case Status.APPROVED:
-		//			productStatus.statusInfo = {
-		//				isWaitingApprove: true,
-		//				isApproved: true,
-		//				isDisable: true
-		//			};
-		//			break;
-		//	}
-        //
-		//}
+		/**
+		 * 获取产品的平台属性
+		 * @param { prodId:"",cartId:""} 产品id，平台id
+         * @returns
+         */
+		function getProductPlatform(req){
+			var defer = $q.defer();
+			$productDetailService.getProductPlatform(req)
+				.then (function (res) {
+					defer.resolve(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 切换类目接口
+		 * @param { prodId:"",cartId:"",catId:""} 产品ID，平台ID,catId:平台类目ID
+         * @returns {*}
+         */
+		function changePlatformCategory(req){
+			var defer = $q.defer();
+			$productDetailService.changePlatformCategory(req)
+				.then (function (res) {
+					defer.resolve(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 *检查sku sale price
+		 * @param { prodId:"",cartId:"",platform} 产品id，平台id,platform
+		 */
+		function updateProductPlatformChk(req){
+			var defer = $q.defer();
+			$productDetailService.updateProductPlatformChk(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 *保存产品的平台属性
+		 * @param { prodId:"",cartId:"",platform} 产品id，平台id,platform
+         */
+		function updateProductPlatform(req){
+			var defer = $q.defer();
+			$productDetailService.updateProductPlatform(req)
+				.then (function (res) {
+					defer.resolve(res);
+				});
+
+			return defer.promise;
+		}
 	}
+
 
 });

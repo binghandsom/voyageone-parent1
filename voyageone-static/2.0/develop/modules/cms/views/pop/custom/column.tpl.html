@@ -7,32 +7,48 @@
     <div class="modal-body">
       <div class="row m-l-md m-r-md">
         <div class="col-sm-4">
-            <h4 class="m-l-sm text-vo">{{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
+            <h4 class="m-l-sm text-vo">
+                <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+                    <input type="checkbox" ng-model="all_commonData"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                </label>
+                {{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
                 <div ng-repeat="commonData in cus.commonProps" class="m-t-xs">
                     <label class="checkbox-inline c-checkbox">
-                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk">
-                    <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label></div>
+                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk" >
+                    <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label>
+                </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <h4 class="m-l-sm text-vo">{{'TXT_CUST_ATTRIBUTE' | translate}}</h4>
+            <h4 class="m-l-sm text-vo">
+                <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+                    <input type="checkbox" ng-model="all_customData"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                </label>
+                {{'TXT_CUST_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
                 <div ng-repeat="customData in cus.customProps" class="m-t-xs">
                     <label class="checkbox-inline c-checkbox">
-                    <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk">
-                    <span class="fa fa-check"></span>&nbsp;{{customData.feed_prop_translation}}</label></div>
+                    <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk" >
+                    <span class="fa fa-check"></span>&nbsp;{{customData.feed_prop_translation}}</label>
+                </div>
             </div>
         </div>
-          <div class="col-sm-4">
-              <h4 class="m-l-sm text-vo">销量显示选择</h4>
-              <div class="column_overflow">
-                  <div ng-repeat="salesType in cus.salesTypeList" class="m-t-xs">
-                      <label class="checkbox-inline c-checkbox">
-                      <input type="checkbox" name="salesTypeSels" value="{{salesType.value}}" ng-model="salesType.isChk">
-                      <span class="fa fa-check"></span>&nbsp;{{salesType.name}}</label></div>
+        <div class="col-sm-4">
+          <h4 class="m-l-sm text-vo">
+              <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+                  <input type="checkbox" ng-model="all_salesType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+              </label>
+              销量显示选择
+          </h4>
+          <div class="column_overflow">
+              <div ng-repeat="salesType in cus.salesTypeList" class="m-t-xs">
+                  <label class="checkbox-inline c-checkbox">
+                  <input type="checkbox" name="salesTypeSels" value="{{salesType.value}}" ng-model="salesType.isChk" >
+                  <span class="fa fa-check"></span>&nbsp;{{salesType.name}}</label>
               </div>
           </div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">

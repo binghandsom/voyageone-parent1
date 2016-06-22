@@ -101,7 +101,7 @@ public class CmsImageGroupService extends BaseAppService {
      * @param imageGroupList 检索结果（Model）
      * @param channelId 渠道id
      * @param lang 语言
-     * @return 检索结果（Bean）
+     * @return 检索结果（bean）
      */
     private List<CmsBtImageGroupBean> changeToBeanList(List<CmsBtImageGroupModel> imageGroupList, String channelId, String lang) {
         List<CmsBtImageGroupBean> imageGroupBeanList = new ArrayList<>();
@@ -126,7 +126,7 @@ public class CmsImageGroupService extends BaseAppService {
     /**
      * 检索结果编辑
      *
-     * @param bean 检索结果（Bean）
+     * @param bean 检索结果（bean）
      * @param channelId 渠道id
      * @param lang 语言
      */

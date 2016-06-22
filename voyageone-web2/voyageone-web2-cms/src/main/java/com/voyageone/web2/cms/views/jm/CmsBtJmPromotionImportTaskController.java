@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
@@ -49,7 +50,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
         CmsBtJmPromotionImportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
-        String path = Properties.readValue(CmsProperty.Props.CMS_JM_EXPORT_PATH);
+        String path = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         String fileName = model.getFailuresFileName().trim();
         String filepath = path + "/" + fileName;//"/Product20160324164706.xls";
         FileUtils.downloadFile(response, fileName, filepath);
@@ -69,6 +70,17 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
             model.setCmsBtJmPromotionId(promotionId);
             model.setCreater(userName);
             model.setCreated(new Date());
+            model.setModifier(userName);
+            model.setModified(new Date());
+
+            model.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
+            model.setEndTime(DateTimeUtil.getCreatedDefaultDate());
+            model.setErrorCode(0);
+            model.setErrorMsg("");
+            model.setFailuresFileName("");
+            model.setFailuresRows(0);
+            model.setIsImport(false);
+            model.setSuccessRows(0);
             listModel.add(model);
         }
         service.saveList(listModel);

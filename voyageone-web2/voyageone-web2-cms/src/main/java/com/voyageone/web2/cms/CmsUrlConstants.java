@@ -27,18 +27,15 @@ public interface CmsUrlConstants {
     interface JMPROMOTION {
         interface LIST {
             interface INDEX {
-
                 String ROOT = "/cms/jmpromotion/index";
-
                 String INIT = "init";
-
-                String GET_LIST_BY_WHERE = "getListByWhere";
-
-                String INSERT = "insert";
-
-                String UPDATE = "update";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
+                String SaveModel = "saveModel";
                 String DELETE = "delete";
                 String GET = "get";
+                String GetEditModel="getEditModel";
+                String GetTagListByPromotionId="getTagListByPromotionId";
+                String ImportJM="importJM";
 
             }
 
@@ -47,7 +44,7 @@ public interface CmsUrlConstants {
 
                 String INIT = "init";
 
-                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
                 String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE = "getPromotionProductInfoListByWhere";
                 String GetPromotionProductInfoCountByWhere = "getPromotionProductInfoCountByWhere";
                 String INSERT = "insert";
@@ -68,6 +65,15 @@ public interface CmsUrlConstants {
                 String DELETE_PROMOTION_SKU = "deletePromotionSku";
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
                 String UpdateJM = "updateJM";
+                String BatchUpdateDealPrice="batchUpdateDealPrice";
+                String BatchSynchPrice="batchSynchPrice";
+                String SynchAllPrice="synchAllPrice";
+                String BatchCopyDeal="batchCopyDeal";
+                String CopyDealAll="copyDealAll";
+                String BatchDeleteProduct="batchDeleteProduct";
+                String DeleteAllProduct="deleteAllProduct";
+                String GetProductView="getProductView";
+                String UpdateDealPrice="updateDealPrice";
             }
         }
     }
@@ -96,12 +102,12 @@ public interface CmsUrlConstants {
             interface INDEX {
                 String ROOT = "/cms/cmsmtmasterinfo/index";
                 String INIT = "init";
-                String GET_LIST_BY_WHERE = "getListByWhere";
+                String GET_LIST_BY_WHERE = "selectListByWhere";
                 String INSERT = "insert";
                 String UPDATE = "update";
                 String GET = "get";
                 String UPDATEJMIMG = "updateJMImg";
-                String GetCountByWhere = "getCountByWhere";
+                String GetCountByWhere = "selectCountByWhere";
                 String LoadJmMasterBrand = "loadJmMasterBrand";
             }
         }
@@ -114,7 +120,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String INSERT = "insert";
                 String UPDATE = "update";
-                String GETBYKEY = "getByKey";
+                String GETBYKEY = "selectByKey";
 
             }
         }
@@ -429,6 +435,13 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String CLEAR = "clear";
         }
+
+        interface MQ {
+
+            String ROOT = "/cms/system/mq";
+            String INIT = "init";
+            String SEND = "send";
+        }
     }
 
     // popup页面
@@ -494,7 +507,17 @@ public interface CmsUrlConstants {
 
             String UPDATE_PRODUCT_ALL_INFO = "updateProductAllInfo";
 
+            String UPDATE_PRODUCT_FEED = "updateProductFeed";
+
             String CHANGE_CATEGORY = "changeCategory";
+
+            String GET_PRODUCT_PLATFORM ="getProductPlatform";
+
+            String UPDATE_PRODUCT_PLATFORM ="updateProductPlatform";
+
+            String UPDATE_PRODUCT_PLATFORM_CHK ="updateProductPlatformChk";
+
+            String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
 
         }
 
@@ -581,7 +604,7 @@ public interface CmsUrlConstants {
         interface CHANNEL_IMAGE_TEMPLATE {
             String ROOT = "/cms/channel/image_template";
             String Init = "init";
-            String GetPage = "getPage";
+            String GetPage = "selectPage";
             String GetCount = "getCount";
             String Save = "save";
             String Delete = "delete";
@@ -636,9 +659,26 @@ public interface CmsUrlConstants {
     interface ImageCreate {
         String ROOT = "/cms/imagecreate/index";
         String Upload = "upload";
-        String GetPageByWhere = "getPageByWhere";
-        String GetCountByWhere = "getCountByWhere";
+        String GetPageByWhere = "selectPageByWhere";
+        String GetCountByWhere = "selectCountByWhere";
         String DownloadExcel = "downloadExcel";
         String DownloadImportErrorExcel = "downloadImportErrorExcel";
+    }
+    // hsCode编辑
+    interface TOOLS{
+        interface PRODUCT {
+
+            String ROOT = "/cms/tools/product";
+
+            String INIT_HS_CODE_INFO = "initHsCodeInfo";
+
+            String SEARCH_HS_CODE_INFO = "searchHsCodeInfo";
+
+            String GET_HS_CODE_INFO = "getHsCodeInfo";
+
+            String SAVE_HS_CODE_INFO = "saveHsCodeInfo";
+
+            String CANCEL_HS_CODE_INFO = "cancelHsCodeInfo";
+        }
     }
 }

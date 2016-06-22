@@ -17,8 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.net.UnknownHostException;
 import java.util.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsProductDaoTest {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -338,7 +337,6 @@ public class CmsProductDaoTest {
         long start = System.currentTimeMillis();
 
         CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.setLock("1");
 
         List<String> codeList = new ArrayList<>();
         codeList.add("100001");
@@ -357,10 +355,8 @@ public class CmsProductDaoTest {
 
         Map<String, CmsBtProductModel_Field> codeFieldMap = new LinkedHashMap<>();
         CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-        field.setLock("1");
         codeFieldMap.put("100001", field);
         field = new CmsBtProductModel_Field();
-        field.setLock("1");
         field.setColor("BBB");
         codeFieldMap.put("100002", field);
 

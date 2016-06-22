@@ -3,15 +3,17 @@
   "version": "2.0.0",
   "description": "VoyageOne Front Project v2",
   "scripts": {
-    "prebuild-dev-pkg": "gulp build-angular-suff",
     "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
     "build-css-pkg": "node node_scripts/npm-build-css-package.js",
-    "lite": "lite-server"
+    "i-server": "npm i morgan http-proxy-middleware browser-sync",
+    "server": "browser-sync start -c bs-config.js"
   },
   "author": "VoyageOne",
   "license": "ISC",
   "dependencies": {
-    "chart.js": "^2.1.4",
+    "chart.js": "^2.1.4"
+  },
+  "devDependencies": {
     "extend": "",
     "glob": "",
     "gulp": "",
@@ -28,8 +30,9 @@
     "gulp-sourcemaps": "",
     "gulp-uglify": "",
     "gulp-util": "",
-    "lite-server": "",
-    "request": "",
-    "through2": ""
+    "through2": "",
+    "morgan":"",
+    "http-proxy-middleware":"",
+    "browser-sync":""
   }
 }

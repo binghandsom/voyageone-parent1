@@ -20,13 +20,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Transactional(rollbackFor=Exception.class)
 public @interface VOTransactional {
-
     Propagation propagation() default Propagation.REQUIRED;
-
     Isolation isolation() default Isolation.DEFAULT;
-
     int timeout() default -1;
-
     boolean readOnly() default false;
-
 }

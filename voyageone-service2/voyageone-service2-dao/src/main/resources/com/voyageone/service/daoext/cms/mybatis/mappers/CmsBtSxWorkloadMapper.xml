@@ -32,6 +32,36 @@
         </if>
     </select>
 
+
+    <select id="cms_select_sx_workload_groupby" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        SELECT
+        id as id,
+        channel_id as channelId,
+        group_id as groupId,
+        cart_id as cartId,
+        publish_status as publishStatus,
+        creater,
+        MAX(created) as created,
+        modifier,
+        MAX(modified) as modified
+        FROM voyageone_cms2.cms_bt_sx_workload
+        WHERE
+        publish_status=0
+        <if test="channel_id != null">
+            AND
+            channel_id=#{channel_id}
+        </if>
+        <if test="cartId != null">
+            AND
+            cart_id=#{cartId}
+        </if>
+        group by channel_id, cart_id, group_id
+        order by MAX(modified) desc
+        <if test="record_count != null">
+            limit 0,#{record_count}
+        </if>
+    </select>
+
     <update id="cms_update_sx_workload">
         UPDATE
             voyageone_cms2.cms_bt_sx_workload
@@ -110,4 +140,46 @@
             )
         </foreach>
     </insert>
+
+    <update id="update_publish_status" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        <![CDATA[
+        UPDATE
+        voyageone_cms2.cms_bt_sx_workload
+        SET
+        publish_status=#{publishStatus},
+        modifier=#{modifier},
+        modified=now()
+        WHERE
+        modified <= #{modified}
+        AND
+        channel_id =  #{channelId}
+        AND
+        cart_id =  #{cartId}
+        AND
+        group_id =  #{groupId}
+        AND
+         publish_status=0
+         ]]>
+    </update>
+
+
+    <update id="delay_work_load" parameterType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
+        <![CDATA[
+        UPDATE
+        voyageone_cms2.cms_bt_sx_workload
+        SET
+        modifier=#{modifier},
+        modified=#{created}
+        WHERE
+        modified <= #{modified}
+        AND
+        channel_id =  #{channelId}
+        AND
+        cart_id =  #{cartId}
+        AND
+        group_id =  #{groupId}
+        AND
+         publish_status = 0
+         ]]>
+    </update>
 </mapper>

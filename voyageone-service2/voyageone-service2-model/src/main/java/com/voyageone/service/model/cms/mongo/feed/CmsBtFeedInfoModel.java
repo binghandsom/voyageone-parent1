@@ -44,17 +44,10 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private int updFlg;
     private String clientProductURL = "";
     private Integer qty = 0;
+    private String isFeedReImport;
 
     private String productType;
     private String material;
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
 
     public String getCategory() {
         return category;
@@ -111,6 +104,10 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public void setSizeType(String sizeType) {
         this.sizeType = sizeType;
     }
+
+    public String getMaterial() { return material;  }
+
+    public void setMaterial(String material) { this.material = material; }
 
     public List<String> getImage() {
         return image;
@@ -199,6 +196,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
+        attribute.put("material", this.material);
         attribute.put("shortDescription", this.shortDescription);
         attribute.put("longDescription", this.longDescription);
 
@@ -309,4 +307,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public void setQty(Integer qty) {
         this.qty = qty;
     }
+
+    public String getIsFeedReImport() { return isFeedReImport; }
+
+    public void setIsFeedReImport(String isFeedReImport) { this.isFeedReImport = isFeedReImport; }
 }

@@ -1,3 +1,3 @@
-define([
-  'components/js/simple-download/index'
-]);
+define(function (require) {
+  require('components/js/simple-download/index');
+});

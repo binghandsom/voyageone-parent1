@@ -6,9 +6,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,53 +30,60 @@ public class UploadToUSJoiServiceTest {
     ProductService productService;
 
     @Autowired
-    CmsMtPlatformCategorySchemaDao  cmsMtPlatformCategorySchemaDao;
+    CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+
     @Test
     public void testUpload() throws Exception {
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
         sxWorkLoadBean.setChannelId("017");
-        sxWorkLoadBean.setGroupId(138906L);
+        sxWorkLoadBean.setGroupId(246676L);
         sxWorkLoadBean.setModifier("james");
+        sxWorkLoadBean.setCartId(929);
 
         uploadToUSJoiService.upload(sxWorkLoadBean);
     }
 
     @Test
-    public void testProduct(){
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010","1E35-2529");
-        CmsBtProductModel_Platform platform = new CmsBtProductModel_Platform();
+    public void testProduct() {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("010", "16189");
         CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = new CmsBtProductModel_Platform_Cart();
-        cmsBtProductModel_platform_cart.setNumIid("1111");
+        cmsBtProductModel_platform_cart.setpNumIId("1111");
         cmsBtProductModel_platform_cart.setpCatId("2222");
 
         cmsBtProductModel_platform_cart.setFields(new BaseMongoMap<>());
-        cmsBtProductModel_platform_cart.getFields().put("8652","aaa");
-        platform.put("p26", cmsBtProductModel_platform_cart);
-        cmsBtProductModel.setPlatform(platform);
+        cmsBtProductModel_platform_cart.getFields().put("8652", "aaa");
+
+        cmsBtProductModel.setPlatform(26, cmsBtProductModel_platform_cart);
         ProductUpdateBean productUpdateBean = new ProductUpdateBean();
         productUpdateBean.setProductModel(cmsBtProductModel);
         productUpdateBean.setIsCheckModifed(false);
-//
-//        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel("1349", 26);
+
+//        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1349", 26);
 //        List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
 //
-//        CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform().get("p26");
-//        if(platformCart != null){
-//            Map<String, Object> fieldsValue =  platformCart.getFields();
+//        CmsBtProductModel_Platform_Cart platformCart = cmsBtProductModel.getPlatform(26);
+//        if (platformCart != null) {
+//            BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
 //            FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
 //            FieldUtil.getFieldsValueToMap(fields);
 //        }
 //        productService.updateProduct("010", productUpdateBean);
     }
+
     @Test
     public void testOnStartup() throws Exception {
 
-        uploadToUSJoiService.onStartup(new ArrayList<TaskControlBean>());
+        uploadToUSJoiService.onStartup(new ArrayList<>());
     }
 
     @Test
     public void testOnStartup1() throws Exception {
+
+    }
+
+    @Test
+    public void testUpload1() throws Exception {
 
     }
 }
