@@ -325,7 +325,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         sku.setStringAttribute("jmSkuNo", spu.getSku_no());
                                     }
                                 }
-                                jmCart.setpProductId(jmGetProductInfoRes.getProduct_id());
+                                jmCart.setpProductId(jmProductId);
                                 jmCart.setpNumIId(originHashId);
                                 saveProductPlatform(channelId, product);
 
@@ -944,8 +944,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
         cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + productCode);
-        cmsBtJmProductModel.setVoBrandName("");//TODO
-        cmsBtJmProductModel.setVoCategoryName("");//TODO
+        cmsBtJmProductModel.setVoBrandName(product.getCatId());
+        cmsBtJmProductModel.setVoCategoryName(product.getCatPath());
         cmsBtJmProductModel.setBrandName(brandName);
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);
