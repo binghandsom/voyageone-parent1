@@ -107,6 +107,13 @@ public class JmBase extends ComponentBase {
 
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         logger.info("result：" + result);
+//        result = " {\"error\":{\"code\":\"501\"}}";
+
+        if(result.contains("审核"))
+        {
+            throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
+        }
+
 
         //转换错误信息
         String  code = "";
