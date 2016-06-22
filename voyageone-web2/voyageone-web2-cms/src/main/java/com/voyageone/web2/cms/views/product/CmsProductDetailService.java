@@ -531,6 +531,9 @@ public class CmsProductDetailService extends BaseAppService {
     }
 
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+        Map<String, Object> result = new HashMap<>();
+
+
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
@@ -553,9 +556,20 @@ public class CmsProductDetailService extends BaseAppService {
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
             productComm.put("schemaFields", cmsMtCommonFields);
-            productComm.put("images",images);
         }
-        return productComm;
+
+
+        Map<String,Object> mastData = new HashMap<>();
+        mastData.put("images",images);
+        List<Map<String,Object>> platformList = new ArrayList<>();
+        if(cmsBtProduct.getPlatforms() != null) {
+            cmsBtProduct.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> platformList.add(cmsBtProductModel_platform_cart));
+        }
+        mastData.put("platformList",platformList);
+
+        result.put("productComm", productComm);
+        result.put("mastData", mastData);
+        return result;
     }
 
     /**
