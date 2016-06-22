@@ -212,7 +212,7 @@
                                     <td class="text-center"></td>
                                     <td class="text-center" ng-if="cartInfo.value == 27">
                                         <select ng-model="entity.property" class="form-control">
-                                            <option value="OTHER" ng-selected="{{entity.property == null || entity.property == 'OTHER'}}">其他</option>
+                                            <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
                                             <option value="FORMAL">正装</option>
                                             <option value="MS">中小样</option>
                                         </select>

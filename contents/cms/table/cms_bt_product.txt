@@ -3,7 +3,8 @@
 * creater
 * modified
 * modifier
-* channelId ->channelId
+* channelId    ->channelId
+* orgChannelId ->原始channelId
 * prodId    ->产品Id
 * catId     ->暂时保留（用于天猫国际类目，以后删除）
 * catPath   ->暂时保留（用于天猫国际类目，以后删除）
