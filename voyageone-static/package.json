@@ -5,12 +5,12 @@
   "scripts": {
     "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
     "build-css-pkg": "node node_scripts/npm-build-css-package.js",
-    "lite": "lite-server"
+    "server": "browser-sync start -c bs-config.js",
+    "i-server": "npm i http-proxy-middleware browser-sync"
   },
   "author": "VoyageOne",
   "license": "ISC",
-  "dependencies": {
-    "chart.js": "^2.1.4",
+  "devDependencies": {
     "extend": "",
     "glob": "",
     "gulp": "",
@@ -26,8 +26,11 @@
     "gulp-sourcemaps": "",
     "gulp-uglify": "",
     "gulp-util": "",
-    "lite-server": "",
-    "request": "",
-    "through2": ""
+    "through2": "",
+    "http-proxy-middleware": "",
+    "browser-sync": ""
+  },
+  "dependencies": {
+    "chart.js": "^2.1.4"
   }
 }

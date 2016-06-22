@@ -1,12 +1,6 @@
 var fs = require('fs');
 var glob = require('glob');
 
-var common = require('./vars').build.common;
-var angularPackage = common.angular.dist + '/' + common.angular.concat;
-
-var commonFiles = common.native.src;
-var commonPackage = common.native.dist + '/' + common.native.concat;
-
 glob('src/components/angular/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
@@ -14,7 +8,7 @@ glob('src/components/angular/*/*.js', function (err, files) {
     }
 
     if (!files || !files.length) {
-        console.warn('cant find any files !!! -> ' + src);
+        console.warn('cant find any files !!!');
         return;
     }
 
@@ -30,17 +24,17 @@ glob('src/components/angular/*/*.js', function (err, files) {
     
     code += '});';
 
-    fs.writeFile(angularPackage, code);
+    fs.writeFile('src/components/components.ng.js', code);
 });
 
-glob(commonFiles, function (err, files) {
+glob('src/components/js/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
     }
 
     if (!files || !files.length) {
-        console.warn('cant find any files !!! -> ' + src);
+        console.warn('cant find any files !!!');
         return;
     }
 
@@ -54,5 +48,5 @@ glob(commonFiles, function (err, files) {
     
     code += '});';
 
-    fs.writeFile(commonPackage, code);
+    fs.writeFile('src/components/components.js', code);
 });
