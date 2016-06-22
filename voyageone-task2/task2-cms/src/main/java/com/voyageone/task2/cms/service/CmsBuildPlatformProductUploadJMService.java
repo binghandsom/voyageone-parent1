@@ -548,8 +548,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
-                    if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                        sxData.setErrorMessage(e.getMessage());
+                    if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
+                        if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                            sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                        }
+                        else
+                        {
+                            sxData.setErrorMessage(e.getMessage());
+                        }
                     }
                     sxProductService.insertBusinessLog(sxData, getTaskName());
                     throw e;
