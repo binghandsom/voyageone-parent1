@@ -14,7 +14,7 @@ public class HtDealUpdate_DealInfo {
     String product_medium_name;// 可选String  产品中标题    参数范围: 注：35字　用于首页、列表页显示，填写商品名+功效的一句话描述，不能出现价格及促销信息
     String product_short_name;// 可选	String    产品短标题    参数范围: 注：15字　用于购物车、移动客户端等，填写产品名如果字数超过，需酌情删减部分信息
 
-    String attribute;//可选	String 生产地区  参数范围: 注：150字以内
+//    String attribute;//可选	String 生产地区  参数范围: 注：150字以内
 
     String before_date;// 可选	String   保质期限   参数范围: 注：150字以内
     String suit_people;// 可选	String    适用人群    参数范围: 注：150字以内
@@ -89,13 +89,13 @@ public class HtDealUpdate_DealInfo {
         this.product_short_name = product_short_name;
     }
 
-    public String getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
+//    public String getAttribute() {
+//        return attribute;
+//    }
+//
+//    public void setAttribute(String attribute) {
+//        this.attribute = attribute;
+//    }
 
     public String getBefore_date() {
         return before_date;
