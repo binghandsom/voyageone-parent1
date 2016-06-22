@@ -278,7 +278,7 @@
                                     <th class="text-left">Color</th>
                                     <th class="text-right">Price</th>
                                     <th class="text-left">聚美Hash ID</th>
-                                    <th class="text-right">最新团购价</th>
+                                    <th class="text-right">聚美价格</th>
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
@@ -310,14 +310,22 @@
                                     <td class="text-right">
                                         <div class="table_main">
                                             <ul>
-                                                <li>海外官方价格:{{model.msrpRmb}}</li>
-                                                <li>中国官方售价:{{model.marketPrice}}</li>
+                                                <li>海外官网价格:{{model.msrpUsd}}</li>
+                                                <li>中国官网售价:{{model.msrpRmb}}</li>
                                                 <li>中国指导售价:{{model.retailPrice}}</li>
+                                                <li>中国最终售价:{{model.salePrice}}</li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td class="text-left">{{model.jmHashId}}</td>
-                                    <td class="text-right">{{model.dealPrice}}</td>
+                                    <td class="text-right">
+                                        <div class="table_main">
+                                        <ul>
+                                            <li>市场价:{{getMarketPrice(model)}}</li>
+                                            <li>团购价:{{getDealPrice(model)}}</li>
+                                        </ul>
+                                        </div>
+                                    </td>
                                     <td class="text-center">{{model.discount == 0?'':(model.discount*10).toFixed(2) + '折'}}</td>
                                     <td class="text-center">
                                         {{model.skuCount}}
@@ -361,7 +369,7 @@
                     <table class="table table-hover-new vo_table" style="table-layout: fixed;">
                         <thead>
                         <tr>
-                            <th class="text-left">导出文件名</th>
+                            <th class="text-left">导入文件</th>
                             <th class="text-center" style="width:100px">成功件数</th>
                             <th class="text-center" style="width:100px">失败件数</th>
                             <th class="text-left">导入开始时间</th>
@@ -373,7 +381,7 @@
                         </thead>
                         <tbody ng-if="vm.cmsBtJmPromotionImportTaskList.length">
                         <tr ng-repeat="model in vm.cmsBtJmPromotionImportTaskList">
-                            <td class="text-left">{{model.fileName}}</td>
+                            <td class="text-left"><a ng-click="downloadImportExcel(model.id)">{{model.fileName}}</a></td>
                             <td class="text-center">{{model.successRows}}</td>
                             <td class="text-center">{{model.failuresRows}}</td>
                             <td class="text-left">{{model.beginTime}}</td>

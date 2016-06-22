@@ -37,6 +37,7 @@ public class CmsBtJmPromotionSku3Service {
 
        CmsBtJmPromotionSkuModel model = dao.select(parameter.getPromotionSkuId());
        model.setDealPrice(new BigDecimal(parameter.getDealPrice()));
+       model.setMarketPrice(new BigDecimal(parameter.getMarketPrice()));
        model.setModifier(modifier);
        return update(model);
    }

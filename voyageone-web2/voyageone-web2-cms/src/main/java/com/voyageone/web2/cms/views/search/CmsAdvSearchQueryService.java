@@ -116,11 +116,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             // 获取promotion tag查询条件
             if (searchValue.getPromotionTags() != null && searchValue.getPromotionTags().length > 0 && searchValue.getPromotionTagType() > 0) {
                 if (searchValue.getPromotionTagType() == 1) {
-                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".tags", searchValue.getPromotionTags()));
+                    result.append(MongoUtils.splicingValue("tags", searchValue.getPromotionTags()));
                     result.append(",");
                 } else if (searchValue.getPromotionTagType() == 2) {
                     // 不在指定范围
-                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".tags", searchValue.getPromotionTags(), "$nin"));
+                    result.append(MongoUtils.splicingValue("tags", searchValue.getPromotionTags(), "$nin"));
                     result.append(",");
                 }
             }
@@ -208,7 +208,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取 master category
         if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
-            result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getmCatId()));
+            result.append(MongoUtils.splicingValue("common.catId", searchValue.getmCatId()));
             result.append(",");
         }
 
