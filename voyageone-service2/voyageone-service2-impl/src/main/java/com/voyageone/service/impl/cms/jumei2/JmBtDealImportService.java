@@ -317,8 +317,12 @@ public class JmBtDealImportService extends BaseService {
 //        8.skus.priceMsrp等被覆盖成空     处理
         List<CmsBtProductModel_Carts> carts  = modelCmsBtProduct.getCarts();
         for(CmsBtProductModel_Carts cart : carts) {
-            if (cart.getCartId() == 27)
+            if (cart.getCartId() == 27) {
                 cart.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                cart.setPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
+                cart.setNumIid(modelJmBtDealImport.getJumeiHashId());
+            }
+
         }
 
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
