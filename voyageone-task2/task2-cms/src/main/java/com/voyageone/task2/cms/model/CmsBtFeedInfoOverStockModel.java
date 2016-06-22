@@ -5,12 +5,10 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 /**
  * Created by gjl on 2016/6/21.
  */
-public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
+public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
     private String retailerId;
-    private String model;
-    private String clientModel;
     private String sku;
-    private String clientSku;
+    private String client_sku;
     private String title;
     private String brand;
     private String manufacturerName;
@@ -35,22 +33,7 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
     private String shippingWeight;
     private String upc;
     private String shipsViaLtl;
-    private String model_image;
-    private String model_retailerId;
-    private String model_title;
-    private String model_brand;
-    private String model_manufacturerName;
-    private String model_shortDescription;
-    private String model_longDescription;
-    private String model_leadTime;
-    private String model_adultContent;
-    private String model_countryOfOrigin;
-    private String model_productActiveStatus;
-    private String model_shippingSiteSale;
-    private String model_discountSiteSale;
-    private String model_condition;
-    private String model_returnPolicy;
-    private String salePoint;
+    private String attribute_name;
 
     public String getRetailerId() {
         return retailerId;
@@ -58,24 +41,6 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
 
     public void setRetailerId(String retailerId) {
         this.retailerId = retailerId;
-    }
-
-    @Override
-    public String getModel() {
-        return model;
-    }
-
-    @Override
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getClientModel() {
-        return clientModel;
-    }
-
-    public void setClientModel(String clientModel) {
-        this.clientModel = clientModel;
     }
 
     public String getSku() {
@@ -86,12 +51,12 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.sku = sku;
     }
 
-    public String getClientSku() {
-        return clientSku;
+    public String getClient_sku() {
+        return client_sku;
     }
 
-    public void setClientSku(String clientSku) {
-        this.clientSku = clientSku;
+    public void setClient_sku(String client_sku) {
+        this.client_sku = client_sku;
     }
 
     public String getTitle() {
@@ -294,131 +259,12 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.shipsViaLtl = shipsViaLtl;
     }
 
-    public String getModel_image() {
-        return model_image;
+    public String getAttribute_name() {
+        return attribute_name;
     }
 
-    public void setModel_image(String model_image) {
-        this.model_image = model_image;
+    public void setAttribute_name(String attribute_name) {
+        this.attribute_name = attribute_name;
     }
 
-    public String getModel_retailerId() {
-        return model_retailerId;
-    }
-
-    public void setModel_retailerId(String model_retailerId) {
-        this.model_retailerId = model_retailerId;
-    }
-
-    public String getModel_title() {
-        return model_title;
-    }
-
-    public void setModel_title(String model_title) {
-        this.model_title = model_title;
-    }
-
-    public String getModel_brand() {
-        return model_brand;
-    }
-
-    public void setModel_brand(String model_brand) {
-        this.model_brand = model_brand;
-    }
-
-    public String getModel_manufacturerName() {
-        return model_manufacturerName;
-    }
-
-    public void setModel_manufacturerName(String model_manufacturerName) {
-        this.model_manufacturerName = model_manufacturerName;
-    }
-
-    public String getModel_shortDescription() {
-        return model_shortDescription;
-    }
-
-    public void setModel_shortDescription(String model_shortDescription) {
-        this.model_shortDescription = model_shortDescription;
-    }
-
-    public String getModel_longDescription() {
-        return model_longDescription;
-    }
-
-    public void setModel_longDescription(String model_longDescription) {
-        this.model_longDescription = model_longDescription;
-    }
-
-    public String getModel_leadTime() {
-        return model_leadTime;
-    }
-
-    public void setModel_leadTime(String model_leadTime) {
-        this.model_leadTime = model_leadTime;
-    }
-
-    public String getModel_adultContent() {
-        return model_adultContent;
-    }
-
-    public void setModel_adultContent(String model_adultContent) {
-        this.model_adultContent = model_adultContent;
-    }
-
-    public String getModel_countryOfOrigin() {
-        return model_countryOfOrigin;
-    }
-
-    public void setModel_countryOfOrigin(String model_countryOfOrigin) {
-        this.model_countryOfOrigin = model_countryOfOrigin;
-    }
-
-    public String getModel_productActiveStatus() {
-        return model_productActiveStatus;
-    }
-
-    public void setModel_productActiveStatus(String model_productActiveStatus) {
-        this.model_productActiveStatus = model_productActiveStatus;
-    }
-
-    public String getModel_shippingSiteSale() {
-        return model_shippingSiteSale;
-    }
-
-    public void setModel_shippingSiteSale(String model_shippingSiteSale) {
-        this.model_shippingSiteSale = model_shippingSiteSale;
-    }
-
-    public String getModel_discountSiteSale() {
-        return model_discountSiteSale;
-    }
-
-    public void setModel_discountSiteSale(String model_discountSiteSale) {
-        this.model_discountSiteSale = model_discountSiteSale;
-    }
-
-    public String getModel_condition() {
-        return model_condition;
-    }
-
-    public void setModel_condition(String model_condition) {
-        this.model_condition = model_condition;
-    }
-
-    public String getModel_returnPolicy() {
-        return model_returnPolicy;
-    }
-
-    public void setModel_returnPolicy(String model_returnPolicy) {
-        this.model_returnPolicy = model_returnPolicy;
-    }
-
-    public String getSalePoint() {
-        return salePoint;
-    }
-
-    public void setSalePoint(String salePoint) {
-        this.salePoint = salePoint;
-    }
 }
