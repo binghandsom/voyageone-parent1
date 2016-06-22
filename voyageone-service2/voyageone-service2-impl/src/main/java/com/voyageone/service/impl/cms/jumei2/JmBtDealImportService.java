@@ -342,6 +342,7 @@ public class JmBtDealImportService extends BaseService {
         platform.setpPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         platform.setpAttributeStatus("1");
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
+        platform.setpStatus(CmsConstants.PlatformStatus.InStock.name());
 
         //fields
         BaseMongoMap<String, Object> fields = platform.getFields() == null ?  new BaseMongoMap<>() : platform.getFields();
@@ -358,7 +359,6 @@ public class JmBtDealImportService extends BaseService {
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
         fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
-        fields.setAttribute("pStatus", CmsConstants.PlatformStatus.InStock.name());
         if (platform.getFields() == null)
             platform.setFields(fields);
 
