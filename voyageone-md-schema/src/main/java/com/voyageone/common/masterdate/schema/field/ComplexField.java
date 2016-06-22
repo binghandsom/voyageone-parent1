@@ -15,6 +15,9 @@ import java.util.*;
 public class ComplexField extends Field {
     protected ComplexValue complexValue = new ComplexValue();
     protected List<Field> fields = new ArrayList<>();
+    // added by morse.lu 2016/06/21 start
+    private Map<String, Field> mapField = null;
+    // added by morse.lu 2016/06/21 end
 
     public ComplexField() {
         super.type = FieldTypeEnum.COMPLEX;
@@ -32,7 +35,20 @@ public class ComplexField extends Field {
 
     public void add(Field field) {
         this.fields.add(field);
+        // added by morse.lu 2016/06/21 start
+        if (mapField != null) {
+            mapField.putIfAbsent(field.getId(), field);
+        }
+        // added by morse.lu 2016/06/21 end
     }
+
+    // added by morse.lu 2016/06/22 start
+    public void clear() {
+        complexValue = new ComplexValue();
+        fields = new ArrayList<>();
+        mapField = null;
+    }
+    // added by morse.lu 2016/06/22 end
 
     public ComplexValue getComplexValue() {
         return this.complexValue;
@@ -68,13 +84,24 @@ public class ComplexField extends Field {
 
     @JsonIgnore
     public Map<String, Field> getFieldMap() {
-        Map<String, Field> map = new HashMap<>();
-
-        for (Field field : this.fields) {
-            map.put(field.getId(), field);
+        // modified by morse.lu 2016/06/21 start
+        // 性能优化
+//        Map<String, Field> map = new HashMap<>();
+//
+//        for (Field field : this.fields) {
+//            map.put(field.getId(), field);
+//        }
+//
+//        return map;
+        if (mapField == null) {
+            mapField = new HashMap<>();
+            for (Field field : this.fields) {
+                mapField.put(field.getId(), field);
+            }
         }
 
-        return map;
+        return mapField;
+        // modified by morse.lu 2016/06/21 end
     }
 
     public Element toElement() throws TopSchemaException {

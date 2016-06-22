@@ -548,8 +548,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
-                    if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                        sxData.setErrorMessage(e.getMessage());
+                    if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
+                        if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                            sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                        }
+                        else
+                        {
+                            sxData.setErrorMessage(e.getMessage());
+                        }
                     }
                     sxProductService.insertBusinessLog(sxData, getTaskName());
                     throw e;
@@ -557,9 +563,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
             else
             {
-                String errorMsg = String.format("取SxDate失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
+                String errorMsg = String.format("取SxData失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                 $error(errorMsg);
-                new BusinessException(errorMsg);
+                throw new BusinessException(errorMsg);
             }
         }
         catch (ServerErrorException se) {
@@ -571,7 +577,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
-
         }
 
     }
