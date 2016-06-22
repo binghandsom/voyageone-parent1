@@ -262,6 +262,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                             sxData.getPlatform().setModifier(getTaskName());
                             sxData.getPlatform().setNumIId(jmHashId);
+                            sxData.getPlatform().setPlatformPid(jmProductId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                             if(jmHashId.endsWith("p0"))
                             {
@@ -329,9 +330,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 jmCart.setpNumIId(originHashId);
                                 saveProductPlatform(channelId, product);
 
-                                sxData.getPlatform().setNumIId(originHashId);
+
                                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                                sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                                 sxData.getPlatform().setModifier(getTaskName());
+                                sxData.getPlatform().setNumIId(originHashId);
+                                sxData.getPlatform().setPlatformPid(jmProductId);
+
                                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
 
                             }
@@ -524,6 +530,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                         sxData.getPlatform().setModifier(getTaskName());
+
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                     }
 
