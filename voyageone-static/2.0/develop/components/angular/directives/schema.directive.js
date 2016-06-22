@@ -392,15 +392,19 @@
         var minRule = rules.minLengthRule,
             maxRule = rules.maxLengthRule;
 
-        if (isByteUnit(minRule))
-            bindLengthRule(innerElement, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
-        else
-            bindLengthRule(innerElement, minRule, 'minLengthRule', 'minlength');
+        if (minRule) {
+            if (isByteUnit(minRule))
+                bindLengthRule(element, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
+            else
+                bindLengthRule(element, minRule, 'minLengthRule', 'minlength');
+        }
 
-        if (isByteUnit(maxRule))
-            bindLengthRule(innerElement, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
-        else
-            bindLengthRule(innerElement, maxRule, 'maxLengthRule', 'maxlength');
+        if (maxRule) {
+            if (isByteUnit(maxRule))
+                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
+            else
+                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxlength');
+        }
     }
 
     /**
@@ -768,7 +772,7 @@
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
         // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
-        if (disableRule.value === true)
+        if (disableRule && disableRule.value === true)
             return;
 
         fieldElement = angular.element('<s-field>');
@@ -1159,7 +1163,7 @@
                                         field.value.value = getInputValue(field.defaultValue, field);
                                     }
 
-                                    if (!requiredRule.value) {
+                                    if (!requiredRule) {
                                         // 非必填, 就创建空选项
                                         // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
                                         // 所以要克隆新的出来使用
@@ -1246,7 +1250,7 @@
                                         checkbox.attr('ng-change', 'update(' + index + ')');
 
                                         // checkbox 的必填比较特殊
-                                        if (requiredRule.value) {
+                                        if (requiredRule) {
                                             if (requiredRule instanceof DependentRule) {
                                                 checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
                                             } else {
@@ -1262,7 +1266,7 @@
                                         // 如果有就把默认值放上去
                                         if (valueStringList.length) {
                                             selected[index] = !(valueStringList.indexOf(option.value) < 0);
-                                        } else if (requiredRule.value && !!defaultValues.length) {
+                                        } else if (requiredRule && !!defaultValues.length) {
                                             selected[index] = !(defaultValues.indexOf(option.value) < 0);
                                         }
 
