@@ -108,7 +108,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result.append(",");
             }
             // 平台类目是否未设置
-            if (StringUtils.isNotEmpty(searchValue.getPCatStatus())) {
+            if (searchValue.getPCatStatus() == 1) {
                 result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".pCatStatus", new String[]{null, "", "0"}, "$in"));
                 result.append(",");
             }
@@ -116,11 +116,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             // 获取promotion tag查询条件
             if (searchValue.getPromotionTags() != null && searchValue.getPromotionTags().length > 0 && searchValue.getPromotionTagType() > 0) {
                 if (searchValue.getPromotionTagType() == 1) {
-                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".tags", searchValue.getPromotionTags()));
+                    result.append(MongoUtils.splicingValue("tags", searchValue.getPromotionTags()));
                     result.append(",");
                 } else if (searchValue.getPromotionTagType() == 2) {
                     // 不在指定范围
-                    result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".tags", searchValue.getPromotionTags(), "$nin"));
+                    result.append(MongoUtils.splicingValue("tags", searchValue.getPromotionTags(), "$nin"));
                     result.append(",");
                 }
             }
@@ -130,9 +130,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 result.append(",");
             }
             // 店铺内分类未设置
-            if (StringUtils.isNotEmpty(searchValue.getShopCatStatus())) {
-                result.append(MongoUtils.splicingValue(_KeyPrefix + cartId + ".sellerCats.cId", new String[]{null, ""}, "$in"));
-                result.append(",");
+            if (searchValue.getShopCatStatus() == 1) {
+                result.append("$or:[{'"+ _KeyPrefix + cartId + ".sellerCats':{$size:0}},{'" + _KeyPrefix + cartId + ".sellerCats':{$in:[null,'']}}],");
             }
 
             // 查询产品上新错误
@@ -208,7 +207,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取 master category
         if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
-            result.append(MongoUtils.splicingValue("common.fields.catId", searchValue.getmCatId()));
+            result.append(MongoUtils.splicingValue("common.catId", searchValue.getmCatId()));
             result.append(",");
         }
 

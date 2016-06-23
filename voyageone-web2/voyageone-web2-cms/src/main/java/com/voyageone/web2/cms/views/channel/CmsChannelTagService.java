@@ -21,6 +21,7 @@ import java.util.Map;
  */
 @Service
 public class CmsChannelTagService extends BaseAppService {
+
     @Autowired
     private TagService tagService;
 
@@ -51,8 +52,9 @@ public class CmsChannelTagService extends BaseAppService {
         String channelId = (String) param.get("channelId");
         //标签类型
         String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
+        Integer cartId = (Integer) param.get("cartId");
         //取得所有的标签类型
-        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(channelId, tagTypeSelectValue);
+        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(channelId, tagTypeSelectValue, cartId);
 
         //返回数据类型
         return convertToTree(categoryList);

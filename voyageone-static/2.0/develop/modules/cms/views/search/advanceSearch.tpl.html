@@ -155,7 +155,7 @@
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
                                                     <!--4 是自由标签-->
-                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag('4'), false)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag({'tagTypeSel':'4','cartId':vm.searchInfo.cartId}), false)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
                                                     </button>
                                                 </div>
@@ -311,7 +311,7 @@
                                                     </div>
                                                     <div>
                                                         <!--2 是活动标签-->
-                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag('2'), true)">
+                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag({'tagTypeSel':'2','cartId':vm.searchInfo.cartId}), true)">
                                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
                                                         </button>
                                                     </div>
@@ -611,7 +611,7 @@
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li ng-if="cartBean.value==27&&cartBean.cartType!=3">
-                                    <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit,cartBean.value)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>
                                 </li>
                                 <!--最终售价 暂时不做-->
                                 <!--<li>-->

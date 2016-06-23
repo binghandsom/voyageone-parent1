@@ -256,8 +256,9 @@
             channel_id = #{channelId,jdbcType=VARCHAR}
         order by tag.id
     </select>
+
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
-    <select id="select_list_by_channel_id_and_tag_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="String">
+    <select id="select_list_by_channel_id_and_tag_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
         select
         tag.id,
         tag.tag_name as tagname,
@@ -277,10 +278,75 @@
         from voyageone_cms2.cms_bt_tag tag
         where
         channel_id = #{channelId}
-        and tag_type = #{tagType}
+        and tag_type = '4'
+        and tag.tag_path_name != ''
         and tag.active=1
         order by tag.id
     </select>
+
+    <!-- Tag信息检索 必须关联cms_bt_promotion（根据ChannelId和tagType，取得对应子TagList）-->
+    <select id="select_list_by_channel_id_and_tag_type2" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
+        select
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid,
+        tag.active,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_promotion promo
+        left join voyageone_cms2.cms_bt_tag tag on tag.id = promo.ref_tag_id
+        where
+        promo.channel_id = #{channelId}
+        <if test="cartId != null">
+            and promo.cart_id = #{cartId}
+        </if>
+        and promo.active=1
+        and tag.tag_path_name != ''
+        and tag.channel_id = #{channelId}
+        and tag_type = '2'
+        order by tag.id
+    </select>
+
+    <!-- promotion Tag信息检索 查询子节点 -->
+    <select id="select_list_by_channel_id_and_parent_tag" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
+        select DISTINCT
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid,
+        tag.active,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+        tag.parent_tag_id in (
+        <foreach collection="tagList" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+        and tag.tag_path_name != ''
+        and tag.channel_id = #{channelId}
+        and tag_type = '2'
+        order by tag.id
+    </select>
+
     <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
     <select id="select_one_by_tag_info" resultMap="TagMap" parameterType="String">
         select

@@ -114,10 +114,10 @@
                 #{dealPrice,jdbcType=DECIMAL},
             </if>
             <if test="appId != null" >
-                #{appId,jdbcType=VARCHAR},
+                #{appId,jdbcType=BIGINT},
             </if>
             <if test="pcId != null" >
-                #{pcId,jdbcType=VARCHAR},
+                #{pcId,jdbcType=BIGINT},
             </if>
             <if test="modified == null" >
                 now(),
@@ -201,10 +201,10 @@
                 `deal_price` = #{dealPrice,jdbcType=DECIMAL},
             </if>
             <if test="appId != null" >
-                `app_id` = #{appId,jdbcType=VARCHAR},
+                `app_id` = #{appId,jdbcType=BIGINT},
             </if>
             <if test="pcId != null" >
-                `pc_id` = #{pcId,jdbcType=VARCHAR},
+                `pc_id` = #{pcId,jdbcType=BIGINT},
             </if>
             <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
@@ -290,10 +290,10 @@
                 and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
             </if>
             <if test="appId != null" >
-                and `app_id` = #{appId,jdbcType=VARCHAR}
+                and `app_id` = #{appId,jdbcType=BIGINT}
             </if>
             <if test="pcId != null" >
-                and `pc_id` = #{pcId,jdbcType=VARCHAR}
+                and `pc_id` = #{pcId,jdbcType=BIGINT}
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
@@ -370,10 +370,10 @@
                 and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
             </if>
             <if test="appId != null" >
-                and `app_id` = #{appId,jdbcType=VARCHAR}
+                and `app_id` = #{appId,jdbcType=BIGINT}
             </if>
             <if test="pcId != null" >
-                and `pc_id` = #{pcId,jdbcType=VARCHAR}
+                and `pc_id` = #{pcId,jdbcType=BIGINT}
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
