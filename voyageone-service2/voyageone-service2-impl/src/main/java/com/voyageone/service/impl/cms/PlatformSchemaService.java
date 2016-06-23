@@ -7,6 +7,7 @@ import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
@@ -96,7 +97,7 @@ public class PlatformSchemaService extends BaseService {
 
         // 删除不想显示的属性
         if (listInvisibleField != null && !listInvisibleField.isEmpty()) {
-            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, invisibleFieldModel.getFieldId(), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
+            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
         }
 
         // 增加属性
@@ -104,7 +105,7 @@ public class PlatformSchemaService extends BaseService {
             listExtendField.forEach(extendFieldModel -> {
                 Field addField = extendFieldModel.getField();
                 FieldUtil.convertFieldIdToDot(addField); // 把field中的【->】替换成【.】
-                addExtendField(mapField, extendFieldModel.getParentFieldId(), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, addField);
+                addExtendField(mapField, StringUtil.replaceToDot(extendFieldModel.getParentFieldId()), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, addField);
             });
         }
 
@@ -112,6 +113,7 @@ public class PlatformSchemaService extends BaseService {
         mapField.forEach((key, value) -> retList.add(value));
 
         FieldUtil.replaceFieldIdDot(retList); // 把field中的【.】替换成【->】
+
         return retList;
     }
 
@@ -152,13 +154,15 @@ public class PlatformSchemaService extends BaseService {
             }
         }
 
+        retMap.forEach((key, value) -> FieldUtil.replaceFieldIdDot(value)); // 把field中的【.】替换成【->】
+
         return retMap;
     }
 
     private void addMappingMap(Map<String, Field> retMap, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, Map<String, Field> mapPlatformField, List<String> listCustomField) throws Exception {
         String separator = CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR;
         for (CmsMtPlatformCategoryInvisibleFieldModel_Field invisibleField : listInvisibleField) {
-            String fieldId = invisibleField.getFieldId();
+            String fieldId = StringUtil.replaceToDot(invisibleField.getFieldId());
             String[] fieldIds = fieldId.split(separator);
             if (listCustomField.contains(fieldIds[fieldIds.length - 1])) {
                 // 不想显示的属性是特殊处理对象,不用显示在Mapping画面,不要加进Map，跳过
@@ -287,7 +291,7 @@ public class PlatformSchemaService extends BaseService {
     public void addExtendField(Map<String, Field> mapField, String fieldId, String separator, Field addField) {
         if (StringUtils.isEmpty(fieldId)) {
             // 要加在根属性下
-            mapField.putIfAbsent(addField.getId(), addField);
+            mapField.putIfAbsent(StringUtil.replaceDot(addField.getId()), addField);
             return;
         }
 
