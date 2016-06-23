@@ -41,14 +41,15 @@ require([
 
             $scope.dirty = true;
 
+            if ($scope.loginForm.$invalid)
+                return;
+
+
+
             if ($scope.username === 'a') {
                 $scope.message = 'aaaaaaa';
                 return;
             }
-
-            if ($scope.loginForm.$invalid)
-                return;
-
             location.href = '/app/app.html';
         };
     });

@@ -1,7 +1,7 @@
 {
   "name": "cms-for-vendor",
   "version": "1.0.0",
-  "description": "VoyageOne Contents? Management System For Vendor",
+  "description": "VoyageOne Management System For Vendor",
   "scripts": {
     "build-dev-pkg": "node node_scripts/npm/packaging-components.js",
     "build-css-pkg": "node node_scripts/npm/npm-build-css-package.js",
