@@ -23,20 +23,26 @@
             <div class="row form-group">
                 <div class="col-lg-10 col-lg-offset-1">
 
-                    <div class="col-lg-10">
+                    <div class="col-lg-9">
                         <div class="input-group">
                             <span class="input-group-addon">折扣</span>
                            <span class="input-group-addon">
 
                                 <input type="radio" value="0" name="priceValueType"  ng-model="model.priceValueType" aria-label="...">
                               </span>
-                            <input type="text" class="form-control"  ng-disabled="model.priceValueType!=0" ng-model="model.discount" aria-label="...">
-
+                            <input type="number" class="form-control"  ng-disabled="model.priceValueType!=0" ng-model="model.discount" aria-label="..." min="0" max="10">
+                            <span class="input-group-addon">折</span>
                         </div>
                     </div>
                 </div>
-
             </div>
+            <div class="row form-group">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="text-warnings" style="padding-left:0px">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;请输入0-10之间的数字,计算公式为 选择的价格 * (输入的值/10)
+                    </div>
+                </div>
+                </div>
             <div class="row form-group">
                 <div class="col-lg-10 col-lg-offset-1">
 
@@ -51,7 +57,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </form>
 

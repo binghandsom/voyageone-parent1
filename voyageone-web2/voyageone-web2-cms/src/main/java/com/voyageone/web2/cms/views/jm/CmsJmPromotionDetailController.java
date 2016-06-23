@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,11 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
-        serviceCmsBtJmPromotionProduct.delete(id);
+        ProductIdListInfo deleteInfo = new ProductIdListInfo();
+        List<Integer> deleteId = new ArrayList<>();
+        deleteId.add(id);
+        deleteInfo.setProductIdList(deleteId);
+        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
         CallResult result = new CallResult();
         return success(result);
     }
