@@ -1,11 +1,11 @@
 /* Add here all your css styles (customizations) */
 
-/* ¡¾ÖØĞ´¡¿³¬Á´½Ó */
+/* ã€é‡å†™ã€‘è¶…é“¾æ¥ */
 a {
 	color: #72c02c;
 }
 
-/* ¡¾ÖØĞ´¡¿µ¼º½³¬Á´½Ó */
+/* ã€é‡å†™ã€‘å¯¼èˆªè¶…é“¾æ¥ */
 .sidebar-nav-v1 ul li:hover a,
 .sidebar-nav-v1 ul li.active a {
 	background-color: #3498db;
@@ -21,14 +21,14 @@ a {
   color: #FFFFFF;
 }
 
-/* ¡¾ÖØĞ´¡¿Ò³Ãæ¼¶±êÌâ */
+/* ã€é‡å†™ã€‘é¡µé¢çº§æ ‡é¢˜ */
 .heading-sm {
 	font-size: 24px;
 	font-weight: 700;
 	border-bottom: 3px solid #72c02c;
 }
 
-/* ±í¸ñ±³¾°É« */
+/* è¡¨æ ¼èƒŒæ™¯è‰² */
 .bg-table-title {
   background-color: #F07027;
   color: #FFFFFF;
