@@ -5,7 +5,7 @@
  * @User:    tony-piao
  * @Version: 0.1.0, 2016-5-5
  */
-angular.module("voyageone.angular.directives").directive("tabInTextarea", function () {
+angular.module("vo.directives").directive("tabInTextarea", function () {
     return {
         restrict: "A",
         link: function (scope, element) {

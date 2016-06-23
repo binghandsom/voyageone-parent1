@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 16/1/11
  */
-angular.module("voyageone.angular.factories").factory("selectRowsFactory", function () {
+angular.module("vo.factories").factory("selectRowsFactory", function () {
     return function (config) {
         var _selectRowsInfo = config ? config : {
             selAllFlag: false,

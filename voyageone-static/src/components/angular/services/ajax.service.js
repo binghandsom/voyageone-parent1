@@ -3,7 +3,7 @@
  * @User:    Jonas
  * @Version: 0.2.1
  */
-angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("ajaxService", AjaxService);
+angular.module("vo.services").service("$ajax", $Ajax).service("ajaxService", AjaxService);
 
 function $Ajax($http, blockUI, $q) {
     this.$http = $http;

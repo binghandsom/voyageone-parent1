@@ -5,7 +5,7 @@
  * @description
  * 根据定义自动生成方法实现. 注意! 依赖 ui-bootstrap
  */
-angular.module("voyageone.angular.factories").factory("pppAutoImpl", function ($q, $modal) {
+angular.module("vo.factories").factory("pppAutoImpl", function ($q, $modal) {
     return function (declares, viewBaseUrl, jsBaseUrl) {
         if (!declares.$$$ || !declares.$$$.impl) declares.$$$ = {
             impl: declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, "")

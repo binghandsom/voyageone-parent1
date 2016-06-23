@@ -3,7 +3,7 @@
  * @User:    Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.factories").factory("interceptorFactory", function () {
+angular.module("vo.factories").factory("interceptorFactory", function () {
     // 未知的系统错误
     var UNKNOWN_CODE = "5";
     // 和 JAVA 同步,系统通知前端自动跳转的特殊代码

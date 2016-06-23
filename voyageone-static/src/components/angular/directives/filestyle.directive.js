@@ -5,7 +5,7 @@
  * @User:    Jonas
  * @Version: 2.0.0
  */
-angular.module("voyageone.angular.directives").directive("fileStyle", function () {
+angular.module("vo.directives").directive("fileStyle", function () {
     return {
         restrict: "A",
         controller: ["$scope", "$element", function ($scope, $element) {

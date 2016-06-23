@@ -4,8 +4,8 @@
  * @User:    Edward
  * @Version: 0.2.0, 2015-12-22
  */
-angular.module("voyageone.angular.directives").directive("voption", function ($templateCache, $compile) {
-    var templateKey_select = "voyageone.angular.directives.optionSelect.tpl.html";
+angular.module("vo.directives").directive("voption", function ($templateCache, $compile) {
+    var templateKey_select = "vo.directives.optionSelect.tpl.html";
     // 显示成select样式
     if (!$templateCache.get(templateKey_select)) {
         $templateCache.put(templateKey_select, '<select class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');

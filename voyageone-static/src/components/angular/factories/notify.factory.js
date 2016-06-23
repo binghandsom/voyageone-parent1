@@ -35,7 +35,7 @@
  * @Date: 2015-3-31 14:39:26
  * @Version: 2.0.0
  */
-angular.module("voyageone.angular.factories").factory("notify", function ($filter) {
+angular.module("vo.factories").factory("notify", function ($filter) {
     /**
      * @ngdoc function
      * @name voNotify

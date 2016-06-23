@@ -3,7 +3,7 @@
  * @User:    Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.services").service("permissionService", PermissionService);
+angular.module("vo.services").service("permissionService", PermissionService);
 
 function PermissionService($rootScope) {
     this.$rootScope = $rootScope;

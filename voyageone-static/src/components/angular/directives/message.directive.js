@@ -28,7 +28,7 @@ var errorTypes = {
  * @User:    Jonas
  * @Version: 1.0.0
  */
-angular.module("voyageone.angular.directives")
+angular.module("vo.directives")
 
     .directive('voMessage', function ($translate) {
         return {

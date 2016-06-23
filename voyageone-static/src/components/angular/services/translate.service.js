@@ -3,7 +3,7 @@
  * @User:    Jonas
  * @Version: 0.2.0
  */
-angular.module("voyageone.angular.services").service("translateService", TranslateService);
+angular.module("vo.services").service("translateService", TranslateService);
 
 function TranslateService($translate) {
     this.$translate = $translate;

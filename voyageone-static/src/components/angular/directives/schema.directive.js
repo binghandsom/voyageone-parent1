@@ -791,7 +791,7 @@
         });
     }
 
-    angular.module('voyageone.angular.directives')
+    angular.module('vo.directives')
 
         .directive('schema', function ($compile, $q) {
 

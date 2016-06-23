@@ -4,7 +4,7 @@
  * @User:    Jonas
  * @Version: 0.2.0, 2015-12-07
  */
-angular.module("voyageone.angular.directives").directive("uiNav", function () {
+angular.module("vo.directives").directive("uiNav", function () {
     return {
         restrict: "AC",
         link: function (scope, el) {

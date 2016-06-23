@@ -2,7 +2,7 @@
  * @User: Edward
  * @Version: 2.0.0, 2015-12-09
  */
-angular.module("voyageone.angular.factories").factory("vpagination", function () {
+angular.module("vo.factories").factory("vpagination", function () {
     /**
      * 创建一个分页服务
      * @param {{ curr: number, size: number, total: number, fetch: function }} config 配置

@@ -7,19 +7,19 @@
 
 // 各级子模块, 子系统可以单独引入
 
-angular.module('voyageone.angular.controllers', []);
+angular.module('vo.controllers', []);
 
-angular.module('voyageone.angular.directives', []);
+angular.module('vo.directives', []);
 
-angular.module('voyageone.angular.factories', []);
+angular.module('vo.factories', []);
 
-angular.module('voyageone.angular.services', []);
+angular.module('vo.services', []);
 
 // 总模块, 供子系统一次性引入
 
-angular.module('voyageone.angular', [
-    'voyageone.angular.controllers',
-    'voyageone.angular.directives',
-    'voyageone.angular.factories',
-    'voyageone.angular.services'
+angular.module('vo.ng', [
+    'vo.controllers',
+    'vo.directives',
+    'vo.factories',
+    'vo.services'
 ]);

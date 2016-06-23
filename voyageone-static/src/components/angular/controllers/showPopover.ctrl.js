@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope) {
+angular.module("vo.controllers").controller("showPopoverCtrl", function ($scope) {
     $scope.showInfo = showInfo;
     function showInfo(values) {
         if (values == undefined || values == '') {
