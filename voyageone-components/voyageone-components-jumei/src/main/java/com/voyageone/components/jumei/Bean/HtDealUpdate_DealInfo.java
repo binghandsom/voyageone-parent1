@@ -7,7 +7,7 @@ public class HtDealUpdate_DealInfo {
     //发货仓库
     Integer shipping_system_id;
 
-    int user_purchase_limit;//            限购数量
+    Integer user_purchase_limit;//            限购数量
 
     String product_long_name;//可选 产品长标题  参数范围: 注：130　用于详情页显示，商品名+功效特点描述，不能出现价格及促销信息
 
@@ -57,11 +57,11 @@ public class HtDealUpdate_DealInfo {
         this.shipping_system_id = shipping_system_id;
     }
 
-    public int getUser_purchase_limit() {
+    public Integer getUser_purchase_limit() {
         return user_purchase_limit;
     }
 
-    public void setUser_purchase_limit(int user_purchase_limit) {
+    public void setUser_purchase_limit(Integer user_purchase_limit) {
         this.user_purchase_limit = user_purchase_limit;
     }
 
