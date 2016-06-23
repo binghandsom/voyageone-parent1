@@ -606,6 +606,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
 //        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
+        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
         dealInfo.setDescription_properties(jmDetailTemplate);
