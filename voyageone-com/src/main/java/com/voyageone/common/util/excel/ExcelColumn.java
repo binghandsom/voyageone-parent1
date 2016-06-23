@@ -1,6 +1,7 @@
 package com.voyageone.common.util.excel;
 
 import com.voyageone.common.util.CamelUtil;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.util.StringUtils;
 
 /**
@@ -16,6 +17,8 @@ public class ExcelColumn<T> {
     int orderIndex;
     FunctionFormatter<Object, T, Integer, Object> formatter;
     double columnWidth;
+    short colorIndex;//HSSFColor.LIGHT_YELLOW.index  颜色索引值
+
     public ExcelColumn()
     {
 
@@ -124,5 +127,11 @@ public class ExcelColumn<T> {
 
     public void setColumnWidth(double columnWidth) {
         this.columnWidth = columnWidth;
+    }
+    public short getColorIndex() {
+        return colorIndex;
+    }
+    public void setColorIndex(short colorIndex) {
+        this.colorIndex = colorIndex;
     }
 }
