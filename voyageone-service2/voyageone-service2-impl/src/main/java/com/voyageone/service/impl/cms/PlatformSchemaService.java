@@ -89,7 +89,7 @@ public class PlatformSchemaService extends BaseService {
      * @return
      */
     private List<Field> getListFieldForProductImage(List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
-        Map mapField = new HashMap<>();
+        Map<String, Field> mapField = new HashMap<>();
         for (Field field : listField){
             mapField.put(field.getId(), field);
         }
@@ -104,7 +104,10 @@ public class PlatformSchemaService extends BaseService {
             listExtendField.forEach(extendFieldModel -> addExtendField(mapField, extendFieldModel.getParentFieldId(), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, extendFieldModel.getField()));
         }
 
-        return listField;
+        List<Field> retList = new ArrayList<>();
+        mapField.forEach((key, value) -> retList.add(value));
+
+        return retList;
     }
 
     /**
@@ -226,6 +229,10 @@ public class PlatformSchemaService extends BaseService {
         }
         if (fieldIds.length == 1) {
             // 最后一层啦
+            if (isNeedDelete) {
+                // map里删除
+                mapField.remove(field.getId());
+            }
             return field;
         } else {
             String newFieldId = fieldIds[1];
@@ -252,8 +259,7 @@ public class PlatformSchemaService extends BaseService {
                 if (findField != null && fieldIds.length == 2) {
                     // 找到了, fieldIds.length == 2表示之后一次递归是最后一层啦
                     if (isNeedDelete) {
-                        // map和list里删除
-                        multiComplexField.getFieldMap().remove(newFieldId);
+                        // list里删除
                         multiComplexField.getFields().remove(findField);
                     }
                 }
