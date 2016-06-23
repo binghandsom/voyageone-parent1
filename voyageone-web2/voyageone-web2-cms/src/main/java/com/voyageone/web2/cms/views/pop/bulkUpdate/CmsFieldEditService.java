@@ -90,10 +90,11 @@ public class CmsFieldEditService extends BaseAppService {
     /**
      * 批量修改属性.
      */
-    public void setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId, CmsSessionBean cmsSession) {
+    public Map<String, Object> setProductFields(Map<String, Object> params, UserSessionBean userInfo, int cartId, CmsSessionBean cmsSession) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
 
+        Map<String, Object> rsMap = new HashMap<>();
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
@@ -104,7 +105,8 @@ public class CmsFieldEditService extends BaseAppService {
         }
         if (productCodes == null || productCodes.isEmpty()) {
             $error("没有code条件 params=" + params.toString());
-            return;
+            rsMap.put("ecd", 1);
+            return rsMap;
         }
 
         String prop_id = prop.get("id").toString();
@@ -141,7 +143,8 @@ public class CmsFieldEditService extends BaseAppService {
             updObj1.put("$set", updObj2);
             WriteResult rs = productService.updateProduct(userInfo.getSelChannelId(), quyObj, updObj1);
             $debug("批量更新结果 " + rs.toString());
-            return;
+            rsMap.put("ecd", 0);
+            return rsMap;
         }
 
         // 获取更新数据
@@ -226,44 +229,31 @@ public class CmsFieldEditService extends BaseAppService {
                 // TODO -- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须改正
                 if (cmsSession.getAttribute("_isNewAdvSearch") != null) {
                     // 这里只需要更新 'platforms.Pxx.status', 'platforms.Pxx.pStatus'
-                    List<CmsBtProductModel_Carts> carts = productModel.getCarts();
-                    CmsBtProductModel_Field prodField = productModel.getCommon().getFields();
-
                     List<String> strList = new ArrayList<>();
+                    List<String> qurStrList = new ArrayList<>();
                     List<Integer> updCartList = new ArrayList<>();
-                    for (Integer cartIdVal : productModel.getCartIdList()) {
-                        // 如果该产品以前就是approved,则不做处理
-                        updCartList.add(cartIdVal);
-                        strList.add("'platforms.P" + cartIdVal + ".status':'" + field[1] + "','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-
-                        if (carts != null && carts.size() > 0) {
-                            for (CmsBtProductModel_Carts cart : carts) {
-                                if (Objects.equals(cartIdVal, cart.getCartId())) {
-                                    cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-                                }
-                            }
+                    if (cartId > 1) {
+                        updCartList.add(cartId);
+                        strList.add("'platforms.P" + cartId + ".status':'" + field[1] + "','platforms.P" + cartId + ".pStatus':'WaitingPublish'");
+                        qurStrList.add("{'platforms.P" + cartId + "':{$exists:true}}");
+                    } else {
+                        for (Integer cartIdVal : productModel.getCartIdList()) {
+                            // 如果该产品以前就是approved,则不做处理
+                            updCartList.add(cartIdVal);
+                            strList.add("'platforms.P" + cartIdVal + ".status':'" + field[1] + "','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
+                            qurStrList.add("{'platforms.P" + cartIdVal + "':{$exists:true}}");
                         }
                     }
-
                     if (strList.isEmpty()) {
                         $debug("产品未更新 code=" + code);
                         continue;
                     }
-                    String updStr = "{$set:{";
-                    updStr += StringUtils.join(strList, ',');
-                    if (carts != null && carts.size() > 0) {
-                        updStr += ",'carts':#";
-                    }
-                    updStr += ",'modified':#,'modifier':#}}";
+
                     JomgoUpdate updObj = new JomgoUpdate();
-                    updObj.setQuery("{'common.fields.code':#}");
+                    updObj.setQuery("{'common.fields.code':#,$and:[" + StringUtils.join(qurStrList, ',') + "]}");
                     updObj.setQueryParameters(code);
-                    updObj.setUpdate(updStr);
-                    if (carts != null && carts.size() > 0) {
-                        updObj.setUpdateParameters(carts, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-                    } else {
-                        updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-                    }
+                    updObj.setUpdate("{$set:{" + StringUtils.join(strList, ',') + ",'modified':#,'modifier':#}}");
+                    updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
 
                     //执行product的pStatus更新及group的publishStatus更新
                     WriteResult rs = cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());
@@ -300,6 +290,8 @@ public class CmsFieldEditService extends BaseAppService {
                 }
             }
         }
+        rsMap.put("ecd", 0);
+        return rsMap;
     }
 
     /**

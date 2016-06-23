@@ -262,6 +262,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                             sxData.getPlatform().setModifier(getTaskName());
                             sxData.getPlatform().setNumIId(jmHashId);
+                            sxData.getPlatform().setPlatformPid(jmProductId);
                             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                             if(jmHashId.endsWith("p0"))
                             {
@@ -329,9 +330,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 jmCart.setpNumIId(originHashId);
                                 saveProductPlatform(channelId, product);
 
-                                sxData.getPlatform().setNumIId(originHashId);
+
                                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                                sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
                                 sxData.getPlatform().setModifier(getTaskName());
+                                sxData.getPlatform().setNumIId(originHashId);
+                                sxData.getPlatform().setPlatformPid(jmProductId);
+
                                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
 
                             }
@@ -524,6 +530,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                         sxData.getPlatform().setModifier(getTaskName());
+
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
                     }
 
@@ -541,8 +548,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
-                    if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                        sxData.setErrorMessage(e.getMessage());
+                    if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
+                        if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                            sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                        }
+                        else
+                        {
+                            sxData.setErrorMessage(e.getMessage());
+                        }
                     }
                     sxProductService.insertBusinessLog(sxData, getTaskName());
                     throw e;
@@ -550,9 +563,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
             else
             {
-                String errorMsg = String.format("取SxDate失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
+                String errorMsg = String.format("取SxData失败![workId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                 $error(errorMsg);
-                new BusinessException(errorMsg);
+                throw new BusinessException(errorMsg);
             }
         }
         catch (ServerErrorException se) {
@@ -564,7 +577,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
-
         }
 
     }
@@ -594,6 +606,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         dealInfo.setSpecial_explain(jmFields.getStringAttribute("specialExplain"));
         dealInfo.setSearch_meta_text_custom(jmFields.getStringAttribute("searchMetaTextCustom"));
 //        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
+        dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
         dealInfo.setDescription_properties(jmDetailTemplate);

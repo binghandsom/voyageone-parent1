@@ -2,15 +2,16 @@ package com.voyageone.web2.cms.views.system.cache;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +37,11 @@ public class CacheManagerController extends CmsController{
     }
 
     private Set<String> cacheKeySet(){
-        return CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
+        try {
+            return CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
+        } catch (Exception ex) {
+            return new HashSet<>();
+        }
     }
 
 }

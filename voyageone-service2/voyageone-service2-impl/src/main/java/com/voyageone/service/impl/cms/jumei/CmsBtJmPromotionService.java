@@ -95,11 +95,11 @@ public class CmsBtJmPromotionService {
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter,String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
-        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getActivityAppId())) {
-            parameter.getModel().setActivityAppId("");
+        if (parameter.getModel().getActivityAppId()==null) {
+            parameter.getModel().setActivityAppId(0L);
         }
-        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getActivityPcId())) {
-            parameter.getModel().setActivityPcId("");
+        if (parameter.getModel().getActivityPcId()==null) {
+            parameter.getModel().setActivityPcId(0L);
         }
         if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getBrand())) {
             parameter.getModel().setBrand("");

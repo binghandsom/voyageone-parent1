@@ -381,7 +381,7 @@ public class JmBtDealImportService extends BaseService {
            // skuMap.setAttribute("priceChgFlg", "");  //价格变更状态（U/D/XU/XD）
             skuMap.setAttribute("jmSpuNo", jmBtSkuModel.getJumeiSpuNo());
             skuMap.setAttribute("jmSkuNo", jmBtSkuModel.getJumeiSkuNo());
-            skuMap.setAttribute("property", "");
+            skuMap.setAttribute("property", "OTHER");
             skuMap.setAttribute("size", jmBtSkuModel.getSize());
             //skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
         }

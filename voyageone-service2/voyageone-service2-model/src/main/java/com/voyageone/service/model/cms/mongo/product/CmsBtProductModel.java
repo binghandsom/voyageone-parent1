@@ -205,6 +205,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         return platforms.get(PLATFORM_CART_PRE + cartId);
     }
     public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
+        cart.setCartId(cartId);
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
@@ -215,6 +216,10 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartType.getId(), cart);
+    }
+
+    public void platformClear(){
+        platforms = new HashMap<>();
     }
 
     public CmsBtProductModel_Sales getSales() {

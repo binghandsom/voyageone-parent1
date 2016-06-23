@@ -39,7 +39,7 @@ define([
             $scope.modelUpdateDealEndTime.isBatch = true;
         };
         $scope.clear = function () {
-            $scope.searchInfo = {};
+            $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
         };
         $scope.search = function () {
             // console.log("searchInfo");

@@ -551,7 +551,7 @@ public class ProductService extends BaseService {
             if (productId != null) {
                 CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),logModel.getClass());
+                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
 //                BeanUtil.copy(productModel, logModel);
                 logModel.set_id(null);
                 cmsBtProductLogDao.insert(logModel);
@@ -1116,10 +1116,10 @@ public class ProductService extends BaseService {
         return newCart;
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
-        return updateProductPlatform(channelId,prodId,platformModel,false);
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier){
+        return updateProductPlatform(channelId,prodId,platformModel,modifier,false);
     }
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, Boolean isModifiedChk){
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk){
 
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if(isModifiedChk){
@@ -1172,10 +1172,25 @@ public class ProductService extends BaseService {
                 sxWorkloadModel.setChannelId(channelId);
                 sxWorkloadModel.setGroupId(group.getGroupId());
                 sxWorkloadModel.setPublishStatus(0);
+                sxWorkloadModel.setModifier(modifier);
                 cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
             }
         }
         return platformModel.getModified();
+    }
+
+    public void updateProductCommon(String channelId, Long prodId, CmsBtProductModel_Common common){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("common", common);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){

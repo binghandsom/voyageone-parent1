@@ -50,15 +50,9 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected BigDecimal dealPrice;
 
-    /**
-     * PC端模块ID
-     */
-    protected String appId;
+    protected Long appId;
 
-    /**
-     * APP端模块ID
-     */
-    protected String pcId;
+    protected Long pcId;
 
     /**
      * 折扣
@@ -171,20 +165,20 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
         this.dealPrice = dealPrice;
     }
 
-    public String getAppId() {
+    public Long getAppId() {
         return appId;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId == null ? null : appId.trim();
+    public void setAppId(Long appId) {
+        this.appId = appId;
     }
 
-    public String getPcId() {
+    public Long getPcId() {
         return pcId;
     }
 
-    public void setPcId(String pcId) {
-        this.pcId = pcId == null ? null : pcId.trim();
+    public void setPcId(Long pcId) {
+        this.pcId = pcId;
     }
 
     public BigDecimal getDiscount() {
