@@ -12,7 +12,8 @@ define([
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
     './tm.component.ctl',
-    './feed.component.ctl'
+    './feed.component.ctl',
+    './master.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -24,6 +25,7 @@ define([
             this.menuService = menuService;
             this.defaultCartId = 0;
             this.platformTypes = null;
+            this.cartData = {};
         }
 
         ProductDetailController.prototype = {
@@ -33,6 +35,10 @@ define([
                 var self = this;
                 self.menuService.getPlatformType().then(function(resp){
                     self.platformTypes = resp;
+                    self.platformTypes.forEach(function(element){
+                        self.cartData["_"+element.value] = element;
+                    });
+                    console.log(self.cartData);
                 });
 
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
