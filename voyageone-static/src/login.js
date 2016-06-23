@@ -32,7 +32,7 @@ require([
   angular.module('voyageone.cms.login', [
     'pascalprecht.translate',
     'blockUI',
-    'voyageone.angular'
+    'vo.ng'
   ]).controller('loginController', function($scope, $ajax) {
     $scope.username = '';
     $scope.password = '';

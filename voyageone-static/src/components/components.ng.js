@@ -1,19 +1,12 @@
 define(function (require) {
-  require('components/angular/angular.modules');
+  require('components/angular/modules');
   require('components/angular/controllers/selectRows.ctrl');
   require('components/angular/controllers/showPopover.ctrl');
-  require('components/angular/directives/dateModelFormat.directive');
   require('components/angular/directives/enterClick.directive');
   require('components/angular/directives/filestyle.directive');
   require('components/angular/directives/goTop.directive');
   require('components/angular/directives/ifNoRows.directive');
-  require('components/angular/directives/image.directive');
   require('components/angular/directives/message.directive');
-  require('components/angular/directives/navigation.directive');
-  require('components/angular/directives/popoverText.directive');
-  require('components/angular/directives/schema.directive');
-  require('components/angular/directives/tabInTextarea.directive');
-  require('components/angular/directives/voption.directive');
   require('components/angular/directives/vpagination.directive');
   require('components/angular/directives/vvalidator.directive');
   require('components/angular/factories/dialogs.factory');
@@ -21,9 +14,9 @@ define(function (require) {
   require('components/angular/factories/notify.factory');
   require('components/angular/factories/pppAutoImpl.factory');
   require('components/angular/factories/selectRows.factory');
-  require('components/angular/factories/vpagination.factory');
   require('components/angular/services/ajax.service');
   require('components/angular/services/cookie.service');
+  require('components/angular/services/formater.service');
   require('components/angular/services/message.service');
   require('components/angular/services/permission.service');
   require('components/angular/services/translate.service');

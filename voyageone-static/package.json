@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "VoyageOne Contents? Management System For Vendor",
   "scripts": {
-    "build-dev-pkg": "node node_scripts/npm/pakcaging-components.js",
+    "build-dev-pkg": "node node_scripts/npm/packaging-components.js",
     "build-css-pkg": "node node_scripts/npm/npm-build-css-package.js",
     "server": "browser-sync start -c bs-config.js",
     "i-server": "npm i http-proxy-middleware browser-sync morgan"
