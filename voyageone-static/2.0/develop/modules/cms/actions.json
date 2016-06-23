@@ -72,7 +72,8 @@
         "changePlatformCategory":"changePlatformCategory",
         "updateProductPlatform":"updateProductPlatform",
         "updateProductPlatformChk":"updateProductPlatformChk",
-        "updateProductFeed":"updateProductFeed"
+        "updateProductFeed":"updateProductFeed",
+        "getCommonProductInfo":"getCommonProductInfo"
       }
     },
     "mapping": {
