@@ -562,7 +562,7 @@ public   void  saveJmProductImportAllInfo(JmProductImportAllInfo info,String cre
 
     private CmsBtJmSkuModel loadSku(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmProductImportSaveInfo saveInfo, CmsBtJmImportSku importSkuModel) {
         CmsBtJmSkuModel oldSkuModel;
-        oldSkuModel = cmsBtJmSkuDaoExt.selectBySkuCodeChannelId(importSkuModel.getSkuCode(), modelCmsBtJmPromotion.getChannelId());
+        oldSkuModel = cmsBtJmSkuDaoExt.selectBySkuCodeChannelId(importSkuModel.getSkuCode(),importSkuModel.getProductCode(), modelCmsBtJmPromotion.getChannelId());
         importSkuModel.setChannelId(modelCmsBtJmPromotion.getChannelId());//渠道
         if (oldSkuModel != null) {
             importSkuModel.setId(oldSkuModel.getId());
