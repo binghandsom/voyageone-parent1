@@ -1,26 +1,23 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.beans.PlatformBean;
-import com.voyageone.common.configs.dao.PlatformDao;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
 import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,14 +63,18 @@ public class PlatformSchemaService extends BaseService {
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
         if (!StringUtils.isEmpty(schemaProduct)) {
             List<Field> listProductField = SchemaReader.readXmlForList(schemaProduct);
-            retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField, invisibleFieldModel.getPropsProduct(), extendFieldModel.getPropsProduct()));
+            retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField,
+                                                                    invisibleFieldModel != null ? invisibleFieldModel.getPropsProduct() : null,
+                                                                    extendFieldModel != null ? extendFieldModel.getPropsProduct() : null));
         }
 
         // 商品
         String schemaItem = platformCatSchemaModel.getPropsItem();
         if (!StringUtils.isEmpty(schemaItem)) {
             List<Field> listItemField = SchemaReader.readXmlForList(schemaItem);
-            retMap.put(KEY_ITEM, getListFieldForProductImage(listItemField, invisibleFieldModel.getPropsItem(), extendFieldModel.getPropsItem()));
+            retMap.put(KEY_ITEM, getListFieldForProductImage(listItemField,
+                                                                invisibleFieldModel != null ? invisibleFieldModel.getPropsItem() : null,
+                                                                extendFieldModel != null ? extendFieldModel.getPropsItem() : null));
         }
 
         return retMap;
@@ -96,16 +97,22 @@ public class PlatformSchemaService extends BaseService {
 
         // 删除不想显示的属性
         if (listInvisibleField != null && !listInvisibleField.isEmpty()) {
-            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, invisibleFieldModel.getFieldId(), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
+            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
         }
 
         // 增加属性
         if (listExtendField != null && !listExtendField.isEmpty()) {
-            listExtendField.forEach(extendFieldModel -> addExtendField(mapField, extendFieldModel.getParentFieldId(), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, extendFieldModel.getField()));
+            listExtendField.forEach(extendFieldModel -> {
+                Field addField = extendFieldModel.getField();
+                FieldUtil.convertFieldIdToDot(addField); // 把field中的【->】替换成【.】
+                addExtendField(mapField, StringUtil.replaceToDot(extendFieldModel.getParentFieldId()), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, addField);
+            });
         }
 
         List<Field> retList = new ArrayList<>();
         mapField.forEach((key, value) -> retList.add(value));
+
+        FieldUtil.replaceFieldIdDot(retList); // 把field中的【.】替换成【->】
 
         return retList;
     }
@@ -147,13 +154,15 @@ public class PlatformSchemaService extends BaseService {
             }
         }
 
+        retMap.forEach((key, value) -> FieldUtil.replaceFieldIdDot(value)); // 把field中的【.】替换成【->】
+
         return retMap;
     }
 
     private void addMappingMap(Map<String, Field> retMap, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, Map<String, Field> mapPlatformField, List<String> listCustomField) throws Exception {
         String separator = CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR;
         for (CmsMtPlatformCategoryInvisibleFieldModel_Field invisibleField : listInvisibleField) {
-            String fieldId = invisibleField.getFieldId();
+            String fieldId = StringUtil.replaceToDot(invisibleField.getFieldId());
             String[] fieldIds = fieldId.split(separator);
             if (listCustomField.contains(fieldIds[fieldIds.length - 1])) {
                 // 不想显示的属性是特殊处理对象,不用显示在Mapping画面,不要加进Map，跳过
@@ -282,7 +291,7 @@ public class PlatformSchemaService extends BaseService {
     public void addExtendField(Map<String, Field> mapField, String fieldId, String separator, Field addField) {
         if (StringUtils.isEmpty(fieldId)) {
             // 要加在根属性下
-            mapField.putIfAbsent(addField.getId(), addField);
+            mapField.putIfAbsent(StringUtil.replaceDot(addField.getId()), addField);
             return;
         }
 
