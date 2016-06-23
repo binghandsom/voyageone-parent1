@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +37,11 @@ public class CacheManagerController extends CmsController{
     }
 
     private Set<String> cacheKeySet(){
-        return CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
+        try {
+            return CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
+        } catch (Exception ex) {
+            return new HashSet<>();
+        }
     }
 
 }
