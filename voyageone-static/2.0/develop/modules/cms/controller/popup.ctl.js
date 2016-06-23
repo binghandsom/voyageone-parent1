@@ -574,14 +574,18 @@ define([
             var params = null;
             if (context && context.isSelAll) {
                 // 全选
-                params = {"productIds": productIds, 'isSelAll': 1};
+                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId};
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
                     });
                 }
-                params = {"productIds": productIds};
+                if (context) {
+                    params = {"productIds": productIds, "cartId": context.cartId};
+                } else {
+                    params = {"productIds": productIds, "cartId": null};
+                }
             }
             return openModel(popActions.bulkUpdate.fieldEdit, params);
         };
