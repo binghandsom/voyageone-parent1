@@ -136,9 +136,9 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
                 "\nTrace Message 2: " + CommonUtil.getExceptionSimpleContent(exception);
 
         if (StringUtils.isEmpty(msg))
-            msg = "maybe in ct exception info (db)";
+            msg = BaseConstants.UNKNOWN_ERROR_MSG;
 
-        return exceptionDeal(msg, "5");
+        return exceptionDeal(msg, BaseConstants.UNKNOWN_ERROR_CODE);
     }
 
     /**
