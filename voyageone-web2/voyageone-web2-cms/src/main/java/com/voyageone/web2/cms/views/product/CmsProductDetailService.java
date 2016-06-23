@@ -572,6 +572,16 @@ public class CmsProductDetailService extends BaseAppService {
         return result;
     }
 
+    public Map<String,Object> updateCommonProductinfo(String channelId, Long prodId, Map<String,Object> commInfo, String modifier){
+
+        List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
+
+        commInfo.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        commInfo.remove("schemaFields");
+        CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
+
+        return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+    }
     /**
      * 获取 feed info model.
      */

@@ -18,6 +18,11 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
 
+    public CmsBtProductModel_Common(){};
+
+    public CmsBtProductModel_Common(Map data){
+        putAll(data);
+    }
     //主类目ID
     public String getCatId() {
         return getAttribute("catId");
@@ -32,6 +37,20 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
     }
     public void setCatPath(String catPath) {
         setAttribute("catPath", catPath);
+    }
+
+    public String getModifier() {
+        return getAttribute("modifier");
+    }
+    public void setModifier(String modifier) {
+        setAttribute("modifier", modifier);
+    }
+
+    public String getModified() {
+        return getAttribute("modified");
+    }
+    public void setModified(String modified) {
+        setAttribute("modified", modified);
     }
 
     public CmsBtProductModel_Field getFields()  {

@@ -521,6 +521,8 @@ public interface CmsUrlConstants {
 
             String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
 
+            String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
+
         }
 
     }

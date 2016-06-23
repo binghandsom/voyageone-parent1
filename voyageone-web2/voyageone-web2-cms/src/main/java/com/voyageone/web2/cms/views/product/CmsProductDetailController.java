@@ -119,4 +119,15 @@ public class CmsProductDetailController extends CmsController {
         return success(productPropsEditService.getMastProductInfo(channelId,prodId));
 
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
+    public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+
+    }
 }
