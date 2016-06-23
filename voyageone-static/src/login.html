@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>LOGIN</title>
-    <link href="login.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="static/css/twitter-bootstrap/3.3.5/css/bootstrap.css">
+    <link rel="stylesheet" href="static/css/twitter-bootstrap/3.3.5/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="static/css/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="static/css/unify/css/app.css">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-<div class="login-logo"><img src="static/img/voyage_one_logo_3.png"/></div>
-<div class="login" ng-controller="loginController">
-    <form class="login-main">
-        <ng-include src="'msg.tpl.html'"></ng-include>
-        <ul>
-            <li>
-                <input ng-model="username" type="text" class="text" placeholder="Username or Email">
-                <span class="small-icon login-user"></span>
-            </li>
-            <li>
-                <input ng-model="password" type="password" placeholder="Password" enter-click="#btn-login">
-                <span class="small-icon login-lock"></span>
-            </li>
-        </ul>
-    </form>
-    <div class="login-submit">
-        <button id="btn-login" ng-click="login()">Login</button>
+<div class="login-box">
+    <div class="logo-box"><img src="static/img/voyage_one_logo_3.png"/></div>
+    <hr>
+    <div ng-controller="loginController">
+        <form name="loginForm" novalidate>
+            <div ng-if="message" ng-bind="message" class="first-hidden alert alert-danger"></div>
+            <div class="input-group" ng-class="{'has-error': dirty && loginForm.username.$invalid}">
+                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                <input name="username" required class="form-control" ng-model="username" type="text" placeholder="Email">
+            </div>
+            <div class="input-group" ng-class="{'has-error': dirty && loginForm.password.$invalid}">
+                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                <input name="password" required class="form-control" ng-model="password" type="password" placeholder="Password" enter-click="#btn-login">
+            </div>
+            <div class="login-btn-box">
+                <button type="button" class="btn btn-u" id="btn-login" ng-click="login()">Login</button>
+            </div>
+        </form>
     </div>
 </div>
-<script type="text/ng-template" id="msg.tpl.html">
-    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
-</script>
 <script src="libs/require.js/2.2.0/require.js" data-main="login"></script>
 </body>
 </html>

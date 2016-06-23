@@ -4,6 +4,7 @@ define(function (require) {
   require('components/angular/controllers/showPopover.ctrl');
   require('components/angular/directives/enterClick.directive');
   require('components/angular/directives/filestyle.directive');
+  require('components/angular/directives/first-hidden.directive');
   require('components/angular/directives/goTop.directive');
   require('components/angular/directives/ifNoRows.directive');
   require('components/angular/directives/message.directive');
