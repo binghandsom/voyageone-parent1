@@ -2,8 +2,10 @@ package com.voyageone.common.util.excel;
 
 import com.voyageone.common.util.DateTimeUtil;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.SheetUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,11 +80,11 @@ public class ExportFileExcelUtil {
             int sheetIndex = 0;
             for (List<T> page : pageList) {
                 HSSFSheet sheet = wwb.createSheet(info.getSheet() + sheetIndex++);//sheetName, i
-                fillSheet(sheet, page, info);
+                fillSheet(sheet, page, info,wwb);
             }
         } else {
             HSSFSheet sheet = wwb.createSheet(info.getSheet());//sheetName, i
-            fillSheet(sheet, info.getDataSource(), info);
+            fillSheet(sheet, info.getDataSource(), info,wwb);
         }
     }
 
@@ -119,7 +121,7 @@ public class ExportFileExcelUtil {
      * @param list  数据源
      * @param info  中英文字段对应关系的Map
      */
-    private static <T> void fillSheet(HSSFSheet sheet, List<T> list, ExportExcelInfo<T> info) throws Exception {
+    private static <T> void fillSheet(HSSFSheet sheet, List<T> list, ExportExcelInfo<T> info,HSSFWorkbook wwb) throws Exception {
         List<ExcelColumn<T>> listColumn = info.getListColumn();
         int rowNo = 0;
         HSSFRow hssfRow = sheet.createRow(rowNo++);
@@ -127,16 +129,28 @@ public class ExportFileExcelUtil {
         for (int i = 0; i < listColumn.size(); i++) {
             HSSFCell xh = hssfRow.createCell(i);
             xh.setCellValue(listColumn.get(i).getText());
+            if(listColumn.get(i).colorIndex>0) {
+                HSSFCellStyle style = wwb.createCellStyle();
+                style.setFillForegroundColor(listColumn.get(i).getColorIndex());
+                style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                xh.setCellStyle(style);//再将想要设置背景色的单元格
+            }
             //xh.setCellStyle();
             //HSSFCellStyle cellStyle =sheet.cre.createCellStyle();
          // cellStyle.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);//  设置背景色的代码
-           // cell.setStyle(cellStyle);//再将想要设置背景色的单元格
+
         }
         if (info.isDisplayColumnName()) {
             hssfRow = sheet.createRow(rowNo++);
             for (int i = 0; i < listColumn.size(); i++) {
                 HSSFCell xh = hssfRow.createCell(i);
                 xh.setCellValue(listColumn.get(i).getCamelColumnName());
+                if(listColumn.get(i).colorIndex>0) {
+                    HSSFCellStyle style = wwb.createCellStyle();
+                    style.setFillForegroundColor(listColumn.get(i).getColorIndex());//short colorIndex= IndexedColors.GREY_25_PERCENT.getIndex();
+                    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    xh.setCellStyle(style);//再将想要设置背景色的单元格
+                }
             }
         }
         if (list != null) {

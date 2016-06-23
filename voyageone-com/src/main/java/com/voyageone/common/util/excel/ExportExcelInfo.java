@@ -69,6 +69,21 @@ public class ExportExcelInfo<TRow> {
         this.getListColumn().add(column);
         return column;
     }
+    public ExcelColumn<TRow> addExcelColumn(String text, String columnName,String tableName,short colorIndex) {
+        ExcelColumn<TRow> column = new ExcelColumn<TRow>();
+        column.setText(text);
+        column.setColumnName(columnName);
+        column.setColumnType(EnumExcelColumnType.ColumnType_String);
+        column.setTableName(tableName);
+        column.setColorIndex(colorIndex);
+        this.getListColumn().add(column);
+        return column;
+    }
+    public ExcelColumn addExcelColumn(String text, String columnName, EnumExcelColumnType columnType) {
+        ExcelColumn<TRow> column = addExcelColumn(text, columnName);
+        column.setColumnType(columnType);
+        return column;
+    }
     public ExcelColumn<TRow> addExcelColumn(String text, String columnName,String tableName) {
         ExcelColumn<TRow> column = new ExcelColumn<TRow>();
         column.setText(text);
@@ -76,11 +91,6 @@ public class ExportExcelInfo<TRow> {
         column.setColumnType(EnumExcelColumnType.ColumnType_String);
         column.setTableName(tableName);
         this.getListColumn().add(column);
-        return column;
-    }
-    public ExcelColumn addExcelColumn(String text, String columnName, EnumExcelColumnType columnType) {
-        ExcelColumn<TRow> column = addExcelColumn(text, columnName);
-        column.setColumnType(columnType);
         return column;
     }
     public ExcelColumn<TRow> addExcelColumn(String text, String columnName, FunctionFormatter<Object, TRow, Integer, Object> formatter) {
