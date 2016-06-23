@@ -1167,16 +1167,19 @@ public class ProductService extends BaseService {
                 bulkList.add(model);
                 cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$addToSet",true);
             }
-            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
-            if(group != null){
-                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
-                sxWorkloadModel.setCartId(platformModel.getCartId());
-                sxWorkloadModel.setChannelId(channelId);
-                sxWorkloadModel.setGroupId(group.getGroupId());
-                sxWorkloadModel.setPublishStatus(0);
-                sxWorkloadModel.setModifier(modifier);
-                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
-            }
+
+
+            insertSxWorkLoad(channelId,new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())),new ArrayList<Integer>(Arrays.asList(platformModel.getCartId())),modifier);
+//            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
+//            if(group != null){
+//                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
+//                sxWorkloadModel.setCartId(platformModel.getCartId());
+//                sxWorkloadModel.setChannelId(channelId);
+//                sxWorkloadModel.setGroupId(group.getGroupId());
+//                sxWorkloadModel.setPublishStatus(0);
+//                sxWorkloadModel.setModifier(modifier);
+//                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
+//            }
         }
         return platformModel.getModified();
     }

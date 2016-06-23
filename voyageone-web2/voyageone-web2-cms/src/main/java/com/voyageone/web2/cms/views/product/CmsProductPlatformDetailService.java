@@ -16,6 +16,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
@@ -49,6 +50,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
 
+    @Autowired
+    PlatformSchemaService platformSchemaService;
+
     /**
      * 获取产品平台信息
      *
@@ -79,18 +83,25 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         }
 
+        platformCart.put("schemaFields", "");
         if (!StringUtil.isEmpty(platformCart.getpCatId())) {
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+
+            List<Field> itemFields;
+            List<Field> productFields;
+            Map<String, List<Field>> fields = null;
             // JM的场合schema就一条
             if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
+                fields = platformSchemaService.getFieldForProductImage("1", cartId);
             } else {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
+                fields = platformSchemaService.getFieldForProductImage(platformCart.getpCatId(), cartId);
             }
-            List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
             BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            if (fieldsValue != null) {
-                FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
+            if (fieldsValue != null && fields != null && fields.get(PlatformSchemaService.KEY_ITEM) != null) {
+                FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_ITEM), fieldsValue);
+            }
+            if (fieldsValue != null && fields != null && fields.get(PlatformSchemaService.KEY_PRODUCT) != null) {
+                FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_PRODUCT), fieldsValue);
             }
             platformCart.put("schemaFields", fields);
         }
