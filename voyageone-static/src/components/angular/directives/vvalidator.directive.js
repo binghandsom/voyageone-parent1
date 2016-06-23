@@ -4,80 +4,57 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/25
  */
-angular.module("vo.directives").directive("ngCharMaxlength", function () {
+
+function vv_getByteLength(value) {
+    var byteLen = 0, len = value.length;
+    if (value) {
+        for (var i = 0; i < len; i++) {
+            if (value.charCodeAt(i) > 255) {
+                byteLen += 2;
+            } else {
+                byteLen++;
+            }
+        }
+        return byteLen;
+    } else {
+        return 0;
+    }
+}
+
+angular.module("vo.directives").directive("charMaxlength", function () {
     return {
         restrict: "A",
         require: "?ngModel",
         link: function (scope, elm, attr, ctrl) {
             if (!ctrl) return;
             var maxlength = -1;
-            attr.$observe("ngCharMaxlength", function (value) {
+            attr.$observe("charMaxlength", function (value) {
                 var intVal = parseInt(value);
                 maxlength = isNaN(intVal) ? -1 : intVal;
                 ctrl.$validate();
             });
             ctrl.$validators.maxlength = function (modelValue, viewValue) {
-                return maxlength < 0 || ctrl.$isEmpty(viewValue) || getByteLength(viewValue) <= maxlength;
+                return maxlength < 0 || ctrl.$isEmpty(viewValue) || vv_getByteLength(viewValue) <= maxlength;
             };
         }
     };
-    /**
-     * 取得字段的字节长度.
-     * @param value
-     * @returns {number}
-     */
-    function getByteLength(value) {
-        var byteLen = 0, len = value.length;
-        if (value) {
-            for (var i = 0; i < len; i++) {
-                if (value.charCodeAt(i) > 255) {
-                    byteLen += 2;
-                } else {
-                    byteLen++;
-                }
-            }
-            return byteLen;
-        } else {
-            return 0;
-        }
-    }
-}).directive("ngCharMinlength", function () {
+}).directive("charMinlength", function () {
     return {
         restrict: "A",
         require: "?ngModel",
         link: function (scope, elm, attr, ctrl) {
             if (!ctrl) return;
             var minlength = -1;
-            attr.$observe("ngCharMinlength", function (value) {
+            attr.$observe("charMinlength", function (value) {
                 var intVal = parseInt(value);
                 minlength = isNaN(intVal) ? -1 : intVal;
                 ctrl.$validate();
             });
             ctrl.$validators.minlength = function (modelValue, viewValue) {
-                return minlength < 0 || ctrl.$isEmpty(viewValue) || getByteLength(viewValue) >= minlength;
+                return minlength < 0 || ctrl.$isEmpty(viewValue) || vv_getByteLength(viewValue) >= minlength;
             };
         }
     };
-    /**
-     * 取得字段的字节长度.
-     * @param value
-     * @returns {number}
-     */
-    function getByteLength(value) {
-        var byteLen = 0, len = value.length;
-        if (value) {
-            for (var i = 0; i < len; i++) {
-                if (value.charCodeAt(i) > 255) {
-                    byteLen += 2;
-                } else {
-                    byteLen++;
-                }
-            }
-            return byteLen;
-        } else {
-            return 0;
-        }
-    }
 }).directive("ngMaxvalue", function () {
     return {
         restrict: "A",
