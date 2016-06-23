@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,alert) {
+    cms.directive("masterSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,alert,$q) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -39,7 +39,7 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-                    productDetailService.getProductPlatform({cartId:scope.cartInfo.value,prodId:scope.productId}).then(function(resp){
+                    productDetailService.getCommonProductInfo({cartId:scope.cartInfo.value,prodId:scope.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
 
@@ -82,14 +82,17 @@ define([
                 function jdCategoryMapping(popupNewCategory) {
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
-                            if (!res.data || !res.data.length) {
-                                alert("没数据");
-                                return null;
-                            }
-                            return popupNewCategory({
-                                from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
-                                categories: res.data,
-                                plateSchema:true
+                            return $q(function(resolve, reject) {
+                                    if (!res.data || !res.data.length) {
+                                        alert("没数据");
+                                        reject("没数据");
+                                    } else {
+                                        resolve(popupNewCategory({
+                                            from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
+                                            categories: res.data,
+                                            plateSchema:true
+                                        }));
+                                    }
                             });
                         }).then(function (context) {
                             if(scope.vm.platform != null){

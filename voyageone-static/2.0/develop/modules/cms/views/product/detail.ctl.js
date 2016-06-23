@@ -38,7 +38,6 @@ define([
                     self.platformTypes.forEach(function(element){
                         self.cartData["_"+element.value] = element;
                     });
-                    console.log(self.cartData);
                 });
 
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
