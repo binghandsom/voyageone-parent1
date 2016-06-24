@@ -19,4 +19,9 @@ module.exports = {
             return proxyMiddleware(req, res, next);
         }
     ]
+ /*   files: [
+        'develop/static/!**!/!*.css',
+        'develop/modules/!**!/!*.{html, js, css}',
+        'develop/components/!**!/!*.js'
+    ],*/
 };

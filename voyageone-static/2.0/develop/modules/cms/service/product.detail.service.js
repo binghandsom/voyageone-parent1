@@ -25,6 +25,7 @@ define([
 		this.updateProductPlatform = updateProductPlatform;
 		this.updateProductFeed = updateProductFeed;
 		this.getCommonProductInfo = getCommonProductInfo;
+		this.updateCommonProductInfo = updateCommonProductInfo;
 
 		/**
 		 * 获取页面产品信息
@@ -282,6 +283,23 @@ define([
 
 			return defer.promise;
 		}
+
+		/**
+		 * master保存操作
+		 * @param { prodId:"",productComm:""} 产品id，productComm(产品共通属性)
+		 * @returns
+		 * */
+		function updateCommonProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.updateCommonProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
 	}
 
 

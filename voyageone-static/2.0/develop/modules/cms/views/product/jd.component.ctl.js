@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,alert) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -78,14 +78,17 @@ define([
                 function jdCategoryMapping(popupNewCategory) {
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
-                            if (!res.data || !res.data.length) {
-                                alert("没数据");
-                                return null;
-                            }
-                            return popupNewCategory({
-                                from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
-                                categories: res.data,
-                                plateSchema:true
+                            return $q(function(resolve, reject) {
+                                if (!res.data || !res.data.length) {
+                                    notify.danger("数据还未准备完毕");
+                                    reject("数据还未准备完毕");
+                                } else {
+                                    resolve(popupNewCategory({
+                                        from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
+                                        categories: res.data,
+                                        plateSchema:true
+                                    }));
+                                }
                             });
                         }).then(function (context) {
                             if(scope.vm.platform != null){

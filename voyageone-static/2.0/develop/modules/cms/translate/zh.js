@@ -637,6 +637,7 @@ define(function () {
         "TXT_HS_CODE_STATUS": "税号状态",
         "TXT_MATERIAL": "材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT": "税号/品名/单位",
+        "TXT_RULE_OF_PRE":"优先规则",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",
