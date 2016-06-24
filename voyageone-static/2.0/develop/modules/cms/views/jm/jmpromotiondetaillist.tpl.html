@@ -97,9 +97,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">品牌</label>
-
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="searchInfo.brandName">
+                                        <select search-contains="true" chosen class="form-control" ng-model="searchInfo.brand"
+                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -178,7 +180,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">产品变更标签</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control">
+                                        <select class="form-control" ng-model="searchInfo.selectedChanged">
                                             <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                                             <option value="">有变更</option>
                                             <option value="">无变更</option>

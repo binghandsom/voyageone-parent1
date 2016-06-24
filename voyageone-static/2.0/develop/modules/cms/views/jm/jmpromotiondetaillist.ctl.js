@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService) {
+    function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService, $feedSearchService) {
 
         //($scope);
 
@@ -33,6 +33,10 @@ define([
             jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.tagList = res.data;
             });
+            $feedSearchService.init()
+                .then(function (res) {
+                    $scope.vm.masterData = res.data;
+                });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
@@ -40,6 +44,8 @@ define([
         };
         $scope.clear = function () {
             $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
+            $scope.searchInfo.brand = null;
+            $scope.searchInfo.selectedChanged = null;
         };
         $scope.search = function () {
             // console.log("searchInfo");
@@ -482,6 +488,6 @@ define([
         }
     }
 
-    detailController.$inject = ['$scope', 'popups', 'jmPromotionService', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate', 'confirm', 'cRoutes', 'selectRowsFactory', 'platformMappingService'];
+    detailController.$inject = ['$scope', 'popups', 'jmPromotionService', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate', 'confirm', 'cRoutes', 'selectRowsFactory', 'platformMappingService', '$feedSearchService'];
     return detailController;
 });
