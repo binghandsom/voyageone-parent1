@@ -256,23 +256,29 @@ public class UploadToUSJoiService extends BaseTaskService {
                             newPlatform.setCartId(cart);
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform,getTaskName());
                         } else {
-                            for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
-                                boolean updateFlg = false;
-                                for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
-                                    if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
-                                        oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
-                                        oldSku.put("priceRetail", newSku.get("priceRetail"));
-                                        updateFlg = true;
-                                        break;
+                            if(platformCart.getSkus() == null){
+                                platformCart.setSkus(newPlatform.getSkus());
+                            }else{
+                                for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
+                                    boolean updateFlg = false;
+                                    if(platformCart.getSkus() != null) {
+                                        for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
+                                            if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
+                                                oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
+                                                oldSku.put("priceRetail", newSku.get("priceRetail"));
+                                                updateFlg = true;
+                                                break;
+                                            }
+                                        }
                                     }
+                                    if(!updateFlg){
+                                        platformCart.getSkus().add(newSku);
+                                    }
+                                    platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
+                                    platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
+                                    platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
+                                    platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
                                 }
-                                if(!updateFlg){
-                                    platformCart.getSkus().add(newSku);
-                                }
-                                platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
-                                platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
-                                platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
-                                platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
                             }
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), platformCart,getTaskName());
                         }
