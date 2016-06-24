@@ -89,12 +89,12 @@
                                                 <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
                                                 <div class="col-sm-8 form-inline" style="padding-left:0px">
                                                     <div class="col-sm-5">
-                                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+                                                        <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
                                                                 ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                                    <div class="col-sm-5"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -278,7 +278,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
+                                                <input type="text" class="form-control" style="padding:0px" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
@@ -294,8 +294,8 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7" style="min-height: 40px; max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2;">
-                                                <label ng-show="!vm.searchInfo.shopCatStatus" class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
+                                            <div class="col-sm-7" style="min-height: 42px; max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2;margin:8px 0px 0px 4px">
+                                                <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
@@ -317,7 +317,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7" style=" min-height: 40px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;">
+                                            <div class="col-sm-7" style="min-height: 42px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm._promotionTags" style="display: inline-block;">{{promotionTag.tagPathName}}</label>
                                             </div>
                                         </div>
