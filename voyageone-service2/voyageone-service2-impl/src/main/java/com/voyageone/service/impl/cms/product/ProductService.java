@@ -1153,7 +1153,7 @@ public class ProductService extends BaseService {
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
         bulkList.add(model);
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         if(CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())){
             if(oldProduct.getCarts().stream().filter(cart->cart.getCartId() == platformModel.getCartId()).collect(Collectors.toList()).size() == 0)
@@ -1215,9 +1215,9 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         Map<String,Object> result = new HashMap<>();
-        result.put("modified",common.getModified());
-        result.put("translateStatus",common.getFields().getTranslateStatus());
-        result.put("hsCodeStatus",common.getFields().getHsCodeStatus());
+        result.put("modified", common.getModified());
+        result.put("translateStatus", common.getFields().getTranslateStatus());
+        result.put("hsCodeStatus", common.getFields().getHsCodeStatus());
         return  result;
     }
 

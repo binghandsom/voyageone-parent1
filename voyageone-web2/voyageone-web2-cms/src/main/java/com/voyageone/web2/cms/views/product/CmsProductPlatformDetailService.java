@@ -235,8 +235,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private List<Field> buildMasterFields(Map<String, Object> masterFieldsList) {
 
         List<Map<String, Object>> item = new ArrayList<>();
-        item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_ITEM));
-        item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT));
+        if(masterFieldsList.get(PlatformSchemaService.KEY_ITEM) != null) {
+            item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_ITEM));
+        }
+        if(masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT) != null){
+            item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT));
+        }
         List<Field> masterFields = SchemaJsonReader.readJsonForList(item);
 
         // setComplexValue

@@ -585,9 +585,9 @@ public class CmsProductDetailService extends BaseAppService {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
 
-        commInfo.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
+        commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
