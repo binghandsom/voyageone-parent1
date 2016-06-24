@@ -140,7 +140,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
         for (String channel : channels) {
-            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartId(LIMIT, channel, CART_ID);
+            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(LIMIT, channel, CART_ID);
 
             if (groupList.size() > LIMIT) {
                 break;
