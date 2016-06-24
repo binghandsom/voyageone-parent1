@@ -147,7 +147,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
-            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
+            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size()+listSkuErrorMap.size());
         }
         if (listProductImport.size() == 0) {
             modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
@@ -161,8 +161,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
        //product
         List<ProductImportBean> listErroProduct = new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
-                product.setErrorMsg("活动日期有重叠");//取一个活动id
+            CmsBtJmPromotionProductModel modelPromotionProduct= daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            if (modelPromotionProduct!=null) { //活动日期重叠
+                product.setErrorMsg("活动日期有重叠,JMPromotionId:"+modelPromotionProduct.getCmsBtJmPromotionId()+"存在该商品");//取一个活动id
                 listErroProduct.add(product);
             } else if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
