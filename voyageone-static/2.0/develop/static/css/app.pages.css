@@ -270,13 +270,13 @@ s-field textarea.s-html {
     border-radius: 2.5px;
     box-shadow: 1px 1px 2px #888;
 }
-
+/*欢迎页面首页数据展示*/
 .stat-boxes {
     display: inline-block;
     list-style: none outside none;
     margin: 4px 0 0 -48px;
     text-align: center;
-    min-height: 144px;
+    min-height: 216px;
 }
 
 @media screen and (max-width: 1441px) {
@@ -610,4 +610,55 @@ s-field textarea.s-html {
     -webkit-border-radius: 2px 0 2px 2px;
     -moz-border-radius: 2px 0 2px 2px;
     border-radius: 2px 0 2px 2px;
+}
+
+.data-display-boxes {
+    display: inline-block;
+    list-style: none outside none;
+    margin: 0 0 0 -48px;
+    text-align: center;
+    min-height: 144px;
+}
+
+@media screen and (max-width: 1441px) {
+    .data-display-boxes {
+        min-height: 140px;
+    }
+}
+
+.data-display-boxes li {
+    background-color: #F6F6F6;
+    background-image: -webkit-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -moz-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -ms-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -o-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    border: 1px solid #d5d5d5;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 18px;
+    margin: 0 4px 4px;
+}
+
+.data-display-boxes .data {
+    font-size: 12px;
+    padding: 4px 0 4px 0;
+    text-align: center;
+    width: 120px;
+    color: #666666;
+    text-shadow: 0 1px 0 #ffffff;
+    float: left;
+}
+@media screen and (min-width: 1441px) {
+    .data-display-boxes .data {
+        width: 163px;
+    }
+}
+
+.data-display-boxes .data strong {
+    font-size: 26px;
+    margin-bottom: 3px;
+    margin-top: 6px;
+    display: block;
 }
