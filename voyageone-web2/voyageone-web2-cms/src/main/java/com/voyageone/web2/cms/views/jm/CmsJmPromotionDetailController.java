@@ -123,12 +123,12 @@ public class CmsJmPromotionDetailController extends CmsController {
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
-    public int updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
+    public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
         int result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        return result;
+        return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)
@@ -321,8 +321,16 @@ public class CmsJmPromotionDetailController extends CmsController {
     //删除全部product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DeleteAllProduct)
     public AjaxResponse deleteAllProduct(@RequestBody int promotionId) {
-        service3.deleteAllProduct(promotionId);
         CallResult result = new CallResult();
+        if(service3.existsCopyDealByPromotionId(promotionId))
+        {
+            result.setResult(false);
+            result.setMsg("该专场内存在商品已完成上传，禁止删除!");
+        }
+        else {
+            service3.deleteAllProduct(promotionId);
+        }
+
         return success(result);
     }
 

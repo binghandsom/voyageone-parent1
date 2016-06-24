@@ -409,7 +409,7 @@ define([
                         alert($translate.instant('TXT_SUCCESS'));
                     }
                     else {
-                        alert($translate.instant('TXT_FAIL'));
+                        alert(res.data.msg);
                     }
                 }, function (res) {
                     alert($translate.instant('TXT_FAIL'));

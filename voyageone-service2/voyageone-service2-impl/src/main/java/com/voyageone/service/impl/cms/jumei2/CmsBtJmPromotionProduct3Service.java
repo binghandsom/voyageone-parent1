@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +143,12 @@ public class CmsBtJmPromotionProduct3Service {
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(promotionId);
         daoExt.deleteAllProduct(promotionId);
+    }
+    public  boolean existsCopyDealByPromotionId(int promotionId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("cmsBtJmPromotionId", promotionId);
+        map.put("synchStatus", 2);
+        return dao.selectOne(map) != null;
     }
 
     public ProductViewBean getProductView(int promotionProductId) {

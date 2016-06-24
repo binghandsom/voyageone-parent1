@@ -109,12 +109,12 @@ public class CmsBtJmPromotionProductService {
         return daoExt.jmNewByProductIdListInfo(parameter);
     }
 
-    //所有未上心商品上新
+    //所有上新
     public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
         daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
-        return daoExt.updateDealEndTimeAll(parameter);
+        return daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
     }
 
     //部分商品上新
