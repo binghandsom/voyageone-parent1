@@ -39,6 +39,8 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int selectCountByWhere(Map<String, Object> ma);//add
 
+    CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+
     //add  不包含本次活动
     Boolean existsCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
