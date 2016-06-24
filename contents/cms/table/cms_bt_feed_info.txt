@@ -1,0 +1,41 @@
+* _id
+* created
+* creater
+* modified
+* modifier
+* channelId
+* catId
+* category
+* code
+* name
+* model
+* color
+* origin
+* sizeType
+* productType
+* brand
+* weight
+* qty
+* clientProductURL -> feed的商品官网
+* shortDescription
+* longDescription
+* updFlg     -> (用于feed->master的导入)0:等待导入,1:导入成功,2:导入失败,3:不导入,9:新品
+* updMessage -> (用于feed->master的导入)如果导入失败,写明原因
+* importFlg     -> (用于feed导入)1:导入成功,2:导入失败
+* importMessage -> (用于feed导入)如果导入失败,写明原因
+* image[]
+* skus
+ * sku
+ * size
+ * barcode
+ * clientSku
+ * priceCurrent    -> 中国指导价
+ * priceMsrp       -> 中国建议零售价
+ * priceNet           -> 客户成本价
+ * priceClientRetail  -> 客户指导价
+ * priceClientMsrp    -> 客户建议零售价
+ * iamge -> 用于产品按sku拆分
+* attribute[]
+ * 按feed的字段名字定义数组名称
+   eg:MSRP[0] -> 3355.0
+* fullAttribute ->删除
