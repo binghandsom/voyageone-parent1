@@ -276,13 +276,21 @@
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
         JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
-        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price
+        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price,a.update_state=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
+    <update id="updateAvgPriceByPromotionProductId">
+        UPDATE cms_bt_jm_promotion_product  AS a
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount FROM `cms_bt_jm_promotion_sku`
+        WHERE  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId}) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
+        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        WHERE    a.id =#{cmsBtJmPromotionProductId}
+    </update>
+
     <update id="batchSynchPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
         WHERE    id in

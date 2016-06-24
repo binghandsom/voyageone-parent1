@@ -39,10 +39,10 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int selectCountByWhere(Map<String, Object> ma);//add
 
-    CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     //add  不包含本次活动
-    Boolean existsCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    Boolean existsCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
@@ -63,7 +63,6 @@ public interface CmsBtJmPromotionProductDaoExt {
     int deleteAllProduct(int promotionId);
 
     List<CmsBtJmPromotionProductModel> selectJMCopyList(int promotionId);
-
     /**
      * 获取jm_hash_id
      *
@@ -74,5 +73,6 @@ public interface CmsBtJmPromotionProductDaoExt {
     List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode);
     //是否存在在销售的商品
     CmsBtJmPromotionProductModel getOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
     //jm2 end
 }

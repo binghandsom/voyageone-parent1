@@ -209,6 +209,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         } else {
             daoCmsBtJmPromotionProduct.update(info.productModel);
         }
+        daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.productModel.getId());//求价格 折扣 平均值
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.skuList) {
             sku.setCmsBtJmPromotionProductId(info.productModel.getId());
@@ -235,27 +236,34 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setId(0);
             saveInfo.productModel.setCreater("system");
             saveInfo.productModel.setCreated(new Date());
+            saveInfo.productModel.setJmHashId("");
+            saveInfo.productModel.setErrorMsg("");
+            saveInfo.productModel.setPriceStatus(0);
+            saveInfo.productModel.setDealPrice(new BigDecimal(0));
+            saveInfo.productModel.setMarketPrice(new BigDecimal(0));
+            saveInfo.productModel.setDiscount(new BigDecimal(0));
+            saveInfo.productModel.setSkuCount(0);
+            saveInfo.productModel.setQuantity(0);
+            saveInfo.productModel.setDealEndTimeStatus(0);
+            saveInfo.productModel.setActivityStart(model.getActivityStart());
+            saveInfo.productModel.setActivityEnd(model.getActivityEnd());
+            saveInfo.productModel.setProductCode(product.getProductCode());
+            saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
+            saveInfo.productModel.setChannelId(model.getChannelId());
+            saveInfo.productModel.setSynchStatus(0);
         }
-        saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
-        saveInfo.productModel.setProductCode(product.getProductCode());
         saveInfo.productModel.setAppId(product.getAppId());
         saveInfo.productModel.setPcId(product.getPcId());
-        saveInfo.productModel.setLimit(product.getLimit());
-        saveInfo.productModel.setChannelId(model.getChannelId());
-        saveInfo.productModel.setActivityStart(model.getActivityStart());
-        saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-        saveInfo.productModel.setJmHashId("");
+        if(saveInfo.productModel.getSynchStatus()==2)
+        {
+            if(product.getLimit()!=saveInfo.productModel.getLimit()) {
+                saveInfo.productModel.setLimit(product.getLimit());
+                saveInfo.productModel.setUpdateStatus(1);//已经变更
+            }
+        }
         saveInfo.productModel.setPromotionTag(product.getPromotionTag());
-        saveInfo.productModel.setErrorMsg("");
-        saveInfo.productModel.setPriceStatus(0);
-        saveInfo.productModel.setDealPrice(new BigDecimal(0));
-        saveInfo.productModel.setMarketPrice(new BigDecimal(0));
-        saveInfo.productModel.setDiscount(new BigDecimal(0));
-        saveInfo.productModel.setSkuCount(0);
-        saveInfo.productModel.setQuantity(0);
-        saveInfo.productModel.setDealEndTimeStatus(0);
         saveInfo.productModel.setModifier("system");
-
+        saveInfo.productModel.setModified(new Date());
         if (saveInfo.productModel.getPromotionTag() == null) {
             saveInfo.productModel.setPromotionTag("");
         }
@@ -272,7 +280,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setDiscount(saveInfo.skuList.get(0).getDiscount());//折扣
             saveInfo.productModel.setSkuCount(saveInfo.skuList.size());
         }
-
         return saveInfo;
     }
 
@@ -307,22 +314,35 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
             if (skuModel == null) {
                 skuModel = new CmsBtJmPromotionSkuModel();
+                skuModel.setSynchStatus(0);
+                skuModel.setUpdateState(0);
+                skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
+                skuModel.setChannelId(saveInfo.productModel.getChannelId());
+                skuModel.setSkuCode(skuImportBean.getSkuCode());
+                skuModel.setCreated(new Date());
+                skuModel.setCreater("system");
+                skuModel.setProductCode(skuImportBean.getProductCode());
+                skuModel.setErrorMsg("");
+                if (saveInfo.productModel.getSynchStatus() == 2) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更     新增了一个sku
+                }
             }
-            skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
+            if (saveInfo.productModel.getSynchStatus() == 2) {
+                if (skuModel.getDealPrice().doubleValue() != skuImportBean.getDealPrice()) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更
+                }
+                if (skuModel.getMarketPrice().doubleValue() != skuImportBean.getMarketPrice()) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更
+                }
+            }
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));
-            skuModel.setChannelId(saveInfo.productModel.getChannelId());
-            skuModel.setSkuCode(skuImportBean.getSkuCode());
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));//折扣
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier("system");
-            skuModel.setCreated(new Date());
-            skuModel.setCreater("system");
-            skuModel.setProductCode(skuImportBean.getProductCode());
-            skuModel.setErrorMsg("");
-            skuModel.setSynchStatus(0);
-            skuModel.setUpdateState(0);
             saveInfo.skuList.add(skuModel);
             skuModel = null;
         }
