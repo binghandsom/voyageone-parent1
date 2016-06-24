@@ -129,6 +129,9 @@
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
             </if>
+            <if test="pCatPath!=null">
+                and b.category_name like  CONCAT(#{pCatPath},'%')
+            </if>
             <if test="tagIdList!=null and tagIdList.size()!=0">
             and  a.id in (SELECT `cms_bt_jm_promotion_product_id`  FROM `cms_bt_jm_promotion_tag_product`
                 WHERE `cms_bt_tag_id` in   <foreach item="item" index="i" collection="tagIdList"
