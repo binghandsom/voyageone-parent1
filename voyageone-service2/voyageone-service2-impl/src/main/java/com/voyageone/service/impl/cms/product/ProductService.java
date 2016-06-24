@@ -12,6 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -34,6 +35,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.print.DocFlavor;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -1168,21 +1170,38 @@ public class ProductService extends BaseService {
                 bulkList.add(model);
                 cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$addToSet",true);
             }
-            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
-            if(group != null){
-                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
-                sxWorkloadModel.setCartId(platformModel.getCartId());
-                sxWorkloadModel.setChannelId(channelId);
-                sxWorkloadModel.setGroupId(group.getGroupId());
-                sxWorkloadModel.setPublishStatus(0);
-                sxWorkloadModel.setModifier(modifier);
-                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
-            }
+
+
+            insertSxWorkLoad(channelId,new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())),new ArrayList<Integer>(Arrays.asList(platformModel.getCartId())),modifier);
+//            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
+//            if(group != null){
+//                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
+//                sxWorkloadModel.setCartId(platformModel.getCartId());
+//                sxWorkloadModel.setChannelId(channelId);
+//                sxWorkloadModel.setGroupId(group.getGroupId());
+//                sxWorkloadModel.setPublishStatus(0);
+//                sxWorkloadModel.setModifier(modifier);
+//                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
+//            }
         }
         return platformModel.getModified();
     }
 
-    public void updateProductCommon(String channelId, Long prodId, CmsBtProductModel_Common common){
+    public Map<String,Object> updateProductCommon(String channelId, Long prodId, CmsBtProductModel_Common common, String modifier,boolean isModifiedChk){
+
+        CmsBtProductModel oldProduct = getProductById(channelId, prodId);
+        if(isModifiedChk){
+            String oldModified = oldProduct.getCommon().getModified()!=null?oldProduct.getCommon().getModified():"";
+            String newModified = common.getModified()!=null?common.getModified():"";
+            if(!oldModified.equalsIgnoreCase(newModified)){
+                    throw new BusinessException("200011");
+            }
+        }
+
+
+        common.setModified(DateTimeUtil.getNowTimeStamp());
+        common.setModifier(modifier);
+        common.getFields().setHsCodeStatus(StringUtil.isEmpty(common.getFields().getHsCodePrivate())?"0":"1");
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
@@ -1194,6 +1213,12 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        Map<String,Object> result = new HashMap<>();
+        result.put("modified",common.getModified());
+        result.put("translateStatus",common.getFields().getTranslateStatus());
+        result.put("hsCodeStatus",common.getFields().getHsCodeStatus());
+        return  result;
     }
 
     public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){

@@ -24,6 +24,7 @@ define([
 		this.updateProductPlatformChk = updateProductPlatformChk;
 		this.updateProductPlatform = updateProductPlatform;
 		this.updateProductFeed = updateProductFeed;
+		this.getCommonProductInfo = getCommonProductInfo;
 
 		/**
 		 * 获取页面产品信息
@@ -260,6 +261,23 @@ define([
 			$productDetailService.updateProductPlatform(req)
 				.then (function (res) {
 					defer.resolve(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 获取产品的平台属性
+		 * @param { prodId:"",cartId:""} 产品id，平台id
+		 * @returns
+		 */
+		function getCommonProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getCommonProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
 				});
 
 			return defer.promise;
