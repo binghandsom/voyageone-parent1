@@ -1,29 +1,8 @@
 /**
- * @Description
- * Login Page Main JS
- * @Date:    2015-11-24 17:03:16
- * @User:    Jonas
- * @Version: 2.0.0
+ * @Date: 2016-06-24 17:35:36
+ * @User: Jonas
  */
-
-require.config({
-    paths: {
-        'angular': 'assets/js/angular.js/1.5.6/angular',
-        "angular-vo": 'components/components.ng',
-        'angular-translate': 'assets/js/angular-translate/2.8.1/angular-translate',
-        'angular-block-ui': 'assets/js/angular-block-ui/0.2.1/angular-block-ui',
-        'css': 'assets/js/require-css/0.1.8/css'
-    },
-    shim: {
-        'angular-block-ui': ['angular', 'css!assets/js/angular-block-ui/0.2.1/angular-block-ui.min.css'],
-        'angular-translate': ['angular'],
-        'angular-vo': ['angular'],
-        'angular': {exports: 'angular'}
-    }
-});
-
-// Bootstrap App !!
-require([
+define([
     'angular',
     'angular-block-ui',
     'angular-translate',
@@ -43,7 +22,6 @@ require([
 
             if ($scope.loginForm.$invalid)
                 return;
-
 
 
             if ($scope.username === 'a') {
