@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.imagecreate;
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
@@ -45,9 +46,10 @@ import java.util.*;
             String userName = getUser().getUserName();
             String path = Properties.readValue(CmsProperty.Props.CMS_Image_Ceate_Import_Path);
             FileUtils.mkdirPath(path);
-            List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
+            String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
+            List<String> listFileName = FileUtils.uploadFile(request, path,timerstr);//上传文件
             for (String fileName : listFileName) {
-                resultBean = service.importImageCreateInfo(path, fileName, userName);
+                resultBean = service.importImageCreateInfo(path, timerstr+fileName, userName);
             }
             Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
             if (resultBean.getErrorCode() > 0) {
