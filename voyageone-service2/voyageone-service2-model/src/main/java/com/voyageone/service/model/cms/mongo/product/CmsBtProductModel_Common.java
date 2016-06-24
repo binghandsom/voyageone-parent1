@@ -57,6 +57,17 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         return getAttribute("fields");
     }
 
+    /**
+     * 返回非空CmsBtProductModel_Field对象，
+     */
+    public CmsBtProductModel_Field getFieldsNotNull()  {
+        CmsBtProductModel_Field obj = getAttribute("fields");
+        if (obj == null) {
+            return new CmsBtProductModel_Field();
+        }
+        return obj;
+    }
+
     public void setFields(CmsBtProductModel_Field fields) {
         setAttribute("fields", fields);
     }

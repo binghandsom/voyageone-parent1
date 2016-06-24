@@ -121,7 +121,8 @@ define([
                 tagTypeSelectValue: '0',
                 cidValue: [],
                 promotionTagType: 1,
-                freeTagType: 1
+                freeTagType: 1,
+                shopCatStatus: null,
             };
             $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
@@ -129,10 +130,10 @@ define([
             $scope.vm.masterData.tagList = [];
             $scope.vm.masterData.catList = [];
             $scope.vm.custAttrList = [{inputVal: "", inputOpts: ""}];
-            $scope.vm.platform.catPath=null;
-            $scope.vm.masterCat.catPath=null;
-            $scope.vm.feedCat.catPath=null;
-            $scope.vm.channelInner.catPath=null;
+            $scope.vm.platform.catPath = null;
+            $scope.vm.masterCat.catPath = null;
+            $scope.vm.feedCat.catPath = null;
+            $scope.vm.channelInner.catPath = null;
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
             $scope.vm._freeTags = null;
@@ -750,7 +751,7 @@ define([
                 if (_.isArray(context.sellerCats)) {
                     // 设置画面显示用的值
                     var shopCatValues = [];
-                    _.forEach(context.sellerCats, function(catObj) {
+                    _.forEach(context.sellerCats, function (catObj) {
                         if (_.isArray(catObj.cNames)) {
                             shopCatValues.push(catObj.cNames.join('>'));
                         }
@@ -759,7 +760,7 @@ define([
 
                     // 设置查询用的参数
                     var cidValue = [];
-                    _.forEach(context.sellerCats, function(catObj) {
+                    _.forEach(context.sellerCats, function (catObj) {
                         cidValue.push(catObj.cId);
                     });
                     $scope.vm.searchInfo.cidValue = cidValue;
@@ -775,13 +776,29 @@ define([
             openFreeTag.then(function (res) {
                 if (isPromoTag) {
                     $scope.vm._promotionTags = res.selectdTagList;
-                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPath;
+                    }).value();
                 } else {
                     $scope.vm._freeTags = res.selectdTagList;
-                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function(key, value) { return key.tagPath;}).value();
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPath;
+                    }).value();
                 }
             });
         }
+
+        // 选中‘未设置’，清除输入框中的值
+        $scope.chkSelStatus = function (stsType) {
+            if (stsType == 1) {
+                $scope.vm.searchInfo.pCatPath = '';
+                $scope.vm.searchInfo.pCatId = '';
+            } else if (stsType == 2) {
+                $scope.vm._shopCatValues = [];
+                $scope.vm.searchInfo.cidValue = [];
+            }
+        };
+
     }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
