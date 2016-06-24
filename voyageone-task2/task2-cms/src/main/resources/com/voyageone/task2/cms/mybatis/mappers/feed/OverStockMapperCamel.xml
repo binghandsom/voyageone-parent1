@@ -833,7 +833,7 @@
     ${keyword}
   </select>
   <update id="updateFlagBySku"  parameterType="java.util.List">
-    UPDATE voyageone_cms2.cms_zz_feed_overstock_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `inventoryAvailable` in (
+    UPDATE voyageone_cms2.cms_zz_feed_overstock_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
@@ -842,7 +842,7 @@
 
   <insert id="insertFullBySku"  parameterType="java.util.List">
     INSERT INTO voyageone_cms2.cms_zz_feed_overstock_product_full SELECT * from
-    voyageone_cms2.cms_zz_feed_overstock_product_temp where `Inventory_Number` in
+    voyageone_cms2.cms_zz_feed_overstock_product_temp where `sku` in
     (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
@@ -854,7 +854,7 @@
     DELETE
     FROM
     voyageone_cms2.cms_zz_feed_overstock_product_full
-    where `inventoryAvailable` in (
+    where `sku` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>

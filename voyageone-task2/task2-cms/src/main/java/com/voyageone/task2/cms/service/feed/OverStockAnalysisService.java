@@ -14,6 +14,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedOverStockBean;
 import com.voyageone.task2.cms.dao.feed.OverStockFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoOverStockModel;
@@ -58,6 +59,21 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         overStockFeedDao.delete();
     }
 
+    @Override
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        init();
+
+        zzWorkClear();
+
+        $info("产品信息插入开始");
+        int cnt = superFeedImport();
+        $info("产品信息插入完成 共" + cnt + "条数据");
+        if (cnt > 0) {
+            transformer.new Context(channel, this).transform();
+            postNewProduct();
+        }
+    }
     /**
      * OverStock产品文件读入
      */
@@ -77,7 +93,6 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                 int statusCode = result.getStatusCode();
                 ProductsType productsType = result.getEntity();
                 List<ProductType> productTypeList = productsType.getProduct();
-
                 if (statusCode == 200) {
                     if (productTypeList.size() == 0) {
                         $info("产品取得结束");
@@ -90,14 +105,11 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                 //循环variationTypeList取得对应的属性值
                                 for (VariationType variationType : variationTypeList) {
                                     SuperFeedOverStockBean superFeedverStockBean = new SuperFeedOverStockBean();
-                                    superFeedverStockBean.setRetailerid(getValue(variationType.getRetailerId()));
+                                    superFeedverStockBean.setRetailerid(getValue(variationType.getProduct().getRetailerId()));
                                     superFeedverStockBean.setModel(getValue(variationType.getFullSku().split("-")[0]));
                                     superFeedverStockBean.setClientmodel(getValue(product.getSku()));
                                     superFeedverStockBean.setSku(getValue(variationType.getFullSku()));
                                     sku=variationType.getFullSku();
-                                    if(sku.equals("10328044-000-000")){
-                                        $info("10328044-000-000");
-                                    }
                                     superFeedverStockBean.setClientsku(getValue(variationType.getSku()));
                                     superFeedverStockBean.setTitle(getValue(variationType.getProduct().getTitle()));
                                     superFeedverStockBean.setBrand(getValue(variationType.getProduct().getBrand()));
@@ -167,7 +179,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     }
                                     superFeedverStockBean.setShippingwidth(getValue(String.valueOf(variationType.getShippingWidth())));
                                     superFeedverStockBean.setShippingheight(getValue(String.valueOf(variationType.getShippingHeight())));
-                                    superFeedverStockBean.setShippinglength(getValue(String.valueOf(variationType.getShippingWeight())));
+                                    superFeedverStockBean.setShippinglength(getValue(String.valueOf(variationType.getShippingLength())));
                                     superFeedverStockBean.setShippingweight(getValue(String.valueOf(variationType.getShippingWeight())));
                                     superFeedverStockBean.setUpc(getValue(variationType.getUpc()));
                                     superFeedverStockBean.setShipsvialtl(getValue(String.valueOf(variationType.isShipsViaLtl())));
@@ -254,9 +266,10 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     $info("queryForMultipleProducts error; limit = 200, offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 1;
+                offset = offset + 200;
             } catch (Exception e) {
-                $info(e.getMessage()+"111"+count+sku);
+                $info("OverStock产品文件读入失败");
+                logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
             }
         }
         if (superfeed.size() >0) {
