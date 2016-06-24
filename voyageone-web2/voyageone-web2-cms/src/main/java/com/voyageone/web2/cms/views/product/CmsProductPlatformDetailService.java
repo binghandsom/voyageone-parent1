@@ -29,10 +29,7 @@ import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -186,7 +183,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
-        List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
+
+        List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
         platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         platform.remove("schemaFields");
@@ -234,9 +232,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     /**
      * 构建masterFields.
      */
-    private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
+    private List<Field> buildMasterFields(Map<String, Object> masterFieldsList) {
 
-        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
+        List<Map<String, Object>> item = new ArrayList<>();
+        item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_ITEM));
+        item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT));
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(item);
 
         // setComplexValue
         for (Field field : masterFields) {
