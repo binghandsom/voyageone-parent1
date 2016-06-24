@@ -234,6 +234,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setId(0);
             saveInfo.productModel.setCreater("system");
             saveInfo.productModel.setCreated(new Date());
+            saveInfo.productModel.setJmHashId("");
         }
         saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
         saveInfo.productModel.setProductCode(product.getProductCode());
@@ -243,7 +244,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         saveInfo.productModel.setChannelId(model.getChannelId());
         saveInfo.productModel.setActivityStart(model.getActivityStart());
         saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-        saveInfo.productModel.setJmHashId("");
         saveInfo.productModel.setPromotionTag(product.getPromotionTag());
         saveInfo.productModel.setErrorMsg("");
         saveInfo.productModel.setPriceStatus(0);
