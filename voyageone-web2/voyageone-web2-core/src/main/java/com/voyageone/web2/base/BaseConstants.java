@@ -30,4 +30,12 @@ public interface BaseConstants {
      * 告知前端跳转的特殊 Code
      */
     String CODE_SYS_REDIRECT = "SYS_REDIRECT";
+    /**
+     * 未知异常Code
+     */
+    String UNKNOWN_ERROR_CODE = "5";
+    /**
+     * 未知异常Message
+     */
+    String UNKNOWN_ERROR_MSG = "Unknown exception, please contact the administrator.";
 }
