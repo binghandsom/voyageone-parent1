@@ -181,6 +181,11 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String materialCn;
 
+    /**
+     * 聚美类目
+     */
+    protected String categoryName;
+
     public String getChannelId() {
         return channelId;
     }
@@ -451,5 +456,13 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setMaterialCn(String materialCn) {
         this.materialCn = materialCn == null ? null : materialCn.trim();
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName == null ? null : categoryName.trim();
     }
 }
