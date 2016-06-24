@@ -4,7 +4,7 @@
                 <div class="container-fluid"  id="{{cartInfo.name}}1">
                     <div class="row wrapper">
                         <!----------------------------------------历史按钮---------------------------------------------->
-                        <div class="col-md-8 form-group">
+                        <div class="col-md-10 form-group">
                             <div class="col-lg-2">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
@@ -91,9 +91,8 @@
                             </div>
 
                         </div>
-                        <div class="col-md-4">
-                            <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
-                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
+                        <div class="col-md-2">
+<!--                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
                                 <button class="btn btn-vo ng-binding" ng-click="saveProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE'|translate}}</button>
                             </div>
                             <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
@@ -102,7 +101,7 @@
                             </div>
                             <div class="pull-right text-warnings" style="padding-left:0px">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                     <div class="row">
@@ -111,9 +110,9 @@
                                 <label class="col-md-2 control-label">平台状态</label>
                                 <div class="col-md-8">
                                    <span class="label m-l-sm">
+                                       <platform-status data="vm.mastData.platformList"></platform-status>
                                         <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-style="{{cartsObj.cssVal}}">
                                             <span><a ng-href="{{cartsObj._purl}}" title="" target="_blank">TM</a></span>
-                                            <span>TM</span>
                                         </span>
                                     </span>
                                 </div>
@@ -153,15 +152,16 @@
                                         <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">平台属性</a>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">sku属性</a>
                                     </li>
                                 </ul>
+                                <button type="button" class="btn btn-nav" ng-click="saveProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
                             </nav>
                         </div>
                     </div>
                 </div>
 
                 <hr>
+                <span>产品详情</span>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
                 <div class="container-fluid" id="{{cartInfo.name}}2">
 

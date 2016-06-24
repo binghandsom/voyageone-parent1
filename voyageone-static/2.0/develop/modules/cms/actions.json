@@ -73,7 +73,8 @@
         "updateProductPlatform":"updateProductPlatform",
         "updateProductPlatformChk":"updateProductPlatformChk",
         "updateProductFeed":"updateProductFeed",
-        "getCommonProductInfo":"getCommonProductInfo"
+        "getCommonProductInfo":"getCommonProductInfo",
+        "updateCommonProductInfo":"updateCommonProductInfo"
       }
     },
     "mapping": {
