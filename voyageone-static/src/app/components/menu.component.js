@@ -1,6 +1,5 @@
 define([
-    'vo-vms',
-    './components/menu.component'
+    'vo-vms'
 ], function (vms) {
     console.log(vms);
 });

@@ -9,7 +9,7 @@
 require.config({
     paths: {
         'angular': 'assets/js/angular.js/1.5.6/angular',
-        "voyageone-angular-com": 'components/components.ng',
+        "angular-vo": 'components/components.ng',
         'angular-translate': 'assets/js/angular-translate/2.8.1/angular-translate',
         'angular-block-ui': 'assets/js/angular-block-ui/0.2.1/angular-block-ui',
         'css': 'assets/js/require-css/0.1.8/css'
@@ -17,7 +17,7 @@ require.config({
     shim: {
         'angular-block-ui': ['angular', 'css!assets/js/angular-block-ui/0.2.1/angular-block-ui.min.css'],
         'angular-translate': ['angular'],
-        'voyageone-angular-com': ['angular'],
+        'angular-vo': ['angular'],
         'angular': {exports: 'angular'}
     }
 });
@@ -27,7 +27,7 @@ require([
     'angular',
     'angular-block-ui',
     'angular-translate',
-    'voyageone-angular-com'
+    'angular-vo'
 ], function (angular) {
     angular.module('voyageone.cms.login', [
         'pascalprecht.translate',
