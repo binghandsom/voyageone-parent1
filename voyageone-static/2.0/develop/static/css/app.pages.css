@@ -475,7 +475,8 @@ s-field textarea.s-html {
 }
 
 .product-shema-detail .fa-5x{
-    font-size: 3em;
+    font-size: 2em;
+    height: 50px;
 }
 
 .product-shema-detail .panel-primary a{

@@ -18,14 +18,19 @@ define([
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, menuService) {
+        function ProductDetailController($routeParams, $translate, menuService,productDetailService) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
             this.menuService = menuService;
+            this.productDetailService = productDetailService;
             this.defaultCartId = 0;
             this.platformTypes = null;
             this.cartData = {};
+            this.product = {
+                productId : $routeParams.productId,
+                productDetails:null
+            };
         }
 
         ProductDetailController.prototype = {
@@ -38,6 +43,10 @@ define([
                     self.platformTypes.forEach(function(element){
                         self.cartData["_"+element.value] = element;
                     });
+                });
+
+                self.productDetailService.getProductInfo({productId: self.routeParams.productId}).then(function (res) {
+                    self.product.productDetails = res.data;
                 });
 
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;

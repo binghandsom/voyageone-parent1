@@ -11,7 +11,7 @@ define([
             templateUrl : "views/product/jd.component.tpl.html",
             /**独立的scope对象*/
             scope: {
-                productId: "=productId",
+                productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
             link: function (scope) {
@@ -39,7 +39,7 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-                    productDetailService.getProductPlatform({cartId:scope.cartInfo.value,prodId:scope.productId}).then(function(resp){
+                    productDetailService.getProductPlatform({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
 
@@ -58,10 +58,6 @@ define([
                         scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
                         scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
 
-                    });
-                    productDetailService.getProductInfo({productId: scope.productId}).then(function (res) {
-                            scope.vm.productDetails = res.data.productInfo;
-                            scope.vm.productCode = res.data
                     });
 
                     switch(+scope.cartInfo.value){
@@ -97,7 +93,7 @@ define([
                                     return;
                             }
 
-                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productId,catId:context.selected.catId}).then(function(resp){
+                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId,catId:context.selected.catId}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
                                 scope.vm.platform.pCatId = context.selected.catId;
@@ -117,7 +113,7 @@ define([
                     scope.vm.sellerCats.forEach(function(element){
                         selectedIds[element.cId]=true;
                     });
-                    var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
+                    var selList = [{"code": scope.productInfo.productDetails.productInfo.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
@@ -155,7 +151,7 @@ define([
 
                      _.map(scope.vm.platform.skus, function(item){ return item.property = item.property == null?"OTHER":item.property;});
                     /**判断价格*/
-                    productDetailService.updateProductPlatformChk({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
+                    productDetailService.updateProductPlatformChk({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     },function(resp){
@@ -164,7 +160,7 @@ define([
                             return;
                         }
                         confirm(resp.message + ",是否强制上新").result.then(function () {
-                             productDetailService.updateProductPlatform({prodId:scope.productId,platform:scope.vm.platform}).then(function(resp){
+                             productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                  scope.vm.platform.modified = resp.data.modified;
                                  notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                              });

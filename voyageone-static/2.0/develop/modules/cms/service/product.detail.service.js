@@ -273,7 +273,7 @@ define([
 		 */
 		function getCommonProductInfo(req){
 			var defer = $q.defer();
-			$productDetailService.getProductPlatform(req)
+			$productDetailService.getCommonProductInfo(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){
