@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
 import com.voyageone.common.util.excel.ExportFileExcelUtil;
