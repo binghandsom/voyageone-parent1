@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
@@ -14,6 +14,7 @@ import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
+import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -152,6 +153,16 @@ public class CmsBtJmPromotionProduct3Service {
         List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId);
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
+    }
+    public int updatePromotionProduct(UpdatePromotionProductParameter parameter) {
+        CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
+        if (model.getLimit() != parameter.getLimit()) {
+            model.setLimit(parameter.getLimit());
+            model.setUpdateStatus(1);
+            return dao.update(model);
+        }
+        return  1;
+
     }
 }
 

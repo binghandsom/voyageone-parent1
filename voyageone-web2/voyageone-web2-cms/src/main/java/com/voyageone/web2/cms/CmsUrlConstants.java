@@ -41,9 +41,7 @@ public interface CmsUrlConstants {
 
             interface DETAIL {
                 String ROOT = "/cms/jmpromotion/detail";
-
                 String INIT = "init";
-
                 String GET_LIST_BY_WHERE = "selectListByWhere";
                 String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE = "getPromotionProductInfoListByWhere";
                 String GetPromotionProductInfoCountByWhere = "getPromotionProductInfoCountByWhere";
@@ -74,6 +72,7 @@ public interface CmsUrlConstants {
                 String DeleteAllProduct="deleteAllProduct";
                 String GetProductView="getProductView";
                 String UpdateDealPrice="updateDealPrice";
+                String UpdatePromotionProduct="updatePromotionProduct";
             }
         }
     }
