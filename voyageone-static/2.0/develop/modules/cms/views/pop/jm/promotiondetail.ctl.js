@@ -12,6 +12,8 @@ define([
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
         $scope.initialize  = function () {
+            console.log("aaP");
+            console.log(context);
             if(context.id)
             {
                 jmPromotionService.getEditModel(context.id).then(function (res) {

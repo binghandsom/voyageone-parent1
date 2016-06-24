@@ -22,9 +22,12 @@ define([
         $scope.modelUpdateDealEndTime = {};
         $scope.modelAllUpdateDealEndTime = {};
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)}
-        $scope.initialize = function () {
+        $scope.initialize = function (){
+        console.log("aa");
+            console.log($routeParams);
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                 $scope.parentModel = res.data;
+                console.log($scope.parentModel);
             });
             jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.tagList = res.data;
@@ -35,7 +38,7 @@ define([
             $scope.modelUpdateDealEndTime.isBatch = true;
         };
         $scope.clear = function () {
-            $scope.searchInfo = {};
+            $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
         };
         $scope.search = function () {
             // console.log("searchInfo");
@@ -259,7 +262,7 @@ define([
             return listPromotionProductId;
         }
         $scope.updateJM = function (promotionProductId) {
-            confirm("是否同步选中商品的价格?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").result.then(function () {
                 var listPromotionProductId = [promotionProductId];
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
@@ -267,7 +270,7 @@ define([
                 jmPromotionDetailService.batchSynchPrice(parameter).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
-                        alert($translate.instant('TXT_SUCCESS'));
+                        alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                     }
                     else {
                         alert($translate.instant('TXT_FAIL'));
@@ -301,11 +304,11 @@ define([
             });
         };
         $scope.synchAllPrice = function () {
-            confirm("是否同步全部商品价格?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").result.then(function () {
             jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
+                    alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                 }
                 else {
                     alert($translate.instant('TXT_FAIL'));
@@ -327,7 +330,7 @@ define([
             jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
                 if (res.data.result) {
                     $scope.search();
-                    alert($translate.instant('TXT_SUCCESS'));
+                    alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                 }
                 else {
                     alert($translate.instant('TXT_FAIL'));
@@ -342,7 +345,7 @@ define([
                 jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
-                        alert($translate.instant('TXT_SUCCESS'));
+                        alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                     }
                     else {
                         alert($translate.instant('TXT_FAIL'));
@@ -429,8 +432,9 @@ define([
         $scope.openJmPromotionProductImportWin = function () {
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
-        $scope.openJmPromotionDetailWin = function (parameter) {
-            popups.openJmPromotionDetail(parameter);
+        $scope.openJmPromotionDetailWin = function () {
+           // console.log(parameter);
+            popups.openJmPromotionDetail({id: $routeParams.parentId});
         }
         $scope.openDealExtensionWin=function(){
             popups.openDealExtension($scope.parentModel);
@@ -443,6 +447,18 @@ define([
              return"";
          }
             return errorMsg.substr(0,30)+"...";
+        }
+        $scope.getDealPrice=function(m) {
+            if (m.maxDealPrice==m.minDealPrice)
+                return m.maxDealPrice;
+
+            return m.maxDealPrice + "~" + m.minDealPrice;
+        }
+        $scope.getMarketPrice=function(m) {
+            if (m.maxMarketPrice==m.minMarketPrice)
+                return m.maxMarketPrice;
+
+            return m.maxMarketPrice + "~" + m.minMarketPrice;
         }
     }
     detailController.$inject = ['$scope','popups', 'jmPromotionService','cmsBtJmPromotionImportTaskService','cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];

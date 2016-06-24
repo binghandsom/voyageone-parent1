@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtJmSkuDaoExt {
-    public CmsBtJmSkuModel selectBySkuCodeChannelId(@Param("skuCode") String skuCode, @Param("channelId") String channelId);
+    CmsBtJmSkuModel selectBySkuCodeChannelId(@Param("skuCode") String skuCode,@Param("productCode") String productCode, @Param("channelId") String channelId);
+    Boolean existsCode(@Param("skuCode") String skuCode,@Param("productCode") String productCode, @Param("channelId") String channelId);
 }

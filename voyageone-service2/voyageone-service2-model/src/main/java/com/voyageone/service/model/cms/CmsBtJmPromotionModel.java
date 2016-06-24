@@ -24,15 +24,9 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected String name;
 
-    /**
-     * 聚美专场PC端ID
-     */
-    protected String activityPcId;
+    protected Long activityPcId;
 
-    /**
-     * 聚美专场APP端ID
-     */
-    protected String activityAppId;
+    protected Long activityAppId;
 
     protected Integer cmsBtJmMasterBrandId;
 
@@ -96,20 +90,20 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getActivityPcId() {
+    public Long getActivityPcId() {
         return activityPcId;
     }
 
-    public void setActivityPcId(String activityPcId) {
-        this.activityPcId = activityPcId == null ? null : activityPcId.trim();
+    public void setActivityPcId(Long activityPcId) {
+        this.activityPcId = activityPcId;
     }
 
-    public String getActivityAppId() {
+    public Long getActivityAppId() {
         return activityAppId;
     }
 
-    public void setActivityAppId(String activityAppId) {
-        this.activityAppId = activityAppId == null ? null : activityAppId.trim();
+    public void setActivityAppId(Long activityAppId) {
+        this.activityAppId = activityAppId;
     }
 
     public Integer getCmsBtJmMasterBrandId() {

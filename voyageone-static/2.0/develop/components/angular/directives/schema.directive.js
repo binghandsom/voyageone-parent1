@@ -215,32 +215,28 @@
             return rules;
 
         each(field.rules, function (rule) {
-
             if (!hasDepend(rule)) {
-                // 如果不需要监视, 则就是固定值。
-                // 就不需要怎么处理, 记下来下一个即可
-                if (rule.value === 'false')
-                // 除了 disable/readonly/required 这类值回事布尔外, 其他的一定都不是
+                var newRule;
+                // 除了 disable/readonly/required 这类值是布尔外, 其他的一定都不是
                 // 所以固定值总是 false 的也不用继续处理了
+                if (rule.value === 'false')
                     return;
+                newRule = {};
+                newRule.__proto__ = rule;
 
                 if (rule.value === 'true')
-                    rules[rule.name] = true;
-                else if (/^-?\d+(\.\d+)?$/.test(rule.value))
-                // 尝试简单的数字检查, 如果是就转换
-                    rules[rule.name] = parseFloat(rule.value);
-                else if ('url' in rule)
-                // 如果是有 url 的就把完整的记下来
-                    rules[rule.name] = rule;
-                else
-                    rules[rule.name] = rule.value;
+                    newRule.value = true;
 
+                // 尝试简单的数字检查, 如果是就转换
+                else if (/^-?\d+(\.\d+)?$/.test(rule.value))
+                    newRule.value = parseFloat(rule.value);
+
+                rules[rule.name] = newRule;
 
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
                 rules[rule.name] = new DependentRule(rule, field, schema);
             }
-
         });
 
         rules.$withSchema = withSchema;
@@ -286,7 +282,7 @@
         if (!valueTypeRule)
             return type;
 
-        switch (valueTypeRule) {
+        switch (valueTypeRule.value) {
             case VALUE_TYPES.TEXT:
                 type = 'text';
                 break;
@@ -341,7 +337,7 @@
         if (!valueTypeRule)
             return value;
 
-        switch (valueTypeRule) {
+        switch (valueTypeRule.value) {
             case VALUE_TYPES.TEXT:
             case VALUE_TYPES.HTML:
             case VALUE_TYPES.TEXTAREA:
@@ -380,14 +376,34 @@
     /**
      * 为 maxlength 和 minlength 规则提供支持
      */
-    function bindLengthRule(element, rule, name, attr) {
+    function bindLengthRule(element, rule, name, attr, ngAttr) {
 
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr('ng-' + attr, 'rules.' + name + '.getLength()');
+            element.attr(ngAttr || ('ng-' + attr), 'rules.' + name + '.getLength()');
         } else {
-            element.attr(attr, rule);
+            element.attr(attr, rule.value);
+        }
+    }
+
+    function bindInputLengthRule(element, rules) {
+
+        var minRule = rules.minLengthRule,
+            maxRule = rules.maxLengthRule;
+
+        if (minRule) {
+            if (isByteUnit(minRule))
+                bindLengthRule(element, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
+            else
+                bindLengthRule(element, minRule, 'minLengthRule', 'minlength');
+        }
+
+        if (maxRule) {
+            if (isByteUnit(maxRule))
+                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
+            else
+                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxlength');
         }
     }
 
@@ -427,18 +443,13 @@
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
-            if (!is.string(content)) {
 
-                if ('url' in content && !!content.url) {
-                    var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
-                    aTag.text(content.value);
-                    contentContainer.append(aTag);
-                } else {
-                    contentContainer.text(content.value);
-                }
-            }
-            else {
-                contentContainer.text(content);
+            if ('url' in content && !!content.url) {
+                var aTag = angular.element('<a href="' + content.url + '" target="_blank">');
+                aTag.text(content.value);
+                contentContainer.append(aTag);
+            } else {
+                contentContainer.text(content.value);
             }
         });
     }
@@ -487,6 +498,10 @@
 
             return false;
         });
+    }
+
+    function isByteUnit(rule) {
+        return rule.unit === 'byte';
     }
 
     /**
@@ -757,7 +772,7 @@
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
         // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
-        if (disableRule === true)
+        if (disableRule && disableRule.value === true)
             return;
 
         fieldElement = angular.element('<s-field>');
@@ -1066,7 +1081,7 @@
                                         innerElement = angular.element('<textarea class="form-control">');
                                         // 如果是 html 就加个特殊样式用来便于外观控制
                                         if (valueTypeRule === VALUE_TYPES.HTML)
-                                            innerElement.addClass('schema-field-html');
+                                            innerElement.addClass('s-html');
                                     } else {
                                         innerElement = angular.element('<input class="form-control">').attr('type', type);
                                     }
@@ -1077,8 +1092,7 @@
                                     bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                     bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
 
-                                    bindLengthRule(innerElement, rules.minLengthRule, 'minLengthRule', 'minlength');
-                                    bindLengthRule(innerElement, rules.maxLengthRule, 'maxLengthRule', 'maxlength');
+                                    bindInputLengthRule(innerElement, rules);
 
                                     // 处理正则规则
                                     if (regexRule) {
@@ -1088,10 +1102,10 @@
                                             // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
                                             innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
 
-                                        } else if (regexRule !== 'yyyy-MM-dd') {
+                                        } else if (regexRule.value !== 'yyyy-MM-dd') {
                                             // 如果是日期格式验证就不需要了
                                             // type=date 时 angular 会验证的
-                                            innerElement.attr('pattern', regexRule);
+                                            innerElement.attr('pattern', regexRule.value);
                                         }
                                     }
 
@@ -1252,7 +1266,7 @@
                                         // 如果有就把默认值放上去
                                         if (valueStringList.length) {
                                             selected[index] = !(valueStringList.indexOf(option.value) < 0);
-                                        } else if (requiredRule === true && !!defaultValues.length) {
+                                        } else if (requiredRule && !!defaultValues.length) {
                                             selected[index] = !(defaultValues.indexOf(option.value) < 0);
                                         }
 

@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -71,7 +72,11 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
             reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
             // Head读入
             reader.readHeaders();
-            reader.getHeaders();
+            String[] head = reader.getHeaders();
+            if(!"VoyageOnePurchasePrice".equalsIgnoreCase(head[60])){
+                issueLog.log("shoeZoo文件格式发生变化","", ErrorType.BatchJob,SubSystem.CMS);
+                return 0;
+            }
             // Body读入
             while (reader.readRecord()) {
                 SuperFeedShoeZooBean superFeedShoeZooBean = new SuperFeedShoeZooBean();
@@ -133,10 +138,10 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
                 superFeedShoeZooBean.setVariationtheme(reader.get(i++));
                 superFeedShoeZooBean.setWaterresistancelevel(reader.get(i++));
                 superFeedShoeZooBean.setFeatureBullets(reader.get(i++));
-                superFeedShoeZooBean.setVoyageOnePurchasePrice(reader.get(i++));
                 superFeedShoeZooBean.setCountry_of_Origin(reader.get(i++));
                 superFeedShoeZooBean.setTmall_Weight(reader.get(i++));
                 superFeedShoeZooBean.setQty(reader.get(i++));
+                superFeedShoeZooBean.setVoyageOnePurchasePrice(reader.get(i++));
                 if (StringUtil.isEmpty(superFeedShoeZooBean.getUpc1())) {
                     continue;
                 }

@@ -9,7 +9,7 @@
         <div class="col-sm-4">
             <h4 class="m-l-sm text-vo">
                 <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
-                    <input type="checkbox" ng-model="all_commonData"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                    <input type="checkbox" ng-model="cus.all_commonData" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                 </label>
                 {{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
@@ -23,7 +23,7 @@
         <div class="col-sm-4">
             <h4 class="m-l-sm text-vo">
                 <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
-                    <input type="checkbox" ng-model="all_customData"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                    <input type="checkbox" ng-model="cus.all_customData" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                 </label>
                 {{'TXT_CUST_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
@@ -37,7 +37,7 @@
         <div class="col-sm-4">
           <h4 class="m-l-sm text-vo">
               <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
-                  <input type="checkbox" ng-model="all_salesType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                  <input type="checkbox" ng-model="cus.all_salesType" ng-change="chkSelStatus(3)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
               </label>
               销量显示选择
           </h4>

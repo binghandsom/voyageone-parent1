@@ -81,6 +81,9 @@ public class CmsBtJmPromotionProduct3Service {
     //批量更新价格
     @VOTransactional
     public void batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
+//        <option value="0">中国官网价格</option> <!--msrp_rmb-->
+//        <option value="1">中国指导价格</option> <!--retail_price-->
+//        <option value="2">中国最终售价</option> <!--sale_price-->
         if (parameter.getListPromotionProductId().size() == 0) return;
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
@@ -88,12 +91,15 @@ public class CmsBtJmPromotionProduct3Service {
             //parameter.setDiscount(BigDecimalUtil.divide(price));
         } else//折扣 0：市场价 1：团购价
         {
-            if (parameter.getPriceType() == 1)//团购价 deal_price
+            if (parameter.getPriceType() == 0)//团购价 deal_price
             {
-                price = "deal_price*" + Double.toString(parameter.getDiscount());
-            } else //市场价 market_price
+                price = "b.msrp_rmb*" + Double.toString(parameter.getDiscount());//中国官网价格
+            } else if (parameter.getPriceType() == 1) //市场价 market_price
             {
-                price = "market_price*" + Double.toString(parameter.getDiscount());
+                price = "b.retail_price*" + Double.toString(parameter.getDiscount());//中国指导价格
+            } else if (parameter.getPriceType() == 2)
+            {
+                price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
         daoExt.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);

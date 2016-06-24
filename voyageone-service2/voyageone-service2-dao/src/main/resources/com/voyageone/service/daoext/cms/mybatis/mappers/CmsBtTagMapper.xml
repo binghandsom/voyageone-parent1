@@ -316,6 +316,37 @@
         order by tag.id
     </select>
 
+    <!-- promotion Tag信息检索 查询子节点 -->
+    <select id="select_list_by_channel_id_and_parent_tag" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
+        select DISTINCT
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid,
+        tag.active,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_tag tag
+        where
+        tag.parent_tag_id in (
+        <foreach collection="tagList" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+        and tag.tag_path_name != ''
+        and tag.channel_id = #{channelId}
+        and tag_type = '2'
+        order by tag.id
+    </select>
+
     <!-- Tag信息检索 （根据 父tag_id，取得对应Tag）-->
     <select id="select_one_by_tag_info" resultMap="TagMap" parameterType="String">
         select

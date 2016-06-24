@@ -12,7 +12,6 @@ import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.*;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -50,6 +49,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtJmPromotionSkuDao daoCmsBtJmPromotionSku;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
+
+    @Autowired
+    CmsBtJmProductDaoExt daoExtCmsBtJmProduct;
+    @Autowired
+    CmsBtJmSkuDaoExt daoExtCmsBtJmSkuDao;
     @Autowired
     TransactionRunner transactionRunner;
     @Autowired
@@ -153,15 +157,31 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     //check
     public void check(CmsBtJmPromotionModel model, List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap) throws IllegalAccessException {
+       //product
         List<ProductImportBean> listErroProduct = new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
-                product.setErrorMsg("活动日期有重叠");
+            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
+                product.setErrorMsg("活动日期有重叠");//取一个活动id
+                listErroProduct.add(product);
+            } else if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
+                product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
                 listErroProduct.add(product);
             }
         }
         listProductModel.removeAll(listErroProduct);//移除不能导入的 product
-        listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));
+        listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
+
+        //sku
+        List<SkuImportBean> listErroSku=new ArrayList<>();
+        for (SkuImportBean sku : listSkuModel) {
+
+            if (daoExtCmsBtJmSkuDao.existsCode(sku.getSkuCode(), sku.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
+                sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
+                listErroSku.add(sku);
+            }
+        }
+        listProductModel.removeAll(listErroSku);
+        listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
 
     //save
@@ -213,6 +233,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setId(0);
             saveInfo.productModel.setCreater("system");
             saveInfo.productModel.setCreated(new Date());
+            saveInfo.productModel.setJmHashId("");
         }
         saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
         saveInfo.productModel.setProductCode(product.getProductCode());
@@ -222,7 +243,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         saveInfo.productModel.setChannelId(model.getChannelId());
         saveInfo.productModel.setActivityStart(model.getActivityStart());
         saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-        saveInfo.productModel.setJmHashId("");
         saveInfo.productModel.setPromotionTag(product.getPromotionTag());
         saveInfo.productModel.setErrorMsg("");
         saveInfo.productModel.setPriceStatus(0);

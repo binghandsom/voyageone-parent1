@@ -183,6 +183,16 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public CmsBtProductModel_Common getCommon() {
         return common;
     }
+
+    /**
+     * 返回非空CmsBtProductModel_Common对象，
+     */
+    public CmsBtProductModel_Common getCommonNotNull() {
+        if (common == null) {
+            return new CmsBtProductModel_Common();
+        }
+        return common;
+    }
     public void setCommon(CmsBtProductModel_Common common) {
         this.common = common;
     }
@@ -205,6 +215,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         return platforms.get(PLATFORM_CART_PRE + cartId);
     }
     public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
+        cart.setCartId(cartId);
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
@@ -215,6 +226,10 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartType.getId(), cart);
+    }
+
+    public void platformClear(){
+        platforms = new HashMap<>();
     }
 
     public CmsBtProductModel_Sales getSales() {

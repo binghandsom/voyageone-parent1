@@ -60,9 +60,26 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
-
-        if (platformCart != null && !StringUtil.isEmpty(platformCart.getpCatId())) {
+        if(platformCart == null){
+            platformCart = new CmsBtProductModel_Platform_Cart();
             platformCart.setCartId(cartId);
+        }
+
+        // platform 品牌名
+        if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+            Map<String, Object> parm = new HashMap<>();
+            parm.put("channelId", channelId);
+            parm.put("cartId", cartId);
+            parm.put("cmsBrand", cmsBtProduct.getFields().getBrand());
+            parm.put("active", 1);
+            CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
+            if (cmsMtBrandsMappingModel != null) {
+                platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
+                platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+            }
+        }
+
+        if (!StringUtil.isEmpty(platformCart.getpCatId())) {
             CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
             // JM的场合schema就一条
             if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
@@ -76,19 +93,6 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
             }
             platformCart.put("schemaFields", fields);
-            // platform 品牌名
-            if (StringUtil.isEmpty(platformCart.getpBrandId())) {
-                Map<String, Object> parm = new HashMap<>();
-                parm.put("channelId", channelId);
-                parm.put("cartId", cartId);
-                parm.put("cmsBrand", cmsBtProduct.getFields().getBrand());
-                parm.put("active", 1);
-                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(parm);
-                if (cmsMtBrandsMappingModel != null) {
-                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
-                }
-            }
         }
         return platformCart;
     }
@@ -208,7 +212,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         return platformCart;
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform) {
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
 
@@ -216,7 +220,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         platform.remove("schemaFields");
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel,true);
+        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier,true);
 
     }
 
