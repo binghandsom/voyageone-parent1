@@ -188,23 +188,14 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductBean> getList(String channelId, Set<Long> pids, String[] projections) {
-        JomgoQuery queryObject = new JomgoQuery();
-        String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
-        queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
-        queryObject.setProjectionExt(projections);
-        return getBeanList(channelId, queryObject);
-    }
-
-    /**
-     * getList
-     */
     public List<CmsBtProductModel> getList(String channelId, JomgoQuery queryObject) {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
     /**
      * getList
+     * 注意：调用此方法时，返回值中的getGroupBean()为空，需要自行填值
+     * 如需要groupBean,请使用getListWithGroup()
      */
     public List<CmsBtProductBean> getBeanList(String channelId, JomgoQuery queryObject) {
         return cmsBtProductDao.selectBean(queryObject, channelId);
@@ -691,10 +682,9 @@ public class ProductService extends BaseService {
      * confirm change category
      */
     public Map<String, Object> changeProductCategory(String channelId, String categoryId, String categoryPath, List<String> models, String modifier) {
-
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("catId", categoryId);
-        updateMap.put("catPath", categoryPath);
+        updateMap.put("common.catId", categoryId);
+        updateMap.put("common.catPath", categoryPath);
         // bug CMS-30修正 edward 2016-05-24
         if (!Channel.VOYAGEONE.getId().equals(channelId))
             updateMap.put("batchField.switchCategory", 1);

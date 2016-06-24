@@ -183,6 +183,16 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public CmsBtProductModel_Common getCommon() {
         return common;
     }
+
+    /**
+     * 返回非空CmsBtProductModel_Common对象，
+     */
+    public CmsBtProductModel_Common getCommonNotNull() {
+        if (common == null) {
+            return new CmsBtProductModel_Common();
+        }
+        return common;
+    }
     public void setCommon(CmsBtProductModel_Common common) {
         this.common = common;
     }
