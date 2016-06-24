@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.common.util.excel.ExportExcelInfo;
 import com.voyageone.common.util.excel.ExportFileExcelUtil;
@@ -15,9 +16,11 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import  com.voyageone.common.util.excel.*;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/3/18.
@@ -76,6 +79,7 @@ public class CmsBtJmPromotionExportTask3Service {
     }
 
     public  ExportExcelInfo<Map<String, Object>> getProductExportExcelInfo(List<Map<String, Object>> dataSource,boolean isErrorColumn) {
+
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Product");

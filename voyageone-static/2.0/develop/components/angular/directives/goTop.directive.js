@@ -5,17 +5,15 @@
  * @User:    tony-piao
  * @Version: 0.1.0, 2016-5-24
  */
-(function() {
-    angular.module("voyageone.angular.directives.goTop", []).directive("goTop", function() {
-        return {
-            restrict: "A",
-            link: function(scope, element,attrs) {
-                 var speed = +attrs.goTop;
-                 $(element).on("click",function(){
-                     $("body").animate({ scrollTop: 0 }, speed);
-                     return false;
-                 });
-            }
-        };
-    });
-})();
+angular.module("voyageone.angular.directives", []).directive("goTop", function() {
+    return {
+        restrict: "A",
+        link: function(scope, element,attrs) {
+            var speed = +attrs.goTop;
+            $(element).on("click",function(){
+                $("body").animate({ scrollTop: 0 }, speed);
+                return false;
+            });
+        }
+    };
+});

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.pop.image;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.ImgUtils;
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -110,6 +112,9 @@ public class CmsImageSettingService extends BaseAppService {
     // 根据imagetype计算出新上传的图片名
     private String getImageName(CmsBtProductModel cmsBtProductModel, String imageType, UserSessionBean user) {
 
+        String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
+        Pattern special_symbol = Pattern.compile(URL_FORMAT);
+
         CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
         List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getFields().getImages(fieldImageType);
 
@@ -119,7 +124,7 @@ public class CmsImageSettingService extends BaseAppService {
         int size = images.size();
         while (true){
             size++;
-            imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), cmsBtProductModel.getFields().getCode(), imageType.substring(imageType.length() - 1), size);
+            imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString), imageType.substring(imageType.length() - 1), size);
             final String finalImageName = imageName;
             if(images.stream().filter(cmsBtProductModel_field_image -> finalImageName.equalsIgnoreCase(cmsBtProductModel_field_image.getName())).collect(Collectors.toList()).size() == 0){
                 break;
