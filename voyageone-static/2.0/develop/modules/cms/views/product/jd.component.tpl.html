@@ -167,19 +167,20 @@
                 </div>
 
                 <hr>
-                <!------------------------------------------------以下为产品schema------------------------------------------------------->
+                <!------------------------------------------------以下为产品Schema------------------------------------------------------->
 
                 <div class="container-fluid" id="{{cartInfo.name}}2">
 
                     <div class="col-sm-7">
                         <ng-form name="schemaForm" novalidate>
-                            <schema data="vm.platform.schemaFields"></schema>
+                            <schema data="vm.platform.schemaFields.item"></schema>
+                            <schema data="vm.platform.schemaFields.product"></schema>
                         </ng-form>
                     </div>
                 </div>
 
                 <hr>
-                <!------------------------------------------------以下为产品schema------------------------------------------------------->
+                <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="{{cartInfo.name}}3">
                     <div class="table-responsive">
                         <ng-form name="skuForm" novalidate>

@@ -430,8 +430,8 @@ public class CmsProductDetailService extends BaseAppService {
         //执行product上新
 //        if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
-            // 插入上新程序
-            productService.insertSxWorkLoad(channelId, newProduct, userName);
+        // 插入上新程序
+        productService.insertSxWorkLoad(channelId, newProduct, userName);
 
 //        }
 
@@ -531,6 +531,9 @@ public class CmsProductDetailService extends BaseAppService {
     }
 
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+        Map<String, Object> result = new HashMap<>();
+
+
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
@@ -553,9 +556,40 @@ public class CmsProductDetailService extends BaseAppService {
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
             productComm.put("schemaFields", cmsMtCommonFields);
-            productComm.put("images",images);
         }
-        return productComm;
+
+
+        Map<String, Object> mastData = new HashMap<>();
+        mastData.put("images", images);
+
+        // 获取各个平台的状态
+        List<Map<String, Object>> platformList = new ArrayList<>();
+        if (cmsBtProduct.getPlatforms() != null) {
+            cmsBtProduct.getPlatforms().forEach((s, platformInfo) -> {
+                Map<String,Object> platformStatus = new HashMap<String, Object>();
+                platformStatus.put("cartId", platformInfo.getCartId());
+                platformStatus.put("pStatus", platformInfo.getpStatus());
+                platformStatus.put("status", platformInfo.getStatus());
+                platformList.add(platformStatus);
+                
+            });
+        }
+        mastData.put("platformList", platformList);
+
+        result.put("productComm", productComm);
+        result.put("mastData", mastData);
+        return result;
+    }
+
+    public Map<String, Object> updateCommonProductinfo(String channelId, Long prodId, Map<String, Object> commInfo, String modifier) {
+
+        List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
+
+        commInfo.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        commInfo.remove("schemaFields");
+        CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
+
+        return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
 
     /**

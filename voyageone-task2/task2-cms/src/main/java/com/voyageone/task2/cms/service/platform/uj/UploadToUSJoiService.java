@@ -279,7 +279,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                     });
 
                     if (pr.getCommon() == null || pr.getCommon().size() == 0) {
-                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon());
+                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(),getTaskName(),false);
                     }
 
                 }

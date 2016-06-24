@@ -474,6 +474,42 @@ s-field textarea.s-html {
     min-width: 125px;
 }
 
+.product-shema-detail .fa-5x{
+    font-size: 2em;
+    height: 50px;
+}
+
+.product-shema-detail .panel-primary a{
+    color: #337ab7
+}
+
+.product-shema-detail .panel-green{
+     background-color: #5cb75c;
+    color: white;
+ }
+
+.product-shema-detail .panel-green a{
+    color: #5cb75c;
+}
+
+.product-shema-detail .panel-yellow{
+    background-color: #efac4e;
+    color: white;
+}
+
+.product-shema-detail .panel-yellow a{
+    color: #efac4e;
+}
+
+.product-shema-detail .panel-red{
+    background-color: #d8534f;
+    color: white;
+}
+
+.product-shema-detail .panel-red a{
+    color: #d8534f;
+}
+
 /*uib-tab样式*/
 .tab-container {
     margin-bottom: 15px;
