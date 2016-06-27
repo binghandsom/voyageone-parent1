@@ -480,7 +480,7 @@ define([
             parameter.tagList = productTagList;
             parameter.id = m.id;
             jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
-                    alert($translate.instant('TXT_SUCCESS'));
+                 //   alert($translate.instant('TXT_SUCCESS'));
             }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
             });

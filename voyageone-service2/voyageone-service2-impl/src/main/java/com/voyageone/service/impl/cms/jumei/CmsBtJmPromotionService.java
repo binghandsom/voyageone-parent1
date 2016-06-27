@@ -222,11 +222,13 @@ public class CmsBtJmPromotionService {
         modelTag.setTagStatus(0);
         modelTag.setParentTagId(0);
         modelTag.setSortOrder(0);
-        modelTag.setTagPath("");
-        modelTag.setTagPathName("");
+        modelTag.setTagPath(String.format("-%s-", ""));
+        modelTag.setTagPathName(String.format("-%s-", model.getName()));
         modelTag.setModifier(model.getModifier());
         //Tag追加  活动名称
-         daoCmsBtTag.insert(modelTag);
+        daoCmsBtTag.insert(modelTag);
+        modelTag.setTagPath(String.format("-%s-", modelTag.getId()));
+        daoCmsBtTag.update(modelTag);
         return modelTag.getId();
     }
 

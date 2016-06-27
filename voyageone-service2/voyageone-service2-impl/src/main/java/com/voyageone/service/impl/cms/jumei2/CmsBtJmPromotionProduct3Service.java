@@ -1,11 +1,13 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
@@ -15,9 +17,12 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +53,14 @@ public class CmsBtJmPromotionProduct3Service {
     CmsMtJmConfigService serviceCmsMtJmConfig;
     @Autowired
     JMShopBeanService serviceJMShopBean;
-
+    @Autowired
+    CmsBtJmPromotionDao daoCmsBtJmPromotion;
     @Autowired
     CmsBtJmPromotionTagProductDao daoCmsBtJmPromotionTagProduct;
     @Autowired
     CmsBtJmPromotionTagProductDaoExt daoExtCmsBtJmPromotionTagProduct;
-
+    @Autowired
+    private ProductService productService;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -193,11 +200,14 @@ public class CmsBtJmPromotionProduct3Service {
             tagNameList += "|" + tagInfo.getTagName();
         }
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
-        model.setPromotionTag(tagNameList);
+        model.setPromotionTag(tagNameList);//1.更新 CmsBtJmPromotionProductModel tag
         model.setModifier(userName);
-        dao.update(model);
-        daoExtCmsBtJmPromotionTagProduct.deleteByCmsBtJmPromotionProductId(parameter.getId());
+        dao.update(model);//1
+
+        CmsBtJmPromotionModel modelPromotion = daoCmsBtJmPromotion.select(model.getCmsBtJmPromotionId());
+        daoExtCmsBtJmPromotionTagProduct.deleteByCmsBtJmPromotionProductId(parameter.getId());//2删除旧的tag
         CmsBtJmPromotionTagProductModel modelCmsBtJmPromotionTagProduct = null;
+        //3.添加新的tag
         for (ProductTagInfo tagInfo : parameter.getTagList()) {
             modelCmsBtJmPromotionTagProduct = new CmsBtJmPromotionTagProductModel();
             modelCmsBtJmPromotionTagProduct.setCmsBtTagId(tagInfo.getTagId());
@@ -210,7 +220,32 @@ public class CmsBtJmPromotionProduct3Service {
             modelCmsBtJmPromotionTagProduct.setCreater(userName);
             daoCmsBtJmPromotionTagProduct.insert(modelCmsBtJmPromotionTagProduct);
         }
+        //更新mongo  product  tag
+        updateCmsBtProductTags(model, modelPromotion, parameter, userName);
         return 1;
+    }
+    //更新mongo  product  tag
+    private void updateCmsBtProductTags(CmsBtJmPromotionProductModel model,CmsBtJmPromotionModel modelPromotion,UpdatePromotionProductTagParameter parameter,String modifier) {
+        //更新商品Tags  sunpt
+        CmsBtProductModel productModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());
+        if (productModel != null) {
+            List<String> tags = productModel.getTags();
+            int size = tags.size();
+            //1.移除该活动的所有tag
+            for (int i = size - 1; i >= 0; i--) {
+                String tag = String.format("-%s-", modelPromotion.getRefTagId().toString());
+                if (tags.get(i).indexOf(tag)== 0) {
+                    tags.remove(i);
+                }
+            }
+            //2.添加新的tag
+            for (ProductTagInfo tagInfo : parameter.getTagList()) {
+                tags.add(String.format("-%s-%s-", modelPromotion.getRefTagId(), tagInfo.getTagId()));
+            }
+            productModel.setTags(tags);
+            //3.更新
+            productService.updateTags(model.getChannelId(), productModel.getProdId(), tags, modifier);
+        }
     }
 }
 
