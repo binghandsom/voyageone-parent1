@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,9 +64,25 @@ public class CmsBtJmPromotionProductService {
     }
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        return daoExt.selectPageByWhere(map);
+        List<MapModel> list = daoExt.selectPageByWhere(map);
+        for (MapModel model : list) {
+            loadMap(model);
+        }
+        return list;
     }
-
+      void  loadMap(MapModel map) {
+          String promotionTag = map.get("promotionTag").toString();
+          if (!StringUtils.isEmpty(promotionTag)) {
+              String[] tagStrList =  promotionTag.split("\\|");
+              List<String> tagNameList = new ArrayList<>();
+              for (String tagName : tagStrList) {
+                  if (!StringUtils.isEmpty(tagName)) {
+                      tagNameList.add(tagName);
+                  }
+              }
+              map.put("tagNameList",tagNameList);
+          }
+      }
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }

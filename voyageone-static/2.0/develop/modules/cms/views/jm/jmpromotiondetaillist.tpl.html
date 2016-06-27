@@ -173,7 +173,7 @@
                                     <label class="col-sm-3 control-label">Promotion Tag</label>
                                     <div class="col-sm-8">
                                         <select multiple chosen class="form-control" ng-model="searchInfo.tagIdList"
-                                                ng-options="m.id as m.tagName for m in vm.tagList">
+                                                ng-options="m.tagName as m.tagName for m in vm.tagList">
                                         </select>
                                     </div>
                                 </div>
@@ -291,8 +291,8 @@
                                         {{model.productLongName}}  </a>
                                     </td>
                                     <td>
-                                        <select multiple chosen class="form-control" ng-model="searchInfo.tagIdList"
-                                                ng-options="m.id as m.tagName for m in vm.tagList">
+                                        <select multiple chosen class="form-control"  ng-change="changeSelectTag(model)" ng-model="model.tagNameList"
+                                                ng-options="m.tagName as m.tagName for m in vm.tagList">
                                         </select>
                                     </td>
                                     <!--<td class="text-left">{{model.promotionTag}}</td>-->

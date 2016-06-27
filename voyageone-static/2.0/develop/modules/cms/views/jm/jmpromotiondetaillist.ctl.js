@@ -466,6 +466,10 @@ define([
 
             return m.maxMarketPrice + "~" + m.minMarketPrice;
         }
+        $scope.changeSelectTag=function(m){
+            console.log(m.tagNameList);
+            alert(m.tagNameList.toString());
+        }
         /**
          * popup弹出选择聚美平台数据类目
          * @param popupNewCategory
