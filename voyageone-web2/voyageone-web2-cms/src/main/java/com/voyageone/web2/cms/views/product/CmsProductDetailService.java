@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -592,6 +593,8 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("pStatus", platformInfo.getpStatus());
                 platformStatus.put("status", platformInfo.getStatus());
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
+                platformStatus.put("pNumIId",platformInfo.getpNumIId());
+                platformStatus.put("cartName",CartEnums.Cart.getValueByID(platformInfo.getCartId()+"").toString());
                 platformList.add(platformStatus);
             });
         }
