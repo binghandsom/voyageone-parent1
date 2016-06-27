@@ -3,216 +3,62 @@ package com.voyageone.task2.cms.model;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 /**
- * Created by gjl on 2016/6/21.
+ * Created by gjl on 2016/6/15.
  */
 public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
-    private String retailerId;
-    private String model;
-    private String clientModel;
-    private String sku;
-    private String clientSku;
-    private String title;
-    private String brand;
-    private String manufacturerName;
-    private String shortDescription;
-    private String longDescription;
-    private String leadTime;
-    private String adultContent;
-    private String countryOfOrigin;
-    private String productActiveStatus;
-    private String shippingSiteSale;
-    private String discountSiteSale;
-    private String condition;
-    private String returnPolicy;
-    private String category;
+    private String auctionTitle;
     private String description;
-    private String inventoryAvailable;
-    private String msrpExpirationDate;
-    private String compareAtExpirationDate;
-    private String shippingWidth;
-    private String shippingHeight;
-    private String shippingLength;
-    private String shippingWeight;
-    private String upc;
-    private String shipsViaLtl;
-    private String model_image;
-    private String model_retailerId;
-    private String model_title;
-    private String model_brand;
-    private String model_manufacturerName;
-    private String model_shortDescription;
-    private String model_longDescription;
-    private String model_leadTime;
-    private String model_adultContent;
-    private String model_countryOfOrigin;
-    private String model_productActiveStatus;
-    private String model_shippingSiteSale;
-    private String model_discountSiteSale;
-    private String model_condition;
-    private String model_returnPolicy;
-    private String salePoint;
+    private String manufacturer;
+    private String relationshipName;
+    private String variationParentSku;
+    private String brandname;
+    private String categories;
+    private String closuretype;
+    private String colormap;
+    private String colorname;
+    private String departmentname;
+    private String ebaymaincolor;
+    private String ebaystorecategorytext;
+    private String externalproductid;
+    private String externalproductidtype;
+    private String feedproducttype;
+    private String gender;
+    private String generickeywords;
+    private String itemclassdisplaypath;
+    private String itemname;
+    private String itemtype;
+    private String itemtypekeyword;
+    private String materialtype;
+    private String numberofitems;
+    private String productdescription;
+    private String recommendedbrowsenodes;
+    private String relationshiptype;
+    private String shoesizedisplay;
+    private String shoesizeinfants;
+    private String shoesizekids;
+    private String shoesizemen;
+    private String shoesizewomen;
+    private String shoetypes;
+    private String sizename;
+    private String solematerial;
+    private String stylekeywords1;
+    private String stylename;
+    private String toestyle;
+    private String variationtheme;
+    private String waterresistancelevel;
+    private String featureBullets;
+    private String tmallWeight;
+    private String countryOfOrigin;
 
-    public String getRetailerId() {
-        return retailerId;
+
+    public String getAuctionTitle() {
+        return auctionTitle;
     }
 
-    public void setRetailerId(String retailerId) {
-        this.retailerId = retailerId;
+    public void setAuctionTitle(String auctionTitle) {
+        this.auctionTitle = auctionTitle;
     }
 
-    @Override
-    public String getModel() {
-        return model;
-    }
-
-    @Override
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getClientModel() {
-        return clientModel;
-    }
-
-    public void setClientModel(String clientModel) {
-        this.clientModel = clientModel;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getClientSku() {
-        return clientSku;
-    }
-
-    public void setClientSku(String clientSku) {
-        this.clientSku = clientSku;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public String getBrand() {
-        return brand;
-    }
-
-    @Override
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getManufacturerName() {
-        return manufacturerName;
-    }
-
-    public void setManufacturerName(String manufacturerName) {
-        this.manufacturerName = manufacturerName;
-    }
-
-    @Override
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    @Override
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    @Override
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    @Override
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
-    }
-
-    public String getLeadTime() {
-        return leadTime;
-    }
-
-    public void setLeadTime(String leadTime) {
-        this.leadTime = leadTime;
-    }
-
-    public String getAdultContent() {
-        return adultContent;
-    }
-
-    public void setAdultContent(String adultContent) {
-        this.adultContent = adultContent;
-    }
-
-    public String getCountryOfOrigin() {
-        return countryOfOrigin;
-    }
-
-    public void setCountryOfOrigin(String countryOfOrigin) {
-        this.countryOfOrigin = countryOfOrigin;
-    }
-
-    public String getProductActiveStatus() {
-        return productActiveStatus;
-    }
-
-    public void setProductActiveStatus(String productActiveStatus) {
-        this.productActiveStatus = productActiveStatus;
-    }
-
-    public String getShippingSiteSale() {
-        return shippingSiteSale;
-    }
-
-    public void setShippingSiteSale(String shippingSiteSale) {
-        this.shippingSiteSale = shippingSiteSale;
-    }
-
-    public String getDiscountSiteSale() {
-        return discountSiteSale;
-    }
-
-    public void setDiscountSiteSale(String discountSiteSale) {
-        this.discountSiteSale = discountSiteSale;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getReturnPolicy() {
-        return returnPolicy;
-    }
-
-    public void setReturnPolicy(String returnPolicy) {
-        this.returnPolicy = returnPolicy;
-    }
-
-    @Override
-    public String getCategory() {
-        return category;
-    }
-
-    @Override
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public String getDescription() {
         return description;
@@ -222,203 +68,332 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.description = description;
     }
 
-    public String getInventoryAvailable() {
-        return inventoryAvailable;
+    public String getManufacturer() {
+        return manufacturer;
     }
 
-    public void setInventoryAvailable(String inventoryAvailable) {
-        this.inventoryAvailable = inventoryAvailable;
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
     }
 
-    public String getMsrpExpirationDate() {
-        return msrpExpirationDate;
+    public String getRelationshipName() {
+        return relationshipName;
     }
 
-    public void setMsrpExpirationDate(String msrpExpirationDate) {
-        this.msrpExpirationDate = msrpExpirationDate;
+    public void setRelationshipName(String relationshipName) {
+        this.relationshipName = relationshipName;
     }
 
-    public String getCompareAtExpirationDate() {
-        return compareAtExpirationDate;
+    public String getVariationParentSku() {
+        return variationParentSku;
     }
 
-    public void setCompareAtExpirationDate(String compareAtExpirationDate) {
-        this.compareAtExpirationDate = compareAtExpirationDate;
+    public void setVariationParentSku(String variationParentSku) {
+        this.variationParentSku = variationParentSku;
     }
 
-    public String getShippingWidth() {
-        return shippingWidth;
+    public String getBrandname() {
+        return brandname;
     }
 
-    public void setShippingWidth(String shippingWidth) {
-        this.shippingWidth = shippingWidth;
+    public void setBrandname(String brandname) {
+        this.brandname = brandname;
     }
 
-    public String getShippingHeight() {
-        return shippingHeight;
+    public String getCategories() {
+        return categories;
     }
 
-    public void setShippingHeight(String shippingHeight) {
-        this.shippingHeight = shippingHeight;
+    public void setCategories(String categories) {
+        this.categories = categories;
     }
 
-    public String getShippingLength() {
-        return shippingLength;
+    public String getClosuretype() {
+        return closuretype;
     }
 
-    public void setShippingLength(String shippingLength) {
-        this.shippingLength = shippingLength;
+    public void setClosuretype(String closuretype) {
+        this.closuretype = closuretype;
     }
 
-    public String getShippingWeight() {
-        return shippingWeight;
+    public String getColormap() {
+        return colormap;
     }
 
-    public void setShippingWeight(String shippingWeight) {
-        this.shippingWeight = shippingWeight;
+    public void setColormap(String colormap) {
+        this.colormap = colormap;
     }
 
-    public String getUpc() {
-        return upc;
+    public String getColorname() {
+        return colorname;
     }
 
-    public void setUpc(String upc) {
-        this.upc = upc;
+    public void setColorname(String colorname) {
+        this.colorname = colorname;
     }
 
-    public String getShipsViaLtl() {
-        return shipsViaLtl;
+    public String getDepartmentname() {
+        return departmentname;
     }
 
-    public void setShipsViaLtl(String shipsViaLtl) {
-        this.shipsViaLtl = shipsViaLtl;
+    public void setDepartmentname(String departmentname) {
+        this.departmentname = departmentname;
     }
 
-    public String getModel_image() {
-        return model_image;
+    public String getEbaymaincolor() {
+        return ebaymaincolor;
     }
 
-    public void setModel_image(String model_image) {
-        this.model_image = model_image;
+    public void setEbaymaincolor(String ebaymaincolor) {
+        this.ebaymaincolor = ebaymaincolor;
     }
 
-    public String getModel_retailerId() {
-        return model_retailerId;
+    public String getEbaystorecategorytext() {
+        return ebaystorecategorytext;
     }
 
-    public void setModel_retailerId(String model_retailerId) {
-        this.model_retailerId = model_retailerId;
+    public void setEbaystorecategorytext(String ebaystorecategorytext) {
+        this.ebaystorecategorytext = ebaystorecategorytext;
     }
 
-    public String getModel_title() {
-        return model_title;
+    public String getExternalproductid() {
+        return externalproductid;
     }
 
-    public void setModel_title(String model_title) {
-        this.model_title = model_title;
+    public void setExternalproductid(String externalproductid) {
+        this.externalproductid = externalproductid;
     }
 
-    public String getModel_brand() {
-        return model_brand;
+    public String getExternalproductidtype() {
+        return externalproductidtype;
     }
 
-    public void setModel_brand(String model_brand) {
-        this.model_brand = model_brand;
+    public void setExternalproductidtype(String externalproductidtype) {
+        this.externalproductidtype = externalproductidtype;
     }
 
-    public String getModel_manufacturerName() {
-        return model_manufacturerName;
+    public String getFeedproducttype() {
+        return feedproducttype;
     }
 
-    public void setModel_manufacturerName(String model_manufacturerName) {
-        this.model_manufacturerName = model_manufacturerName;
+    public void setFeedproducttype(String feedproducttype) {
+        this.feedproducttype = feedproducttype;
     }
 
-    public String getModel_shortDescription() {
-        return model_shortDescription;
+    public String getGender() {
+        return gender;
     }
 
-    public void setModel_shortDescription(String model_shortDescription) {
-        this.model_shortDescription = model_shortDescription;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public String getModel_longDescription() {
-        return model_longDescription;
+    public String getGenerickeywords() {
+        return generickeywords;
     }
 
-    public void setModel_longDescription(String model_longDescription) {
-        this.model_longDescription = model_longDescription;
+    public void setGenerickeywords(String generickeywords) {
+        this.generickeywords = generickeywords;
     }
 
-    public String getModel_leadTime() {
-        return model_leadTime;
+    public String getItemclassdisplaypath() {
+        return itemclassdisplaypath;
     }
 
-    public void setModel_leadTime(String model_leadTime) {
-        this.model_leadTime = model_leadTime;
+    public void setItemclassdisplaypath(String itemclassdisplaypath) {
+        this.itemclassdisplaypath = itemclassdisplaypath;
     }
 
-    public String getModel_adultContent() {
-        return model_adultContent;
+    public String getItemname() {
+        return itemname;
     }
 
-    public void setModel_adultContent(String model_adultContent) {
-        this.model_adultContent = model_adultContent;
+    public void setItemname(String itemname) {
+        this.itemname = itemname;
     }
 
-    public String getModel_countryOfOrigin() {
-        return model_countryOfOrigin;
+    public String getItemtype() {
+        return itemtype;
     }
 
-    public void setModel_countryOfOrigin(String model_countryOfOrigin) {
-        this.model_countryOfOrigin = model_countryOfOrigin;
+    public void setItemtype(String itemtype) {
+        this.itemtype = itemtype;
     }
 
-    public String getModel_productActiveStatus() {
-        return model_productActiveStatus;
+    public String getItemtypekeyword() {
+        return itemtypekeyword;
     }
 
-    public void setModel_productActiveStatus(String model_productActiveStatus) {
-        this.model_productActiveStatus = model_productActiveStatus;
+    public void setItemtypekeyword(String itemtypekeyword) {
+        this.itemtypekeyword = itemtypekeyword;
     }
 
-    public String getModel_shippingSiteSale() {
-        return model_shippingSiteSale;
+    public String getMaterialtype() {
+        return materialtype;
     }
 
-    public void setModel_shippingSiteSale(String model_shippingSiteSale) {
-        this.model_shippingSiteSale = model_shippingSiteSale;
+    public void setMaterialtype(String materialtype) {
+        this.materialtype = materialtype;
     }
 
-    public String getModel_discountSiteSale() {
-        return model_discountSiteSale;
+
+    public String getNumberofitems() {
+        return numberofitems;
     }
 
-    public void setModel_discountSiteSale(String model_discountSiteSale) {
-        this.model_discountSiteSale = model_discountSiteSale;
+    public void setNumberofitems(String numberofitems) {
+        this.numberofitems = numberofitems;
     }
 
-    public String getModel_condition() {
-        return model_condition;
+    public String getProductdescription() {
+        return productdescription;
     }
 
-    public void setModel_condition(String model_condition) {
-        this.model_condition = model_condition;
+    public void setProductdescription(String productdescription) {
+        this.productdescription = productdescription;
     }
 
-    public String getModel_returnPolicy() {
-        return model_returnPolicy;
+    public String getRecommendedbrowsenodes() {
+        return recommendedbrowsenodes;
     }
 
-    public void setModel_returnPolicy(String model_returnPolicy) {
-        this.model_returnPolicy = model_returnPolicy;
+    public void setRecommendedbrowsenodes(String recommendedbrowsenodes) {
+        this.recommendedbrowsenodes = recommendedbrowsenodes;
     }
 
-    public String getSalePoint() {
-        return salePoint;
+    public String getRelationshiptype() {
+        return relationshiptype;
     }
 
-    public void setSalePoint(String salePoint) {
-        this.salePoint = salePoint;
+    public void setRelationshiptype(String relationshiptype) {
+        this.relationshiptype = relationshiptype;
+    }
+
+    public String getShoesizedisplay() {
+        return shoesizedisplay;
+    }
+
+    public void setShoesizedisplay(String shoesizedisplay) {
+        this.shoesizedisplay = shoesizedisplay;
+    }
+
+    public String getShoesizeinfants() {
+        return shoesizeinfants;
+    }
+
+    public void setShoesizeinfants(String shoesizeinfants) {
+        this.shoesizeinfants = shoesizeinfants;
+    }
+
+    public String getShoesizekids() {
+        return shoesizekids;
+    }
+
+    public void setShoesizekids(String shoesizekids) {
+        this.shoesizekids = shoesizekids;
+    }
+
+    public String getShoesizemen() {
+        return shoesizemen;
+    }
+
+    public void setShoesizemen(String shoesizemen) {
+        this.shoesizemen = shoesizemen;
+    }
+
+    public String getShoesizewomen() {
+        return shoesizewomen;
+    }
+
+    public void setShoesizewomen(String shoesizewomen) {
+        this.shoesizewomen = shoesizewomen;
+    }
+
+    public String getShoetypes() {
+        return shoetypes;
+    }
+
+    public void setShoetypes(String shoetypes) {
+        this.shoetypes = shoetypes;
+    }
+
+    public String getSizename() {
+        return sizename;
+    }
+
+    public void setSizename(String sizename) {
+        this.sizename = sizename;
+    }
+
+    public String getSolematerial() {
+        return solematerial;
+    }
+
+    public void setSolematerial(String solematerial) {
+        this.solematerial = solematerial;
+    }
+
+    public String getStylekeywords1() {
+        return stylekeywords1;
+    }
+
+    public void setStylekeywords1(String stylekeywords1) {
+        this.stylekeywords1 = stylekeywords1;
+    }
+
+    public String getStylename() {
+        return stylename;
+    }
+
+    public void setStylename(String stylename) {
+        this.stylename = stylename;
+    }
+
+    public String getToestyle() {
+        return toestyle;
+    }
+
+    public void setToestyle(String toestyle) {
+        this.toestyle = toestyle;
+    }
+
+    public String getVariationtheme() {
+        return variationtheme;
+    }
+
+    public void setVariationtheme(String variationtheme) {
+        this.variationtheme = variationtheme;
+    }
+
+    public String getWaterresistancelevel() {
+        return waterresistancelevel;
+    }
+
+    public void setWaterresistancelevel(String waterresistancelevel) {
+        this.waterresistancelevel = waterresistancelevel;
+    }
+
+    public String getFeatureBullets() {
+        return featureBullets;
+    }
+
+    public void setFeatureBullets(String featureBullets) {
+        this.featureBullets = featureBullets;
+    }
+
+    public String getTmallWeight() {
+        return tmallWeight;
+    }
+
+    public void setTmallWeight(String tmallWeight) {
+        this.tmallWeight = tmallWeight;
+    }
+
+    public String getCountryOfOrigin() {
+        return countryOfOrigin;
+    }
+
+    public void setCountryOfOrigin(String countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
     }
 }
