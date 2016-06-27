@@ -542,11 +542,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //需要重试
                         delayWorkload(work);
                         $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
+                        return;
                     }
-                    else {
-                        saveWorkload(work, WORK_LOAD_SUCCESS);
-                        $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
-                    }
+
+                    saveWorkload(work, WORK_LOAD_SUCCESS);
+                    $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
+
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
