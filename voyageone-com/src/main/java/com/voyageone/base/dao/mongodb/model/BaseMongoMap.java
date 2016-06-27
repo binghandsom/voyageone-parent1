@@ -148,6 +148,9 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
         for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
