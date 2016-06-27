@@ -11,22 +11,7 @@
     <link rel="stylesheet" href="assets/js/angular-block-ui/0.2.1/angular-block-ui.min.css">
     <script src="assets/js/system.js/system.js"></script>
     <script>
-        System.config({
-            defaultJSExtensions: true,
-            paths: {
-                'angular': 'assets/js/angular.js/1.5.6/angular',
-                'angular-vo': 'shared/components.ng',
-                'angular-translate': 'assets/js/angular-translate/2.8.1/angular-translate',
-                'angular-block-ui': 'assets/js/angular-block-ui/0.2.1/angular-block-ui'
-            },
-            meta: {
-                'angular-block-ui': ['angular'],
-                'angular-translate': ['angular'],
-                'angular-vo': ['angular'],
-                'angular': {exports: 'angular'}
-            }
-        });
-        System.import('login');
+        System.import('login.js');
     </script>
 </head>
 <body>
