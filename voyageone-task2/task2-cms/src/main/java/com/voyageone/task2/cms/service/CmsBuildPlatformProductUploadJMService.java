@@ -420,6 +420,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     sizeStr = getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType);
                                     htSpuUpdateRequest.setSize(sizeStr);
+                                    htSpuUpdateRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                                     HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
@@ -475,7 +476,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 //新SPU需要增加
                                 else {
                                     HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
-                                    htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode"));
+                                    htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
@@ -542,11 +543,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //需要重试
                         delayWorkload(work);
                         $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
+                        return;
                     }
-                    else {
-                        saveWorkload(work, WORK_LOAD_SUCCESS);
-                        $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
-                    }
+
+                    saveWorkload(work, WORK_LOAD_SUCCESS);
+                    $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
+
                 } catch (Exception e) {
                     //保存错误log
                     // 如果上新数据中的errorMessage为空
@@ -863,7 +865,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
-            spu.setUpc_code(jmSku.getStringAttribute("barcode"));
+            spu.setUpc_code(jmSku.getStringAttribute("barcode")+"vo");
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             String size = jmSku.getStringAttribute("size");
