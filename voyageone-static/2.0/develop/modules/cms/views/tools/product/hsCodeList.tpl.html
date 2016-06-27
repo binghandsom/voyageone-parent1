@@ -7,34 +7,107 @@
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-5">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_NUMBER_OF_WAITED_FOR_SETTED"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.totalHsCodeCnt" readonly>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                         <div class="col-sm-4">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_GET_TASK_COUNT"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="ctrl.hsCodeTaskCnt" readonly ng-pattern="/^(\d+)$/">
-                                    </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
+                                    <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;商品税号设置状态</h3>
                                 </div>
-                            </form>
+                                <div class="panel-body">
+                                    <ul class="data-display-boxes">
+                                        <li>
+                                            <div class="data  data-priority-2"> <strong>180</strong> 未分配总数 </div>
+                                        </li>
+                                        <li>
+                                            <div class="data  data-priority-1"> <strong>20</strong> 已分配但未完成总数 </div>
+                                        </li>
+                                        <li>
+                                            <div class="data  data-priority-5"> <strong>20</strong> 设置税号商品总数 </div>
+                                        </li>
+                                        <li>
+                                            <div class="data  data-priority-5"> <strong>5</strong> 个人设置税号商品译数 </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-2">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <div class="col-sm-2 col-sm-offset-6">
-                                        <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
-                                    </div>
+                        <div class="col-sm-5">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
+                                    <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;获取任务</h3>
                                 </div>
-                            </form>
+                                <div class="panel-body white-bg">
+                                    <form class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control" ng-model="ctrl.hsCodeRule">
+                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                    <option value="0">{{'TXT_INVENTORY'|translate}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="checkbox-inline c-radio ng-binding">
+                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="checkbox-inline c-radio ng-binding">
+                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" translate="TXT_CODE_FULL"></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" ng-model="ctrl.code">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
+                                            <div class="col-sm-8">
+                                                <input type="number" class="form-control" ng-model="ctrl.hsCodeTaskCnt" ng-pattern="/^(\d+)$/">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-2 col-sm-offset-4">
+                                                <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
+                                    <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;个人设置税号成果搜索</h3>
+                                </div>
+                                <div class="panel-body white-bg">
+                                    <form class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
+                                            <div class="col-sm-7">
+                                                <select class="form-control" ng-model="ctrl.hsCodeStatus">
+                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                    <option value="0">已设置</option>
+                                                    <option value="1">未设置</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-11">
+                                                <textarea type="text" rows="3" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.code"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <button class="btn btn-default ng-binding" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清空 </button>
+                                            <button class="btn btn-vo" type="button" ng-click="ctrl.search(1)">
+                                                <i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,43 +116,6 @@
     </div>
     <div class="box">
         <div class="box-body-new">
-            <div class="col-sm-12 m-t-sm">
-                <div class="col-sm-5">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control no-resize" rows="3" ng-model="ctrl.searchCondition"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-sm-4 m-t-md">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" translate="TXT_HS_CODE_STATUS"></label>
-                            <div class="col-sm-7">
-                                <select class="form-control" ng-model="ctrl.hsCodeStatus">
-                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    <option value="0">已设置</option>
-                                    <option value="1">未设置</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-sm-2 m-t-md">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-2 col-sm-offset-6">
-                                <button class="btn btn-vo" type="button" ng-click="ctrl.search(1)">
-                                    <i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <table class="table table-hover-new table-hover">
                 <thead>
                     <tr>

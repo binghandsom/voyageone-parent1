@@ -677,7 +677,7 @@
             dependExpressList = self.dependExpressList,
             currRule = self.origin,
             currentField = DependentRule.fieldCache[self.$fieldId],
-            forceTrue = false;
+            forceFail = false;
 
         var result = all(dependExpressList, function (express) {
 
@@ -707,8 +707,10 @@
             }
 
             // 如果依赖的目标字段不存在, 则规则强制生效
+            // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
+            // 如果依赖的目标不存在, 则强制规则失效, 并打断 all 判断
             if (!targetField)
-                return !(forceTrue = true);
+                return !(forceFail = true);
 
             if (currRule.name === 'disableRule' && !!(parentDisableRule = getRules(targetField).disableRule)) {
                 // 如果当前要检查的就是 disableRule
@@ -727,8 +729,10 @@
                 value = value.value;
 
             // 如果最终获取的值内容为空, 那么认为计算失败, 则规则强制生效
+            // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
+            // 如果最终获取的值内容为空, 则强制规则失效, 并打断 all 判断
             if (value === null)
-                return !(forceTrue = true);
+                return !(forceFail = true);
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -744,7 +748,7 @@
             }
         });
 
-        return forceTrue || result;
+        return (forceFail ? false : result);
     };
 
     /**

@@ -127,7 +127,9 @@ public class CmsProductDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+        Map<String, Object> productComm = (Map<String, Object>) requestMap.get("productComm");
+
+        return success(productPropsEditService.updateCommonProductinfo(channelId, prodId, productComm, getUser().getUserName()));
 
     }
 }
