@@ -759,7 +759,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-        String productName = jmFields.getStringAttribute("productNameCn") + " " + fields.getCode();
+        String productName = jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(fields.getCode()).replaceAll("-");
         htProductUpdateRequest.setJumei_product_name(productName);
         htProductUpdateRequest.setJumei_product_id(productId);
         HtProductUpdate_ProductInfo productInfo = new HtProductUpdate_ProductInfo();
@@ -959,7 +959,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
-        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + productCode);
+        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
         cmsBtJmProductModel.setVoBrandName(product.getCatId());
         cmsBtJmProductModel.setVoCategoryName(product.getCatPath());
         cmsBtJmProductModel.setBrandName(brandName);
@@ -1079,7 +1079,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
             if (commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).count() > 0) {
                 CmsBtProductModel_Sku CommonSku = commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).findFirst().get();
-                jmSku.put("barcode", CommonSku.getBarcode());
+                jmSku.put("barcode", CommonSku.getBarcode() + "vo");
                 jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
                 jmSku.put("priceRetail", CommonSku.getPriceRetail());
                 jmSku.put("clientMsrpPrice", CommonSku.getClientMsrpPrice());

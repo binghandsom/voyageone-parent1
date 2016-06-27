@@ -818,7 +818,7 @@ public class ProductService extends BaseService {
 
             // 设置原始价格单位
 
-            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getOrgChannelId()
                     , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
             resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
 
