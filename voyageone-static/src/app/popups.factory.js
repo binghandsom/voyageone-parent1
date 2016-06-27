@@ -4,16 +4,22 @@
  */
 
 define([
-    'cms',
     'underscore',
     'require'
-], function (cms, _, require) {
+], function (_, require) {
 
     var popups = {
+        test: {
+            templateUrl: "views/pop/bulkUpdate/addToPromotion.tpl.html",
+            controllerUrl: "modules/cms/views/pop/bulkUpdate/addToPromotion.ctl",
+            controller: 'popAddToPromotionCtl',
+            backdrop: 'static',
+            size: 'md'
+        }
         // 在这里增加你的 popup 配置
     };
 
-    cms.factory('popups', function PopupsService ($uibModal, $q) {
+    return angular.module('vms.popups', []).factory('popups', function PopupsService($uibModal, $q) {
 
         function open(config, context) {
 
@@ -33,6 +39,9 @@ define([
         }
 
         return {
+            test: function () {
+                open(popups.test);
+            }
             // 在这里增加你的打开函数
         };
     });
