@@ -24,14 +24,22 @@ angular.module('vo.cms.login', [
             return;
 
 
-        if ($scope.username === 'a') {
+        $ajax.post('/core/access/user/vendorLogin', {
+            username: $scope.username,
+            password: $scope.password,
+            timezone: -(new Date().getTimezoneOffset() / 60)
+        }).then(function(){
+            location.href = '/app/app.html';
+        }, function(res) {
+            $scope.message = res.message || ('Login Fail(' + (res.code || '?') + ')');
+        });
 
-            alert(1);
 
-            $scope.message = 'aaaaaaa';
-            return;
-        }
-        location.href = '/app/app.html';
+        //if ($scope.username === 'a') {
+        //    $scope.message = 'aaaaaaa';
+        //    return;
+        //}
+        //location.href = '/app/app.html';
     };
 });
 

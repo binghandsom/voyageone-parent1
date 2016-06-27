@@ -3,6 +3,7 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
+import com.voyageone.web2.core.views.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,8 @@ import java.util.Map;
 public class MenuController extends BaseController {
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(CoreUrlConstants.MENU.GET_MENU_HEADER_INFO)
     public AjaxResponse getMenuHeaderInfo() {
@@ -43,6 +46,8 @@ public class MenuController extends BaseController {
         userInfo.put("language", getLang());
         userInfo.put("application",getUser().getApplication());
         resultBean.put("userInfo", userInfo);
+        // vendor系统用
+        userInfo.put("channelInfo", getUser().getUserConfig().get("channel_id"));
 
         // 返回用户信息
         return success(resultBean);
@@ -52,6 +57,15 @@ public class MenuController extends BaseController {
     public AjaxResponse setLanguage(@RequestBody Map<String, Object> params) {
 
         menuService.setLanguage(getSession(), getUser(), params.get("language"));
+
+        // 返回用户信息
+        return success(true);
+    }
+
+    @RequestMapping(CoreUrlConstants.MENU.SET_CHANNEL)
+    public AjaxResponse setChannel(@RequestBody Map<String, Object> params) {
+
+        userService.setSelectChannel(getUser(), (String) params.get("channelId"), "", "vms");
 
         // 返回用户信息
         return success(true);

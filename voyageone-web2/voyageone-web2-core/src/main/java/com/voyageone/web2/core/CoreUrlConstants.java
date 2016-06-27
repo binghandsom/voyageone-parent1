@@ -14,6 +14,8 @@ public interface CoreUrlConstants {
         String GET_MENU_HEADER_INFO = "getMenuHeaderInfo";
 
         String SET_LANGUAGE = "setLanguage";
+
+        String SET_CHANNEL = "setChannel";
     }
 
     interface USER {
@@ -21,6 +23,8 @@ public interface CoreUrlConstants {
         String ROOT = "/core/access/user/";
 
         String LOGIN = "login";
+
+        String VENDOR_LOGIN = "vendorLogin";
 
         String GET_CHANNEL = "getChannel";
 
