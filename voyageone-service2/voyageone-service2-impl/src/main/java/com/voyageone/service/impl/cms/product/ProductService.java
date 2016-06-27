@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
@@ -15,7 +14,10 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -37,7 +39,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.print.DocFlavor;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -1225,7 +1226,7 @@ public class ProductService extends BaseService {
 
         // 更新workLoad表
         CmsBtProductModel productModel = getProductById(channelId, prodId);
-        insertSxWorkLoad(channelId,productModel, modifier);
+        insertSxWorkLoad(channelId, productModel, modifier);
 
         Map<String,Object> result = new HashMap<>();
         result.put("modified", common.getModified());
@@ -1312,5 +1313,30 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         return result.getModifiedCount();
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param translateStatus
+     * @param hsCodeSetter
+     * @return
+     */
+    public Object getTotalHsCodeCnt(String channelId, String userName, String hsCodeStatus,String translateStatus,String hsCodeSetter) {
+        return null;
+    }
+
+    public Object getTotalHsCodeList(String channelId, String userName, String hsCodeStatus, String condition, int pageNum, int pageSize, String[] retFields) {
+        return null;
+    }
+
+    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName, String condition, int hsCodeTaskCnt, String[] retFields) {
+        return null;
+    }
+
+    public void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetTime) {
+
     }
 }
