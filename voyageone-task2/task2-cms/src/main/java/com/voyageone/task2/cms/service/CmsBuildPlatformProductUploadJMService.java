@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +67,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
     private static final String DUPLICATE_SPU_BARCODE = "105106";
     private static final String DUPLICATE_SKU_BUSINESSMAN_NUM = "102063";
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
 
 
     @Autowired
@@ -140,7 +142,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
         for (String channel : channels) {
-            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartId(LIMIT, channel, CART_ID);
+            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(LIMIT, channel, CART_ID);
 
             if (groupList.size() > LIMIT) {
                 break;
@@ -806,7 +808,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         bean.setProduct_spec_number(fields.getCode());
         bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
         bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
-        bean.setName(jmFields.getStringAttribute("productNameCn") + " " + productCode);
+        bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         //白底方图
         String picTemplate = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);

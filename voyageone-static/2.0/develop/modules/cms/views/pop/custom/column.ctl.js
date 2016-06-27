@@ -67,6 +67,22 @@ define([
             $modalInstance.dismiss();
         }
 
+        // 全选框的操作
+        $scope.chkSelStatus = function (stsType) {
+            if (stsType == 1) {
+                _.forEach($scope.cus.commonProps, function (data) {
+                    data.isChk = $scope.cus.all_commonData;
+                });
+            } else if (stsType == 2) {
+                _.forEach($scope.cus.customProps, function (data) {
+                    data.isChk = $scope.cus.all_customData;
+                });
+            } else if (stsType == 3) {
+                _.forEach($scope.cus.salesTypeList, function (data) {
+                    data.isChk = $scope.cus.all_salesType;
+                });
+            }
+        };
     });
 
 });
