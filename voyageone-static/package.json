@@ -34,15 +34,5 @@
   },
   "dependencies": {
     "chart.js": "^2.1.4"
-  },
-  "jspm": {
-    "dependencies": {
-      "css": "github:systemjs/plugin-css@^0.1.23"
-    },
-    "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
-    }
   }
 }
