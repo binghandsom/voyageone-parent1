@@ -1,7 +1,7 @@
 var fs = require('fs');
 var glob = require('glob');
 
-glob('src/components/angular/*/*.js', function (err, files) {
+glob('src/shared/ng/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
@@ -16,7 +16,7 @@ glob('src/components/angular/*/*.js', function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    code += '  require(\'components/angular/modules\');\n';
+    code += '  require(\'shared/ng/modules\');\n';
 
     files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
@@ -24,10 +24,10 @@ glob('src/components/angular/*/*.js', function (err, files) {
     
     code += '});';
 
-    fs.writeFile('src/components/components.ng.js', code);
+    fs.writeFile('src/shared/components.ng.js', code);
 });
 
-glob('src/components/js/*/*.js', function (err, files) {
+glob('src/shared/js/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
@@ -48,5 +48,5 @@ glob('src/components/js/*/*.js', function (err, files) {
     
     code += '});';
 
-    fs.writeFile('src/components/components.js', code);
+    fs.writeFile('src/shared/components.js', code);
 });

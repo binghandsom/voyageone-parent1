@@ -1,3 +1,3 @@
 define(function (require) {
-  require('components/js/simple-download/index');
+  require('/shared/js/simple-download/index');
 });

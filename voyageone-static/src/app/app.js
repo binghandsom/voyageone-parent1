@@ -8,9 +8,10 @@ define([
     'angular-translate',
     'angular-block-ui',
     'angular-ui-bootstrap',
+    'angular-chosen',
     'vo-libs-angular'
 ], function (angularAMD, _) {
-
+    
     var app = angular.module('vo.vms', [
         'ngSanitize',
         'ngRoute',
@@ -19,8 +20,9 @@ define([
         'pascalprecht.translate',
         'blockUI',
         'ui.bootstrap',
-        'vo.ng'
+        'vo.ng',
+        'localytics.directives'
     ]);
-
+    
     return angularAMD.bootstrap(app);
 });

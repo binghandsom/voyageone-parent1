@@ -2,26 +2,42 @@
  * @Date: 2016-06-24 17:35:36
  * @User: Jonas
  */
+require.config({
+    paths: {
+        'ng': 'assets/js/angular.js/1.5.6/angular',
+        'ng-traslate': 'assets/js/angular-translate/2.8.1/angular-translate',
+        'vo-ng': 'shared/components.ng',
+        'ng-block': 'assets/js/angular-block-ui/0.2.1/angular-block-ui'
+    },
+    shim: {
+        'ng-traslate': ['ng'],
+        'vo-ng': ['ng'],
+        'ng-block': ['ng']
+    }
+});
 
-require('assets/js/angular.js/1.5.6/angular.js');
-require('assets/js/angular-translate/2.8.1/angular-translate.js');
-require('shared/components.ng.js');
-require('assets/js/angular-block-ui/0.2.1/angular-block-ui.js');
+require([
+    'ng-traslate',
+    'vo-ng',
+    'ng-block'
+], function () {
 
-angular.module('vo.cms.login', [
-    'pascalprecht.translate',
-    'blockUI',
-    'vo.ng'
-]).controller('loginController', function ($scope, $ajax) {
-    $scope.username = '';
-    $scope.password = '';
+    alert(1);
 
-    $scope.login = function () {
+    angular.module('vo.cms.login', [
+        'pascalprecht.translate',
+        'blockUI',
+        'vo.ng'
+    ]).controller('loginController', function ($scope, $ajax) {
+        $scope.username = '';
+        $scope.password = '';
 
-        $scope.dirty = true;
+        $scope.login = function () {
 
-        if ($scope.loginForm.$invalid)
-            return;
+            $scope.dirty = true;
+
+            if ($scope.loginForm.$invalid)
+                return;
 
 
         $ajax.post('/core/access/user/vendorLogin', {
@@ -43,4 +59,5 @@ angular.module('vo.cms.login', [
     };
 });
 
-angular.bootstrap(document, ['vo.cms.login']);
+    angular.bootstrap(document, ['vo.cms.login']);
+});
