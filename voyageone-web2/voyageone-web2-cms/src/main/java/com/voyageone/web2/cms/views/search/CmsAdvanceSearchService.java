@@ -145,7 +145,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 获取当前查询的product列表
+     * 获取当前查询的product列表（查询条件从画面而来）
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
@@ -176,7 +176,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 获取当前查询的product code列表
+     * 获取当前查询的product code列表（查询条件从session而来）
      */
     public List<String> getProductCodeList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
@@ -212,7 +212,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 获取当前查询的product id列表
+     * 获取当前查询的product id列表（查询条件从session而来）
      */
     public List<Long> getProductIdList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
