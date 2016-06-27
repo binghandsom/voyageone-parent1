@@ -1183,23 +1183,20 @@ public class ProductService extends BaseService {
                 bulkList.add(model);
                 cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$addToSet",true);
             }
-
-
             insertSxWorkLoad(channelId,new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())),new ArrayList<Integer>(Arrays.asList(platformModel.getCartId())),modifier);
-//            CmsBtProductGroupModel group = productGroupService.selectProductGroupByCode(channelId,getProductById(channelId,prodId).getFields().getCode(),platformModel.getCartId());
-//            if(group != null){
-//                CmsBtSxWorkloadModel sxWorkloadModel = new CmsBtSxWorkloadModel();
-//                sxWorkloadModel.setCartId(platformModel.getCartId());
-//                sxWorkloadModel.setChannelId(channelId);
-//                sxWorkloadModel.setGroupId(group.getGroupId());
-//                sxWorkloadModel.setPublishStatus(0);
-//                sxWorkloadModel.setModifier(modifier);
-//                cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
-//            }
         }
         return platformModel.getModified();
     }
 
+    /**
+     * 更新product的common属性
+     * @param channelId         渠道
+     * @param prodId            产品ID
+     * @param common            comm信息
+     * @param modifier          更新者
+     * @param isModifiedChk     是否检查最后更新时间
+     * @return
+     */
     public Map<String,Object> updateProductCommon(String channelId, Long prodId, CmsBtProductModel_Common common, String modifier,boolean isModifiedChk){
 
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
@@ -1211,10 +1208,9 @@ public class ProductService extends BaseService {
             }
         }
 
-
         common.setModified(DateTimeUtil.getNowTimeStamp());
         common.setModifier(modifier);
-        common.getFields().setHsCodeStatus(StringUtil.isEmpty(common.getFields().getHsCodePrivate())?"0":"1");
+        common.getFields().setHsCodeStatus(StringUtil.isEmpty(common.getFields().getHsCodePrivate()) ? "0" : "1");
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
@@ -1226,6 +1222,10 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        // 更新workLoad表
+        CmsBtProductModel productModel = getProductById(channelId, prodId);
+        insertSxWorkLoad(channelId,productModel, modifier);
 
         Map<String,Object> result = new HashMap<>();
         result.put("modified", common.getModified());

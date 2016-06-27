@@ -593,7 +593,6 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("status", platformInfo.getStatus());
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
                 platformList.add(platformStatus);
-                
             });
         }
         mastData.put("platformList", platformList);
