@@ -13,6 +13,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -66,6 +67,8 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
     private ProductTagService productTagService;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;orgChannelId;modifier;carts;skus;freeTags;sales;platforms;" +
@@ -317,18 +320,33 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 返回当前页的group列表
      */
-    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int cartId) {
+    public long countGroupCodeList(List<String> codeList, UserSessionBean userInfo, int cartId) {
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
         StringBuilder resultPlatforms = new StringBuilder();
+        resultPlatforms.append("{");
         resultPlatforms.append(MongoUtils.splicingValue("cartId", cartId));
         resultPlatforms.append(",");
         resultPlatforms.append(MongoUtils.splicingValue("productCodes", codeArr, "$in"));
+        resultPlatforms.append("}");
 
+        long rs = cmsBtProductGroupDao.countByQuery(resultPlatforms.toString(), userInfo.getSelChannelId());
+        return rs;
+    }
+
+    /**
+     * 返回当前页的group列表，这里是分页查询
+     */
+    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSearchInfoBean2 searchValue, int cartId) {
         // 在group表中过滤platforms相关信息
         JomgoQuery qrpQuy = new JomgoQuery();
-        qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
+        qrpQuy.setQuery("{'cartId':#,'productCodes':{$in:#}}");
+        qrpQuy.setParameters(cartId, codeList);
         qrpQuy.setProjection("{'_id':0,'mainProductCode':1}");
+        if (searchValue.getGroupPageNum() > 0) {
+            qrpQuy.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
+            qrpQuy.setLimit(searchValue.getGroupPageSize());
+        }
 
         List<CmsBtProductGroupModel> grpList = productGroupService.getList(userInfo.getSelChannelId(), qrpQuy);
         if (grpList == null || grpList.isEmpty()) {
@@ -336,15 +354,12 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return new ArrayList<String>(0);
         }
 
-        // 将上面查询的结果放到一个临时map中,以过滤重复code
-        Map<String, String> codeList2 = new HashMap<String, String>();
+        // 将上面查询的结果放到一个List中,以返回code
+        List<String> grpCodeList = new ArrayList<String>(grpList.size());
         for (CmsBtProductGroupModel grpObj : grpList) {
             String pCd = grpObj.getMainProductCode();
-            codeList2.put(pCd, pCd);
+            grpCodeList.add(pCd);
         }
-
-        List<String> grpCodeList = new ArrayList<String>(codeList2.size());
-        codeList2.keySet().forEach(grpCodeList::add);
         return grpCodeList;
     }
 
