@@ -1,0 +1,83 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'TXT_PLATFORM_CONNECTION_SETTING' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-l-md m-t-sm m-b-xs">
+                <div class="col-sm-12">
+                    <div class="form-inline m-b-sm pull-left">
+                        <label translate="TXT_PLATFORM_TYPE_WITH_COLON"></label>
+                        <select class="form-control m-r-xxs"
+                                ng-model="ctrl.selected.cart"
+                                ng-change="ctrl.loadCategories()"
+                                ng-options="v.value as v.name for v in ctrl.carts"></select>
+                        <select class="form-control m-r-xxs"
+                                ng-model="ctrl.matched.category"
+                                ng-options="v as k for (k, v) in ctrl.options.category"></select>
+                        <select class="form-control m-r-xxs"
+                                ng-model="ctrl.matched.property"
+                                ng-options="v as k for (k, v) in ctrl.options.property"></select>
+                        <input ng-model="ctrl.matched.keyWord" type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
+                        <button class="btn btn-default" ng-click="ctrl.clear()">
+                            <i class="fa fa-remove"></i>&nbsp;<span>{{'BTN_CLEAR' | translate}}</span>
+                        </button>
+                        <!--<button class="btn btn-vo btn-xxs" ng-click="ctrl.shown()">-->
+                            <!--<i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>-->
+                        <!--</button>-->
+                    </div><!-- /right-btn -->
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="m-b-lg">
+        <div class="box">
+            <div class="box-body">
+                <table class="table table-hover table-hover-new text-center" ng-controller="popupCtrl">
+                    <thead>
+                    <tr>
+                        <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
+                        <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
+                        <th class="text-left" translate="TXT_PLATFORM_CATEGORY"></th>
+                        <th class="mfb-xxxs text-center" translate="TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM"></th>
+                        <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
+                        <th class="mfb-xxx text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="category in ctrl.mainCategories track by category.catId"
+                        ng-if="ctrl.shown(category)">
+                        <td class="mfb-xt text-center">{{::$index + 1}}</td>
+                        <td class="text-left">{{::category.catPath}}</td>
+                        <td class="text-left">{{category.mapping}}</td>
+                        <td class="mfb-xxxs">
+                            <div class="btn-group">
+                                <button ng-click="ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
+                                    <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
+                                </button>
+                                <button class="btn btn-default btn-xs"
+                                        ng-click="openOtherPlatform({mainCategoryId: category.catId})">
+                                    <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_OTHER_PLATFORM' | translate}}
+                                </button>
+                            </div>
+                        </td>
+                        <td class="mfb-xxt">
+                            <span class="h4" ng-if="category.propertyMatched">
+                                <i class="fa fa-check-circle"></i>
+                            </span>
+                        </td>
+                        <td class="mfb-xxx text-center">
+                            <a target="platform-field-mapping" ng-href="#/mapping/platform/{{ctrl.selected.cart}}/{{::category.catId}}" ng-if="category.matched">
+                                <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

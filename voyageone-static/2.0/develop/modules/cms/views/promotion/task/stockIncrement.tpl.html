@@ -1,0 +1,78 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{{'TXT_TASK_NAME' | translate}}</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" ng-model="ctrl.subTaskName">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{{'TXT_PLATFORM' | translate}}</label>
+									<div class="col-sm-9">
+										<select class="form-control" ng-model="ctrl.cartId">
+											<option value='' translate="TXT_SELECT_NO_VALUE"></option>
+											<option ng-repeat="platform in ctrl.platformList" value={{platform.cartId}}>{{platform.cartName}}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 text-center" ng-controller="popupCtrl">
+							<div class="form-horizontal form-inline">
+								<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-primary" ng-click="openAddMrbStockIncrement('md',{'task':null,'ctrl':ctrl})" ng-show="ctrl.platformList.length >  0"><i class="fa fa-plus"></i>&nbsp;{{'TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-body">
+			<div class="table-responsive">
+				<div class="col-sm-12 dropdown_table_main">
+					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+						<thead>
+						<tr>
+							<th class="mfb-xxxs text-left">No</th>
+							<th class="mfb-xxxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
+							<th class="mfb-xxt text-left">{{'TXT_PLATFORM' | translate}}</th>
+							<th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
+							<th class="mfb-xt text-center">{{'BTN_EDIT' | translate}}</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-repeat="task in ctrl.taskList">
+							<td class="text-left">{{$index+1}}</td>
+							<td class="text-left">{{task.subTaskName}}</td>
+							<td class="text-left">{{task.cartName}}</td>
+							<td class="text-center">
+								<a href="#/promotion/task_stock_increment_detail/{{task.subTaskId}}" target="_blank"><button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}</button></a>
+							</td>
+							<td class="text-center">
+								<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md',{'task':task,'ctrl':ctrl})"><i class="fa fa-pencil"></i></button>
+								<button title="{{'BTN_DELETE' | translate}}" ng-click="ctrl.delTask(task.subTaskId)" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div><!-- .table-responsive -->
+			</div>
+		</div><!-- /.box-body -->
+	</div>
+</div><!-- end .wrapper-md -->

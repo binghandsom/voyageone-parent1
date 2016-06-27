@@ -1,0 +1,110 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"> Product Photo</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="bg-light vo_prodDetailPanel">
+            <div id="vo_fixProdPanel">
+                <!-- product photos -->
+                <div class="vo_prodGallery">
+                    <div class="imageContainer">
+                        <img class="imageWrapper" style="margin:0 auto" ng-src="{{!vm.currentImage ? vm.picInfo.mainPic : vm.currentImage}}">
+                    </div>
+                </div>
+                <uib-tabset class="tab-container vo_nav-tabs">
+                    <uib-tab>
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>品牌方商品图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[0] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                              ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab ng-if="vm.picInfo.search == 'master'">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>PC端自拍商品图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[5] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab ng-if="vm.picInfo.search == 'master'">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>包装图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[1] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab ng-if="vm.picInfo.search == 'master'">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>角度图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[2] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab ng-if="vm.picInfo.search == 'master'">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>PC端自定义图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[3] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab ng-if="vm.picInfo.search == 'master'">
+                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>APP端自定义图</tab-heading>
+                        <div class="tab-content" style="border-top: 1px solid silver;">
+                            <div class="tab-pane ng-scope active">
+                                <div class="vo_prodGallery">
+                                    <div class="thumbnailWrapper">
+                                        <div ng-repeat="image in vm.picInfo.picList[4] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                             ng-style="{'background-image' : 'url(' + image + ')'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp; 关闭</button>
+    </div>
+</div><!-- .vo_modal -->

@@ -1,0 +1,59 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title">
+            <i class="fa fa-crosshairs"></i>
+            <span translate="TXT_ATTRIBUTE_MAPPING"></span>&nbsp;:
+            <span>{{::ctrl.context.field.name}}</span>
+        </h5>
+    </div>
+    <div class="m-l m-r m-t">
+        <table class="table box table-hover">
+            <thead>
+            <tr>
+                <th translate="TXT_ATTRIBUTE_MAPPING_VALUE_TYPE"></th>
+                <th translate="TXT_VALUE"></th>
+                <th translate="TXT_ATTRIBUTE_MAPPING_CONDITION_COUNT"></th>
+                <th class="wntab-xxs"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="mapping in ctrl.fieldMapping.mappings">
+                <td>{{:: mapping.type }}</td>
+                <td>{{:: ctrl.value(mapping) }}</td>
+                <td>{{:: mapping.condition ? mapping.condition.length : 0 }}</td>
+                <td class="text-center">
+                    <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.remove($index)">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div ng-controller="popupCtrl">
+            <button class="btn btn-sm btn-success btn-addon"
+                    ng-click="popupFeedValue(ctrl.context).then(ctrl.addValueMapping)">
+                <i class="fa fa-plus"></i>
+                <span translate="BTN_ADD"></span>
+            </button>
+        </div>
+    </div>
+    <div class="attribute_top">
+        <h5 class="text-vo m-l font-bold">Rules：</h5>
+        <ul>
+            <li ng-repeat="rule in ctrl.field.rules">{{:: rule.name }}：{{:: rule.value }}</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()">
+            <i class="fa fa-remove"></i>
+            <span translate="BTN_CANCEL"></span>
+        </button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()">
+            <i class="glyphicon glyphicon-floppy-disk"></i>
+            <span translate="BTN_OK"></span>
+        </button>
+    </div>
+</div>

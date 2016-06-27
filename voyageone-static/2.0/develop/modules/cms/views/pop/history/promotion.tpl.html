@@ -1,0 +1,57 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{ 'TXT_PROMOTION_HISTORY' | translate}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-2 control-label m-t-xs" translate="TXT_PLATFORM_TYPE"></label>
+            <div class="col-sm-4">
+                <select class="form-control" ng-model="vm.cartId"  ng-change="initialize()"
+                        ng-options="cart.value as cart.name for cart in vm.cartList">
+                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table table-hover-new vo_table text-center">
+                        <thead>
+                        <tr>
+                            <th class="text-left mfb-xxs" translate="TXT_PROMOTION_NAME"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_PLATFORM_TYPE"></th>
+                            <th class="text-left mfb-xxx" translate="TXT_PROMOTION_TIME"></th>
+                            <th class="text-right mfb-x" translate="TXT_MSRP"></th>
+                            <th class="text-right mfb-x" translate="TXT_SALE_PRICE"></th>
+                            <th class="text-right mfb-xx" translate="TXT_PROMOTION_PRICE"></th>
+                            <!-- TODO 暂时未实现 -->
+                            <!--<th class="text-center mfb-xxs" translate="TXT_ISOLATE_QUANTITY"></th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="list in vm.promotionList">
+                            <td class="text-left" ng-bind="list.promotionName"></td>
+                            <td class="text-left" ng-bind="list.name"></td>
+                            <td class="text-left">{{list.activityStart}}&nbsp;~&nbsp;{{list.activityEnd}}</td>
+                            <td class="text-right">{{list.msrp | number: 2}}</td><!--&nbsp;({{(list.promotionPrice/list.msrp).toFixed(2)*100}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})-->
+                            <td class="text-right">{{list.salePrice | number: 2}}</td><!--&nbsp;({{(list.promotionPrice/list.salePrice).toFixed(2)*100}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})-->
+                            <td class="text-right"><span class="label label-danger-new"ng-bind="list.promotionPrice | number: 2"></span></td>
+                            <!--<td><span class="label label-success-new"></span></td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="container-fluid">
+                    <vpagination config="vm.pageOption"></vpagination>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+    </div>
+</div><!-- .vo_modal -->

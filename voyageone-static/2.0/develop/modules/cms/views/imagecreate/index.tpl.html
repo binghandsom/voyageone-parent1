@@ -1,0 +1,64 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-th"></i>&nbsp;生成图片信息导入</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="form-inline pull-right m-b-xs" ng-controller="popupCtrl">
+            <button class="btn btn-default" ng-click="openImageCreateImport()"><i class="fa fa-reply-all"></i>&nbsp;导入
+            </button>
+        </div>
+        <tabset class="tab-container vo_nav-tabs">
+            <tab ng-click="searchImport()">
+                <tab-heading>导入任务一览</tab-heading>
+                <div class="box">
+                <div  class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-hover-new vo_table" style="table-layout: fixed;">
+                        <thead>
+                        <tr>
+                            <th class="text-left">导入文件名</th>
+                            <th class="text-center">成功件数</th>
+                            <th class="text-center">失败件数</th>
+                            <th class="text-left">导入开始时间</th>
+                            <th class="text-left">导入结束时间</th>
+                            <th class="text-left">异常信息Code</th>
+                            <th class="text-left">失败文件</th>
+
+                        </tr>
+                        </thead>
+                        <tbody ng-if="vm.modelList.length">
+                        <tr ng-repeat="model in vm.modelList">
+                            <td class="text-left"><a ng-click="downloadImportExcel(model.id);">{{model.fileName}}</a></td>
+                            <td class="text-center">{{model.successRows}}</td>
+                            <td class="text-center">{{model.failuresRows}}</td>
+                            <td class="text-left">{{model.beginTime}}</td>
+                            <td class="text-left">{{model.endTime}}</td>
+                            <td class="text-left"><textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>
+                            </td>
+                            <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
+                            <!--<td class="text-center">-->
+                                <!--<button title="下载" ng-click="downloadImportExcel(model.id)" class="btn btn-danger btn-xs"><i-->
+                                        <!--class="fa fa-download"></i></button>-->
+                            <!--</td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div if-no-rows="vm.modelList.length"></div>
+                </div>
+                </div>
+                <div class="col-sm-12 m-t-lg m-b-lg">
+                    <vpagination config="dataPageOption"></vpagination>
+                </div>
+                </div>
+            </tab>
+        </tabset>
+    </div>
+</div>
+</div><!-- end .wrapper-md -->
