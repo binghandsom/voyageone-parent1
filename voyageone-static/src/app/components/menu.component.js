@@ -1,5 +1,5 @@
-define([
-    'vo-vms'
-], function (vms) {
-    console.log(vms);
+define(function () {
+    return angular.module('vms.menu', []).component('voMenu', {
+        templateUrl: 'components/menu.html'
+    });
 });
