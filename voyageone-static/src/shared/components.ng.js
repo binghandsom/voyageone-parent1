@@ -1,0 +1,24 @@
+define(function (require) {
+  require('./ng/modules.js');
+  require('./ng/controllers/selectRows.ctrl.js');
+  require('./ng/controllers/showPopover.ctrl.js');
+  require('./ng/directives/enterClick.directive.js');
+  require('./ng/directives/filestyle.directive.js');
+  require('./ng/directives/first-hidden.directive.js');
+  require('./ng/directives/goTop.directive.js');
+  require('./ng/directives/ifNoRows.directive.js');
+  require('./ng/directives/message.directive.js');
+  require('./ng/directives/vpagination.directive.js');
+  require('./ng/directives/vvalidator.directive.js');
+  require('./ng/factories/dialogs.factory.js');
+  require('./ng/factories/interceptor.factory.js');
+  require('./ng/factories/notify.factory.js');
+  require('./ng/factories/pppAutoImpl.factory.js');
+  require('./ng/factories/selectRows.factory.js');
+  require('./ng/services/ajax.service.js');
+  require('./ng/services/cookie.service.js');
+  require('./ng/services/formater.service.js');
+  require('./ng/services/message.service.js');
+  require('./ng/services/permission.service.js');
+  require('./ng/services/translate.service.js');
+});

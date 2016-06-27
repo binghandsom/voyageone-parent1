@@ -16,7 +16,7 @@ glob('src/components/angular/*/*.js', function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    code += '  require(\'components/angular/angular.modules\');\n';
+    code += '  require(\'components/angular/modules\');\n';
 
     files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
         code += '  require(\'' + file + '\');\n';

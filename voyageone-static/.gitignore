@@ -1,3 +1,5 @@
 publish/
 *.doc.js
 config.js
+node_modules/
+jspm_packages/
