@@ -145,10 +145,15 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <if test="synchStatus!=null">
-                and a.synch_status=#{synchStatus}
+            <if test="synchStatusList!=null and synchStatusList.size()!=0">
+            and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
+                                                open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
-
+             <!--<if test="errorStatus!=null">-->
+             <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
+             <!--</if>-->
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -181,9 +186,6 @@
             </if>
             <if test="productNameCn!=null">
                 and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
-            </if>
-            <if test="state!=null">
-                and  a.state=#{state}
             </if>
             <if test="brandName!=null">
                 and  b.brand_name=#{brandName}

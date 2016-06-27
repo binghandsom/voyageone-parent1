@@ -225,24 +225,18 @@ define([
             Form.submit();
         };
         function loadSearchInfo() {
-            $scope.searchInfo.synchStateList = [];
-            if ($scope.searchInfo.synchState0) {
-                $scope.searchInfo.synchStateList.push(0)
+            $scope.searchInfo.synchStatusList = [];
+            if ($scope.searchInfo.synchStatus0) {
+                $scope.searchInfo.synchStatusList.push(0)
+                $scope.searchInfo.synchStatusList.push(1)
             }
-            if ($scope.searchInfo.synchState1) {
-                $scope.searchInfo.synchStateList.push(1)
+            if ($scope.searchInfo.synchStatus2) {
+                $scope.searchInfo.synchStatusList.push(2)
             }
-            if ($scope.searchInfo.synchState2) {
-                $scope.searchInfo.synchStateList.push(2)
-            }
-            if ($scope.searchInfo.synchState3) {
-                $scope.searchInfo.synchStateList.push(3)
-            }
-            if ($scope.searchInfo.synchState4) {
-                $scope.searchInfo.synchStateList.push(4)
+            if ($scope.searchInfo.synchStatus3) {
+                $scope.searchInfo.errorStatus=3;
             }
         }
-
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
