@@ -186,7 +186,8 @@
         "deleteAllProduct": "deleteAllProduct",
         "getProductView": "getProductView",
         "updateDealPrice": "updateDealPrice",
-        "updatePromotionProduct":"updatePromotionProduct"
+        "updatePromotionProduct":"updatePromotionProduct",
+        "updatePromotionProductTag":"updatePromotionProductTag"
       },
       "cmsBtJmPromotionImportTask": {
         "cmsBtJmPromotionImportTaskService": {

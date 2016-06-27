@@ -73,6 +73,7 @@ public interface CmsUrlConstants {
                 String GetProductView="getProductView";
                 String UpdateDealPrice="updateDealPrice";
                 String UpdatePromotionProduct="updatePromotionProduct";
+                String UpdatePromotionProductTag="updatePromotionProductTag";
             }
         }
     }

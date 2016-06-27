@@ -2,23 +2,29 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +48,11 @@ public class CmsBtJmPromotionProduct3Service {
     CmsMtJmConfigService serviceCmsMtJmConfig;
     @Autowired
     JMShopBeanService serviceJMShopBean;
+
+    @Autowired
+    CmsBtJmPromotionTagProductDao daoCmsBtJmPromotionTagProduct;
+    @Autowired
+    CmsBtJmPromotionTagProductDaoExt daoExtCmsBtJmPromotionTagProduct;
 
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
@@ -99,8 +110,7 @@ public class CmsBtJmPromotionProduct3Service {
             } else if (parameter.getPriceType() == 1) //市场价 market_price
             {
                 price = "b.retail_price*" + Double.toString(parameter.getDiscount());//中国指导价格
-            } else if (parameter.getPriceType() == 2)
-            {
+            } else if (parameter.getPriceType() == 2) {
                 price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
@@ -144,13 +154,15 @@ public class CmsBtJmPromotionProduct3Service {
         daoExtCmsBtJmPromotionSku.deleteAllSku(promotionId);
         daoExt.deleteAllProduct(promotionId);
     }
-    public  boolean existsCopyDealByPromotionId(int promotionId) {
+
+    public boolean existsCopyDealByPromotionId(int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("cmsBtJmPromotionId", promotionId);
         map.put("synchStatus", 2);
         return dao.selectOne(map) != null;
     }
 
+    //商品预览
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
         CmsBtJmPromotionProductModel modelPromotionProduct = dao.select(promotionProductId);
@@ -161,15 +173,44 @@ public class CmsBtJmPromotionProduct3Service {
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }
-    public int updatePromotionProduct(UpdatePromotionProductParameter parameter) {
+
+    //更新PromotionProduct 目前只更新 limit
+    public int updatePromotionProduct(UpdatePromotionProductParameter parameter,String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
         if (model.getLimit() != parameter.getLimit()) {
             model.setLimit(parameter.getLimit());
             model.setUpdateStatus(1);
+            model.setModifier(userName);
             return dao.update(model);
         }
-        return  1;
+        return 1;
+    }
 
+    @VOTransactional
+    public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String userName) {
+        String tagNameList = "";
+        for (ProductTagInfo tagInfo : parameter.getTagList()) {
+            tagNameList += "|" + tagInfo.getTagName();
+        }
+        CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
+        model.setPromotionTag(tagNameList);
+        model.setModifier(userName);
+        dao.update(model);
+        daoExtCmsBtJmPromotionTagProduct.deleteByCmsBtJmPromotionProductId(parameter.getId());
+        CmsBtJmPromotionTagProductModel modelCmsBtJmPromotionTagProduct = null;
+        for (ProductTagInfo tagInfo : parameter.getTagList()) {
+            modelCmsBtJmPromotionTagProduct = new CmsBtJmPromotionTagProductModel();
+            modelCmsBtJmPromotionTagProduct.setCmsBtTagId(tagInfo.getTagId());
+            modelCmsBtJmPromotionTagProduct.setTagName(tagInfo.getTagName());
+            modelCmsBtJmPromotionTagProduct.setCmsBtJmPromotionProductId(parameter.getId());
+            modelCmsBtJmPromotionTagProduct.setChannelId(model.getChannelId());
+            modelCmsBtJmPromotionTagProduct.setModifier(userName);
+            modelCmsBtJmPromotionTagProduct.setCreated(new Date());
+            modelCmsBtJmPromotionTagProduct.setModified(new Date());
+            modelCmsBtJmPromotionTagProduct.setCreater(userName);
+            daoCmsBtJmPromotionTagProduct.insert(modelCmsBtJmPromotionTagProduct);
+        }
+        return 1;
     }
 }
 

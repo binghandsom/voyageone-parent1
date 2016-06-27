@@ -3,6 +3,7 @@
  */
 define([
     'angularAMD',
+    'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService, $feedSearchService) {
@@ -466,9 +467,25 @@ define([
 
             return m.maxMarketPrice + "~" + m.minMarketPrice;
         }
-        $scope.changeSelectTag=function(m){
-            console.log(m.tagNameList);
-            alert(m.tagNameList.toString());
+        $scope.changeSelectTag=function(m) {
+            var productTagList = [];
+            for (var i = 0; i < m.tagNameList.length; i++) {
+                var tagName = m.tagNameList[i];
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName});
+            }
+            var parameter = {};
+            parameter.tagList = productTagList;
+            parameter.id = m.id;
+            jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
+                    alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+            //$scope.vm.tagList.
+            // alert(m.tagNameList.toString());
         }
         /**
          * popup弹出选择聚美平台数据类目
