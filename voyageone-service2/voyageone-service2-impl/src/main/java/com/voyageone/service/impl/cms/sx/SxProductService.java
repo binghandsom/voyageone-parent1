@@ -889,6 +889,7 @@ SxProductService extends BaseService {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
         String strRex3 = "其它";
+        String strRex4 = "不限";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -931,7 +932,8 @@ SxProductService extends BaseService {
             }
 
             if (!blnError) {
-                if (optionDisplayName.equals(strRex3)) {
+                if (optionDisplayName.equals(strRex3) ||
+                        optionDisplayName.equals(strRex4)) {
                     blnError = true;
                 }
             }
