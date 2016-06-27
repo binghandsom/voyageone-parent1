@@ -926,7 +926,7 @@ public class ProductService extends BaseService {
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
                 Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channelId);
+                param.put("channelId", product.getOrgChannelId());
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
