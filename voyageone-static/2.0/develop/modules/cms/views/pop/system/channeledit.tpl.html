@@ -1,0 +1,140 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i><span class="label" >&nbsp;Channel Edit&nbsp;</span></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal m-b-md ng-pristine ng-valid">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_CHANNEL_ID"></label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text" placeholder="请输入数字" ng-model="vm.order_channel_id"
+                                     ng-disabled="!is_add"/>
+                                </div>
+                                <label class="col-sm-2 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_COMPANY"></label>
+                                <div class="col-sm-7">
+                                    <select class="form-control" ng-model="vm.company_id">
+                                        <option value="{{c.id}}" ng-repeat="c in COMPANYS">{{c.company}}</option>
+                                    </select>
+                                </div>
+                                <label class="col-sm-2 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NAME"></label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.name"/>
+                                </div>
+                                <label class="col-sm-2 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label" translate="TXT_FULL_NAME"></label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.full_name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label" translate="TXT_IMAGE_URL"></label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.img_url"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label vo_reqfield">Send Name</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.send_name"/>
+                                </div>
+                                <label class="col-sm-2 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Send Address</label>
+                                <div class="col-sm-7">
+                                    <textarea class="form-control" type="text"  ng-model="vm.send_address" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Send Tel</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.send_tel"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Send Zip</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text"  ng-model="vm.send_zip"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="is_add">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label" translate="TXT_ALLOW_USJOI"></label>
+                                <div class="col-sm-7">
+                                    <ul>
+                                        <div class="col-sm-6"><input type="radio"  value="1" ng-model="vm.is_usjoi"><span class="ng-binding">Yes</span></div>
+                                        <div class="col-sm-6"><input type="radio"  value="0" ng-model="vm.is_usjoi"><span>No</span></div>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-2">
+                                    &nbsp;{{'TXT_REQUIRED' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label  vo_reqfield">Secrect Key</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text"  ng-model="vm.screct_key" disabled/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" ng-click="genSecretKey()" >&nbsp;重置</button>&nbsp;
+                                </div>
+                                <label class="col-sm-3 col-sm-offset-3 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label  vo_reqfield">Session Key</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text"  ng-model="vm.session_key" disabled/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" ng-click="genSessionKey()" >&nbsp;重置</button>&nbsp;
+                                </div>
+                                <label class="col-sm-3 col-sm-offset-3 control-label text-u-red text-left ng-scope" translate="TXT_REQUIRED">Required</label>
+                            </div>
+                        </div>
+                        <!-- .form-group -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

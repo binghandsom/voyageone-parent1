@@ -1,0 +1,578 @@
+/*!
+ * views样式，权重最高
+ */
+
+/* 为页面上的 schema 输入框定制样式 */
+s-field textarea.form-control {
+    height: 100px;
+}
+s-field textarea.schema-field-html {
+    height: 200px;
+}
+
+/* category_drag_list_qh
+ * 在自定义属性页面, 提供选中样式。和扩大输入框宽度 */
+.category_drag_list_qh {
+    margin: 0;
+    padding: 10px;
+    min-height: 200px;
+}
+
+.category_drag_list_qh ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list_qh li {
+    padding: 5px;
+    transition: 200ms ease-in;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background-color: #F9E9F2;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.category_drag_list_qh li:hover {
+    background: #73214B;
+    font-weight: bold;
+    color: white;
+}
+
+.category_drag_list_qh .translated-row {
+    margin: 8px 0;
+}
+
+.category_drag_list_qh .translated-row input {
+    width: 70%;
+}
+
+.category_drag_list {
+    margin: 0;
+    padding: 4px 4px 0 4px;
+    height: 180px;
+    overflow-y: auto;
+    overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    color: #3366cc;
+}
+
+.category_drag_list ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list li a:link {
+    float: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+}
+
+.category_drag_list li a:visited {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list li a:hover {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list li a:active {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    background: #dcf3f9;
+    color: #333
+}
+
+/* channel_index
+ * 表格鼠标经过每行tr样式 */
+.table-hover > tr:hover, .table-hover > tr:visited {
+    background-color: #F9F9F9;
+}
+
+.vo_prodGallery {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.vo_prodGallery .imageWrapper {
+    display: block;
+    height: 250px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 1s;
+    text-align: -webkit-center;
+}
+
+.vo_prodGallery .thumbnailWrapper {
+    display: inline-block;
+    width: 100%;
+    min-height: 57px;
+    text-align: left;
+    margin-top: 0;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    padding-right: 2%;
+    padding-left: 2%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.vo_prodGallery .thumbnail {
+    display: inline-block;
+    width: 12%;
+    height: 40px;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    background-color: #fff;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    vertical-align: top;
+    border-radius: 2px;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    transition: all 0.3s;
+}
+
+.vo_prodGallery .thumbnail:hover {
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
+.vo_prodGallery .thumbnail.active {
+    border: 1px solid #e67e22;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+@media screen and (max-width: 500px) {
+    .vo_prodGallery .imageWrapper {
+        width: 100%;
+    }
+
+    .vo_prodGallery .thumbnailWrapper {
+        width: 100%;
+    }
+}
+
+.nav-stacked {
+    width: 110px;
+    position: absolute;
+    top: 15px;
+    left: 1px;
+}
+
+/**为店铺管理页面和标签管理页面提供样式 addedy by tony-piao*/
+.category_drag_list_dp {
+    margin: 0;
+    padding: 4px 4px 0 4px;
+    height: 520px;
+    overflow-y: auto;
+    overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    color: #3366cc;
+}
+
+.category_drag_list_dp ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.category_drag_list_dp li a:link {
+    float: left;
+    width: 100%;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.category_drag_list_dp li a:hover {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 4px;
+    background: #dcf3f9;
+    color: #333;
+}
+
+.category_drag_list_dp li .indexSelected {
+    float: left;
+    display: block;
+    position: relative;
+    list-style-type: none;
+    padding: 2px;
+    background: #dcf3f9;
+    color: #333
+}
+
+.category_drag_list_dp li input {
+    position: relative;
+    width: 20% ! important;
+    padding: 10px;
+    border: 1px solid #ededed;
+    border-radius: 4px;
+    opacity: 1;
+    height: 30px;
+}
+
+.category-drag-minWidth {
+    border: 2px solid #d5e4fa;
+    margin: 2px 4px;
+    border-radius: 7px;
+}
+
+.category-drag-minWidth input {
+    width: 84% ! important;
+}
+
+@media screen and (max-width: 1580px) {
+    .category-drag-minWidth input {
+        width: 77% ! important;
+        display: inline;
+    }
+}
+
+.btn {
+    font-weight: 500;
+    outline: 0 !important;
+}
+
+.btn-pop {
+    border-radius: 2.5px;
+    box-shadow: 1px 1px 2px #888;
+}
+
+.stat-boxes {
+    display: inline-block;
+    list-style: none outside none;
+    margin: 4px 0 0 -48px;
+    text-align: center;
+    min-height: 144px;
+}
+
+@media screen and (max-width: 1441px) {
+    .stat-boxes {
+        min-height: 216px;
+    }
+}
+
+.stat-boxes li {
+    background-color: #F6F6F6;
+    background-image: -webkit-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -moz-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -ms-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -o-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    border: 1px solid #d5d5d5;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 18px;
+    margin: 0 4px 4px;
+}
+
+.stat-boxes .right {
+    font-size: 12px;
+    padding: 9px 0 8px 0;
+    text-align: center;
+    width: 110px;
+    color: #666666;
+    text-shadow: 0 1px 0 #ffffff;
+    float: left;
+}
+
+.stat-boxes .right strong {
+    font-size: 26px;
+    margin-bottom: 3px;
+    margin-top: 6px;
+    display: block;
+}
+
+.data-priority-0,
+.data-priority-1,
+.data-priority-2,
+.data-priority-3,
+.data-priority-4 {
+    border-left: 3px solid red;
+    transition: border-left 218ms ease-in, opacity 218ms ease-in;
+    -moz-transition: border-left 218ms ease-in, opacity 218ms ease-in; /* Firefox 4 */
+    -webkit-transition: border-left 218ms ease-in, opacity 218ms ease-in; /* Safari and Chrome */
+    -o-transition: border-left 218ms ease-in, opacity 218ms ease-in; /* Opera */
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+    cursor: pointer;
+}
+
+.data-priority-0 {
+    border-left: 3px solid #fff;
+}
+
+.data-priority-0:hover {
+    border-left: 6px solid #b3b3b3;
+}
+
+.data-priority-1:hover {
+    border-left: 6px solid red;
+}
+
+.data-priority-2 {
+    border-left: 3px solid #ff9800;
+}
+
+.data-priority-2:hover {
+    border-left: 6px solid #ff9800;
+}
+
+.data-priority-3 {
+    border-left: 3px solid #5bc0de;
+}
+
+.data-priority-3:hover {
+    border-left: 6px solid #5bc0de;
+}
+
+.data-priority-4 {
+    border-left: 3px solid #5cb85c;
+}
+
+.data-priority-4:hover {
+    border-left: 6px solid #5cb85c;
+}
+
+/**平台schema*/
+.product-shema-detail .nav span {
+    display: inline-block;
+    width: 135px;
+    height: 27px;
+    background: #23ad44;
+    color: white;
+    text-align: center;
+    line-height: 24px;
+}
+
+.product-shema-detail span a {
+    color: #e67e22;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.product-shema-detail button span {
+    font-size: 12px;
+}
+
+.product-shema-detail .nav span.tagFlag {
+    background: #ee3939;
+}
+
+.product-shema-detail hr {
+    border-bottom: 2px solid #e67e22;
+}
+
+.product-shema-detail .thumbnail.main {
+    border: 1px solid #337ab7;
+    box-shadow: 0 1px 8px 0 #337ab7;
+}
+
+.product-shema-detail .thumbnail.current {
+    background: #FB6E52;
+}
+
+.product-shema-detail h4 {
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.product-shema-detail .ng-number {
+    width: 150px;
+    text-align: right;
+    margin: 0 auto;
+}
+
+.product-shema-detail .bs-docs-sidebar {
+    position: fixed;
+    right: 40px;
+    color: white;
+    margin-top: 80px;
+    border: 1px solid #ADCAE2;
+    background: #fff;
+    opacity: .5;
+}
+
+.product-shema-detail .bs-docs-sidebar:hover {
+    opacity: 1;
+}
+
+.product-shema-detail .bs-docs-sidebar h3 {
+    background: #ADCAE2;
+    text-align: center;
+    font-size: 15px;
+    margin: 0;
+    height: 30px;
+    line-height: 30px;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav > li > a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #767676;
+}
+
+.product-shema-detail .bs-docs-sidebar .nav > li > a:focus, .bs-docs-sidebar .nav > li > a:hover {
+    padding-left: 19px;
+    color: #ADCAE2;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid #ADCAE2;
+}
+
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
+    margin-top: 23px;
+    align-self: auto;
+}
+
+.product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex label {
+    text-indent: 1em;
+}
+
+.tm-sku-detail schema-field {
+    min-width: 125px;
+}
+
+/*uib-tab样式*/
+.tab-container {
+    margin-bottom: 15px;
+}
+
+.tab-container .tab-content {
+    padding: 8px;
+    background-color: #F8F8F8;
+    border: 1px solid #d4cfcf;
+    border-top-width: 0;
+    border-radius: 0 0 2px 2px;
+}
+
+/*多级菜单样式*/
+.dropdown-header {
+    padding: 5px 15px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+    background-color: #eceaea !important;
+    color: #42413a;
+}
+
+.dropdown-submenu:hover > .dropdown-menu,
+.dropdown-submenu:focus > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu.pull-left {
+    float: none !important;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+}
+
+.dropdown-submenu .dropdown-menu {
+    left: 100%;
+    top: 0;
+    margin-top: -6px;
+    margin-left: -1px;
+}
+
+.dropup .dropdown-submenu > .dropdown-menu {
+    top: auto;
+    bottom: 0;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: -100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 2px 2px 2px;
+    -moz-border-radius: 0 2px 2px 2px;
+    border-radius: 0 2px 2px 2px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu > a:before {
+    content: " ";
+    float: left;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 0 solid transparent;
+    margin-top: 4px;
+    margin-right: 6px;
+    margin-left: -7px;
+}
+
+.dropdown-submenu:hover > a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 2px 0 2px 2px;
+    -moz-border-radius: 2px 0 2px 2px;
+    border-radius: 2px 0 2px 2px;
+}

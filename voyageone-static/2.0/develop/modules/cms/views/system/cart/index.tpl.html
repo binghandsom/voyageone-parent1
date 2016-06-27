@@ -1,0 +1,106 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+					<h4 class="panel-title ng-binding"><i class="glyphicon glyphicon-cog"></i>&nbsp;Cart List</h4>
+				</div>
+                <div class="container-fluid m-l-md m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Cart ID</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.search.cart_id">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_NAME"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="vm.search.name">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">USJOI ID</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" ng-model="vm.search.cart_type">
+                                            <option ng-repeat="entry in vm.CART_TYPE_DICT" value="{{entry[0]}}" >{{entry[1]}}</option>
+                                        </select>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" ng-model="vm.search.active" ng-true-value="0" ng-false-value="1"> 已删除
+                                    </label>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-sm" ng-controller="popupCtrl">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="$parent.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                    <button class="btn btn-success"  ng-click="$parent.add(this)"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                </div><!-- .form-group -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body table-responsive">
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="text-center col-sm-1" translate="TXT_CART_ID"></th>
+                    <th class="text-left col-sm-1" translate="TXT_NAME"></th>
+                    <th class="text-left col-sm-1" translate="TXT_SHORT_NAME"></th>
+                    <th class="text-left col-sm-4" translate="TXT_MSG_SHORT_DESCRIPTION"></th>
+                    <th class="text-left col-sm-1" translate="TXT_ALLOW_USJOI"></th>
+                    <th class="text-left col-sm-1" >平台</th>
+                    <th class="text-center col-sm-1" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="el in vm.data track by el.cart_id">
+                    <td class="text-center">{{el.cart_id}}</td>
+                    <td class="text-left">{{el.name}}</td>
+                    <td class="text-left">{{el.short_name}}</td>
+                    <td class="text-left">{{el.description}}</td>
+                    <td class="text-left">{{vm.CART_TYPE_DICT[el.cart_type][1]}}</td>
+                    <td class="text-left">{{vm.PLATFORM_DICT[el.platform_id]}}</td>
+                    <td ng-controller="popupCtrl" class="text-center">
+                        <button class="btn btn-success btn-xs ng-scope" ng-click="$parent.edit(el,this)" ng-disabled="el.active==0"><i class="fa fa-pencil"></i></button>
+                        <button id="delCustDiv" class="btn btn-danger btn-xs ng-scope" ng-click="$parent.delete($index, el)"
+                           ng-disabled="el.active==0"><i class="fa fa-trash-o"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <vpagination config="page"></vpagination>
+        </div><!-- /.box-body -->
+    </div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

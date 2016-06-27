@@ -1,0 +1,50 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-crosshairs"></i>&nbsp;{{'TXT_DICTIONARY_CUSTOM' | translate}}</h5>
+    </div>
+    <form role="form" class="form-horizontal m-t-md m-l-sm m-b-sm m-r-sm">
+        <div class="form-group">
+            <label class="col-sm-1 control-label text-center" translate="TXT_CUSTOM"></label>
+            <div class="col-sm-4">
+                <select id="dict-custom-name" class="form-control" ng-model="vm.customInfo" ng-change="resetValue()"
+                        ng-options="i as i.wordDesc for i in vm.masterData.customs">
+                </select>
+            </div>
+            <!--<label class="col-sm-5 control-label text-left" ng-bind="vm.customInfo.word_desc"></label>-->
+        </div>
+        <div class="box table-responsive">
+            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.customInfo.params.length">
+                <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
+                    <thead>
+                    <tr>
+                        <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
+                        <th class="mfb-xxs text-left" translate="TXT_NAME"></th>
+                        <th class="mfb-xxxs text-left" translate="TXT_ABSTRACT"></th>
+                        <th class="mfb-xxxs text-left" translate="TXT_VALUE"></th>
+                        <th class="mfb-xxt text-center" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="param in vm.customInfo.params">
+                        <td class="mfb-xt text-center">{{$index+1}}</td>
+                        <td class="mfb-xxs text-left" ng-bind="param.paramName"></td>
+                        <td class="mfb-xxxs text-left" ng-bind="param.paramDesc"></td>
+                        <td class="mfb-xxxs text-left">{{param.value[0]}}</td>
+                        <td class="mfb-xxt text-center" ng-controller="popupCtrl">
+                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, param.value[0])"><i class="fa fa-pencil"></i></button>
+                            <button ng-if="param.value" class="btn btn-danger btn-xs"  ng-click="param.value = null"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!-- .table-responsive -->
+        </div>
+    </form>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div><!-- .vo_modal -->

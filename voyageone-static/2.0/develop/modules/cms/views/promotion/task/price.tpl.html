@@ -1,0 +1,102 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="glyphicons glyphicons-yen"></i>&nbsp;{{'TXT_TEJIABAO_DETAIL' | translate}}</h4>
+				</div>
+				<div class="container-fluid m-t-sm m-b-sm">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">{{'TXT_TASK_NAME' | translate}}</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" ng-model="vm.promotion.promotionName" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label  class="col-sm-4 control-label">{{'TXT_TASK_DATE' | translate}}</label>
+									<div class="col-sm-7 form-inline">
+										<div class="input-group col-sm-5"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityStart" disabled></div>
+										<div class="input-group col-sm-6"><input type="text" class="form-control inherited" ng-model="vm.promotion.activityEnd" disabled></div>
+									</div>
+								</div><!-- .form-group -->
+							</form><!-- .form -->
+						</div><!--.col -->
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{{'TXT_PROMOTION_STATUS' | translate}}</label>
+									<div class="col-sm-8">
+										<input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text" class="form-control" placeholder="promotion_approved" disabled>
+										<input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text" class="form-control" placeholder="promotion_approved" disabled>
+									</div>
+								</div>
+							</form><!-- .form -->
+						</div>
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Search</label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.searchKey" placeholder="" >
+									</div>
+								</div>
+							</form><!-- .form -->
+						</div>
+						<div class="col-sm-12">
+							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-success" ng-click="updateAllStatus(1)"><i class="fa fa-refresh"></i> {{'TXT_STARTUP_ALL' | translate}}</button>
+								<button class="btn btn-danger"  ng-click="updateAllStatus(0)"><i class="fa fa-warning"></i> {{'TXT_STOP_ALL' | translate}}</button>
+							</div><!-- /right-btn -->
+						</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<div class="box">
+		<div class="box-body">
+		<table class="table table-hover-new">
+			<thead>
+			<tr>
+				<th class="text-center">Seq.</th>
+				<th>{{'TXT_PRODUCT_CODE' | translate}}</th>
+				<th>{{'TXT_NUM_IID' | translate}}</th>
+				<th class="text-center">{{'TXT_PROMOTION_PRICE' | translate}}</th>
+				<th>{{'TXT_STATUS' | translate}}</th>
+				<th>{{'TXT_ERROR_MESSAGE' | translate}}</th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr ng-repeat="price in vm.priceList">
+				<td class="text-center">{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
+				<td>{{price.key}}</td>
+				<td><a ng-if="price.numIid" ng-href="{{$root.productUrl}}{{price.numIid}}" target="_blank"  >{{price.numIid}}</a></td>
+				<td class="text-right">{{price.promotionPrice | number: 2}}</td>
+				<td><span ng-if="price.synFlg == 0" class="badge badge-stop">{{'TXT_STOP'| translate}}</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">{{"TXT_PENDING" | translate}}</span><span ng-if="price.synFlg == 2" class="badge badge-success">{{"TXT_SUCCESS" | translate}}</span><span ng-if="price.synFlg == 3" class="badge badge-failure">{{"TXT_FAIL" |　translate}}</span></td>
+				<td class="text-hs">{{price.errMsg}}</td>
+				<td class="text-right">
+					<button title="{{'TXT_STARTUP' | translate}}" class="btn btn-success btn-xs" ng-click="updateStatus(price,1)"><i class="fa fa-refresh"></i></button>
+					<button title="{{'TXT_STOP' | translate}}" class="btn btn-danger btn-xs" ng-click="updateStatus(price,0)"><i class="fa fa-refresh"></i></button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		</div>
+		<div class="col-sm-12 m-b-lg">
+			<vpagination config="vm.pricePageOption" total="{{vm.pricePageOption.total}}"></vpagination>
+		</div>
+	</div><!-- .col-lg-12 -->
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

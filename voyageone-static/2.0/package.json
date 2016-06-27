@@ -1,0 +1,34 @@
+{
+  "name": "voyageone_cms",
+  "version": "2.0.0",
+  "description": "VoyageOne Front Project v2",
+  "scripts": {
+    "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
+    "build-css-pkg": "node node_scripts/npm-build-css-package.js",
+    "lite": "lite-server"
+  },
+  "author": "VoyageOne",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^2.1.4",
+    "extend": "",
+    "glob": "",
+    "gulp": "",
+    "gulp-concat": "",
+    "gulp-debug": "",
+    "gulp-footer": "",
+    "gulp-header": "",
+    "gulp-minify-css": "",
+    "gulp-minify-html": "",
+    "gulp-ng-annotate": "",
+    "gulp-ng-html2js": "",
+    "gulp-rename": "",
+    "gulp-replace": "",
+    "gulp-sourcemaps": "",
+    "gulp-uglify": "",
+    "gulp-util": "",
+    "lite-server": "",
+    "request": "",
+    "through2": ""
+  }
+}

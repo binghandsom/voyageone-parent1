@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+    <link href="static/css/login.min.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="login-logo"><img src="static/img/voyage_one_logo_3.png"/></div>
+<div class="login" ng-controller="loginController">
+    <form class="login-main">
+        <ng-include src="'msg.tpl.html'"></ng-include>
+        <ul>
+            <li>
+                <input ng-model="username" type="text" class="text" placeholder="Username or Email">
+                <span class="small-icon login-user"></span>
+            </li>
+            <li>
+                <input ng-model="password" type="password" placeholder="Password" enter-click="#btn-login">
+                <span class="small-icon login-lock"></span>
+            </li>
+        </ul>
+    </form>
+    <div class="login-submit">
+        <button id="btn-login" ng-click="login()">Login</button>
+    </div>
+</div>
+<script type="text/ng-template" id="msg.tpl.html">
+    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
+</script>
+<script src="libs/require.js/2.2.0/require.js" data-main="login"></script>
+</body>
+</html>
