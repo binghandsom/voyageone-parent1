@@ -1,0 +1,50 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_PROMOTION_AND_TAG' | translate}}</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="addPromotionForm" novalidate>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'TXT_CHANNEL_WITH_COLON' | translate}}</label>
+                <div class="col-sm-7">
+                    <input class="form-control" placeholder="{{vm.promotion.cartName}}"  ng-model="vm.promotion.cartName"  readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'TXT_PROMOTION_NAME_WITH_COLON' | translate}}</label>
+                <div class="col-sm-7">
+                    <input class="form-control" ng-model="vm.promotion.promotionName"  readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'TXT_PROMOTION_TIME_WITH_COLON' | translate}}</label>
+                <div class="col-sm-7">
+                    <input class="form-control" placeholder="{{vm.promotion.activityStart}}&nbsp;~&nbsp;{{vm.promotion.activityEnd}}"  readonly>
+                </div>
+                <!--<label class="col-sm-7 control-label text-left">{{vm.promotion.activityStart}}&nbsp;~&nbsp;{{vm.promotion.activityEnd}}</label>-->
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label vo_reqfield">{{'TXT_PROMOTION_TAG_WITH_COLON' | translate}}</label>
+
+                <div class="col-sm-6">
+                    <select name="tag" class="form-control" ng-model="vm.promotionInfo.tagId"
+                            ng-options="subPromotion.id as subPromotion.tagName for subPromotion in vm.subPromotionList" required>
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                    </select>
+                </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <vo-message target="addPromotionForm.tag"></vo-message>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()" translate="BTN_CANCEL"></button>
+        <button type="button" class="btn btn-vo" ng-click="ok()" translate="BTN_SAVE"></button>
+    </div>
+</div><!-- .vo_modal -->

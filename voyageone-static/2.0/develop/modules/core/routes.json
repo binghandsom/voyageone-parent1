@@ -1,0 +1,12 @@
+{
+  "/core/xxx": {
+    "templateUrl": "views/home.html",
+    "controller": "homeController",
+    "controllerUrl": "views/home.ctrl"
+  },
+  "/core/yyy": {
+    "templateUrl": "views/user.html",
+    "controller": "userController",
+    "controllerUrl": "views/user.ctrl"
+  }
+}

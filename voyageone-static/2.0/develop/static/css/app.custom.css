@@ -1,0 +1,36 @@
+/*!
+ * bootstap和第三方插件拓展样式覆盖
+ */
+
+.modal-xlg {
+    width: 650px;
+}
+
+input[datepicker-popup][readonly] {
+    background-color: white;
+}
+
+ul[uib-datepicker-popup-wrap] table {
+    border: 0;
+}
+
+ul[uib-datepicker-popup-wrap] button {
+    border: 0;
+}
+.category_highlight{
+    background: hotpink;
+    color: #fff;
+}
+.category_highlight>p>span{
+    color: #fff;
+}
+.thumb-xxs {
+    max-width: 17px;
+    max-height: 34px;
+    display: inline-block;
+}
+.thumb-sm-search {
+     max-width: 80px;
+     max-height:80px;
+     display: inline-block;
+ }

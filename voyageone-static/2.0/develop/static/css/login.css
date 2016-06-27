@@ -1,0 +1,180 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    background: #eeeded;
+    font-family: "Microsoft Yahei", sans-serif;
+}
+
+.login-logo {
+    text-align: center;
+    margin: 5% auto auto;
+}
+
+.login {
+    margin: 20px auto auto;
+    width: 390px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #eeeded;
+    overflow: hidden;
+    box-shadow: #FFFFFF 0 0 3px;
+}
+
+.login-main {
+    padding: 1px 10px;
+}
+
+.login-main span {
+    font-size: 12px;
+    vertical-align: middle;
+    color: #555555;
+}
+
+.login-main ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.login-main li {
+    list-style: none;
+    width: 100%;
+    font-weight: 500;
+    background: #fff;
+    margin: 1em 0;
+    outline: none;
+}
+
+.login-main input[type="text"], input[type="password"] {
+    width: 83%;
+    padding: 1em 0 1em 2.7em;
+    color: #555555;
+    font-size: 15px;
+    outline: none;
+    background: none;
+    font-weight: 500;
+    border: none;
+}
+
+.small-icon {
+    height: 20px;
+    width: 30px;
+    display: block;
+    float: left;
+    margin: 12px -28px 0 10px;
+}
+
+.login-user {
+    background: url(../img/user.png) no-repeat 8px 2px;
+}
+
+.login-lock {
+    background: url(../img/lock.png) no-repeat 8px 2px;
+}
+
+.login-submit button {
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    padding: 13px 20px;
+    margin: 0;
+    width: 100%;
+    border: none;
+    background: #ffa300;
+    transition: 200ms ease-in;
+}
+
+.login-submit button:hover {
+    color: #FFFFFF;
+    background: #ed9005;
+}
+
+.loginSign {
+    position: relative;
+    margin-top: 4%;
+    width: 100%;
+    text-align: center;
+    background: #DC2424;
+    color: #fff;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.loginSign:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 100%;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #DC2424;
+}
+
+@media (max-width: 1366px) {
+    .login-main {
+        padding: 1px 4%;
+    }
+}
+
+@media (max-width: 1280px) {
+    .login {
+        margin: 2% auto 6%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .login {
+        margin: 2% auto 6%;
+    }
+}
+
+@media (max-width: 768px) {
+    .login {
+        margin: 3% auto 8%;
+    }
+}
+
+@media (max-width: 640px) {
+    .login {
+        margin: 3% auto 8%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login {
+        margin: 4% auto 18%;
+    }
+}
+
+@media (max-width: 320px) {
+    .login {
+        margin: 4% auto 8%;
+    }
+
+    .login-submit input[type="submit"] {
+        font-size: 18px;
+        padding: 18px 18px;
+    }
+
+    .login-submit input[type="text"], input[type="password"] {
+        font-size: 13px;
+    }
+
+    .small-icon {
+        margin: 8px -29px 0 0;
+    }
+
+    .login-main li {
+        width: 99%;
+    }
+
+}

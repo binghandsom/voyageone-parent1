@@ -1,0 +1,28 @@
+<div class="vo_modal" ng-controller="popupCtrl">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>
+        <span translate="TXT_FILE_IMPORT"></span></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" id="uploadForm">
+            <div class="form-group">
+                <label class="col-sm-3 control-label" translate="TXT_FILE_WITH_COLON"></label>
+                <div class="col-sm-8">
+                    <input type="file" file-style nv-file-select="" uploader="uploader" accept=".xls*">
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8">
+                    <p class="text-vo"><i class="icon fa"></i>{{vm.messager}}</p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
+        <button class="btn btn-vo" ng-click="upload()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_IMPORT_FILE' | translate}}</button>
+    </div>
+</div><!-- .vo_modal -->

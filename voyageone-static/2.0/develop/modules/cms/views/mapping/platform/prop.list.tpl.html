@@ -1,0 +1,68 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'TXT_PLATFORM_ATTRIBUTE_MAPPING' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
+                            <span class="font-bold text-vo">{{ctrl.maindata.category.schema.catFullPath}}</span>
+                            <sup class="font-bold text-vo"><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
+                            <span class="font-bold text-vo fa fa-exchange"></span>
+                            <span>{{ctrl.platform.category.catFullPath}}</span>
+                            <sup><strong>{{'TXT_PLATFORM_CATEGORY' | translate}}</strong></sup>
+                        </div>
+                        <div class="form-inline pull-left m-r-lg">
+                            <label class="m-t-xs col-sm-9" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></label>
+                            <div class="col-sm-3 text-left">
+                                <div class="onoffswitch">
+                                    <input type="checkbox" class="onoffswitch-checkbox" id="check1"
+                                           ng-true-value="1" ng-false-value="0"
+                                           ng-change="ctrl.saveMatchOver()" ng-model="ctrl.platform.matchOver">
+                                    <label class="onoffswitch-label" for="check1">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div><!-- onoff switch -->
+                            </div>
+                        </div>
+                        <div class="form-inline">
+                            <select class="form-control m-r-xxs"
+                                    ng-model="ctrl.selected.required"
+                                    ng-options="v as k for (k, v) in ctrl.options.required"
+                                    ng-change="ctrl.filteringData()">
+                            </select>
+                            <select class="form-control m-r-xxs"
+                                    ng-model="ctrl.selected.matched"
+                                    ng-options="v as k for (k, v) in ctrl.options.matched"
+                                    ng-change="ctrl.filteringData()">
+                            </select>
+                            <input ng-model="ctrl.selected.keyWord" enter-click="#btn-filter"
+                                   type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
+                            <button class="btn btn-default" ng-click="ctrl.clear()">
+                                <i class="fa fa-remove"></i>&nbsp;<span>{{'BTN_CLEAR' | translate}}</span>
+                            </button>
+                            <button id="btn-filter" class="btn btn-vo btn-xxs" ng-click="ctrl.filteringData()">
+                                <i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <form class="form-horizontal">
+                <div class="container-fluid" ng-controller="popupCtrl">
+                    <div ng-repeat="(k, property) in ctrl.platform.properties track by property.id"
+                         ng-if="!property.hide"
+                         platform-prop="property"
+                         platform-prop-popup="ctrl.popup(property, ppPlatformMapping)"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

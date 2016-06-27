@@ -1,0 +1,141 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_SIZE_CHART' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" ng-model="vm.searchInfo.sizeChartName">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_FINISH' | translate}}</label>
+
+                                    <div class="col-sm-7">
+                                        <select class="form-control" ng-model="vm.searchInfo.finishFlag">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="1">yes</option>
+                                            <option value="0">no</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</label>
+
+                                    <div class="col-sm-9" style="margin-left: -4px;">
+                                        <div class="col-sm-10 form-inline">
+                                            <!--------------------------------startTime-------------------------------->
+                                            <div class="col-sm-5 input-group">
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.startTime"
+                                                       max-date="vm.searchInfo.endTime" date-model-format="yyyy-MM-dd" is-open="vm.datePicker1" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="vm.datePicker1 = !vm.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                            </div>&nbsp;~&nbsp;
+                                            <!--------------------------------endTime-------------------------------->
+                                            <div class="col-sm-5 input-group">
+                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="vm.searchInfo.endTime"
+                                                       min-date="vm.searchInfo.startTime" date-model-format="yyyy-MM-dd" is-open="vm.datePicker2" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="vm.datePicker2 = !vm.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.brandNameList"
+                                                ng-options="brand.value as brand.name for brand in vm.brandNameList">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.productTypeList"
+                                                ng-options="productType.value as productType.name for productType in vm.productTypeList">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
+                                    <div class="col-sm-7">
+                                        <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.sizeTypeList"
+                                                ng-options="sizeType.value as sizeType.name for sizeType in vm.sizeTypeList">
+                                        </select>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-12 text-center m-b-sm" ng-controller="popupCtrl">
+                        <div class="form-inline">
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                            <button class="btn btn-success" ng-click="openSizeChartAdd(vm)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_ADD' | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!---------------------------------------------------show table datas----------------------------------------------------->
+    <div class="box" ng-controller="popupCtrl">
+        <div class="box-body">
+            <div class="table-responsive">
+                <div class="col-sm-12 dropdown_table_main">
+                    <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
+                        <thead>
+                            <tr>
+                                <th class="mfb-xt text-center">{{'TXT_SEQ' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_NAME' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_FINISH' | translate}}</th>
+                                <th class="mfb-xxs text-center">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</th>
+                                <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
+                            </tr>
+                        </thead>
+                        </table>
+                        <div if-no-rows="vm.sizeChartList.length" style="padding-left:0px">
+                            <table class="table dropdown_table_main">
+                                <tbody>
+                                        <tr ng-repeat="chartInfo in vm.sizeChartList">
+                                            <td class="mfb-xt text-center">{{chartInfo.sizeChartId}}</td>
+                                            <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.brandNameTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.productTypeTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.finish == true?"yes":"no"}}</td>
+                                            <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
+                                            <td class="mfb-xxt text-center">
+                                                <a title="{{'BTN_SET'|translate}}" href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                                <a title="{{'BTN_DELETE'|translate}}" href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="m-t-xs">
+            <vpagination config="vm.sizeChartPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->
