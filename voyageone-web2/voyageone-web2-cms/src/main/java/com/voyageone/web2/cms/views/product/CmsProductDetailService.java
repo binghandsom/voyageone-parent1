@@ -570,6 +570,7 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("cartId", platformInfo.getCartId());
                 platformStatus.put("pStatus", platformInfo.getpStatus());
                 platformStatus.put("status", platformInfo.getStatus());
+                platformStatus.put("pPublishError", platformInfo.getpPublishError());
                 platformList.add(platformStatus);
                 
             });
