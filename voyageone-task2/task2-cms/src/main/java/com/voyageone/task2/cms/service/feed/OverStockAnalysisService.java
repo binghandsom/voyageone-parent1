@@ -263,7 +263,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         }
                     }
                 } else {
-                    $info("queryForMultipleProducts error; limit = 200, offset = " + offset + " statusCode = " + statusCode);
+                    $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
                 offset = offset + 200;
