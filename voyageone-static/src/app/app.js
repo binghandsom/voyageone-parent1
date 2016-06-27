@@ -1,4 +1,4 @@
-define('vo-vms', [
+define([
     'angularAMD',
     'underscore',
     'angular-sanitize',
