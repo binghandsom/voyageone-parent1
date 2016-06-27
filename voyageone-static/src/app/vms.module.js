@@ -1,6 +1,7 @@
 define(function (require) {
     
     require('components/menu.component');
+    require('controllers/topbar.controller');
     
     var angularAMD = require('angularAMD');
     
@@ -14,7 +15,8 @@ define(function (require) {
         'ui.bootstrap',
         'vo.ng',
         'localytics.directives',
-        'vms.menu'
+        'vms.menu',
+        'vms.topbar'
     ]);  
     
     return angularAMD.bootstrap(app);

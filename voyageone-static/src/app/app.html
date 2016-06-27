@@ -19,8 +19,10 @@
 <div class="wrapper">
     <div class="header">
         <div class="container">
-            <div class="topbar">
-                LANGUAGES | LOGIN | LOGOUT
+            <div class="topbar" ng-controller="TopBarController as tbCtrl">
+                <span ng-bind="::tbCtrl.channel.name"></span>
+                <span ng-bind="::tbCtrl.language"></span>
+                <span><a href="">LOG OUT</a></span>
             </div>
             <div class="navbar navbar-default">
                 <div class="navbar-header">
@@ -28,17 +30,71 @@
                         <img src="../assets/img/voyage_one_logo_3.png" alt="VoyageOne">
                     </a>
                 </div>
-                <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">Home</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="index.html">Option 1: Default Page</a></li>
-                            <li><a href="page_home1.html">Option 2: Layer Slider</a></li>
-                            <li><a href="page_home2.html">Option 3: Revolution Slider</a></li>
-                            <li><a href="page_home3.html">Option 4: Amazing Content</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                <vo-menu></vo-menu>
+            </div>
+        </div>
+    </div><!-- === end .header === -->
+    <vo-breadcrumbs></vo-breadcrumbs>
+    <div class="container content">
+        <div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Search</h5>
+                </div>
+                <div class="panel-body search-box-inline">
+                    <div class="row margin-bottom-10">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <label for="SKU_STATUS" class="input-group-addon">SKU STATUS</label>
+                                <select id="SKU_STATUS" class="form-control input-sm">
+                                    <option value="">Select</option>
+                                    <option value="open">open</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <label for="ORDER_ID" class="input-group-addon">ORDER ID</label>
+                                <input id="ORDER_ID" type="text" class="form-control input-sm">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <label for="SKU" class="input-group-addon">SKU</label>
+                                <input type="text" id="SKU" class="form-control input-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <label for="SKU" class="input-group-addon">ORDER DATE</label>
+                                <input type="text" id="SKU" class="form-control input-sm">
+                                <input type="text" id="SKU" class="form-control input-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="row padding-xs">
+                <div class="col-sm-3">
+                    <button class="btn btn-success">NEW/END SHIPMENT</button>
+                </div>
+                <div class="col-sm-3">
+                    <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
+                </div>
+                <div class="col-sm-6 text-right form-inline">
+                    <select class="form-control" name="" id="">
+                        <option value="">ORDER BY SKU</option>
+                    </select>
+                    <button class="btn btn-default">DOWNLOAD PICKING LIST</button>
+                </div>
             </div>
         </div>
     </div>
