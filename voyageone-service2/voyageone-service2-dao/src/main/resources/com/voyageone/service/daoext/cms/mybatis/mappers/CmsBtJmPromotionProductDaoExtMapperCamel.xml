@@ -123,8 +123,11 @@
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
-            <if test="productCode!=null">
-                and    b.product_code  like CONCAT(#{productCode},'%')
+            <if test="code!=null">
+                and    b.product_code  like CONCAT(#{code},'%')
+            </if>
+            <if test="code!=null">
+                and    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  like CONCAT(#{code},'%'))
             </if>
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
@@ -144,10 +147,10 @@
             </if>
 
             <if test="beginDiscount!=null">
-                and a.discount>=#{beginDiscount}
+                and a.discount>=(#{beginDiscount}/10)
             </if>
             <if test="endDiscount!=null">
-                and  a.discount&lt;=#{endDiscount}
+                and  a.discount&lt;=(#{endDiscount}/10)
             </if>
             <if test="priceType=='msrp'">
                 <if test="beginPrice!=null">

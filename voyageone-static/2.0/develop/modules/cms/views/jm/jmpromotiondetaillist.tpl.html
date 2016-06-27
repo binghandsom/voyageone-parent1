@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_JOIN_JM_CODE_SKU_SEARCH"></label>
                                     <div class="col-sm-8">
-                                        <textarea type="text" rows="4" class="form-control" ng-model="searchInfo.voCategoryName"></textarea>
+                                        <textarea type="text" rows="4" class="form-control" ng-model="searchInfo.code"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">品牌</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen class="form-control" ng-model="searchInfo.brand"
+                                        <select search-contains="true" chosen class="form-control" ng-model="searchInfo.brandName"
                                                 ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
@@ -108,10 +108,10 @@
                                     <label class="col-sm-3 control-label">折扣</label>
 
                                     <div class="col-sm-8 form-inline">
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginDiscount"
+                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
                                                                                  placeholder="from"></div>
                                         &nbsp;~&nbsp;
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endDiscount"
+                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
                                                                                  placeholder="to"></div>
                                     </div>
                                 </div>
