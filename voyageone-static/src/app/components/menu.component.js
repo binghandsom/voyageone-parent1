@@ -10,10 +10,5 @@ define(function () {
                 {name: 'Shipment', items: [{name: 'Shipment Info ', url: ''}]}
             ];
         }
-    }).component('voBreadcrumbs', {
-        templateUrl: 'components/breadcrumb.html',
-        controller: function BreadcrumbController() {
-            
-        }
     });
 });

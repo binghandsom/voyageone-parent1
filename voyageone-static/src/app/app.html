@@ -34,59 +34,49 @@
             </div>
         </div>
     </div><!-- === end .header === -->
-    <vo-breadcrumbs></vo-breadcrumbs>
-    <div class="container content">
-        <div>
+    <div>
+        <div class="breadcrumbs">
+            <div class="container">
+                <h4 class="pull-left">Order Info</h4>
+                <ul class="pull-right breadcrumb">
+                    <li><a href="">Home</a></li>
+                    <li><a href="">Features</a></li>
+                    <li class="active">Content Boxes</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container content">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h5 class="panel-title">Search</h5>
                 </div>
-                <div class="panel-body search-box-inline">
-                    <div class="row margin-bottom-10">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <label for="SKU_STATUS" class="input-group-addon">SKU STATUS</label>
-                                <select id="SKU_STATUS" class="form-control input-sm">
-                                    <option value="">Select</option>
-                                    <option value="open">open</option>
-                                </select>
-                            </div>
+                <div class="panel-body">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="SKU_STATUS" class="control-label">SKU STATUS</label>
+                            <input id="SKU_STATUS" type="text" class="form-control input-sm">
                         </div>
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <label for="ORDER_ID" class="input-group-addon">ORDER ID</label>
-                                <input id="ORDER_ID" type="text" class="form-control input-sm">
-                            </div>
+                        <div class="form-group">
+                            <label for="ORDER_ID" class="control-label">ORDER ID</label>
+                            <input id="ORDER_ID" type="text" class="form-control input-sm">
                         </div>
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <label for="SKU" class="input-group-addon">SKU</label>
-                                <input type="text" id="SKU" class="form-control input-sm">
-                            </div>
+                        <div class="form-group">
+                            <label for="SKU" class="control-label">SKU</label>
+                            <input id="SKU" type="text" class="form-control input-sm">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-inline">
-                                <label for="SKU" class="control-label">ORDER DATE</label>
-                                <input type="text" id="SKU" class="form-control input-sm">
-                                <span>~</span>
-                                <input type="text" id="SKU" class="form-control input-sm">
-                            </div>
+                        <div class="form-group">
+                            <label class="control-label">ORDER DATE</label>
+                            <input type="text" class="form-control input-sm">
+                            <span>~</span>
+                            <input type="text" class="form-control input-sm">
                         </div>
-                        <div class="col-md-6 text-right">
+                        <div class="form-group pull-right">
                             <button class="btn btn-default btn-sm">SEARCH</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-            <div class="row padding-xs">
+            <div class="row">
                 <div class="col-sm-3">
                     <button class="btn btn-success">NEW/END SHIPMENT</button>
                 </div>
@@ -100,6 +90,90 @@
                     <button class="btn btn-default">DOWNLOAD PICKING LIST</button>
                 </div>
             </div>
+            <div>
+                <table class="table table-bordered table-vo">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>ORDER ID</th>
+                        <th>ORDER DATE</th>
+                        <th>SKU</th>
+                        <th>DESCRIPTION</th>
+                        <th>STATUS</th>
+                        <th>PRICE</th>
+                        <th>ACTION</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>+</td>
+                        <td>99109839021</td>
+                        <td>2016-06-28 11:46:05</td>
+                        <td>XSJDIO1900</td>
+                        <td>Adidas Busenitz</td>
+                        <td>Open</td>
+                        <td>$1000</td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-default">CANCEL</button>
+                            <button class="btn btn-xs btn-default">ADD TO SHIPMENT</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>99109839021</td>
+                        <td>2016-06-28 11:46:05</td>
+                        <td>XSJDIO1900</td>
+                        <td>Adidas Busenitz</td>
+                        <td>Open</td>
+                        <td>$1000</td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-default">CANCEL</button>
+                            <button class="btn btn-xs btn-default">ADD TO SHIPMENT</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>99109839021</td>
+                        <td>2016-06-28 11:46:05</td>
+                        <td>XSJDIO1900</td>
+                        <td>Adidas Busenitz</td>
+                        <td>Open</td>
+                        <td>$1000</td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-default">CANCEL</button>
+                            <button class="btn btn-xs btn-default">ADD TO SHIPMENT</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>99109839021</td>
+                        <td>2016-06-28 11:46:05</td>
+                        <td>XSJDIO1900</td>
+                        <td>Adidas Busenitz</td>
+                        <td>Open</td>
+                        <td>$1000</td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-default">CANCEL</button>
+                            <button class="btn btn-xs btn-default">ADD TO SHIPMENT</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>99109839021</td>
+                        <td>2016-06-28 11:46:05</td>
+                        <td>XSJDIO1900</td>
+                        <td>Adidas Busenitz</td>
+                        <td>Open</td>
+                        <td>$1000</td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-default">CANCEL</button>
+                            <button class="btn btn-xs btn-default">ADD TO SHIPMENT</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div vpagination="{}"></div>
         </div>
     </div>
 </div>
