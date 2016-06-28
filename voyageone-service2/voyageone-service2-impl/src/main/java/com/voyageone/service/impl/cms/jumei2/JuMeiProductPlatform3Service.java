@@ -78,7 +78,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             if (model.getSynchStatus() == 1 || model.getSynchStatus() == 0 || model.getSynchStatus() == 3) {
                 //获取在售商品的model
-                CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.getOnSaleByCode(model.getChannelId(), model.getProductCode());
+                CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.selectOnSaleByCode(model.getChannelId(), model.getProductCode());
                 if (onSaleModel != null) {
                     model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "已在其它聚美专场，且未过期。该商品上传失败不能上传");
                     daoCmsBtJmPromotionProduct.update(model);

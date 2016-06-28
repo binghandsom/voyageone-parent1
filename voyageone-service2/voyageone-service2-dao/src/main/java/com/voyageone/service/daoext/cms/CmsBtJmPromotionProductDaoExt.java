@@ -72,9 +72,12 @@ public interface CmsBtJmPromotionProductDaoExt {
      */
     List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode);
     //是否存在在销售的商品
-    CmsBtJmPromotionProductModel getOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    CmsBtJmPromotionProductModel selectOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
     int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
 //获取变更数量
     int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);
+
+    //获取本活动商品在其他活动处于在售状态的商品
+    CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
     //jm2 end
 }

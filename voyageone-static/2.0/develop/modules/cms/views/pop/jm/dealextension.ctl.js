@@ -46,6 +46,10 @@ define([
                 //    $scope.vm.modelList[i].synchState=1;
                 //
                 //}
+                if (!res.data.result) {
+                    $scope.search();
+                    alert(res.data.msg);
+                }
                 $scope.$close();
             }, function (res) {
             })

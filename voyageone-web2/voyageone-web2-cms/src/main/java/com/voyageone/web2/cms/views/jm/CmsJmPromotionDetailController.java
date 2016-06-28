@@ -125,11 +125,13 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
-        int result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", parameter.getPromotionId());
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        return success(null);
+        CallResult result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
+        if (result.isResult()) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", parameter.getPromotionId());
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        }
+        return success(result);
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)

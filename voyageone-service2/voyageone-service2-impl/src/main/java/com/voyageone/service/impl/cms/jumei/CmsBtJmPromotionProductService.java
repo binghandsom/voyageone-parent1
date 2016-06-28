@@ -134,11 +134,21 @@ public class CmsBtJmPromotionProductService {
     }
 
     //所有上新
-    public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+    public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        //获取本活动商品在其他活动,处于在售状态的商品
+        CmsBtJmPromotionProductModel modelJmPromotionProduct = daoExt.selectOnSaleByNoPromotionId(modelCmsBtJmPromotion.getChannelId(), parameter.getPromotionId());
+        if (modelJmPromotionProduct != null) {
+
+            result.setMsg("该专场商品已在其它聚美专场上传，且未过期("+modelJmPromotionProduct.getJmHashId()+")。专场延期失败");
+            result.setResult(false);
+            return  result;
+        }
         modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
         daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
-        return daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
+        daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
+        return result;
     }
 
     //部分商品上新
