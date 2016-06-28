@@ -1,0 +1,13 @@
+.loop-table-width(@index) when (@index > 0) {
+  .calc-table-width(@index);
+  // next iteration
+  .loop-table-width(@index - 1);
+}
+
+.calc-table-width(@index) {
+  .td-@{index} {
+    width: percentage((@index / 12));
+  }
+}
+
+.loop-table-width(12);
