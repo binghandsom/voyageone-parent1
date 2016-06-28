@@ -262,7 +262,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
             }
 
             // 主产品等列表取得
