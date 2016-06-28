@@ -94,7 +94,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <overWriteIfNewer>true</overWriteIfNewer>
-                            <excludeGroupIds>com.voyageone</excludeGroupIds>
+                            <excludeArtifactIds>task2-base</excludeArtifactIds>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
