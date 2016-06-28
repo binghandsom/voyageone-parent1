@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.bean.cms.TaskSummary;
+import com.voyageone.service.bean.cms.TaskSummaryBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +25,12 @@ public class TranslationTaskService extends BaseService {
     @Autowired
     private ProductService productService;
 
-    public TaskSummary getTaskSummary(String channelId, String userName) throws BusinessException
+    public TaskSummaryBean getTaskSummary(String channelId, String userName) throws BusinessException
     {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        TaskSummary taskSummary = new TaskSummary();
+        TaskSummaryBean taskSummary = new TaskSummaryBean();
 
         //未分配的任务
         String queryStr = String.format("{'common.fields.translateStatus':'0'," +
