@@ -123,11 +123,29 @@
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
-            <if test="code!=null">
-                and    b.product_code  like CONCAT(#{code},'%')
+            <if test="codeList!=null and codeList.length!=0">
+                and (   b.product_code  in <foreach item="item" index="i" collection="codeList"
+                                                    open="(" separator="," close=")">
+                    #{item}
+                     </foreach>
+                or    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  in <foreach item="item" index="i" collection="codeList"
+                                                                                                                               open="(" separator="," close=")">
+                        #{item}
+                    </foreach> )
+                )
             </if>
-            <if test="code!=null">
-                and    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  like CONCAT(#{code},'%'))
+            <if test="productNameCn!=null">
+                and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
+                       or  b.product_long_name like CONCAT(#{productNameCn},'%')
+                       or  b.product_medium_name like CONCAT(#{productNameCn},'%')
+                       or  b.product_short_name like CONCAT(#{productNameCn},'%')
+                      )
+            </if>
+            <if test="listBrandName!=null and listBrandName.size()!=0">
+                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                                              open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
@@ -184,12 +202,8 @@
                     and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="productNameCn!=null">
-                and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
-            </if>
-            <if test="brandName!=null">
-                and  b.brand_name=#{brandName}
-            </if>
+
+
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}
             </if>

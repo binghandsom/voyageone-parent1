@@ -76,11 +76,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
     public CallResult updateJm( CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         CallResult result = new CallResult();
         try {
-            if (model.getSynchStatus() == 1 || model.getSynchStatus() == 0) {
+            if (model.getSynchStatus() == 1 || model.getSynchStatus() == 0 || model.getSynchStatus() == 3) {
                 //获取在售商品的model
                 CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.getOnSaleByCode(model.getChannelId(), model.getProductCode());
                 if (onSaleModel != null) {
-                    model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "不能上传");
+                    model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "已在其它聚美专场，且未过期。该商品上传失败不能上传");
                     daoCmsBtJmPromotionProduct.update(model);
                     return result;
                 }
@@ -89,6 +89,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
                 //更新deal   商品属性 价格
                 updateDeal(model, shopBean);
+                if (model.getDealEndTimeStatus() == 1) {
+                    updateDealEndTime(modelCmsBtJmPromotion, model, shopBean);//deal延期
+                }
 
             } else {
                 if (model.getPriceStatus() == 1) //更新价格
