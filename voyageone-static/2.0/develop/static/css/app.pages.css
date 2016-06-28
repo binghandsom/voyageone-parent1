@@ -6,7 +6,7 @@
 s-field textarea.form-control {
     height: 100px;
 }
-s-field textarea.schema-field-html {
+s-field textarea.s-html {
     height: 200px;
 }
 
@@ -415,7 +415,6 @@ s-field textarea.schema-field-html {
 .product-shema-detail .ng-number {
     width: 150px;
     text-align: right;
-    margin: 0 auto;
 }
 
 .product-shema-detail .bs-docs-sidebar {

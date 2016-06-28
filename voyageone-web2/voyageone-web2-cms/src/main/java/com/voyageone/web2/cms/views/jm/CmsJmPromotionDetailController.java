@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,11 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
     public AjaxResponse delete(@RequestBody int id) {
-        serviceCmsBtJmPromotionProduct.delete(id);
+        ProductIdListInfo deleteInfo = new ProductIdListInfo();
+        List<Integer> deleteId = new ArrayList<>();
+        deleteId.add(id);
+        deleteInfo.setProductIdList(deleteId);
+        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
         CallResult result = new CallResult();
         return success(result);
     }
@@ -124,10 +129,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public int updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
+       int result= serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        return serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
+        return result;
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)

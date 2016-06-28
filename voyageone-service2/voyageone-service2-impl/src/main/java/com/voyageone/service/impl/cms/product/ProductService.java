@@ -188,23 +188,14 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductBean> getList(String channelId, Set<Long> pids, String[] projections) {
-        JomgoQuery queryObject = new JomgoQuery();
-        String pidsArrStr = Joiner.on(", ").skipNulls().join(pids);
-        queryObject.setQuery(String.format("{ \"prodId\" : { $in : [ %s ] } }", pidsArrStr));
-        queryObject.setProjectionExt(projections);
-        return getBeanList(channelId, queryObject);
-    }
-
-    /**
-     * getList
-     */
     public List<CmsBtProductModel> getList(String channelId, JomgoQuery queryObject) {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
     /**
      * getList
+     * 注意：调用此方法时，返回值中的getGroupBean()为空，需要自行填值
+     * 如需要groupBean,请使用getListWithGroup()
      */
     public List<CmsBtProductBean> getBeanList(String channelId, JomgoQuery queryObject) {
         return cmsBtProductDao.selectBean(queryObject, channelId);
@@ -551,7 +542,7 @@ public class ProductService extends BaseService {
             if (productId != null) {
                 CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),logModel.getClass());
+                JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
 //                BeanUtil.copy(productModel, logModel);
                 logModel.set_id(null);
                 cmsBtProductLogDao.insert(logModel);
@@ -691,10 +682,9 @@ public class ProductService extends BaseService {
      * confirm change category
      */
     public Map<String, Object> changeProductCategory(String channelId, String categoryId, String categoryPath, List<String> models, String modifier) {
-
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("catId", categoryId);
-        updateMap.put("catPath", categoryPath);
+        updateMap.put("common.catId", categoryId);
+        updateMap.put("common.catPath", categoryPath);
         // bug CMS-30修正 edward 2016-05-24
         if (!Channel.VOYAGEONE.getId().equals(channelId))
             updateMap.put("batchField.switchCategory", 1);
@@ -913,7 +903,10 @@ public class ProductService extends BaseService {
                 param.put("channelId", product.getOrgChannelId());
                 param.put("sku", String.valueOf(sku.get("skuCode")));
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
+                if (skuInfo != null)
+                    bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
+                else
+                    bean.setInventory("0");
                 String imagePath = "";
                 if (product.getCommon().getFields().getImages1().size() > 0) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
@@ -1116,10 +1109,10 @@ public class ProductService extends BaseService {
         return newCart;
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel){
-        return updateProductPlatform(channelId,prodId,platformModel,false);
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier){
+        return updateProductPlatform(channelId,prodId,platformModel,modifier,false);
     }
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, Boolean isModifiedChk){
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk){
 
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if(isModifiedChk){
@@ -1172,10 +1165,25 @@ public class ProductService extends BaseService {
                 sxWorkloadModel.setChannelId(channelId);
                 sxWorkloadModel.setGroupId(group.getGroupId());
                 sxWorkloadModel.setPublishStatus(0);
+                sxWorkloadModel.setModifier(modifier);
                 cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(sxWorkloadModel);
             }
         }
         return platformModel.getModified();
+    }
+
+    public void updateProductCommon(String channelId, Long prodId, CmsBtProductModel_Common common){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("common", common);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){

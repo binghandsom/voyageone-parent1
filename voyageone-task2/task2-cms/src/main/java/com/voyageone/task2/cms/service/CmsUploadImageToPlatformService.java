@@ -291,9 +291,11 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                 }
                 image.setErrorMsg(errMsg);
             }
-           else if(errMsg.indexOf("response code: 413")>0)
-            {
-                image.setErrorMsg("");
+           else if(errMsg.indexOf("response code: 413")>0) {
+                image.setErrorMsg("1.图片不要使用中国模特，如有代言人必须是当年的。\n" +
+                        "2.PC端上传图片宽660 - 790px（推荐790px），高度660 - 1000px。\n" +
+                        "3.APP端上传图片宽750-1200px（推荐750px），高度750-1200px。\n" +
+                        "4.聚美优品用图片，单张体积必须小于457KB。");
             }
             else
             {

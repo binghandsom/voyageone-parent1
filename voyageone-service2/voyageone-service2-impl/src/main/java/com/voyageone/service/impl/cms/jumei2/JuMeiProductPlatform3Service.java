@@ -76,11 +76,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
     public CallResult updateJm( CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
         CallResult result = new CallResult();
         try {
-            if (model.getSynchStatus() == 1) {
+            if (model.getSynchStatus() == 1||model.getSynchStatus() == 0) {
                 //获取在售商品的model
                 CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.getOnSaleByCode(model.getChannelId(), model.getProductCode());
                 if (onSaleModel != null) {
-                    model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "不能上新");
+                    model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "不能上传");
                     daoCmsBtJmPromotionProduct.update(model);
                     return result;
                 }
@@ -127,20 +127,19 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 }
             }
         } catch (Exception ex) {
-            model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));
+            model.setErrorMsg(ex.getMessage());
             // model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
-            LOG.error("addProductAndDealByPromotionId", ex);
+            LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", ex);
             try {
                 if (model.getErrorMsg().length() > 600) {
                     model.setErrorMsg(model.getErrorMsg().substring(0, 600));
                 }
                 daoCmsBtJmPromotionProduct.update(model);
             } catch (Exception cex) {
-                LOG.error("addProductAndDealByPromotionId", cex);
-                ex.printStackTrace();
+                LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
             result.setResult(false);
-            result.setMsg(ExceptionUtil.getErrorMsg(ex));
+            result.setMsg(ex.getMessage());
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
  * @author Edward
  * @version 2.0.0, 15/12/15
  */
-public class CmsSearchInfoBean2 {
+public class CmsSearchInfoBean2 implements Serializable {
 
     private Integer groupPageNum = 0;
     private Integer groupPageSize = 0;
@@ -45,18 +46,18 @@ public class CmsSearchInfoBean2 {
     private BigDecimal priceEnd;
 
     private String pCatId;
-    private String pCatStatus;
+    private int pCatStatus = 0;
 
     private String[] promotionTags;
     private int promotionTagType = 0;
     // 店铺内分类的查询
     private List<String>  cidValue;
-    private String shopCatStatus;
+    private int shopCatStatus = 0;
 
     // 价格变动查询用标志位
     private int priceChgFlg = 0;
     private String propertyStatus;
-    private int hasErrorFlg;
+    private int hasErrorFlg = 0;
 
     private String salesSortType = null;
     private String salesType = null;
@@ -433,19 +434,19 @@ public class CmsSearchInfoBean2 {
         this.fileType = fileType;
     }
 
-    public String getShopCatStatus() {
+    public int getShopCatStatus() {
         return shopCatStatus;
     }
 
-    public void setShopCatStatus(String shopCatStatus) {
+    public void setShopCatStatus(int shopCatStatus) {
         this.shopCatStatus = shopCatStatus;
     }
 
-    public String getPCatStatus() {
+    public int getPCatStatus() {
         return pCatStatus;
     }
 
-    public void setPCatStatus(String pCatStatus) {
+    public void setPCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
 
@@ -473,11 +474,11 @@ public class CmsSearchInfoBean2 {
         this.pCatId = pCatId;
     }
 
-    public String getpCatStatus() {
+    public int getpCatStatus() {
         return pCatStatus;
     }
 
-    public void setpCatStatus(String pCatStatus) {
+    public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
 }

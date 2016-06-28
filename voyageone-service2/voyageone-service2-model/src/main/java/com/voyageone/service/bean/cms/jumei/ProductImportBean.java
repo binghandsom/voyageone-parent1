@@ -4,12 +4,29 @@ package com.voyageone.service.bean.cms.jumei;
  */
 public class ProductImportBean {
     String productCode;
-    String appId;
-    String pcId;
+    long appId;
+    long pcId;
     int limit;
     String promotionTag;
     String errorMsg;
     Double discount;
+    public long getAppId() {
+        return appId;
+    }
+
+    public void setAppId(long appId) {
+        this.appId = appId;
+    }
+
+    public long getPcId() {
+        return pcId;
+    }
+
+    public void setPcId(long pcId) {
+        this.pcId = pcId;
+    }
+
+
 
     public String getProductCode() {
         return productCode;
@@ -17,22 +34,6 @@ public class ProductImportBean {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getPcId() {
-        return pcId;
-    }
-
-    public void setPcId(String pcId) {
-        this.pcId = pcId;
     }
 
     public int getLimit() {

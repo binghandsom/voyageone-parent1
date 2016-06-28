@@ -115,7 +115,7 @@ define([
                 function openSellerCat (openAddChannelCategoryEdit) {
                     var selectedIds = {};
                     scope.vm.sellerCats.forEach(function(element){
-                        selectedIds[element.cid]=true;
+                        selectedIds[element.cId]=true;
                     });
                     var selList = [{"code": scope.vm.productDetails.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
@@ -178,7 +178,7 @@ define([
 
                 function selectAll(){
                     scope.vm.platform.skus.forEach(function(element){
-                        element.isSale = $(".table-responsive thead .sku_check").prop('checked');
+                        element.isSale = scope.vm.skuFlag;
                     });
                 }
 

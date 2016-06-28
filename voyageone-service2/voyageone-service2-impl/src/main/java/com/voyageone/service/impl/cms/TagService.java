@@ -10,7 +10,9 @@ import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Tag Service
@@ -186,8 +188,29 @@ public class TagService extends BaseService {
     /**
      * 根据ChannelId 和 tagType 检索Tags
      */
-    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType) {
-        return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId, tagType);
+    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType, Integer cartId) {
+        if ("4".equals(tagType)) {
+            // 查询自由标签
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId);
+        } else if ("2".equals(tagType)) {
+            // 查询Promotion标签
+            List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(channelId, cartId);
+            if (categoryList == null || categoryList.isEmpty()) {
+                return categoryList;
+            }
+            // 再查询一遍，检查是否有子节点
+            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(channelId, categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
+            if (categoryList2 != null && categoryList2.size() > 0) {
+                for (CmsBtTagBean tagBean : categoryList2) {
+                    if (categoryList.indexOf(tagBean) >= 0) {
+                        continue;
+                    }
+                    categoryList.add(tagBean);
+                }
+            }
+            return categoryList;
+        }
+        return new ArrayList<>(0);
     }
 
     public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {

@@ -12,6 +12,10 @@
 
                             <div class="form-inline pull-right" ng-controller="popupCtrl">
                                 <button class="btn btn-default" ng-click="openCategoryMapping(vm.productDetails, popupNewCategory)">&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
+                                <button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', vm.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'BTN_PROMOTION_HISTORY' | translate}}
+                                </button>
+                                <button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', vm.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'BTN_PRICE_HISTORY' | translate}}
+                                </button>
                             </div>
                         </div>
                         <div class="col-sm-8 form-inline pull-left m-b-xs m-r-sm">
@@ -258,7 +262,7 @@
                 <hr>
 
                 <div class="panel vo_panel tab_panel" style="overflow-x: scroll" id="tm3">
-                    <div class="container-fluid tm-sku-detail" style="width:1830px;">
+                    <div class="container-fluid tm-sku-detail" style="width: 2000px;table-layout: fixed;">
                         <ng-form name="skuForm" novalidate>
                             <s-field field="vm.productDetails.skuFields" add="false"></s-field>
                         </ng-form>

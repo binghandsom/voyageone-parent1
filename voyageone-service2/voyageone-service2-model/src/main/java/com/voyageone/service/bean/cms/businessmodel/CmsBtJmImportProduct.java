@@ -2,22 +2,23 @@ package com.voyageone.service.bean.cms.businessmodel;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 
 public class CmsBtJmImportProduct extends CmsBtJmProductModel {
-    String appId;
-    String pcId;
+    long appId;
+    long pcId;
     int limit;
-    public String getAppId() {
+
+    public long getAppId() {
         return appId;
     }
 
-    public void setAppId(String appId) {
+    public void setAppId(long appId) {
         this.appId = appId;
     }
 
-    public String getPcId() {
+    public long getPcId() {
         return pcId;
     }
 
-    public void setPcId(String pcId) {
+    public void setPcId(int pcId) {
         this.pcId = pcId;
     }
 

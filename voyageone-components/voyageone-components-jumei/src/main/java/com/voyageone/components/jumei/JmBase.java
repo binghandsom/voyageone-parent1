@@ -4,13 +4,11 @@ import com.google.gson.JsonSyntaxException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.jumei.bean.JMErrorResult;
 import com.voyageone.components.jumei.bean.NotSignString;
+import com.voyageone.components.jumei.bean.ServerErrorException;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -109,32 +107,72 @@ public class JmBase extends ComponentBase {
 
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         logger.info("result：" + result);
+//        result = " {\"error\":{\"code\":\"501\"}}";
 
-        //转换错误信息
-        if (result != null && result.contains("\"error\"")) {
-            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
-                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
-            }
-        }
-        else if (result != null && result.contains("\"error_code\""))
+        if(result.contains("审核"))
         {
-            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error_code") && !"0".equals(resultMap.get("error_code"))) {
-                throw new BusinessException("调用聚美API错误：" + result+post_url+parm_url);
-            }
-        }
-        else {
-            JMErrorResult res;
-            try {
-                res = JsonUtil.jsonToBean(result, JMErrorResult.class);
-                if (res.getCode() != null) {
-                    throw new BusinessException("调用聚美API错误：" +  result+post_url+parm_url);
-                }
-            } catch (JsonSyntaxException ignored) {
-            }
+            throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
         }
 
+
+        try {
+            //转换错误信息
+            String code = "";
+            String codes = "";
+
+            Map<String, Object> map = JacksonUtil.jsonToMap(result);
+            if (map.containsKey("error")) {
+                Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
+                if (errorMap.containsKey("code")) {
+                    code = (String.valueOf(errorMap.get("code")));
+                    if (code.equals("500") || code.equals("501")) {
+                        throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                    }
+
+                }
+                if (errorMap.containsKey("codes")) {
+                    Map<String, Object> codesMap = (Map<String, Object>) errorMap.get("codes");
+                    codes = (codesMap.keySet()).toString();
+                    if (codes.equals("500") || codes.equals("501")) {
+                        throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                    }
+                }
+
+                if (!(code.equals("0") || code.contains("109902") || code.contains("103087") ||
+                        codes.equals("0") || codes.contains("109902") || codes.contains("103087"))) {
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                }
+            } else if (map.containsKey("error_code")) {
+                String error_code = map.get("error_code").toString();
+                if (error_code.equals("500") || error_code.equals("501")) {
+                    throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                } else if (!(error_code.equals("0"))) {
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                }
+            }
+        }
+        catch (BusinessException be )
+        {
+            throw  be;
+        }
+        catch (ServerErrorException se)
+        {
+            throw se;
+        }
+        catch (Exception e)
+        {
+            //返回的字符串不是json map,可能是个数组, Do Nothing.
+        }
+
+
+        JMErrorResult res;
+        try {
+            res = JsonUtil.jsonToBean(result, JMErrorResult.class);
+            if (res.getCode() != null) {
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
+            }
+        } catch (JsonSyntaxException ignored) {
+        }
 
         return result;
     }

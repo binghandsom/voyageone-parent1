@@ -110,8 +110,13 @@
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
-        ,b.retail_price,a.market_price,b.msrp_rmb,a.jm_hash_id AS jmHashId,a.discount,a.sku_count AS skuCount
-        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code
+        ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
+        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,
+        (SELECT MAX(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxDealPrice,
+        (SELECT min(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minDealPrice,
+        (SELECT MAX(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxMarketPrice,
+        (SELECT min(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minMarketPrice,
+        (SELECT AVG (discount) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as discount
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -131,13 +136,10 @@
                 #{item}
             </foreach>)
             </if>
-            <if test="synchStateList.size()!=0">
-                and  a.synch_state in
-                <foreach item="item" index="i" collection="synchStateList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
+            <if test="synchStatus!=null">
+                and a.synch_status=#{synchStatus}
             </if>
+
             <if test="beginDiscount!=null">
                 and a.discount>=#{beginDiscount}
             </if>
@@ -253,7 +255,7 @@
     </select>
 
     <select id="existsCode" resultType="Boolean">
-      SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` limit 1
+      SELECT 1 FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
 
     <select id="selectByProductCode"  resultMap="ResultMap">
@@ -268,8 +270,10 @@
     </select>
 
     <update id="batchUpdateDealPrice">
-                 UPDATE cms_bt_jm_promotion_product set deal_Price=${dealPrice},discount=deal_Price/market_price
-                 WHERE    id in
+        UPDATE cms_bt_jm_promotion_product  AS a
+        JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
+        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price
+        WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
