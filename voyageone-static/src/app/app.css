@@ -103,6 +103,16 @@ body {
 .control-label {
   font-weight: normal;
 }
+.form-control {
+  padding: 5px 5px;
+}
+select.form-control,
+input.form-control {
+  height: 28px;
+}
+.btn {
+  padding: 3px 10px;
+}
 .margin-bottom-10 {
   margin-bottom: 10px;
 }
