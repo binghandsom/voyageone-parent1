@@ -1129,6 +1129,9 @@
                                     }
 
                                     if (isDate) {
+                                        // 将转换后的值放在特定的变量上, 供前端绑定
+                                        // 将老格式的值还原回字段对象中
+                                        // 当强类型的值变动, 就同步更新字段值
                                         scope.dateValue = field.value;
                                         field.value = _value;
                                         innerElement.attr('ng-model', 'dateValue');
