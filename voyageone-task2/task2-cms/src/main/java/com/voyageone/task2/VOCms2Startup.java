@@ -20,7 +20,7 @@ public class VOCms2Startup {
 
     public static void main(String[] args) {
         try {
-            log.info(NAME + " -> 启动中111111111111......");
+            log.info(NAME + " -> 启动中......");
             Context context = Context.getContext();
             ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
             context.putAttribute("springContext", ctx);
