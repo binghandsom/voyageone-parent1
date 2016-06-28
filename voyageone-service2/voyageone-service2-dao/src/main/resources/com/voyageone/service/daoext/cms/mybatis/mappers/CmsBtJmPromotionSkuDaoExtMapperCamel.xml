@@ -44,6 +44,7 @@
         FROM `cms_bt_jm_promotion_sku` AS a
         JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id`
         WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}
+   ORDER by b.`product_code`,b.`jm_size`
     </select>
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_sku  AS a

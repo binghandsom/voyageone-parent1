@@ -78,6 +78,7 @@
     FROM `cms_bt_jm_promotion_product`  AS a
     JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
     WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
+    ORDER by b.`product_code`,b.`vo_category_name`
 </select>
 <select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">
     SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`
@@ -208,7 +209,7 @@
                 and    b.color_en=#{colorEn}
             </if>
         </where>
-        order by a.id desc
+        order by a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
@@ -221,11 +222,29 @@
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
-            <if test="code!=null">
-                and    b.product_code  like CONCAT(#{code},'%')
+            <if test="codeList!=null and codeList.length!=0">
+                and (   b.product_code  in <foreach item="item" index="i" collection="codeList"
+                                                    open="(" separator="," close=")">
+                #{item}
+            </foreach>
+                or    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  in <foreach item="item" index="i" collection="codeList"
+                                                                                                                               open="(" separator="," close=")">
+                #{item}
+            </foreach> )
+                )
             </if>
-            <if test="code!=null">
-                and    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  like CONCAT(#{code},'%'))
+            <if test="productNameCn!=null">
+                and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
+                or  b.product_long_name like CONCAT(#{productNameCn},'%')
+                or  b.product_medium_name like CONCAT(#{productNameCn},'%')
+                or  b.product_short_name like CONCAT(#{productNameCn},'%')
+                )
+            </if>
+            <if test="listBrandName!=null and listBrandName.size()!=0">
+                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                                              open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
@@ -243,10 +262,15 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <if test="synchStatus!=null">
-                and a.synch_status=#{synchStatus}
+            <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
+                                                open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
-
+            <!--<if test="errorStatus!=null">-->
+            <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
+            <!--</if>-->
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -277,15 +301,8 @@
                     and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="productNameCn!=null">
-                and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
-            </if>
-            <if test="state!=null">
-                and  a.state=#{state}
-            </if>
-            <if test="brandName!=null">
-                and  b.brand_name=#{brandName}
-            </if>
+
+
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}
             </if>
