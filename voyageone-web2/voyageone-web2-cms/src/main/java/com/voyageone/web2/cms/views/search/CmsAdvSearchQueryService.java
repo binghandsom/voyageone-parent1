@@ -479,10 +479,10 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         for (CmsBtProductBean groupObj : groupsList) {
-            CmsBtProductModel_Field fields = groupObj.getCommon().getFields();
-            String prodCode = null;
-            if (fields != null) {
-                prodCode = fields.getCode();
+            String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
+            if (prodCode == null) {
+                $warn("高级检索 getGroupExtraInfo 无产品code OBJ=:" + groupObj.toString());
+                continue;
             }
             // 从group表合并platforms信息
             StringBuilder resultPlatforms = new StringBuilder();
@@ -496,7 +496,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qrpQuy);
             CmsBtProductGroupModel groupModelMap = null;
             if (grpList == null || grpList.isEmpty()) {
-                $warn("CmsSearchAdvanceService.getGroupExtraInfo prodCode=" + prodCode);
+                $warn("高级检索 getGroupExtraInfo group查询无结果 prodCode=" + prodCode);
                 groupObj.setGroupBean(new CmsBtProductGroupModel());
             } else {
                 groupModelMap = grpList.get(0);
@@ -587,13 +587,13 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                     for (int i = 1, leng = pCdList.size(); i < leng; i++) {
                         // 根据商品code找到其主图片
                         JomgoQuery queryObj = new JomgoQuery();
-                        queryObj.setProjection("{'fields.images1':1,'prodId': 1, 'fields.code': 1,'_id':0}");
-                        queryObj.setQuery("{'fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
+                        queryObj.setProjection("{'common.fields.images1':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
+                        queryObj.setQuery("{'common.fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
                         // 如果根据code获取不到数据就跳过
                         if (prod == null)
                             continue;
-                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
+                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
                             map.put("value", fldImgList.get(0).getName());
@@ -603,7 +603,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                         // 设定该group对应的prodId
                         Map<String, Object> proMap = new HashMap<>();
                         proMap.put("prodId", prod.getProdId());
-                        proMap.put("code", prod.getFields().getCode());
+                        proMap.put("code", prod.getCommonNotNull().getFieldsNotNull().getCode());
                         groupProdIdList.add(proMap);
                     }
                 }
