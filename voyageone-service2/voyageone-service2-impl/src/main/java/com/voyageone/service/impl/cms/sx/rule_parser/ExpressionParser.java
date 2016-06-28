@@ -31,6 +31,9 @@ public class ExpressionParser extends VOAbsLoggable {
     private FeedCnWordParser feedCnWordParser;
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
+    // added by morse.lu 2016/06/27 start
+    private CommonWordParser commonWordParser;
+    // added by morse.lu 2016/06/27 end
 
     public ExpressionParser(SxProductService sxProductService, SxData sxData) {
         this.sxProductService = sxProductService;
@@ -39,10 +42,13 @@ public class ExpressionParser extends VOAbsLoggable {
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
-        this.masterWordParser = new MasterWordParser(sxData.getMainProduct());
+        this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());
         this.feedOrgWordParser = new FeedOrgWordParser(sxData.getMainProduct(), sxData.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
+        // added by morse.lu 2016/06/27 start
+        this.commonWordParser = new CommonWordParser(sxData.getMainProduct());
+        // added by morse.lu 2016/06/27 end
     }
 
     public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user, String[] extParameter) throws Exception {
@@ -106,6 +112,12 @@ public class ExpressionParser extends VOAbsLoggable {
                         plainValue = skuWordParser.parse(ruleWord);
                         break;
                     }
+                    // added by morse.lu 2016/06/27 start
+                    case COMMON: {
+                        // 从product表的common下去取
+                        commonWordParser.parse(ruleWord);
+                    }
+                    // added by morse.lu 2016/06/27 end
                 }
 
                 if (plainValue != null) {
@@ -127,6 +139,10 @@ public class ExpressionParser extends VOAbsLoggable {
 
     public void pushMasterPropContext(Map<String, Object> masterPropContext) {
         masterWordParser.pushEvaluationContext(masterPropContext);
+    }
+
+    public Map<String, Object> getLastMasterPropContext() {
+        return masterWordParser.getLastEvaluationContext();
     }
 
     public void setSkuPropContext(Map<String, Object> skuPropContext) {

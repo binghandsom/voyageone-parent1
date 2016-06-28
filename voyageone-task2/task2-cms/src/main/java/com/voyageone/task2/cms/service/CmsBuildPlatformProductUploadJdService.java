@@ -262,8 +262,18 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
+                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
+                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_CommonSku::getSkuCode).collect(Collectors.toList()));
+                // modified by morse.lu 2016/06/28 end
             }
+            // added by morse.lu 2016/06/28 start
+            // skuList也排序一下
+            sxProductService.sortSkuInfo(sxData.getSkuList());
+            // added by morse.lu 2016/06/28 end
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
