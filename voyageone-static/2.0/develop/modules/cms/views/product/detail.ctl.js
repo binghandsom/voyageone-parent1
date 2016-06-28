@@ -29,7 +29,9 @@ define([
             this.cartData = {};
             this.product = {
                 productId : $routeParams.productId,
-                productDetails:null
+                productDetails:null,
+                cartData:this.cartData,
+                testData:"test Data beta0"
             };
         }
 

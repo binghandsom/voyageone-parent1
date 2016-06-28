@@ -2171,40 +2171,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         /**
-         * getProductCarts 生成ProductCarts信息
-         *
-         * @param feed 品牌方提供的数据
-         * @return ProductCarts信息
-         */
-        private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
-            // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得展示用数据
-            if (typeChannelBeanList == null) {
-                return null;
-            }
-
-            List<CmsBtProductModel_Carts> carts = new ArrayList<>();
-
-            // 循环一下
-            for (TypeChannelBean shop : typeChannelBeanList) {
-                CmsBtProductModel_Carts cart = new CmsBtProductModel_Carts();
-                cart.setCartId(Integer.parseInt(shop.getValue()));
-                cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-                carts.add(cart);
-            }
-
-            return carts;
-        }
-        // jeff 2016/04 add end
-
-        /**
          * getIsMasterMain 是否是Main商品
          *
          * @param feed 品牌方提供的数据
          * @return 1:isMasterMain;0:isNotMasterMain
          */
-        private int
-        getIsMasterMain(CmsBtFeedInfoModel feed) {
+        private int getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
                     String.format("{\"feed.orgAtts.modelCode\":\"%s\", \"fields.isMasterMain\":1}", feed.getModel()));
             if (cnt < 1) {

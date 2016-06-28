@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,alert,$q) {
+    cms.directive("masterSchema", function (productDetailService,platformMappingService,notify,$q,$rootScope) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -16,17 +16,8 @@ define([
             },
             link: function (scope) {
                 scope.vm = {
-                    productDetails:null,
-                    productCode:"",
                     mastData:null,
-                    platform:null,
-                    productComm:null,
-                    status:"Pending",
-                    skuTemp:{},
-                    checkFlag:{translate:0, tax:0, category:0, attribute:0},
-                    resultFlag:0,
-                    sellerCats:[],
-                    productUrl:""
+                    productComm:null
                 };
 
                 initialize();
@@ -38,29 +29,29 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
+                    var productMonitor = scope.$watch("productInfo.productDetails",function(data){
+
+                        // 没有就继续等待
+                        if (!data){
+                            return;
+                        }
+                       scope.vm.productDetails = data.productInfo;
+                       scope.vm.inventoryList = data.inventoryList;
+                       if ($rootScope.imageUrl == undefined) {
+                        $rootScope.imageUrl = '';
+                       }
+                       scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
+                       scope.vm.currentImage = data.defaultImage;
+
+                        productMonitor();
+                        productMonitor = null;
+                    });
+
                     productDetailService.getCommonProductInfo({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
-/*                        if(scope.vm.platform != null){
-                            scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
-                            scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
-                            scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
-                            scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
-                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null ? "Failed":scope.vm.platform.pStatus;
-                        }
-
-                        _.each(scope.vm.mastData.skus,function(mSku){
-                                scope.vm.skuTemp[mSku.skuCode] = mSku;
-                        });
-
-                        scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
-                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;*/
 
                     });
-/*                    productDetailService.getProductInfo({productId: scope.productInfo.productId}).then(function (res) {
-                        scope.vm.productDetails = res.data.productInfo;
-                        scope.vm.productCode = res.data
-                    });*/
                 }
 
                 /**
@@ -124,6 +115,7 @@ define([
                         offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
                     $("body").animate({ scrollTop:  offsetTop-70}, speed);
                 }
+
             }
         };
     });

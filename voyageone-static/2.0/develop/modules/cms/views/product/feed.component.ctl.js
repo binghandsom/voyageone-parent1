@@ -12,9 +12,7 @@ define([
             transclude: true,
             templateUrl : "views/product/feed.component.tpl.html",
             /**独立的scope对象*/
-            scope: {
-                productId: "=productId"
-            },
+            scope: true,
             link: function (scope) {
 
                 scope.vm = {
@@ -24,28 +22,33 @@ define([
                 // 获取初始化数据
                 initialize();
                 function initialize() {
-                    var data = {productId: scope.productId};
-                    productDetailService.getProductInfo(data)
-                        .then(function (res) {
-                            scope.vm.productDetails = res.data.productInfo;
-                            scope.vm.productStatusList = res.data.productStatusList;
-                            scope.vm.inventoryList = res.data.inventoryList;
-                            scope.vm._orgChaName = res.data.orgChaName;
-                            scope.vm._isminimall = res.data.isminimall;
-                            scope.vm._isMain = res.data.isMain;
-                            if ($rootScope.imageUrl == undefined) {
-                                $rootScope.imageUrl = '';
-                            }
-                            scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
+                    var disposeDataWatcher = scope.$watch("ctrl.product.productDetails", function (data) {
 
-                            scope.vm.currentImage = res.data.defaultImage;
-                            scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
-                            scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady
+                        // 没有就继续等待
+                        if (!data){
+                            return;
+                        }
 
-                        }, function (res) {
-                            scope.vm.errorMsg = res.message;
-                            scope.vm.showInfoFlag = false;
-                        })
+                        // 有了就保存, 然后触发下一步
+                        scope.vm.productDetails = data.productInfo;
+                        scope.vm.productStatusList = data.productStatusList;
+                        scope.vm.inventoryList = data.inventoryList;
+                        scope.vm._orgChaName = data.orgChaName;
+                        scope.vm._isminimall = data.isminimall;
+                        scope.vm._isMain = data.isMain;
+                        if ($rootScope.imageUrl == undefined) {
+                            $rootScope.imageUrl = '';
+                        }
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
+
+                        scope.vm.currentImage = data.defaultImage;
+                        scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
+                        scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady;
+
+                        disposeDataWatcher();
+                        disposeDataWatcher = null;
+                    });
+
                 }
 
                 scope.updateFeed = updateFeed;
