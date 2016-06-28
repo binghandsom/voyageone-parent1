@@ -173,6 +173,8 @@ define([
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
+                $scope.vm.currTab = "product";
+                $scope.vm.currTab2 = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
                 $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
