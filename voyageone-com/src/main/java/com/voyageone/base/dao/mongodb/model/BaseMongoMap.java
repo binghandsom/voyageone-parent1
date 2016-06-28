@@ -145,4 +145,19 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
             return input.toString();
         }
     }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            this.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public V put(K key, V value) {
+        return super.put(key, value);
+    }
 }

@@ -31,6 +31,7 @@ define(['cms',
              * @type {object}
              */
             this.selected = null;
+            this.selectedCat = [];
             /**
              * 选择目录的路径
              * @type {Array}
@@ -65,30 +66,26 @@ define(['cms',
              * 并尝试展示其子类目
              * @param {object} category 类目对象
              */
-            openCategory: function (category) {
+            openCategory: function (category, categoryItem) {
+                if (categoryItem.selectedCat == undefined) {
+                    categoryItem.selectedCat = [];
+                }
+                categoryItem.selectedCat[0] = category;
+
                 // 标记选中
                 this.selected = category;
-                if (!category.children || !category.children.length) return;
-                // 查询当前选中的是第几级
-                var level = 0;
-                if (this.selected.children[0].catPath.indexOf('-') > 0) this.divType = '-';
-                if (this.selected.children[0].catPath.indexOf('>') > 0) this.divType = '>';
-                if (this.divType == '-') {
-                    level = category.catPath.split('-').length;
-                } else if (this.divType == '>') {
-                    level = category.catPath.split('>').length;
-                } else {
-                    level = category.catPath.split(this.divType).length;
-                }
-                // 获取这一级别的数据
-                var pathItem = this.categoryPath[level];
 
+                // 查询当前选中的是第几级
+                var levelIdx = categoryItem.level - 1;
+
+                // 获取这一级别的数据
+                var pathItem = this.categoryPath[levelIdx + 1];
                 if (pathItem) {
                     // 如果有数据,那么当前级别和后续级别都需要清空
-                    this.categoryPath.splice(level);
+                    this.categoryPath.splice(levelIdx + 1);
                 }
-
-                this.categoryPath.push({level: level + 1, categories: category.children});
+                if (!category.children || !category.children.length) return;
+                this.categoryPath.push({level: levelIdx + 2, categories: category.children});
             },
             defaultCategroy: function () {
                 // 默认选中

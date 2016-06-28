@@ -275,9 +275,9 @@ public class CmsFieldEditService extends BaseAppService {
                         productService.insertSxWorkLoad(userInfo.getSelChannelId(), newProduct, userInfo.getUserName());
                     }
                 } else {
-                    // 执行carts更新
-                    List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
-                    updateRequest.getProductModel().setCarts(carts);
+//                    // 执行carts更新　TODO--这里需要再讨论，是否要更新group中的paltformStatus
+//                    List<CmsBtProductModel_Carts> carts = productService.getCarts(updateRequest.getProductModel().getSkus(), updateRequest.getProductModel().getCarts());
+//                    updateRequest.getProductModel().setCarts(carts);
 
                     productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
 
@@ -537,7 +537,6 @@ public class CmsFieldEditService extends BaseAppService {
             if (field == null) {
                 continue;
             }
-            List<CmsBtProductModel_Carts> carts = productModel.getCarts();
 
             List<String> strList = new ArrayList<>();
             List<Integer> updCartList = new ArrayList<>();
@@ -548,14 +547,6 @@ public class CmsFieldEditService extends BaseAppService {
                 }
                 updCartList.add(cartIdVal);
                 strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-
-                if (carts != null && carts.size() > 0) {
-                    for (CmsBtProductModel_Carts cart : carts) {
-                        if (Objects.equals(cartIdVal, cart.getCartId())) {
-                            cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-                        }
-                    }
-                }
             }
 
             if (strList.isEmpty()) {
@@ -564,19 +555,12 @@ public class CmsFieldEditService extends BaseAppService {
             }
             String updStr = "{$set:{";
             updStr += StringUtils.join(strList, ',');
-            if (carts != null && carts.size() > 0) {
-                updStr += ",'carts':#";
-            }
             updStr += ",'modified':#,'modifier':#}}";
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':#}");
             updObj.setQueryParameters(code);
             updObj.setUpdate(updStr);
-            if (carts != null && carts.size() > 0) {
-                updObj.setUpdateParameters(carts, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            } else {
-                updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            }
+            updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
 
             //执行product的pStatus更新及group的publishStatus更新
             cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());

@@ -317,15 +317,6 @@ public class JmBtDealImportService extends BaseService {
 //        6.pPriceMsrpSt等被覆盖成空        处理
 //        7.fields.productShortName 未空？  处理
 //        8.skus.priceMsrp等被覆盖成空     处理
-        List<CmsBtProductModel_Carts> carts  = modelCmsBtProduct.getCarts();
-        for(CmsBtProductModel_Carts cart : carts) {
-            if (cart.getCartId() == 27) {
-                cart.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-                cart.setPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
-                cart.setNumIid(modelJmBtDealImport.getJumeiHashId());
-            }
-
-        }
 
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
@@ -386,9 +377,6 @@ public class JmBtDealImportService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("platforms.P27", platform);
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        updateMap.put("carts", carts);
-
-        //updateMap.put("platforms.P27", platform);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.code", modelJmBtProduct.getProductCode());
