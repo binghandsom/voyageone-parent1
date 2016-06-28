@@ -30,7 +30,7 @@ define(function () {
                         main.$window.location = '/login.html';
                     });
             }
-        }
+        };
 
         return TopBarController;
     }()));
