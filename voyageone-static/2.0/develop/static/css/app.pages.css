@@ -650,12 +650,12 @@ s-field textarea.s-html {
     list-style: none outside none;
     margin: 0 0 0 -48px;
     text-align: center;
-    min-height: 144px;
+    min-height: 127px;
 }
 
 @media screen and (max-width: 1441px) {
     .data-display-boxes {
-        min-height: 140px;
+        min-height: 127px;
     }
 }
 
