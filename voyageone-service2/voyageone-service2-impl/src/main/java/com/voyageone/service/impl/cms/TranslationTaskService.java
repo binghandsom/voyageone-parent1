@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.bean.cms.TaskSummaryBean;
+import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
