@@ -1,5 +1,4 @@
 <div class="wrapper-md" ng-init="ctrl.initialize()">
-
     <div>
         <uib-tabset class="tab-container vo_nav-tabs">
             <!---------------------------------------------------master 产品详情页面------------------------------------------------->
@@ -17,7 +16,7 @@
             <!---------------------------------------------------feed 产品详情页面------------------------------------------------->
             <uib-tab>
                 <tab-heading>Feed详情</tab-heading>
-                <feed-schema product-id="ctrl.routeParams.productId"></feed-schema>
+                <feed-schema product-info="ctrl.product"></feed-schema>
             </uib-tab>
 
             <!---------------------------------------------------京东&聚美 产品详情页面------------------------------------------------->
