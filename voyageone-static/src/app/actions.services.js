@@ -64,6 +64,8 @@ define(function (require) {
         return ['ajaxService', _class];
     };
 
+    window.CommonDataService = CommonDataService;
+
     return {
         testService: new CommonDataService('/test/', {
             action1: 'getSomeData',
