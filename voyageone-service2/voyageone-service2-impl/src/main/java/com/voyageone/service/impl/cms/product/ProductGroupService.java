@@ -218,7 +218,6 @@ public class ProductGroupService extends BaseService {
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap2 = new HashMap<>();
                 bulkQueryMap2.put("common.fields.code", code);
-                bulkQueryMap2.put("platforms.P"+model.getCartId() + ".cartId", model.getCartId());
 
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
