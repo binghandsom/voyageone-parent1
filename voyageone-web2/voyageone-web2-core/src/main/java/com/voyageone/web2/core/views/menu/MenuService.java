@@ -110,4 +110,86 @@ public class MenuService extends BaseAppService {
         if (userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID) != null)
             userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID).get(0).setCfg_val1(language);
     }
+
+    /**
+     * 取得用的的Menu信息
+     */
+    public List<Map<String, Object>> getVendorMenuHInfo(UserSessionBean user) {
+        // MenuList
+        List<Map<String, Object>> menuList = new ArrayList<>();
+
+        // Feed
+        Map<String, Object> feedMenu = new HashMap<>();
+        feedMenu.put("name", "Feed");
+        List<Map<String, String>> feedMenuItems = new ArrayList<>();
+        // Feed->Feed File Upload
+        Map<String, String> feedFileUpload = new HashMap<>();
+        feedFileUpload.put("name", "Feed File Upload");
+        feedFileUpload.put("url", "#/feed/feed_file_upload");
+        // Feed->Feed Import Result
+        Map<String, String> feedImportResult = new HashMap<>();
+        feedImportResult.put("name", "Feed Import Result");
+        feedImportResult.put("url", "#/feed/feed_import_result");
+        // Feed->Feed Info Search
+        Map<String, String> feedInfoSearch = new HashMap<>();
+        feedInfoSearch.put("name", "Feed Info Search");
+        feedInfoSearch.put("url", "#/feed/feed_info_search");
+        feedMenuItems.add(feedFileUpload);
+        feedMenuItems.add(feedImportResult);
+        feedMenuItems.add(feedInfoSearch);
+        feedMenu.put("items", feedMenuItems);
+
+        // Order
+        Map<String, Object> orderMenu = new HashMap<>();
+        orderMenu.put("name", "Order");
+        List<Map<String, String>> orderMenuItems = new ArrayList<>();
+        // Order->Order Info
+        Map<String, String> orderInfo = new HashMap<>();
+        orderInfo.put("name", "Order Info");
+        orderInfo.put("url", "#/order/order_info");
+        orderMenuItems.add(orderInfo);
+        orderMenu.put("items", orderMenuItems);
+
+
+        // Reports
+        Map<String, Object> reportsMenu = new HashMap<>();
+        reportsMenu.put("name", "Reports");
+        List<Map<String, String>> reportsMenuItems = new ArrayList<>();
+        // Reports->Financial Report
+        Map<String, String> financialReport = new HashMap<>();
+        financialReport.put("name", "Financial Report");
+        financialReport.put("url", "#/reports/financial_report");
+        reportsMenuItems.add(financialReport);
+        reportsMenu.put("items", reportsMenuItems);
+
+        // Inventory
+        Map<String, Object> inventoryMenu = new HashMap<>();
+        inventoryMenu.put("name", "Inventory");
+        List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
+        // Inventory->Inventory Upload
+        Map<String, String> inventoryUpload = new HashMap<>();
+        inventoryUpload.put("name", "Inventory Upload");
+        inventoryUpload.put("url", "#/inventory/inventory_upload");
+        inventoryMenuItems.add(inventoryUpload);
+        inventoryMenu.put("items", inventoryMenuItems);
+
+        // Shipment
+        Map<String, Object> shipmentMenu = new HashMap<>();
+        shipmentMenu.put("name", "Shipment");
+        List<Map<String, String>> shipmentMenuItems = new ArrayList<>();
+        // Shipment->Shipment Info
+        Map<String, String> shipmentInfo = new HashMap<>();
+        shipmentInfo.put("name", "Shipment Info");
+        shipmentInfo.put("url", "#/reports/financial_report");
+        shipmentMenuItems.add(shipmentInfo);
+        shipmentMenu.put("items", shipmentMenuItems);
+
+        // TODO 在这里加Menu权限控制
+        menuList.add(feedMenu);
+        menuList.add(orderMenu);
+        menuList.add(reportsMenu);
+        menuList.add(inventoryMenu);
+
+        return menuList;
+    }
 }

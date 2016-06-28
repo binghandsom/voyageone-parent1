@@ -39,6 +39,12 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
         $info(request.getServletPath() + " is start.");
 
+        // vms系统没有channel选择画面所以channelInterceptor不需要
+        if (request.getServletPath().startsWith("/vms")) {
+            return loginInterceptor.preHandle(request)
+                    && authorizationInterceptor.preHandle(request);
+        }
+
         return loginInterceptor.preHandle(request)
             && channelInterceptor.preHandle(request)
             && authorizationInterceptor.preHandle(request);

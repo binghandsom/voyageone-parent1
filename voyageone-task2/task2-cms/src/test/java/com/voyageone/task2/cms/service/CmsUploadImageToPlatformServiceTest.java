@@ -23,7 +23,9 @@ public class CmsUploadImageToPlatformServiceTest {
     private CmsUploadImageToPlatformService cmsUploadImageToPlatformService;
 
     @Test
-    public void testStartup() {
-        cmsUploadImageToPlatformService.startup();
+    public void testStartup()  throws Exception {
+        List<TaskControlBean> taskControlList = new ArrayList<>();
+        TaskControlBean taskControlBean = new TaskControlBean();
+        cmsUploadImageToPlatformService.onStartup(taskControlList);
     }
 }

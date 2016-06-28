@@ -22,8 +22,6 @@ require([
     'ng-block'
 ], function () {
 
-    alert(1);
-
     angular.module('vo.cms.login', [
         'pascalprecht.translate',
         'blockUI',
@@ -40,16 +38,24 @@ require([
                 return;
 
 
-            if ($scope.username === 'a') {
-
-                alert(1);
-
-                $scope.message = 'aaaaaaa';
-                return;
-            }
+        $ajax.post('/core/access/user/vendorLogin', {
+            username: $scope.username,
+            password: $scope.password,
+            timezone: -(new Date().getTimezoneOffset() / 60)
+        }).then(function(){
             location.href = '/app/app.html';
-        };
-    });
+        }, function(res) {
+            $scope.message = res.message || ('Login Fail(' + (res.code || '?') + ')');
+        });
+
+
+        //if ($scope.username === 'a') {
+        //    $scope.message = 'aaaaaaa';
+        //    return;
+        //}
+        //location.href = '/app/app.html';
+    };
+});
 
     angular.bootstrap(document, ['vo.cms.login']);
 });

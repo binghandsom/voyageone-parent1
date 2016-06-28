@@ -50,6 +50,7 @@
             <mvc:mapping path="/**"/>
             <!-- 例外 -->
             <mvc:exclude-mapping path="/core/access/user/login"/>
+            <mvc:exclude-mapping path="/core/access/user/vendorLogin"/>
             <mvc:exclude-mapping path="/rest/**"/>
             <bean class="com.voyageone.web2.base.interceptors.Interceptor"/>
         </mvc:interceptor>
