@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+
+<generatorConfiguration>
+
+    <classPathEntry location="voyageone-tools/voyageone-dao-codegen/src/main/resources/com/voyageone/tools/dao/codegen/mysql-connector-java-5.1.30.jar"/>
+
+    <context id="MySQLTables" targetRuntime="MyBatis3">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/voyageone_vms"
+                        userId="root" password="sneakerhead">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.voyageone.service.model.vms"
+                            targetProject="voyageone-service2/voyageone-service2-model/src/main/java/">
+            <!--<property name="constructorBased" value="true"/>-->
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+            <property name="rootClass" value="com.voyageone.base.dao.mysql.BaseModel"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.voyageone.service.dao.vms.mybatis.mappers"
+                         targetProject="voyageone-service2/voyageone-service2-dao/src/main/resources/">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.voyageone.service.dao.vms"
+                             targetProject="voyageone-service2/voyageone-service2-dao/src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+
+        <table tableName="vms_bt_feed_file" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="vms_bt_financial_report" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="vms_bt_order_detail" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+
+        <table tableName="vms_bt_shipment" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="vms_bt_order_log" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="vms_bt_data_amount" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+    </context>
+</generatorConfiguration>
