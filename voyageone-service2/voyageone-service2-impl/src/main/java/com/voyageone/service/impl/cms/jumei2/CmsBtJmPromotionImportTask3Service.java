@@ -138,7 +138,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         check(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap);//check 移除不能导入的product
 
         //save
-        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport,modelCmsBtJmPromotionImportTask.getModifier());
+        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport,modelCmsBtJmPromotionImportTask.getCreater());
 
         //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
@@ -179,6 +179,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
             if (daoExtCmsBtJmSkuDao.existsCode(sku.getSkuCode(), sku.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
+                listErroSku.add(sku);
+            }
+            else if(sku.getDealPrice()>=sku.getMarketPrice())
+            {
+               sku.setErrorMsg("skuCode:" + sku.getSkuCode()+"请重新确认价格，市场价必须大于团购价！");
                 listErroSku.add(sku);
             }
         }
@@ -251,16 +256,16 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
             saveInfo.productModel.setChannelId(model.getChannelId());
             saveInfo.productModel.setSynchStatus(0);
+            saveInfo.productModel.setLimit(product.getLimit());
         }
         saveInfo.productModel.setAppId(product.getAppId());
         saveInfo.productModel.setPcId(product.getPcId());
-        if(saveInfo.productModel.getSynchStatus()==2)
-        {
-            if(product.getLimit()!=saveInfo.productModel.getLimit()) {
-                saveInfo.productModel.setLimit(product.getLimit());
+        if (saveInfo.productModel.getSynchStatus() == 2) {
+            if (product.getLimit() != saveInfo.productModel.getLimit()) {
                 saveInfo.productModel.setUpdateStatus(1);//已经变更
             }
         }
+        saveInfo.productModel.setLimit(product.getLimit());
         saveInfo.productModel.setPromotionTag(product.getPromotionTag());
         saveInfo.productModel.setModifier(userName);
         saveInfo.productModel.setModified(new Date());
@@ -272,7 +277,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
         //初始化CmsBtJmPromotionSkuModel
         List<SkuImportBean> listSku = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());
-        loadSaveSku(saveInfo, listSku,userName);
+        loadSaveSku(saveInfo, listSku, userName);
 
         if (saveInfo.skuList.size() > 0) {
             saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());

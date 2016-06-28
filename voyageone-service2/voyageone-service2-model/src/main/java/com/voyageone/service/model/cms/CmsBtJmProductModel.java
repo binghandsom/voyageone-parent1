@@ -186,6 +186,11 @@ public class CmsBtJmProductModel extends BaseModel {
      */
     protected String categoryName;
 
+    /**
+     * 备注
+     */
+    protected String comment;
+
     public String getChannelId() {
         return channelId;
     }
@@ -464,5 +469,13 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName == null ? null : categoryName.trim();
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment == null ? null : comment.trim();
     }
 }

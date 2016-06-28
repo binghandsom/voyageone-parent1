@@ -275,6 +275,7 @@
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
+                                    <th class="text-left">备注</th>
                                     <th class="text-left">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -338,6 +339,7 @@
                                             </div>
                                         </a>
                                     </td>
+                                    <td>{{comment}}</td>
                                     <td >{{getStatus(model)}}</td>
                                     <td class="text-center">
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>

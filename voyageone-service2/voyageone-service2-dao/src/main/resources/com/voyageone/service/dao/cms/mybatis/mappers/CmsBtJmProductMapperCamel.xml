@@ -9,7 +9,8 @@
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
         `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
         `product_short_name`, `search_meta_text_custom`, `msrp_usd`, `msrp_rmb`, `retail_price`, 
-        `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`, `category_name`
+        `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`, `category_name`, 
+        `comment`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -137,6 +138,9 @@
             </if>
             <if test="categoryName != null" >
                 `category_name`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -266,6 +270,9 @@
             <if test="categoryName != null" >
                 #{categoryName,jdbcType=VARCHAR},
             </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -391,6 +398,9 @@
             </if>
             <if test="categoryName != null" >
                 `category_name` = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -523,6 +533,9 @@
             <if test="categoryName != null" >
                 and `category_name` = #{categoryName,jdbcType=VARCHAR}
             </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -647,6 +660,9 @@
             </if>
             <if test="categoryName != null" >
                 and `category_name` = #{categoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
