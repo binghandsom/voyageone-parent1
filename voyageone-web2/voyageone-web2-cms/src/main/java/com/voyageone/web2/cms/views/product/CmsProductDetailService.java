@@ -347,17 +347,13 @@ public class CmsProductDetailService extends BaseAppService {
         // 更新product数据
         CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
 
-        //执行product的carts更新
+        //执行product的carts更新 TODO--这里需要讨论是否要再更新
         if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-
             // 执行carts更新
             productUpdateBean.getProductModel().getSkus().forEach(sku -> {
                 List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929)).collect(Collectors.toList());
                 sku.setSkuCarts(newCarts);
             });
-
-            List<CmsBtProductModel_Carts> carts = productService.getCarts(productUpdateBean.getProductModel().getSkus(), oldProduct.getCarts());
-            productUpdateBean.getProductModel().setCarts(carts);
         }
 
         productService.updateProduct(channelId, productUpdateBean);
@@ -390,8 +386,8 @@ public class CmsProductDetailService extends BaseAppService {
         // Translation状态从完成-》未完成
         if ("1".equalsIgnoreCase(oldProduct.getFields().getTranslateStatus()) && "0".equalsIgnoreCase(newProduct.getFields().getTranslateStatus())) {
             Map<String, Object> updObj = new HashMap<>();
-            updObj.put("fields.translateStatus", "0");
-            updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+            updObj.put("common.fields.translateStatus", "0");
+            updObj.put("common.fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
             productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
         }
 

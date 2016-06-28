@@ -36,8 +36,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
     //品牌方数据
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
-    //在售平台
-    private List<CmsBtProductModel_Carts> carts = new ArrayList<>();
     //店铺内类目
     private CmsBtProductModel_SellerCats sellerCats = new CmsBtProductModel_SellerCats();
     //共通属性
@@ -103,20 +101,25 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
 
     //fields
+    @Deprecated // fields属性现在应该从common里取得
     public CmsBtProductModel_Field getFields() {
         return fields;
     }
+    @Deprecated
     public void setFields(CmsBtProductModel_Field fields) {
         this.fields = fields;
     }
 
     //skus
+    @Deprecated // skus属性现在应该从common里取得
     public List<CmsBtProductModel_Sku> getSkus() {
         return skus;
     }
+    @Deprecated
     public void setSkus(List<CmsBtProductModel_Sku> skus) {
         this.skus = skus;
     }
+    @Deprecated
     public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && this.skus != null) {
             for (CmsBtProductModel_Sku sku : skus) {
@@ -159,16 +162,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     public void setFeed(CmsBtProductModel_Feed feed) {
         this.feed = feed;
-    }
-
-    //carts
-    @Deprecated
-    public List<CmsBtProductModel_Carts> getCarts() {
-        return carts;
-    }
-    @Deprecated
-    public void setCarts(List<CmsBtProductModel_Carts> productCarts) {
-        this.carts = productCarts;
     }
 
     //sellerCats
@@ -241,9 +234,9 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
 
     /**
-     * TODO-- 这里为了使新旧检索画面兼容,作了特殊对应,6/30后必须删除
+     * 取得本商品销售平台列表
+     * 注意: 此方法为逻辑取得，不表示CmsBtProductModel含有"cartIdList"这样一个字段
      */
-    @Deprecated
     public List<Integer> getCartIdList() {
         if (platforms == null || platforms.isEmpty()) {
             return new ArrayList<>(0);

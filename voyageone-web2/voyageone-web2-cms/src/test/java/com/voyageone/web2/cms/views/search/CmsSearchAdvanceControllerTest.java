@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 public class CmsSearchAdvanceControllerTest {
 
     @Autowired
-    CmsSearchAdvanceController targetController;
+    CmsAdvanceSearchController targetController;
     private MockMvc mockMvc;
 
     @Before
