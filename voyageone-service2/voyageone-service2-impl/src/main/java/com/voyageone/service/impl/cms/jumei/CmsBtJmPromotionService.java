@@ -331,7 +331,7 @@ public class CmsBtJmPromotionService {
         });
 
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport);
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,promotion.getModifier());
 
         // 批量更新product表
         if (bulkList.size() > 0) {

@@ -25,8 +25,6 @@ define([
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-            console.log("aa");
-            console.log($routeParams);
             jmPromotionService.get($routeParams.parentId).then(function (res) {
                 $scope.parentModel = res.data;
                 console.log($scope.parentModel);
