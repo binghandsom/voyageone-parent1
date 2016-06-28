@@ -76,6 +76,9 @@ define(function (require) {
                 }
             }
         }),
+        userService: new CommonDataService('/core/access/user/', {
+            logout: 'logout'
+        }),
         menuService: new CommonDataService('/core/home/menu/', {
             getVendorMenuHeaderInfo: 'getVendorMenuHeaderInfo'
         })

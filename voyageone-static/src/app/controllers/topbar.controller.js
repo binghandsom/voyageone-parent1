@@ -1,6 +1,6 @@
 define(function () {
     return angular.module('vms.topbar', []).controller('TopBarController', (function () {
-        function TopBarController($window, $ajax, menuService,alert) {
+        function TopBarController($window,userService, menuService,alert) {
             //this.language = 'EN';
             //this.channel = {name: 'JEWELRY'};
 
@@ -8,8 +8,8 @@ define(function () {
             this.userName = '';
             this.selChannel = {};
             this.channelList = [];
-            this.$ajax = $ajax;
             this.$window = $window;
+            this.userService = userService;
             this.menuService = menuService;
 
             var main = this;
@@ -25,7 +25,7 @@ define(function () {
 
             logout: function () {
                 var main = this;
-                main.$ajax.post('/core/access/user/logout')
+                main.userService.logout('/core/access/user/logout')
                     .then(function () {
                         main.$window.location = '/login.html';
                     });
