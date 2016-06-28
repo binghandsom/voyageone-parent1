@@ -68,16 +68,23 @@ public class MenuController extends BaseController {
         // 获取用户相关信息
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("userName", getUser().getUserName());
-        userInfo.put("selChannel", getUser().getSelChannel());
+        Map<String, String> channelInfo = new HashMap<>();
+        channelInfo.put("id", getUser().getSelChannel().getId());
+        channelInfo.put("name", getUser().getSelChannel().getFullName());
+        userInfo.put("selChannel", channelInfo);
         userInfo.put("language", getLang());
 
         // 如果一个用户对应多了多了channel，把这些加进去
         List<UserConfigBean> channelList = getUser().getUserConfig().get("channel_id");
         if (channelList != null && channelList.size() > 1) {
-            List<ChannelConfigEnums.Channel> channels = new ArrayList<>();
-            for (UserConfigBean channelInfo : channelList) {
-                ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(channelInfo.getCfg_val1());
-                channels.add(channel);
+            List<Map<String, String>> channels = new ArrayList<>();
+            for (UserConfigBean channel : channelList) {
+                if (!getUser().getSelChannel().getId().equals(channel.getCfg_val1())) {
+                    Map<String, String> channelMapInfo = new HashMap<>();
+                    channelMapInfo.put("id", channel.getCfg_val1());
+                    channelMapInfo.put("name", ChannelConfigEnums.Channel.valueOfId(channel.getCfg_val1()).getFullName());
+                    channels.add(channelMapInfo);
+                }
             }
             userInfo.put("channelList", channels);
         }
@@ -100,7 +107,7 @@ public class MenuController extends BaseController {
     @RequestMapping(CoreUrlConstants.MENU.SET_CHANNEL)
     public AjaxResponse setChannel(@RequestBody Map<String, Object> params) {
 
-        userService.setSelectChannel(getUser(), (String) params.get("channelId"), "", "vms");
+        userService.setSelectChannel(getUser(), (String) params.get("channelId"), "99", "vms");
 
         // 返回用户信息
         return success(true);

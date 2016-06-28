@@ -31,7 +31,6 @@ require([
         $scope.password = '';
 
         $scope.login = function () {
-
             $scope.dirty = true;
 
             if ($scope.loginForm.$invalid)
