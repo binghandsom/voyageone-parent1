@@ -27,7 +27,6 @@ public class TranslationTaskService extends BaseService {
 
     public TaskSummary getTaskSummary(String channelId, String userName) throws BusinessException
     {
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
