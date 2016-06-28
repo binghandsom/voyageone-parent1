@@ -187,7 +187,8 @@
         "getProductView": "getProductView",
         "updateDealPrice": "updateDealPrice",
         "updatePromotionProduct":"updatePromotionProduct",
-        "updatePromotionProductTag":"updatePromotionProductTag"
+        "updatePromotionProductTag":"updatePromotionProductTag",
+        "selectChangeCountByPromotionId":"selectChangeCountByPromotionId"
       },
       "cmsBtJmPromotionImportTask": {
         "cmsBtJmPromotionImportTaskService": {

@@ -16,7 +16,8 @@ define([
             modelList: [],
             cmsBtJmPromotionImportTaskList: [],
             cmsBtJmPromotionExportTaskList: [],
-            tagList: []
+            tagList: [],
+            changeCount:0
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
@@ -31,6 +32,9 @@ define([
             });
             jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.tagList = res.data;
+            });
+            jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
+                $scope.vm.changeCount = res.data;
             });
             $feedSearchService.init()
                 .then(function (res) {

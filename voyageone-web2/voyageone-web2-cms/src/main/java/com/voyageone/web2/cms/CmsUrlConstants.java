@@ -74,6 +74,7 @@ public interface CmsUrlConstants {
                 String UpdateDealPrice="updateDealPrice";
                 String UpdatePromotionProduct="updatePromotionProduct";
                 String UpdatePromotionProductTag="updatePromotionProductTag";
+                String SelectChangeCountByPromotionId="selectChangeCountByPromotionId";
             }
         }
     }

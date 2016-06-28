@@ -365,5 +365,10 @@
     <select id="getOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
   SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   NOW() &lt;=`activity_end`  AND   NOW()>=`activity_start` AND `synch_status`=2 limit 1
     </select>
+
+    <select id="selectChangeCountByPromotionId">
+        SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
+WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+    </select>
     <!--jm2 end-->
 </mapper>

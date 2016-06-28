@@ -247,5 +247,10 @@ public class CmsBtJmPromotionProduct3Service {
             productService.updateTags(model.getChannelId(), productModel.getProdId(), tags, modifier);
         }
     }
+
+    public  int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId)
+    {
+        return  daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    }
 }
 

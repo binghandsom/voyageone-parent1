@@ -357,5 +357,11 @@ public class CmsJmPromotionDetailController extends CmsController {
         service3.updatePromotionProductTag(parameter,getUser().getUserName());
         return success(null);
     }
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
+    public  AjaxResponse    selectChangeCountByPromotionId(@RequestBody long cmsBtJmPromotionProductId)
+    {
+        int count=service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+        return success(count);
+    }
         //jm2 end
 }
