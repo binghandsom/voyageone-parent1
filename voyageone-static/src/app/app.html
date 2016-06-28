@@ -19,7 +19,7 @@
         <div class="topbar" ng-controller="TopBarController as topbar">
             <ul class="container list-inline">
                 <li uib-dropdown>
-                    <span uib-dropdown-toggle ng-bind="::topbar.channel.name"></span>
+                    <span uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
                     <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
                         <li>1</li>
                         <li>2</li>
@@ -27,7 +27,7 @@
                     </ul>
                 </li>
                 <li ng-bind="::topbar.language"></li>
-                <li>Jonas</li>
+                <li>{{topbar.userName}}</li>
                 <li>(<a href ng-click="topbar.logout()">LOG OUT</a>)</li>
             </ul>
         </div>
