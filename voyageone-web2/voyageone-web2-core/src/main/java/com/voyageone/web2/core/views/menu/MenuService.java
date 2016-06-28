@@ -164,14 +164,14 @@ public class MenuService extends BaseAppService {
 
         // Inventory
         Map<String, Object> inventoryMenu = new HashMap<>();
-        inventoryMenu.put("name", "Reports");
+        inventoryMenu.put("name", "Inventory");
         List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
         // Inventory->Inventory Upload
         Map<String, String> inventoryUpload = new HashMap<>();
         inventoryUpload.put("name", "Inventory Upload");
         inventoryUpload.put("url", "#/inventory/inventory_upload");
-        reportsMenuItems.add(financialReport);
-        inventoryMenu.put("items", reportsMenuItems);
+        inventoryMenuItems.add(inventoryUpload);
+        inventoryMenu.put("items", inventoryMenuItems);
 
         // Shipment
         Map<String, Object> shipmentMenu = new HashMap<>();
