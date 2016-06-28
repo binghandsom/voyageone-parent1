@@ -247,6 +247,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 return false;
             }
         }
+        // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
+        if (!StringUtils.isEmpty(cmsBtProductModel.getFields().getLock()) && "1".equals(cmsBtProductModel.getFields().getLock())) {
+            return false;
+        }
+        // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
         if (!StringUtils.isEmpty(cmsBtProductModel.getLock()) && "1".equals(cmsBtProductModel.getLock())) {
             return false;
         }
