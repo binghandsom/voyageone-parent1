@@ -5,7 +5,7 @@ define(function (require) {
     require('./popups.factory');
 
     var angularAMD = require('angularAMD');
-    var actions = require('./actions');
+    var services = require('./actions.services');
     var _ = require('underscore');
 
     var app = angular.module('vms', [
@@ -22,39 +22,18 @@ define(function (require) {
         'vms.topbar',
         'vms.popups'
     ]);
-
-    var amdApp = angularAMD.bootstrap(app);
-
-    // 扩展一个 service 创建的帮助方法
-    amdApp.createService = function (actionNames, proto) {
-
-        var _actions = actions, _class;
-
-        _.all(actionNames, function (name) {
-            if (!_actions) return false;
-            return _actions = _actions[name];
+    
+    function eachDeclareService(_services) {
+        _.each(_services, function (content, key) {
+            if (content instanceof CommonDataService) {
+                app.service(key, content.getDeclare());
+            } else if (_.isObject(content)) {
+                eachDeclareService(content);
+            }
         });
-
-        if (!_actions)
-            return null;
-
-        _class = function (ajaxService) {
-            this.ajaxService = ajaxService;
-        };
-
-        _.each(_actions, function (content, key) {
-            var customCallback = proto ? proto[key] : null;
-            if (key === 'root')
-                return;
-            _class.prototype[key] = function (args) {
-                return this.ajaxService.post(_actions['root'] + content, args).then(customCallback || function (res) {
-                        return res.data;
-                    });
-            };
-        });
-
-        return ['ajaxService', _class];
-    };
-
-    return amdApp;
+    }
+    
+    eachDeclareService(services);
+    
+    return angularAMD.bootstrap(app);
 });
