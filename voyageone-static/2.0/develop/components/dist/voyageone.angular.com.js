@@ -11,6 +11,7 @@ define(function (require) {
   require('components/angular/directives/image.directive');
   require('components/angular/directives/message.directive');
   require('components/angular/directives/navigation.directive');
+  require('components/angular/directives/platFormStatus.directive');
   require('components/angular/directives/popoverText.directive');
   require('components/angular/directives/schema.directive');
   require('components/angular/directives/tabInTextarea.directive');

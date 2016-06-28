@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OpenApiProductController extends OpenAipBaseController {
 
     // TODO 好像不能只取到group的platforms数据
-    private final String searchItems = "prodId;channelId;orgChannelId;common.fields;common.skus;platfrom";
+    private final String searchItems = "prodId;channelId;orgChannelId;common.fields;common.skus;fields;skus;platforms";
 
     @Autowired
     private OpenApiProductService productService;

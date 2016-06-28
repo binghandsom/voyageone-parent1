@@ -99,6 +99,8 @@ public class CmsConstants {
         String PRICE_SX_PRICE = ".sx_price";
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
+
+        String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
     }
 
     public interface DataAmount {

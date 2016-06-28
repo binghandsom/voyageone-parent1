@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.OverStockFeedDao" >
+
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    <id column="sku" property="sku" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="inventoryAvailable" property="inventoryavailable" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" extends="BaseResultMap" >
+    <result column="retailerId" property="retailerid" jdbcType="LONGVARCHAR" />
+    <result column="model" property="model" jdbcType="LONGVARCHAR" />
+    <result column="clientModel" property="clientmodel" jdbcType="LONGVARCHAR" />
+    <result column="clientSku" property="clientsku" jdbcType="LONGVARCHAR" />
+    <result column="title" property="title" jdbcType="LONGVARCHAR" />
+    <result column="brand" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="manufacturerName" property="manufacturername" jdbcType="LONGVARCHAR" />
+    <result column="shortDescription" property="shortdescription" jdbcType="LONGVARCHAR" />
+    <result column="longDescription" property="longdescription" jdbcType="LONGVARCHAR" />
+    <result column="leadTime" property="leadtime" jdbcType="LONGVARCHAR" />
+    <result column="adultContent" property="adultcontent" jdbcType="LONGVARCHAR" />
+    <result column="countryOfOrigin" property="countryoforigin" jdbcType="LONGVARCHAR" />
+    <result column="productActiveStatus" property="productactivestatus" jdbcType="LONGVARCHAR" />
+    <result column="shippingSiteSale" property="shippingsitesale" jdbcType="LONGVARCHAR" />
+    <result column="discountSiteSale" property="discountsitesale" jdbcType="LONGVARCHAR" />
+    <result column="condition" property="condition" jdbcType="LONGVARCHAR" />
+    <result column="returnPolicy" property="returnpolicy" jdbcType="LONGVARCHAR" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="sellingPrice_amount" property="sellingpriceAmount" jdbcType="LONGVARCHAR" />
+    <result column="sellingPrice_currency" property="sellingpriceCurrency" jdbcType="LONGVARCHAR" />
+    <result column="mapPrice_amount" property="mappriceAmount" jdbcType="LONGVARCHAR" />
+    <result column="mapPrice_currency" property="mappriceCurrency" jdbcType="LONGVARCHAR" />
+    <result column="msrpPrice_amount" property="msrppriceAmount" jdbcType="LONGVARCHAR" />
+    <result column="msrpPrice_currency" property="msrppriceCurrency" jdbcType="LONGVARCHAR" />
+    <result column="msrpExpirationDate" property="msrpexpirationdate" jdbcType="LONGVARCHAR" />
+    <result column="compareAtPrice_currency" property="compareatpriceCurrency" jdbcType="LONGVARCHAR" />
+    <result column="compareAtPrice_amount" property="compareatpriceAmount" jdbcType="LONGVARCHAR" />
+    <result column="compareAtExpirationDate" property="compareatexpirationdate" jdbcType="LONGVARCHAR" />
+    <result column="previouslyAdvertisedPrice_amount" property="previouslyadvertisedpriceAmount" jdbcType="LONGVARCHAR" />
+    <result column="previouslyAdvertisedPrice_currency" property="previouslyadvertisedpriceCurrency" jdbcType="LONGVARCHAR" />
+    <result column="shippingWidth" property="shippingwidth" jdbcType="LONGVARCHAR" />
+    <result column="shippingHeight" property="shippingheight" jdbcType="LONGVARCHAR" />
+    <result column="shippingLength" property="shippinglength" jdbcType="LONGVARCHAR" />
+    <result column="shippingWeight" property="shippingweight" jdbcType="LONGVARCHAR" />
+    <result column="upc" property="upc" jdbcType="LONGVARCHAR" />
+    <result column="shipsViaLtl" property="shipsvialtl" jdbcType="LONGVARCHAR" />
+    <result column="attribute" property="attribute" jdbcType="LONGVARCHAR" />
+    <result column="image" property="image" jdbcType="LONGVARCHAR" />
+    <result column="model_image" property="modelImage" jdbcType="LONGVARCHAR" />
+    <result column="model_retailerId" property="modelRetailerid" jdbcType="LONGVARCHAR" />
+    <result column="model_title" property="modelTitle" jdbcType="LONGVARCHAR" />
+    <result column="model_brand" property="modelBrand" jdbcType="LONGVARCHAR" />
+    <result column="model_manufacturerName" property="modelManufacturername" jdbcType="LONGVARCHAR" />
+    <result column="model_shortDescription" property="modelShortdescription" jdbcType="LONGVARCHAR" />
+    <result column="model_longDescription" property="modelLongdescription" jdbcType="LONGVARCHAR" />
+    <result column="model_leadTime" property="modelLeadtime" jdbcType="LONGVARCHAR" />
+    <result column="model_adultContent" property="modelAdultcontent" jdbcType="LONGVARCHAR" />
+    <result column="model_countryOfOrigin" property="modelCountryoforigin" jdbcType="LONGVARCHAR" />
+    <result column="model_productActiveStatus" property="modelProductactivestatus" jdbcType="LONGVARCHAR" />
+    <result column="model_shippingSiteSale" property="modelShippingsitesale" jdbcType="LONGVARCHAR" />
+    <result column="model_discountSiteSale" property="modelDiscountsitesale" jdbcType="LONGVARCHAR" />
+    <result column="model_condition" property="modelCondition" jdbcType="LONGVARCHAR" />
+    <result column="model_returnPolicy" property="modelReturnpolicy" jdbcType="LONGVARCHAR" />
+    <result column="salePoint" property="salepoint" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "sku", "category", "inventoryAvailable", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "retailerId", "model", "clientModel", "clientSku", "title", "brand", "manufacturerName",
+    "shortDescription", "longDescription", "leadTime", "adultContent", "countryOfOrigin",
+    "productActiveStatus", "shippingSiteSale", "discountSiteSale", "condition", "returnPolicy",
+    "description", "sellingPrice_amount", "sellingPrice_currency", "mapPrice_amount",
+    "mapPrice_currency", "msrpPrice_amount", "msrpPrice_currency", "msrpExpirationDate",
+    "compareAtPrice_currency", "compareAtPrice_amount", "compareAtExpirationDate", "previouslyAdvertisedPrice_amount",
+    "previouslyAdvertisedPrice_currency", "shippingWidth", "shippingHeight", "shippingLength",
+    "shippingWeight", "upc", "shipsViaLtl", "attribute", "image", "model_image", "model_retailerId",
+    "model_title", "model_brand", "model_manufacturerName", "model_shortDescription",
+    "model_longDescription", "model_leadTime", "model_adultContent", "model_countryOfOrigin",
+    "model_productActiveStatus", "model_shippingSiteSale", "model_discountSiteSale",
+    "model_condition", "model_returnPolicy", "salePoint"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_overstock_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_overstock_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    insert into cms_zz_feed_overstock_product_temp ("sku", "category", "inventoryAvailable",
+    "md5", "updateFlag", "retailerId",
+    "model", "clientModel", "clientSku",
+    "title", "brand", "manufacturerName",
+    "shortDescription", "longDescription",
+    "leadTime", "adultContent", "countryOfOrigin",
+    "productActiveStatus", "shippingSiteSale",
+    "discountSiteSale", "condition", "returnPolicy",
+    "description", "sellingPrice_amount",
+    "sellingPrice_currency", "mapPrice_amount",
+    "mapPrice_currency", "msrpPrice_amount",
+    "msrpPrice_currency", "msrpExpirationDate",
+    "compareAtPrice_currency", "compareAtPrice_amount",
+    "compareAtExpirationDate", "previouslyAdvertisedPrice_amount",
+    "previouslyAdvertisedPrice_currency", "shippingWidth",
+    "shippingHeight", "shippingLength",
+    "shippingWeight", "upc", "shipsViaLtl",
+    "attribute", "image", "model_image",
+    "model_retailerId", "model_title", "model_brand",
+    "model_manufacturerName", "model_shortDescription",
+    "model_longDescription", "model_leadTime",
+    "model_adultContent", "model_countryOfOrigin",
+    "model_productActiveStatus", "model_shippingSiteSale",
+    "model_discountSiteSale", "model_condition",
+    "model_returnPolicy", "salePoint")
+    values (#{sku,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{inventoryavailable,jdbcType=VARCHAR},
+    #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER}, #{retailerid,jdbcType=LONGVARCHAR},
+    #{model,jdbcType=LONGVARCHAR}, #{clientmodel,jdbcType=LONGVARCHAR}, #{clientsku,jdbcType=LONGVARCHAR},
+    #{title,jdbcType=LONGVARCHAR}, #{brand,jdbcType=LONGVARCHAR}, #{manufacturername,jdbcType=LONGVARCHAR},
+    #{shortdescription,jdbcType=LONGVARCHAR}, #{longdescription,jdbcType=LONGVARCHAR},
+    #{leadtime,jdbcType=LONGVARCHAR}, #{adultcontent,jdbcType=LONGVARCHAR}, #{countryoforigin,jdbcType=LONGVARCHAR},
+    #{productactivestatus,jdbcType=LONGVARCHAR}, #{shippingsitesale,jdbcType=LONGVARCHAR},
+    #{discountsitesale,jdbcType=LONGVARCHAR}, #{condition,jdbcType=LONGVARCHAR}, #{returnpolicy,jdbcType=LONGVARCHAR},
+    #{description,jdbcType=LONGVARCHAR}, #{sellingpriceAmount,jdbcType=LONGVARCHAR},
+    #{sellingpriceCurrency,jdbcType=LONGVARCHAR}, #{mappriceAmount,jdbcType=LONGVARCHAR},
+    #{mappriceCurrency,jdbcType=LONGVARCHAR}, #{msrppriceAmount,jdbcType=LONGVARCHAR},
+    #{msrppriceCurrency,jdbcType=LONGVARCHAR}, #{msrpexpirationdate,jdbcType=LONGVARCHAR},
+    #{compareatpriceCurrency,jdbcType=LONGVARCHAR}, #{compareatpriceAmount,jdbcType=LONGVARCHAR},
+    #{compareatexpirationdate,jdbcType=LONGVARCHAR}, #{previouslyadvertisedpriceAmount,jdbcType=LONGVARCHAR},
+    #{previouslyadvertisedpriceCurrency,jdbcType=LONGVARCHAR}, #{shippingwidth,jdbcType=LONGVARCHAR},
+    #{shippingheight,jdbcType=LONGVARCHAR}, #{shippinglength,jdbcType=LONGVARCHAR},
+    #{shippingweight,jdbcType=LONGVARCHAR}, #{upc,jdbcType=LONGVARCHAR}, #{shipsvialtl,jdbcType=LONGVARCHAR},
+    #{attribute,jdbcType=LONGVARCHAR}, #{image,jdbcType=LONGVARCHAR}, #{modelImage,jdbcType=LONGVARCHAR},
+    #{modelRetailerid,jdbcType=LONGVARCHAR}, #{modelTitle,jdbcType=LONGVARCHAR}, #{modelBrand,jdbcType=LONGVARCHAR},
+    #{modelManufacturername,jdbcType=LONGVARCHAR}, #{modelShortdescription,jdbcType=LONGVARCHAR},
+    #{modelLongdescription,jdbcType=LONGVARCHAR}, #{modelLeadtime,jdbcType=LONGVARCHAR},
+    #{modelAdultcontent,jdbcType=LONGVARCHAR}, #{modelCountryoforigin,jdbcType=LONGVARCHAR},
+    #{modelProductactivestatus,jdbcType=LONGVARCHAR}, #{modelShippingsitesale,jdbcType=LONGVARCHAR},
+    #{modelDiscountsitesale,jdbcType=LONGVARCHAR}, #{modelCondition,jdbcType=LONGVARCHAR},
+    #{modelReturnpolicy,jdbcType=LONGVARCHAR}, #{salepoint,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    insert into cms_zz_feed_overstock_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        sku,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="inventoryavailable != null" >
+        inventoryAvailable,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="retailerid != null" >
+        retailerId,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+      <if test="clientmodel != null" >
+        clientModel,
+      </if>
+      <if test="clientsku != null" >
+        clientSku,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="manufacturername != null" >
+        manufacturerName,
+      </if>
+      <if test="shortdescription != null" >
+        shortDescription,
+      </if>
+      <if test="longdescription != null" >
+        longDescription,
+      </if>
+      <if test="leadtime != null" >
+        leadTime,
+      </if>
+      <if test="adultcontent != null" >
+        adultContent,
+      </if>
+      <if test="countryoforigin != null" >
+        countryOfOrigin,
+      </if>
+      <if test="productactivestatus != null" >
+        productActiveStatus,
+      </if>
+      <if test="shippingsitesale != null" >
+        shippingSiteSale,
+      </if>
+      <if test="discountsitesale != null" >
+        discountSiteSale,
+      </if>
+      <if test="condition != null" >
+        `condition`,
+      </if>
+      <if test="returnpolicy != null" >
+        returnPolicy,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="sellingpriceAmount != null" >
+        sellingPrice_amount,
+      </if>
+      <if test="sellingpriceCurrency != null" >
+        sellingPrice_currency,
+      </if>
+      <if test="mappriceAmount != null" >
+        mapPrice_amount,
+      </if>
+      <if test="mappriceCurrency != null" >
+        mapPrice_currency,
+      </if>
+      <if test="msrppriceAmount != null" >
+        msrpPrice_amount,
+      </if>
+      <if test="msrppriceCurrency != null" >
+        msrpPrice_currency,
+      </if>
+      <if test="msrpexpirationdate != null" >
+        msrpExpirationDate,
+      </if>
+      <if test="compareatpriceCurrency != null" >
+        compareAtPrice_currency,
+      </if>
+      <if test="compareatpriceAmount != null" >
+        compareAtPrice_amount,
+      </if>
+      <if test="compareatexpirationdate != null" >
+        compareAtExpirationDate,
+      </if>
+      <if test="previouslyadvertisedpriceAmount != null" >
+        previouslyAdvertisedPrice_amount,
+      </if>
+      <if test="previouslyadvertisedpriceCurrency != null" >
+        previouslyAdvertisedPrice_currency,
+      </if>
+      <if test="shippingwidth != null" >
+        shippingWidth,
+      </if>
+      <if test="shippingheight != null" >
+        shippingHeight,
+      </if>
+      <if test="shippinglength != null" >
+        shippingLength,
+      </if>
+      <if test="shippingweight != null" >
+        shippingWeight,
+      </if>
+      <if test="upc != null" >
+        upc,
+      </if>
+      <if test="shipsvialtl != null" >
+        shipsViaLtl,
+      </if>
+      <if test="attribute != null" >
+        attribute,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="modelImage != null" >
+        model_image,
+      </if>
+      <if test="modelRetailerid != null" >
+        model_retailerId,
+      </if>
+      <if test="modelTitle != null" >
+        model_title,
+      </if>
+      <if test="modelBrand != null" >
+        model_brand,
+      </if>
+      <if test="modelManufacturername != null" >
+        model_manufacturerName,
+      </if>
+      <if test="modelShortdescription != null" >
+        model_shortDescription,
+      </if>
+      <if test="modelLongdescription != null" >
+        model_longDescription,
+      </if>
+      <if test="modelLeadtime != null" >
+        model_leadTime,
+      </if>
+      <if test="modelAdultcontent != null" >
+        model_adultContent,
+      </if>
+      <if test="modelCountryoforigin != null" >
+        model_countryOfOrigin,
+      </if>
+      <if test="modelProductactivestatus != null" >
+        model_productActiveStatus,
+      </if>
+      <if test="modelShippingsitesale != null" >
+        model_shippingSiteSale,
+      </if>
+      <if test="modelDiscountsitesale != null" >
+        model_discountSiteSale,
+      </if>
+      <if test="modelCondition != null" >
+        model_condition,
+      </if>
+      <if test="modelReturnpolicy != null" >
+        model_returnPolicy,
+      </if>
+      <if test="salepoint != null" >
+        salePoint,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="inventoryavailable != null" >
+        #{inventoryavailable,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="retailerid != null" >
+        #{retailerid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clientmodel != null" >
+        #{clientmodel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clientsku != null" >
+        #{clientsku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturername != null" >
+        #{manufacturername,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortdescription != null" >
+        #{shortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="longdescription != null" >
+        #{longdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leadtime != null" >
+        #{leadtime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="adultcontent != null" >
+        #{adultcontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productactivestatus != null" >
+        #{productactivestatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingsitesale != null" >
+        #{shippingsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="discountsitesale != null" >
+        #{discountsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnpolicy != null" >
+        #{returnpolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellingpriceAmount != null" >
+        #{sellingpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellingpriceCurrency != null" >
+        #{sellingpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mappriceAmount != null" >
+        #{mappriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mappriceCurrency != null" >
+        #{mappriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrppriceAmount != null" >
+        #{msrppriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrppriceCurrency != null" >
+        #{msrppriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrpexpirationdate != null" >
+        #{msrpexpirationdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatpriceCurrency != null" >
+        #{compareatpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatpriceAmount != null" >
+        #{compareatpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatexpirationdate != null" >
+        #{compareatexpirationdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="previouslyadvertisedpriceAmount != null" >
+        #{previouslyadvertisedpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="previouslyadvertisedpriceCurrency != null" >
+        #{previouslyadvertisedpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingwidth != null" >
+        #{shippingwidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingheight != null" >
+        #{shippingheight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippinglength != null" >
+        #{shippinglength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingweight != null" >
+        #{shippingweight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shipsvialtl != null" >
+        #{shipsvialtl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attribute != null" >
+        #{attribute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelImage != null" >
+        #{modelImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelRetailerid != null" >
+        #{modelRetailerid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelTitle != null" >
+        #{modelTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBrand != null" >
+        #{modelBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelManufacturername != null" >
+        #{modelManufacturername,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelShortdescription != null" >
+        #{modelShortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelLongdescription != null" >
+        #{modelLongdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelLeadtime != null" >
+        #{modelLeadtime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelAdultcontent != null" >
+        #{modelAdultcontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelCountryoforigin != null" >
+        #{modelCountryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelProductactivestatus != null" >
+        #{modelProductactivestatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelShippingsitesale != null" >
+        #{modelShippingsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelDiscountsitesale != null" >
+        #{modelDiscountsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelCondition != null" >
+        #{modelCondition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelReturnpolicy != null" >
+        #{modelReturnpolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salepoint != null" >
+        #{salepoint,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    update cms_zz_feed_overstock_product_temp
+    <set >
+      <if test="category != null" >
+        "category" = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="inventoryavailable != null" >
+        "inventoryAvailable" = #{inventoryavailable,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="retailerid != null" >
+        "retailerId" = #{retailerid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="model != null" >
+        "model" = #{model,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clientmodel != null" >
+        "clientModel" = #{clientmodel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clientsku != null" >
+        "clientSku" = #{clientsku,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="title != null" >
+        "title" = #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        "brand" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturername != null" >
+        "manufacturerName" = #{manufacturername,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortdescription != null" >
+        "shortDescription" = #{shortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="longdescription != null" >
+        "longDescription" = #{longdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leadtime != null" >
+        "leadTime" = #{leadtime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="adultcontent != null" >
+        "adultContent" = #{adultcontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        "countryOfOrigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productactivestatus != null" >
+        "productActiveStatus" = #{productactivestatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingsitesale != null" >
+        "shippingSiteSale" = #{shippingsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="discountsitesale != null" >
+        "discountSiteSale" = #{discountsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="condition != null" >
+        "condition" = #{condition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnpolicy != null" >
+        "returnPolicy" = #{returnpolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellingpriceAmount != null" >
+        "sellingPrice_amount" = #{sellingpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sellingpriceCurrency != null" >
+        "sellingPrice_currency" = #{sellingpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mappriceAmount != null" >
+        "mapPrice_amount" = #{mappriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mappriceCurrency != null" >
+        "mapPrice_currency" = #{mappriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrppriceAmount != null" >
+        "msrpPrice_amount" = #{msrppriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrppriceCurrency != null" >
+        "msrpPrice_currency" = #{msrppriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="msrpexpirationdate != null" >
+        "msrpExpirationDate" = #{msrpexpirationdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatpriceCurrency != null" >
+        "compareAtPrice_currency" = #{compareatpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatpriceAmount != null" >
+        "compareAtPrice_amount" = #{compareatpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="compareatexpirationdate != null" >
+        "compareAtExpirationDate" = #{compareatexpirationdate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="previouslyadvertisedpriceAmount != null" >
+        "previouslyAdvertisedPrice_amount" = #{previouslyadvertisedpriceAmount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="previouslyadvertisedpriceCurrency != null" >
+        "previouslyAdvertisedPrice_currency" = #{previouslyadvertisedpriceCurrency,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingwidth != null" >
+        "shippingWidth" = #{shippingwidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingheight != null" >
+        "shippingHeight" = #{shippingheight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippinglength != null" >
+        "shippingLength" = #{shippinglength,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shippingweight != null" >
+        "shippingWeight" = #{shippingweight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="upc != null" >
+        "upc" = #{upc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shipsvialtl != null" >
+        "shipsViaLtl" = #{shipsvialtl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attribute != null" >
+        "attribute" = #{attribute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image != null" >
+        "image" = #{image,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelImage != null" >
+        "model_image" = #{modelImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelRetailerid != null" >
+        "model_retailerId" = #{modelRetailerid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelTitle != null" >
+        "model_title" = #{modelTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBrand != null" >
+        "model_brand" = #{modelBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelManufacturername != null" >
+        "model_manufacturerName" = #{modelManufacturername,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelShortdescription != null" >
+        "model_shortDescription" = #{modelShortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelLongdescription != null" >
+        "model_longDescription" = #{modelLongdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelLeadtime != null" >
+        "model_leadTime" = #{modelLeadtime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelAdultcontent != null" >
+        "model_adultContent" = #{modelAdultcontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelCountryoforigin != null" >
+        "model_countryOfOrigin" = #{modelCountryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelProductactivestatus != null" >
+        "model_productActiveStatus" = #{modelProductactivestatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelShippingsitesale != null" >
+        "model_shippingSiteSale" = #{modelShippingsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelDiscountsitesale != null" >
+        "model_discountSiteSale" = #{modelDiscountsitesale,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelCondition != null" >
+        "model_condition" = #{modelCondition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelReturnpolicy != null" >
+        "model_returnPolicy" = #{modelReturnpolicy,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salepoint != null" >
+        "salePoint" = #{salepoint,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    update cms_zz_feed_overstock_product_temp
+    set "category" = #{category,jdbcType=VARCHAR},
+    "inventoryAvailable" = #{inventoryavailable,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "retailerId" = #{retailerid,jdbcType=LONGVARCHAR},
+    "model" = #{model,jdbcType=LONGVARCHAR},
+    "clientModel" = #{clientmodel,jdbcType=LONGVARCHAR},
+    "clientSku" = #{clientsku,jdbcType=LONGVARCHAR},
+    "title" = #{title,jdbcType=LONGVARCHAR},
+    "brand" = #{brand,jdbcType=LONGVARCHAR},
+    "manufacturerName" = #{manufacturername,jdbcType=LONGVARCHAR},
+    "shortDescription" = #{shortdescription,jdbcType=LONGVARCHAR},
+    "longDescription" = #{longdescription,jdbcType=LONGVARCHAR},
+    "leadTime" = #{leadtime,jdbcType=LONGVARCHAR},
+    "adultContent" = #{adultcontent,jdbcType=LONGVARCHAR},
+    "countryOfOrigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+    "productActiveStatus" = #{productactivestatus,jdbcType=LONGVARCHAR},
+    "shippingSiteSale" = #{shippingsitesale,jdbcType=LONGVARCHAR},
+    "discountSiteSale" = #{discountsitesale,jdbcType=LONGVARCHAR},
+    "condition" = #{condition,jdbcType=LONGVARCHAR},
+    "returnPolicy" = #{returnpolicy,jdbcType=LONGVARCHAR},
+    "description" = #{description,jdbcType=LONGVARCHAR},
+    "sellingPrice_amount" = #{sellingpriceAmount,jdbcType=LONGVARCHAR},
+    "sellingPrice_currency" = #{sellingpriceCurrency,jdbcType=LONGVARCHAR},
+    "mapPrice_amount" = #{mappriceAmount,jdbcType=LONGVARCHAR},
+    "mapPrice_currency" = #{mappriceCurrency,jdbcType=LONGVARCHAR},
+    "msrpPrice_amount" = #{msrppriceAmount,jdbcType=LONGVARCHAR},
+    "msrpPrice_currency" = #{msrppriceCurrency,jdbcType=LONGVARCHAR},
+    "msrpExpirationDate" = #{msrpexpirationdate,jdbcType=LONGVARCHAR},
+    "compareAtPrice_currency" = #{compareatpriceCurrency,jdbcType=LONGVARCHAR},
+    "compareAtPrice_amount" = #{compareatpriceAmount,jdbcType=LONGVARCHAR},
+    "compareAtExpirationDate" = #{compareatexpirationdate,jdbcType=LONGVARCHAR},
+    "previouslyAdvertisedPrice_amount" = #{previouslyadvertisedpriceAmount,jdbcType=LONGVARCHAR},
+    "previouslyAdvertisedPrice_currency" = #{previouslyadvertisedpriceCurrency,jdbcType=LONGVARCHAR},
+    "shippingWidth" = #{shippingwidth,jdbcType=LONGVARCHAR},
+    "shippingHeight" = #{shippingheight,jdbcType=LONGVARCHAR},
+    "shippingLength" = #{shippinglength,jdbcType=LONGVARCHAR},
+    "shippingWeight" = #{shippingweight,jdbcType=LONGVARCHAR},
+    "upc" = #{upc,jdbcType=LONGVARCHAR},
+    "shipsViaLtl" = #{shipsvialtl,jdbcType=LONGVARCHAR},
+    "attribute" = #{attribute,jdbcType=LONGVARCHAR},
+    "image" = #{image,jdbcType=LONGVARCHAR},
+    "model_image" = #{modelImage,jdbcType=LONGVARCHAR},
+    "model_retailerId" = #{modelRetailerid,jdbcType=LONGVARCHAR},
+    "model_title" = #{modelTitle,jdbcType=LONGVARCHAR},
+    "model_brand" = #{modelBrand,jdbcType=LONGVARCHAR},
+    "model_manufacturerName" = #{modelManufacturername,jdbcType=LONGVARCHAR},
+    "model_shortDescription" = #{modelShortdescription,jdbcType=LONGVARCHAR},
+    "model_longDescription" = #{modelLongdescription,jdbcType=LONGVARCHAR},
+    "model_leadTime" = #{modelLeadtime,jdbcType=LONGVARCHAR},
+    "model_adultContent" = #{modelAdultcontent,jdbcType=LONGVARCHAR},
+    "model_countryOfOrigin" = #{modelCountryoforigin,jdbcType=LONGVARCHAR},
+    "model_productActiveStatus" = #{modelProductactivestatus,jdbcType=LONGVARCHAR},
+    "model_shippingSiteSale" = #{modelShippingsitesale,jdbcType=LONGVARCHAR},
+    "model_discountSiteSale" = #{modelDiscountsitesale,jdbcType=LONGVARCHAR},
+    "model_condition" = #{modelCondition,jdbcType=LONGVARCHAR},
+    "model_returnPolicy" = #{modelReturnpolicy,jdbcType=LONGVARCHAR},
+    "salePoint" = #{salepoint,jdbcType=LONGVARCHAR}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
+    update cms_zz_feed_overstock_product_temp
+    set "category" = #{category,jdbcType=VARCHAR},
+    "inventoryAvailable" = #{inventoryavailable,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+
+
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_overstock_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoOverStockModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_overstock_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_overstock_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_overstock_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_overstock_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>

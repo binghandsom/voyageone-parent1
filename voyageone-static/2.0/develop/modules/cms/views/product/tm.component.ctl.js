@@ -60,7 +60,7 @@ define([
                 function updateProductDetail () {
 
                     if (!validSchema()&& scope.vm.productDetails.productStatus.approveStatus == 'Approved') {
-                        return alert("保存失败，请查看schema的属性是否填写正确！");
+                        return alert("保存失败，请查看产品的属性是否填写正确！");
                     }
 
                     /**推算产品状态

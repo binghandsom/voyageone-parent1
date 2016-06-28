@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
@@ -70,6 +71,7 @@ public class CmsProductDetailService extends BaseAppService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+
     @Autowired
     ImageTemplateService imageTemplateService;
 
@@ -591,8 +593,10 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("cartId", platformInfo.getCartId());
                 platformStatus.put("pStatus", platformInfo.getpStatus());
                 platformStatus.put("status", platformInfo.getStatus());
+                platformStatus.put("pPublishError", platformInfo.getpPublishError());
+                platformStatus.put("pNumIId",platformInfo.getpNumIId());
+                platformStatus.put("cartName",CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
                 platformList.add(platformStatus);
-                
             });
         }
         mastData.put("platformList", platformList);
@@ -606,9 +610,9 @@ public class CmsProductDetailService extends BaseAppService {
 
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
 
-        commInfo.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
+        commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }

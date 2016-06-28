@@ -67,6 +67,16 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
+        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+            // 京东的场合，产品schema是共通，写死 catId = 1
+            CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
+            if (platformCatSchemaModelJD == null) {
+                $error("JD的产品schema未设定!");
+                return null;
+            } else {
+                schemaProduct = platformCatSchemaModelJD.getPropsProduct();
+            }
+        }
         if (!StringUtils.isEmpty(schemaProduct)) {
             List<Field> listProductField = SchemaReader.readXmlForList(schemaProduct);
             retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField,
@@ -147,6 +157,16 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
+        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+            // 京东的场合，产品schema是共通，写死 catId = 1
+            CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
+            if (platformCatSchemaModelJD == null) {
+                $error("JD的产品schema未设定!");
+                return null;
+            } else {
+                schemaProduct = platformCatSchemaModelJD.getPropsProduct();
+            }
+        }
         if (!StringUtils.isEmpty(schemaProduct)) {
             Map<String, Field> mapProductField = SchemaReader.readXmlForMap(schemaProduct);
             List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField = invisibleFieldModel.getPropsProduct();

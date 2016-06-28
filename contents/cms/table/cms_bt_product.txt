@@ -58,12 +58,17 @@
     * hsCodeStatus
     * hsCodeSetter
     * hsCodeSetTime
+    * codeDiff ->20160627,商品特质英文（颜色/口味/香型等）
+    * hsCodeCross ->20160627,税号跨境申报（10位）
+    * usageEn ->20160627,使用说明英语
+    * usageCn ->20160627,使用说明中文
   * skus[]
     * skuCode
     * barcode
     * clientSku
     * clientSize
     * size
+    * sizeNick  ->20160627,售卖用尺码别名
     * clientMsrpPrice     ->客户建议零售价
     * clientRetailPrice   ->客户指导价
     * clientNetPrice      ->客户成本价
@@ -119,7 +124,6 @@
 	  * pProductId
 	  * pNumIId
 	  * pStatus
-	  * pPublishError
 	  * pBrandId
 	  * pBrandName
 	  * pPublishTime

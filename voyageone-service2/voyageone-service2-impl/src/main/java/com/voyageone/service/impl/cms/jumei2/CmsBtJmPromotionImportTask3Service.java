@@ -234,24 +234,25 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setCreater("system");
             saveInfo.productModel.setCreated(new Date());
             saveInfo.productModel.setJmHashId("");
+            saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
+            saveInfo.productModel.setProductCode(product.getProductCode());
+            saveInfo.productModel.setAppId(product.getAppId());
+            saveInfo.productModel.setPcId(product.getPcId());
+            saveInfo.productModel.setChannelId(model.getChannelId());
+            saveInfo.productModel.setActivityStart(model.getActivityStart());
+            saveInfo.productModel.setActivityEnd(model.getActivityEnd());
+            saveInfo.productModel.setPromotionTag(product.getPromotionTag());
+            saveInfo.productModel.setErrorMsg("");
+            saveInfo.productModel.setPriceStatus(0);
+            saveInfo.productModel.setDealPrice(new BigDecimal(0));
+            saveInfo.productModel.setMarketPrice(new BigDecimal(0));
+            saveInfo.productModel.setDiscount(new BigDecimal(0));
+            saveInfo.productModel.setSkuCount(0);
+            saveInfo.productModel.setQuantity(0);
+            saveInfo.productModel.setDealEndTimeStatus(0);
         }
-        saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
-        saveInfo.productModel.setProductCode(product.getProductCode());
-        saveInfo.productModel.setAppId(product.getAppId());
-        saveInfo.productModel.setPcId(product.getPcId());
+
         saveInfo.productModel.setLimit(product.getLimit());
-        saveInfo.productModel.setChannelId(model.getChannelId());
-        saveInfo.productModel.setActivityStart(model.getActivityStart());
-        saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-        saveInfo.productModel.setPromotionTag(product.getPromotionTag());
-        saveInfo.productModel.setErrorMsg("");
-        saveInfo.productModel.setPriceStatus(0);
-        saveInfo.productModel.setDealPrice(new BigDecimal(0));
-        saveInfo.productModel.setMarketPrice(new BigDecimal(0));
-        saveInfo.productModel.setDiscount(new BigDecimal(0));
-        saveInfo.productModel.setSkuCount(0);
-        saveInfo.productModel.setQuantity(0);
-        saveInfo.productModel.setDealEndTimeStatus(0);
         saveInfo.productModel.setModifier("system");
 
         if (saveInfo.productModel.getPromotionTag() == null) {

@@ -91,26 +91,27 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("APP端模块ID","appId", "cms_bt_jm_promotion_product");
         info.addExcelColumn("PC端模块ID","pcId", "cms_bt_jm_promotion_product");
         info.addExcelColumn( "专场标签（以|分隔）","promotionTag", "cms_bt_jm_promotion_product");
-        info.addExcelColumn("商品英文名称","foreignLanguageName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("商品中文名称","productNameCn", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "长标题","productLongName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("中标题","productMediumName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("短标题","productShortName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("自定义搜索词","searchMetaTextCustom", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "英文产地","origin", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("保质期","availablePeriod","cms_bt_jm_product",colorIndex);//add
-        info.addExcelColumn( "中文产地","addressOfProduce", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "适合人群","applicableCrowd", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "特别说明 用于聚美上新","specialNote", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "英文颜色","colorEn", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "中文颜色","attribute", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("主数据类目","voCategoryName","cms_bt_jm_product",colorIndex);//add
-        info.addExcelColumn("主数据品牌名称","brandName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("聚美品牌名称","brandName", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("商品类别","productType", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("尺码类别","sizeType", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn("使用方法_产品介绍","productDesEn", "cms_bt_jm_product",colorIndex);
-        info.addExcelColumn( "使用方法_产品介绍","productDesCn", "cms_bt_jm_product",colorIndex);
+        info.addExcelColumn("商品英文名称","foreignLanguageName", "cms_bt_jm_product");
+        info.addExcelColumn("商品中文名称","productNameCn", "cms_bt_jm_product");
+        info.addExcelColumn( "长标题","productLongName", "cms_bt_jm_product");
+        info.addExcelColumn("中标题","productMediumName", "cms_bt_jm_product");
+        info.addExcelColumn("短标题","productShortName", "cms_bt_jm_product");
+        info.addExcelColumn("自定义搜索词","searchMetaTextCustom", "cms_bt_jm_product");
+        info.addExcelColumn( "英文产地","origin", "cms_bt_jm_product");
+        info.addExcelColumn("保质期","availablePeriod","cms_bt_jm_product");//add
+        info.addExcelColumn( "中文产地","addressOfProduce", "cms_bt_jm_product");
+        info.addExcelColumn( "适合人群","applicableCrowd", "cms_bt_jm_product");
+        info.addExcelColumn( "特别说明 用于聚美上新","specialNote", "cms_bt_jm_product");
+        info.addExcelColumn( "英文颜色","colorEn", "cms_bt_jm_product");
+        info.addExcelColumn( "中文颜色","attribute", "cms_bt_jm_product");
+        info.addExcelColumn("主数据类目","voCategoryName","cms_bt_jm_product");//add
+        info.addExcelColumn("主数据品牌名称","brandName", "cms_bt_jm_product");
+        info.addExcelColumn("聚美品牌名称","brandName", "cms_bt_jm_product");
+        info.addExcelColumn("商品类别","productType", "cms_bt_jm_product");
+        info.addExcelColumn("尺码类别","sizeType", "cms_bt_jm_product");
+        info.addExcelColumn("使用方法_产品介绍","productDesEn", "cms_bt_jm_product");
+        info.addExcelColumn( "使用方法_产品介绍","productDesCn", "cms_bt_jm_product");
+        info.addExcelColumn("聚美HID","jmHashId","cms_bt_jm_product");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
         }
@@ -155,6 +156,8 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("中国最终售价", "salePrice", "cms_bt_jm_promotion_sku",colorIndex);
         info.addExcelColumn("团购价格", "dealPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("市场价格", "marketPrice", "cms_bt_jm_promotion_sku");
+        info.addExcelColumn("聚美HID","jmHashId","cms_bt_jm_product");
+        info.addExcelColumn("聚美SKU","jmSkuNo","cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
         }

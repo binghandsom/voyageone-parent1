@@ -83,9 +83,6 @@ define([
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
-            if ($scope.vm.searchInfo.fuzzySearch != undefined) {
-                $scope.vm.searchInfo.fuzzyList = $scope.vm.searchInfo.fuzzySearch.split("\n");
-            }
 
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
                 $scope.vm.feedList = res.data.feedList;
