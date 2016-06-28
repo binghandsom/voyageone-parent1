@@ -187,7 +187,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 listErroSku.add(sku);
             }
         }
-        listProductModel.removeAll(listErroSku);
+        listSkuModel.removeAll(listErroSku);
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
 
