@@ -1,0 +1,57 @@
+html, body {
+  height: 100%;
+}
+
+.container {
+  width: 1500px;
+}
+
+@media (max-width: 1500px) {
+  .container {
+    width: 1300px;
+  }
+}
+
+@media (max-width: 1350px) {
+  .container {
+    width: 1150px;
+  }
+}
+
+.content {
+  padding-top: 10px;
+  padding-bottom: 25px;
+}
+
+
+.topbar {
+  text-align: right;
+  font-size: 12px;
+  color: #939393;
+
+  span {
+    margin-left: 15px;
+  }
+}
+
+.form-text,
+.form-text a {
+  line-height: 32px;
+  font-size: 14px;
+}
+
+.form-inline {
+  .control-label {
+    margin-left: 15px;
+  }
+  .form-group:first-child .control-label {
+    margin-left: 0;
+  }
+}
+
+.table-vo {
+  thead th {
+    background-color: #4b7c9e;
+    color: white;
+  }
+}
