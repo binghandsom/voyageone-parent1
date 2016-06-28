@@ -85,7 +85,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSessionBean, cartId);
+            prodCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, searchValue, cartId);
             recCount = prodCodeList.size();
         }
 

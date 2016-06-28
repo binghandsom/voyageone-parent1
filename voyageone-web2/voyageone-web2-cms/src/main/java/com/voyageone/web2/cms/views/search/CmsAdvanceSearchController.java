@@ -86,7 +86,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
 
-        // 查询该商品是否有价格变动
+        // 查询平台显示商品URL
         Integer cartId = params.getCartId();
         if (cartId == null) {
             cartId = 0;
@@ -94,26 +94,24 @@ public class CmsAdvanceSearchController extends CmsController {
         } else {
             resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
         }
+        // 查询商品其它画面显示用的信息
         List[] infoArr = advSearchQueryService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
         resultBean.put("prodChgInfoList", infoArr[0]);
         resultBean.put("prodOrgChaNameList", infoArr[1]);
         resultBean.put("freeTagsList", infoArr[2]);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession, cartId);
-        endIdx = params.getGroupPageSize();
-        int groupListTotal = groupCodeList.size();
-        if (endIdx > groupListTotal) {
-            endIdx = groupListTotal;
-        }
-
+        // 先统计group件数
+        long groupListTotal = searchIndexService.countGroupCodeList(prodCodeList, userInfo, cartId);
+        // 然后再取得当页显示用的group信息
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, params, cartId);
         List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
-        List<CmsBtProductBean> currGrpList = grpInfoList.subList(0, endIdx);
-        searchIndexService.checkProcStatus(currGrpList, getLang());
-        resultBean.put("groupList", currGrpList);
+
+        searchIndexService.checkProcStatus(grpInfoList, getLang());
+        resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), cartId, true);
+        infoArr = advSearchQueryService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), cartId, true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -152,21 +150,17 @@ public class CmsAdvanceSearchController extends CmsController {
         List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
 
         // 获取group列表
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSession, cartId);
-        int staIdx = (params.getGroupPageNum() - 1) * params.getGroupPageSize();
-        int endIdx = staIdx + params.getGroupPageSize();
-        int groupListTotal = groupCodeList.size();
-        if (endIdx > groupListTotal) {
-            endIdx = groupListTotal;
-        }
-
+        // 先统计group件数
+        long groupListTotal = searchIndexService.countGroupCodeList(prodCodeList, userInfo, cartId);
+        // 然后再取得当页显示用的group信息
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, params, cartId);
         List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
-        List<CmsBtProductBean> currGrpList = grpInfoList.subList(staIdx, endIdx);
-        searchIndexService.checkProcStatus(currGrpList, getLang());
-        resultBean.put("groupList", currGrpList);
+
+        searchIndexService.checkProcStatus(grpInfoList, getLang());
+        resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
 
-        List[] infoArr = advSearchQueryService.getGroupExtraInfo(currGrpList, userInfo.getSelChannelId(), cartId, true);
+        List[] infoArr = advSearchQueryService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), cartId, true);
         // 获取该组商品图片
         resultBean.put("grpImgList", infoArr[1]);
         // 查询该组商品是否有价格变动
@@ -244,6 +238,8 @@ public class CmsAdvanceSearchController extends CmsController {
 
         byte[] data = null;
         try {
+            // 文件下载时分页查询要做特殊处理
+            p.setGroupPageNum(0);
             data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession(), getLang());
         } catch (Exception e) {
             $error("创建文件时出错", e);

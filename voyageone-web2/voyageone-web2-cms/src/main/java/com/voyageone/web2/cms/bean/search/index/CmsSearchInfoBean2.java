@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
  * @author Edward
  * @version 2.0.0, 15/12/15
  */
-public class CmsSearchInfoBean2 {
+public class CmsSearchInfoBean2 implements Serializable {
 
     private Integer groupPageNum = 0;
     private Integer groupPageSize = 0;
