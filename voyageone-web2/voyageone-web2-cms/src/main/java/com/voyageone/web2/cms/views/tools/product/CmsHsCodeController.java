@@ -37,22 +37,7 @@ public class CmsHsCodeController extends CmsController {
         //返回数据的类型
         return success(resultBean);
     }
-    /**
-     * HsCode信息检索
-     * @param param
-     * @return
-     */
-    @RequestMapping(value = CmsUrlConstants.TOOLS.PRODUCT.SEARCH_HS_CODE_INFO)
-    public AjaxResponse searchHsCodeInfo(@RequestBody Map param) {
-        //店铺渠道取得
-        String channelId=this.getUser().getSelChannelId();
-        //当前用户名称
-        String userName=this.getUser().getUserName();
-        //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsHsCodeService.searchHsCodeInfo(getLang(),channelId,userName,param);
-        //返回数据的类型
-        return success(resultBean);
-    }
+
     /**
      * HsCode信息获取
      * @param param
@@ -65,10 +50,28 @@ public class CmsHsCodeController extends CmsController {
         //当前用户名称
         String userName=this.getUser().getUserName();
         //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsHsCodeService.getHsCodeInfo(getLang(),channelId,userName,param);
+        Map<String, Object> resultBean=cmsHsCodeService.getHsCodeInfo(getLang(), channelId, userName, param);
         //返回数据的类型
         return success(resultBean);
     }
+
+    /**
+     * HsCode信息检索
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = CmsUrlConstants.TOOLS.PRODUCT.SEARCH_HS_CODE_INFO)
+    public AjaxResponse searchHsCodeInfo(@RequestBody Map param) {
+        //店铺渠道取得
+        String channelId=this.getUser().getSelChannelId();
+        //当前用户名称
+        String userName=this.getUser().getUserName();
+        //取得尺码关系一览初始化
+        Map<String, Object> resultBean=cmsHsCodeService.searchHsCodeInfo(getLang(), channelId, userName, param);
+        //返回数据的类型
+        return success(resultBean);
+    }
+
     /**
      * HsCode信息保存
      * @param param
