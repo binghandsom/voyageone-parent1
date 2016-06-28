@@ -3,36 +3,21 @@ body {
   height: 100%;
 }
 .container {
-  width: 90%;
+  width: 1500px;
 }
-@media (max-width: 1150px) {
+@media (max-width: 1500px) {
   .container {
-    width: 99%;
+    width: 1300px;
   }
 }
-.breadcrumbs h4 {
-  color: #525151;
-}
-.breadcrumb {
-  margin-bottom: 0;
-  padding: 10px 0;
-  position: static;
+@media (max-width: 1350px) {
+  .container {
+    width: 1150px;
+  }
 }
 .content {
-  padding-top: 25px;
+  padding-top: 10px;
   padding-bottom: 25px;
-}
-.header .navbar-brand {
-  padding-left: 0;
-}
-.control-label {
-  font-weight: normal;
-}
-.navbar-brand {
-  margin-top: -10px;
-}
-.navbar-brand img {
-  height: 50px;
 }
 .topbar {
   text-align: right;
@@ -50,7 +35,74 @@ body {
 .form-inline .control-label {
   margin-left: 15px;
 }
+.form-inline .form-group:first-child .control-label {
+  margin-left: 0;
+}
 .table-vo thead th {
   background-color: #4b7c9e;
   color: white;
+}
+.header {
+  border-bottom: 1px solid #eeeeee;
+}
+.header .navbar {
+  min-height: 0;
+}
+.header .navbar-header {
+  margin-top: -17px;
+}
+.header .navbar-brand {
+  padding-left: 0;
+  margin-top: -10px;
+}
+.header .navbar-brand img {
+  height: 50px;
+}
+.header .navbar-nav .dropdown.open .dropdown-toggle {
+  background-color: transparent;
+}
+.header .navbar-nav .dropdown-toggle {
+  padding: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+.header .navbar-nav .dropdown-toggle:after {
+  font-family: FontAwesome;
+  content: "\f107";
+  margin-left: 10px;
+}
+.header .navbar-nav .dropdown-menu {
+  border-top: solid 2px #72c02c;
+}
+.header .navbar-nav .dropdown-menu li a {
+  padding: 5px 10px;
+}
+.navbar-default {
+  margin-bottom: 0;
+  border: 0;
+  background-color: transparent;
+}
+@media (min-width: 992px) {
+  .header .navbar-nav {
+    float: right;
+  }
+}
+.breadcrumbs {
+  background-color: #fafafa;
+  border-bottom: 1px solid #eeeeee;
+}
+.breadcrumbs h4 {
+  color: #525151;
+}
+.breadcrumb {
+  margin-top: 2px;
+  margin-bottom: 0;
+  padding-right: 0;
+  background: transparent;
+}
+.control-label {
+  font-weight: normal;
+}
+.margin-bottom-10 {
+  margin-bottom: 10px;
 }

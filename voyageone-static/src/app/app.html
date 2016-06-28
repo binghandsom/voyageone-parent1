@@ -7,10 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../assets/css/twitter-bootstrap/3.3.5/css/bootstrap.css">
-    <link rel="stylesheet" href="../assets/css/unify/css/style.css">
     <link rel="stylesheet" href="../assets/css/Simple-Line-Icons/simple-line-icons.css">
     <link rel="stylesheet" href="../assets/css/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="../assets/css/unify/css/themes/default.css">
     <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="../assets/js/angular-block-ui/0.2.1/angular-block-ui.min.css">
     <link rel="stylesheet" href="../assets/js/chosen/1.4.2/chosen.min.css">
@@ -18,13 +16,13 @@
 <body>
 <div class="wrapper">
     <div class="header">
-        <div class="container">
-            <div class="topbar" ng-controller="TopBarController as tbCtrl">
-                <span ng-bind="::tbCtrl.channel.name"></span>
-                <span ng-bind="::tbCtrl.language"></span>
-                <span><a href="">LOG OUT</a></span>
-            </div>
-            <div class="navbar navbar-default">
+        <div class="topbar container" ng-controller="TopBarController as tbCtrl">
+            <span ng-bind="::tbCtrl.channel.name"></span>
+            <span ng-bind="::tbCtrl.language"></span>
+            <span><a href="">LOG OUT</a></span>
+        </div>
+        <div class="navbar navbar-default">
+            <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="app.html">
                         <img src="../assets/img/voyage_one_logo_3.png" alt="VoyageOne">
@@ -76,18 +74,18 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row margin-bottom-10">
                 <div class="col-sm-3">
-                    <button class="btn btn-success">NEW/END SHIPMENT</button>
+                    <button class="btn btn-success btn-sm">NEW/END SHIPMENT</button>
                 </div>
                 <div class="col-sm-3">
                     <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
                 </div>
                 <div class="col-sm-6 text-right form-inline">
-                    <select class="form-control" name="" id="">
+                    <select class="form-control input-sm" name="" id="">
                         <option value="">ORDER BY SKU</option>
                     </select>
-                    <button class="btn btn-default">DOWNLOAD PICKING LIST</button>
+                    <button class="btn btn-default btn-sm">DOWNLOAD PICKING LIST</button>
                 </div>
             </div>
             <div>
