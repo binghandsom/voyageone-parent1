@@ -1,7 +1,7 @@
 define(function (require) {
-    
+
     var _ = require('underscore');
-    
+
     function CommonDataService(root, actions) {
         this.root = root;
         this.actions = actions;
@@ -23,37 +23,47 @@ define(function (require) {
         };
 
         _.each(actions, function (content, key) {
-            
-            var _url, _root, _customCallback;
-            
+
+            var _url, _root, _resolve, _reject;
+
             if (_.isString(content))
                 _url = content;
             else if (_.isObject(content)) {
                 _url = content.url;
-                _customCallback = content.then;
+                _resolve = content.then;
                 _root = content.root;
             }
-            
+
             if (!_url) {
                 console.error('URL is undefined', content);
                 return;
             }
-            
+
             if (_root === false)
                 _root = "";
             else if (_root === null || _root === undefined || _root === true)
                 _root = root;
-            
+
+            if (_.isArray(_resolve)) {
+                _reject = _resolve[1];
+                _resolve = _resolve[0]
+            }
+
+            if (!_.isFunction(_resolve))
+                _resolve = null;
+
             _class.prototype[key] = function (args) {
-                return this.ajaxService.post(_root + _url, args).then(_customCallback || function (res) {
+                return this.ajaxService.post(_root + _url, args).then(
+                    _resolve || function (res) {
                         return res.data;
-                    });
+                    },
+                    _reject || null);
             };
         });
 
         return ['ajaxService', _class];
     };
-    
+
     return {
         testService: new CommonDataService('/test/', {
             action1: 'getSomeData',
