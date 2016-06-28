@@ -706,6 +706,12 @@ SxProductService extends BaseService {
                 }
             }
             // 2016/06/02 Update by desmond end
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
+            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
