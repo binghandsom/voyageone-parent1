@@ -1,9 +1,6 @@
 define(function () {
     return angular.module('vms.topbar', []).controller('TopBarController', (function () {
-        function TopBarController($window,userService, menuService,alert) {
-            //this.language = 'EN';
-            //this.channel = {name: 'JEWELRY'};
-
+        function TopBarController($window,userService, menuService) {
             this.language = '';
             this.userName = '';
             this.selChannel = {};
