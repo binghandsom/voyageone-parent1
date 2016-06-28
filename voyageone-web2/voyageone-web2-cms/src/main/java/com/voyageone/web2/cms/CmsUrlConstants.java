@@ -314,6 +314,7 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
+            String EXPORT = "export";
         }
     }
 

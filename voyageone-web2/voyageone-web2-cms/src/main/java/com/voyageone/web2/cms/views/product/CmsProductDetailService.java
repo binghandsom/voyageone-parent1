@@ -71,6 +71,7 @@ public class CmsProductDetailService extends BaseAppService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+
     @Autowired
     ImageTemplateService imageTemplateService;
 
@@ -594,7 +595,7 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("status", platformInfo.getStatus());
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
                 platformStatus.put("pNumIId",platformInfo.getpNumIId());
-                platformStatus.put("cartName",CartEnums.Cart.getValueByID(platformInfo.getCartId()+"").toString());
+                platformStatus.put("cartName",CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
                 platformList.add(platformStatus);
             });
         }
