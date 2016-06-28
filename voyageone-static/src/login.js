@@ -22,8 +22,6 @@ require([
     'ng-block'
 ], function () {
 
-    alert(1);
-
     angular.module('vo.cms.login', [
         'pascalprecht.translate',
         'blockUI',

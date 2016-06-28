@@ -1,5 +1,7 @@
 package com.voyageone.web2.core.views.menu;
 
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,8 +50,39 @@ public class MenuController extends BaseController {
         userInfo.put("language", getLang());
         userInfo.put("application",getUser().getApplication());
         resultBean.put("userInfo", userInfo);
-        // vendor系统用
-        userInfo.put("channelInfo", getUser().getUserConfig().get("channel_id"));
+
+        // 返回用户信息
+        return success(resultBean);
+    }
+
+    @RequestMapping(CoreUrlConstants.MENU.GET_VENDOR_MENU_HEADER_INFO)
+    public AjaxResponse getVendorMenuHeaderInfo() {
+
+        // 返回Map
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 取得Menu信息
+        List<Map<String, Object>> menuInfo =menuService.getVendorMenuHInfo(getUser());
+        resultBean.put("menuInfo", menuInfo);
+
+        // 获取用户相关信息
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("userName", getUser().getUserName());
+        userInfo.put("selChannel", getUser().getSelChannel());
+        userInfo.put("language", getLang());
+
+        // 如果一个用户对应多了多了channel，把这些加进去
+        List<UserConfigBean> channelList = getUser().getUserConfig().get("channel_id");
+        if (channelList != null && channelList.size() > 1) {
+            List<ChannelConfigEnums.Channel> channels = new ArrayList<>();
+            for (UserConfigBean channelInfo : channelList) {
+                ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(channelInfo.getCfg_val1());
+                channels.add(channel);
+            }
+            userInfo.put("channelList", channels);
+        }
+
+        resultBean.put("userInfo", userInfo);
 
         // 返回用户信息
         return success(resultBean);

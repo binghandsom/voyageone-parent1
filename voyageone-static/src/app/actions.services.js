@@ -75,6 +75,9 @@ define(function (require) {
                     return res.message;
                 }
             }
+        }),
+        menuService: new CommonDataService('/core/home/menu/', {
+            getVendorMenuHeaderInfo: 'getVendorMenuHeaderInfo'
         })
     }
 });
