@@ -348,7 +348,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjectionExt("prodId", "modified", "fields.status", "carts");
+        queryObject.setProjectionExt("prodId", "modified", "fields.status"); // TODO--这里不应该再从fields取status
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -486,29 +486,9 @@ public class ProductService extends BaseService {
             productSkuService.saveSkus(channelId, findModel.getProdId(), skus);
         }
 
-        /**
-         * 更新carts
-         */
-        if (productModel.getCarts().size() > 0) {
-
-            // 设置批量更新条件
-//            Map<String, Object> bulkQueryMap = new HashMap<>();
-//            bulkQueryMap.put("fields.code", productModel.getFields().getCode());
-
-            BasicDBObject queryObj = new BasicDBObject();
-            queryObj.put("fields.code", productModel.getFields().getCode());
-
-            BasicDBObject cartsObj = new BasicDBObject().append("carts", productModel.getCarts());
-            BasicDBObject pushObj = new BasicDBObject().append("$set", cartsObj);
-            cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
-        }
-
 //        if (bulkUpdateList.size() > 0) {
 //            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
 //        }
-
-
-
 
 //        for (CmsBtProductModel_Carts cartInfo : ) {
 //
@@ -555,38 +535,8 @@ public class ProductService extends BaseService {
     }
 
     // jeff 2016/04 change start
-//    private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
-//                                  CmsConstants.ProductStatus aftStatus,
-//                                  String channelId, List<CmsBtProductModel_Group_Platform> platforms, String modifier) {
     public void insertSxWorkLoad(String channelId, CmsBtProductModel cmsProduct, String modifier){
-//        if (befStatus != null && aftStatus != null) {
-//            boolean isNeed = false;
-//            // 从其他状态转为Pending
-//            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
-//                isNeed = true;
-//                // 从Pending转为其他状态
-//                // 在Pending下变更了
-//            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
-//                isNeed = true;
-//            }
-
-//            if (isNeed) {
-//                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-//                model.setChannelId(channelId);
-//                model.setGroupId(groupId);
-//                model.setPublishStatus(0);
-//                model.setCreater(modifier);
-//                model.setModifier(modifier);
-//                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
-
-        List<CmsBtProductModel_Carts> carts = cmsProduct.getCarts();
-
-        // 获得该店铺的上新平台列表
-//        List<Integer> carts = new ArrayList<>();
-//        for(TypeChannelBean typeChannelBean : TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
-//            carts.add(Integer.valueOf(typeChannelBean.getValue()));
-//        }
-
+        List<Integer> carts = cmsProduct.getCartIdList();
         if (carts != null && carts.size() > 0) {
             // 根据商品code获取其所有group信息(所有平台)
             List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getFields().getCode() + "\"}", channelId);
@@ -595,12 +545,12 @@ public class ProductService extends BaseService {
             // 获取所有的可上新的平台group信息
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 
-            for (CmsBtProductModel_Carts cartInfo : carts) {
+            for (Integer cartInfo : carts) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 model.setChannelId(channelId);
-                if(platformsMap.get(cartInfo.getCartId()) != null){
-                    model.setGroupId(platformsMap.get(cartInfo.getCartId()));
-                }else{
+                if (platformsMap.get(cartInfo) != null) {
+                    model.setGroupId(platformsMap.get(cartInfo));
+                } else {
                     CmsBtProductGroupModel newGroup;
                     try {
                         newGroup = (CmsBtProductGroupModel) BeanUtils.cloneBean(groups.get(0));
@@ -610,12 +560,12 @@ public class ProductService extends BaseService {
                     newGroup.set_id(null);
                     newGroup.setChannelId(channelId);
                     newGroup.setNumIId(null);
-                    newGroup.setCartId(cartInfo.getCartId());
+                    newGroup.setCartId(cartInfo);
                     newGroup.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
                     cmsBtProductGroupDao.insert(newGroup);
                     model.setGroupId(newGroup.getGroupId());
                 }
-                model.setCartId(cartInfo.getCartId());
+                model.setCartId(cartInfo);
                 model.setPublishStatus(0);
                 model.setCreater(modifier);
                 model.setModifier(modifier);
@@ -628,7 +578,6 @@ public class ProductService extends BaseService {
                 $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
             }
         }
-//        }
     }
     // jeff 2016/04 change end
 
@@ -891,11 +840,6 @@ public class ProductService extends BaseService {
             sbQuery.append(",");
         }
 
-        if (!StringUtils.isEmpty(cartId) && !"1".equals(cartId)) {
-            sbQuery.append(MongoUtils.splicingValue("carts.cartId", Integer.valueOf(cartId)));
-            sbQuery.append(",");
-        }
-
         if (!StringUtils.isEmpty(sbQuery.toString())) {
             queryObject.setQuery("{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}");
         }
@@ -1088,57 +1032,10 @@ public class ProductService extends BaseService {
         return skuLogicQty;
     }
 
-    /**
-     * 返回已经存在的及新生成的carts数据
-     *
-     * @param skus  产品SKU列表
-     * @param carts 寄存Cart列表
-     * @return List<CmsBtProductModel_Carts>
-     */
-    public List<CmsBtProductModel_Carts> getCarts(List<CmsBtProductModel_Sku> skus, List<CmsBtProductModel_Carts> carts) {
-
-        List<CmsBtProductModel_Carts> newCarts = skus
-                .stream()
-                .map(CmsBtProductModel_Sku::getSkuCarts)
-                .flatMap(List::stream)
-                .distinct()
-                .filter(byCartId(carts))
-                .map(this::toProductModelCart)
-                .collect(Collectors.toList());
-
-        newCarts.addAll(carts);
-
-        return newCarts;
-    }
-
-    /**
-     * 返回在不在既存carts中的新cart过滤器
-     */
-    private Predicate<Integer> byCartId(List<CmsBtProductModel_Carts> carts) {
-        return i -> {
-            for (CmsBtProductModel_Carts cart : carts) {
-                if (Objects.equals(i, cart.getCartId()))
-                    return false;
-            }
-            return true;
-        };
-    }
-
-    /**
-     * 返回新的cart信息
-     */
-    private CmsBtProductModel_Carts toProductModelCart(Integer i) {
-        CmsBtProductModel_Carts newCart = new CmsBtProductModel_Carts();
-        newCart.setCartId(i);
-        newCart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-        return newCart;
-    }
-
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier){
         return updateProductPlatform(channelId,prodId,platformModel,modifier,false);
     }
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk){
-
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if(isModifiedChk){
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
@@ -1168,22 +1065,8 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
-        if(CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())){
-            if(oldProduct.getCarts().stream().filter(cart->cart.getCartId() == platformModel.getCartId()).collect(Collectors.toList()).size() == 0)
-            {
-                CmsBtProductModel_Carts cmsBtProductModel_carts = new CmsBtProductModel_Carts();
-                cmsBtProductModel_carts.setCartId(platformModel.getCartId());
-                cmsBtProductModel_carts.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-                updateMap = new HashMap<>();
-                updateMap.put("carts" , cmsBtProductModel_carts);
-                model = new BulkUpdateModel();
-                model.setUpdateMap(updateMap);
-                model.setQueryMap(queryMap);
-                bulkList = new ArrayList<>();
-                bulkList.add(model);
-                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$addToSet",true);
-            }
-            insertSxWorkLoad(channelId,new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())),new ArrayList<Integer>(Arrays.asList(platformModel.getCartId())),modifier);
+        if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
+            insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), new ArrayList<Integer>(Arrays.asList(platformModel.getCartId())), modifier);
         }
         return platformModel.getModified();
     }
