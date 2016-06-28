@@ -25,9 +25,6 @@ body {
   color: #939393;
   padding-top: 10px;
 }
-.topbar span {
-  margin-left: 15px;
-}
 .form-text,
 .form-text a {
   line-height: 32px;
@@ -118,6 +115,20 @@ input.form-control {
 }
 .btn {
   padding: 3px 10px;
+}
+.panel {
+  margin-bottom: 10px;
+}
+.dropdown-toggle {
+  cursor: pointer;
+}
+.dropdown-menu-sm li {
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.dropdown-menu-sm li:hover {
+  background-color: #337ab7;
+  color: white;
 }
 .margin-bottom-10 {
   margin-bottom: 10px;

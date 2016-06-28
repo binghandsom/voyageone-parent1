@@ -16,12 +16,20 @@
 <body>
 <div class="wrapper">
     <div class="header">
-        <div class="topbar" ng-controller="TopBarController as tbCtrl">
-            <div class="container">
-                <span ng-bind="::tbCtrl.channel.name"></span>
-                <span ng-bind="::tbCtrl.language"></span>
-                <span><a href="">LOG OUT</a></span>
-            </div>
+        <div class="topbar" ng-controller="TopBarController as topbar">
+            <ul class="container list-inline">
+                <li uib-dropdown>
+                    <span uib-dropdown-toggle ng-bind="::topbar.channel.name"></span>
+                    <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
+                        <li>1</li>
+                        <li>2</li>
+                        <li>3</li>
+                    </ul>
+                </li>
+                <li ng-bind="::topbar.language"></li>
+                <li>Jonas</li>
+                <li>(<a href="">LOG OUT</a>)</li>
+            </ul>
         </div>
         <div class="navbar navbar-default">
             <div class="container">
