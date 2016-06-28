@@ -23,9 +23,7 @@ body {
   text-align: right;
   font-size: 12px;
   color: #939393;
-}
-.topbar span {
-  margin-left: 15px;
+  padding-top: 10px;
 }
 .form-text,
 .form-text a {
@@ -39,7 +37,7 @@ body {
   margin-left: 0;
 }
 .table-vo thead th {
-  background-color: #4b7c9e;
+  background-color: #339be6;
   color: white;
 }
 .header {
@@ -53,7 +51,7 @@ body {
 }
 .header .navbar-brand {
   padding-left: 0;
-  margin-top: -10px;
+  margin-top: -15px;
 }
 .header .navbar-brand img {
   height: 50px;
@@ -76,6 +74,11 @@ body {
 }
 .header .navbar-nav .dropdown-menu li a {
   padding: 5px 10px;
+}
+@media (min-width: 768px) {
+  .navbar > .container .navbar-brand {
+    margin-left: -5px;
+  }
 }
 .navbar-default {
   margin-bottom: 0;
@@ -112,6 +115,20 @@ input.form-control {
 }
 .btn {
   padding: 3px 10px;
+}
+.panel {
+  margin-bottom: 10px;
+}
+.dropdown-toggle {
+  cursor: pointer;
+}
+.dropdown-menu-sm li {
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.dropdown-menu-sm li:hover {
+  background-color: #337ab7;
+  color: white;
 }
 .margin-bottom-10 {
   margin-bottom: 10px;
