@@ -563,6 +563,11 @@ public class ChannelConfigEnums {
         ShoeZoo("023"),
 
         /**
+         * OverStock
+         */
+        OverStock("024"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
@@ -628,6 +633,7 @@ public class ChannelConfigEnums {
                 case "021": return BHFO_MINIMALL;
                 case "022": return DFO;
                 case "023": return ShoeZoo;
+                case "024": return OverStock;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;

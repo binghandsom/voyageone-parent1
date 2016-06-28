@@ -314,6 +314,7 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
+            String EXPORT = "export";
         }
     }
 
@@ -562,6 +563,21 @@ public interface CmsUrlConstants {
             String CANCEL_TASK = "cancelTask";
 
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String ASSIGN = "assign";
+
+            String SAVE = "save";
+
+            String SUBMIT = "submit";
+
+            String CANCEL = "cancel";
+
+            String GET = "get";
         }
     }
 

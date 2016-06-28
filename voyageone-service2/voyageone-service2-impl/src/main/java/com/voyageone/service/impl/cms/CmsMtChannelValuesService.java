@@ -23,6 +23,12 @@ public class CmsMtChannelValuesService {
     @Autowired
     private CmsMtChannelValuesDaoExt cmsMtChannelValuesDaoExt;
 
+    public static final int BRAND = 0;
+    public static final int SIZE_TYPE = 1;
+    public static final int PRODUCT_TYPE = 2;
+    public static final int HS_CODE_PRIVATE = 3;
+    public static final int HS_CODE_CROP = 4;
+
     /**
      * 插入ChannelValues
      *

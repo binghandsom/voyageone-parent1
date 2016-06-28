@@ -14,6 +14,7 @@ define([
             this.hsCodeStatus = "0";
             this.hsCodeList = [];
             this.hsCodeValue = [];
+            this.status = false;
         }
 
         HsCodeController.prototype = {

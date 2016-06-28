@@ -19,6 +19,7 @@
 * clientProductURL -> feed的商品官网
 * shortDescription
 * longDescription
+* codeDiff  -> 20160627,商品特质英文(颜色/口味/香型等),主要用于翻译页面使用
 * updFlg     -> (用于feed->master的导入)0:等待导入,1:导入成功,2:导入失败,3:不导入,9:新品
 * updMessage -> (用于feed->master的导入)如果导入失败,写明原因
 * importFlg     -> (用于feed导入)1:导入成功,2:导入失败
