@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.vms.VmsBtShipmentDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `shipment_name`, `shipped_date`, `expressCompany`, `tracking_no`, 
+        `comment`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`, `creater`, 
+        `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_shipment
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.vms.VmsBtShipmentModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into vms_bt_shipment
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="shipmentName != null" >
+                `shipment_name`,
+            </if>
+            <if test="shippedDate != null" >
+                `shipped_date`,
+            </if>
+            <if test="expresscompany != null" >
+                `expressCompany`,
+            </if>
+            <if test="trackingNo != null" >
+                `tracking_no`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+            <if test="arrivedTime != null" >
+                `arrived_time`,
+            </if>
+            <if test="arriver != null" >
+                `arriver`,
+            </if>
+            <if test="receivedTime != null" >
+                `received_time`,
+            </if>
+            <if test="receiver != null" >
+                `receiver`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="shipmentName != null" >
+                #{shipmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippedDate != null" >
+                #{shippedDate,jdbcType=VARCHAR},
+            </if>
+            <if test="expresscompany != null" >
+                #{expresscompany,jdbcType=VARCHAR},
+            </if>
+            <if test="trackingNo != null" >
+                #{trackingNo,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="arrivedTime != null" >
+                #{arrivedTime,jdbcType=VARCHAR},
+            </if>
+            <if test="arriver != null" >
+                #{arriver,jdbcType=VARCHAR},
+            </if>
+            <if test="receivedTime != null" >
+                #{receivedTime,jdbcType=VARCHAR},
+            </if>
+            <if test="receiver != null" >
+                #{receiver,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtShipmentModel" >
+        update vms_bt_shipment
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="shipmentName != null" >
+                `shipment_name` = #{shipmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippedDate != null" >
+                `shipped_date` = #{shippedDate,jdbcType=VARCHAR},
+            </if>
+            <if test="expresscompany != null" >
+                `expressCompany` = #{expresscompany,jdbcType=VARCHAR},
+            </if>
+            <if test="trackingNo != null" >
+                `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="arrivedTime != null" >
+                `arrived_time` = #{arrivedTime,jdbcType=VARCHAR},
+            </if>
+            <if test="arriver != null" >
+                `arriver` = #{arriver,jdbcType=VARCHAR},
+            </if>
+            <if test="receivedTime != null" >
+                `received_time` = #{receivedTime,jdbcType=VARCHAR},
+            </if>
+            <if test="receiver != null" >
+                `receiver` = #{receiver,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from vms_bt_shipment
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_shipment
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentName != null" >
+                and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null" >
+                and `shipped_date` = #{shippedDate,jdbcType=VARCHAR}
+            </if>
+            <if test="expresscompany != null" >
+                and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
+            </if>
+            <if test="trackingNo != null" >
+                and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="arrivedTime != null" >
+                and `arrived_time` = #{arrivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="arriver != null" >
+                and `arriver` = #{arriver,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null" >
+                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="receiver != null" >
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_shipment
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentName != null" >
+                and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null" >
+                and `shipped_date` = #{shippedDate,jdbcType=VARCHAR}
+            </if>
+            <if test="expresscompany != null" >
+                and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
+            </if>
+            <if test="trackingNo != null" >
+                and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="arrivedTime != null" >
+                and `arrived_time` = #{arrivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="arriver != null" >
+                and `arriver` = #{arriver,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null" >
+                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="receiver != null" >
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>

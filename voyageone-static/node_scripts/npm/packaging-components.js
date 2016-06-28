@@ -16,9 +16,9 @@ glob('src/shared/ng/*/*.js', function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    code += '  require(\'shared/ng/modules\');\n';
+    code += '  require(\'/shared/ng/modules.js\');\n';
 
-    files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('src/', '/')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
     
@@ -42,7 +42,7 @@ glob('src/shared/js/*/*.js', function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    files.map(file => file.replace('src/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('src/', '/')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
     
