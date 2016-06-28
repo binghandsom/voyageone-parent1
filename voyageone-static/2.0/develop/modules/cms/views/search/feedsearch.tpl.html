@@ -311,7 +311,7 @@
                                         </label>
                                     </td>
                                     <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
-                                        <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                                        <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                                     </td>
                                     <td style="overflow: hidden;" class="text-left mfb-xxt">{{feedInfo.category}}</td>
                                     <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
