@@ -614,7 +614,7 @@ SxProductService extends BaseService {
 //        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         List<BaseMongoMap<String, Object>> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         // modified by morse.lu 2016/06/13 end
-        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
