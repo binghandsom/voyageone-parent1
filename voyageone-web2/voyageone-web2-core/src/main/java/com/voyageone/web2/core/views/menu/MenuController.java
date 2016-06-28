@@ -79,10 +79,12 @@ public class MenuController extends BaseController {
         if (channelList != null && channelList.size() > 1) {
             List<Map<String, String>> channels = new ArrayList<>();
             for (UserConfigBean channel : channelList) {
-                Map<String, String> channelMapInfo = new HashMap<>();
-                channelMapInfo.put("id", channel.getCfg_val1());
-                channelMapInfo.put("name",  ChannelConfigEnums.Channel.valueOfId(channel.getCfg_val1()).getFullName());
-                channels.add(channelMapInfo);
+                if (!getUser().getSelChannel().getId().equals(channel.getCfg_val1())) {
+                    Map<String, String> channelMapInfo = new HashMap<>();
+                    channelMapInfo.put("id", channel.getCfg_val1());
+                    channelMapInfo.put("name", ChannelConfigEnums.Channel.valueOfId(channel.getCfg_val1()).getFullName());
+                    channels.add(channelMapInfo);
+                }
             }
             userInfo.put("channelList", channels);
         }
@@ -105,7 +107,7 @@ public class MenuController extends BaseController {
     @RequestMapping(CoreUrlConstants.MENU.SET_CHANNEL)
     public AjaxResponse setChannel(@RequestBody Map<String, Object> params) {
 
-        userService.setSelectChannel(getUser(), (String) params.get("channelId"), "", "vms");
+        userService.setSelectChannel(getUser(), (String) params.get("channelId"), "99", "vms");
 
         // 返回用户信息
         return success(true);

@@ -23,6 +23,14 @@ define(function () {
 
         TopBarController.prototype = {
 
+            setChannel: function (channelId) {
+                var main = this;
+                main.menuService.setChannel({"channelId":channelId})
+                    .then(function () {
+                        main.$window.location = '/app/app.html';
+                    });
+            },
+
             logout: function () {
                 var main = this;
                 main.userService.logout('/core/access/user/logout')

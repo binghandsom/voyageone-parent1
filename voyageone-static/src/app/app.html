@@ -21,13 +21,11 @@
                 <li uib-dropdown>
                     <span uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
                     <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
+                        <li ng-repeat="channel in topbar.channelList" ng-click="topbar.setChannel(channel.id)" ng-bind="::channel.name">
+                        </li>
                     </ul>
                 </li>
-                <li ng-bind="::topbar.language"></li>
-                <li>{{topbar.userName}}</li>
+                <li ng-bind="topbar.userName"></li>
                 <li>(<a href ng-click="topbar.logout()">LOG OUT</a>)</li>
             </ul>
         </div>

@@ -80,7 +80,8 @@ define(function (require) {
             logout: 'logout'
         }),
         menuService: new CommonDataService('/core/home/menu/', {
-            getVendorMenuHeaderInfo: 'getVendorMenuHeaderInfo'
+            getVendorMenuHeaderInfo: 'getVendorMenuHeaderInfo',
+            setChannel: 'setChannel'
         })
     }
 });
