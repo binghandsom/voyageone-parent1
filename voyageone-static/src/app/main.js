@@ -17,8 +17,9 @@ require.config({
         'chosen': '../assets/js/chosen/1.4.2/chosen.jquery',
         'angular-chosen': '../assets/js/angular-chosen/1.2.0/angular-chosen',
         'angular-animate': '../assets/js/angular.js/1.5.6/angular-animate',
-        'angular-ngStorage': '../assets/js/angular-ngStorage/ngStorage',
+        'ngStorage': '../assets/js/ngstorage/0.3.10/ngStorage',
         'angular-file-upload': '../assets/js/angular-file-upload/2.2.0/angular-file-upload',
+        'md5': '../assets/js/angular-md5/0.1.8/angular-md5',
         'vms': 'vms.module'
     },
     shim: {
@@ -31,7 +32,7 @@ require.config({
         'angular-translate': ['angular'],
         'angular-block-ui': ['angular'],
         'angular-ui-bootstrap': ['angular'],
-        'angular-ngStorage': ['angular'],
+        'ngStorage': ['angular'],
         'angular-file-upload': ['angular'],
         'angular': {exports: 'angular', deps: ['jquery']},
         'jquery': {exports: 'jQuery'},
@@ -50,7 +51,9 @@ require.config({
             'angular-block-ui',
             'angular-ui-bootstrap',
             'angular-chosen',
-            'vo-libs-angular'
+            'ngStorage',
+            'vo-libs-angular',
+            'md5'
         ]
     },
     deps: ['vms']

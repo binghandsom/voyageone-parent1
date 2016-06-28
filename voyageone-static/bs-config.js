@@ -1,6 +1,9 @@
-var morgan = require('morgan');
-var less = require('less');
-var fs = require('fs');
+var morgan = require('morgan'),
+    less = require('less'),
+    fs = require('fs'),
+    proxy = require('http-proxy-middleware');
+
+var proxyMiddleware = proxy('http://localhost:8080');
 
 module.exports = {
     server: {
@@ -32,6 +35,11 @@ module.exports = {
     browser: "google chrome",
     notify: false,
     middleware: [
-        morgan('dev')
+        morgan('dev'),
+        function (req, res, next) {
+            if (req.method !== 'POST')
+                return next();
+            return proxyMiddleware(req, res, next);
+        }
     ]
 };

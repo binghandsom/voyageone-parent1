@@ -2,6 +2,12 @@ define(function (require) {
 
     var _ = require('underscore');
 
+    function actionHashcode(md5, root, action, args) {
+        var argsJson = angular.toJson(args);
+        var md5Arg = root + action + argsJson;
+        return '_' + md5.createHash(md5Arg);
+    }
+
     function CommonDataService(root, actions) {
         this.root = root;
         this.actions = actions;
@@ -18,13 +24,17 @@ define(function (require) {
         if (!actions)
             return null;
 
-        _class = function (ajaxService) {
+        _class = function (ajaxService, $localStorage, md5, $q) {
             this.ajaxService = ajaxService;
+            this.$storage = $localStorage;
+            this.md5 = md5;
+            this.$q = $q;
+            this.cached = {};
         };
 
         _.each(actions, function (content, key) {
 
-            var _url, _root, _resolve, _reject;
+            var _url, _root, _resolve, _reject, _cacheable;
 
             if (_.isString(content))
                 _url = content;
@@ -32,6 +42,7 @@ define(function (require) {
                 _url = content.url;
                 _resolve = content.then;
                 _root = content.root;
+                _cacheable = !!content.localstorage;
             }
 
             if (!_url) {
@@ -50,18 +61,41 @@ define(function (require) {
             }
 
             if (!_.isFunction(_resolve))
-                _resolve = null;
+                _resolve = function (res) {
+                    return res.data;
+                };
 
-            _class.prototype[key] = function (args) {
-                return this.ajaxService.post(_root + _url, args).then(
-                    _resolve || function (res) {
-                        return res.data;
-                    },
-                    _reject || null);
+            _class.prototype[key] = !_cacheable ? function (args) {
+                return this.ajaxService.post(_root + _url, args).then(_resolve, _reject);
+            } : function (args) {
+                var deferred, result;
+                var storage = this.$storage,
+                    hash = actionHashcode(this.md5, root, key, args),
+                    promise = this.cached[hash];
+                if (promise)
+                    return promise;
+                deferred = this.$q.defer();
+                promise = deferred.promise;
+                this.cached[hash] = promise;
+
+                result = storage[hash];
+                if (result !== null || result !== undefined)
+                    deferred.resolve(result);
+                else
+                    this.ajaxService.post(_root + _url, args).then(function (res) {
+                        result = _resolve(res);
+                        storage[hash] = result;
+                        deferred.resolve(result);
+                    }, function (res) {
+                        result = _reject(res);
+                        deferred.reject(result);
+                    });
+
+                return promise;
             };
         });
 
-        return ['ajaxService', _class];
+        return ['ajaxService', '$localStorage', 'md5', _class];
     };
 
     window.CommonDataService = CommonDataService;

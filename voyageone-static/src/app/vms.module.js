@@ -13,11 +13,13 @@ define(function (require) {
         'ngRoute',
         'ngAnimate',
         'ngCookies',
+        'ngStorage',
         'pascalprecht.translate',
         'blockUI',
         'ui.bootstrap',
         'vo.ng',
         'localytics.directives',
+        'angular-md5',
         'vms.menu',
         'vms.topbar',
         'vms.popups'
