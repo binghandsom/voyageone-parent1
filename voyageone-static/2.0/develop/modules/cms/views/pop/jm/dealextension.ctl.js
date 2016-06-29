@@ -19,38 +19,15 @@ define([
         };
 
         $scope.ok=function() {
-            //if (context.isBatch) {
-            //    updateDealEndTime();
-            //}
-            //else {
                 updateDealEndTimeAll();
-            //}
         }
-        var updateDealEndTime=function() {
-            $scope.model.productIdList = context.getSelectedProductIdList();
-            if (! $scope.model.productIdList ||  $scope.model.productIdList.length == 0) {
-                $scope.$close();
-                return;
-            }
-            $scope.model.dealEndTime=formatToStr(dealEndTime);
-            jmPromotionDetailService.updateDealEndTime($scope.model).then(function () {
-                $scope.$close();
-            }, function (res) {
-            })
-        };
 
         var updateDealEndTimeAll=function(){
             jmPromotionDetailService.updateDealEndTimeAll( $scope.model).then(function (res) {
-                //for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
-                //
-                //    $scope.vm.modelList[i].synchState=1;
-                //
-                //}
                 if (!res.data.result) {
                     alert(res.data.msg);
                     return;
                 }
-                $scope.search();
                 $scope.$close();
             }, function (res) {
             })

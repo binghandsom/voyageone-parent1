@@ -442,7 +442,9 @@ define([
             popups.openJmPromotionDetail({id: $routeParams.parentId});
         }
         $scope.openDealExtensionWin = function () {
-            popups.openDealExtension($scope.parentModel);
+            popups.openDealExtension($scope.parentModel).then(function () {
+                $scope.search();
+            });;
         }
 
         $scope.getErrorMsg = function (errorMsg) {
