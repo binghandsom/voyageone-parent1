@@ -1,11 +1,10 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameterNew;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -22,7 +21,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
-import org.mortbay.util.ajax.AjaxFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -222,7 +220,7 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     //更新PromotionProduct 目前只更新 limit
-    public int updatePromotionProduct(UpdatePromotionProductParameter parameter,String userName) {
+    public int updatePromotionProduct(UpdatePromotionProductParameterNew parameter, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
         if (model.getLimit() != parameter.getLimit()) {
             model.setLimit(parameter.getLimit());
