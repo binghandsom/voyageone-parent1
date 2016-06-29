@@ -109,6 +109,11 @@ s-complex[multi] s-toolbox {
     padding-left: 5px;
 }
 
+.s-not-required:after {
+    content: '\00a0';
+    padding-left: 6px;
+}
+
 s-tip {
     display: block;
     color: #ee903d;

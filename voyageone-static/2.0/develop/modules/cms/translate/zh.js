@@ -634,7 +634,6 @@ define(function () {
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING": "商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED": "等待设置税号数",
         "TXT_HS_CODE_STATUS": "税号状态",
-        "TXT_PRODUCT_CODE":"产品code",
         "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT": "税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
@@ -717,6 +716,8 @@ define(function () {
         "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
         "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
         "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
-        "TXT_ITEM_CODE": "商品Code"
+        "TXT_FUZZY_SEARCH_PLACE_HOLDER": "模糊查询(ProductCode，商品名称)",
+        "TXT_PRODUCT_EN_NAME": "商品名称(英语)",
+        "TXT_PRODUCT_CN_NAME": "商品名称(中文)"
     };
 });
