@@ -3,8 +3,6 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
-import org.apache.commons.collections.IteratorUtils;
-import org.jongo.Aggregate;
 
 import java.util.Iterator;
 import java.util.List;

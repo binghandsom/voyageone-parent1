@@ -5,7 +5,6 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.common.redis.CacheHelper;
-import de.undercouch.bson4jackson.io.StaticBuffers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ public class Channels {
 
     private static final Class selfClass = Channels.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString();

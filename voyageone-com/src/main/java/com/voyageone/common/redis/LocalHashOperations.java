@@ -2,7 +2,6 @@ package com.voyageone.common.redis;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisOperations;
@@ -99,7 +98,7 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     private synchronized void createCache(K key) {
         if (!localCache.containsKey(key)) {
-            Map<HK, HV> map = new HashedMap();
+            Map<HK, HV> map = new HashMap<>();
             localCache.put(key, map);
         }
     }

@@ -28,7 +28,7 @@ public class TypeChannels {
 
     private static final Class selfClass = TypeChannels.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
 
     /* redis key */
