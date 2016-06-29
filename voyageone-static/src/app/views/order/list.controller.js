@@ -46,6 +46,13 @@ define(['vms'], function (vms) {
             ];
         }
 
+        OrderListController.prototype.toggleAll = function () {
+            var collapse = (this.collapse = !this.collapse);
+            this.data.forEach(function (item) {
+                item.collapse = collapse;
+            });
+        };
+
         return OrderListController;
 
     }()));
