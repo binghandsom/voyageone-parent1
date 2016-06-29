@@ -15,7 +15,7 @@ public class TranslationTaskBean {
     private String productCode;
 
     TranslationTaskBean_CommonFields commonFields;
-    List<TranslationTaskBean_CustomProps> CustomProps;
+    List<TranslationTaskBean_CustomProps> customProps;
 
 
     public long getProdId() {
@@ -43,10 +43,10 @@ public class TranslationTaskBean {
     }
 
     public List<TranslationTaskBean_CustomProps> getCustomProps() {
-        return CustomProps;
+        return customProps;
     }
 
     public void setCustomProps(List<TranslationTaskBean_CustomProps> customProps) {
-        CustomProps = customProps;
+        this.customProps = customProps;
     }
 }
