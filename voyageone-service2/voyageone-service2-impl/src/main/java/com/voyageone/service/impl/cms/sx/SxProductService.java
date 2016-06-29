@@ -19,9 +19,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -81,8 +78,7 @@ import java.util.stream.Collectors;
  * @author morse.lu 16/04/19
  */
 @Service
-public class
-SxProductService extends BaseService {
+public class SxProductService extends BaseService {
 
     /**
      * upd_flg=0,需要上传(重新上传)
@@ -102,8 +98,7 @@ SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
-    @Autowired
-    private ImageCreateService imageCreateService;
+
     @Autowired
     private FeedCustomPropService customPropService;
     @Autowired
@@ -1979,20 +1974,24 @@ SxProductService extends BaseService {
 
     // 20160513 tom 图片服务器切换 START
     public String getImageByTemplateId(String channelId, String imageTemplate, String... imageName) throws Exception {
-
-        ImageCreateGetRequest request = new ImageCreateGetRequest();
-        request.setChannelId(channelId);
-        request.setTemplateId(Integer.parseInt(imageTemplate));
-        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-        String[] vPara = imageName;
-        request.setVParam(vPara);
-        ImageCreateGetResponse response = null;
-        try {
-            response = imageCreateService.getImage(request);
-            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-        } catch (Exception e) {
-            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
-        }
+        return null;
+        /**
+         * REMOVE LiquidFire
+         * liang 2016/06/29
+         */
+//        ImageCreateGetRequest request = new ImageCreateGetRequest();
+//        request.setChannelId(channelId);
+//        request.setTemplateId(Integer.parseInt(imageTemplate));
+//        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+//        String[] vPara = imageName;
+//        request.setVParam(vPara);
+//        ImageCreateGetResponse response = null;
+//        try {
+//            response = imageCreateService.getImage(request);
+//            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+//        } catch (Exception e) {
+//            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
+//        }
     }
     // 20160513 tom 图片服务器切换 END
 
