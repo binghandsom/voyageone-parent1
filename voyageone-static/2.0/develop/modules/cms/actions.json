@@ -284,7 +284,8 @@
             "root": "/cms/system/category",
             "getCategoryList": "getCategoryList",
             "getCategoryDetail": "getCategoryDetail",
-            "updateCategorySchema": "updateCategorySchema"
+            "updateCategorySchema": "updateCategorySchema",
+            "getNewsCategoryList":"getNewsCategoryList"
           },
           "categorySettingService": {
             "root": "/cms/system/category/setting",

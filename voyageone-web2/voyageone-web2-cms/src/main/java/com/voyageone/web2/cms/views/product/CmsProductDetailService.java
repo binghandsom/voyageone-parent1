@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -18,6 +19,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
@@ -25,6 +27,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -33,6 +36,8 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -77,6 +82,9 @@ public class CmsProductDetailService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private ImageTemplateService imageTemplateService;
+
+    @Autowired
+    private CategoryTreeAllService categoryTreeAllService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -524,7 +532,7 @@ public class CmsProductDetailService extends BaseAppService {
                 updObj.setQuery("{'prodId':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
                 updObj.setQueryParameters(productIds);
             }
-            if (pCatId == null || pCatPath == null ) {
+            if (pCatId == null || pCatPath == null) {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath);
             } else {
@@ -576,13 +584,13 @@ public class CmsProductDetailService extends BaseAppService {
         List<Map<String, Object>> platformList = new ArrayList<>();
         if (cmsBtProduct.getPlatforms() != null) {
             cmsBtProduct.getPlatforms().forEach((s, platformInfo) -> {
-                Map<String,Object> platformStatus = new HashMap<String, Object>();
+                Map<String, Object> platformStatus = new HashMap<String, Object>();
                 platformStatus.put("cartId", platformInfo.getCartId());
                 platformStatus.put("pStatus", platformInfo.getpStatus());
                 platformStatus.put("status", platformInfo.getStatus());
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
-                platformStatus.put("pNumIId",platformInfo.getpNumIId());
-                platformStatus.put("cartName",CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
+                platformStatus.put("pNumIId", platformInfo.getpNumIId());
+                platformStatus.put("cartName", CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
                 platformList.add(platformStatus);
             });
         }
@@ -600,13 +608,26 @@ public class CmsProductDetailService extends BaseAppService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
-        CmsBtProductModel oldProduct = productService.getProductById(channelId,prodId);
-        if(oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())){
-
+        CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
+        if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
+            changeMastCategory(commonModel, oldProduct,modifier);
         }
-
-
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+    }
+
+    private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
+        List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatId(commonModel.getCatPath()).getPlatformCategory();
+        if(platformCategory == null || platformCategory.size() == 0) return;
+        oldProduct.getPlatforms().forEach((cartId, platform) -> {
+            if(platform.getFields() == null || platform.getFields().size() == 0){
+                List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase( Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
+                if(temp != null && temp.size()>0 && !StringUtil.isEmpty(temp.get(0).getCatId())){
+                    platform.setpCatId(temp.get(0).getCatId());
+                    platform.setpCatPath(temp.get(0).getCatPath());
+                    productService.updateProductPlatform(oldProduct.getChannelId(),oldProduct.getProdId(),platform,modifier);
+                }
+            }
+        });
     }
 
     /**

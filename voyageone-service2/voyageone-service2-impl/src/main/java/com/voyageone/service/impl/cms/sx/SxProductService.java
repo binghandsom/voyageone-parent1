@@ -2242,4 +2242,106 @@ public class SxProductService extends BaseService {
         throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
+    /**
+     * 上新成功或者失败之后回写group, product,ims_bt_product表状态并记录履历
+     *
+     * 1.一般店铺上新时成功时更新字段 (失败时只更新product表的pPublishError字段)
+     * 1-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
+     *     numIId,
+     *     platformPid（有的话更新）,
+     *     publishTime,
+     *     onSaleTime，
+     *     inStockTime，
+     *     platformStatus(Onsale/InStock)
+     * 1-2.MongoDB的product表中下列字段的值，没找到不新插入新的记录
+     *     pNumIId，
+     *     pProductId（有的话更新），
+     *     pPublishTime，
+     *     pPublishError（上新失败"Error"，上新成功清空），
+     *     pStatus(Onsale/InStock)
+     * 1-3.MySql的ims_bt_product表中下列字段的值，没找到插入新的记录
+     *     NumIId，
+     *     QuantityUpdateType（s:sku级别, p:product级别）
+     * 1-4.MySql.ims_bt_log表中插入履历信息
+     *
+     * 2.子店铺上新到US JOI上新成功时更新字段
+     * 2-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
+     *     publishTime,
+     *     inStockTime,
+     *     platformStatus：InStock
+     * 2-2.MongoDB的product表中下列字段的值，没找到不新插入新的记录
+     *     pPublishTime，
+     *     pStatus：InStock
+     *
+     * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
+     * @param sxData SxData 上新数据
+     * @param uploadStatus boolean 上新结果(成功:true,失败:false)
+     * @param numIId String 商品id
+     * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
+     * @param numIId String 商品id
+     */
+    private void doUploadFinalProc(boolean isUsJoi, SxData sxData, boolean uploadStatus,
+                                   String numIId, CmsConstants.PlatformStatus platformStatus,
+                                   String platformPid, String modifier) {
+
+        // 取得变更前的product group表数据
+        CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
+                sxData.getPlatform().getGroupId());
+        if (beforeProductGroup == null) {
+            $error("回写上新结果状态之前，没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
+                    sxData.getChannelId(), sxData.getPlatform().getGroupId());
+            return;
+        }
+
+        // 设置共通属性
+        sxData.getPlatform().setNumIId(numIId);
+        if (!isUsJoi) {
+            // 一般店铺上新时 (默认为下架)
+            platformStatus = (platformStatus == null) ? CmsConstants.PlatformStatus.InStock : platformStatus;
+            sxData.getPlatform().setPlatformStatus(platformStatus);
+        } else {
+            // USJoi店铺上新时,固定设为下架
+            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+        }
+        if (!StringUtils.isEmpty(platformPid)) {
+            sxData.getPlatform().setModifier(platformPid);
+        }
+        sxData.getPlatform().setModifier(modifier);
+
+        // 第一次上新的时候
+        if (StringUtils.isEmpty(beforeProductGroup.getPublishTime())) {
+            sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+        }
+
+        // 第一次变成inStock的时候(""->"InStock")，设置InStockTime
+        if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
+                && CmsConstants.PlatformStatus.InStock.equals(sxData.getPlatform().getPlatformStatus())) {
+            sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
+        }
+
+        // 上新成功时
+        if (uploadStatus) {
+            if (!isUsJoi) {
+                // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
+                if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
+                        && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
+                    sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
+                }
+                // 一般店铺上新成功后回写productGroup及product表的状态
+                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());;
+            } else {
+                productGroupService.updateUSJoiGroupsPlatformStatus(sxData.getPlatform());
+            }
+
+            // 回写ims_bt_product表(numIId)
+            this.updateImsBtProduct(sxData, modifier);
+
+            // 写入履历
+//          productGroupService.insertHistoryLog(beforeProductGroup, sxData.getPlatform());
+        } else {
+            // 上新失败后回写product表pPublishError的值("Error")
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform());
+        }
+    }
+
 }

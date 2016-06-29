@@ -39,6 +39,18 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
+
+/*                    var masterCategory = scope.$watch("productInfo.masterCategory",function(data){
+
+                        // 没有就继续等待
+                        if (!data){
+                            return;
+                        }
+
+                        alert(scope.cartInfo.value);
+
+                    });*/
+
                     productDetailService.getProductPlatform({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;

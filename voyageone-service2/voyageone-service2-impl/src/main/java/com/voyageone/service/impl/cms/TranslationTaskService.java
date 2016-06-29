@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class TranslationTaskService extends BaseService {
 
-    private static final int  EXPIRE_HOURS = -48;
+    private static final int EXPIRE_HOURS = -48;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -58,14 +58,8 @@ public class TranslationTaskService extends BaseService {
 
     /**
      * 计算翻译任务的汇总信息
-     *
-     * @param channelId
-     * @param userName
-     * @return
-     * @throws BusinessException
      */
-    public TaskSummaryBean getTaskSummary(String channelId, String userName) throws BusinessException
-    {
+    public TaskSummaryBean getTaskSummary(String channelId, String userName) throws BusinessException {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
@@ -83,35 +77,29 @@ public class TranslationTaskService extends BaseService {
 
         //已分配但未完成的任务
         queryStr = String.format("{'common.fields.isMasterMain':1," +
-                        "'common.fields.translateStatus':'0'," +
-                        "'common.fields.translator':{'$exists' : true}," +
-                        "'common.fields.translator':{'$ne' : ''}," +
-                        "'common.fields.translateTime':{'$gt':'%s'}}", translateTimeStr);
+                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translator':{'$exists' : true}," +
+                "'common.fields.translator':{'$ne' : ''}," +
+                "'common.fields.translateTime':{'$gt':'%s'}}", translateTimeStr);
         taskSummary.setImcompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
 
         //完成翻译总商品数
         queryStr = "{'common.fields.isMasterMain':1," +
-                   "'common.fields.translateStatus':'1'}";
+                "'common.fields.translateStatus':'1'}";
         taskSummary.setCompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
 
         //个人完成翻译商品数
         queryStr = String.format("{'common.fields.isMasterMain':1," +
-                        "'common.fields.translateStatus':'1'," +
-                        "'common.fields.translator':'%s'}", userName);
+                "'common.fields.translateStatus':'1'," +
+                "'common.fields.translator':'%s'}", userName);
         taskSummary.setUserCompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
-        return  taskSummary;
+        return taskSummary;
     }
 
     /**
      * 取当前任务
-     *
-     * @param channelId
-     * @param userName
-     * @return
-     * @throws BusinessException
      */
-    public TranslationTaskBean getCurrentTask(String channelId, String userName) throws BusinessException
-    {
+    public TranslationTaskBean getCurrentTask(String channelId, String userName) throws BusinessException {
 
 
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
@@ -119,35 +107,28 @@ public class TranslationTaskService extends BaseService {
 
         String queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'0'," +
-                "'common.fields.translator':'%s', "+
+                "'common.fields.translator':'%s', " +
                 "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
 
-        CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
+        CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
 
-        TranslationTaskBean translationTaskBean = fillTranslationTaskBean(product);
-        return  translationTaskBean;
+        return fillTranslationTaskBean(product);
     }
 
-    public TaskSummaryBean  saveTask(TranslationTaskBean bean, String channelId, String userName) throws BusinessException
-    {
+    public TaskSummaryBean saveTask(TranslationTaskBean bean, String channelId, String userName) throws BusinessException {
         //获取产品组
-        String mainCode =  bean.getProductCode();
-
-
-        return  null;
+        //String mainCode = bean.getProductCode();
+        return null;
     }
 
 
     /**
      * 装填TranslationTaskBean
-     *
-     * @param product
-     * @return
      */
     private TranslationTaskBean fillTranslationTaskBean(CmsBtProductModel product) {
-        String channelId = product.getChannelId();
         TranslationTaskBean translationTaskBean = new TranslationTaskBean();
-        if(product!= null) {
+        if (product != null) {
+            String channelId = product.getChannelId();
             //装填Bean
             translationTaskBean.setProdId(product.getProdId());
             CmsBtProductModel_Field fields = product.getCommon().getFields();
@@ -226,12 +207,10 @@ public class TranslationTaskService extends BaseService {
             List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
 
             //去除掉feedCustomPropList中的垃圾数据
-            if(feedCustomPropList != null && feedCustomPropList.size() > 0) {
-                feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation())  &&
+            if (feedCustomPropList != null && feedCustomPropList.size() > 0) {
+                feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
                         !StringUtils.isNullOrBlank2(w.getFeed_prop_original()))).collect(Collectors.toList());
-            }
-            else
-            {
+            } else {
                 feedCustomPropList = new ArrayList<>();
             }
 
