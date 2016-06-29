@@ -122,9 +122,9 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">价格</label>
                                     <div class="col-sm-8" style="padding-left:0px">
-                                        <label class="checkbox-inline c-radio" style="margin-left:4px">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span
-                                                class="fa fa-check"></span>&nbsp;MSRP</label>
+                                        <!--<label class="checkbox-inline c-radio" style="margin-left:4px">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;MSRP</label>-->
                                         <!--<label class="checkbox-inline c-radio">-->
                                         <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
                                         <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
@@ -132,12 +132,23 @@
                                         <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
                                         <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
 
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span
-                                                class="fa fa-check"></span>&nbsp;中国指导价格</label>
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span
-                                                class="fa fa-check"></span>&nbsp;中国最终售价</label>
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;中国指导价格</label>-->
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;中国最终售价</label>-->
+                                        <select class="form-control" ng-model="searchInfo.priceType">
+                                            <option value="" translate="TXT_SELECT_NO_VALUE"></option>
+                                            <option value="dealPrice">当前活动售价</option>
+                                            <option value="salePrice">中国最终售价</option>
+                                            <option value="retailPrice">中国指导售价</option>
+                                            <option value="msrpRmb">中国官方售价</option>
+                                        </select>
+                                        <!--<li>海外官网价格:{{model.msrpUsd}}</li>-->
+                                        <!--<li>中国官网售价:{{model.msrpRmb}}</li>-->
+                                        <!--<li>中国指导售价:{{model.retailPrice}}</li>-->
+                                        <!--<li>中国最终售价:{{model.salePrice}}</li>-->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -309,8 +320,8 @@
                                     <td class="text-right">
                                         <div class="table_main">
                                             <ul>
-                                                <li>海外官网价格:{{model.msrpUsd}}</li>
-                                                <li>中国官网售价:{{model.msrpRmb}}</li>
+                                                <li>海外官方价格:{{model.msrpUsd}}</li>
+                                                <li>中国官方售价:{{model.msrpRmb}}</li>
                                                 <li>中国指导售价:{{model.retailPrice}}</li>
                                                 <li>中国最终售价:{{model.salePrice}}</li>
                                             </ul>
