@@ -110,7 +110,6 @@ public class UploadToUSJoiService extends BaseTaskService {
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
-                    productModel.setCarts(new ArrayList<>());
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setSellerCats(new CmsBtProductModel_SellerCats());
                     productModel.setTags(new ArrayList<>());
@@ -150,7 +149,6 @@ public class UploadToUSJoiService extends BaseTaskService {
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-                    productModel.setCarts(new ArrayList<CmsBtProductModel_Carts>());
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(sxWorkLoadBean.getCartId());

@@ -380,12 +380,19 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
+/**限制宽度，防止图片布局混乱*/
+@media screen and (max-width: 1280px) {
+    body{
+        min-width: 1280px;
+    }
+}
+
 .product-shema-detail .btn-nav{
     width: 100%;
     height: 27px;
     border-top: 1px solid #ADCAE2;
     background: white;
-    color: #ADCAE2;
+    color: #B97977;
     border-radius: 0px;
 
 }
@@ -398,6 +405,15 @@ s-field textarea.s-html {
 
 .product-shema-detail button span {
     font-size: 12px;
+}
+
+.product-shema-detail .product-title{
+    position: absolute;
+    margin-top: -43px;
+    margin-left: 11px;
+    font-size: 15px;
+    background: white;
+    color: #e67e22;
 }
 
 .product-shema-detail .nav span.tagFlag {
@@ -435,6 +451,13 @@ s-field textarea.s-html {
     border: 1px solid #ADCAE2;
     background: #fff;
     opacity: .5;
+}
+
+.product-shema-detail .master-sidebar {
+    top: 130px;
+    right: 40px;
+    z-index: 9;
+    opacity: initial;
 }
 
 .product-shema-detail .bs-docs-sidebar:hover {
@@ -627,12 +650,12 @@ s-field textarea.s-html {
     list-style: none outside none;
     margin: 0 0 0 -48px;
     text-align: center;
-    min-height: 144px;
+    min-height: 127px;
 }
 
 @media screen and (max-width: 1441px) {
     .data-display-boxes {
-        min-height: 140px;
+        min-height: 127px;
     }
 }
 

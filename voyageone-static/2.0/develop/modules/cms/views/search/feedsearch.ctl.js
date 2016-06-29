@@ -7,7 +7,7 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, selectRowsFactory, confirm, alert) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -156,8 +156,26 @@ define([
                     })
                 });
         };
+
+        $scope.openFeedCategoryMapping = function(popupNewCategory) {
+            attributeService.getCatTree()
+                .then(function (res) {
+                    if (!res.data.categoryTree || !res.data.categoryTree.length) {
+                        alert("没数据");
+                        return null;
+                    }
+                    return popupNewCategory({
+                        categories: res.data.categoryTree,
+                        from: ""
+                    }).then(function (context) {
+                        $scope.vm.searchInfo.category = context.selected.catPath;
+                        }
+                    );
+                });
+        }
+
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', 'selectRowsFactory', 'confirm', 'alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService'];
     return searchIndex;
 });

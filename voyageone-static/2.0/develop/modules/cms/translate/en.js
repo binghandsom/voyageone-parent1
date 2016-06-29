@@ -94,6 +94,9 @@ define(function(){
         "TXT_AUTHORITY_SETTING": "权限设置",
         "TXT_CONFIGURATION_SETTING": "配置设置",
         "TXT_TRANSLATION_MANAGER": "翻译管理",
+        "TXT_TRANSLATION_STATUS":"商品翻译状态",
+        "TXT_TRANSLATION_TASK_GET": "获取任务",
+        "TXT_TRANSLATION_SEARCH": "个人翻译成果搜索",
         "TXT_TRANSLATION_INDEX": "翻译一览",
         "TXT_SYSTEM_SETTING_IT": "系统管理（维护）",
         "TXT_CATEGORY_INDEX": "主类目一览",
@@ -365,9 +368,12 @@ define(function(){
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
         "TXT_UN_TRANSLATION": "未分配总数",
-        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但为完成总数",
+        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但未完成总数",
         "TXT_TRANSLATED": "完成翻译总数",
-        "TXT_DISTRIBUTION_RULE": "分发规则",
+        "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
+        "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
+        "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
+        "TXT_DISTRIBUTION_RULE": "优先规则",
         "TXT_MAIN_PRODUCT": "主商品",
         "TXT_GET_TASK_COUNT": "获取任务数量",
         "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "产品标题 / 长描述",
@@ -635,9 +641,11 @@ define(function(){
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
         "TXT_HS_CODE_STATUS":"税号状态",
-        "TXT_MATERIAL":"材质",
+        "TXT_PRODUCT_CODE":"产品code",
+        "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT":"税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
+        "TXT_GROUP_NAME_FEED_CAT_WITH_COLON":"商品名称/Feed类目/主类目",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW":"高级搜索",
@@ -707,6 +715,7 @@ define(function(){
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误",
+        "TXT_ITEM_CODE": "商品Code"
     };
 });

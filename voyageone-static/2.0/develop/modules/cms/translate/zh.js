@@ -22,7 +22,6 @@ define(function () {
         "TXT_IMAGE_COMMON_LIST": "共通图片一览",
         "TXT_IMAGE_SIZE_CHART_LIST": "尺码对照表一览",
         "TXT_IMAGE_PRODUCT_LABEL_LIST": "自定义标签一览",
-        "TXT_CHANNEL_MANAGER": "店铺管理",
         "TXT_CHANNEL_CART_CATEGORY_LIST": "店铺内分类一览",
         "TXT_CHANNEL_SALE_INFO_LIST": "店铺销售情况一览",
         "TXT_SEARCH": "检索",
@@ -635,9 +634,11 @@ define(function () {
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING": "商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED": "等待设置税号数",
         "TXT_HS_CODE_STATUS": "税号状态",
-        "TXT_MATERIAL": "材质",
+        "TXT_PRODUCT_CODE":"产品code",
+        "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT": "税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
+        "TXT_GROUP_NAME_FEED_CAT_WITH_COLON":"商品名称/Feed类目/主类目",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",
@@ -707,6 +708,15 @@ define(function () {
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误",
+        
+        /** 翻译页面相关 **/
+        "TXT_TRANSLATION_STATUS": "商品翻译状态",
+        "TXT_TRANSLATION_TASK_GET": "获取任务",
+        "TXT_TRANSLATION_SEARCH": "个人翻译成果搜索",
+        "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
+        "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
+        "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
+        "TXT_ITEM_CODE": "商品Code"
     };
 });

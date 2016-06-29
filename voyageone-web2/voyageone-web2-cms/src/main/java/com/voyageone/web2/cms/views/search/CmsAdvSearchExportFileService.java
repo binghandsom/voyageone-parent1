@@ -77,7 +77,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         // 获取product列表
-        List<String> prodCodeList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean);
+        List<String> prodCodeList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean, 0);
         long recCount = prodCodeList.size();
 
         if (searchValue.getFileType() == 2) {
@@ -85,7 +85,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, cmsSessionBean, cartId);
+            prodCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, searchValue, cartId);
             recCount = prodCodeList.size();
         }
 

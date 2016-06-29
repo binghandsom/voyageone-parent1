@@ -7,57 +7,57 @@
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4" style="margin-bottom: 8px;">
                             <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
+                                <div class="panel-heading" style="background-color: #666666;">
                                     <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;商品税号设置状态</h3>
                                 </div>
-                                <div class="panel-body">
+                                <div class="panel-body" style="background-color: #F8F8F8;">
                                     <ul class="data-display-boxes">
                                         <li>
-                                            <div class="data  data-priority-2"> <strong>180</strong> 未分配总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.notAssignedTotalHsCodeCnt"></strong> 未分配总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data  data-priority-1"> <strong>20</strong> 已分配但未完成总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.alreadyAssignedTotalHsCodeCnt"></strong> 已分配但未完成总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data  data-priority-5"> <strong>20</strong> 设置税号商品总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.setChannelTotalHsCodeCnt"></strong> 设置税号商品总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data  data-priority-5"> <strong>5</strong> 个人设置税号商品译数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.setPersonalTotalHsCodeCnt"></strong> 个人设置税号商品译数 </div>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-5">
+                        <div class="col-sm-5" style="margin-bottom: 8px;">
                             <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
+                                <div class="panel-heading" style="background-color: #666666;">
                                     <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;获取任务</h3>
                                 </div>
-                                <div class="panel-body white-bg">
+                                <div class="panel-body" style="background-color: #F8F8F8;">
                                     <form class="form-horizontal">
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
                                             <div class="col-sm-3">
-                                                <select class="form-control" ng-model="ctrl.hsCodeRule">
+                                                <select class="form-control" ng-model="ctrl.qty">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="0">{{'TXT_INVENTORY'|translate}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
+                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
                                                 </label>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
+                                                    <input name="sortOne" type="radio" value="-1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label" translate="TXT_CODE_FULL"></label>
+                                            <label class="col-sm-3 control-label" translate="TXT_PRODUCT_CODE"></label>
                                             <div class="col-sm-8">
                                                 <input type="text" class="form-control" ng-model="ctrl.code">
                                             </div>
@@ -68,22 +68,21 @@
                                                 <input type="number" class="form-control" ng-model="ctrl.hsCodeTaskCnt" ng-pattern="/^(\d+)$/">
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-2 col-sm-offset-4">
-                                                <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
-                                            </div>
+                                        <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
+                                            <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #F5F5FE;color: #0a0a09">
-                                    <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;个人设置税号成果搜索</h3>
-                                </div>
-                                <div class="panel-body white-bg">
-                                    <form class="form-horizontal">
+                            <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+                                <uib-accordion-group is-open="ctrl.status">
+                                    <uib-accordion-heading>
+                                        <i class="fa fa-search"></i>&nbsp;个人设置税号成果搜索
+                                        <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': ctrl.status, 'glyphicon-menu-down': !ctrl.status}"></i>
+                                    </uib-accordion-heading>
+                                    <form class="form-horizontal m-l-md">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
                                             <div class="col-sm-7">
@@ -96,7 +95,7 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-11">
-                                                <textarea type="text" rows="3" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.code"></textarea>
+                                                <textarea type="text" rows="4" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.searchCondition"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group text-center">
@@ -106,8 +105,8 @@
                                             </button>
                                         </div>
                                     </form>
-                                </div>
-                            </div>
+                                </uib-accordion-group>
+                            </uib-accordion>
                         </div>
                     </div>
                 </div>
@@ -120,9 +119,10 @@
                 <thead>
                     <tr>
                         <th class="text-center mfb-xt" translate="TXT_NUMBER_IID_WITH_COLON"></th>
-                        <th class="text-center mfb-xxs" translate="TXT_GROUP_NAME_WITH_COLON"></th>
-                        <th class="text-center mfb-xxt" translate="TXT_MATERIAL"></th>
+                        <th class="text-center mfb-x">图片</th>
+                        <th class="text-center mfb-xxt" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
                         <th class="text-center mfb-xxs" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
+                        <th class="text-center mfb-xxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
                         <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                     </tr>
                 </thead>
@@ -136,7 +136,9 @@
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
                     <tr ng-repeat="list in ctrl.hsCodeList">
                         <td class="text-center mfb-xt">48307</td>
-                        <td class="text-left mfb-xxs">NOW Foods -左旋肉碱-医药 左旋肉碱 热带口味 1000毫克-16盎司</td>
+                        <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
+                            <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                        </td>
                         <td class="text-center mfb-xxt">牛肉</td>
                         <td class="text-left mfb-xxs">
                             <select class="form-control">
@@ -145,6 +147,7 @@
                                 <option value="1">123123123，猪肉铺，包</option>
                             </select>
                         </td>
+                        <td class="text-left mfb-xxs">NOW Foods -左旋肉碱-医药 左旋肉碱 热带口味 1000毫克-16盎司</td>
                         <td class="text-center mfb-xt">
                             <button class="btn btn-vo btn-xs ng-binding"><i class="glyphicon glyphicon-floppy-disk"></i></button>
                         </td>
@@ -155,5 +158,5 @@
         <div class="col-sm-12 m-t-lg m-b-lg">
             <vpagination config="ctrl.prodPageOption"></vpagination>
         </div>
-    </div><!-- tabs ng-controller -->
-</div><!-- .col-lg-12 -->
+    </div>
+</div>
