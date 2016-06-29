@@ -10,7 +10,7 @@ define([
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.searchCondition = "";
             this.totalHsCodeCnt = 0;
-            this.hsCodeTaskCnt = "";
+            this.hsCodeTaskCnt = 10;
             this.hsCodeStatus = "0";
             this.hsCodeList = [];
             this.hsCodeValue = [];
@@ -32,8 +32,6 @@ define([
                     self.setChannelTotalHsCodeCnt = res.data.setChannelTotalHsCodeCnt;
                     self.setPersonalTotalHsCodeCnt = res.data.setPersonalTotalHsCodeCnt;
 
-                    self.totalHsCodeCnt = res.data.totalHsCodeCnt;
-                    self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsCodeList = res.data.hsCodeList;
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
