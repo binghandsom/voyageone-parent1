@@ -4,9 +4,9 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.PlatformBean;
 import com.voyageone.common.configs.dao.PlatformDao;
 import com.voyageone.service.impl.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Service
 public class PlatformService extends BaseService {
-    @Resource
+    @Autowired
     PlatformDao platformDao;
 
     public List<PlatformBean> getAll() {
@@ -26,10 +26,11 @@ public class PlatformService extends BaseService {
 
     /**
      * 返回平台的商品访问url
+     *
      * @param cartId
      * @return
      */
-    public String getPlatformProductUrl (String cartId) {
+    public String getPlatformProductUrl(String cartId) {
 
         // 取得CMS中默认的显示用模板ID
         String commonTemplateId = Codes.getCodeName("PLATFORM_PRODUCT_URL", cartId);

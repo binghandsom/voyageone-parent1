@@ -147,7 +147,7 @@ public class SxProductService extends BaseService {
      *
      * @param skuSourceList 排序对象
      */
-    public void sortSkuInfo(List<CmsBtProductModel_CommonSku> skuSourceList) {
+    public void sortSkuInfo(List<CmsBtProductModel_Sku> skuSourceList) {
 
         // Map<size, sort> 为了将来可能会从DB取得设定，先做成Map
         Map<String, Integer> mapSort = new HashMap<>();
@@ -1477,7 +1477,7 @@ public class SxProductService extends BaseService {
                             throw new BusinessException(errorCause);
                         }
                         CmsBtProductModel sxProduct = processProducts.get(0);
-                        List<CmsBtProductModel_CommonSku> cmsBtProductModelSkus = sxProduct.getCommon().getSkus();
+                        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProduct.getCommon().getSkus();
                         if (cmsBtProductModelSkus.size() != 1) {
                             String errorCause = "包含商品外部编码的类目必须只有一个sku";
                             $error(errorCause);
@@ -1659,7 +1659,7 @@ public class SxProductService extends BaseService {
             if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
-            for (CmsBtProductModel_CommonSku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
+            for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
                 if (skuQuantityInteger != null) {

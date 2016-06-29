@@ -73,37 +73,28 @@ public class SellerCatService extends BaseService {
 
     /**
      * 获取店铺自定义分类的相关配置参数
-     * @param cartId
-     * @return
      */
-    public Map<String, Object> getSellerCatConfig(int cartId)
-    {
+    public Map<String, Object> getSellerCatConfig(int cartId) {
         String cartIdStr = String.valueOf(cartId);
         Codes.reload();
-        String depth = Codes.getCodeName("SELLER_CAT_MAX_DEPTH",  cartIdStr);
-        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT",  cartIdStr);
+        String depth = Codes.getCodeName("SELLER_CAT_MAX_DEPTH", cartIdStr);
+        String cnt = Codes.getCodeName("SELLER_CAT_MAX_CNT", cartIdStr);
 
         Map<String, Object> result = new HashMap<>();
 
-        if(!StringUtils.isNullOrBlank2(depth))
-        {
-            result.put("MAX_SELLER_CAT_DEPTH" ,depth );
-        }
-        else
-        {
-            result.put("MAX_SELLER_CAT_DEPTH" ,DEFAULT_SELLER_CAT_DEPTH );
+        if (!StringUtils.isNullOrBlank2(depth)) {
+            result.put("MAX_SELLER_CAT_DEPTH", depth);
+        } else {
+            result.put("MAX_SELLER_CAT_DEPTH", DEFAULT_SELLER_CAT_DEPTH);
         }
 
-        if(!StringUtils.isNullOrBlank2(cnt))
-        {
-            result.put("MAX_SELLER_CAT_CNT" ,cnt );
-        }
-        else
-        {
-            result.put("MAX_SELLER_CAT_CNT" ,DEFAULT_SELLER_CAT_CNT );
+        if (!StringUtils.isNullOrBlank2(cnt)) {
+            result.put("MAX_SELLER_CAT_CNT", cnt);
+        } else {
+            result.put("MAX_SELLER_CAT_CNT", DEFAULT_SELLER_CAT_CNT);
         }
 
-        return  result;
+        return result;
     }
 
 
@@ -121,11 +112,9 @@ public class SellerCatService extends BaseService {
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId, boolean isTree) {
 
-        if(isTree) {
+        if (isTree) {
             return cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
-        }
-        else
-        {
+        } else {
             List<CmsBtSellerCatModel> result = new ArrayList<>();
 
             List<CmsBtSellerCatModel> treeList = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
@@ -137,15 +126,12 @@ public class SellerCatService extends BaseService {
                 result.addAll(findAllChildren(node));
             }
 
-            return  result;
+            return result;
         }
     }
 
-
     /**
      * clone 一个CmsBtSellerCatModel对象
-     * @param node
-     * @return
      */
     private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
         CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
@@ -160,64 +146,46 @@ public class SellerCatService extends BaseService {
         copyRoot.setModifier(node.getModifier());
         copyRoot.setFullCatId(node.getFullCatId());
         copyRoot.setCatPath(node.getCatPath());
-        copyRoot.setChildren(new ArrayList<CmsBtSellerCatModel>());
+        copyRoot.setChildren(new ArrayList<>());
         return copyRoot;
     }
 
-
     /**
      * 找出所有孩子节点
-     * @param root
-     * @return
      */
-    private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root)
-    {
+    private List<CmsBtSellerCatModel> findAllChildren(CmsBtSellerCatModel root) {
         List<CmsBtSellerCatModel> result = new ArrayList<>();
 
-        for (CmsBtSellerCatModel model: root.getChildren()) {
+        for (CmsBtSellerCatModel model : root.getChildren()) {
 
             CmsBtSellerCatModel cmsBtSellerCatModel = copyCmsBtSellerCatModel(model);
             result.add(cmsBtSellerCatModel);
-            result.addAll(findAllChildren(model) );
+            result.addAll(findAllChildren(model));
         }
-        return  result;
+        return result;
     }
 
     /**
      * 保存整组分类树
-     * @param allCats
      */
-    public void save(List<CmsBtSellerCatModel> allCats)
-    {
-        for (CmsBtSellerCatModel model: allCats) {
+    public void save(List<CmsBtSellerCatModel> allCats) {
+        for (CmsBtSellerCatModel model : allCats) {
             cmsBtSellerCatDao.insert(model);
         }
-
     }
 
     /**
-     *
-     * @param channelId
-     * @param cartId
-     * @param cName
-     * @param parentCId
-     * @param creator
+     * addSellerCat
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-
         String cId = "";
-
         String shopCartId = shopBean.getCart_id();
 
-
-        if(isJDPlatform(shopCartId))
-        {
+        if (isJDPlatform(shopCartId)) {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
-        }
-        else if (isTMPlatform(shopCartId))
-        {
+        } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
         }
 
@@ -225,50 +193,37 @@ public class SellerCatService extends BaseService {
 //        Random random = new Random();
 //        cId = String.valueOf(random.nextInt(1000) + 1000);
 
-        if(!StringUtils.isNullOrBlank2(cId)) {
+        if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
         }
     }
 
     /**
-     *
-     * @param channelId
-     * @param cartId
-     * @param cName
-     * @param cId
-     * @param modifier
+     * updateSellerCat
      */
-    public void  updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
+    public void updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String shopCartId = shopBean.getCart_id();
-        if(isJDPlatform(shopCartId))
-        {
-            jdShopService.updateShopCategory(shopBean,cId, cName);
-        }
-        else if (isTMPlatform(shopCartId))
-        {
+        if (isJDPlatform(shopCartId)) {
+            jdShopService.updateShopCategory(shopBean, cId, cName);
+        } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
 
         //更新product表中所有的店铺内分类
-        if(changedList != null) {
-            List<CmsBtProductModel>  list  =  cmsBtProductDao.updateSellerCat(channelId, changedList , cartId);
+        if (changedList != null) {
+            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId);
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
-
         }
     }
 
     /**
-     *
-     * @param channelId
-     * @param cartId
-     * @param parentCId
-     * @param cId
+     * deleteSellerCat
      */
     public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
@@ -276,21 +231,17 @@ public class SellerCatService extends BaseService {
 
         String shopCartId = shopBean.getCart_id();
 
-        if(isJDPlatform(shopCartId))
-        {
+        if (isJDPlatform(shopCartId)) {
             jdShopService.deleteShopCategory(shopBean, cId);
-        }
-        else if (isTMPlatform(shopCartId))
-        {
+        } else if (isTMPlatform(shopCartId)) {
             throw new BusinessException(shopBean.getShop_name() + ":阿里系没有删除店铺内分类的API");
         }
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中所有的店铺内分类
-        if(deleted != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted , cartId);
-
+        if (deleted != null) {
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId);
 
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
@@ -300,23 +251,17 @@ public class SellerCatService extends BaseService {
 
     /**
      * 插入上新表
-     * @param channelId
-     * @param cartId
-     * @param modifier
-     * @param list
      */
     private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
-        if(list != null)
-        {
-            for (CmsBtProductModel product: list) {
-                if(product.getFields().getStatus().equals("Approved"))
-                {
+        if (list != null) {
+            for (CmsBtProductModel product : list) {
+                if (product.getFields().getStatus().equals("Approved")) {
                     List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + product.getFields().getCode() + "\"}", channelId);
                     Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
                     CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                     model.setChannelId(channelId);
-                    model.setGroupId(platformsMap.get(cartId).longValue());
+                    model.setGroupId(platformsMap.get(cartId));
                     model.setCartId(cartId);
                     model.setPublishStatus(0);
                     model.setCreater(modifier);
@@ -330,14 +275,8 @@ public class SellerCatService extends BaseService {
 
     /**
      * 从TMALL，JD平台获取店铺自定义类目树
-     *
-     * @param channelId
-     * @param cartId
-     * @param creator
-     * @return
      */
-    public List<CmsBtSellerCatModel> refreshSellerCat(String channelId, int cartId, String creator)
-    {
+    public List<CmsBtSellerCatModel> refreshSellerCat(String channelId, int cartId, String creator) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String shopCartId = shopBean.getCart_id();
@@ -353,22 +292,17 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
-        if(isJDPlatform(shopCartId))
-        {
+        if (isJDPlatform(shopCartId)) {
             List<ShopCategory> shopCategory = jdShopService.getShopCategoryList(shopBean);
             sellerCat = formatJDModel(shopCategory, channelId, cartId, creator);
 
-        }
-        else if (isTMPlatform(shopCartId) )
-        {
-            List<SellerCat> sellerCatList= tbSellerCatService.getSellerCat(shopBean);
+        } else if (isTMPlatform(shopCartId)) {
+            List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
         }
-        return  convert2Tree(sellerCat);
+        return convert2Tree(sellerCat);
 
     }
-
-
 
     @Deprecated
     public void refeshAllProduct(String channelId, int cartId, String creator) {
@@ -378,9 +312,8 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
-        if (isTMPlatform(shopCartId) )
-        {
-            List<SellerCat> sellerCatList= tbSellerCatService.getSellerCat(shopBean);
+        if (isTMPlatform(shopCartId)) {
+            List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
         }
 
@@ -397,24 +330,17 @@ public class SellerCatService extends BaseService {
         }
 
         //只支持2层结构
-        Map<String, CmsBtSellerCatModel> sellerCatMap =  new HashedMap();
-
-
-        for (CmsBtSellerCatModel model: result) {
+        Map<String, CmsBtSellerCatModel> sellerCatMap = new HashMap<>();
+        for (CmsBtSellerCatModel model : result) {
             sellerCatMap.put(model.getCatId(), model);
         }
 
         //得到所有的product_group
-
         String query = "{\"numIId\": {\"$ne\": \"\"} }";
-
-        List<CmsBtProductGroupModel> groupList =  cmsBtProductGroupDao.select(query, channelId);
-
+        List<CmsBtProductGroupModel> groupList = cmsBtProductGroupDao.select(query, channelId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
 
-        int count = 0;
-
-        for (CmsBtProductGroupModel group:groupList) {
+        for (CmsBtProductGroupModel group : groupList) {
 
 
             List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(), channelId);
@@ -422,7 +348,7 @@ public class SellerCatService extends BaseService {
 
 
             try {
-                if(numIId != null) {
+                if (numIId != null) {
                     TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, Long.valueOf(numIId));
 
                     List<Field> fields = schema.getFields();
@@ -434,8 +360,7 @@ public class SellerCatService extends BaseService {
                             List<String> values = ((MultiCheckField) field).getDefaultValues();
 
                             for (String value : values) {
-                                String cId = value;
-                                cIds.add(cId);
+                                cIds.add(value);
                             }
                         }
                     }
@@ -480,9 +405,7 @@ public class SellerCatService extends BaseService {
                     }
                 }
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -494,17 +417,11 @@ public class SellerCatService extends BaseService {
 
     /**
      * 将TM店铺自定义分类Model转换成CmsBtSellerCatModel
-     * @param list
-     * @param channelId
-     * @param cartId
-     * @param creator
-     * @return
      */
-    private List<CmsBtSellerCatModel> formatTMModel(List<SellerCat> list, String channelId, int cartId, String creator)
-    {
-        List<CmsBtSellerCatModel> result = new ArrayList<>() ;
+    private List<CmsBtSellerCatModel> formatTMModel(List<SellerCat> list, String channelId, int cartId, String creator) {
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
 
-        for (SellerCat model: list) {
+        for (SellerCat model : list) {
             CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
             cmsBtSellerCatModel.setCatId(String.valueOf(model.getCid()));
             cmsBtSellerCatModel.setCatName(model.getName());
@@ -526,19 +443,12 @@ public class SellerCatService extends BaseService {
 
     /**
      * 将JD店铺自定义分类Model转换成CmsBtSellerCatModel
-     *
-     * @param list
-     * @param channelId
-     * @param cartId
-     * @param creator
-     * @return
      */
-    private List<CmsBtSellerCatModel> formatJDModel(List<ShopCategory> list, String channelId, int cartId, String creator)
-    {
+    private List<CmsBtSellerCatModel> formatJDModel(List<ShopCategory> list, String channelId, int cartId, String creator) {
 
-        List<CmsBtSellerCatModel> result = new ArrayList<>() ;
+        List<CmsBtSellerCatModel> result = new ArrayList<>();
 
-        for (ShopCategory model: list) {
+        for (ShopCategory model : list) {
             CmsBtSellerCatModel cmsBtSellerCatModel = new CmsBtSellerCatModel();
             cmsBtSellerCatModel.setCatId(String.valueOf(model.getCid()));
             cmsBtSellerCatModel.setCatName(model.getName());
@@ -561,9 +471,6 @@ public class SellerCatService extends BaseService {
 
     /**
      * 将店铺自定义分类列转成一组树
-     *
-     * @param sellCatList
-     * @return
      */
     private List<CmsBtSellerCatModel> convert2Tree(List<CmsBtSellerCatModel> sellCatList) {
         List<CmsBtSellerCatModel> roots = findRoots(sellCatList);
@@ -578,9 +485,6 @@ public class SellerCatService extends BaseService {
 
     /**
      * 查找所有子节点
-     * @param root
-     * @param allNodes
-     * @return
      */
     private List<CmsBtSellerCatModel> findChildren(CmsBtSellerCatModel root, List<CmsBtSellerCatModel> allNodes) {
         List<CmsBtSellerCatModel> children = new ArrayList<>();
@@ -593,12 +497,9 @@ public class SellerCatService extends BaseService {
             }
         }
         root.setChildren(children);
-        if(children.size() > 0)
-        {
+        if (children.size() > 0) {
             root.setIsParent(1);
-        }
-        else
-        {
+        } else {
             root.setIsParent(0);
         }
 
@@ -610,19 +511,16 @@ public class SellerCatService extends BaseService {
             child.setChildren(tmpChildren);
         }
 
-        return  children;
+        return children;
     }
 
     /**
      * 查找所有根节点
-     * @param allNodes
-     * @return
      */
     private List<CmsBtSellerCatModel> findRoots(List<CmsBtSellerCatModel> allNodes) {
         List<CmsBtSellerCatModel> results = new ArrayList<>();
         for (CmsBtSellerCatModel node : allNodes) {
-            if(node.getParentCatId().equals("0"))
-            {
+            if (node.getParentCatId().equals("0")) {
                 results.add(node);
                 node.setCatPath(node.getCatName());
                 node.setFullCatId(node.getCatId());
@@ -634,33 +532,25 @@ public class SellerCatService extends BaseService {
 
     /**
      * 是京东平台
-     * @param shopCartId
-     * @return
      */
-    private boolean isJDPlatform(String shopCartId)
-    {
-        if(shopCartId.equals(CartEnums.Cart.JD.getId())  ||  shopCartId.equals(CartEnums.Cart.JG.getId()) ||
-                shopCartId.equals(CartEnums.Cart.JGJ.getId())||  shopCartId.equals(CartEnums.Cart.JGY.getId()) )
-        {
+    private boolean isJDPlatform(String shopCartId) {
+        if (shopCartId.equals(CartEnums.Cart.JD.getId()) || shopCartId.equals(CartEnums.Cart.JG.getId()) ||
+                shopCartId.equals(CartEnums.Cart.JGJ.getId()) || shopCartId.equals(CartEnums.Cart.JGY.getId())) {
             return true;
         }
-        return  false;
+        return false;
     }
 
 
     /**
      * 是天猫品台
-     * @param shopCartId
-     * @return
      */
-    private boolean isTMPlatform(String shopCartId)
-    {
-        if(shopCartId.equals(CartEnums.Cart.TM.getId())  ||  shopCartId.equals(CartEnums.Cart.TB.getId()) ||
-                shopCartId.equals(CartEnums.Cart.TG.getId() ) ||  shopCartId.equals(CartEnums.Cart.TMM.getId()) )
-        {
+    private boolean isTMPlatform(String shopCartId) {
+        if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
+                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TMM.getId())) {
             return true;
         }
-        return  false;
+        return false;
     }
 
 
