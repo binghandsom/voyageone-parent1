@@ -367,8 +367,13 @@
         </foreach>
     </update>
     <update id="copyDealAll">
-        UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,1)
+        UPDATE cms_bt_jm_promotion_product set synch_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+
+        UPDATE cms_bt_jm_promotion_product set price_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (2);
     </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product
