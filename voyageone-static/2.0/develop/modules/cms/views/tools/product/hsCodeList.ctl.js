@@ -35,9 +35,17 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
-            get: function () {
+            get: function (page) {
                 var self = this;
-                self.hsCodeInfoService.get({"qty": self.qty, "order": self.order, "code":self.code, "hsCodeTaskCnt":self.hsCodeTaskCnt}).then()
+                self.getTaskInfo = {};
+                self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                self.getTaskInfo.curr = self.prodPageOption.curr;
+                self.getTaskInfo.size = self.prodPageOption.size;
+                self.getTaskInfo.qty = self.qty;
+                self.getTaskInfo.order = self.order;
+                self.getTaskInfo.code = self.code;
+                self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
+                self.hsCodeInfoService.get(self.getTaskInfo).then()
             },
             search: function (page) {
                 var self = this;
