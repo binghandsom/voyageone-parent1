@@ -314,7 +314,7 @@ define([
                         alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                     }
                     else {
-                        alert($translate.instant('TXT_FAIL'));
+                        alert(res.data.msg);
                     }
                 }, function (res) {
                     alert($translate.instant('TXT_FAIL'));

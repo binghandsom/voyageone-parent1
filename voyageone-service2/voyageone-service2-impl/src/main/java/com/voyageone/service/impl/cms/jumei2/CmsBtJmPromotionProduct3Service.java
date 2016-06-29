@@ -126,24 +126,37 @@ public class CmsBtJmPromotionProduct3Service {
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
     }
 
-    //批量同步价格
+    //批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
-        daoExt.batchSynchPrice(parameter.getListPromotionProductId());
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId(),isPreStart);
     }
 
     //全量同步价格
-    public void synchAllPrice(int promotionId) {
+    public CallResult synchAllPrice(int promotionId) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
+        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+            result.setMsg("预热已经开始,不能全量同步价格!");
+            result.setResult(false);
+            return result;
+        }
         daoExt.synchAllPrice(promotionId);
+        return result;
     }
 
-    //批量再售
+    //批量再售  //1. if未上传  then synch_status=1   2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
-        daoExt.batchCopyDeal(parameter.getListPromotionProductId());
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        daoExt.batchCopyDeal(parameter.getListPromotionProductId(),isPreStart);
     }
 
-    //全部再售
+    //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
     public CallResult copyDealAll(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);

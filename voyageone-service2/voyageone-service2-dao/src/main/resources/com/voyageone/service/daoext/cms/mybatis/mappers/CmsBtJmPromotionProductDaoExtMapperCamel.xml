@@ -353,6 +353,9 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
+        <if test="isPreStart=false">
+          and   synch_status!=2
+        </if>
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
@@ -360,11 +363,19 @@
     </update>
     <update id="batchCopyDeal">
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE   synch_status=0 and  id in
+        WHERE   synch_status in (0,3) and  id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
-        </foreach>
+        </foreach>;
+        <if test="isPreStart=false">
+            UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
+            WHERE   synch_status in (0,3) and  id in
+            <foreach item="item" index="i" collection="listPromotionProductId"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach> and synch_status=2;
+        </if>
     </update>
     <update id="copyDealAll">
         UPDATE cms_bt_jm_promotion_product set synch_status=1
