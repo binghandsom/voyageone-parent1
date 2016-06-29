@@ -37,10 +37,6 @@ body {
 .form-inline .form-group:first-child .control-label {
   margin-left: 0;
 }
-.table-vo thead th {
-  background-color: #339be6;
-  color: white;
-}
 .header {
   border-bottom: 1px solid #eeeeee;
 }
@@ -106,18 +102,17 @@ body {
 .control-label {
   font-weight: normal;
 }
-.form-control {
-  padding: 5px 5px;
-}
-select.form-control,
-input.form-control {
-  height: 28px;
-}
-.btn {
-  padding: 3px 10px;
-}
 .panel {
   margin-bottom: 10px;
+}
+.panel-vo {
+  border-color: #339be6;
+}
+.panel-body {
+  padding: 10px;
+}
+.panel-heading {
+  padding: 6px 10px;
 }
 .dropdown-toggle {
   cursor: pointer;
@@ -129,6 +124,13 @@ input.form-control {
 }
 .dropdown-menu-sm li:hover {
   background-color: #337ab7;
+  color: white;
+}
+.table-fixed {
+  table-layout: fixed;
+}
+.table-vo thead th {
+  background-color: #339be6;
   color: white;
 }
 .margin-bottom-10 {

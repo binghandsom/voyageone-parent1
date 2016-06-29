@@ -63,52 +63,54 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <label for="SKU_STATUS" class="control-label">SKU STATUS</label>
-                            <input id="SKU_STATUS" type="text" class="form-control">
+                            <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm">
+                                <option value="">Select</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="ORDER_ID" class="control-label">ORDER ID</label>
-                            <input id="ORDER_ID" type="text" class="form-control">
+                            <input id="ORDER_ID" type="text" class="form-control input-sm">
                         </div>
                         <div class="form-group">
                             <label for="SKU" class="control-label">SKU</label>
-                            <input id="SKU" type="text" class="form-control">
+                            <input id="SKU" type="text" class="form-control input-sm">
                         </div>
                         <div class="form-group">
                             <label class="control-label">ORDER DATE</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control input-sm">
                             <span>~</span>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control input-sm">
                         </div>
                         <div class="form-group pull-right">
-                            <button class="btn btn-primary">SEARCH</button>
+                            <button class="btn btn-primary btn-sm">SEARCH</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row margin-bottom-10">
                 <div class="col-sm-6">
-                    <button class="btn btn-success">NEW/END SHIPMENT</button>
+                    <button class="btn btn-success btn-sm">NEW/END SHIPMENT</button>
                     <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
                 </div>
                 <div class="col-sm-6 text-right form-inline">
-                    <select class="form-control" name="" id="">
+                    <select class="form-control input-sm" name="" id="">
                         <option value="">ORDER BY SKU</option>
                     </select>
-                    <button class="btn btn-primary">DOWNLOAD PICKING LIST</button>
+                    <button class="btn btn-primary btn-sm">DOWNLOAD PICKING LIST</button>
                 </div>
             </div>
-            <div>
-                <table class="table table-bordered table-vo">
+            <div class="panel panel-vo">
+                <table class="table table-fixed">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>ORDER ID</th>
-                        <th>ORDER DATE</th>
-                        <th>SKU</th>
-                        <th>DESCRIPTION</th>
-                        <th>STATUS</th>
-                        <th>PRICE</th>
-                        <th>ACTION</th>
+                        <th style="width: 10px"></th>
+                        <th class="td-1">ORDER ID</th>
+                        <th class="td-2">ORDER DATE</th>
+                        <th class="td-1">SKU</th>
+                        <th class="td-3">DESCRIPTION</th>
+                        <th class="td-1">STATUS</th>
+                        <th class="td-1">PRICE</th>
+                        <th style="width: 180px">ACTION</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -120,7 +122,7 @@
                         <td>Adidas Busenitz</td>
                         <td>Open</td>
                         <td>$1000</td>
-                        <td class="text-center">
+                        <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
@@ -133,7 +135,7 @@
                         <td>Adidas Busenitz</td>
                         <td>Open</td>
                         <td>$1000</td>
-                        <td class="text-center">
+                        <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
@@ -146,7 +148,7 @@
                         <td>Adidas Busenitz</td>
                         <td>Open</td>
                         <td>$1000</td>
-                        <td class="text-center">
+                        <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
@@ -159,7 +161,7 @@
                         <td>Adidas Busenitz</td>
                         <td>Open</td>
                         <td>$1000</td>
-                        <td class="text-center">
+                        <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
@@ -172,7 +174,7 @@
                         <td>Adidas Busenitz</td>
                         <td>Open</td>
                         <td>$1000</td>
-                        <td class="text-center">
+                        <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
