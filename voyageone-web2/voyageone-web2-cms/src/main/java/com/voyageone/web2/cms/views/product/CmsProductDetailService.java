@@ -543,7 +543,7 @@ public class CmsProductDetailService extends BaseAppService {
         return resultMap;
     }
 
-    public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+    public Map<String, Object> getMastProductInfo(String channelId, Long prodId, String lang) {
         Map<String, Object> result = new HashMap<>();
 
         // 取得产品信息
@@ -564,6 +564,7 @@ public class CmsProductDetailService extends BaseAppService {
         });
 
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
@@ -602,6 +603,8 @@ public class CmsProductDetailService extends BaseAppService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        productService.getProductById(channelId,prodId);
+
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
