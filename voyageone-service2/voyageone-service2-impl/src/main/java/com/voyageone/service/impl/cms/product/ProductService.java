@@ -1202,15 +1202,15 @@ public class ProductService extends BaseService {
      * 不同条件取得对应的不同记录总件数
      */
     public Object getTotalHsCodeCnt(String channelId, String userName, String hsCodeStatus, String translateStatus, String hsCodeSetter) {
-        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,translateStatus,hsCodeSetter,"","","");
-        return cmsBtProductDao.countByQuery(parameter,channelId);
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,translateStatus,hsCodeSetter,"");
+        return cmsBtProductDao.countByQuery(parameter, channelId);
     }
 
     /**
      * 设置税一览的信息
      */
     public Object getTotalHsCodeList(String channelId, String userName, String hsCodeStatus, String condition, int curr, int size, String[] retFields) {
-        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","",condition,"","");
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","",condition);
         JomgoQuery queryObject = new JomgoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
@@ -1220,31 +1220,66 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
+    /**
+     * 获取任务
+     * @param channelId
+     * @param hsCodeStatus
+     * @param userName
+     * @param hsCodeTaskCnt
+     * @param retFields
+     * @return
+     */
     public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName, int hsCodeTaskCnt, String[] retFields) {
-        return null;
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","","");
+        JomgoQuery queryObject = new JomgoQuery();
+        //取得收索的条件
+        queryObject.setQuery(parameter);
+        queryObject.setProjectionExt(retFields);
+        queryObject.setLimit(hsCodeTaskCnt);
+        return cmsBtProductDao.select(queryObject,channelId);
     }
 
+    /**
+     * 获取任务更新
+     * @param channelId
+     * @param allCodeList
+     * @param userName
+     * @param hsCodeStatus
+     * @param hsCodeSetTime
+     */
     public void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetTime) {
 
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("common.fields.hsCodePrivate", userName);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        for (String code : allCodeList) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", code);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
     }
 
     /**
      * getSearchQuery
      */
     private String getSearchQuery(String channelId, String userName, String hsCodeStatus
-            , String translateStatus, String hsCodeSetter,String condition,String pageNum,String pageSize) {
+            , String translateStatus, String hsCodeSetter,String condition) {
         StringBuilder sbQuery = new StringBuilder();
         //hsCodePrivate
         if(!StringUtils.isEmpty(userName)){
             if(userName.equals("notNull")){
-                sbQuery.append("common.fields.hsCodeSetter:{$in:[null],$exists:true}");
+                sbQuery.append("common.fields.hsCodePrivate:{$in:[null],$exists:true}");
                 sbQuery.append(",");
             }else{
-                sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", userName));
+                sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodePrivate", userName));
                 sbQuery.append(",");
             }
         }else{
-            sbQuery.append("\"common.fields.hsCodeSetter\":{$ne:null}");
+            sbQuery.append("\"common.fields.hsCodePrivate\":{$ne:null}");
             sbQuery.append(",");
         }
         //hsCodeStatus

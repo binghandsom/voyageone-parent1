@@ -126,13 +126,13 @@ public class CmsHsCodeService extends BaseAppService {
         //主数据
         int cartId = 1;
         //根据获取任务数去取得对应的code
-        List<CmsBtProductModel> hsCodeList =productService.getHsCodeInfo(channelId, "", userName,hsCodeTaskCnt,RET_FIELDS);
+        List<CmsBtProductModel> hsCodeList =productService.getHsCodeInfo(channelId, "0", "",hsCodeTaskCnt,RET_FIELDS);
         //取得codeList结果集
         List<String> codeList = new ArrayList<>();
         //取得获取任务的信息
         if(hsCodeList.size()>0){
             for(CmsBtProductModel model:hsCodeList){
-                codeList.add(model.getFields().getCode());
+                codeList.add(model.getCommon().getFields().getCode());
             }
         }
         //根据获取任务的主code同步到master同一个Group下所有code
@@ -142,7 +142,7 @@ public class CmsHsCodeService extends BaseAppService {
         //更新cms_bt_product表的hsCodeInfo
         productService.updateHsCodeInfo(channelId, allCodeList, userName,"",hsCodeSetTime);
         //等待设置税一览
-        data.put("hsCodeList", productService.getTotalHsCodeList(channelId, "", userName, "", curr, size, RET_FIELDS));
+        data.put("hsCodeList", productService.getTotalHsCodeList(channelId, userName,"0", "", curr, size, RET_FIELDS));
         //返回数据类型
         return data;
     }
