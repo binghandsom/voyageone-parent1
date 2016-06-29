@@ -427,7 +427,7 @@ define([
                 alert("请选择修改价格的商品!");
                 return;
             }
-            popups.openPriceModify({search: $scope.search, listPromotionProductId: listPromotionProductId})
+            popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
         }
         $scope.openProductDetailWin = function (object) {
             popups.openJmProductDetail(object).then(function () {

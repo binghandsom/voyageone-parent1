@@ -5,6 +5,7 @@ define([
     angularAMD.controller('popPriceModifyCtl', function ($scope,jmPromotionDetailService,alert,context, $routeParams) {
         $scope.model={priceValueType:1,priceType:"1",discount:0,price:0};
         var listPromotionProductId=[];
+        var jmPromotionId=undefined;
         /**
          * 初始化数据.
          */
@@ -16,10 +17,12 @@ define([
             if(context)
             {
                 listPromotionProductId=context.listPromotionProductId;
+                jmPromotionId=context.jmPromotionId;
             }
         };
         $scope.ok = function () {
             $scope.model.listPromotionProductId =listPromotionProductId;
+            $scope.model.jmPromotionId=jmPromotionId;
             if(listPromotionProductId.length==0)
             {
                 alert("请选择修改价格的商品!");

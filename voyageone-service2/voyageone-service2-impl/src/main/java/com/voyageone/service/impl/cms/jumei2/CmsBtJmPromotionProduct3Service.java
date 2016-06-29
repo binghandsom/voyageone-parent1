@@ -120,10 +120,17 @@ public class CmsBtJmPromotionProduct3Service {
                 price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
+        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime()) {
+            result.setResult(false);
+            result.setMsg("预热已经开始,不能修改价格!");
+            return result;
+        }
+
         CmsBtJmPromotionSkuModel modelCmsBtJmPromotionSku = daoExtCmsBtJmPromotionSku.selectNotUpdateDealPrice(parameter.getListPromotionProductId(), price);
         if (modelCmsBtJmPromotionSku != null) {
             result.setResult(false);
-            result.setMsg(String.format("skuCode:%s更新后的团购价大于市场价,不能更新!",modelCmsBtJmPromotionSku.getSkuCode()));
+            result.setMsg(String.format("skuCode:%s更新后的团购价大于市场价,不能更新!", modelCmsBtJmPromotionSku.getSkuCode()));
             return result;
         }
 
