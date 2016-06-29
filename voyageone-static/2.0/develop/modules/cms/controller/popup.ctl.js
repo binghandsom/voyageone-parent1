@@ -1348,7 +1348,7 @@ define([
             return openModel(popActions.bulkUpdate.putOnOff, context);
         };
 
-        //打开高级查询页的搜索条件（自由标签和活动标签）
+        //打开高级查询页的搜索条件，自由标签
         $scope.openFreeTag = function (context) {
             return openModel(popActions.bulkUpdate.freeTag, context);
         };

@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
+import com.voyageone.service.impl.cms.TranslationTaskService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -28,6 +30,9 @@ public class TranslationController extends CmsController{
 
     @Autowired
     TranslationService feedPropsTranslateService;
+
+    @Autowired
+    TranslationTaskService translationTaskService;
 
     @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
@@ -158,9 +163,29 @@ public class TranslationController extends CmsController{
         return success(feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode")));
     }
 
+
+    /**
+     * 初始化页面
+     *
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.INIT)
     public AjaxResponse doInit()
     {
+
+        String channelId = this.getUser().getSelChannelId();
+        String user =this.getUser().getUserName();
+        Map<String,Object> translateTaskInitResponse = new HashMap<>();
+
+        translateTaskInitResponse.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
+        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId,user));
+
+        return success(translateTaskInitResponse);
+    }
+
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
+    public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean){
         return success(null);
     }
 
