@@ -609,14 +609,14 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
-        if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
+        if ((oldProduct.getCommon().getCatId() == null && commonModel.getCatId() != null) || !oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct,modifier);
         }
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
 
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
-        List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatId(commonModel.getCatPath()).getPlatformCategory();
+        List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if(platformCategory == null || platformCategory.size() == 0) return;
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
             if(platform.getFields() == null || platform.getFields().size() == 0){
