@@ -11,7 +11,6 @@ import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformImagesService;
@@ -48,8 +47,6 @@ public class CmsImageSettingService extends BaseAppService {
     ProductGroupService productGroupService;
     @Autowired
     PlatformImagesService platformImagesService;
-    @Autowired
-    ImageCreateService imageCreateService;
     @Autowired
     ImagesService imagesService;
 
