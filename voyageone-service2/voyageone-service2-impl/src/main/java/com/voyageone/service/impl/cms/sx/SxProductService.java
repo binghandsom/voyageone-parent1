@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -20,9 +19,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -82,8 +78,7 @@ import java.util.stream.Collectors;
  * @author morse.lu 16/04/19
  */
 @Service
-public class
-SxProductService extends BaseService {
+public class SxProductService extends BaseService {
 
     /**
      * upd_flg=0,需要上传(重新上传)
@@ -103,8 +98,7 @@ SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
-    @Autowired
-    private ImageCreateService imageCreateService;
+
     @Autowired
     private FeedCustomPropService customPropService;
     @Autowired
@@ -153,7 +147,7 @@ SxProductService extends BaseService {
      *
      * @param skuSourceList 排序对象
      */
-    public void sortSkuInfo(List<CmsBtProductModel_Sku> skuSourceList) {
+    public void sortSkuInfo(List<CmsBtProductModel_CommonSku> skuSourceList) {
 
         // Map<size, sort> 为了将来可能会从DB取得设定，先做成Map
         Map<String, Integer> mapSort = new HashMap<>();
@@ -303,7 +297,7 @@ SxProductService extends BaseService {
         // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
         List<CmsBtProductModel> sxProductList = sxData.getProductList();
         for (CmsBtProductModel sxProduct : sxProductList) {
-            String code = sxProduct.getFields().getCode();
+            String code = sxProduct.getCommon().getFields().getCode();
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
                     sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
@@ -615,17 +609,17 @@ SxProductService extends BaseService {
 //        List<CmsBtProductModel_Sku> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         List<BaseMongoMap<String, Object>> skuList = new ArrayList<>(); // 该group下，所有允许在该平台上上架的sku
         // modified by morse.lu 2016/06/13 end
-        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}", channelId);
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
-            if (mainProductCode.equals(productModel.getFields().getCode())) {
+            if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
                 // 主商品
                 sxData.setMainProduct(productModel);
                 // modified by morse.lu 2016/06/07 start
 //                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
                 String orgChannelId = productModel.getOrgChannelId(); // feed信息要从org里获取
-                String prodOrgCode = productModel.getFields().getOriginalCode(); // 有可能会有原始code
-                if (prodOrgCode == null) prodOrgCode = productModel.getFields().getCode();
+                String prodOrgCode = productModel.getCommon().getFields().getOriginalCode(); // 有可能会有原始code
+                if (prodOrgCode == null) prodOrgCode = productModel.getCommon().getFields().getCode();
                 CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
@@ -640,7 +634,7 @@ SxProductService extends BaseService {
                 Map<String, Object> searchParam = new HashMap<>();
                 searchParam.put("channelId", channelId);
                 searchParam.put("cartId", cartId);
-                searchParam.put("cmsBrand", productModel.getFields().getBrand());
+                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
                 CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
                 if (cmsMtBrandsMappingModel != null) {
                     sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
@@ -688,15 +682,15 @@ SxProductService extends BaseService {
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
             // 2016/06/02 Update by desmond Start  分平台对应
-            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
-                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
-                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-                    removeProductList.add(productModel);
-                    continue;
-                }
-            } else {
+//            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
+//                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
+//                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
+//                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
+//                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+//                    removeProductList.add(productModel);
+//                    continue;
+//                }
+//            } else {
                 // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
                 CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
                 if (productPlatformCart == null ||
@@ -704,8 +698,14 @@ SxProductService extends BaseService {
                     removeProductList.add(productModel);
                     continue;
                 }
-            }
+//            }
             // 2016/06/02 Update by desmond end
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
+            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -776,7 +776,7 @@ SxProductService extends BaseService {
             {
                 // {}2
                 // 暂时sku不判断是不是能在该平台上上架，且都从外面的skus里取
-                skuList.addAll(productModel.getSkus());
+                skuList.addAll(productModel.getCommon().getSkus());
             }
             // modified by morse.lu 2016/06/15 end
         }
@@ -835,7 +835,8 @@ SxProductService extends BaseService {
             // 所有sku取得
             List<String> skus = new ArrayList<>();
             for (CmsBtProductModel productModel : sxData.getProductList()) {
-                skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                //skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                skus.addAll(productModel.getCommon().getSkus().stream().map(p -> p.getSkuCode()).collect(Collectors.toList()));
             }
             // wms逻辑库存取得
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
@@ -889,6 +890,7 @@ SxProductService extends BaseService {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
         String strRex3 = "其它";
+        String strRex4 = "不限";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -931,7 +933,8 @@ SxProductService extends BaseService {
             }
 
             if (!blnError) {
-                if (optionDisplayName.equals(strRex3)) {
+                if (optionDisplayName.equals(strRex3) ||
+                        optionDisplayName.equals(strRex4)) {
                     blnError = true;
                 }
             }
@@ -1120,7 +1123,7 @@ SxProductService extends BaseService {
             CmsBtProductModel mainProduct = expressionParser.getSxData().getMainProduct();
             ComplexMappingBean complexMappingBean = (ComplexMappingBean) mappingBean;
             if (field.getType() == FieldTypeEnum.COMPLEX) {
-                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getFields().get(complexMappingBean.getMasterPropId());
+                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
                 if (masterWordEvaluationContext != null) {
                     expressionParser.pushMasterPropContext(masterWordEvaluationContext);
                 }
@@ -1150,7 +1153,7 @@ SxProductService extends BaseService {
                     expressionParser.popMasterPropContext();
                 }
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getFields().get(complexMappingBean.getMasterPropId());
+                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
 
                 if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
                     $info("No value found for MultiComplex field: " + field.getId());
@@ -1474,7 +1477,7 @@ SxProductService extends BaseService {
                             throw new BusinessException(errorCause);
                         }
                         CmsBtProductModel sxProduct = processProducts.get(0);
-                        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProduct.getSkus();
+                        List<CmsBtProductModel_CommonSku> cmsBtProductModelSkus = sxProduct.getCommon().getSkus();
                         if (cmsBtProductModelSkus.size() != 1) {
                             String errorCause = "包含商品外部编码的类目必须只有一个sku";
                             $error(errorCause);
@@ -1615,7 +1618,7 @@ SxProductService extends BaseService {
         boolean isDarwin = sxData.isDarwin();
         if (!isDarwin) {
             // 不是达尔文
-            String styleCode = sxData.getMainProduct().getFields().getModel();
+            String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
             sxData.setStyleCode(styleCode);
             return styleCode;
         } else {
@@ -1653,10 +1656,10 @@ SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
-            if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+            if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
-            for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
+            for (CmsBtProductModel_CommonSku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
                 int skuQuantity = 0;
                 Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
                 if (skuQuantityInteger != null) {
@@ -1977,20 +1980,24 @@ SxProductService extends BaseService {
 
     // 20160513 tom 图片服务器切换 START
     public String getImageByTemplateId(String channelId, String imageTemplate, String... imageName) throws Exception {
-
-        ImageCreateGetRequest request = new ImageCreateGetRequest();
-        request.setChannelId(channelId);
-        request.setTemplateId(Integer.parseInt(imageTemplate));
-        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-        String[] vPara = imageName;
-        request.setVParam(vPara);
-        ImageCreateGetResponse response = null;
-        try {
-            response = imageCreateService.getImage(request);
-            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-        } catch (Exception e) {
-            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
-        }
+        return null;
+        /**
+         * REMOVE LiquidFire
+         * liang 2016/06/29
+         */
+//        ImageCreateGetRequest request = new ImageCreateGetRequest();
+//        request.setChannelId(channelId);
+//        request.setTemplateId(Integer.parseInt(imageTemplate));
+//        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
+//        String[] vPara = imageName;
+//        request.setVParam(vPara);
+//        ImageCreateGetResponse response = null;
+//        try {
+//            response = imageCreateService.getImage(request);
+//            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+//        } catch (Exception e) {
+//            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
+//        }
     }
     // 20160513 tom 图片服务器切换 END
 
@@ -1999,12 +2006,12 @@ SxProductService extends BaseService {
 //        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
         List<CmsBtProductModel_Field_Image> productImages;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
-            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
-                productImages = product.getFields().getImages(imageType);
+                productImages = product.getCommon().getFields().getImages(imageType);
             }
         } else {
-            productImages = product.getFields().getImages(imageType);
+            productImages = product.getCommon().getFields().getImages(imageType);
         }
         return productImages;
     }

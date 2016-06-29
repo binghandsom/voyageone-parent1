@@ -503,20 +503,6 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 groupObj.setGroupBean(groupModelMap);
             }
 
-            // 设置cart相关信息
-            List<CmsBtProductModel_Carts> cartList = groupObj.getCarts();
-            if (cartList != null && cartList.size() > 0) {
-                for (CmsBtProductModel_Carts cart : cartList) {
-                    if (cart.getCartId() == cartId) {
-                        groupObj.setCartBean(cart);
-                        break;
-                    }
-                }
-            }
-            if (groupObj.getCartBean() == null) {
-                groupObj.setCartBean(new CmsBtProductModel_Carts());
-            }
-
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
             if (channel == null) {
                 orgChaNameList.add("");
@@ -558,24 +544,24 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                     }
                 }
 
-                // 查询商品在各平台状态
-                List<CmsBtProductModel_Carts> carts = groupObj.getCarts();
-                if (carts != null && carts.size() > 0) {
-                    for (CmsBtProductModel_Carts cartsObj : carts) {
-                        StringBuilder resultStr = new StringBuilder();
-                        resultStr.append(MongoUtils.splicingValue("cartId", cartsObj.getCartId()));
-                        resultStr.append(",");
-                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
-
-                        // 在group表中过滤platforms相关信息
-                        JomgoQuery qrpQuyObj = new JomgoQuery();
-                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
-                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
-                        if (grpItem != null) {
-                            cartsObj.setAttribute("numiid", grpItem.getNumIId());
-                        }
-                    }
-                }
+//                // 查询商品在各平台状态
+//                List<CmsBtProductModel_Carts> carts = groupObj.getCarts();
+//                if (carts != null && carts.size() > 0) {
+//                    for (CmsBtProductModel_Carts cartsObj : carts) {
+//                        StringBuilder resultStr = new StringBuilder();
+//                        resultStr.append(MongoUtils.splicingValue("cartId", cartsObj.getCartId()));
+//                        resultStr.append(",");
+//                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
+//
+//                        // 在group表中过滤platforms相关信息
+//                        JomgoQuery qrpQuyObj = new JomgoQuery();
+//                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
+//                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
+//                        if (grpItem != null) {
+//                            cartsObj.setAttribute("numiid", grpItem.getNumIId());
+//                        }
+//                    }
+//                }
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();

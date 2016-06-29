@@ -104,11 +104,12 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap) {
 
-        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getLang());
+        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getCmsSession());
 
         return success(resultMap);
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_COMMON_PRODUCTINFO)
     public AjaxResponse doGetMastProductInfo(@RequestBody Map requestMap) {
 
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
@@ -116,6 +117,19 @@ public class CmsProductDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
 
         return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
+    public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> productComm = (Map<String, Object>) requestMap.get("productComm");
+
+        return success(productPropsEditService.updateCommonProductinfo(channelId, prodId, productComm, getUser().getUserName()));
 
     }
 }

@@ -165,7 +165,7 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setHsCode(modelJmBtProduct.getHsCode());
         modelCmsBtJmProduct.setHsName(modelJmBtProduct.getHsName());
         modelCmsBtJmProduct.setHsUnit(modelJmBtProduct.getHsUnit());
-        modelCmsBtJmProduct.setImage1("");
+//        modelCmsBtJmProduct.setImage1("");modelJmBtProduct.
         modelCmsBtJmProduct.setJumeiProductId(modelJmBtProduct.getJumeiProductId());
         if(commonField!=null&&!StringUtils.isEmpty(commonField.getMaterialCn())) {
             modelCmsBtJmProduct.setMaterialCn(commonField.getMaterialCn());
@@ -223,7 +223,7 @@ public class JmBtDealImportService extends BaseService {
             daoCmsBtJmProduct.insert(modelCmsBtJmProduct);//CmsBtJmProduct
         } catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
         {
-
+            System.out.println("该数据已经存在,不再重复插入:" + modelJmBtProduct.getChannelId() + "-" + modelCmsBtJmProduct.getProductCode());
         }
     }
 
@@ -265,7 +265,7 @@ public class JmBtDealImportService extends BaseService {
 
             } catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
             {
-
+                System.out.println("该数据已经存在,不再重复插入:" + modelCmsBtJmSku.getChannelId() + "-" + modelCmsBtJmSku.getSkuCode());
             }
         }
     }
@@ -290,6 +290,8 @@ public class JmBtDealImportService extends BaseService {
 //            onSaleTime
         HashMap<String, Object>  queryMap = new HashMap<>();
          queryMap.put("mainProductCode", modelJmBtProduct.getProductCode());
+         queryMap.put("cartId", 27);
+
 
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("numIId", modelJmBtDealImport.getJumeiHashId());
@@ -315,19 +317,10 @@ public class JmBtDealImportService extends BaseService {
 //        6.pPriceMsrpSt等被覆盖成空        处理
 //        7.fields.productShortName 未空？  处理
 //        8.skus.priceMsrp等被覆盖成空     处理
-        List<CmsBtProductModel_Carts> carts  = modelCmsBtProduct.getCarts();
-        for(CmsBtProductModel_Carts cart : carts) {
-            if (cart.getCartId() == 27) {
-                cart.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-                cart.setPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
-                cart.setNumIid(modelJmBtDealImport.getJumeiHashId());
-            }
-
-        }
 
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
-        platform.setpCatId(CartEnums.Cart.TM.getId());
+        platform.setpCatId(String.valueOf(modelJmBtProduct.getCategoryLv4Id()));
         if(modelJmBtProduct.getCategoryLv4Id()!=0) {
             String catPath = daoExtJmBtDealImport.selectCategoryFullPath(modelJmBtProduct.getCategoryLv4Id());
             if (!StringUtils.isEmpty(catPath)) {
@@ -339,7 +332,6 @@ public class JmBtDealImportService extends BaseService {
         platform.setpCatStatus("1");
         platform.setpIsMain(1);
         platform.setpAttributeSetTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
-        //platform.setpPriceMsrpSt();
         platform.setpBrandId(Integer.toString(modelJmBtProduct.getBrandId()));
         platform.setpBrandName(modelJmBtProduct.getBrandName());
         platform.setpNumIId(modelJmBtDealImport.getJumeiHashId());
@@ -376,24 +368,15 @@ public class JmBtDealImportService extends BaseService {
                 $error("code:"+modelJmBtDealImport.getProductCode()+" skuCode:" +jmBtSkuModel.getSku()+ "mongo不存在");
                 continue;
             }
-          //  skuMap.setAttribute("priceRetail", "");  //各平台的销售指导价
-           // skuMap.setAttribute("priceSale", "");    //中国最终售价
-           // skuMap.setAttribute("priceChgFlg", "");  //价格变更状态（U/D/XU/XD）
             skuMap.setAttribute("jmSpuNo", jmBtSkuModel.getJumeiSpuNo());
             skuMap.setAttribute("jmSkuNo", jmBtSkuModel.getJumeiSkuNo());
             skuMap.setAttribute("property", "OTHER");
             skuMap.setAttribute("size", jmBtSkuModel.getSize());
-            //skuMap.setAttribute("skuCode", jmBtSkuModel.getSku());
         }
-        //platform.setSkus(skus);
 
-        // List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("platforms.P27", platform);
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        updateMap.put("carts", carts);
-
-        //updateMap.put("platforms.P27", platform);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("fields.code", modelJmBtProduct.getProductCode());
@@ -402,7 +385,6 @@ public class JmBtDealImportService extends BaseService {
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
-        //bulkList.add(model);
         return model;
         //        * P27  ->聚美
 //            * cartId

@@ -239,18 +239,11 @@
                     <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
-            <!-- 高级检索 -->
-            <li ui-sref-active="active">
-                <a href="#/search/advance">
-                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span translate="TXT_ADVANCE_SEARCH"></span>
-                </a>
-            </li>
             <!-- 新高级检索 -->
             <li ui-sref-active="active">
                 <a href="#/search/advanceSearch">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span translate="TXT_ADVANCE_SEARCH"></span> new
+                    <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
         </ul>
@@ -689,12 +682,12 @@
                         </a>
                     </li>
                     <!-- 商品税号设置 todo:暂时不支持 -->
-                    <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
-                        <!--<a ng-href="#/tools_product/hscode_setting">-->
-                            <!--<i class="fa fa-minus icon text-vo"></i>-->
-                            <!--<span TRANSLATE="TOOLS_PRODUCT_HSCODE_SETTING"></span>-->
-                        <!--</a>-->
-                    <!--</li>-->
+                    <li ui-sref-active="active" ng-if="!$root.isTranslator">
+                        <a ng-href="#/tools/product">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TOOLS_PRODUCT_HSCODE_SETTING"></span>
+                        </a>
+                    </li>
                     <!-- 商品自定义图片任务 todo:暂时不支持 -->
                     <!--<li ui-sref-active="active" ng-if="!$root.isTranslator">-->
                         <!--<a ng-href="#/tools_product/custom_images_setting">-->

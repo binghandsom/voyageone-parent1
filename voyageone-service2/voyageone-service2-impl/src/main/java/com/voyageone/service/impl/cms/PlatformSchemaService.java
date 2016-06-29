@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -50,6 +51,11 @@ public class PlatformSchemaService extends BaseService {
      * 产品画面属性list取得
      */
     public Map<String, List<Field>> getFieldForProductImage(String catId, int cartId) {
+        if (CartEnums.Cart.JM.getValue() == cartId) {
+            // 聚美的场合，因为只有一个catId，写死 catId = 1
+            catId = "1";
+        }
+
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
         if (platformCatSchemaModel == null) {
             return null;
@@ -61,6 +67,16 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
+        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+            // 京东的场合，产品schema是共通，写死 catId = 1
+            CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
+            if (platformCatSchemaModelJD == null) {
+                $error("JD的产品schema未设定!");
+                return null;
+            } else {
+                schemaProduct = platformCatSchemaModelJD.getPropsProduct();
+            }
+        }
         if (!StringUtils.isEmpty(schemaProduct)) {
             List<Field> listProductField = SchemaReader.readXmlForList(schemaProduct);
             retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField,
@@ -121,6 +137,11 @@ public class PlatformSchemaService extends BaseService {
      * Mapping画面属性Map取得
      */
     public Map<String, Field> getMapFieldForMappingImage(String catId, int cartId) throws Exception {
+        if (CartEnums.Cart.JM.getValue() == cartId) {
+            // 聚美的场合，因为只有一个catId，写死 catId = 1
+            catId = "1";
+        }
+
         Map<String, Field> retMap = new HashMap<>();
 
         CmsMtPlatformCategoryInvisibleFieldModel invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId(catId, cartId);
@@ -136,6 +157,16 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
+        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+            // 京东的场合，产品schema是共通，写死 catId = 1
+            CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
+            if (platformCatSchemaModelJD == null) {
+                $error("JD的产品schema未设定!");
+                return null;
+            } else {
+                schemaProduct = platformCatSchemaModelJD.getPropsProduct();
+            }
+        }
         if (!StringUtils.isEmpty(schemaProduct)) {
             Map<String, Field> mapProductField = SchemaReader.readXmlForMap(schemaProduct);
             List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField = invisibleFieldModel.getPropsProduct();

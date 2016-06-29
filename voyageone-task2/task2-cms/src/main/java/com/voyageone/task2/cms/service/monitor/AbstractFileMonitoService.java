@@ -168,7 +168,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                 onEvent(event, watchPath, strPath, strFileName, channelId);
             }
         } catch (Exception e) {
-            LOG.error("AbstractFileMonitoService.executeCmd error:", e);
+            LOG.error("AbstractFileMonitoService.executeCmd error:", e.getMessage());
         } finally {
             if (reader != null) {
                 try {
@@ -205,7 +205,7 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                 return true;
             }
         } catch (Exception e) {
-            LOG.error("AbstractFileMonitoService.executeKill error:", e);
+            LOG.error("AbstractFileMonitoService.executeKill error:", e.getMessage());
         }
         return false;
     }

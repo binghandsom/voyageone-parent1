@@ -3,13 +3,17 @@ package com.voyageone.service.impl.cms.product;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +37,9 @@ public class ProductGroupService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+
+    @Autowired
+    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
 
     /**
      * getList
@@ -186,23 +193,18 @@ public class ProductGroupService extends BaseService {
 
             // 获取以前的产品carts信息,用于判断是否需要更新publishTime
             JomgoQuery queryObject = new JomgoQuery();
-            StringBuilder sbQuery = new StringBuilder();
-            sbQuery.append(MongoUtils.splicingValue("carts.cartId", model.getCartId()));
-            sbQuery.append(",");
-            sbQuery.append(MongoUtils.splicingValue("common.fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
-            queryObject.setQuery("{" + sbQuery.toString() + "}");
+            queryObject.setQuery("{'common.fields.code':{$in:#},'platforms.P" + model.getCartId() + ".pStatus':'WaitingPublish'}");
+            queryObject.setParameters(model.getProductCodes());
 
             // 如果该产品已经上新过,则对应值为true,否则为false
-            queryObject.setProjection("{\"common.fields.code\": 1, \"carts.$\": 1}");
+            queryObject.setProjection("{\"common.fields.code\": 1}");
             List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, model.getChannelId());
             Map<String, Boolean> isPublishedProducts = new HashMap<>();
-            for(CmsBtProductModel product : products) {
-                isPublishedProducts.put(product.getCommon().getFields().getCode(),
-                        product.getCarts().size() > 0 && !StringUtils.isEmpty(product.getCarts().get(0).getPublishTime()));
+            for (CmsBtProductModel product : products) {
+                isPublishedProducts.put(product.getCommon().getFields().getCode(), true);
             }
 
             // 批量更新产品的平台状态.
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
             List<BulkUpdateModel> bulkList2 = new ArrayList<>();
             for (String code : model.getProductCodes()) {
 
@@ -211,37 +213,18 @@ public class ProductGroupService extends BaseService {
                 }
 
                 // 设置批量更新条件
-                HashMap<String, Object> bulkQueryMap = new HashMap<>();
-                bulkQueryMap.put("common.fields.code", code);
-                bulkQueryMap.put("carts.cartId", model.getCartId());
-
-                // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap2 = new HashMap<>();
                 bulkQueryMap2.put("common.fields.code", code);
-                bulkQueryMap2.put("platforms.P"+model.getCartId() + ".cartId", model.getCartId());
 
                 // 设置更新值
-                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 HashMap<String, Object> bulkUpdateMap2 = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
-                    bulkUpdateMap.put("carts.$.platformStatus", model.getPlatformStatus().name());
                     bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 if (!isPublishedProducts.get(code)) {
-                    bulkUpdateMap.put("carts.$.publishTime", model.getPublishTime());
-                    bulkUpdateMap.put("carts.$.numIId", model.getNumIId());
-
                     bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pPublishTime", model.getPublishTime());
                     bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pNumIId", model.getNumIId());
                     bulkUpdateMap2.put("platforms.P"+model.getCartId() + ".pProductId", model.getPlatformPid());
-                }
-
-                // 设定批量更新条件和值
-                if (bulkUpdateMap.size() > 0) {
-                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-                    bulkUpdateModel.setQueryMap(bulkQueryMap);
-                    bulkList.add(bulkUpdateModel);
                 }
 
                 // 设定批量更新条件和值
@@ -251,11 +234,6 @@ public class ProductGroupService extends BaseService {
                     bulkUpdateModel2.setQueryMap(bulkQueryMap2);
                     bulkList2.add(bulkUpdateModel2);
                 }
-            }
-
-            // 批量更新product表
-            if (bulkList.size() > 0) {
-                cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", true);
             }
 
             // 批量更新product表
@@ -283,5 +261,56 @@ public class ProductGroupService extends BaseService {
         updateMap.put("modifier", model.getModifier());
 
         return cmsBtProductGroupDao.update(model.getChannelId(), queryMap, updateMap);
+    }
+
+    /**
+     * 获取聚美下面的所有group的codes大于1的数据,然后将其对应的group按一个code一个group做拆分,并删除以前的group.
+     * @param channelId 渠道Id
+     * @return
+     */
+    public String splitJmProductGroup (String channelId) {
+        List<CmsBtProductGroupModel> allGroupList = cmsBtProductGroupDao.selectGroupInfoByMoreProductCodes(channelId, 27);
+
+
+        $info("处理的channelId:" + channelId + ",取得group的总件数:" + allGroupList.size());
+        for(CmsBtProductGroupModel groupInfo : allGroupList) {
+
+            if (groupInfo.getProductCodes().size() > 0) {
+
+                for(String code : groupInfo.getProductCodes()) {
+                    CmsBtProductGroupModel newGroupInfo = new CmsBtProductGroupModel();
+                    BeanUtils.copyProperties(groupInfo, newGroupInfo);
+                    newGroupInfo.set_id(null);
+                    newGroupInfo.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+                    newGroupInfo.setMainProductCode(code);
+
+                    List<String> productCodes = new ArrayList<>();
+                    productCodes.add(code);
+                    newGroupInfo.setProductCodes(productCodes);
+
+                    if (!code.equals(groupInfo.getMainProductCode())) {
+                        newGroupInfo.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+                        newGroupInfo.setInStockTime("");
+                        newGroupInfo.setNumIId("");
+                        newGroupInfo.setPlatformPid("");
+                        newGroupInfo.setPublishTime("");
+                        newGroupInfo.setOnSaleTime("");
+                    }
+
+                    $info("插入新group数据内容" + JacksonUtil.bean2Json(newGroupInfo));
+
+                    cmsBtProductGroupDao.insert(newGroupInfo);
+
+                }
+
+                $info("插入新数据成功,删除旧的group数据:" + JacksonUtil.bean2Json(groupInfo));
+                cmsBtProductGroupDao.deleteById(groupInfo.get_id(), groupInfo.getChannelId());
+
+            }else {
+                break;
+            }
+        }
+
+        return "成功处理group的总件数:" + allGroupList.size();
     }
 }

@@ -67,7 +67,7 @@ define([
         $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategoryFromAdSearch;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
-        $scope.getTagList = getTagList;
+        //$scope.getTagList = getTagList;
         $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
@@ -173,6 +173,8 @@ define([
                     var prodObj = $scope.vm.productList[idx];
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
+                $scope.vm.currTab = "product";
+                $scope.vm.currTab2 = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
                 $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
@@ -302,6 +304,10 @@ define([
                         alert("未选择商品，请选择后再操作。");
                         return;
                     }
+                    if (res.data.ecd == 2) {
+                        alert("未设置变更项目，请设置后再操作。");
+                        return;
+                    }
                     if (res.data.ecd == 4) {
                         alert("下列商品不在 " + res.data.cartStr + " 上销售，无法继续操作，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
                         return;
@@ -362,7 +368,7 @@ define([
         }
 
         /**
-         * 添加新search选项
+         * 添加新的自定义查询选项
          */
         function addCustAttribute() {
             if ($scope.vm.custAttrList.length < 5) {
@@ -371,7 +377,7 @@ define([
                 alert("最多只能添加5项")
             }
         }
-
+        // 删除自定义查询选项
         function delCustAttribute(idx) {
             if ($scope.vm.custAttrList.length > 1) {
                 $scope.vm.custAttrList.splice(idx, 1);
@@ -453,19 +459,19 @@ define([
             return selList;
         }
 
-        /**
-         * 查询指定标签类型下的所有标签(list形式)
-         */
-        function getTagList() {
-            if ($scope.vm.searchInfo.tagTypeSelectValue == '0' || $scope.vm.searchInfo.tagTypeSelectValue == '' || $scope.vm.searchInfo.tagTypeSelectValue == undefined) {
-                $scope.vm.masterData.tagList = [];
-                return;
-            }
-            channelTagService.getTagList({'tagTypeSelectValue': $scope.vm.searchInfo.tagTypeSelectValue})
-                .then(function (res) {
-                    $scope.vm.masterData.tagList = res.data;
-                });
-        }
+        ///**
+        // * 查询指定标签类型下的所有标签(list形式)
+        // */
+        //function getTagList() {
+        //    if ($scope.vm.searchInfo.tagTypeSelectValue == '0' || $scope.vm.searchInfo.tagTypeSelectValue == '' || $scope.vm.searchInfo.tagTypeSelectValue == undefined) {
+        //        $scope.vm.masterData.tagList = [];
+        //        return;
+        //    }
+        //    channelTagService.getTagList({'tagTypeSelectValue': $scope.vm.searchInfo.tagTypeSelectValue})
+        //        .then(function (res) {
+        //            $scope.vm.masterData.tagList = res.data;
+        //        });
+        //}
 
         /**
          * 查询指定店铺cart类型下的所有类目(list形式)
@@ -553,7 +559,7 @@ define([
 
                 confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
                     .then(function () {
-                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds).then(function () {
+                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             searchAdvanceService2.clearSelList();
                             getGroupList();
@@ -564,8 +570,11 @@ define([
         }
 
         function openAdvanceImagedetail(item) {
+            if (item.common == undefined || item.common.fields == undefined) {
+                return;
+            }
             var picList = [];
-            for (var attr in item.commom.fields) {
+            for (var attr in item.common.fields) {
                 if (attr.indexOf("images") >= 0) {
                     var image = _.map(item.common.fields[attr], function (entity) {
                         var imageKeyName = "image" + attr.substring(6, 7);
@@ -577,6 +586,7 @@ define([
             this.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
         }
 
+        // 检查是否已勾选商品
         function _chkProductSel(cartId, callback, context) {
             if (cartId == null || cartId == undefined) {
                 // 全平台处理
@@ -769,7 +779,7 @@ define([
         }
 
         /**
-         * popup出选择Tag的功能
+         * popup出选择Tag的功能（包括活动标签和自由标签）
          * @param openFreeTag
          */
         function openTagManagement(openFreeTag, isPromoTag) {

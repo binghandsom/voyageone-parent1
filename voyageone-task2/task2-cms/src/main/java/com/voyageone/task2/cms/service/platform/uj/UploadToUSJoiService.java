@@ -110,7 +110,6 @@ public class UploadToUSJoiService extends BaseTaskService {
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
-                    productModel.setCarts(new ArrayList<>());
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setSellerCats(new CmsBtProductModel_SellerCats());
                     productModel.setTags(new ArrayList<>());
@@ -150,7 +149,6 @@ public class UploadToUSJoiService extends BaseTaskService {
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-                    productModel.setCarts(new ArrayList<CmsBtProductModel_Carts>());
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(sxWorkLoadBean.getCartId());
@@ -256,30 +254,36 @@ public class UploadToUSJoiService extends BaseTaskService {
                             newPlatform.setCartId(cart);
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform,getTaskName());
                         } else {
-                            for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
-                                boolean updateFlg = false;
-                                for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
-                                    if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
-                                        oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
-                                        oldSku.put("priceRetail", newSku.get("priceRetail"));
-                                        updateFlg = true;
-                                        break;
+                            if(platformCart.getSkus() == null){
+                                platformCart.setSkus(newPlatform.getSkus());
+                            }else{
+                                for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
+                                    boolean updateFlg = false;
+                                    if(platformCart.getSkus() != null) {
+                                        for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
+                                            if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
+                                                oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
+                                                oldSku.put("priceRetail", newSku.get("priceRetail"));
+                                                updateFlg = true;
+                                                break;
+                                            }
+                                        }
                                     }
+                                    if(!updateFlg){
+                                        platformCart.getSkus().add(newSku);
+                                    }
+                                    platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
+                                    platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
+                                    platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
+                                    platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
                                 }
-                                if(!updateFlg){
-                                    platformCart.getSkus().add(newSku);
-                                }
-                                platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
-                                platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
-                                platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
-                                platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
                             }
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), platformCart,getTaskName());
                         }
                     });
 
                     if (pr.getCommon() == null || pr.getCommon().size() == 0) {
-                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon());
+                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(),getTaskName(),false);
                     }
 
                 }

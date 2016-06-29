@@ -26,6 +26,7 @@ define([
                 sortRule: ""
             }
         };
+        $scope.btnclick = false;
         $scope.searchHistoryTasks = searchHistoryTasks;
         // 获取初始化数据
         $scope.initialize = function() {
@@ -95,6 +96,7 @@ define([
 
         // 查询历史任务.
         function searchHistoryTasks(page) {
+            $scope.btnclick = true;
             $scope.vm.prodPageOption.curr = !page ? $scope.vm.prodPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.prodPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.prodPageOption.size;
@@ -104,7 +106,9 @@ define([
                     $scope.vm.taskInfos.productTranslationBeanList = res.data.productTranslationBeanList;
                     $scope.vm.prodPageOption.total = res.data.prodListTotal;
                 })
-        };
+        }
+
+        // qing
 
         // 撤销翻译任务.
         $scope.cancelTask = function (productItem, index) {
@@ -134,3 +138,18 @@ define([
     translationDetail.$inject = ['$scope','$routeParams','$translate','translationService','notify','confirm','alert'];
     return translationDetail;
 });
+
+define([
+    'cms',
+    'modules/cms/controller/popup.ctl'
+]),function () {
+    cms.controller('aa',(function(){
+        function aa(){};
+        
+        aa.prototype =function () {
+
+        };
+        
+        return aa;
+    })())
+}

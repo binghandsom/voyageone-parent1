@@ -70,7 +70,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public UploadProductService() {}
 
     public String do_upload() {
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        // modified by morse.lu 2016/06/24 start
+//        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        // 只有天猫国际才是对象
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModelWithCartId(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, CartEnums.Cart.TG.getValue());
+        // modified by morse.lu 2016/06/24 end
         workLoadBeanListMap = buildWorkloadMap(sxWorkloadModels);
         workLoadBeans = workLoadBeanListMap.keySet();
 
@@ -133,15 +137,18 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 }
             }
 
+            // deleted by morse.lu 2016/06/24 start
+            // 数据抽出(sx_workload表)的时候做了
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 START
-            if (mainSxProduct != null) {
-                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
-                    if (23 != mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId()) {
-                        continue;
-                    }
-                }
-            }
+//            if (mainSxProduct != null) {
+//                if (mainSxProduct.getCmsBtProductModelGroupPlatform() != null) {
+//                    if (23 != mainSxProduct.getCmsBtProductModelGroupPlatform().getCartId()) {
+//                        continue;
+//                    }
+//                }
+//            }
             // tom 增加一个判断, 防止非天猫国际的数据进来, 这段代码也就是临时用用, 2016年5月中旬就会被废掉 END
+            // deleted by morse.lu 2016/06/24 end
 
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
             if (mainSxProduct != null && mainSxProduct.getCmsBtProductModel() != null) {
@@ -240,6 +247,11 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 return false;
             }
         }
+        // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
+        if (!StringUtils.isEmpty(cmsBtProductModel.getFields().getLock()) && "1".equals(cmsBtProductModel.getFields().getLock())) {
+            return false;
+        }
+        // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
         if (!StringUtils.isEmpty(cmsBtProductModel.getLock()) && "1".equals(cmsBtProductModel.getLock())) {
             return false;
         }

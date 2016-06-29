@@ -16,6 +16,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
@@ -28,10 +29,7 @@ import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +46,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
+
+    @Autowired
+    private PlatformSchemaService platformSchemaService;
 
     /**
      * 获取产品平台信息
@@ -79,21 +80,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         }
 
-        if (!StringUtil.isEmpty(platformCart.getpCatId())) {
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
-            // JM的场合schema就一条
-            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
-            } else {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(platformCart.getpCatId(), cartId);
-            }
-            List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
-            BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            if (fieldsValue != null) {
-                FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
-            }
-            platformCart.put("schemaFields", fields);
-        }
+        platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(),platformCart.getpCatId(),cartId));
         return platformCart;
     }
 
@@ -159,20 +146,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
-            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
-            } else {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
-            }
-            List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
-            BaseMongoMap<String, Object> fieldsValue = platformCart.getFields();
-            if (fieldsValue != null) {
-                FieldUtil.setFieldsValueFromMap(fields, fieldsValue);
-            }
-            platformCart.put("schemaFields", fields);
-            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
-            platformCart.setpCatId(platformCategorySchemaModel.getCatId());
+
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(),catId,cartId));
+            platformCart.setpCatId(catId);
             // platform 品牌名
             if (StringUtil.isEmpty(platformCart.getpBrandId())) {
                 Map<String, Object> parm = new HashMap<>();
@@ -188,14 +164,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
-            CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
-            if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel("1", cartId);
-            } else {
-                platformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
-            }
-            List<Field> fields = SchemaReader.readXmlForList(platformCategorySchemaModel.getPropsItem());
-            platformCart.put("schemaFields", fields);
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(),catId,cartId));
+
             Map<String, Object> parm = new HashMap<>();
             parm.put("channelId", channelId);
             parm.put("cartId", cartId);
@@ -206,7 +176,6 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                 platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
             }
-            platformCart.setpCatPath(platformCategorySchemaModel.getCatFullPath());
             platformCart.setpCatId(catId);
         }
         return platformCart;
@@ -214,7 +183,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
-        List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("schemaFields"));
+
+        List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
         platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         platform.remove("schemaFields");
@@ -262,9 +232,16 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     /**
      * 构建masterFields.
      */
-    private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
+    private List<Field> buildMasterFields(Map<String, Object> masterFieldsList) {
 
-        List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
+        List<Map<String, Object>> item = new ArrayList<>();
+        if(masterFieldsList.get(PlatformSchemaService.KEY_ITEM) != null) {
+            item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_ITEM));
+        }
+        if(masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT) != null){
+            item.addAll((Collection<? extends Map<String, Object>>) masterFieldsList.get(PlatformSchemaService.KEY_PRODUCT));
+        }
+        List<Field> masterFields = SchemaJsonReader.readJsonForList(item);
 
         // setComplexValue
         for (Field field : masterFields) {
@@ -330,6 +307,22 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
 
         }
+    }
 
+    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, Integer cartId){
+        Map<String, List<Field>> fields = null;
+        // JM的场合schema就一条
+        if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
+            fields = platformSchemaService.getFieldForProductImage("1", cartId);
+        } else {
+            fields = platformSchemaService.getFieldForProductImage(catId, cartId);
+        }
+        if (fieldsValue != null && fields != null && fields.get(PlatformSchemaService.KEY_ITEM) != null) {
+            FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_ITEM), fieldsValue);
+        }
+        if (fieldsValue != null && fields != null && fields.get(PlatformSchemaService.KEY_PRODUCT) != null) {
+            FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_PRODUCT), fieldsValue);
+        }
+        return fields;
     }
 }

@@ -7,7 +7,7 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, selectRowsFactory, confirm, alert) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -18,6 +18,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+        $scope.doExport = doExport;
 
         var tempFeedSelect = null;
 
@@ -83,9 +84,6 @@ define([
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
-            if ($scope.vm.searchInfo.fuzzySearch != undefined) {
-                $scope.vm.searchInfo.fuzzyList = $scope.vm.searchInfo.fuzzySearch.split("\n");
-            }
 
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
                 $scope.vm.feedList = res.data.feedList;
@@ -159,8 +157,36 @@ define([
                     })
                 });
         };
+
+        function doExport(){
+            var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
+            $feedSearchService.doExport(data).then(function(data){
+
+
+            })
+        }
+
+
+
+        $scope.openFeedCategoryMapping = function(popupNewCategory) {
+            attributeService.getCatTree()
+                .then(function (res) {
+                    if (!res.data.categoryTree || !res.data.categoryTree.length) {
+                        alert("没数据");
+                        return null;
+                    }
+                    return popupNewCategory({
+                        categories: res.data.categoryTree,
+                        from: ""
+                    }).then(function (context) {
+                        $scope.vm.searchInfo.category = context.selected.catPath;
+                        }
+                    );
+                });
+        }
+
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', 'selectRowsFactory', 'confirm', 'alert'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService'];
     return searchIndex;
 });
