@@ -13,14 +13,16 @@
                                 <div class="panel-heading" style="background-color: #666666;">
                                     <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> {{'TXT_TRANSLATION_STATUS' | translate}}</h3>
                                 </div>
-                                <div class="panel-body" style="background-color: #F8F8F8;padding: 13px 0 5px 0;">
-                                    <ul class="data-display-boxes" style="min-height: 110px;">
+                                <div class="panel-body text-center" style="background-color: #F8F8F8;padding: 13px 0 5px 0;">
+                                    <ul class="data-display-boxes" style="min-height: 0;">
                                         <li>
                                             <div class="data"><strong>{{vm.taskInfos.totalUndoneCount}}</strong> {{'TXT_UN_TRANSLATION' | translate}}</div>
                                         </li>
                                         <li>
                                             <div class="data"><strong>{{vm.taskInfos.totalDistributeUndoneCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
                                         </li>
+                                        </ul>
+                                    <ul class="data-display-boxes" style="min-height: 0;">
                                         <li>
                                             <div class="data"><strong>{{vm.taskInfos.totalDoneCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
                                         </li>
