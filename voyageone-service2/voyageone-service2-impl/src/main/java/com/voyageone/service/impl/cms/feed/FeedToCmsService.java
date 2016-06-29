@@ -10,9 +10,8 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,13 +115,13 @@ public class FeedToCmsService extends BaseService {
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     //把之前的sku（新的product中没有的sku）保存到新的product的sku中
-                    for(CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
+                    for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
                         if (!product.getSkus().contains(skuModel)) {
                             product.getSkus().add(skuModel);
                             insertLog = true;
-                        }else{
+                        } else {
                             // 改条数据已经需要跟新主数据了 后面价格也不需要比了
-                            if(insertLog == false) {
+                            if (insertLog == false) {
                                 CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
                                 if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
                                         || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
@@ -138,20 +137,20 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
-                    if((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1) && insertLog){
+                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1) && insertLog) {
                         product.setUpdFlg(0);
-                    }else{
+                    } else {
                         product.setUpdFlg(befproduct.getUpdFlg());
                     }
-                }else{
+                } else {
                     insertLog = true;
                     product.setUpdFlg(9);
                 }
 
                 // code 库存计算
                 Integer qty = 0;
-                for(CmsBtFeedInfoModel_Sku sku : product.getSkus()){
-                    if(sku.getQty() != null) qty+=sku.getQty();
+                for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                    if (sku.getQty() != null) qty += sku.getQty();
                 }
                 product.setQty(qty);
 
@@ -162,7 +161,7 @@ public class FeedToCmsService extends BaseService {
                 sizeTypeList.add(product.getSizeType());
                 productTypeList.add(product.getProductType());
 
-                if(insertLog){
+                if (insertLog) {
                     // 写log表
                     product.set_id(null);
                     feedInfoLogService.insertCmsBtFeedInfoLog(product);
@@ -191,9 +190,9 @@ public class FeedToCmsService extends BaseService {
         }
 
         //0:brand 1:sizeType 2:productType
-        insertCmsMtChannelValues(channelId,brandList, 0, modifier);
-        insertCmsMtChannelValues(channelId,sizeTypeList, 1, modifier);
-        insertCmsMtChannelValues(channelId,productTypeList, 2, modifier);
+        insertCmsMtChannelValues(channelId, brandList, 0, modifier);
+        insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
+        insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
 
         Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
@@ -273,7 +272,7 @@ public class FeedToCmsService extends BaseService {
         feedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);
     }
 
-    private void insertCmsMtChannelValues(String channelId, Set<String> values, int type,String modifier) {
+    private void insertCmsMtChannelValues(String channelId, Set<String> values, int type, String modifier) {
         CmsMtChannelValuesModel cmsMtChannelValuesModel = new CmsMtChannelValuesModel();
         cmsMtChannelValuesModel.setChannelId(channelId);
         cmsMtChannelValuesModel.setType(type);
@@ -282,7 +281,7 @@ public class FeedToCmsService extends BaseService {
 //        cmsMtChannelValuesModel.setCreatedStr(DateTimeUtil.getNow());
         cmsMtChannelValuesModel.setCreated(new Date());
         values.forEach(s -> {
-            if(!StringUtil.isEmpty(s)) {
+            if (!StringUtil.isEmpty(s)) {
                 cmsMtChannelValuesModel.setKey(s);
                 cmsMtChannelValuesModel.setValue(s);
                 cmsMtChannelValuesService.insertCmsMtChannelValues(cmsMtChannelValuesModel);
