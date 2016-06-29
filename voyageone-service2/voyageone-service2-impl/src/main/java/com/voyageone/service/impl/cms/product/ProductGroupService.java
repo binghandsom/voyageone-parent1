@@ -186,9 +186,8 @@ public class ProductGroupService extends BaseService {
 
             // 获取以前的产品carts信息,用于判断是否需要更新publishTime
             JomgoQuery queryObject = new JomgoQuery();
-            StringBuilder sbQuery = new StringBuilder();
-            sbQuery.append(MongoUtils.splicingValue("common.fields.code", model.getProductCodes().toArray(new String[model.getProductCodes().size()]), "$in"));
-            queryObject.setQuery("{" + sbQuery.toString() + "}");
+            queryObject.setQuery("{'common.fields.code':{$in:#},'platforms.P" + model.getCartId() + ".pStatus':'WaitingPublish'}");
+            queryObject.setParameters(model.getProductCodes());
 
             // 如果该产品已经上新过,则对应值为true,否则为false
             queryObject.setProjection("{\"common.fields.code\": 1}");
