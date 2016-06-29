@@ -2279,14 +2279,15 @@ public class SxProductService extends BaseService {
      *
      * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
      * @param sxData SxData 上新数据
+     * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param numIId String 商品id
      * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
      * @param numIId String 商品id
      */
-    private void doUploadFinalProc(boolean isUsJoi, SxData sxData, boolean uploadStatus,
-                                   String numIId, CmsConstants.PlatformStatus platformStatus,
-                                   String platformPid, String modifier) {
+    public void doUploadFinalProc(boolean isUsJoi, SxData sxData, CmsBtSxWorkloadModel cmsBtSxWorkloadModel,
+                                  boolean uploadStatus, String numIId, CmsConstants.PlatformStatus platformStatus,
+                                  String platformPid, String modifier) {
 
         // 取得变更前的product group表数据
         CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
@@ -2297,34 +2298,35 @@ public class SxProductService extends BaseService {
             return;
         }
 
-        // 设置共通属性
-        sxData.getPlatform().setNumIId(numIId);
-        if (!isUsJoi) {
-            // 一般店铺上新时 (默认为下架)
-            platformStatus = (platformStatus == null) ? CmsConstants.PlatformStatus.InStock : platformStatus;
-            sxData.getPlatform().setPlatformStatus(platformStatus);
-        } else {
-            // USJoi店铺上新时,固定设为下架
-            sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-        }
-        if (!StringUtils.isEmpty(platformPid)) {
-            sxData.getPlatform().setModifier(platformPid);
-        }
-        sxData.getPlatform().setModifier(modifier);
-
-        // 第一次上新的时候
-        if (StringUtils.isEmpty(beforeProductGroup.getPublishTime())) {
-            sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
-        }
-
-        // 第一次变成inStock的时候(""->"InStock")，设置InStockTime
-        if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
-                && CmsConstants.PlatformStatus.InStock.equals(sxData.getPlatform().getPlatformStatus())) {
-            sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
-        }
-
         // 上新成功时
         if (uploadStatus) {
+            // 设置共通属性
+            sxData.getPlatform().setNumIId(numIId);
+            if (!isUsJoi) {
+                // 一般店铺上新时(更新商品失败时，不更新platformStatus)
+                if (platformStatus != null) {
+                    sxData.getPlatform().setPlatformStatus(platformStatus);
+                }
+            } else {
+                // USJoi店铺上新时,固定设为下架
+                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+            }
+            if (!StringUtils.isEmpty(platformPid)) {
+                sxData.getPlatform().setModifier(platformPid);
+            }
+            sxData.getPlatform().setModifier(modifier);
+
+            // 第一次上新的时候
+            if (StringUtils.isEmpty(beforeProductGroup.getPublishTime())) {
+                sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+            }
+
+            // 第一次变成inStock的时候(""->"InStock")，设置InStockTime
+            if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
+                    && CmsConstants.PlatformStatus.InStock.equals(sxData.getPlatform().getPlatformStatus())) {
+                sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
+            }
+
             if (!isUsJoi) {
                 // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
                 if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
@@ -2342,12 +2344,20 @@ public class SxProductService extends BaseService {
 
             // 写入履历
 //          productGroupService.insertHistoryLog(beforeProductGroup, sxData.getPlatform());
+
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum,
+                    cmsBtSxWorkloadModel.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);
+
+            // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
+            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
+                    cmsBtSxWorkloadModel.getModifier());
         }
     }
 
