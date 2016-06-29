@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
@@ -85,8 +87,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     return result;
                 }
                 // 再售
-                copyDeal(modelCmsBtJmPromotion, model, shopBean);
-
+                if(StringUtil.isEmpty(model.getJmHashId())) {
+                    copyDeal(modelCmsBtJmPromotion, model, shopBean);
+                }
                 //更新deal   商品属性 价格
                 updateDeal(model, shopBean);
                 if (model.getDealEndTimeStatus() == 1) {
@@ -178,6 +181,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         if (response.is_Success()) {
             model.setJmHashId(response.getJumei_hash_id());
         } else {
+            if(!StringUtils.isEmpty(response.getJumei_hash_id())) {
+                model.setJmHashId(response.getJumei_hash_id());
+            }
             model.setSynchStatus(3);
             throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
         }

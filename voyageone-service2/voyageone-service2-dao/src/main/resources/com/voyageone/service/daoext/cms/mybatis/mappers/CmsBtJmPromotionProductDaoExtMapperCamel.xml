@@ -169,9 +169,9 @@
                 #{item}
             </foreach>
             </if>
-             <!--<if test="errorStatus!=null">-->
-             <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
-             <!--</if>-->
+             <if test="errorStatus!=null">
+             and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
+             </if>
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -283,7 +283,7 @@
             <if test="endDiscount!=null">
                 and  a.discount&lt;=(#{endDiscount}/10)
             </if>
-            <if test="priceType=='msrp'">
+            <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
                     and   b.msrp_rmb>=#{beginPrice}
                 </if>
@@ -307,7 +307,14 @@
                     and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
-
+            <if test="priceType=='dealPrice'">
+                <if test="beginPrice!=null">
+                    and  a.deal_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and  a.deal_price&lt;=#{endPrice}
+                </if>
+            </if>
 
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}

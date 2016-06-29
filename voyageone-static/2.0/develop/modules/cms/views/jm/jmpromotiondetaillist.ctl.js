@@ -228,6 +228,7 @@ define([
         };
         function loadSearchInfo() {
             $scope.searchInfo.synchStatusList = [];
+            $scope.searchInfo.errorStatus=undefined;
             if ($scope.searchInfo.synchStatus0) {
                 $scope.searchInfo.synchStatusList.push(0)
                 $scope.searchInfo.synchStatusList.push(1)
