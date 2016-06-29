@@ -184,7 +184,7 @@ public class TranslationController extends CmsController{
         return success(translateTaskInitResponse);
     }
 
-    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE)
     public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean){
         return success(null);
     }
