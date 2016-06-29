@@ -417,7 +417,7 @@
        JOIN cms_bt_jm_promotion_product AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code`  and b.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
         WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND   NOW() &lt;=a.`activity_end`  AND   NOW()>=a.`activity_start` AND a.`synch_status`=2 limit 1
     </select>
-    <select id="selectChangeCountByPromotionId">
+    <select id="selectChangeCountByPromotionId" resultType="int">
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>

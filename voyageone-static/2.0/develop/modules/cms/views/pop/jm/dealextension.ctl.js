@@ -40,7 +40,7 @@ define([
         };
 
         var updateDealEndTimeAll=function(){
-            jmPromotionDetailService.updateDealEndTimeAll( $scope.model).then(function () {
+            jmPromotionDetailService.updateDealEndTimeAll( $scope.model).then(function (res) {
                 //for (var i=$scope.vm.modelList.length-1;i>=0;i--) {
                 //
                 //    $scope.vm.modelList[i].synchState=1;
