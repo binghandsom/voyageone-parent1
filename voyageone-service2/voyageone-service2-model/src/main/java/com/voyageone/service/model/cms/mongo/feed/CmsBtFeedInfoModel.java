@@ -46,8 +46,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private Integer qty = 0;
     private String isFeedReImport;
 
+    private String codeDiff="";
+
     private String productType;
     private String material;
+    private String message="";
 
     public String getCategory() {
         return category;
@@ -281,6 +284,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
         cmsBtFeedInfoModel.setProductType(this.productType);
         cmsBtFeedInfoModel.setMaterial(this.material);
+        cmsBtFeedInfoModel.setCodeDiff(this.codeDiff);
         return cmsBtFeedInfoModel;
     }
 
@@ -311,4 +315,20 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public String getIsFeedReImport() { return isFeedReImport; }
 
     public void setIsFeedReImport(String isFeedReImport) { this.isFeedReImport = isFeedReImport; }
+
+    public String getCodeDiff() {
+        return codeDiff;
+    }
+
+    public void setCodeDiff(String codeDiff) {
+        this.codeDiff = codeDiff;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
