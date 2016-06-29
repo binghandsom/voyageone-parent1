@@ -122,7 +122,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
                 promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
             } else {
                 param.put("cartId", Integer.parseInt(cartBean.getValue()));
-                promotionMap.put(cartBean.getValue(), promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), param));
+                promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
             }
         }
         masterData.put("promotionMap", promotionMap);
