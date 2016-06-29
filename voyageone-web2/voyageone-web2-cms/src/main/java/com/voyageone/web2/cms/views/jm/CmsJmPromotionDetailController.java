@@ -305,11 +305,12 @@ public class CmsJmPromotionDetailController extends CmsController {
     //全部再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
     public AjaxResponse copyDealAll(@RequestBody int promotionId) {
-        service3.copyDealAll(promotionId);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", promotionId);
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
-        CallResult result = new CallResult();
+        CallResult result = service3.copyDealAll(promotionId);
+        if (result.isResult()) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", promotionId);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_JuMeiProductUpdate, map);
+        }
         return success(result);
     }
 

@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
@@ -143,8 +144,16 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     //全部再售
-    public void copyDealAll(int promotionId) {
+    public CallResult copyDealAll(int promotionId) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
+        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+            result.setMsg("预热已经开始,不能全量上传!");
+            result.setResult(false);
+            return result;
+        }
         daoExt.copyDealAll(promotionId);
+        return result;
     }
 
     //批量删除 product  已经再售的不删
