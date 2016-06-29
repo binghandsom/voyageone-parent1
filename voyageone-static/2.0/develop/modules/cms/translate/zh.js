@@ -706,6 +706,15 @@ define(function () {
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误",
+
+        /**聚美专场*/
+        "TXT_JM_PROMOTION_NAME":"聚美专场名称",
+        "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",
+        "TXT_JOIN_JM_PROMOTION_PRESALE_TIME":"预热时间",
+        "TXT_JOIN_JM_PROMOTION_START_TIME":"活动开始时间",
+        "TXT_JOIN_JM_PROMOTION_END_TIME":"活动结束时间",
+        "TXT_PROMOTION_PRODUCT_STATUS":"产品活动状态",
+        "TXT_JOIN_JM_CODE_SKU_SEARCH":"款号/Code/SKU"
     };
 });
