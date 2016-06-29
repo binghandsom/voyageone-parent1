@@ -17,6 +17,10 @@ import java.util.Map;
 
 /**
  * Created by lewis on 15-12-16.
+ *
+ * @author Ethan Shi
+ * @version 2.2.0
+ *
  */
 @RestController
 @RequestMapping(method = RequestMethod.POST,value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
@@ -25,6 +29,7 @@ public class TranslationController extends CmsController{
     @Autowired
     TranslationService feedPropsTranslateService;
 
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
     public AjaxResponse doGetTasks() {
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
@@ -38,18 +43,20 @@ public class TranslationController extends CmsController{
         return success(translateTaskBeanInfo);
     }
 
-
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN_TASKS)
     public AjaxResponse doAssignTask(@RequestBody TranslateTaskBean request){
         return success(feedPropsTranslateService.assignTask(getUser(),request));
     }
 
+    @Deprecated
     // 保存翻译内容
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
         return success(feedPropsTranslateService.saveTask(getUser(), requestBean, "0"));
     }
 
+    @Deprecated
     // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
@@ -66,6 +73,7 @@ public class TranslationController extends CmsController{
      * @param requestBean
      * @return
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_FEED_ATTRIBUTES)
     public AjaxResponse doGetFeedAttributes(@RequestBody ProductTranslationBean requestBean) {
         return success(feedPropsTranslateService.getFeedAttributes(getUser().getSelChannelId(),requestBean.getProductCode()));
@@ -108,6 +116,7 @@ public class TranslationController extends CmsController{
      *  使用mongo:cms_bt_product_cxxx表
      * @apiSampleRequest off
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
     public AjaxResponse doSearchTasks(@RequestBody Map requestBean) {
         return success(feedPropsTranslateService.searchUserTasks(getUser(), requestBean));
@@ -143,8 +152,18 @@ public class TranslationController extends CmsController{
      *  使用mongo:cms_bt_product_cxxx表
      * @apiSampleRequest off
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.CANCEL_TASK)
     public AjaxResponse doCancelTasks(@RequestBody Map requestBean) {
         return success(feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode")));
     }
+
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.INIT)
+    public AjaxResponse doInit()
+    {
+        return success(null);
+    }
+
+
+
 }

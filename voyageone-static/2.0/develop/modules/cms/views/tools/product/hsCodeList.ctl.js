@@ -7,7 +7,7 @@ define([
     cms.controller('HsCodeController', (function () {
         function HsCodeController(hsCodeInfoService) {
             this.hsCodeInfoService = hsCodeInfoService;
-            this.prodPageOption = {curr: 1, total: 0, fetch: this.search};
+            this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.searchCondition = "";
             this.totalHsCodeCnt = 0;
             this.hsCodeTaskCnt = "";
@@ -21,9 +21,14 @@ define([
             init: function () {
                 var self = this;
                 var data = this.prodPageOption;
-                _.extend(data ,{"hsCodeStatus":this.hsCodeStatus});
-                _.extend(data ,{"searchCondition":this.searchCondition});
+                _.extend(data, {"hsCodeStatus": this.hsCodeStatus});
+                _.extend(data, {"searchCondition": this.searchCondition});
                 self.hsCodeInfoService.init(data).then(function (res) {
+                    self.notAssignedTotalHsCodeCnt = res.data.notAssignedTotalHsCodeCnt;
+                    self.alreadyAssignedTotalHsCodeCnt = res.data.alreadyAssignedTotalHsCodeCnt;
+                    self.setChannelTotalHsCodeCnt = res.data.setChannelTotalHsCodeCnt;
+                    self.setPersonalTotalHsCodeCnt = res.data.setPersonalTotalHsCodeCnt;
+
                     self.totalHsCodeCnt = res.data.totalHsCodeCnt;
                     self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsCodeList = res.data.hsCodeList;

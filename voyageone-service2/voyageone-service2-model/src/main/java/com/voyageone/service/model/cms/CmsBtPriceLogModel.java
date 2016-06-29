@@ -17,6 +17,8 @@ public class CmsBtPriceLogModel extends BaseModel {
 
     protected Integer productId;
 
+    protected Integer cartId;
+
     protected String code;
 
     protected String sku;
@@ -49,6 +51,14 @@ public class CmsBtPriceLogModel extends BaseModel {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getCode() {
