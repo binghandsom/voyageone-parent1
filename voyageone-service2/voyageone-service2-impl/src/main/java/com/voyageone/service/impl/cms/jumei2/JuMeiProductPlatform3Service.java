@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
@@ -12,8 +11,8 @@ import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse
 import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
 import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.jumei.request.HtDealUpdateRequest;
+import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
