@@ -47,7 +47,7 @@
             <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
         </div>
         <div class="col-sm-6 text-right form-inline">
-            <select class="form-control input-sm" name="" id="">
+            <select class="form-control input-sm">
                 <option value="">ORDER BY SKU</option>
             </select>
             <button class="btn btn-primary btn-sm">DOWNLOAD PICKING LIST</button>
@@ -71,20 +71,20 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat-start="item in ctrl.data">
-                        <td class="text-right"><span ng-click="item.collapse = !item.collapse">+</span></td>
+                        <td class="text-right"><span ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '-' : '+'"></span></td>
                         <td>{{item.orderId}}</td>
                         <td>{{item.orderDate}}</td>
-                        <td>{{item.sku}}</td>
-                        <td>{{item.desc}}</td>
-                        <td>{{item.status}}</td>
+                        <td><strong><span>{{item.details.length}}</span> SKU</strong></td>
                         <td></td>
+                        <td></td>
+                        <td><strong>${{item.totalPrice}}</strong></td>
                         <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
                     <tr ng-show="item.collapse" ng-repeat="detail in item.details" ng-repeat-end>
-                        <td class="text-right"><span ng-click="">-</span></td>
+                        <td></td>
                         <td>{{detail.orderId}}</td>
                         <td>{{detail.orderDate}}</td>
                         <td>{{detail.sku}}</td>
