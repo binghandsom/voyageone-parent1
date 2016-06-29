@@ -53,6 +53,8 @@ public class CacheKeyEnums {
 
         ConfigData_CartConfigs,
 
-        ConfigData_UsJois;
+        ConfigData_UsJois,
+
+        ConfigData_VmsChannelConfigs;
     }
 }
