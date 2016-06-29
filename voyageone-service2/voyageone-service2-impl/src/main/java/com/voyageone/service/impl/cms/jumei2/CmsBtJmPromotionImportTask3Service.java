@@ -138,7 +138,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         check(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap);//check 移除不能导入的product
 
         //save
-        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport,modelCmsBtJmPromotionImportTask.getCreater());
+        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport,listProducctErrorMap, listSkuErrorMap,modelCmsBtJmPromotionImportTask.getCreater());
 
         //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
@@ -192,13 +192,15 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
 
     //save
-    public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport,String userName) {
+    public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
         //初始化
         ProductSaveInfo saveInfo = null;
         for (ProductImportBean product : listProductImport) {
-            saveInfo = loadSaveInfo(model, listSkuImport, product,userName);
-            listSaveInfo.add(saveInfo);
+            saveInfo = loadSaveInfo(model, listSkuImport, product,listProducctErrorMap,listSkuErrorMap,userName);
+            if(saveInfo!=null) {
+                listSaveInfo.add(saveInfo);
+            }
         }
 
         //保存
@@ -233,8 +235,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
     }
 
-    private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product,String userName) {
+    private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
         ProductSaveInfo saveInfo = new ProductSaveInfo();
+        List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
         saveInfo.productModel = daoExtCmsBtJmPromotionProduct.selectByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.productModel == null) {
             saveInfo.productModel = new CmsBtJmPromotionProductModel();
@@ -258,6 +261,20 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setSynchStatus(0);
             saveInfo.productModel.setLimit(product.getLimit());
         }
+        else
+        {
+            if(model.getPrePeriodStart().getTime()<new Date().getTime()&&saveInfo.productModel.getSynchStatus()==2)
+            {
+                product.setErrorMsg("该商品预热已开始,不能导入");
+                listProducctErrorMap.add(MapUtil.toMap(product));
+               for(SkuImportBean skuImport:listProductSkuImport)
+               {
+                   skuImport.setErrorMsg("预热已开始,不能导入");
+                   listSkuErrorMap.add(MapUtil.toMap(skuImport));
+               }
+                return null;
+            }
+        }
         saveInfo.productModel.setAppId(product.getAppId());
         saveInfo.productModel.setPcId(product.getPcId());
         if (saveInfo.productModel.getSynchStatus() == 2) {
@@ -276,8 +293,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         loadSaveTag(product.getPromotionTag(), saveInfo, model);
 
         //初始化CmsBtJmPromotionSkuModel
-        List<SkuImportBean> listSku = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());
-        loadSaveSku(saveInfo, listSku, userName);
+
+        loadSaveSku(saveInfo, listProductSkuImport, userName);
 
         if (saveInfo.skuList.size() > 0) {
             saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());

@@ -279,7 +279,7 @@ public class CmsBtJmPromotionService {
                                          Integer priceType,
                                          String tagName,
                                          String tagId,
-                                         String creater) {
+                                         String creater) throws IllegalAccessException {
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
@@ -329,9 +329,10 @@ public class CmsBtJmPromotionService {
             if (!product.getTags().contains(tagId))
                 bulkList.add(buildBulkUpdateTag(product, tagId, creater));
         });
-
+        List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
+        List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,promotion.getModifier());
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier());
 
         // 批量更新product表
         if (bulkList.size() > 0) {
