@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,platformMappingService,notify,$q,$rootScope,systemCategoryService) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -65,7 +65,7 @@ define([
                             categories: res.data
                         }).then(function(context){
                             scope.vm.productComm.catId = context.selected.catId;
-                            scope.vm.productComm.pCatPath = context.selected.catPath;
+                            scope.vm.productComm.catPath = context.selected.catPath;
 
                             scope.productInfo.masterCategory = true;
                         });
@@ -77,11 +77,14 @@ define([
                  */
                 function saveProduct(){
 
-                    alert(validSchema());
+                    if (!validSchema()) {
+                        return alert("保存失败，请查看产品的属性是否填写正确！");
+                    }
 
-/*                    productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
+                    productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
+                        console.log(resp);
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    });*/
+                    });
                 }
 
                 function validSchema(){

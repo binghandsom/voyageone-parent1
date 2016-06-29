@@ -60,7 +60,10 @@ public class CmsMenuController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
         //主数据类目+Feed类目
-        if (cTypeId.equals(CartType.MASTER.getShortName()) || cTypeId.equals(CartType.FEED.getShortName())) {
+        if (cTypeId.equals(CartType.MASTER.getShortName())) {
+            resultBean.put("categoryTreeList", new ArrayList<>());
+        }
+        else if (cTypeId.equals(CartType.FEED.getShortName())) {
             // 获取主数据类目CategoryTreeList
 
             List<CmsMtCategoryTreeModel> categoryTreeList = menuService.getCategoryTreeList(cTypeId, channelId);

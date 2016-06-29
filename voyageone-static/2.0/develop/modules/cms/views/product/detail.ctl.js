@@ -55,9 +55,6 @@ define([
             },
             cartIdFilter:function(item){
                 return item.value > 20 && item.value < 900;
-            },
-            change:function(){
-                this.master  =true;
             }
 
         };
