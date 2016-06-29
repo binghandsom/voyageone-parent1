@@ -2243,7 +2243,9 @@ public class SxProductService extends BaseService {
     }
 
     /**
-     * 上新成功或者失败之后回写group, product,ims_bt_product表状态并记录履历
+     * 上新成功或出错时状态回写操作
+     * 上新成功时回写group, product,ims_bt_product表状态并记录履历
+     * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
      *
      * 1.一般店铺上新时成功时更新字段 (失败时只更新product表的pPublishError字段)
      * 1-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
@@ -2262,16 +2264,18 @@ public class SxProductService extends BaseService {
      * 1-3.MySql的ims_bt_product表中下列字段的值，没找到插入新的记录
      *     NumIId，
      *     QuantityUpdateType（s:sku级别, p:product级别）
-     * 1-4.MySql.ims_bt_log表中插入履历信息
+     * 1-4.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
      * 2.子店铺上新到US JOI上新成功时更新字段
      * 2-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
      *     publishTime,
      *     inStockTime,
      *     platformStatus：InStock
-     * 2-2.MongoDB的product表中下列字段的值，没找到不新插入新的记录
+     * 2-2.MongoDB的product表下面（例：P928/P929）平台的下列字段的值，没找到不新插入新的记录
      *     pPublishTime，
-     *     pStatus：InStock
+     *     pStatus：InStock,
+     *     pPublishError（上新失败"Error"，上新成功清空），
+     * 2-3.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
      * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
      * @param sxData SxData 上新数据
@@ -2341,6 +2345,9 @@ public class SxProductService extends BaseService {
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform());
+
+            // 出错的时候将错误信息回写到cms_bt_business_log表
+            this.insertBusinessLog(sxData, modifier);
         }
     }
 

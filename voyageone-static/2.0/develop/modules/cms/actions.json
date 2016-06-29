@@ -136,7 +136,7 @@
       }
     },
     "jmpromotion": {
-      "jmPromotionService":{
+      "jmPromotionService": {
         "root": "/cms/jmpromotion/index",
         "init": "init",
         "get": "get",
@@ -184,7 +184,8 @@
           "root": "/cms/CmsBtJmPromotionImportTask/index",
           "getByPromotionId": "getByPromotionId"
         }
-      },
+      }
+    },
       "cmsBtJmPromotionExportTask": {
         "cmsBtJmPromotionExportTaskService": {
           "root": "/cms/CmsBtJmPromotionExportTask/index",
@@ -233,7 +234,8 @@
           "addNumiid": "addNumiid",
           "addCode": "addCode",
           "addCheck": "addCheck",
-          "add": "add"
+          "add": "add",
+          "getTemplates": "getTemplates"
         },
         "taskPriceService": {
           "root": "/cms/task/price",
@@ -469,6 +471,5 @@
           "cancel": "cancelHsCodeInfo"
         }
       }
-    }
   }
 }
