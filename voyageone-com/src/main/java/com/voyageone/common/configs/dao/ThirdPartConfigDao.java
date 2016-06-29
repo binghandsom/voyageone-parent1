@@ -2,7 +2,6 @@ package com.voyageone.common.configs.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.beans.PortConfigBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import org.springframework.stereotype.Repository;
 
