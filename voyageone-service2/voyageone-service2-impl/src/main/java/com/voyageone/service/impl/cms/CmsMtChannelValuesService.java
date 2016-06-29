@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsMtChannelValuesDao;
 import com.voyageone.service.daoext.cms.CmsMtChannelValuesDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsMtChannelValuesService {
+public class CmsMtChannelValuesService extends BaseService {
 
     @Autowired
     private CmsMtChannelValuesDao cmsMtChannelValuesDao;

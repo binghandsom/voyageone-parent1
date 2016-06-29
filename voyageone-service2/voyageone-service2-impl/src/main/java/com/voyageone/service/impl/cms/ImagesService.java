@@ -97,7 +97,7 @@ public class ImagesService extends BaseService {
     /**
      * getImagesByCode
      */
-    public List<Map>  getImagesByCode(String channelId, List<String> prodCodeList) {
+    public List<Map> getImagesByCode(String channelId, List<String> prodCodeList) {
         return cmsBtImagesDaoExt.selectImagesByCode(channelId, prodCodeList);
     }
 }

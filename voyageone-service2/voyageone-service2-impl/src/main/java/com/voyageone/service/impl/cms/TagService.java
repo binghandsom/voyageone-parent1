@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class TagService extends BaseService {
 
     @Autowired
-    // mysql
     private CmsBtTagDaoExt cmsBtTagDaoExt;
     @Autowired
     private CmsBtTagDao cmsBtTagDao;

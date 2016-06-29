@@ -17,6 +17,7 @@ import java.util.Map;
  */
 @Service
 public class CmsMtBrandService extends BaseService {
+
     @Autowired
     private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
 
