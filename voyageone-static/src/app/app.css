@@ -186,11 +186,26 @@ body {
   left: 0;
   right: 0;
 }
+.modal-header {
+  padding: 10px;
+}
+.modal-footer {
+  padding: 10px;
+}
+.modal-alert {
+  width: 380px;
+}
+.modal-confirm {
+  width: 450px;
+}
 a {
   color: #72c02c;
 }
 .control-label {
   font-weight: normal;
+}
+[ng-click] {
+  cursor: pointer;
 }
 .margin-bottom-10 {
   margin-bottom: 10px;

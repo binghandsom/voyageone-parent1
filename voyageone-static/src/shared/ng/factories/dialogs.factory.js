@@ -25,7 +25,7 @@ angular.module("vo.factories").factory("$dialogs", function ($uibModal, $filter,
             controller: ["$scope", function (scope) {
                 _.extend(scope, options);
             }],
-            size: "md"
+            size: options.size || 'sm'
         });
         options.close = function () {
             modalInstance.dismiss("close");
@@ -33,14 +33,15 @@ angular.module("vo.factories").factory("$dialogs", function ($uibModal, $filter,
         options.ok = function () {
             modalInstance.close("");
         };
-        return modalInstance;
+        return modalInstance.result;
     };
 }).factory("alert", function ($dialogs) {
     return function (content, title) {
         return $dialogs({
             title: title || "TXT_ALERT",
             content: content,
-            isAlert: true
+            isAlert: true,
+            size: 'alert'
         });
     };
 }).factory("confirm", function vConfirm($dialogs) {
@@ -48,7 +49,8 @@ angular.module("vo.factories").factory("$dialogs", function ($uibModal, $filter,
         return $dialogs({
             title: title || "TXT_CONFIRM",
             content: content,
-            isAlert: false
+            isAlert: false,
+            size: 'confirm'
         });
     };
 });
