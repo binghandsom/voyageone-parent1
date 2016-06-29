@@ -263,7 +263,7 @@
     </select>
 
     <select id="selectExportListByPromotionId" resultType="MapModel">
-        SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag
+        SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id
         FROM `cms_bt_jm_promotion_product`  AS a
         JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
@@ -323,7 +323,7 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and activity_end = 1 and jm_hash_id is not null
+        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  NOW() &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
     </select>
 
     <select id="getOnSaleByCode" resultType="CmsBtJmPromotionProductModel">

@@ -706,6 +706,12 @@ SxProductService extends BaseService {
                 }
             }
             // 2016/06/02 Update by desmond end
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
+            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -889,6 +895,7 @@ SxProductService extends BaseService {
         String strRex1 = "\\s*\\d+-\\d+\\s*元*";
         String strRex2 = "\\s*\\d+\\s*元*以上";
         String strRex3 = "其它";
+        String strRex4 = "不限";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -931,7 +938,8 @@ SxProductService extends BaseService {
             }
 
             if (!blnError) {
-                if (optionDisplayName.equals(strRex3)) {
+                if (optionDisplayName.equals(strRex3) ||
+                        optionDisplayName.equals(strRex4)) {
                     blnError = true;
                 }
             }

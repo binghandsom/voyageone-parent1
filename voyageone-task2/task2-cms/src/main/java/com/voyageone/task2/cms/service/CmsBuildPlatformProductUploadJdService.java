@@ -645,8 +645,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //        jdProductBean.setUpcCode(mainProduct.getXXX());                 // 不使用
         // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
         jdProductBean.setOptionType(this.getOptionType(sxData.getPlatform(), groupId));
-        // 外部商品编号，对应商家后台货号(非必须)
-//        jdProductBean.setItemNum(mainProduct.getFields().getCode());    // 不使用
+        // 外部商品编号，对应商家后台货号(非必须) -> 部分类目必须(并且京东schema没有任何提示), 所以这里还是要设置一下
+        jdProductBean.setItemNum(mainProduct.getFields().getModel());    // 不使用
         // 库存(必须)
         // 计算该产品所有SKU的逻辑库存之和
         int skuTotalLogicQty = 0;
