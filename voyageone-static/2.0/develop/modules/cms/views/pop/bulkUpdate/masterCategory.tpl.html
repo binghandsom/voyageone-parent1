@@ -19,7 +19,7 @@
                         <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%">
                         <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
                     </div>
-                    <div class="category_drag_list_dp">
+                    <div class="category_drag_list_dp" style="height: 200px;overflow-y: auto">
                         <ul>
                             <li ng-repeat="category in categoryItem.categories track by category.catId">
                                 <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat[0] == category}">>

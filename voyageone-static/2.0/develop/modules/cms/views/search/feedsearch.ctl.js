@@ -168,8 +168,7 @@ define([
                         categories: res.data.categoryTree,
                         from: ""
                     }).then(function (context) {
-                            $scope.vm.searchInfo.fCatPath = context.selected.catPath;
-                            $scope.vm.searchInfo.fCatId = context.selected.catId;
+                        $scope.vm.searchInfo.category = context.selected.catPath;
                         }
                     );
                 });
