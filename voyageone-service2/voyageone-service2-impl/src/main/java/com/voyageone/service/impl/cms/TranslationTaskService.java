@@ -142,9 +142,9 @@ public class TranslationTaskService extends BaseService {
         List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
 
         //合并feedAttr和feedCustomPropList
-//        for (String attrKey: feedAttr) {
-//
-//        }
+        for (String attrKey: feedAttr.keySet()) {
+
+        }
 
 
 
