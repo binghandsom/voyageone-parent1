@@ -8,8 +8,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,8 +50,9 @@ public class FeedInfoService extends BaseService {
 
     /**
      * 更新feed的产品信息
+     *
      * @param cmsBtFeedInfoModel feed的产品信息
-     * @return     WriteResult
+     * @return WriteResult
      */
     public WriteResult updateFeedInfo(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
         return cmsBtFeedInfoDao.update(cmsBtFeedInfoModel);
@@ -70,6 +69,7 @@ public class FeedInfoService extends BaseService {
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
+     *
      * @param searchValue
      * @return
      */
@@ -87,7 +87,7 @@ public class FeedInfoService extends BaseService {
                 throw new BusinessException("设置的查询价格区间不正确");
             }
             if (priceSta > -1 || priceEnd > -1) {
-                result.append("{\"skus." + priceType + "\":{" );
+                result.append("{\"skus." + priceType + "\":{");
                 if (priceSta > -1) {
                     result.append(MongoUtils.splicingValue("$gte", priceSta));
                 }
@@ -106,7 +106,7 @@ public class FeedInfoService extends BaseService {
         // 获取createdTime End
         String createTimeEnd = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("createTimeEnd"));
         if (createTimeSta != null || createTimeEnd != null) {
-            result.append("{\"created\":{" );
+            result.append("{\"created\":{");
             if (createTimeSta != null) {
                 result.append(MongoUtils.splicingValue("$gte", createTimeSta + " 00.00.00"));
             }
@@ -124,7 +124,7 @@ public class FeedInfoService extends BaseService {
         // 获取updateTime End
         String updateTimeEnd = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("updateTimeEnd"));
         if (updateTimeSta != null || updateTimeEnd != null) {
-            result.append("{\"modified\":{" );
+            result.append("{\"modified\":{");
             if (updateTimeSta != null) {
                 result.append(MongoUtils.splicingValue("$gte", updateTimeSta + " 00.00.00.000"));
             }
@@ -153,8 +153,8 @@ public class FeedInfoService extends BaseService {
 
         // 获取输入的模糊查询字符串,用于检索code,name,model,short_description,long_description
         String codesStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("codeList"));
-        if(codesStr != null) {
-            List<String> strList = new ArrayList( Arrays.asList(codesStr.split("\n")));
+        if (codesStr != null) {
+            List<String> strList = new ArrayList(Arrays.asList(codesStr.split("\n")));
             if (strList != null && strList.size() > 0) {
                 List<String> orSearch = new ArrayList<>();
                 for (String fuzzyStr : strList) {
@@ -173,7 +173,7 @@ public class FeedInfoService extends BaseService {
             }
         }
         String fuzzySearch = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("fuzzySearch"));
-        if (fuzzySearch != null ) {
+        if (fuzzySearch != null) {
             List<String> orSearch = new ArrayList<>();
             orSearch.add(MongoUtils.splicingValue("category", fuzzySearch, "$regex"));
             orSearch.add(MongoUtils.splicingValue("name", fuzzySearch, "$regex"));
@@ -207,7 +207,7 @@ public class FeedInfoService extends BaseService {
         // 获取size type
         String sizeType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("sizeType"));
         if (sizeType != null) {
-            result.append("{" + MongoUtils.splicingValue("sizeType",sizeType));
+            result.append("{" + MongoUtils.splicingValue("sizeType", sizeType));
             result.append("},");
         }
 
@@ -229,8 +229,7 @@ public class FeedInfoService extends BaseService {
 
         if (!StringUtils.isEmpty(result.toString())) {
             return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
-        }
-        else {
+        } else {
             return "";
         }
     }

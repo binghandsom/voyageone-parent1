@@ -80,8 +80,8 @@ public class PlatformSchemaService extends BaseService {
         if (!StringUtils.isEmpty(schemaProduct)) {
             List<Field> listProductField = SchemaReader.readXmlForList(schemaProduct);
             retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField,
-                                                                    invisibleFieldModel != null ? invisibleFieldModel.getPropsProduct() : null,
-                                                                    extendFieldModel != null ? extendFieldModel.getPropsProduct() : null));
+                    invisibleFieldModel != null ? invisibleFieldModel.getPropsProduct() : null,
+                    extendFieldModel != null ? extendFieldModel.getPropsProduct() : null));
         }
 
         // 商品
@@ -89,8 +89,8 @@ public class PlatformSchemaService extends BaseService {
         if (!StringUtils.isEmpty(schemaItem)) {
             List<Field> listItemField = SchemaReader.readXmlForList(schemaItem);
             retMap.put(KEY_ITEM, getListFieldForProductImage(listItemField,
-                                                                invisibleFieldModel != null ? invisibleFieldModel.getPropsItem() : null,
-                                                                extendFieldModel != null ? extendFieldModel.getPropsItem() : null));
+                    invisibleFieldModel != null ? invisibleFieldModel.getPropsItem() : null,
+                    extendFieldModel != null ? extendFieldModel.getPropsItem() : null));
         }
 
         return retMap;
@@ -100,14 +100,14 @@ public class PlatformSchemaService extends BaseService {
      * 产品画面属性list取得
      * 产品画面要分产品商品，所以检索表都放在外部去做，listField,listInvisibleField,listExtendField作为参数传入
      *
-     * @param listField 平台产品或商品的fields
+     * @param listField          平台产品或商品的fields
      * @param listInvisibleField 不想显示的fields
-     * @param listExtendField 增加的fields
+     * @param listExtendField    增加的fields
      * @return
      */
     private List<Field> getListFieldForProductImage(List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();
-        for (Field field : listField){
+        for (Field field : listField) {
             mapField.put(field.getId(), field);
         }
 
@@ -151,7 +151,9 @@ public class PlatformSchemaService extends BaseService {
         }
 
         // 从cms_mt_platform_prop_mapping查找，该属性是否在范围，如果在，那么不显示在Mapping画面，直接会做特殊处理，所以不加进Map
-        List<CmsMtPlatformPropMappingCustomModel> cmsMtPlatformPropMappingCustomModels = cmsMtPlatformPropMappingCustomDao.selectList(new HashMap<String, Object>(){{put("cartId", cartId);}});
+        List<CmsMtPlatformPropMappingCustomModel> cmsMtPlatformPropMappingCustomModels = cmsMtPlatformPropMappingCustomDao.selectList(new HashMap<String, Object>() {{
+            put("cartId", cartId);
+        }});
         List<String> listCustomField = new ArrayList<>();
         cmsMtPlatformPropMappingCustomModels.forEach(model -> listCustomField.add(model.getPlatformPropId()));
 
@@ -213,7 +215,7 @@ public class PlatformSchemaService extends BaseService {
         Field newPlatformField;
         Field addField;
 
-        for(int index = 0; index < fieldIds.length; index++) {
+        for (int index = 0; index < fieldIds.length; index++) {
             String field_id = fieldIds[index];
             // 一层一层的加
             newPlatformField = newMapPlatformField.get(field_id);
@@ -247,9 +249,9 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 取得指定Field
      *
-     * @param mapField schema转换成的Map
-     * @param fieldId 一级属性>二级属性>三级属性
-     * @param separator fieldId的分隔符
+     * @param mapField     schema转换成的Map
+     * @param fieldId      一级属性>二级属性>三级属性
+     * @param separator    fieldId的分隔符
      * @param isNeedDelete true的话，检索到的同时在Map里删除
      * @return Field
      */
@@ -314,10 +316,10 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 增加指定Field(暂时做成相同id存在，不会增加不会覆盖)
      *
-     * @param mapField schema转换成的Map
-     * @param fieldId  需要增加的属性结构，例：一级属性>二级属性,Field增加到一级属性>二级属性属性下面
+     * @param mapField  schema转换成的Map
+     * @param fieldId   需要增加的属性结构，例：一级属性>二级属性,Field增加到一级属性>二级属性属性下面
      * @param separator fieldId的分隔符
-     * @param addField 需要增加的Field
+     * @param addField  需要增加的Field
      */
     public void addExtendField(Map<String, Field> mapField, String fieldId, String separator, Field addField) {
         if (StringUtils.isEmpty(fieldId)) {

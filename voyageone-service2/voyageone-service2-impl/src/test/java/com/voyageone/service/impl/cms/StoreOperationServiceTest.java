@@ -7,6 +7,7 @@ import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.AssertTrue;
@@ -26,7 +27,7 @@ import static org.junit.Assume.*;
  */
 public class StoreOperationServiceTest {
 
-    @Resource
+    @Autowired
     StoreOperationService storeOperationService;
     private static final String channelId = "018";
 

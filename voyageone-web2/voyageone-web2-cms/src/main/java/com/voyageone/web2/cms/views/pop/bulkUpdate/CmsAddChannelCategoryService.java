@@ -1,24 +1,16 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.SellerCatService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -43,11 +35,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     @Autowired
     private SellerCatService sellerCatService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private CmsAdvanceSearchService advanceSearchService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
     private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
@@ -150,7 +138,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         queryMap.put("common.fields.code", queryMap1);
         queryMap.put("platforms.P" + cartId, queryMap2); // 要过滤掉platforms.Pxx未设置的情况
 
-        WriteResult rslt = cmsBtProductDao.update(channelId, queryMap, updateMap2);
+        WriteResult rslt = productService.updateProduct(channelId, queryMap, updateMap2);
         $debug("更新店铺内分类结果：" + rslt.toString());
 
         //取得approved的code插入
@@ -174,7 +162,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 取得最大达标个数
-     * @param cartId
+     * @param cartId int
      * @return cnt
      */
     private String getSellerCatCnt(int cartId) {
@@ -188,7 +176,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 同一店铺不同渠道的叶子类目插入形式不同
-     * @param cartId
+     * @param cartId int
      * @return cnt
      */
     private String getSellerCatCategoryCid(int cartId) {

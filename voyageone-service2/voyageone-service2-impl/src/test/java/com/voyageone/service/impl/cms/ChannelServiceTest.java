@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.List;
 public class ChannelServiceTest {
 
 
-    @Resource ChannelService service;
+    @Autowired
+    ChannelService service;
 
     @Test
     public void testGetChannelList() throws Exception {

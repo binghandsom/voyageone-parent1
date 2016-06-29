@@ -2,11 +2,10 @@ package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -97,9 +96,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据channelId和产品Code检索出productGroup数据.
-     * @param channelId
-     * @param code
-     * @return
      */
     public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
         JomgoQuery query = new JomgoQuery();
@@ -109,9 +105,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据channelId和产品Code检索出是否主商品.
-     * @param channelId
-     * @param code
-     * @return
      */
     public CmsBtProductGroupModel selectMainProductGroupByCode(String channelId, String code, Integer cartId) {
         JomgoQuery query = new JomgoQuery();
@@ -266,7 +259,6 @@ public class ProductGroupService extends BaseService {
     /**
      * 获取聚美下面的所有group的codes大于1的数据,然后将其对应的group按一个code一个group做拆分,并删除以前的group.
      * @param channelId 渠道Id
-     * @return
      */
     public String splitJmProductGroup (String channelId) {
         List<CmsBtProductGroupModel> allGroupList = cmsBtProductGroupDao.selectGroupInfoByMoreProductCodes(channelId, 27);
@@ -312,5 +304,13 @@ public class ProductGroupService extends BaseService {
         }
 
         return "成功处理group的总件数:" + allGroupList.size();
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+        return cmsBtProductGroupDao.updateMulti(updObj, channelId);
+    }
+
+    public long countByQuery(final String strQuery, String channelId) {
+        return cmsBtProductGroupDao.countByQuery(strQuery, channelId);
     }
 }

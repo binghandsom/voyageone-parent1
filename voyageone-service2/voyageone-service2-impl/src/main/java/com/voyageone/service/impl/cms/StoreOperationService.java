@@ -11,7 +11,6 @@ import com.voyageone.service.dao.cms.CmsBtStoreOperationHistoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -23,7 +22,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,19 +51,16 @@ public class StoreOperationService extends BaseService {
 //            .build();
 
 
-    @Resource
+    @Autowired
     private CmsBtProductDao productDao;
 
-    @Resource
+    @Autowired
     private CmsBtFeedInfoDao feedInfoDao;
 
-    @Resource
+    @Autowired
     private CmsBtProductGroupDao productGroupDao;
 
-    @Resource
-    private CmsBtSxWorkloadDaoExt workloadDao;
-
-    @Resource
+    @Autowired
     private CmsBtStoreOperationHistoryDao historyDao;
 
     @Autowired
@@ -87,8 +82,6 @@ public class StoreOperationService extends BaseService {
      * 1. 从cms_bt_product_cxxx中获取素有的fields.status为approve的商品code
      * 2. 更新商品code在cms_bt_product_groups_cxxxx表中找到所有的groupId
      * 3. 插入cms_bt_sx_workload表
-     *
-     * @param channelId
      */
     public void rePublish(String channelId, String creater) {
         List<CmsBtProductModel> products = productDao.selectByFieldStatusEqualApproved(channelId);
@@ -123,8 +116,6 @@ public class StoreOperationService extends BaseService {
 
     /**
      * 价格同步
-     *
-     * @param channelId
      */
     public void rePublishPrice(String channelId, String creater) {
         //查询priceRetail和priceSale不相等的product
@@ -180,9 +171,6 @@ public class StoreOperationService extends BaseService {
     /**
      * 生成需要改变价格的ProductPriceBean,如果某个product的某个sku中priceSale和priceRetail不相同那么将其
      * priceSale设为priceRetail后updatePrice
-     *
-     * @param products
-     * @return
      */
     private List<ProductPriceBean> buildProductPricesFrom(List<CmsBtProductModel> products) {
         List<ProductPriceBean> prices = new ArrayList<>();
@@ -252,10 +240,6 @@ public class StoreOperationService extends BaseService {
 
     /**
      * 重新导入所有feed商品 这里仅仅只是更新标志位,其他逻辑由重新导入job进行
-     *
-     * @param channelId
-     * @param cleanCommonProperties
-     * @return
      */
     public boolean reUpload(String channelId, boolean cleanCommonProperties, String creater) {
 
@@ -287,9 +271,7 @@ public class StoreOperationService extends BaseService {
             CmsBtStoreOperationHistoryBean dest = new CmsBtStoreOperationHistoryBean();
             try {
                 BeanUtils.copyProperties(dest, storeOperationHistory);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
             dest.setOperationTypeName(Types.getTypeName(75, lang, String.valueOf(dest.getOperationType())));
@@ -300,9 +282,6 @@ public class StoreOperationService extends BaseService {
 
     /**
      * 插入操作log
-     *
-     * @param operationType
-     * @param creater
      */
     private void insertHistory(String operationType, String creater) {
         CmsBtStoreOperationHistoryModel history = new CmsBtStoreOperationHistoryModel();

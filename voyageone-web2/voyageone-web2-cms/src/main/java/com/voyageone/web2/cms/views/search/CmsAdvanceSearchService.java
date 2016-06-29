@@ -15,7 +15,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -70,8 +69,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
     private ProductTagService productTagService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
@@ -154,8 +151,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        long rs = cmsBtProductDao.countByQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false), userInfo.getSelChannelId());
-        return rs;
+        return productService.countByQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false), userInfo.getSelChannelId());
     }
 
     /**
@@ -348,7 +344,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         String gp2 = "{ $group : { _id : null, count: { $sum : 1 } } }";
         aggrList.add(new JomgoAggregate(gp1));
         aggrList.add(new JomgoAggregate(gp2));
-        List<Map<String, Object>> rs = cmsBtProductDao.aggregateToMap(userInfo.getSelChannelId(), aggrList);
+        List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
             $warn("高级检索 countGroupCodeList 统计无结果");
             return 0;
@@ -358,8 +354,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 countGroupCodeList 统计无结果");
             return 0;
         }
-        int sum = (Integer) rsMap.get("count");
-        return sum;
+        return (Integer) rsMap.get("count");
     }
 
     /**

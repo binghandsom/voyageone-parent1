@@ -26,7 +26,6 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
@@ -83,8 +82,6 @@ public class CmsProductDetailService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private ImageTemplateService imageTemplateService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     private CategoryTreeAllService categoryTreeAllService;
@@ -542,7 +539,7 @@ public class CmsProductDetailService extends BaseAppService {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + "'.pCatId:#,'platforms.P" + cartId + "'.pCatPath:#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath, pCatId, pCatPath);
             }
-            WriteResult rs = cmsBtProductDao.updateMulti(updObj, userInfo.getSelChannelId());
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("切换类目结果 " + rs.toString());
         }
 
