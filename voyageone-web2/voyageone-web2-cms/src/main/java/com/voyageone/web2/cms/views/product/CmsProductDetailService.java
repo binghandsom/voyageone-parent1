@@ -600,7 +600,10 @@ public class CmsProductDetailService extends BaseAppService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
-        productService.getProductById(channelId,prodId);
+        CmsBtProductModel oldProduct = productService.getProductById(channelId,prodId);
+        if(oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())){
+
+        }
 
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);

@@ -491,7 +491,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (fields == null) {
                 continue;
             }
-            List<CmsBtProductModel_CommonSku> skuList = item.getCommon().getSkus();
+            List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
             if (skuList == null || skuList.isEmpty()) {
                 continue;
             }
@@ -506,7 +506,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             int index = 0;
 
             // 内容输出
-            for (CmsBtProductModel_CommonSku skuItem : skuList) {
+            for (CmsBtProductModel_Sku skuItem : skuList) {
                 Row row = FileUtils.row(sheet, startRowIndex++);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getSkuCode());
                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getBarcode());
