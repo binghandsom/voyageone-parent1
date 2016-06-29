@@ -6,7 +6,11 @@ define(function (require) {
 
     var angularAMD = require('angularAMD');
     var services = require('./actions.services');
+    var routes = require('./routes');
     var _ = require('underscore');
+
+    var en = require('./translate/en');
+    var zh = require('./translate/zh');
 
     var app = angular.module('vms', [
         'ngSanitize',
@@ -23,8 +27,16 @@ define(function (require) {
         'vms.menu',
         'vms.topbar',
         'vms.popups'
-    ]);
-    
+    ]).config(function ($routeProvider, $translateProvider) {
+
+        $translateProvider.translations('zh', zh);
+        $translateProvider.translations('en', en);
+
+        _.each(routes, function (module) {
+            return $routeProvider.when(module.hash, angularAMD.route(module));
+        });
+    });
+
     function eachDeclareService(_services) {
         _.each(_services, function (content, key) {
             if (content instanceof CommonDataService) {
@@ -34,8 +46,8 @@ define(function (require) {
             }
         });
     }
-    
+
     eachDeclareService(services);
-    
+
     return angularAMD.bootstrap(app);
 });
