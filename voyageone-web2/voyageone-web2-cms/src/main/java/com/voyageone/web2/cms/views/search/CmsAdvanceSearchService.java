@@ -409,22 +409,31 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 向产品添加tag，同时添加该tag的所有上级tag
      */
     public void addProdTag(String channelId, Map<String, Object> params, String tagsKey, String modifier, CmsSessionBean cmsSession) {
-        List<Long> prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
         String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
         if (tagPath == null) {
             $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
             throw new BusinessException("缺少参数，未选择标签!");
         }
 
-        if (prodIdList == null || prodIdList.isEmpty()) {
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<Long> prodIdList = null;
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             prodIdList = getProductIdList(channelId, cmsSession);
+            if (prodIdList == null || prodIdList.isEmpty()) {
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
+                throw new BusinessException("缺少参数，未选择商品!");
+            }
+        } else {
+            prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
             if (prodIdList == null || prodIdList.isEmpty()) {
                 $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-
         productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
     }
 }
