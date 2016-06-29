@@ -566,8 +566,11 @@ define([
         }
 
         function openAdvanceImagedetail(item) {
+            if (item.common == undefined || item.common.fields == undefined) {
+                return;
+            }
             var picList = [];
-            for (var attr in item.commom.fields) {
+            for (var attr in item.common.fields) {
                 if (attr.indexOf("images") >= 0) {
                     var image = _.map(item.common.fields[attr], function (entity) {
                         var imageKeyName = "image" + attr.substring(6, 7);
