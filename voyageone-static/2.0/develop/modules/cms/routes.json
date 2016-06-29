@@ -199,7 +199,8 @@
   "tools_product_translation_setting": {
     "hash": "/tools_product/translation_setting",
     "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl"
+    "controllerUrl": "modules/cms/views/translation/index.ctl",
+    "controller": "translationManageController as ctrl"
   },
   "tools_category_feed_to_master_mapping": {
     "hash": "/tools_category/feed_to_master_mapping",
