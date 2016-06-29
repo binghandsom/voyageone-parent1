@@ -12,7 +12,6 @@ define([
             this.hsCodeValue = [];
             this.status = false;
             this.notify = notify;
-            this.selectedTr = null;
             this.getTaskInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
@@ -33,11 +32,11 @@ define([
             init: function () {
                 var self = this;
                 var data = this.prodPageOption;
-                _.extend(data, {"hsCodeStatus": this.hsCodeStatus});
-                _.extend(data, {"searchCondition": this.searchCondition});
+                _.extend(data, {"hsCodeStatus": this.searchInfo.hsCodeStatus});
+                _.extend(data, {"searchCondition": this.searchInfo.searchCondition});
+
                 self.hsCodeInfoService.init(data).then(function (res) {
                     self.hsSettedData = res.data;
-
                     self.hsCodeList = self.hsSettedData.hsCodeList;
                     self.hsCodeValue = self.hsSettedData.hsCodeValue;
                 })
@@ -54,15 +53,11 @@ define([
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
                 })
             },
-            save: function (selectedValue) {
+            save: function (list) {
                 var self = this;
-                console.log(selectedValue.parent);
-                    if (selectedValue) {
-                        self.selectedTr = {"background-color": "coral"};
-                        self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    }
-                    self.notify.warning('请完善税号设置！');
-                }
+                if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                self.notify.warning('请继续完善税号设置');
+            }
         };
 
         return HsCodeController;
