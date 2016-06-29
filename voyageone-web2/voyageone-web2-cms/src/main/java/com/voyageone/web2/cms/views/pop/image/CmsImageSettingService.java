@@ -121,7 +121,7 @@ public class CmsImageSettingService extends BaseAppService {
 
         images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName = String.format("%s-%s%s-%s", user.getSelChannelId(), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), imageType.substring(imageType.length() - 1));
+        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(),DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString),  imageType.substring(imageType.length() - 1));
 
         images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
 
