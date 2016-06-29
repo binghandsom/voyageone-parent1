@@ -55,8 +55,10 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int synchAllPrice(int promotionId);
 
-    //1. if未上传  then synch_status=1   2.if已上传&预热未开始  then price_status=1
-    int batchCopyDeal(@Param("listPromotionProductId") List<Long> listPromotionProductId,@Param("isPreStart")boolean isPreStart);
+    //1. if未上传  then synch_status=1
+    int batchCopyDeal(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    //2.if已上传&预热未开始  then price_status=1
+    int batchCopyDealUpdatePrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
     int copyDealAll(int promotionId);

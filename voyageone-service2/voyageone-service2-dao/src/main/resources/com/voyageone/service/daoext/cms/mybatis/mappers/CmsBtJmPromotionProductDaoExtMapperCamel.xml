@@ -374,14 +374,12 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>;
-        <if test="isPreStart==false">
-            UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
-            WHERE    id in
-            <foreach item="item" index="i" collection="listPromotionProductId"
-                     open="(" separator="," close=")">
-                #{item}
-            </foreach> and synch_status=2;
-        </if>
+    </update>
+    <update id="batchCopyDealUpdatePrice">
+        UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
+        WHERE    id in  <foreach item="item" index="i" collection="listPromotionProductId"
+                                 open="(" separator="," close=")">#{item}</foreach>
+        and synch_status=2;
     </update>
     <update id="copyDealAll">
         UPDATE cms_bt_jm_promotion_product set synch_status=1

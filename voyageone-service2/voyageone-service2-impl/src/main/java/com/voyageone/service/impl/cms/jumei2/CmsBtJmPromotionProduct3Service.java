@@ -163,12 +163,15 @@ public class CmsBtJmPromotionProduct3Service {
         return result;
     }
 
-    //批量再售  //1. if未上传  then synch_status=1   2.if已上传&预热未开始  then price_status=1
+    //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
-        daoExt.batchCopyDeal(parameter.getListPromotionProductId(),isPreStart);
+        daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
+        if (!isPreStart) {// 2.if已上传&预热未开始  then price_status=1
+            daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
+        }
     }
 
     //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
