@@ -417,6 +417,8 @@ public interface CmsUrlConstants {
             String GET_CATEGORY_DETAIL = "getCategoryDetail";
 
             String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
+
+            String GET_NEW_CATEGORY_LIST = "getNewsCategoryList";
         }
 
         interface ERROR {
