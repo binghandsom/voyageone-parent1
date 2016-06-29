@@ -524,8 +524,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
                 // 新增或更新商品成功时
-                // 回写ims_bt_product表(numIId)
-                sxProductService.updateImsBtProduct(sxData, getTaskName());
+//                // 回写ims_bt_product表(numIId)
+//                sxProductService.updateImsBtProduct(sxData, getTaskName());
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -534,13 +534,31 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 updateJdWareLayoutId(shopProp, sxData, jdWareId);
 
                 // 执行商品上架/下架操作
-                boolean updateJdWareListing = false;
-                updateJdWareListing = updateJdWareListing(shopProp, sxData, jdWareId, updateWare);
+                boolean updateJdWareListing = updateJdWareListing(shopProp, sxData, jdWareId, updateWare);
+                // 新增或更新商品，只有在商品上架/下架操作成功之后才回写platformStatus，失败不回写状态(新增商品时除外)
+                CmsConstants.PlatformStatus platformStatus = CmsConstants.PlatformStatus.InStock;
+                if (updateJdWareListing) {
+                    // 上架/下架操作成功时
+                    // platformActive平台上新状态类型(ToOnSale/ToInStock)
+                    if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+                        // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
+                        platformStatus = CmsConstants.PlatformStatus.OnSale;
+                    }
+                } else {
+                    // 商品上架/下架失败的时候，更新商品时不回写状态，新增商品时一律回写成"InStock"(默认)
+                    if (updateWare) {
+                        // 新增商品之后商品上架/下架失败时，把platformStatus更新成"InStock"(默认)
+                        platformStatus = null;
+                    }
+                }
                 // 上新或更新成功后回写product group表中的platformStatus(Onsale/InStock)
-                updateProductGroupStatus(sxData, updateWare, updateJdWareListing);
+//                updateProductGroupStatus(sxData, updateWare, updateJdWareListing);
+//
+//                // 回写workload表   (成功1)
+//                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
-                // 回写workload表   (成功1)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+                // 上新成功时状态回写操作
+                sxProductService.doUploadFinalProc(false, sxData, cmsBtSxWorkloadModel, true, String.valueOf(jdWareId), platformStatus, "", getTaskName());
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -550,8 +568,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                     sxData.setErrorMessage(shopProp.getShop_name() + " 京东单个商品新增或更新信息失败！请向管理员确认 [WareId:" + jdWareId + "]" );
                 }
-                // 回写详细错误信息表(cms_bt_business_log)
-                sxProductService.insertBusinessLog(sxData, getTaskName());
+//                // 回写详细错误信息表(cms_bt_business_log)
+//                sxProductService.insertBusinessLog(sxData, getTaskName());
 
                 // 更新商品出错时，也要设置运费模板和关联板式
                 if (updateWare) {
@@ -561,8 +579,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     updateJdWareLayoutId(shopProp, sxData, jdWareId);
                 }
 
-                // 回写workload表   (失败2)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+//                // 回写workload表   (失败2)
+//                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+                // 上新出错时状态回写操作
+                sxProductService.doUploadFinalProc(false, sxData, cmsBtSxWorkloadModel, false, "", null, "", getTaskName());
                 return;
             }
         } catch (Exception ex) {
@@ -583,10 +603,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getMessage());
             }
-            // 回写详细错误信息表(cms_bt_business_log)
-            sxProductService.insertBusinessLog(sxData, getTaskName());
-            // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+//            // 回写详细错误信息表(cms_bt_business_log)
+//            sxProductService.insertBusinessLog(sxData, getTaskName());
+//
+//            // 回写workload表   (失败2)
+//            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+
+            // 上新出错时状态回写操作
+            sxProductService.doUploadFinalProc(false, sxData, cmsBtSxWorkloadModel, false, "", null, "", getTaskName());
             return;
         }
 
@@ -1716,33 +1740,33 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param updateFlg boolean 新增/更新商品flg
      * @param updateListingResult boolean 商品上架/下架操作结果状态
      */
-    private void updateProductGroupStatus(SxData sxData, boolean updateFlg, boolean updateListingResult) {
-        // 上新成功后回写product group表中的platformStatus
-        // 设置PublishTime
-        sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
-
-        // 新增或更新商品，只有在商品上架/下架操作成功之后才回写platformStatus，失败不回写状态(新增商品时除外)
-        if (updateListingResult) {
-            // platformActive平台上新状态类型(ToOnSale/ToInStock)
-            if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
-                // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
-                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
-            } else {
-                // platformActive是(ToInStock)时，把platformStatus更新成"InStock"(默认)
-                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-            }
-        } else {
-            // 商品上架/下架失败的时候，更新商品时不回写状态，新增商品时一律回写成"InStock"(默认)
-            if (!updateFlg) {
-                // 新增商品之后商品上架/下架失败时，把platformStatus更新成"InStock"(默认)
-                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-            }
-        }
-        // 更新者
-        sxData.getPlatform().setModifier(getTaskName());
-        // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
-        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
-    }
+//    private void updateProductGroupStatus(SxData sxData, boolean updateFlg, boolean updateListingResult) {
+//        // 上新成功后回写product group表中的platformStatus
+//        // 设置PublishTime
+//        sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+//
+//        // 新增或更新商品，只有在商品上架/下架操作成功之后才回写platformStatus，失败不回写状态(新增商品时除外)
+//        if (updateListingResult) {
+//            // platformActive平台上新状态类型(ToOnSale/ToInStock)
+//            if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+//                // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
+//                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
+//            } else {
+//                // platformActive是(ToInStock)时，把platformStatus更新成"InStock"(默认)
+//                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+//            }
+//        } else {
+//            // 商品上架/下架失败的时候，更新商品时不回写状态，新增商品时一律回写成"InStock"(默认)
+//            if (!updateFlg) {
+//                // 新增商品之后商品上架/下架失败时，把platformStatus更新成"InStock"(默认)
+//                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+//            }
+//        }
+//        // 更新者
+//        sxData.getPlatform().setModifier(getTaskName());
+//        // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
+//        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+//    }
 
     /**
      * 商品上架/下架处理
