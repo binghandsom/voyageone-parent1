@@ -29,12 +29,6 @@
       text-transform: uppercase;
     }
 
-    .dropdown-toggle:after {
-      font-family: FontAwesome;
-      content: "\f107";
-      margin-left: 10px;
-    }
-
     .dropdown-menu {
       border-top: solid 2px #72c02c;
 
@@ -45,6 +39,12 @@
       }
     }
   }
+}
+
+.dropdown-toggle-arr:after {
+  font-family: FontAwesome;
+  content: "\f107";
+  margin-left: 10px;
 }
 
 @media (min-width: 768px) {
@@ -110,6 +110,7 @@ input.form-control {
   li {
     padding: 3px 10px;
     cursor: pointer;
+    font-size: 12px;
 
     &:hover {
       background-color: #337ab7;

@@ -64,16 +64,16 @@ body {
   font-size: 14px;
   text-transform: uppercase;
 }
-.header .navbar-nav .dropdown-toggle:after {
-  font-family: FontAwesome;
-  content: "\f107";
-  margin-left: 10px;
-}
 .header .navbar-nav .dropdown-menu {
   border-top: solid 2px #72c02c;
 }
 .header .navbar-nav .dropdown-menu li a {
   padding: 5px 10px;
+}
+.dropdown-toggle-arr:after {
+  font-family: FontAwesome;
+  content: "\f107";
+  margin-left: 10px;
 }
 @media (min-width: 768px) {
   .navbar > .container .navbar-brand {
@@ -125,6 +125,7 @@ input.form-control {
 .dropdown-menu-sm li {
   padding: 3px 10px;
   cursor: pointer;
+  font-size: 12px;
 }
 .dropdown-menu-sm li:hover {
   background-color: #337ab7;

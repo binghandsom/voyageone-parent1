@@ -18,15 +18,18 @@
     <div class="header">
         <div class="topbar" ng-controller="TopBarController as topbar">
             <ul class="container list-inline">
+                <li ng-bind="topbar.userName"></li>
+                <li>(</li>
                 <li uib-dropdown>
-                    <span uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
+                    <span class="dropdown-toggle-arr" uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
                     <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
                         <li ng-repeat="channel in topbar.channelList" ng-click="topbar.setChannel(channel.id)" ng-bind="::channel.name">
                         </li>
                     </ul>
                 </li>
-                <li ng-bind="topbar.userName"></li>
-                <li>(<a href ng-click="topbar.logout()">Logout</a>)</li>
+                <li>)</li>
+                <li>|</li>
+                <li><a href ng-click="topbar.logout()">Logout</a></li>
             </ul>
         </div>
         <div class="navbar navbar-default">

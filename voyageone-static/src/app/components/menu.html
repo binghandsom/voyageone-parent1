@@ -1,6 +1,6 @@
 <ul class="nav navbar-nav">
     <li uib-dropdown ng-repeat="menu in $ctrl.menus" is-open="menu.open" ng-mouseenter="menu.open = true" ng-mouseleave="menu.open = false">
-        <a href="javascript:void(0);" uib-dropdown-toggle>{{::menu.name}}</a>
+        <a href class="dropdown-toggle-arr" uib-dropdown-toggle>{{::menu.name}}</a>
         <ul class="dropdown-menu" uib-dropdown-menu>
             <li ng-repeat="item in menu.items"><a href="{{::item.url}}">{{::item.name}}</a></li>
         </ul>
