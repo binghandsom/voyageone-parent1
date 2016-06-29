@@ -47,9 +47,10 @@ define([
                 //
                 //}
                 if (!res.data.result) {
-                    $scope.search();
                     alert(res.data.msg);
+                    return;
                 }
+                $scope.search();
                 $scope.$close();
             }, function (res) {
             })

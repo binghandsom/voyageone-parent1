@@ -25,7 +25,11 @@ define([
                 alert("请选择修改价格的商品!");
                 return;
             }
-            jmPromotionDetailService.batchUpdateDealPrice( $scope.model).then(function () {
+            jmPromotionDetailService.batchUpdateDealPrice( $scope.model).then(function (res) {
+                if (!res.data.result) {
+                    alert(res.data.msg);
+                    return;
+                }
                 $scope.$close();
                 context.search();
             }, function (res) {

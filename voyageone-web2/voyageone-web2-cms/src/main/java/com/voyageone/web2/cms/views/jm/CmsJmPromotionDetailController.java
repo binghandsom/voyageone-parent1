@@ -266,8 +266,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     //批量更新价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateDealPrice)
     public AjaxResponse batchUpdateDealPrice(@RequestBody BatchUpdatePriceParameterBean parameter) {
-        service3.batchUpdateDealPrice(parameter);
-        return success(null);
+      CallResult result=  service3.batchUpdateDealPrice(parameter);
+        return success(result);
     }
 
     //批量同步价格

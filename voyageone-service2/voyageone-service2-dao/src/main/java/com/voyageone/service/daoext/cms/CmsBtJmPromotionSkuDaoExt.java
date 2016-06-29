@@ -29,6 +29,8 @@ public interface CmsBtJmPromotionSkuDaoExt {
     CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId);
 
     List selectExportListByPromotionId(int promotionId);
+   //更新的dealPrice大于market_price的记录
+    CmsBtJmPromotionSkuModel  selectNotUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 

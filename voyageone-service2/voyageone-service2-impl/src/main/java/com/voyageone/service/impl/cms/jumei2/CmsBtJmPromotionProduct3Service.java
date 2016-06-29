@@ -19,10 +19,7 @@ import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.CmsBtJmProductModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.mortbay.util.ajax.AjaxFilter;
@@ -101,11 +98,12 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量更新价格
     @VOTransactional
-    public void batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
+    public CallResult batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
+        CallResult result = new CallResult();
 //        <option value="0">中国官网价格</option> <!--msrp_rmb-->
 //        <option value="1">中国指导价格</option> <!--retail_price-->
 //        <option value="2">中国最终售价</option> <!--sale_price-->
-        if (parameter.getListPromotionProductId().size() == 0) return;
+        if (parameter.getListPromotionProductId().size() == 0) return result;
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
             price = Double.toString(parameter.getPrice());
@@ -122,8 +120,18 @@ public class CmsBtJmPromotionProduct3Service {
                 price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
+        CmsBtJmPromotionSkuModel modelCmsBtJmPromotionSku = daoExtCmsBtJmPromotionSku.selectNotUpdateDealPrice(parameter.getListPromotionProductId(), price);
+        if (modelCmsBtJmPromotionSku != null) {
+            result.setResult(false);
+            result.setMsg(String.format("skuCode:%s更新后的团购价大于市场价,不能更新!",modelCmsBtJmPromotionSku.getSkuCode()));
+            return result;
+        }
+
         daoExt.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
+
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
+
+        return result;
     }
 
     //批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
