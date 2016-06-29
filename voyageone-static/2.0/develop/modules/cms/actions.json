@@ -37,7 +37,8 @@
         "root": "/cms/search/feed/",
         "init": "init",
         "search": "search",
-        "updateFeedStatus": "updateFeedStatus"
+        "updateFeedStatus": "updateFeedStatus",
+        "doExport":"export"
       }
     },
     "group": {
