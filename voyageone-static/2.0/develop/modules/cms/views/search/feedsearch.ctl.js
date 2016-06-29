@@ -176,8 +176,7 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree,
-                        from: ""
+                        categories: res.data.categoryTree
                     }).then(function (context) {
                         $scope.vm.searchInfo.category = context.selected.catPath;
                         }
