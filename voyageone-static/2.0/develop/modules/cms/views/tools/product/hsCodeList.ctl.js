@@ -15,6 +15,9 @@ define([
             this.hsCodeList = [];
             this.hsCodeValue = [];
             this.status = false;
+            this.qty = "";
+            this.order = "";
+            this.code = "";
         }
 
         HsCodeController.prototype = {
@@ -35,18 +38,21 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
+            get: function () {
+                var self = this;
+                self.hsCodeInfoService.get({"qty": self.qty, "order": self.order, "code":self.code, "hsCodeTaskCnt":self.hsCodeTaskCnt}).then()
+            },
             search: function (page) {
                 var self = this;
+                self.searchInfo = {};
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
                 self.searchInfo.pageNum = self.prodPageOption.curr;
                 self.searchInfo.pageSize = self.prodPageOption.size;
+                self.searchInfo.hsCodeStatus = self.hsCodeStatus;
+                self.searchInfo.searchCondition = self.searchCondition;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
 
                 })
-            },
-            get: function () {
-                var self = this;
-                self.hsCodeInfoService.get().then()
             }
         };
 

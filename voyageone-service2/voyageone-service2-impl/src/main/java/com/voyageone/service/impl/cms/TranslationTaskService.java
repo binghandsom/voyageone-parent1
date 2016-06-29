@@ -1,22 +1,28 @@
 package com.voyageone.service.impl.cms;
 
+import com.google.common.base.Joiner;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CommonFields;
+import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CustomProps;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Feed;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -100,56 +106,114 @@ public class TranslationTaskService extends BaseService {
         String queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'0'," +
                 "'common.fields.translator':'%s', "+
-                "{'common.fields.translateTime':{'$gt':'%s'}} }", userName, translateTimeStr);
+                "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
 
         CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
-        //装填Bean
-        translationTaskBean.setProdId(product.getProdId());
-        CmsBtProductModel_Field fields = product.getCommon().getFields();
-        translationTaskBean.setProductCode(fields.getCode());
-        TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
-        commonFields.setBrand(fields.getBrand());
-        commonFields.setProductNameEn(fields.getProductNameEn());
-        commonFields.setOriginalTitleCn(fields.getOriginalTitleCn());
-        commonFields.setMaterialEn(fields.getMaterialEn());
-        commonFields.setMaterialCn(fields.getMaterialCn());
-        commonFields.setOrigin(fields.getOrigin());
-        commonFields.setShortDesEn(fields.getShortDesEn());
-        commonFields.setShortDesCn(fields.getShortDesCn());
-        commonFields.setLongDesEn(fields.getLongDesEn());
-        commonFields.setLongDesCn(fields.getLongDesCn());
-//        commonFields.setUsageEn();
-//        commonFields.setUsageCn(); //TODO
-        List<CmsBtProductModel_Field_Image>  img1 = fields.getImages1();
-        if(img1!= null  && img1.size() > 0) {
-            commonFields.setImages1(img1.get(0).getName()); //TODO
+        if(product!= null) {
+            //装填Bean
+            translationTaskBean.setProdId(product.getProdId());
+            CmsBtProductModel_Field fields = product.getCommon().getFields();
+            translationTaskBean.setProductCode(fields.getCode());
+            TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
+            commonFields.setBrand(fields.getBrand());
+            commonFields.setProductNameEn(fields.getProductNameEn());
+            commonFields.setOriginalTitleCn(fields.getOriginalTitleCn());
+            commonFields.setMaterialEn(fields.getMaterialEn());
+            commonFields.setMaterialCn(fields.getMaterialCn());
+            commonFields.setOrigin(fields.getOrigin());
+            commonFields.setShortDesEn(fields.getShortDesEn());
+            commonFields.setShortDesCn(fields.getShortDesCn());
+            commonFields.setLongDesEn(fields.getLongDesEn());
+            commonFields.setLongDesCn(fields.getLongDesCn());
+            commonFields.setUsageEn(fields.getUsageEn());
+            commonFields.setUsageCn(fields.getUsageCn());
+            List<CmsBtProductModel_Field_Image> img1 = fields.getImages1();
+            if (img1 != null && img1.size() > 0) {
+                commonFields.setImages1(img1.get(0).getName()); //TODO
+            } else {
+                commonFields.setImages1("");
+            }
+            commonFields.setClientProductUrl(fields.getClientProductUrl());
+            commonFields.setTranslator(fields.getTranslator());
+            commonFields.setTranslateStatus(fields.getTranslateStatus());
+            commonFields.setTranslateTime(fields.getTranslateTime());
+            translationTaskBean.setCommonFields(commonFields);
+
+            CmsBtProductModel_Feed productFeed = product.getFeed();
+            BaseMongoMap<String, Object> cnAttrs = productFeed.getCnAtts();
+
+
+            List<TranslationTaskBean_CustomProps> props = new ArrayList<>();
+
+            //读feed_info
+            CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getCode());
+            Map<String, List<String>> feedAttr = feedInfo.getAttribute();
+
+            //读cms_mt_feed_custom_prop
+            List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
+
+            //合并feedAttr和feedCustomPropList
+            for (String attrKey : feedAttr.keySet()) {
+                if(attrKey.equals("MetalStamp")){
+                    System.out.println(attrKey);
+                }
+
+                List<String> valueList = feedAttr.get(attrKey);
+                TranslationTaskBean_CustomProps prop = new TranslationTaskBean_CustomProps();
+                prop.setFeedAttrEn(attrKey);
+                String attrValue = Joiner.on(",").skipNulls().join(valueList);
+                prop.setFeedAttrValueEn(attrValue);
+                prop.setFeedAttrCn("");
+                prop.setFeedAttrValueCn("");
+                prop.setIsfeedAttr(true);
+
+                if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
+                    FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
+                    prop.setFeedAttrCn(feedCustProp.getFeed_prop_translation());
+                    if (cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).count() > 0) {
+                        //如果product已经保存过
+                        String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).findFirst().get();
+                        prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
+                    }
+                   else {
+                        //取默认值
+                        Map<String, List<String>> defaultValueMap= feedCustProp.getMapPropValue();
+                        List<String>  vList =  defaultValueMap.get(attrValue);
+                        if(vList != null)
+                        {
+                            if(vList.stream().filter(w-> !StringUtils.isNullOrBlank2(w)).count() >0)
+                            {
+                                String cnAttValue = vList.stream().filter(w-> !StringUtils.isNullOrBlank2(w)).findFirst().get();
+                                prop.setFeedAttrValueCn(cnAttValue);
+                            }
+                        }
+
+                    }
+                }
+                props.add(prop);
+            }
+
+            //仅存在于cms_mt_feed_custom_prop中，不存在于feed attributes中的项目
+            for (FeedCustomPropWithValueBean custProp : feedCustomPropList) {
+                String feedKey = custProp.getFeed_prop_original();
+                if (feedAttr.keySet().stream().filter(w -> w.equals(feedKey)).count() == 0) {
+                    TranslationTaskBean_CustomProps prop = new TranslationTaskBean_CustomProps();
+                    prop.setFeedAttrEn(feedKey);
+                    prop.setFeedAttrValueEn("");
+                    prop.setFeedAttrCn(custProp.getFeed_prop_translation());
+                    prop.setFeedAttrValueCn("");
+                    prop.setIsfeedAttr(false);
+
+                    if (cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).count() > 0) {
+                        String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).findFirst().get();
+                        prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
+                    }
+                    props.add(prop);
+                }
+
+            }
+            translationTaskBean.setCustomProps(props);
         }
-        else
-        {
-            commonFields.setImages1("");
-        }
-        commonFields.setClientProductUrl(fields.getClientProductUrl());
-        commonFields.setTranslator(fields.getTranslator());
-        commonFields.setTranslateStatus(fields.getTranslateStatus());
-        commonFields.setTranslateTime(fields.getTranslateTime());
-        translationTaskBean.setCommonFields(commonFields);
-
-        //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getCode());
-        Map<String, List<String>> feedAttr  = feedInfo.getAttribute();
-
-        //读cms_mt_feed_custom_prop
-        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
-
-        //合并feedAttr和feedCustomPropList
-        for (String attrKey: feedAttr.keySet()) {
-
-        }
-
-
-
-
-
         return  translationTaskBean;
     }
 

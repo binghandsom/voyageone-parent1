@@ -14,6 +14,9 @@ import java.util.Map;
  * 的商品Model Fields
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
+ * @author Ethan Shi 2016/06/29
+ * @version 2.2.0
+ *
  * @since 2.0.0
  */
 public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
@@ -273,6 +276,23 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     public void setPriceChange(Integer priceChange) {
         setAttribute("priceChange", priceChange);
     }
+
+    // usageEn 使用方法英文
+    public String getUsageEn() {
+        return getAttribute("usageEn");
+    }
+    public void setUsageEn(String usageEn) {
+        setAttribute("usageEn", usageEn);
+    }
+
+    // usageCn 使用方法中文
+    public String getUsageCn() {
+        return getAttribute("usageCn");
+    }
+    public void setUsageCn(String usageCn) {
+        setAttribute("usageCn", usageCn);
+    }
+
 
     // clientProductUrl 官方网站链接
     public String getClientProductUrl() {
