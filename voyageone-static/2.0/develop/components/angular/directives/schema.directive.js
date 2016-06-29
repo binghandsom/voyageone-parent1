@@ -677,7 +677,7 @@
             dependExpressList = self.dependExpressList,
             currRule = self.origin,
             currentField = DependentRule.fieldCache[self.$fieldId],
-            forceTrue = false;
+            forceFail = false;
 
         var result = all(dependExpressList, function (express) {
 
@@ -707,8 +707,10 @@
             }
 
             // 如果依赖的目标字段不存在, 则规则强制生效
+            // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
+            // 如果依赖的目标不存在, 则强制规则失效, 并打断 all 判断
             if (!targetField)
-                return !(forceTrue = true);
+                return !(forceFail = true);
 
             if (currRule.name === 'disableRule' && !!(parentDisableRule = getRules(targetField).disableRule)) {
                 // 如果当前要检查的就是 disableRule
@@ -727,8 +729,10 @@
                 value = value.value;
 
             // 如果最终获取的值内容为空, 那么认为计算失败, 则规则强制生效
+            // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
+            // 如果最终获取的值内容为空, 则强制规则失效, 并打断 all 判断
             if (value === null)
-                return !(forceTrue = true);
+                return !(forceFail = true);
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -744,7 +748,7 @@
             }
         });
 
-        return forceTrue || result;
+        return (forceFail ? false : result);
     };
 
     /**
@@ -1049,7 +1053,7 @@
             }
         })
 
-        .directive('sContainer', function ($compile) {
+        .directive('sContainer', function ($compile, $filter) {
             return {
                 restrict: 'E',
                 scope: false,
@@ -1075,7 +1079,9 @@
                                         valueTypeRule = rules.valueTypeRule,
                                         requiredRule = rules.requiredRule,
                                         readOnlyRule = rules.readOnlyRule,
-                                        type = getInputType(valueTypeRule);
+                                        type = getInputType(valueTypeRule),
+                                        _value,
+                                        isDate = type.indexOf('date') > -1;
 
                                     if (type === 'textarea') {
                                         innerElement = angular.element('<textarea class="form-control">');
@@ -1087,7 +1093,6 @@
                                     }
 
                                     innerElement.attr('name', name);
-                                    innerElement.attr('ng-model', 'field.value');
 
                                     bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                     bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
@@ -1112,22 +1117,38 @@
                                     innerElement.attr('title', field.name || field.id);
 
                                     // 根据类型转换值类型, 并填值
-                                    field.value = getInputValue(field.value, field, valueTypeRule);
+                                    _value = field.value;
+                                    field.value = getInputValue(_value, field, valueTypeRule);
 
                                     // 没有填值, 并且有默认值, 那么就使用默认值
                                     // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
                                     // 所以这里要单独判断
-                                    if (!exists(field.value) && exists(field.defaultValue))
-                                        field.value = getInputValue(field.defaultValue, field, valueTypeRule);
+                                    if (!exists(field.value) && exists(field.defaultValue)) {
+                                        _value = field.defaultValue;
+                                        field.value = getInputValue(_value, field, valueTypeRule);
+                                    }
 
-                                    if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && type.indexOf('date') > -1) {
+                                    if (isDate) {
+                                        // 将转换后的值放在特定的变量上, 供前端绑定
+                                        // 将老格式的值还原回字段对象中
+                                        // 当强类型的值变动, 就同步更新字段值
+                                        scope.dateValue = field.value;
+                                        field.value = _value;
+                                        innerElement.attr('ng-model', 'dateValue');
+                                        scope.$watch('dateValue', function (newDate) {
+                                            field.value = $filter('date')(newDate, (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
+                                        });
+                                    } else {
+                                        innerElement.attr('ng-model', 'field.value');
+                                    }
+
+                                    if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && isDate) {
                                         // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
                                         // 并且 readonly 时, 要把这个按钮隐藏掉
                                         var inputGroup = angular.element('<div class="input-group">');
                                         var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
 
                                         innerElement.attr('uib-datepicker-popup', '');
-                                        innerElement.attr('date-model-format', (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
                                         innerElement.attr('is-open', '$opened');
 
                                         if (readOnlyRule instanceof DependentRule) {

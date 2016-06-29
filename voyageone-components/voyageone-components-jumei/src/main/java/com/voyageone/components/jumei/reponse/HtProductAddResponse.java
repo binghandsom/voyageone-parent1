@@ -76,6 +76,9 @@ public class HtProductAddResponse extends BaseJMResponse {
 
 
     public void setBody(String body) throws IOException {
+        error_code = "";
+        codes = "";
+
         this.body = body;
         try {
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
@@ -90,17 +93,16 @@ public class HtProductAddResponse extends BaseJMResponse {
                     codes = (codesMap.keySet()).toString();
                 }
 
-                if(StringUtils.isNullOrBlank2(error_code))
-                {
-                    error_code = codes;
+                if(!StringUtils.isNullOrBlank2(codes)) {
+                    if (StringUtils.isNullOrBlank2(error_code)) {
+                        error_code = codes;
+                    } else {
+                        error_code = error_code + "," + codes;
+                    }
                 }
-                else
-                {
-                    error_code = error_code + "," + codes;
-                }
-
-
             }
+
+
             // 取得聚美生成的产品Id jumei_product_id
             if (map.containsKey("product")) {
                 Map<String, Object> productMap = (Map<String, Object>) map.get("product");

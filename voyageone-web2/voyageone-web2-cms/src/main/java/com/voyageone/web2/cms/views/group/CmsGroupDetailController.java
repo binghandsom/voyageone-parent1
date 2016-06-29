@@ -1,13 +1,11 @@
 package com.voyageone.web2.cms.views.group;
 
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +20,9 @@ public class CmsGroupDetailController extends CmsController {
 
     @Autowired
     private CmsGroupDetailService cmsGroupListService;
+
+    @Autowired
+    private ProductGroupService productGroupService;
 
     /**
      * 初始化,获取master数据
@@ -63,6 +64,16 @@ public class CmsGroupDetailController extends CmsController {
 
         // 返回用户信息
         return success(new HashMap<>());
+    }
+
+    /**
+     * 临时使用,用于清除聚美下的多个产品在一个group的数据
+     * @param channelId 渠道Id
+     * @return
+     */
+    @RequestMapping(value = "splitGroup", method = RequestMethod.GET)
+    public Object splitJmProductGroup(@RequestParam("channelId") String channelId) {
+        return productGroupService.splitJmProductGroup(channelId);
     }
 
 }
