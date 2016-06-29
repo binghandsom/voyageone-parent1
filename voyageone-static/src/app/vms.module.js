@@ -6,7 +6,7 @@ define(function (require) {
 
     var angularAMD = require('angularAMD');
     var services = require('./actions.services');
-    var routes = require('./routes');
+    var router = require('./router');
     var _ = require('underscore');
 
     var en = require('./translate/en');
@@ -32,9 +32,11 @@ define(function (require) {
         $translateProvider.translations('zh', zh);
         $translateProvider.translations('en', en);
 
-        _.each(routes, function (module) {
+        _.each(router.routes, function (module) {
             return $routeProvider.when(module.hash, angularAMD.route(module));
         });
+
+        $routeProvider.otherwise(router.otherwise);
     });
 
     function eachDeclareService(_services) {
