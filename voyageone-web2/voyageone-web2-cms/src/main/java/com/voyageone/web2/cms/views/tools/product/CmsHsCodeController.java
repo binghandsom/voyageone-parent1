@@ -39,7 +39,7 @@ public class CmsHsCodeController extends CmsController {
     }
 
     /**
-     * HsCode信息获取
+     * 获取任务
      * @param param
      * @return
      */
