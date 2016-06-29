@@ -44,8 +44,8 @@ define([
                 var self = this;
                 self.searchInfo = {};
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
-                self.searchInfo.pageNum = self.prodPageOption.curr;
-                self.searchInfo.pageSize = self.prodPageOption.size;
+                self.searchInfo.curr = self.prodPageOption.curr;
+                self.searchInfo.size = self.prodPageOption.size;
                 self.searchInfo.hsCodeStatus = self.hsCodeStatus;
                 self.searchInfo.searchCondition = self.searchCondition;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
