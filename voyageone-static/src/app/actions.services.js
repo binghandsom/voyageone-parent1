@@ -2,6 +2,14 @@ define(function (require) {
 
     var _ = require('underscore');
 
+    function CacheFlag(id) {
+        this.id = id;
+    }
+
+    CacheFlag.NONE = new CacheFlag(0);
+    CacheFlag.ONCE = new CacheFlag(1);
+    CacheFlag.LOCAL = new CacheFlag(2);
+
     function actionHashcode(md5, root, action, args) {
         var argsJson = angular.toJson(args);
         var md5Arg = root + action + argsJson;
@@ -34,7 +42,7 @@ define(function (require) {
 
         _.each(actions, function (content, key) {
 
-            var _url, _root, _resolve, _reject, _cacheable;
+            var _url, _root, _resolve, _reject, _cacheFlag;
 
             if (_.isString(content))
                 _url = content;
@@ -42,7 +50,7 @@ define(function (require) {
                 _url = content.url;
                 _resolve = content.then;
                 _root = content.root;
-                _cacheable = !!content.localstorage;
+                _cacheFlag = content.cache;
             }
 
             if (!_url) {
@@ -65,7 +73,10 @@ define(function (require) {
                     return res.data;
                 };
 
-            _class.prototype[key] = !_cacheable ? function (args) {
+            if (!(_cacheFlag instanceof CacheFlag))
+                _cacheFlag = CacheFlag.NONE;
+
+            _class.prototype[key] = _cacheFlag === CacheFlag.NONE ? function (args) {
                 return this.ajaxService.post(_root + _url, args).then(_resolve, _reject);
             } : function (args) {
                 var deferred, result;
@@ -78,13 +89,17 @@ define(function (require) {
                 promise = deferred.promise;
                 this.cached[hash] = promise;
 
-                result = storage[hash];
-                if (result !== null || result !== undefined)
+                if (_cacheFlag === CacheFlag.LOCAL) {
+                    result = storage[hash];
+                }
+
+                if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
                     this.ajaxService.post(_root + _url, args).then(function (res) {
                         result = _resolve(res);
-                        storage[hash] = result;
+                        if (_cacheFlag === CacheFlag.LOCAL)
+                            storage[hash] = result;
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -95,7 +110,7 @@ define(function (require) {
             };
         });
 
-        return ['ajaxService', '$localStorage', 'md5', _class];
+        return ['ajaxService', '$localStorage', 'md5', '$q', _class];
     };
 
     window.CommonDataService = CommonDataService;
@@ -116,7 +131,7 @@ define(function (require) {
         menuService: new CommonDataService('/core/home/menu/', {
             getVendorMenuHeaderInfo: {
                 url: 'getVendorMenuHeaderInfo',
-                localstorage: true
+                cache: CacheFlag.ONCE
             },
             setChannel: 'setChannel'
         })

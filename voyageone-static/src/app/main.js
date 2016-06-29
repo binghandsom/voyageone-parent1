@@ -40,6 +40,7 @@ require.config({
         'angularAMD': ['angular'],
         'chosen': ['jquery'],
         'angular-chosen': ['angular', 'chosen'],
+        'md5': ['angular'],
         'vms': [
             'angularAMD',
             'underscore',
