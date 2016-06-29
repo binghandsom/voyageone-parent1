@@ -104,19 +104,20 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         }
 
         List<String> codeList = (List) params.get("productIds");
-        if (isSelAll == 1 && (codeList == null || codeList.isEmpty())) {
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
         }
         if (codeList == null || codeList.isEmpty()) {
-            $error("没有code条件 params=" + params.toString());
+            $warn("没有code条件 params=" + params.toString());
             return null;
         }
 
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
         if (cartId <= 0) {
-            cartId = (Integer) cmsSession.getPlatformType().get("cartId");
+            $warn("未选择平台/店铺 params=" + params.toString());
+            return null;
         }
         saveChannelCategory(params, codeList, cartId);
         return null;
@@ -169,7 +170,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             // 类目选择check
             throw new BusinessException("7000090", cnt);
         }
-    };
+    }
 
     /**
      * 取得最大达标个数

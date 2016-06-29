@@ -250,7 +250,7 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能（批量追加用）
+         * popup出添加店铺内分类的对话框（批量追加用）
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
