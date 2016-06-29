@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.service.bean.cms.TaskSummary;
+import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class TranslationTaskServiceTest {
 
     @Test
     public void testGetTaskSummary() throws Exception {
-        TaskSummary result = translationTaskService.getTaskSummary("010", "salley.yang");
+        TaskSummaryBean result = translationTaskService.getTaskSummary("010", "salley.yang");
         System.out.println(JsonUtil.bean2Json(result));
 
     }

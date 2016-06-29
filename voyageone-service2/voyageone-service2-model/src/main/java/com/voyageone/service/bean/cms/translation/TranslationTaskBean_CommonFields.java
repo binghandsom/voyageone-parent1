@@ -25,7 +25,7 @@ public class TranslationTaskBean_CommonFields
     private String images1;
     private String clientProductUrl;
     private String translator;
-    private int translateStatus;
+    private String translateStatus;
     private String translateTime;
 
 
@@ -157,11 +157,11 @@ public class TranslationTaskBean_CommonFields
         this.translator = translator;
     }
 
-    public int getTranslateStatus() {
+    public String getTranslateStatus() {
         return translateStatus;
     }
 
-    public void setTranslateStatus(int translateStatus) {
+    public void setTranslateStatus(String translateStatus) {
         this.translateStatus = translateStatus;
     }
 
