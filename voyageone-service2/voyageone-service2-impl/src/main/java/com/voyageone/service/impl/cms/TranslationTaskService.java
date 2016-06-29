@@ -12,8 +12,10 @@ import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CommonFiel
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CustomProps;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Feed;
@@ -50,6 +52,9 @@ public class TranslationTaskService extends BaseService {
 
     @Autowired
     FeedCustomPropService customPropService;
+
+    @Autowired
+    ProductGroupService productGroupService;
 
     /**
      * 计算翻译任务的汇总信息
@@ -123,9 +128,13 @@ public class TranslationTaskService extends BaseService {
         return  translationTaskBean;
     }
 
-    public void  saveTask(TranslationTaskBean bean, String channelId, String userName) throws BusinessException
+    public TaskSummaryBean  saveTask(TranslationTaskBean bean, String channelId, String userName) throws BusinessException
     {
+        //获取产品组
+        String mainCode =  bean.getProductCode();
 
+
+        return  null;
     }
 
 
