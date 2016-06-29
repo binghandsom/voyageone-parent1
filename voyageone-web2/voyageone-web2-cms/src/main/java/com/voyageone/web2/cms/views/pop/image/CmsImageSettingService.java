@@ -5,6 +5,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
@@ -120,16 +121,7 @@ public class CmsImageSettingService extends BaseAppService {
 
         images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName;
-        int size = images.size();
-        while (true){
-            size++;
-            imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString), imageType.substring(imageType.length() - 1), size);
-            final String finalImageName = imageName;
-            if(images.stream().filter(cmsBtProductModel_field_image -> finalImageName.equalsIgnoreCase(cmsBtProductModel_field_image.getName())).collect(Collectors.toList()).size() == 0){
-                break;
-            }
-        }
+        String imageName = String.format("%s-%s%s-%s", user.getSelChannelId(), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), imageType.substring(imageType.length() - 1));
 
         images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
 
