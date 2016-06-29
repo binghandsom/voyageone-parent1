@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtExportTaskDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsBtExportTaskService {
+public class CmsBtExportTaskService extends BaseService {
 
     @Autowired
     private CmsBtExportTaskDao cmsBtExportTaskDao;

@@ -15,16 +15,16 @@
                                 <div class="panel-body" style="background-color: #F8F8F8;">
                                     <ul class="data-display-boxes">
                                         <li>
-                                            <div class="data"> <strong ng-bind="ctrl.notAssignedTotalHsCodeCnt"></strong> 未分配总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.notAssignedTotalHsCodeCnt"></strong> 未分配总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong ng-bind="ctrl.alreadyAssignedTotalHsCodeCnt"></strong> 已分配但未完成总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.alreadyAssignedTotalHsCodeCnt"></strong> 已分配但未完成总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong ng-bind="ctrl.setChannelTotalHsCodeCnt"></strong> 设置税号商品总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setChannelTotalHsCodeCnt"></strong> 设置税号商品总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong ng-bind="ctrl.setPersonalTotalHsCodeCnt"></strong> 个人设置税号商品译数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setPersonalTotalHsCodeCnt"></strong> 个人设置税号商品译数 </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -40,32 +40,30 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
                                             <div class="col-sm-3">
-                                                <select class="form-control" ng-model="ctrl.qty">
+                                                <select class="form-control" ng-model="ctrl.getTaskInfo.qty">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="0">{{'TXT_INVENTORY'|translate}}</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
+                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
                                                 </label>
-                                            </div>
-                                            <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="-1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
+                                                    <input name="sortOne" type="radio" value="-1" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_PRODUCT_CODE"></label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" ng-model="ctrl.code">
+                                                <input type="text" class="form-control" ng-model="ctrl.getTaskInfo.code">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div class="col-sm-8">
-                                                <input type="number" class="form-control" ng-model="ctrl.hsCodeTaskCnt" ng-pattern="/^(\d+)$/">
+                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" ng-pattern="/^(\d+)$/">
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
@@ -86,7 +84,7 @@
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
                                             <div class="col-sm-7">
-                                                <select class="form-control" ng-model="ctrl.hsCodeStatus">
+                                                <select class="form-control" ng-model="ctrl.searchInfo.hsCodeStatus">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="0">已设置</option>
                                                     <option value="1">未设置</option>
@@ -95,7 +93,7 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-11">
-                                                <textarea type="text" rows="4" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.searchCondition"></textarea>
+                                                <textarea type="text" rows="4" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.searchInfo.searchCondition"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group text-center">
@@ -115,41 +113,50 @@
     </div>
     <div class="box">
         <div class="box-body-new">
-            <table class="table table-hover-new table-hover">
+            <table class="table table-hover-new table-hover table_main">
                 <thead>
                     <tr>
-                        <th class="text-center mfb-xt" translate="TXT_NUMBER_IID_WITH_COLON"></th>
-                        <th class="text-center mfb-x">图片</th>
-                        <th class="text-center mfb-xxt" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
-                        <th class="text-center mfb-xxs" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
-                        <th class="text-center mfb-xxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
+                        <th class="text-center mfb-xxt" translate="TXT_NUMBER_IID_WITH_COLON"></th>
+                        <th class="text-center mfb-xxt">图片</th>
+                        <th class="text-center mfb-xxx" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
+                        <th class="text-center mfb-xxt" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
+                        <th class="text-center mfb-xxxxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
                         <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                     </tr>
                 </thead>
                 <tbody ng-if="ctrl.hsCodeList.length == 0">
                     <tr style="padding-left:0px">
-                        <td colspan="5">
+                        <td colspan="6">
                             <div if-no-rows="ctrl.hsCodeList.length"></div>
                         </td>
                     </tr>
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
-                    <tr ng-repeat="list in ctrl.hsCodeList">
+                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
                         <td class="text-center mfb-xt">48307</td>
-                        <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
-                            <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-xs m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
+                        <td style="overflow: hidden;" class="text-center mfb-x">
+                            <a ng-if="list.common.fields.images1.length > 0"><img class="thumb-xs m-b-xs" ng-src="{{list.common.fields.images1[0]}}" ng-click="openFeedImagedetail($index)"></a>
                         </td>
-                        <td class="text-center mfb-xxt">牛肉</td>
+                        <td class="text-center mfb-xxt">
+                            <ul>
+                                <li class="text-left" ng-bind="list.common.fields.code"></li>
+                                <li class="text-left">牛肉</li>
+                            </ul>
+                        </td>
                         <td class="text-left mfb-xxs">
-                            <select class="form-control">
+                            <select class="form-control" ng-options="value.value for value in ctrl.hsCodeValue" ng-model="list.selectedValue">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                <option value="0">123123123，牛肉干，包</option>
-                                <option value="1">123123123，猪肉铺，包</option>
                             </select>
                         </td>
-                        <td class="text-left mfb-xxs">NOW Foods -左旋肉碱-医药 左旋肉碱 热带口味 1000毫克-16盎司</td>
+                        <td class="text-left mfb-xxs">
+                            <ul>
+                                <li>Jewelry.com 925银镶嵌立方锆石耳坠 女款简约耳环 欧美耳饰</li>
+                                <li>Bracelets-Bangles-Diamond</li>
+                                <li>饰品/流行首饰/时尚饰品新>耳饰>耳环</li>
+                            </ul>
+                        </td>
                         <td class="text-center mfb-xt">
-                            <button class="btn btn-vo btn-xs ng-binding"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                            <button class="btn btn-vo btn-xs ng-binding" title="点击保存当前设置" ng-click="ctrl.save(list)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
                         </td>
                     </tr>
                 </tbody>

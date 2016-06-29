@@ -37,7 +37,8 @@
         "root": "/cms/search/feed/",
         "init": "init",
         "search": "search",
-        "updateFeedStatus": "updateFeedStatus"
+        "updateFeedStatus": "updateFeedStatus",
+        "doExport":"export"
       }
     },
     "group": {
@@ -283,7 +284,8 @@
             "root": "/cms/system/category",
             "getCategoryList": "getCategoryList",
             "getCategoryDetail": "getCategoryDetail",
-            "updateCategorySchema": "updateCategorySchema"
+            "updateCategorySchema": "updateCategorySchema",
+            "getNewsCategoryList":"getNewsCategoryList"
           },
           "categorySettingService": {
             "root": "/cms/system/category/setting",

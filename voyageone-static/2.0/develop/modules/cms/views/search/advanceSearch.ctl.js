@@ -250,7 +250,7 @@ define([
         }
 
         /**
-         * popup出添加到CategoryEdit的功能（批量追加用）
+         * popup出添加店铺内分类的对话框（批量追加用）
          * @param openCategoryEdit
          */
         function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
@@ -302,6 +302,10 @@ define([
                     }
                     if (res.data.ecd == 1) {
                         alert("未选择商品，请选择后再操作。");
+                        return;
+                    }
+                    if (res.data.ecd == 2) {
+                        alert("未设置变更项目，请设置后再操作。");
                         return;
                     }
                     if (res.data.ecd == 4) {
@@ -555,7 +559,7 @@ define([
 
                 confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
                     .then(function () {
-                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds).then(function () {
+                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             searchAdvanceService2.clearSelList();
                             getGroupList();
@@ -566,8 +570,11 @@ define([
         }
 
         function openAdvanceImagedetail(item) {
+            if (item.common == undefined || item.common.fields == undefined) {
+                return;
+            }
             var picList = [];
-            for (var attr in item.commom.fields) {
+            for (var attr in item.common.fields) {
                 if (attr.indexOf("images") >= 0) {
                     var image = _.map(item.common.fields[attr], function (entity) {
                         var imageKeyName = "image" + attr.substring(6, 7);

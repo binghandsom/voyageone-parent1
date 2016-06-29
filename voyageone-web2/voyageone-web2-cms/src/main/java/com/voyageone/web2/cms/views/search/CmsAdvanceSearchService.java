@@ -12,10 +12,9 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -32,6 +31,7 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,8 +69,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
     private ProductTagService productTagService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
@@ -153,8 +151,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        long rs = cmsBtProductDao.countByQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false), userInfo.getSelChannelId());
-        return rs;
+        return productService.countByQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false), userInfo.getSelChannelId());
     }
 
     /**
@@ -347,7 +344,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         String gp2 = "{ $group : { _id : null, count: { $sum : 1 } } }";
         aggrList.add(new JomgoAggregate(gp1));
         aggrList.add(new JomgoAggregate(gp2));
-        List<Map<String, Object>> rs = cmsBtProductDao.aggregateToMap(userInfo.getSelChannelId(), aggrList);
+        List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
             $warn("高级检索 countGroupCodeList 统计无结果");
             return 0;
@@ -357,8 +354,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 countGroupCodeList 统计无结果");
             return 0;
         }
-        int sum = (Integer) rsMap.get("count");
-        return sum;
+        return (Integer) rsMap.get("count");
     }
 
     /**
@@ -407,21 +403,32 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 向产品添加tag，同时添加该tag的所有上级tag
      */
-    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier, CmsSessionBean cmsSession) {
+    public void addProdTag(String channelId, Map<String, Object> params, String tagsKey, String modifier, CmsSessionBean cmsSession) {
+        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
         if (tagPath == null) {
-            $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
-            throw new BusinessException("缺少参数!");
+            $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
+            throw new BusinessException("缺少参数，未选择标签!");
         }
 
-        if (prodIdList == null || prodIdList.isEmpty()) {
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<Long> prodIdList = null;
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             prodIdList = getProductIdList(channelId, cmsSession);
             if (prodIdList == null || prodIdList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
-                throw new BusinessException("缺少参数!");
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
+                throw new BusinessException("缺少参数，未选择商品!");
+            }
+        } else {
+            prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
+            if (prodIdList == null || prodIdList.isEmpty()) {
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
+                throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-
         productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
     }
 }

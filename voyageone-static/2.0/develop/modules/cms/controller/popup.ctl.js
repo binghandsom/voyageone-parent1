@@ -550,8 +550,10 @@ define([
          */
         $scope.openAddToPromotion = function (promotion, selList, context) {
             var productIds = [];
+            var selAllFlg = 0;
             if (context && context.isSelAll) {
                 // 全选
+                selAllFlg = 1;
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -562,7 +564,8 @@ define([
             return openModel(popActions.bulkUpdate.addToPromotion, {
                 "promotion": promotion,
                 "productIds": productIds,
-                "products": selList
+                "products": selList,
+                "isSelAll": selAllFlg
             });
         };
 
@@ -1348,7 +1351,7 @@ define([
             return openModel(popActions.bulkUpdate.putOnOff, context);
         };
 
-        //打开高级查询页的搜索条件（自由标签和活动标签）
+        //打开高级查询页的搜索条件，自由标签
         $scope.openFreeTag = function (context) {
             return openModel(popActions.bulkUpdate.freeTag, context);
         };

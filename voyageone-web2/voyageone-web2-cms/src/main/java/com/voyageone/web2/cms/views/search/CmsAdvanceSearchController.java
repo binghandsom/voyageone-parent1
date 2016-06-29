@@ -54,7 +54,6 @@ public class CmsAdvanceSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.INIT)
     public AjaxResponse init() throws Exception {
         CmsSessionBean cmsSession = getCmsSession();
-        cmsSession.putAttribute("_isNewAdvSearch", "Y");
         UserSessionBean userInfo = getUser();
         advSearchCustColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
         return success(searchIndexService.getMasterData(userInfo, cmsSession, getLang()));
@@ -326,11 +325,9 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping("addFreeTag")
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
-        List<Long> prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
-        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.addProdTag(userInfo.getSelChannelId(), tagPath, prodIdList, "freeTags", userInfo.getUserName(), getCmsSession());
+        searchIndexService.addProdTag(userInfo.getSelChannelId(), params, "freeTags", userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

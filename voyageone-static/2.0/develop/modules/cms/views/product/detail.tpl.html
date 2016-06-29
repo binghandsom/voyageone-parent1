@@ -2,19 +2,21 @@
     <div>
         <uib-tabset class="tab-container vo_nav-tabs">
             <!---------------------------------------------------master 产品详情页面---------------------------------------------->
-            <uib-tab>
+            <uib-tab  active="ctrl.master">
                 <tab-heading>Master产品详情</tab-heading>
                 <master-schema product-info="ctrl.product" cart-info="ctrl.cartData['_0']"></master-schema>
             </uib-tab>
 
             <!---------------------------------------------------天猫 产品详情页面------------------------------------------------>
+<!--
             <uib-tab>
                 <tab-heading>产品详情</tab-heading>
                 <tm-schema product-id="ctrl.routeParams.productId"></tm-schema>
             </uib-tab>
+-->
 
             <!---------------------------------------------------feed 产品详情页面----------------------------------------------->
-            <uib-tab>
+            <uib-tab  active="ctrl.feed">
                 <tab-heading>Feed详情</tab-heading>
                 <feed-schema product-info="ctrl.product"></feed-schema>
             </uib-tab>

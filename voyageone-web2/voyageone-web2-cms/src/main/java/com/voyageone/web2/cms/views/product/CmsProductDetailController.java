@@ -104,7 +104,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap) {
 
-        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getLang());
+        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getCmsSession());
 
         return success(resultMap);
     }
@@ -116,7 +116,7 @@ public class CmsProductDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+        return success(productPropsEditService.getMastProductInfo(channelId,prodId,getLang()));
 
     }
 
