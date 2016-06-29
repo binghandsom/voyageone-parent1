@@ -19,10 +19,8 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
@@ -56,11 +54,7 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private CmsBtSizeChartDao cmsBtSizeChartDao;
+    private SizeChartService sizeChartService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -130,7 +124,7 @@ public class CmsFieldEditService extends BaseAppService {
             updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
             updObj.setUpdateParameters(hsCode);
 
-            WriteResult rs = cmsBtProductDao.updateMulti(updObj, userInfo.getSelChannelId());
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("批量更新结果 " + rs.toString());
             rsMap.put("ecd", 0);
             return rsMap;
@@ -226,7 +220,7 @@ public class CmsFieldEditService extends BaseAppService {
                 updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
 
                 //执行product的pStatus更新及group的publishStatus更新
-                WriteResult rs = cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());
+                WriteResult rs = productService.updateFirstProduct(updObj, userInfo.getSelChannelId());
                 $debug("update status result:=" + rs.toString());
 
                 if (field[1].equals(CmsConstants.ProductStatus.Approved.name())) {
@@ -234,7 +228,7 @@ public class CmsFieldEditService extends BaseAppService {
                     updObj.setQueryParameters(code, userInfo.getSelChannelId(), updCartList);
                     updObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
                     updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-                    rs = cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+                    rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
                     $debug("update group status result:=" + rs.toString());
                 }
 
@@ -310,7 +304,7 @@ public class CmsFieldEditService extends BaseAppService {
 
         updObj.setQueryParameters(productCodes, userInfo.getSelChannelId(), cartList, statusVal);
         updObj.setUpdateParameters(statusVal, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-        WriteResult rs = cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+        WriteResult rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         for (Integer cartIdVal : cartList) {
@@ -519,13 +513,13 @@ public class CmsFieldEditService extends BaseAppService {
             updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
 
             //执行product的pStatus更新及group的publishStatus更新
-            cmsBtProductDao.updateFirst(updObj, userInfo.getSelChannelId());
+            productService.updateFirstProduct(updObj, userInfo.getSelChannelId());
 
             updObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#}}");
             updObj.setQueryParameters(code, userInfo.getSelChannelId(), updCartList);
             updObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            cmsBtProductGroupDao.updateMulti(updObj, userInfo.getSelChannelId());
+            productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
 
             // 这里需要确认更新成功后再记录上新操作表
             CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
@@ -609,7 +603,7 @@ public class CmsFieldEditService extends BaseAppService {
             queryObject.setParameters(channelId);
             queryObject.setSort("{sizeChartId:-1}");
             //返回数据的类型
-            List<CmsBtSizeChartModel> sizeCharList = cmsBtSizeChartDao.select(queryObject);
+            List<CmsBtSizeChartModel> sizeCharList = sizeChartService.getSizeCharts(queryObject);
             List<Option> options = new ArrayList<>();
             for (CmsBtSizeChartModel sizeChart : sizeCharList) {
                 Option opt = new Option();

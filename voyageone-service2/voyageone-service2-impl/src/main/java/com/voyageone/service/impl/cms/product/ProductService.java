@@ -86,9 +86,6 @@ public class ProductService extends BaseService {
     @Autowired
     private MongoSequenceService commSequenceMongoService;
 
-    @Autowired
-    private ProductGroupService productGroupService;
-
 
     /**
      * 获取商品 根据ID获
