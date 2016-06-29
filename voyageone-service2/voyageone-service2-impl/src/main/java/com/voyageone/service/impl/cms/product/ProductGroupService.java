@@ -2,9 +2,8 @@ package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -90,9 +89,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据channelId和产品Code检索出productGroup数据.
-     * @param channelId
-     * @param code
-     * @return
      */
     public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
         JomgoQuery query = new JomgoQuery();
@@ -102,9 +98,6 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 根据channelId和产品Code检索出是否主商品.
-     * @param channelId
-     * @param code
-     * @return
      */
     public CmsBtProductGroupModel selectMainProductGroupByCode(String channelId, String code, Integer cartId) {
         JomgoQuery query = new JomgoQuery();
@@ -255,5 +248,13 @@ public class ProductGroupService extends BaseService {
         updateMap.put("modifier", model.getModifier());
 
         return cmsBtProductGroupDao.update(model.getChannelId(), queryMap, updateMap);
+    }
+
+    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+        return cmsBtProductGroupDao.updateMulti(updObj, channelId);
+    }
+
+    public long countByQuery(final String strQuery, String channelId) {
+        return cmsBtProductGroupDao.countByQuery(strQuery, channelId);
     }
 }

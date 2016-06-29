@@ -24,7 +24,6 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
@@ -78,8 +77,6 @@ public class CmsProductDetailService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private ImageTemplateService imageTemplateService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     /**
      * 获取类目以及类目属性信息.
@@ -534,7 +531,7 @@ public class CmsProductDetailService extends BaseAppService {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + "'.pCatId:#,'platforms.P" + cartId + "'.pCatPath:#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath, pCatId, pCatPath);
             }
-            WriteResult rs = cmsBtProductDao.updateMulti(updObj, userInfo.getSelChannelId());
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("切换类目结果 " + rs.toString());
         }
 
