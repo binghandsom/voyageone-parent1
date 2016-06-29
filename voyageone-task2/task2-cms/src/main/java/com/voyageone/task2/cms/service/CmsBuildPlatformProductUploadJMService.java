@@ -515,11 +515,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             }
 
                             //获取jm_hash_id列表
-                            List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(productCode, channelId);
-                            jmHashIdList.add(originHashId);
+                            List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(channelId, productCode);
+                            $info("已经存在的聚美Deal的size:" + jmHashIdList.size() + ",对应的productCode:" + productCode);
+                            if (jmHashIdList.size() == 0)
+                                jmHashIdList.add(originHashId);
 
 
                             for (String hashId : jmHashIdList) {
+                                $info("更新Deal的hashId:" + hashId);
                                 HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                                 HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                                 if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
@@ -1079,7 +1082,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
             if (commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).count() > 0) {
                 CmsBtProductModel_Sku CommonSku = commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).findFirst().get();
-                jmSku.put("barcode", CommonSku.getBarcode() + "vo");
+                jmSku.put("barcode", CommonSku.getBarcode());
                 jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
                 jmSku.put("priceRetail", CommonSku.getPriceRetail());
                 jmSku.put("clientMsrpPrice", CommonSku.getClientMsrpPrice());
