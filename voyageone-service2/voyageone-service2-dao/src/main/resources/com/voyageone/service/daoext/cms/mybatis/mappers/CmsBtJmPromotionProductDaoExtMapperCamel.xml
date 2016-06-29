@@ -359,7 +359,7 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
-        <if test="isPreStart==false">
+        <if test="isPreStart==true">
           and   synch_status!=2
         </if>
     </update>
@@ -376,7 +376,7 @@
         </foreach>;
         <if test="isPreStart==false">
             UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
-            WHERE   synch_status in (0,3) and  id in
+            WHERE    id in
             <foreach item="item" index="i" collection="listPromotionProductId"
                      open="(" separator="," close=")">
                 #{item}
