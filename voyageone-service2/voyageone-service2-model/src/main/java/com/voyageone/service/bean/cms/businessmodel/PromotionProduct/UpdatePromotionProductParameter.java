@@ -3,7 +3,7 @@ package com.voyageone.service.bean.cms.businessmodel.PromotionProduct;
 /**
  * Created by dell on 2016/6/24.
  */
-public class UpdatePromotionProductParameterNew {
+public class UpdatePromotionProductParameter {
     public int getId() {
         return id;
     }

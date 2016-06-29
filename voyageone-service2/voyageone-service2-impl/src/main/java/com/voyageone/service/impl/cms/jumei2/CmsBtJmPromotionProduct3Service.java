@@ -4,7 +4,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameterNew;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -220,7 +220,7 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     //更新PromotionProduct 目前只更新 limit
-    public int updatePromotionProduct(UpdatePromotionProductParameterNew parameter, String userName) {
+    public int updatePromotionProduct(UpdatePromotionProductParameter parameter, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
         if (model.getLimit() != parameter.getLimit()) {
             model.setLimit(parameter.getLimit());

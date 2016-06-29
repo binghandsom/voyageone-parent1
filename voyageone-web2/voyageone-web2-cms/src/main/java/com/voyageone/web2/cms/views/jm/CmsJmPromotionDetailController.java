@@ -5,7 +5,7 @@ import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameterNew;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei.*;
@@ -357,7 +357,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProduct)
-    public AjaxResponse updatePromotionProduct(@RequestBody UpdatePromotionProductParameterNew parameter) {
+    public AjaxResponse updatePromotionProduct(@RequestBody UpdatePromotionProductParameter parameter) {
         service3.updatePromotionProduct(parameter,getUser().getUserName());
         return success(null);
     }
