@@ -2,7 +2,6 @@ package com.voyageone.common.configs;
 
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
-import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.TypeChannelDao;
