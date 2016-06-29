@@ -147,26 +147,26 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
     //clientMsrpPrice
     public Double getClientMsrpPrice () {
-        return getDoubleAttribute("client_msrp_price");
+        return getDoubleAttribute("clientMsrpPrice");
     }
     public void setClientMsrpPrice (Double clientMsrpPrice) {
-        setAttribute("client_msrp_price", clientMsrpPrice);
+        setAttribute("clientMsrpPrice", clientMsrpPrice);
     }
 
     //clientRetailPrice
     public Double getClientRetailPrice () {
-        return getDoubleAttribute("client_retail_price");
+        return getDoubleAttribute("clientRetailPrice");
     }
     public void setClientRetailPrice (Double clientRetailPrice) {
-        setAttribute("client_retail_price", clientRetailPrice);
+        setAttribute("clientRetailPrice", clientRetailPrice);
     }
 
     //clientNetPrice
     public Double getClientNetPrice () {
-        return getDoubleAttribute("client_net_price");
+        return getDoubleAttribute("clientNetPrice");
     }
     public void setClientNetPrice (Double clientNetPrice) {
-        setAttribute("client_net_price", clientNetPrice);
+        setAttribute("clientNetPrice", clientNetPrice);
     }
 
     //priceChgFlg

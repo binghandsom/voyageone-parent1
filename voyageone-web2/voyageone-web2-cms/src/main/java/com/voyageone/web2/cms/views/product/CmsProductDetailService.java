@@ -24,7 +24,6 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
@@ -78,8 +77,6 @@ public class CmsProductDetailService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private ImageTemplateService imageTemplateService;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     /**
      * 获取类目以及类目属性信息.
@@ -357,7 +354,7 @@ public class CmsProductDetailService extends BaseAppService {
         if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
             // 执行carts更新
             productUpdateBean.getProductModel().getSkus().forEach(sku -> {
-                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929)).collect(Collectors.toList());
+                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929 || s == 28 || s == 29)).collect(Collectors.toList());
                 sku.setSkuCarts(newCarts);
             });
         }
@@ -534,7 +531,7 @@ public class CmsProductDetailService extends BaseAppService {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + "'.pCatId:#,'platforms.P" + cartId + "'.pCatPath:#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath, pCatId, pCatPath);
             }
-            WriteResult rs = cmsBtProductDao.updateMulti(updObj, userInfo.getSelChannelId());
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("切换类目结果 " + rs.toString());
         }
 
@@ -543,7 +540,7 @@ public class CmsProductDetailService extends BaseAppService {
         return resultMap;
     }
 
-    public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+    public Map<String, Object> getMastProductInfo(String channelId, Long prodId, String lang) {
         Map<String, Object> result = new HashMap<>();
 
         // 取得产品信息
@@ -564,6 +561,7 @@ public class CmsProductDetailService extends BaseAppService {
         });
 
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
@@ -602,6 +600,11 @@ public class CmsProductDetailService extends BaseAppService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        CmsBtProductModel oldProduct = productService.getProductById(channelId,prodId);
+        if(oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())){
+
+        }
+
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }

@@ -27,15 +27,6 @@ public class SizeChartService extends BaseService {
 
     /**
      * 按照填写的条件去数据库检索记录
-     * @param channelId
-     * @param sizeChartName
-     * @param finishFlag
-     * @param startTime
-     * @param endTime
-     * @param brandNameList
-     * @param productTypeList
-     * @param sizeTypeList
-     * @return sizeChartList
      */
     public List<CmsBtSizeChartModel> getSizeChartSearch(String channelId,String sizeChartName,String finishFlag
             ,String startTime,String endTime,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList,int curr,int size){
@@ -50,16 +41,17 @@ public class SizeChartService extends BaseService {
     }
 
     /**
+     * 按照填写的条件去数据库检索记录
+     *
+     * @param queryObject JomgoQuery
+     * @return List
+     */
+    public List<CmsBtSizeChartModel> getSizeCharts(JomgoQuery queryObject) {
+        return cmsBtSizeChartDao.select(queryObject);
+    }
+
+    /**
      * 取得的总件数
-     * @param channelId
-     * @param sizeChartName
-     * @param finishFlag
-     * @param startTime
-     * @param endTime
-     * @param brandNameList
-     * @param productTypeList
-     * @param sizeTypeList
-     * @return total
      */
     public long getCount(String channelId,String sizeChartName,String finishFlag
             ,String startTime,String endTime,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList) {
@@ -69,15 +61,6 @@ public class SizeChartService extends BaseService {
 
     /**
      * 取得收索的条件
-     * @param channelId
-     * @param sizeChartName
-     * @param finishFlag
-     * @param startTime
-     * @param endTime
-     * @param brandNameList
-     * @param productTypeList
-     * @param sizeTypeList
-     * @return sbQuery
      */
     private String getSearchQuery(String channelId,String sizeChartName,String finishFlag
             ,String startTime,String endTime,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList) {
@@ -141,7 +124,6 @@ public class SizeChartService extends BaseService {
     }
     /**
      * 逻辑删除选中的记录
-     * @param sizeChartId
      */
     public void sizeChartUpdate(int sizeChartId,String userName,String channelId){
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId,channelId);
@@ -155,12 +137,6 @@ public class SizeChartService extends BaseService {
 
     /**
      * 根据尺码关系一览编辑的数据插入数据库
-     * @param channelId
-     * @param userName
-     * @param sizeChartName
-     * @param brandNameList
-     * @param productTypeList
-     * @param sizeTypeList
      */
     public void insert(String channelId,String userName,String sizeChartName
             ,List<String> brandNameList,List<String>  productTypeList,List<String> sizeTypeList) {
@@ -182,7 +158,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setFinish("0");
         //产品品牌
         if (brandNameList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
@@ -190,7 +166,7 @@ public class SizeChartService extends BaseService {
         }
         //产品类型
         if(productTypeList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
         } else {
@@ -198,7 +174,7 @@ public class SizeChartService extends BaseService {
         }
         //产品性别
         if(sizeTypeList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);
         } else {
@@ -212,14 +188,6 @@ public class SizeChartService extends BaseService {
 
     /**
      * 尺码关系一览编辑详情编辑画面
-     * @param channelId
-     * @param userName
-     * @param sizeChartId
-     * @param sizeChartName
-     * @param finishFlag
-     * @param brandNameList
-     * @param productTypeList
-     * @param sizeTypeList
      */
     public void sizeChartDetailUpdate(String channelId, String userName,int sizeChartId, String sizeChartName, String finishFlag
             , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList){
@@ -236,7 +204,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setFinish(finishFlag);
         //产品品牌
         if (brandNameList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
         } else {
@@ -244,7 +212,7 @@ public class SizeChartService extends BaseService {
         }
         //产品类型
         if(productTypeList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
         } else {
@@ -252,7 +220,7 @@ public class SizeChartService extends BaseService {
         }
         //产品性别
         if(sizeTypeList.size()==0) {
-            List lst = new ArrayList<String>();
+            List<String> lst = new ArrayList();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);
         } else {
@@ -264,10 +232,6 @@ public class SizeChartService extends BaseService {
 
     /**
      * 尺码关系一览编辑详情编辑画面(编辑尺码表)
-     * @param channelId
-     * @param userName
-     * @param sizeChartId
-     * @param sizeMapList
      */
     public void sizeChartDetailSizeMapSave(String channelId, String userName ,int sizeChartId,List<CmsBtSizeChartModelSizeMap> sizeMapList ){
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId,channelId);
@@ -281,7 +245,6 @@ public class SizeChartService extends BaseService {
     }
     /**
      * 根据sizeChartId取得sizeChartInfo
-     * @param sizeChartId
      */
     public CmsBtSizeChartModel getCmsBtSizeChartModel(int sizeChartId,String channelId) {
         JomgoQuery queryObject = new JomgoQuery();
