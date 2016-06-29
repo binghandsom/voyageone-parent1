@@ -16,6 +16,11 @@ body {
     width: 1150px;
   }
 }
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+  }
+}
 .content {
   padding-top: 10px;
   padding-bottom: 25px;
@@ -115,6 +120,7 @@ body {
 }
 .table {
   margin-bottom: 10px;
+  min-width: 1000px;
 }
 .table thead th {
   font-size: 14px;
