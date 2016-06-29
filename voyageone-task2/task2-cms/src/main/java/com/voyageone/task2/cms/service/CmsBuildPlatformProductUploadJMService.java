@@ -515,11 +515,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             }
 
                             //获取jm_hash_id列表
-                            List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(productCode, channelId);
-                            jmHashIdList.add(originHashId);
+                            List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(channelId, productCode);
+                            $info("已经存在的聚美Deal的size:" + jmHashIdList.size() + ",对应的productCode:" + productCode);
+                            if (jmHashIdList.size() == 0)
+                                jmHashIdList.add(originHashId);
 
 
                             for (String hashId : jmHashIdList) {
+                                $info("更新Deal的hashId:" + hashId);
                                 HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                                 HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                                 if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
@@ -760,7 +763,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-        String productName = jmFields.getStringAttribute("productNameCn") + " " + fields.getCode();
+        String productName = jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(fields.getCode()).replaceAll("-");
         htProductUpdateRequest.setJumei_product_name(productName);
         htProductUpdateRequest.setJumei_product_id(productId);
         HtProductUpdate_ProductInfo productInfo = new HtProductUpdate_ProductInfo();
@@ -960,7 +963,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setChannelId(channelId);
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
-        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + productCode);
+        cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
         cmsBtJmProductModel.setVoBrandName(product.getCatId());
         cmsBtJmProductModel.setVoCategoryName(product.getCatPath());
         cmsBtJmProductModel.setBrandName(brandName);

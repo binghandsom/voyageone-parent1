@@ -116,7 +116,7 @@ public class CmsProductDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+        return success(productPropsEditService.getMastProductInfo(channelId,prodId,getLang()));
 
     }
 

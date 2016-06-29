@@ -354,7 +354,7 @@ public class CmsProductDetailService extends BaseAppService {
         if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
             // 执行carts更新
             productUpdateBean.getProductModel().getSkus().forEach(sku -> {
-                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929)).collect(Collectors.toList());
+                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929 || s == 28 || s == 29)).collect(Collectors.toList());
                 sku.setSkuCarts(newCarts);
             });
         }
@@ -540,7 +540,7 @@ public class CmsProductDetailService extends BaseAppService {
         return resultMap;
     }
 
-    public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
+    public Map<String, Object> getMastProductInfo(String channelId, Long prodId, String lang) {
         Map<String, Object> result = new HashMap<>();
 
         // 取得产品信息
@@ -561,6 +561,7 @@ public class CmsProductDetailService extends BaseAppService {
         });
 
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
@@ -599,6 +600,8 @@ public class CmsProductDetailService extends BaseAppService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        productService.getProductById(channelId,prodId);
+
 
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
