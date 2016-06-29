@@ -59,7 +59,7 @@
                 <table class="table table-fixed table-vo">
                     <thead>
                     <tr>
-                        <th style="width: 10px"></th>
+                        <th style="width: 30px"></th>
                         <th class="td-1">ORDER ID</th>
                         <th class="td-2">ORDER DATE</th>
                         <th class="td-1">SKU</th>
@@ -70,69 +70,28 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><span ng-click="">+</span></td>
-                        <td>99109839021</td>
-                        <td>2016-06-28 11:46:05</td>
-                        <td>XSJDIO1900</td>
-                        <td>Adidas Busenitz</td>
-                        <td>Open</td>
-                        <td>$1000</td>
+                    <tr ng-repeat-start="item in ctrl.data">
+                        <td class="text-right"><span ng-click="item.collapse = !item.collapse">+</span></td>
+                        <td>{{item.orderId}}</td>
+                        <td>{{item.orderDate}}</td>
+                        <td>{{item.sku}}</td>
+                        <td>{{item.desc}}</td>
+                        <td>{{item.status}}</td>
+                        <td></td>
                         <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>+</td>
-                        <td>99109839021</td>
-                        <td>2016-06-28 11:46:05</td>
-                        <td>XSJDIO1900</td>
-                        <td>Adidas Busenitz</td>
-                        <td>Open</td>
-                        <td>$1000</td>
+                    <tr ng-show="item.collapse" ng-repeat="detail in item.details" ng-repeat-end>
+                        <td class="text-right"><span ng-click="">-</span></td>
+                        <td>{{detail.orderId}}</td>
+                        <td>{{detail.orderDate}}</td>
+                        <td>{{detail.sku}}</td>
+                        <td>{{detail.desc}}</td>
+                        <td>{{detail.status}}</td>
+                        <td>${{detail.price}}</td>
                         <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
-                            <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>+</td>
-                        <td>99109839021</td>
-                        <td>2016-06-28 11:46:05</td>
-                        <td>XSJDIO1900</td>
-                        <td>Adidas Busenitz</td>
-                        <td>Open</td>
-                        <td>$1000</td>
-                        <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
-                            <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>+</td>
-                        <td>99109839021</td>
-                        <td>2016-06-28 11:46:05</td>
-                        <td>XSJDIO1900</td>
-                        <td>Adidas Busenitz</td>
-                        <td>Open</td>
-                        <td>$1000</td>
-                        <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
-                            <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>+</td>
-                        <td>99109839021</td>
-                        <td>2016-06-28 11:46:05</td>
-                        <td>XSJDIO1900</td>
-                        <td>Adidas Busenitz</td>
-                        <td>Open</td>
-                        <td>$1000</td>
-                        <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
-                            <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
                     </tbody>
