@@ -9,7 +9,6 @@ define([
             this.hsCodeInfoService = hsCodeInfoService;
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.searchCondition = "";
-            this.totalHsCodeCnt = 0;
             this.hsCodeTaskCnt = 10;
             this.hsCodeStatus = "0";
             this.hsCodeList = [];
