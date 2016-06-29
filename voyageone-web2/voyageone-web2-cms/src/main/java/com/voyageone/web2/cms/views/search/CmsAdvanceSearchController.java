@@ -54,7 +54,6 @@ public class CmsAdvanceSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.INIT)
     public AjaxResponse init() throws Exception {
         CmsSessionBean cmsSession = getCmsSession();
-        cmsSession.putAttribute("_isNewAdvSearch", "Y");
         UserSessionBean userInfo = getUser();
         advSearchCustColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
         return success(searchIndexService.getMasterData(userInfo, cmsSession, getLang()));

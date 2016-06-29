@@ -261,7 +261,7 @@ public class CmsFieldEditService extends BaseAppService {
         }
 
         Map<String, Object> rsMap = new HashMap<>();
-        if (isSelAll == 1 && (productCodes == null || productCodes.isEmpty())) {
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
@@ -355,7 +355,7 @@ public class CmsFieldEditService extends BaseAppService {
         }
 
         Map<String, Object> rsMap = new HashMap<>();
-        if (isSelAll == 1 && (productCodes == null || productCodes.isEmpty())) {
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
