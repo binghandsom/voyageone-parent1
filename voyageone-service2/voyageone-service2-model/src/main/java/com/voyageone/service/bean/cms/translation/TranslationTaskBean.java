@@ -11,18 +11,18 @@ import java.util.List;
  */
 public class TranslationTaskBean {
 
-    private int prodId;
+    private long prodId;
     private String productCode;
 
     TranslationTaskBean_CommonFields commonFields;
     List<TranslationTaskBean_CustomProps> CustomProps;
 
 
-    public int getProdId() {
+    public long getProdId() {
         return prodId;
     }
 
-    public void setProdId(int prodId) {
+    public void setProdId(long prodId) {
         this.prodId = prodId;
     }
 

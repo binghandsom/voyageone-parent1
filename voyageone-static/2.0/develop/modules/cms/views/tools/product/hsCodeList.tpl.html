@@ -15,16 +15,16 @@
                                 <div class="panel-body" style="background-color: #F8F8F8;">
                                     <ul class="data-display-boxes">
                                         <li>
-                                            <div class="data"> <strong>180</strong> 未分配总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.notAssignedTotalHsCodeCnt"></strong> 未分配总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong>20</strong> 已分配但未完成总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.alreadyAssignedTotalHsCodeCnt"></strong> 已分配但未完成总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong>20</strong> 设置税号商品总数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.setChannelTotalHsCodeCnt"></strong> 设置税号商品总数 </div>
                                         </li>
                                         <li>
-                                            <div class="data"> <strong>5</strong> 个人设置税号商品译数 </div>
+                                            <div class="data"> <strong ng-bind="ctrl.setPersonalTotalHsCodeCnt"></strong> 个人设置税号商品译数 </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -40,19 +40,19 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
                                             <div class="col-sm-3">
-                                                <select class="form-control" ng-model="ctrl.hsCodeRule">
+                                                <select class="form-control" ng-model="ctrl.qty">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="0">{{'TXT_INVENTORY'|translate}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
+                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
                                                 </label>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
+                                                    <input name="sortOne" type="radio" value="-1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
                                                 </label>
                                             </div>
                                         </div>
@@ -95,7 +95,7 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-11">
-                                                <textarea type="text" rows="4" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.code"></textarea>
+                                                <textarea type="text" rows="4" class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.searchCondition"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group text-center">

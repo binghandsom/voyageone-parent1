@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
@@ -15,7 +14,10 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -37,10 +39,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.print.DocFlavor;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -1108,7 +1107,7 @@ public class ProductService extends BaseService {
 
         // 更新workLoad表
         CmsBtProductModel productModel = getProductById(channelId, prodId);
-        insertSxWorkLoad(channelId,productModel, modifier);
+        insertSxWorkLoad(channelId, productModel, modifier);
 
         Map<String,Object> result = new HashMap<>();
         result.put("modified", common.getModified());
@@ -1195,5 +1194,108 @@ public class ProductService extends BaseService {
         bulkList.add(model);
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         return result.getModifiedCount();
+    }
+
+    /**
+     * 不同条件取得对应的不同记录总件数
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param translateStatus
+     * @param hsCodeSetter
+     * @return cmsBtProductDao.countByQuery(parameter,channelId)
+     */
+    public Object getTotalHsCodeCnt(String channelId, String userName, String hsCodeStatus, String translateStatus, String hsCodeSetter) {
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,translateStatus,hsCodeSetter,"","","");
+        return cmsBtProductDao.countByQuery(parameter,channelId);
+    }
+
+    /**
+     * 设置税一览的信息
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param condition
+     * @param curr
+     * @param size
+     * @param retFields
+     * @return cmsBtProductDao.select(queryObject,channelId)
+     */
+    public Object getTotalHsCodeList(String channelId, String userName, String hsCodeStatus, String condition, int curr, int size, String[] retFields) {
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","",condition,"","");
+        JomgoQuery queryObject = new JomgoQuery();
+        //取得收索的条件
+        queryObject.setQuery(parameter);
+        queryObject.setProjectionExt(retFields);
+        queryObject.setLimit(size);
+        queryObject.setSkip((curr - 1) * size);
+        return cmsBtProductDao.select(queryObject,channelId);
+    }
+
+    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName, int hsCodeTaskCnt, String[] retFields) {
+        return null;
+    }
+
+    public void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetTime) {
+
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param translateStatus
+     * @param hsCodeSetter
+     * @return
+     */
+    private String getSearchQuery(String channelId, String userName, String hsCodeStatus
+            , String translateStatus, String hsCodeSetter,String condition,String pageNum,String pageSize) {
+        StringBuilder sbQuery = new StringBuilder();
+        //hsCodePrivate
+        if(!StringUtils.isEmpty(userName)){
+            if(userName.equals("notNull")){
+                sbQuery.append("common.fields.hsCodeSetter:{$in:[null],$exists:true}");
+                sbQuery.append(",");
+            }else{
+                sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", userName));
+                sbQuery.append(",");
+            }
+        }else{
+            sbQuery.append("\"common.fields.hsCodeSetter\":{$ne:null}");
+            sbQuery.append(",");
+        }
+        //hsCodeStatus
+        if(!StringUtils.isEmpty(hsCodeStatus)){
+            sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeStatus", hsCodeStatus));
+            sbQuery.append(",");
+        }
+        //translateStatus
+        if(!StringUtils.isEmpty(translateStatus)){
+            sbQuery.append(MongoUtils.splicingValue("common.fields.translateStatus", translateStatus));
+            sbQuery.append(",");
+        }
+        //hsCodeSetter
+        if(!StringUtils.isEmpty(hsCodeSetter)){
+            if(userName.equals("notNull")){
+                sbQuery.append("common.fields.hsCodeSetter:{$in:[null],$exists:true}");
+                sbQuery.append(",");
+            }else{
+                sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", hsCodeSetter));
+                sbQuery.append(",");
+            }
+        }else{
+            sbQuery.append("\"common.fields.hsCodeSetter\":{$ne:null}");
+            sbQuery.append(",");
+        }
+        //condition
+        if(!StringUtils.isEmpty(condition)){
+            String.format("'fields.productNameEn':{$regex:'%s'},'fields.code':{$regex:'%s'}", condition, condition);
+            sbQuery.append(String.format("'fields.productNameEn':{$regex:'%s'},'fields.code':{$regex:'%s'}", condition, condition));
+            sbQuery.append(",");
+        }
+        //channelId
+        sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
+        return "{" + sbQuery.toString() + "}";
     }
 }
