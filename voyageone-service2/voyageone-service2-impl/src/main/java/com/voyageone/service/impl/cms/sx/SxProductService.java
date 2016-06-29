@@ -2261,12 +2261,12 @@ public class SxProductService extends BaseService {
      *     pPublishTime，
      *     pPublishError（上新失败"Error"，上新成功清空），
      *     pStatus(Onsale/InStock)
-     * 1-3.MySql的ims_bt_product表中下列字段的值，没找到插入新的记录
+     * 1-3.上新成功时更新MySql的ims_bt_product表中下列字段的值，没找到插入新的记录
      *     NumIId，
      *     QuantityUpdateType（s:sku级别, p:product级别）
      * 1-4.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
-     * 2.子店铺上新到US JOI上新成功时更新字段
+     * 2.子店铺上新到US JOI上新成功时更新字段（不用更新ims_bt_product表）
      * 2-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
      *     publishTime,
      *     inStockTime,
@@ -2278,15 +2278,15 @@ public class SxProductService extends BaseService {
      * 2-3.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
      * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
+     * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param sxData SxData 上新数据
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
-     * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param numIId String 商品id
      * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
      * @param numIId String 商品id
      */
-    public void doUploadFinalProc(boolean isUsJoi, SxData sxData, CmsBtSxWorkloadModel cmsBtSxWorkloadModel,
-                                  boolean uploadStatus, String numIId, CmsConstants.PlatformStatus platformStatus,
+    public void doUploadFinalProc(boolean isUsJoi, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel cmsBtSxWorkloadModel,
+                                  String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier) {
 
         // 取得变更前的product group表数据
@@ -2334,13 +2334,13 @@ public class SxProductService extends BaseService {
                     sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
                 }
                 // 一般店铺上新成功后回写productGroup及product表的状态
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());;
+                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+
+                // 回写ims_bt_product表(numIId)
+                this.updateImsBtProduct(sxData, modifier);
             } else {
                 productGroupService.updateUSJoiGroupsPlatformStatus(sxData.getPlatform());
             }
-
-            // 回写ims_bt_product表(numIId)
-            this.updateImsBtProduct(sxData, modifier);
 
             // 写入履历
 //          productGroupService.insertHistoryLog(beforeProductGroup, sxData.getPlatform());
