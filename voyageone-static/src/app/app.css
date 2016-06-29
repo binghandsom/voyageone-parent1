@@ -66,11 +66,6 @@ body {
 .header .navbar-nav .dropdown-menu li a {
   padding: 5px 10px;
 }
-.dropdown-toggle-arr:after {
-  font-family: FontAwesome;
-  content: "\f107";
-  margin-left: 10px;
-}
 @media (min-width: 768px) {
   .navbar > .container .navbar-brand {
     margin-left: -5px;
@@ -99,9 +94,6 @@ body {
   padding-right: 0;
   background: transparent;
 }
-.control-label {
-  font-weight: normal;
-}
 .panel {
   margin-bottom: 10px;
 }
@@ -113,6 +105,24 @@ body {
 }
 .panel-heading {
   padding: 6px 10px;
+}
+.table-fixed {
+  table-layout: fixed;
+}
+.table-vo thead th {
+  background-color: #339be6;
+  color: white;
+}
+.table {
+  margin-bottom: 10px;
+}
+.table thead th {
+  font-size: 14px;
+}
+.dropdown-toggle-arr:after {
+  font-family: FontAwesome;
+  content: "\f107";
+  margin-left: 10px;
 }
 .dropdown-toggle {
   cursor: pointer;
@@ -126,12 +136,8 @@ body {
   background-color: #337ab7;
   color: white;
 }
-.table-fixed {
-  table-layout: fixed;
-}
-.table-vo thead th {
-  background-color: #339be6;
-  color: white;
+.control-label {
+  font-weight: normal;
 }
 .margin-bottom-10 {
   margin-bottom: 10px;
