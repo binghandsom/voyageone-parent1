@@ -12,10 +12,10 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -32,6 +32,7 @@ import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -407,21 +408,32 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 向产品添加tag，同时添加该tag的所有上级tag
      */
-    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier, CmsSessionBean cmsSession) {
+    public void addProdTag(String channelId, Map<String, Object> params, String tagsKey, String modifier, CmsSessionBean cmsSession) {
+        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
         if (tagPath == null) {
-            $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
-            throw new BusinessException("缺少参数!");
+            $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
+            throw new BusinessException("缺少参数，未选择标签!");
         }
 
-        if (prodIdList == null || prodIdList.isEmpty()) {
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<Long> prodIdList = null;
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             prodIdList = getProductIdList(channelId, cmsSession);
             if (prodIdList == null || prodIdList.isEmpty()) {
-                $warn("CmsAdvanceSearchService：addProdTag 缺少参数");
-                throw new BusinessException("缺少参数!");
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
+                throw new BusinessException("缺少参数，未选择商品!");
+            }
+        } else {
+            prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
+            if (prodIdList == null || prodIdList.isEmpty()) {
+                $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
+                throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-
         productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
     }
 }

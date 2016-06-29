@@ -18,6 +18,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+        $scope.doExport = doExport;
 
         var tempFeedSelect = null;
 
@@ -156,6 +157,16 @@ define([
                     })
                 });
         };
+
+        function doExport(){
+            var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
+            $feedSearchService.doExport(data).then(function(data){
+
+
+            })
+        }
+
+
 
         $scope.openFeedCategoryMapping = function(popupNewCategory) {
             attributeService.getCatTree()

@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -154,6 +155,11 @@ public class CmsFeedSearchController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORT)
     public  AjaxResponse export(@RequestBody CmsBtExportTaskModel params) {
+        params.setChannelId(getUser().getSelChannelId());
+        params.setModifier(getUser().getUserName());
+        params.setCreater(getUser().getUserName());
+        params.setTaskType(CmsBtExportTaskService.FEED);
+        params.setStatus(0);
         return success(searchService.export(getUser().getSelChannelId(),params,getUser().getUserName()));
     }
 }

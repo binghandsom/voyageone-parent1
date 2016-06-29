@@ -323,7 +323,7 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and activity_end = 1 and jm_hash_id is not null
+        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  NOW() &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
     </select>
 
     <select id="getOnSaleByCode" resultType="CmsBtJmPromotionProductModel">

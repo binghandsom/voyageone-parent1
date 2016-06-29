@@ -7,9 +7,6 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by dell on 2016/4/28.
- */
 @Component
 @Lazy(value = false)
 public class ImagePathCache implements ApplicationContextAware {

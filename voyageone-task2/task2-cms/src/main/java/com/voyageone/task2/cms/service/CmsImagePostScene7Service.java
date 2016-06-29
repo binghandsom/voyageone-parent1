@@ -1,33 +1,19 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateAddListResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
-import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
-import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.PlatformImagesService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
-import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,23 +35,6 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
     @Autowired
     private CmsBtImagesDaoExt cmsBtImagesDaoExt;
-
-    @Autowired
-    private PlatformImagesService platformImagesService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductGroupService productGroupService;
-//    @Autowired
-//    ImagesService imagesService;
-
-    @Autowired
-    private ImageTemplateService imageTemplateService;
-
-    @Autowired
-    private ImageCreateService imageCreateService;
 
     @Override
     public SubSystem getSubSystem() {

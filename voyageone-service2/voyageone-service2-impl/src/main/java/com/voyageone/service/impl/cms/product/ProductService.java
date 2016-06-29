@@ -755,7 +755,7 @@ public class ProductService extends BaseService {
 
             // 设置原始价格单位
 
-            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getOrgChannelId()
                     , CmsConstants.ChannelConfig.CLIENT_PRICE_UNIT);
             resultInfo.setClientPriceUnit(channelConfig.getConfigValue1());
 
@@ -858,7 +858,7 @@ public class ProductService extends BaseService {
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
                 Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channelId);
+                param.put("channelId", product.getOrgChannelId());
                 param.put("sku", sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));

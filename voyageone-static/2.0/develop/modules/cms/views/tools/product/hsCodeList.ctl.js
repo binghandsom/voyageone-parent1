@@ -9,12 +9,14 @@ define([
             this.hsCodeInfoService = hsCodeInfoService;
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.searchCondition = "";
-            this.totalHsCodeCnt = 0;
-            this.hsCodeTaskCnt = "";
+            this.hsCodeTaskCnt = 10;
             this.hsCodeStatus = "0";
             this.hsCodeList = [];
             this.hsCodeValue = [];
             this.status = false;
+            this.qty = "";
+            this.order = "";
+            this.code = "";
         }
 
         HsCodeController.prototype = {
@@ -29,24 +31,33 @@ define([
                     self.setChannelTotalHsCodeCnt = res.data.setChannelTotalHsCodeCnt;
                     self.setPersonalTotalHsCodeCnt = res.data.setPersonalTotalHsCodeCnt;
 
-                    self.totalHsCodeCnt = res.data.totalHsCodeCnt;
-                    self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsCodeList = res.data.hsCodeList;
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
+            get: function (page) {
+                var self = this;
+                self.getTaskInfo = {};
+                self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                self.getTaskInfo.curr = self.prodPageOption.curr;
+                self.getTaskInfo.size = self.prodPageOption.size;
+                self.getTaskInfo.qty = self.qty;
+                self.getTaskInfo.order = self.order;
+                self.getTaskInfo.code = self.code;
+                self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
+                self.hsCodeInfoService.get(self.getTaskInfo).then()
+            },
             search: function (page) {
                 var self = this;
+                self.searchInfo = {};
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
-                self.searchInfo.pageNum = self.prodPageOption.curr;
-                self.searchInfo.pageSize = self.prodPageOption.size;
+                self.searchInfo.curr = self.prodPageOption.curr;
+                self.searchInfo.size = self.prodPageOption.size;
+                self.searchInfo.hsCodeStatus = self.hsCodeStatus;
+                self.searchInfo.searchCondition = self.searchCondition;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
 
                 })
-            },
-            get: function () {
-                var self = this;
-                self.hsCodeInfoService.get().then()
             }
         };
 

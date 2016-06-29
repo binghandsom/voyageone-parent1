@@ -114,9 +114,9 @@ define([
          * @param data
          * @returns {*}
          */
-        function addFreeTag(tagPath, prodIdList) {
+        function addFreeTag(tagPath, prodIdList, selAllFlg) {
             var defer = $q.defer();
-            var data = {"tagPath":tagPath, "prodIdList":prodIdList};
+            var data = {"tagPath":tagPath, "prodIdList":prodIdList, "isSelAll":selAllFlg};
 
             $searchAdvanceService2.addFreeTag(data).then(function (res) {
                 defer.resolve (res);

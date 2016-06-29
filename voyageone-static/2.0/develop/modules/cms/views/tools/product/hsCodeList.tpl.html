@@ -45,14 +45,12 @@
                                                     <option value="0">{{'TXT_INVENTORY'|translate}}</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <label class="checkbox-inline c-radio ng-binding">
                                                     <input name="sortOne" type="radio" value="1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
                                                 </label>
-                                            </div>
-                                            <div class="col-sm-3">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="-1" ng-model="ctrl.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
+                                                    <input name="sortOne" type="radio" value="-1" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;降序
                                                 </label>
                                             </div>
                                         </div>
@@ -128,7 +126,7 @@
                 </thead>
                 <tbody ng-if="ctrl.hsCodeList.length == 0">
                     <tr style="padding-left:0px">
-                        <td colspan="5">
+                        <td colspan="6">
                             <div if-no-rows="ctrl.hsCodeList.length"></div>
                         </td>
                     </tr>
