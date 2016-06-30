@@ -45,6 +45,7 @@ define([
             get: function (page) {
                 var self = this;
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
                 self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                 })
             },
