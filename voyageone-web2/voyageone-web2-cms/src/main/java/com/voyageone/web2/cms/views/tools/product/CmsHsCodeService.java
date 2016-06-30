@@ -31,8 +31,11 @@ public class CmsHsCodeService extends BaseAppService {
      */
     private static String[] RET_FIELDS = {
             "common.fields.code",
+            "common.catPath",
             "common.fields.productNameEn",
+            "feed.catPath",
             "common.fields.materialCn",
+            "common.fields.materialEn",
             "common.fields.hsCodePrivate",
             "common.fields.hsCodeCrop",
             "common.fields.images1",
