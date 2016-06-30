@@ -11,6 +11,10 @@
 
 angular.module("voyageone.angular.vresources", []).provider("$vresources", function ($provide) {
 
+    function getActionUrl(root, action) {
+        return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+
     function actionHashcode(md5, root, action, args) {
         var argsJson = angular.toJson(args);
         var md5Arg = root + action + argsJson;
@@ -82,8 +86,10 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
             if (!_cacheFlag || _cacheFlag > 2)
                 _cacheFlag = 0;
 
+            _url = getActionUrl(_root, _url);
+
             _ServiceClass.prototype[key] = _cacheFlag === 0 ? function (args) {
-                return this._a.post(_root + _url, args).then(_resolve, _reject);
+                return this._a.post(_url, args).then(_resolve, _reject);
             } : function (args) {
                 var deferred, result;
                 var storage = this._s,
@@ -102,7 +108,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
-                    this._a.post(_root + _url, args).then(function (res) {
+                    this._a.post(_url, args).then(function (res) {
                         result = _resolve(res);
                         if (_cacheFlag === 2)
                             storage[hash] = result;

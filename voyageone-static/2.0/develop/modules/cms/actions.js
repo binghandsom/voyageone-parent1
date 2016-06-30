@@ -344,7 +344,7 @@ define(function () {
                 },
                 "$priceHistoryService": {
                     "root": "/cms/pop/history_price",
-                    "init": "getChannelCategory",
+                    "init": "getChannelCategory2",
                     "getPriceHistory": "getPriceHistory"
                 },
                 "$addChannelCategoryService": {
