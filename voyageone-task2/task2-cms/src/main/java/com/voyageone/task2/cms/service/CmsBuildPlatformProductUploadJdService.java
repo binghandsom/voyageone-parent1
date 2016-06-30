@@ -1626,10 +1626,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         Double resultPrice = 0.0;
         // 如果是平台售价(sale_price)，则取个平台相应的售价(platform.P29.sku.priceSale)
         if (PriceType_jdprice.equals(priceType)) {
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute("priceSale")).max().getAsDouble();
+            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else if (PriceType_marketprice.equals(priceType)) {
             // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute("priceMsrp")).max().getAsDouble();
+            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else {
             $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceType);
         }

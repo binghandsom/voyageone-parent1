@@ -1,37 +1,5 @@
 package com.voyageone.components.channeladvisor.webservice;
 
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.APICredentials;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfArrayOfBoolean;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfArrayOfOrderUpdateResponse;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfArrayOfSetExportStatusResponse;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfInt32;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfOrderRefundHistoryResponse;
-import com.voyageone.components.channeladvisor.webservice.APIResultOfRefundOrderResponse;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfOrderResponseItem;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfOrderUpdateResponse;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfOrderUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfSetExportStatusResponse;
-import com.voyageone.components.channeladvisor.webservice.GetOrderList;
-import com.voyageone.components.channeladvisor.webservice.GetOrderListResponse;
-import com.voyageone.components.channeladvisor.webservice.GetOrderRefundHistoryResponse;
-import com.voyageone.components.channeladvisor.webservice.OrderMerge;
-import com.voyageone.components.channeladvisor.webservice.OrderMergeResponse;
-import com.voyageone.components.channeladvisor.webservice.OrderSplit;
-import com.voyageone.components.channeladvisor.webservice.OrderStatusUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.OrderUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.SetExportStatusResponse;
-import com.voyageone.components.channeladvisor.webservice.SetOrdersExportStatusResponse;
-import com.voyageone.components.channeladvisor.webservice.SetSellerOrderIDResponse;
-import com.voyageone.components.channeladvisor.webservice.SetSellerOrderItemIDList;
-import com.voyageone.components.channeladvisor.webservice.SetSellerOrderItemIDListResponse;
-import com.voyageone.components.channeladvisor.webservice.ShippingMethodInfoUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.SubmitOrder;
-import com.voyageone.components.channeladvisor.webservice.SubmitOrderRefund;
-import com.voyageone.components.channeladvisor.webservice.TransactionNoteSubmit;
-import com.voyageone.components.channeladvisor.webservice.UpdateOrderList;
-import com.voyageone.components.channeladvisor.webservice.UpdateOrderListResponse;
-
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;

@@ -1,6 +1,4 @@
-package com.voyageone.components.channeladvisor.webservice;//
-
-import com.voyageone.components.channeladvisor.webservice.GetInventoryItemListResponse;
+package com.voyageone.components.channeladvisor.webservice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
