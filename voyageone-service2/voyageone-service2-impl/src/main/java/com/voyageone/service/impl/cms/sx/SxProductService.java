@@ -1656,8 +1656,8 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
-            //// TODO: 16/6/30 edward 因为不知道怎么修改所以请上新组修改 
-            if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+            //// TODO: 16/6/30 edward 因为不知道怎么修改所以请上新组修改
+            if (!productModel.getPlatform(cartId).getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
