@@ -28,6 +28,10 @@ import java.util.Map;
 @RequestMapping(method = RequestMethod.POST,value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
 public class TranslationController extends CmsController{
 
+    private static final  String  TASK_COMPLETE = "1";
+
+    private static final  String  TASK_IMCOMPLETE = "0";
+
     @Autowired
     TranslationService feedPropsTranslateService;
 
@@ -184,9 +188,48 @@ public class TranslationController extends CmsController{
         return success(translateTaskInitResponse);
     }
 
+    /**
+     * 保存任务
+     *
+     * @param requestBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE)
     public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean){
-        return success(null);
+        return success(save(requestBean, TASK_IMCOMPLETE));
+    }
+
+    /**
+     * 提交任务
+     *
+     * @param requestBean
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT)
+    public AjaxResponse doSubmit(@RequestBody TranslationTaskBean requestBean){
+        return success(save(requestBean, TASK_COMPLETE));
+    }
+
+
+
+
+
+
+
+    /**
+     * 保存任务
+     *
+     * @param requestBean
+     * @param status
+     * @return
+     */
+    private Map<String, Object> save(@RequestBody TranslationTaskBean requestBean, String status) {
+        String channelId = this.getUser().getSelChannelId();
+        String user =this.getUser().getUserName();
+        Map<String,Object> translateTaskSaveResponse = new HashMap<>();
+        translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId,user, status));
+        return translateTaskSaveResponse;
     }
 
 
