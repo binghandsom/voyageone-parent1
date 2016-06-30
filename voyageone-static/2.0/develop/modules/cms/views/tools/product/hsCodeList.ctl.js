@@ -39,6 +39,7 @@ define([
                     self.hsSettedData = res.data;
                     self.hsCodeList = self.hsSettedData.hsCodeList;
                     self.hsCodeValue = self.hsSettedData.hsCodeValue;
+                    console.log(self.hsSettedData);
                 })
             },
             get: function (page) {
