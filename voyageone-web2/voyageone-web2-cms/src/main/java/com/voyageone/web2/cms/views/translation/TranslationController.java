@@ -211,6 +211,19 @@ public class TranslationController extends CmsController{
     }
 
 
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH)
+    public AjaxResponse doSearch(@RequestBody Map requestBean){
+        int pageNum = Integer.valueOf(requestBean.getOrDefault("pageNum", 1).toString());
+        int pageSize = Integer.valueOf(requestBean.getOrDefault("pageSize", 10).toString());
+        String codeOrName = requestBean.get("codeOrName").toString();
+        String translateStatus = requestBean.get("translateStatus").toString();
+
+
+
+        return success(null);
+    }
+
+
 
 
 

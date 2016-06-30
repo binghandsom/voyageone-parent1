@@ -54,6 +54,7 @@ require.config({
         'angular-chosen': ['angular', 'chosen'],
         'angular-ui-utils': ['angular'],
         'cms': [
+            'underscore',
             'voyageone-angular-com',
             'voyageone-com',
             'angular-block-ui',

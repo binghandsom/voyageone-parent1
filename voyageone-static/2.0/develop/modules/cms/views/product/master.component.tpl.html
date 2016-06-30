@@ -1,5 +1,5 @@
 <div class="product-shema-detail">
-    <form class="form-horizontal" name="productFieldForm" novalidate>
+    <div class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
                 <div class="container-fluid"  id="{{cartInfo.name}}1">
                     <div class="row wrapper">
@@ -44,7 +44,7 @@
                                     <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.productComm.pCatPath" disabled>
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.productComm.catPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
@@ -112,7 +112,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,7 +136,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -159,7 +159,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -182,7 +182,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -205,7 +205,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +228,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -255,5 +255,5 @@
                 </div>
             <br>
         </div>
-    </form>
+    </div>
 </div>

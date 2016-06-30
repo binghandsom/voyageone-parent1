@@ -17,11 +17,14 @@ define([
             link: function (scope) {
                 scope.vm = {
                     mastData:null,
-                    productComm:null
+                    productComm:null,
+                    categoryMark:null,
+                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[]}
                 };
 
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
+                scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
@@ -64,11 +67,26 @@ define([
                         popupNewCategory({
                             categories: res.data
                         }).then(function(context){
+                            //判断类目是否改变
+                            scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
+
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
 
-                            scope.productInfo.masterCategory = true;
                         });
+                    });
+                }
+
+                /**
+                 * 添加图片
+                 */
+                function openProImageSetting(imageType,openImageSetting) {
+                    openImageSetting({
+                        product:  scope.vm.productDetails,
+                        imageType: imageType
+                    }).then(function(context){
+                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        scope.vm.productDetails = context.productInfo;
                     });
                 }
 
@@ -82,8 +100,15 @@ define([
                     }
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
-                        console.log(resp);
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        scope.vm.productComm.modified = resp.data.modified;
+                        scope.productInfo.translateStatus = resp.data.translateStatus == null ? 0 : +resp.data.translateStatus;
+                        scope.productInfo.hsCodeStatus =  resp.data.hsCodeStatus == null ? 0: +resp.data.hsCodeStatus ;
+
+                        //通知子页面
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        if(scope.vm.categoryMark)
+                            scope.productInfo.masterCategory = new Date().getTime();
+                        notify.success("更新成功!");
                     });
                 }
 
