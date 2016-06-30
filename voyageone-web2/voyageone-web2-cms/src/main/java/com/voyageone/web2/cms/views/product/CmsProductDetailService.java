@@ -545,15 +545,15 @@ public class CmsProductDetailService extends BaseAppService {
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
-        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getFields().getCode(), 0);
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), 0);
         List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
-            CmsBtProductModel product = cmsBtProduct.getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
+            CmsBtProductModel product = cmsBtProduct.getCommon().getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getFields().getImages1().get(0).get("image1"));
+                image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 images.add(image);
             }

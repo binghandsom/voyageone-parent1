@@ -42,10 +42,10 @@ public class CmsPriceHistoryService extends BaseAppService {
         if(isFirstSku){
             //根据页面Code取得对应的SkuList
             CmsBtProductModel cmsBtProductModel=productService.getProductByCode(channelId,code);
-            if(cmsBtProductModel.getSkus().size()>0){
-                skuCode=cmsBtProductModel.getSkus().get(0).getSkuCode();
+            if(cmsBtProductModel.getCommon().getSkus().size()>0){
+                skuCode=cmsBtProductModel.getCommon().getSkus().get(0).getSkuCode();
                 //获取SkuList
-                result.put("skuList",cmsBtProductModel.getSkus());
+                result.put("skuList",cmsBtProductModel.getCommon().getSkus());
             }else{
                 result.put("skuList",new ArrayList<CmsBtProductModel_Sku>());
             }
