@@ -80,7 +80,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
         //取得商品code
         JomgoQuery query = new JomgoQuery();
-        query.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".sellerCats.cId':{$exists:true}}");
+        query.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true}}");
         query.setParameters(codeList);
         query.setProjection("{'platforms.P" + cartId + ".sellerCats.cId':1}");
         //根据商品code取得对应的类目达标属性
@@ -103,7 +103,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             List<CmsBtProductModel_SellerCat> sellCatsList = prodObj.getPlatform(cartId).getSellerCats();
             if (sellCatsList == null || sellCatsList.isEmpty()) {
                 $debug("getChannelCategory 指定商品无sellerCats数据 " + params.toString());
-                break;
+                continue;
             }
 
             for (CmsBtProductModel_SellerCat selectObj : sellCatsList) {
