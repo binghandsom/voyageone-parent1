@@ -163,15 +163,22 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <if test="synchStatusList!=null and synchStatusList.size()!=0">
-            and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
-                                                open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            </if>
-             <if test="errorStatus!=null">
-             and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
-             </if>
+            <choose>
+                <when test="synchStatusList!=null and synchStatusList.size()!=0">
+                    and ( a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                   open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                    <if test="errorStatus!=null">
+                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3
+                    </if> )
+                </when>
+                <when test="errorStatus!=null">
+                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>

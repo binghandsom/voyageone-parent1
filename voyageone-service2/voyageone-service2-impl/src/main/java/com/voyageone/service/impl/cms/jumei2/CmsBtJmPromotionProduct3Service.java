@@ -1,11 +1,11 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -25,10 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -57,6 +55,8 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmPromotionTagProductDaoExt daoExtCmsBtJmPromotionTagProduct;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -64,7 +64,30 @@ public class CmsBtJmPromotionProduct3Service {
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
         return daoExt.selectPageByWhere(map);
     }
+    public InitResult init(InitParameter parameter) {
+        InitResult result = new InitResult();
+        result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));//CmsBtJmPromotion
+        result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
+        result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
 
+        long preStartLocalTime = getLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = getLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+        result.setBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        result.setEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
+        int hour = DateTimeUtil.getDateHour(new Date()) + 8;
+        result.setUpdateJM(hour > 9 && hour < 12);//是否可以更新聚美
+        return result;
+    }
+    public Date getLocalDate(Date beiJingDate) {
+        return new Date(getLocalTime(beiJingDate));
+    }
+    public long getLocalTime(Date beiJingDate) {
+        long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();//当前时区
+        long localTime = utcTime + timeZone.getRawOffset();
+        return localTime;
+    }
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }
@@ -161,6 +184,7 @@ public class CmsBtJmPromotionProduct3Service {
         return result;
     }
 
+    @VOTransactional
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;

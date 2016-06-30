@@ -7,7 +7,7 @@
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4"><!-- 聚美专场名称 -->
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_JM_PROMOTION_NAME"></label>
@@ -18,16 +18,6 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JM_PROMOTION_CHANGED_COUNT"></label>
-                                    <div class="col-sm-8">
-                                       <inpuut type="number" class="form-control" readonly>{{vm.changeCount}}</inpuut>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_PRESALE_TIME"></label>
                                     <div class="col-sm-8">
@@ -36,18 +26,33 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-4"><!-- 变更产品数&活动时间 -->
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JM_PROMOTION_CHANGED_COUNT"></label>
+                                    <div class="col-sm-8">
+                                       <inpuut type="number" class="form-control" readonly>{{vm.changeCount}}</inpuut>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_PROMOTION_TIME"></label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" ng-model="parentModel.activityStart" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close" max-date="vm.promotion.activityEnd" readonly><!-- ngIf: isOpen -->
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" ng-model="parentModel.activityEnd" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close" min-date="vm.promotion.activityStart" readonly><!-- ngIf: isOpen -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4"><!-- 活动备注 -->
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_START_TIME"></label>
                                     <div class="col-sm-7">
-                                        <input type="text" ng-model="parentModel.activityStart" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close" max-date="vm.promotion.activityEnd" readonly><!-- ngIf: isOpen -->
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label ng-scope" translate="TXT_JOIN_JM_PROMOTION_END_TIME"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" ng-model="parentModel.activityEnd" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-not-empty ng-valid-date" uib-datepicker-popup="" is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close" min-date="vm.promotion.activityStart" readonly><!-- ngIf: isOpen -->
+                                        <textarea type="text" rows="4"  class="form-control no-resize" ng-model="searchInfo.voCategoryName"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +76,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_JOIN_JM_CODE_SKU_SEARCH"></label>
                                     <div class="col-sm-8">
-                                        <textarea type="text" rows="4" class="form-control" ng-model="searchInfo.code"></textarea>
+                                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="searchInfo.code"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -108,10 +113,12 @@
                                     <label class="col-sm-3 control-label">折扣</label>
 
                                     <div class="col-sm-8 form-inline">
-                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
+                                        <div class="input-group col-sm-4">
+                                            <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
                                                                                  placeholder="from"></div>
                                         &nbsp;~&nbsp;
-                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
+                                        <div class="input-group col-sm-4">
+                                            <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
                                                                                  placeholder="to"></div>
                                     </div>
                                 </div>
@@ -122,22 +129,6 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">价格</label>
                                     <div class="col-sm-8" style="padding-left:0px">
-                                        <!--<label class="checkbox-inline c-radio" style="margin-left:4px">-->
-                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span-->
-                                                <!--class="fa fa-check"></span>&nbsp;MSRP</label>-->
-                                        <!--<label class="checkbox-inline c-radio">-->
-                                        <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
-                                        <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
-                                        <!--<label class="checkbox-inline c-radio">-->
-                                        <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
-                                        <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
-
-                                        <!--<label class="checkbox-inline c-radio">-->
-                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span-->
-                                                <!--class="fa fa-check"></span>&nbsp;中国指导价格</label>-->
-                                        <!--<label class="checkbox-inline c-radio">-->
-                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span-->
-                                                <!--class="fa fa-check"></span>&nbsp;中国最终售价</label>-->
                                         <select class="form-control" ng-model="searchInfo.priceType">
                                             <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                                             <option value="dealPrice">当前活动售价</option>
@@ -145,10 +136,6 @@
                                             <option value="retailPrice">中国指导售价</option>
                                             <option value="msrpRmb">中国官方售价</option>
                                         </select>
-                                        <!--<li>海外官网价格:{{model.msrpUsd}}</li>-->
-                                        <!--<li>中国官网售价:{{model.msrpRmb}}</li>-->
-                                        <!--<li>中国指导售价:{{model.retailPrice}}</li>-->
-                                        <!--<li>中国最终售价:{{model.salePrice}}</li>-->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -215,10 +202,9 @@
 
     <div class="box">
         <div class="form-inline pull-right m-b-xs" >
-            <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()"><i class="fa fa-reply-all"></i>&nbsp;导入
-            </button>
-            <div class="btn-group dropdown" uib-dropdown="">
-                <button ng-disabled="!vm.modelList.length" type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default" ng-click="openJmPromotionProductImportWin()" ng-hide="vm.isEnd"><i class="fa fa-reply-all"></i>&nbsp;导入 </button>
+            <div class="btn-group dropdown" uib-dropdown=""  ng-if="vm.modelList.length">
+                <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
                     <i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
@@ -232,10 +218,10 @@
                     <i class="fa fa-arrow-circle-right"></i>&nbsp;全量操作&nbsp;<span class="caret"></span>
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                    <li><a href="" ng-click="deleteAllProduct();">全量清空</a></li>
-                    <li><a href="" ng-click="copyDealAll()">全量上传</a></li>
-                    <li><a href="" ng-click="synchAllPrice()">全量同步价格</a></li>
-                    <li><a href="" ng-click="openDealExtensionWin()">全量Deal延期</a></li>
+                    <li><a href="" ng-click="deleteAllProduct();" ng-if="!vm.isBegin || (!vm.isUpdateJM)">全量清空</a></li>
+                    <li><a href="" ng-click="copyDealAll()" ng-if="!vm.isBegin">全量上传</a></li>
+                    <li><a href="" ng-click="synchAllPrice()" ng-if="!vm.isBegin">全量同步价格</a></li>
+                    <li><a href="" ng-click="openDealExtensionWin()" ng-hide="!vm.isUpdateJM">全量Deal延期</a></li>
                 </ul>
             </div>
             <div class="btn-group dropdown" uib-dropdown="" >
@@ -244,11 +230,11 @@
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
-                    <li><a href="" ng-click="batchCopyDeal()">批量上传</a></li>
-                    <li><a href="" ng-click="batchSynchPrice()">批量同步价格</a></li>
+                    <li><a href="" ng-click="batchCopyDeal()" ng-if="!vm.isBegin">批量上传</a></li>
+                    <li><a href="" ng-click="batchSynchPrice()" ng-if="!vm.isBegin">批量同步价格</a></li>
                     <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
                     <!--<li><a href="">批量变更属性</a></li>-->
-                    <li><a href="" ng-click="openPriceModifyWin()">批量变更价格</a></li>
+                    <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isBegin || !vm.isUpdateJM">批量变更价格</a></li>
                 </ul>
             </div>
             <div class="btn-group dropdown" uib-dropdown="" >
@@ -280,7 +266,7 @@
                                     <th class="text-left">聚美商品名称</th>
                                     <th class="text-left">Tag Name</th>
                                     <th class="text-left">Color</th>
-                                    <th class="text-right">Price</th>
+                                    <th class="text-right mfb-xxx">Price</th>
                                     <th class="text-right">聚美价格</th>
                                     <th class="text-left">聚美Hash ID</th>
                                     <th class="text-center">折扣</th>
@@ -320,23 +306,23 @@
                                     <td class="text-right">
                                         <div class="table_main">
                                             <ul>
-                                                <li>海外官方价格:{{model.msrpUsd}}</li>
-                                                <li>中国官方售价:{{model.msrpRmb}}</li>
-                                                <li>中国指导售价:{{model.retailPrice}}</li>
-                                                <li>中国最终售价:{{model.salePrice}}</li>
+                                                <li>海外官网价格:{{model.msrpUsd|number}}</li>
+                                                <li>中国官网售价:{{model.msrpRmb|number}}</li>
+                                                <li>中国指导售价:{{model.retailPrice|number}}</li>
+                                                <li>中国最终售价:{{model.salePrice|number}}</li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td class="text-right">
                                         <div class="table_main">
                                         <ul>
-                                            <li>市场价:{{getMarketPrice(model)}}</li>
-                                            <li>团购价:{{getDealPrice(model)}}</li>
+                                            <li>市场价:{{getMarketPrice(model)|number}}</li>
+                                            <li>团购价:{{getDealPrice(model)|number}}</li>
                                         </ul>
                                         </div>
                                     </td>
                                     <td class="text-left">{{model.jmHashId}}</td>
-                                    <td class="text-center">{{model.discount == 0?'':(model.discount*10).toFixed(2) + '折'}}</td>
+                                    <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
                                     <td class="text-center">
                                         {{model.skuCount}}
                                     </td>
