@@ -2,8 +2,8 @@ define([
     'angularAMD',
     'angular',
     'underscore',
-    'modules/cms/routes.json',
-    'modules/cms/actions.json',
+    'modules/cms/routes',
+    'modules/cms/actions',
     'modules/cms/translate/en',
     'modules/cms/translate/zh'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
