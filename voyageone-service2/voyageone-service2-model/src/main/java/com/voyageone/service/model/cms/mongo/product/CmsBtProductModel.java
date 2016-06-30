@@ -159,6 +159,23 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         platforms.put(PLATFORM_CART_PRE + cartId, new CmsBtProductModel_Platform_Cart());
     }
 
+    /**
+     * 如果对应的平台数据存在则返回平台数据,否则返回一个空的平台数据对象
+     * @param cartId 平台Id
+     * @return
+     */
+    public CmsBtProductModel_Platform_Cart getPlatformNotNull(int cartId) {
+        if (platforms == null) {
+            return new CmsBtProductModel_Platform_Cart();
+        }
+        CmsBtProductModel_Platform_Cart pcObj = platforms.get(PLATFORM_CART_PRE + cartId);
+        if (pcObj == null) {
+            return new CmsBtProductModel_Platform_Cart();
+        }
+        return pcObj;
+    }
+
+
     //feed
     public CmsBtProductModel_Feed getFeed() {
         return feed;
@@ -199,6 +216,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         if (platforms == null || platforms.isEmpty()) {
             return new ArrayList<>(0);
         }
-        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).collect(Collectors.toList());
+        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).filter(cartKey -> cartKey != 0).collect(Collectors.toList());
     }
 }
