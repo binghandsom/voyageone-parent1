@@ -4,6 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,13 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
         }
     }
 
-    public class JuMeiSkuError {
+    public class JuMeiSkuError implements Serializable {
+
+        private String jumei_sku_no;
+        private String jumei_deal_id;
+        private String error_code;
+        private String error_message;
+
         public String getJumei_sku_no() {
             return jumei_sku_no;
         }
@@ -197,9 +204,5 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
             this.error_message = error_message;
         }
 
-        String jumei_sku_no;
-        String jumei_deal_id;
-        String error_code;
-        String error_message;
     }
 }

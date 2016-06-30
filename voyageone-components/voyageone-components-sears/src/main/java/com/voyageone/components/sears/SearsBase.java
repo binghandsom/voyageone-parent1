@@ -3,8 +3,6 @@ package com.voyageone.components.sears;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.sears.bean.OrderResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;

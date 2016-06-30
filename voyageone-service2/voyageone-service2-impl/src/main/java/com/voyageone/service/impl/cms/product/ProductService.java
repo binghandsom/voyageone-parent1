@@ -436,7 +436,7 @@ public class ProductService extends BaseService {
                 //insert　ProductHistory
                 CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
                 CmsConstants.ProductStatus aftStatus = CmsConstants.ProductStatus.valueOf(productModel.getFields().getStatus());
-                insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
+                insertProductHistory(channelId, findModel.getProdId());
 
                 // jeff 2016/04 del start
                 //insert　SxWorkLoad
@@ -520,10 +520,9 @@ public class ProductService extends BaseService {
 
     }
 
-    private void insertProductHistory(CmsConstants.ProductStatus befStatus,
-                                      CmsConstants.ProductStatus aftStatus,
+    private void insertProductHistory(
                                       String channelId, Long productId) {
-        if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
+//        if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
             if (productId != null) {
                 CmsBtProductModel productModel = getProductById(channelId, productId);
                 CmsBtProductLogModel logModel = new CmsBtProductLogModel();
@@ -532,7 +531,7 @@ public class ProductService extends BaseService {
                 logModel.set_id(null);
                 cmsBtProductLogDao.insert(logModel);
             }
-        }
+//        }
     }
 
     // jeff 2016/04 change start
@@ -1069,6 +1068,8 @@ public class ProductService extends BaseService {
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
             insertSxWorkLoad(channelId, new ArrayList<>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), new ArrayList<>(Arrays.asList(platformModel.getCartId())), modifier);
         }
+        insertProductHistory(channelId,prodId);
+
         return platformModel.getModified();
     }
 
@@ -1111,11 +1112,29 @@ public class ProductService extends BaseService {
         CmsBtProductModel productModel = getProductById(channelId, prodId);
         insertSxWorkLoad(channelId, productModel, modifier);
 
+        insertProductHistory(channelId, prodId);
+
         Map<String,Object> result = new HashMap<>();
         result.put("modified", common.getModified());
         result.put("translateStatus", common.getFields().getTranslateStatus());
         result.put("hsCodeStatus", common.getFields().getHsCodeStatus());
         return  result;
+    }
+
+    public void updateProductLock(String channelId, Long prodId, String lock, String modifier){
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("lock", lock);
+        updateMap.put("modifier",modifier);
+        updateMap.put("modified",DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        insertProductHistory(channelId, prodId);
     }
 
     public int updateProductFeedToMaster(String channelId,CmsBtProductModel cmsProduct, String modifier){
@@ -1195,6 +1214,8 @@ public class ProductService extends BaseService {
         model.setQueryMap(queryMap);
         bulkList.add(model);
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        insertProductHistory(channelId,cmsProduct.getProdId());
         return result.getModifiedCount();
     }
 

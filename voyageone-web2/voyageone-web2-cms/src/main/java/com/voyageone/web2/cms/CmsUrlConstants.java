@@ -526,6 +526,8 @@ public interface CmsUrlConstants {
 
             String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
 
+            String UPDATE_LOCK = "updateLock";
+
         }
 
     }
