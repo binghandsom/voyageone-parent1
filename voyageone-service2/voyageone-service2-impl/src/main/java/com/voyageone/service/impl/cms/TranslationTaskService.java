@@ -284,7 +284,7 @@ public class TranslationTaskService extends BaseService {
                 map.put("feeCategory", product.getFeed().getCatPath());
                 map.put("code", fields.getCode());
                 map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? ( fields.getProductNameEn() )  : fields.getOriginalTitleCn());
-                map.put("catPath", fields.getCatPath() == null? "" : fields.getCatPath());
+                map.put("catPath", product.getCommon().getCatPath() == null? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
                 map.put("translateTime", fields.getTranslateTime());
                 list.add(map);
