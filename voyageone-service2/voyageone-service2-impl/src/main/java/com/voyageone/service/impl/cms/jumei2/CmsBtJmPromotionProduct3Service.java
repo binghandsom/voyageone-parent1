@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -70,24 +69,15 @@ public class CmsBtJmPromotionProduct3Service {
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
 
-        long preStartLocalTime = getLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
-        long activityEndTime = getLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
-        result.setBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
-        result.setEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
-        int hour = DateTimeUtil.getDateHour(new Date()) + 8;
-        result.setUpdateJM(hour > 9 && hour < 12);//是否可以更新聚美
+        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+        result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
+        int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+        result.setIsUpdateJM(!(hour >= 9 && hour <= 12));//是否可以更新聚美
         return result;
     }
-    public Date getLocalDate(Date beiJingDate) {
-        return new Date(getLocalTime(beiJingDate));
-    }
-    public long getLocalTime(Date beiJingDate) {
-        long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
-        Calendar cal = Calendar.getInstance();
-        TimeZone timeZone = cal.getTimeZone();//当前时区
-        long localTime = utcTime + timeZone.getRawOffset();
-        return localTime;
-    }
+
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }
@@ -142,7 +132,7 @@ public class CmsBtJmPromotionProduct3Service {
             }
         }
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
-        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             result.setResult(false);
             result.setMsg("预热已经开始,不能修改价格!");
             return result;
@@ -167,7 +157,7 @@ public class CmsBtJmPromotionProduct3Service {
         if (parameter.getListPromotionProductId().size() == 0) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
         daoExt.batchSynchPrice(parameter.getListPromotionProductId(),isPreStart);
     }
 
@@ -175,7 +165,7 @@ public class CmsBtJmPromotionProduct3Service {
     public CallResult synchAllPrice(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
-        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             result.setMsg("预热已经开始,不能全量同步价格!");
             result.setResult(false);
             return result;
@@ -189,7 +179,7 @@ public class CmsBtJmPromotionProduct3Service {
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
         if (!isPreStart) {// 2.if已上传&预热未开始  then price_status=1
             daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
@@ -200,7 +190,7 @@ public class CmsBtJmPromotionProduct3Service {
     public CallResult copyDealAll(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
-        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             result.setMsg("预热已经开始,不能全量上传!");
             result.setResult(false);
             return result;

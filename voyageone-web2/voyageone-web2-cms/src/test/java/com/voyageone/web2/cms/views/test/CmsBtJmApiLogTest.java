@@ -1,4 +1,5 @@
 package com.voyageone.web2.cms.views.test;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmApiLogService;
 import com.voyageone.service.model.cms.CmsBtJmApiLogModel;
@@ -9,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -87,6 +87,17 @@ public class CmsBtJmApiLogTest {
         System.out.println(DateTimeUtil.getDateTime(d, "yyyy-MM-dd HH:mm:ss"));
         System.out.println(DateTimeUtil.getDateTime(d1, "yyyy-MM-dd HH:mm:ss"));
 
+        System.out.println(DateTimeUtil.getDateTime(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println(DateTimeUtil.getDateTime(getCurrentBeiJingDate(), "yyyy-MM-dd HH:mm:ss"));
+
+    }
+
+    public Date getCurrentBeiJingDate() {
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();//当前时区
+        long time = cal.getTimeInMillis() - timeZone.getRawOffset() + 8 * 3600 * 1000;
+
+        return new Date(time);
     }
 
     public Date getLocalDate(Date beiJingDate) throws ParseException {
@@ -95,5 +106,19 @@ public class CmsBtJmApiLogTest {
         TimeZone timeZone = cal.getTimeZone();//当前时区
         long localTime = utcTime + timeZone.getRawOffset();
         return new Date(localTime);
+    }
+    //return TimeZone.getDefault().getRawOffset()
+   // 233.                - TimeZone.getTimeZone("Asia/Shanghai").getRawOffset();
+    @Test
+    public void TestJMDate() {
+
+        long rawOffset = TimeZone.getDefault().getRawOffset();
+       long beiJingRawOffset= TimeZone.getTimeZone("CTT").getRawOffset();
+        System.out.println(TimeZone.getDefault().getID() + ":" + rawOffset+"beiJingRawOffset:"+beiJingRawOffset);
+
+        Date d = DateTimeUtil.parse("2016-05-12 12:05:00");
+        System.out.println(DateTimeUtilBeijing.toLocalTime(d) / 1000);
+       // System.out.println(BeiJingDateUtilTest.toLocalTime(d) / 1000);
+        System.out.println(d.getTime() / 1000 - 8 * 3600);
     }
 }

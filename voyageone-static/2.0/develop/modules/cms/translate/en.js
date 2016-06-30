@@ -222,6 +222,7 @@ define(function(){
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
+        "TXT_PROMOTION_COMMENTS":"活动备注",
         "TXT_PROMOTION_PC_ID":"聚美专场PC端ID",
         "TXT_PROMOTION_APP_ID":"聚美专场App端ID",
         "TXT_MSRP": "官方售价",
@@ -712,9 +713,7 @@ define(function(){
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",
         "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",
         "TXT_JOIN_JM_PROMOTION_PRESALE_TIME":"预热时间",
-        "TXT_JOIN_JM_PROMOTION_START_TIME":"活动开始时间",
-        "TXT_JOIN_JM_PROMOTION_END_TIME":"活动结束时间",
         "TXT_PROMOTION_PRODUCT_STATUS":"产品活动状态",
-        "TXT_JOIN_JM_CODE_SKU_SEARCH":"款号/Code/SKU"
+        "TXT_JOIN_JM_CODE_SKU_SEARCH":"Code/SKU"
     };
 });
