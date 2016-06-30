@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -62,15 +64,37 @@ public class CmsBtJmApiLogTest {
     }
 
     @Test
-    public void testGetPage() {
+    public void testGetPage() throws ParseException {
 
-       // List<Map<String,Object>> list = service.selectPage();
-     //  System.out.println(DateTimeUtil.getDateMonth(new Date()));
-      //  System.out.println(DateTimeUtil.getDateHour(new Date()));
+        // List<Map<String,Object>> list = service.selectPage();
+        //  System.out.println(DateTimeUtil.getDateMonth(new Date()));
+        //  System.out.println(DateTimeUtil.getDateHour(new Date()));
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();
         System.out.println(timeZone.getID());
         System.out.println(timeZone.getDisplayName());
-        System.out.println( 8 * 3600);
+        System.out.println(8 * 3600);
+        Date date = DateTimeUtil.parse("2016-05-12 12:05:00");
+        System.out.println(DateTimeUtil.getDateTime(date,"yyyy-MM-dd HH:mm:ss"));
+        System.out.println(DateTimeUtil.getDateTime(getLocalDate(date),"yyyy-MM-dd HH:mm:ss"));
+
+        System.out.println(DateTimeUtil.getDateTime(getLocalDate(new Date()),"yyyy-MM-dd HH:mm:ss"));
+
+        System.out.println(new Date());
+        System.out.println(new Date(new Date().getTime()));
+
+    }
+    public Date getLocalDate(Date beiJingDate) throws ParseException {
+        long utcTime = beiJingDate.getTime() / 1000 - 8 * 3600;
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();//当前时区
+        long localTime = utcTime + timeZone.getRawOffset();
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String d = format.format(localTime);
+        Date date=format.parse(d);
+        return date;
+        //System.out.println(timeZone.getID());
+        // System.out.println(timeZone.getDisplayName());
+        //System.out.println( 8 * 3600);
     }
 }

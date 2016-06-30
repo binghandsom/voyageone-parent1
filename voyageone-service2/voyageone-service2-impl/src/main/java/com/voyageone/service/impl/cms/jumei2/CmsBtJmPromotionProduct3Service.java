@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -82,6 +79,17 @@ public class CmsBtJmPromotionProduct3Service {
     private static Long getTime(Date d) {
         return d.getTime() / 1000 + 8 * 3600;
     }
+    public Date getLocalDate(Date beiJingDate) {
+        long utcTime = beiJingDate.getTime() / 1000 - 8 * 3600;
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();//当前时区
+        long localTime = utcTime + timeZone.getRawOffset();
+        return new Date(localTime);
+        //System.out.println(timeZone.getID());
+        // System.out.println(timeZone.getDisplayName());
+        //System.out.println( 8 * 3600);
+    }
+
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }

@@ -36,7 +36,7 @@ define([
             //jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
             //    $scope.vm.changeCount = res.data;
             //});
-            jmPromotionService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
+            jmPromotionDetailService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
                 //CmsBtJmPromotionModel modelPromotion;
                 //List<CmsBtTagModel> listTag;//活动的tag
                 //int changeCount;//变更数量
