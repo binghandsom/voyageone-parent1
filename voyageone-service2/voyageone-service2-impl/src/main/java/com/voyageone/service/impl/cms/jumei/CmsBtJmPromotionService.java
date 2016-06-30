@@ -21,6 +21,7 @@ import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.util.MapModel;
@@ -294,14 +295,14 @@ public class CmsBtJmPromotionService {
         // 检查之前有没有上新到聚美上面
         List<String> errCodes = new ArrayList<>();
         List<String> productCodes = new ArrayList<>();
-        orginProducts.forEach(item -> productCodes.add(item.getFields().getCode()));
+        orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
         List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
         if (cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size()) {
             for (CmsBtProductModel orginProduct : orginProducts) {
                 boolean flg = false;
                 if (cmsBtJmProductModels != null) {
                     for (CmsBtJmProductModel cmsBtJmProductModel : cmsBtJmProductModels) {
-                        if (orginProduct.getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())) {
+                        if (orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())) {
                             flg = true;
                             products.add(orginProduct);
                             break;
@@ -309,7 +310,7 @@ public class CmsBtJmPromotionService {
                     }
                 }
                 if (!flg) {
-                    errCodes.add(orginProduct.getFields().getCode());
+                    errCodes.add(orginProduct.getCommon().getFields().getCode());
                 }
             }
         } else {
@@ -350,7 +351,7 @@ public class CmsBtJmPromotionService {
     SynshipComMtValueChannelDao synshipComMtValueChannelDao;
 
     private ProductImportBean buildProductFrom(CmsBtProductModel model, CmsBtJmPromotionModel promotion) {
-        CmsBtProductModel_Field fields = model.getFields();
+        CmsBtProductModel_Field fields = model.getCommon().getFields();
         ProductImportBean bean = new ProductImportBean();
         bean.setAppId(promotion.getActivityAppId());
         bean.setPcId(promotion.getActivityPcId());
@@ -369,17 +370,20 @@ public class CmsBtJmPromotionService {
 
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
-        return model.getSkus().stream().map(oldSku -> {
+        return model.getPlatform(CartType.JUMEI.getCartId()).getSkus().stream().map(oldSku -> {
             SkuImportBean bean = new SkuImportBean();
-            bean.setProductCode(model.getFields().getCode());
-            bean.setSkuCode(oldSku.getSkuCode());
-            bean.setMarketPrice(oldSku.getPriceMsrp());
+            bean.setProductCode(model.getCommon().getFields().getCode());
+            String skuCode = oldSku.getStringAttribute("skuCode");
+            bean.setSkuCode(skuCode);
+            Double priceMsrp = oldSku.getDoubleAttribute("priceMsrp");
+            Double priceSale = oldSku.getDoubleAttribute("priceSale");
+            bean.setMarketPrice(priceMsrp);
             Double finalPrice;
             if (discount != null) {
                 final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
-                finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getPriceSale() * discountCopy));
+                finalPrice = Math.ceil(priceTypeCopy == 1 ? (priceMsrp * discountCopy) : (priceSale * discountCopy));
             } else {
-                finalPrice = oldSku.getPriceSale();
+                finalPrice = priceSale;
             }
             bean.setDealPrice(finalPrice);
             bean.setDiscount(discount);
@@ -397,7 +401,7 @@ public class CmsBtJmPromotionService {
         if (model.getCommon() != null && model.getCommon().size() > 0) {
             bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
         } else {
-            bulkQueryMap.put("common.fields.code", model.getFields().getCode());
+            bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
         }
 
         // 设置更新值
