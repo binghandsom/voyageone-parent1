@@ -161,7 +161,7 @@ public class ProductGroupService extends BaseService {
         // String[] codeArr = new String[codeList.size()];
         // codeArr = codeList.toArray(codeArr);
         // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
-        queryObject.setQuery("{\"productCodes\":\"" + prodList.get(0).getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+        queryObject.setQuery("{\"productCodes\":\"" + prodList.get(0).getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
         // queryObject.setProjection("{'groupId':1,'_id':0}");
         // jeff 2016/04 change end
         List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);

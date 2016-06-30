@@ -259,7 +259,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -701,7 +701,7 @@ public class SxProductService extends BaseService {
 //            }
             // 2016/06/02 Update by desmond end
             // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
                 continue;
             }
@@ -1308,7 +1308,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
@@ -1656,6 +1656,7 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
+            //// TODO: 16/6/30 edward 因为不知道怎么修改所以请上新组修改 
             if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
