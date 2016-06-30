@@ -241,6 +241,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         if (platforms == null || platforms.isEmpty()) {
             return new ArrayList<>(0);
         }
-        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).collect(Collectors.toList());
+        return ((Set<String>) platforms.keySet()).stream().map(cartKey -> NumberUtils.toInt(cartKey.substring(1))).filter(cartKey -> cartKey != 0).collect(Collectors.toList());
     }
 }

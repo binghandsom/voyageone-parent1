@@ -20,7 +20,6 @@ import java.util.TreeMap;
  *
  * @author Ethan Shi
  * @version 2.0.1
- *
  */
 public class JmBase extends ComponentBase {
 
@@ -42,9 +41,8 @@ public class JmBase extends ComponentBase {
     }
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
-        if(shopBean==null)
-        {
-            throw  new  BusinessException("ShopBean不能为null");
+        if (shopBean == null) {
+            throw new BusinessException("ShopBean不能为null");
         }
         for (Object value : params.values()) {
             if (value != null) {
@@ -59,9 +57,9 @@ public class JmBase extends ComponentBase {
             Object valueObj = entry.getValue();
             Object newValueObj;
             if (valueObj instanceof NotSignString) {
-                newValueObj = new NotSignString(replaceSpicialChart(((NotSignString)valueObj).getContent()));
+                newValueObj = new NotSignString(replaceSpicialChart(((NotSignString) valueObj).getContent()));
             } else {
-                newValueObj = replaceSpicialChart((String)valueObj);
+                newValueObj = replaceSpicialChart((String) valueObj);
             }
             paramsTmp.put(entry.getKey(), newValueObj);
         }
@@ -71,7 +69,6 @@ public class JmBase extends ComponentBase {
         String call_url = shopBean.getApp_url() + api_url;
         post_url.append(call_url);
         post_url.append("?");
-
 
 
         //设置系统级参数
@@ -84,24 +81,24 @@ public class JmBase extends ComponentBase {
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
         for (Map.Entry<String, Object> entry : paramsTmp.entrySet()) {
-            if(!StringUtils.isEmpty(entry.getKey())){
+            if (!StringUtils.isEmpty(entry.getKey())) {
                 parm_url.append("&").append(entry.getKey()).append("=");
             }
             Object value = entry.getValue();
             if (value instanceof String) {
-                if(!StringUtils.isEmpty((String)value)){
+                if (!StringUtils.isEmpty((String) value)) {
                     parm_url.append(URLEncoder.encode((String) value, "UTF-8"));
 //                    parm_url.append(value);
                 }
             } else if (value instanceof NotSignString) {
-                NotSignString notSignString = (NotSignString)value;
-                if(!StringUtils.isEmpty(notSignString.getContent())){
+                NotSignString notSignString = (NotSignString) value;
+                if (!StringUtils.isEmpty(notSignString.getContent())) {
                     parm_url.append(notSignString.getContent());
                 }
             }
         }
-        if (parm_url.length() != 0){
-            parm_url.delete(0,1);
+        if (parm_url.length() != 0) {
+            parm_url.delete(0, 1);
         }
 
 
@@ -109,9 +106,8 @@ public class JmBase extends ComponentBase {
         logger.info("result：" + result);
 //        result = " {\"error\":{\"code\":\"501\"}}";
 
-        if(result.contains("审核"))
-        {
-            throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
+        if (result.contains("审核")) {
+            throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
         }
 
 
@@ -124,8 +120,8 @@ public class JmBase extends ComponentBase {
             if (map.containsKey("error")) {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
-                    code = (String.valueOf(errorMap.get("code")));
-                    if (code.equals("500") || code.equals("501")) {
+                    code = String.valueOf(errorMap.get("code"));
+                    if ("500".equals(code) || "501".equals(code)) {
                         throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                     }
 
@@ -133,34 +129,26 @@ public class JmBase extends ComponentBase {
                 if (errorMap.containsKey("codes")) {
                     Map<String, Object> codesMap = (Map<String, Object>) errorMap.get("codes");
                     codes = (codesMap.keySet()).toString();
-                    if (codes.equals("500") || codes.equals("501")) {
+                    if ("500".equals(codes) || "501".equals(codes)) {
                         throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                     }
                 }
 
-                if (!(code.equals("0") || code.contains("109902") || code.contains("103087") ||
-                        codes.equals("0") || codes.contains("109902") || codes.contains("103087"))) {
+                if (!("0".equals(code) || "109902".contains(code) || "103087".contains(code) ||
+                        "0".equals(codes) || "109902".contains(codes) || "103087".contains(codes))) {
                     throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                 }
             } else if (map.containsKey("error_code")) {
                 String error_code = map.get("error_code").toString();
-                if (error_code.equals("500") || error_code.equals("501")) {
+                if ("500".equals(error_code) || "501".equals(error_code)) {
                     throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
-                } else if (!(error_code.equals("0"))) {
+                } else if (!("0".equals(error_code))) {
                     throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                 }
             }
-        }
-        catch (BusinessException be )
-        {
-            throw  be;
-        }
-        catch (ServerErrorException se)
-        {
-            throw se;
-        }
-        catch (Exception e)
-        {
+        } catch (BusinessException | ServerErrorException be) {
+            throw be;
+        } catch (Exception e) {
             //返回的字符串不是json map,可能是个数组, Do Nothing.
         }
 
@@ -169,7 +157,7 @@ public class JmBase extends ComponentBase {
         try {
             res = JsonUtil.jsonToBean(result, JMErrorResult.class);
             if (res.getCode() != null) {
-                throw new BusinessException(String.format("调用聚美API错误[%s]：%s" , post_url, result));
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
             }
         } catch (JsonSyntaxException ignored) {
         }
@@ -180,9 +168,9 @@ public class JmBase extends ComponentBase {
     protected String reqOnTimeoutRepert(String post_url, String parm_url) throws Exception {
         for (int intApiErrorCount = 0; intApiErrorCount < C_MAX_API_REPEAT_TIME; intApiErrorCount++) {
             try {
-                return  HttpUtils.post(post_url, parm_url);
+                return HttpUtils.post(post_url, parm_url);
             } catch (Exception e) {
-                logger.info("time out :"+ intApiErrorCount+1);
+                logger.info("time out :" + intApiErrorCount + 1);
                 // 最后一次出错则直接抛出
                 Thread.sleep(1000);
                 if (C_MAX_API_REPEAT_TIME - intApiErrorCount == 1) throw e;
@@ -193,10 +181,10 @@ public class JmBase extends ComponentBase {
 
     /**
      * @param shopBean ShopBean
-     * @param params Map<String, Object>
+     * @param params   Map<String, Object>
      * @return 加密好的签名
      */
-    public String getSignRequest(ShopBean shopBean,Map<String, Object> params){
+    public String getSignRequest(ShopBean shopBean, Map<String, Object> params) {
         Map<String, Object> sortedParams = new TreeMap<>();
         //1.先按照参数的字母顺序排序
         sortedParams.putAll(params);
@@ -212,7 +200,7 @@ public class JmBase extends ComponentBase {
                 if (!StringUtils.isEmpty(param.getKey())) {
                     query.append(param.getKey());
                 }
-                if (!StringUtils.isEmpty((String)param.getValue())) {
+                if (!StringUtils.isEmpty((String) param.getValue())) {
                     query.append(param.getValue());
                 }
             }

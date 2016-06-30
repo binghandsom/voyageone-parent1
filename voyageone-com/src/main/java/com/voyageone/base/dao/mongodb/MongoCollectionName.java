@@ -2,9 +2,6 @@ package com.voyageone.base.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.support.MongoCollection;
 import com.voyageone.common.util.StringUtils;
-import org.springframework.util.ConcurrentReferenceHashMap;
-
-import java.util.Map;
 
 /**
  * MongoCollectionName

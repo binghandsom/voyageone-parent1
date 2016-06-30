@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.common.sql">
+    <select id="vms_mt_channel_config_getAll" resultType="com.voyageone.common.configs.beans.VmsChannelConfigBean">
+        select
+          channel_id channelId
+          ,config_key configKey
+          ,config_code configCode
+          ,config_value1 configValue1
+          ,config_value2 configValue2
+          ,config_value3 configValue3
+          ,comment comment
+        from
+          voyageone_vms.vms_mt_channel_config
+    </select>
+
+</mapper>

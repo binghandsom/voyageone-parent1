@@ -36,7 +36,6 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -481,7 +480,6 @@ public class CmsProductDetailService extends BaseAppService {
         String mCatPath = StringUtils.trimToNull((String) requestMap.get("catPath"));
         String pCatId = StringUtils.trimToNull((String) requestMap.get("pCatId"));
         String pCatPath = StringUtils.trimToNull((String) requestMap.get("pCatPath"));
-        List<Long> productIds = CommonUtil.changeListType((List<Integer>) requestMap.get("prodIds"));
 
         Map<String, Object> resultMap = new HashMap<>();
         if (mCatId == null || mCatPath == null) {
@@ -494,21 +492,17 @@ public class CmsProductDetailService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<String> productCodes = null;
+        List<Long> productIds = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
-            if (productCodes == null || productCodes.isEmpty()) {
-                $error("切换类目 没有code条件 params=" + requestMap.toString());
-                resultMap.put("isChangeCategory", false);
-                return resultMap;
-            }
+            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), cmsSession);
         } else {
-            if (productIds == null || productIds.isEmpty()) {
-                $error("切换类目 没有prod id条件 params=" + requestMap.toString());
-                resultMap.put("isChangeCategory", false);
-                return resultMap;
-            }
+            productIds = CommonUtil.changeListType((List<Integer>) requestMap.get("prodIds"));
+        }
+        if (productIds == null || productIds.isEmpty()) {
+            $error("切换类目 没有prod id条件 params=" + requestMap.toString());
+            resultMap.put("isChangeCategory", false);
+            return resultMap;
         }
 
         Integer cartIdObj = (Integer) requestMap.get("cartId");
@@ -525,13 +519,9 @@ public class CmsProductDetailService extends BaseAppService {
 
         for (Integer cartId : cartList) {
             JomgoUpdate updObj = new JomgoUpdate();
-            if (isSelAll == 1) {
-                updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
-                updObj.setQueryParameters(productCodes);
-            } else {
-                updObj.setQuery("{'prodId':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
-                updObj.setQueryParameters(productIds);
-            }
+            updObj.setQuery("{'prodId':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
+            updObj.setQueryParameters(productIds);
+
             if (pCatId == null || pCatPath == null) {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath);
@@ -619,12 +609,12 @@ public class CmsProductDetailService extends BaseAppService {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if(platformCategory == null || platformCategory.size() == 0) return;
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
-            if(platform.getFields() == null || platform.getFields().size() == 0){
-                List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase( Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
-                if(temp != null && temp.size()>0 && !StringUtil.isEmpty(temp.get(0).getCatId())){
+            if ((platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
+                List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase(Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
+                if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productService.updateProductPlatform(oldProduct.getChannelId(),oldProduct.getProdId(),platform,modifier);
+                    productService.updateProductPlatform(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier);
                 }
             }
         });
