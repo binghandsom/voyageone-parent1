@@ -41,7 +41,7 @@ public class CmsProductDetailController extends CmsController {
 
         Map<String, Object> productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
         CmsProductInfoBean productModel = (CmsProductInfoBean)productInfo.get("productInfo");
-        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(productModel.getOrgChannelId(), productId);
+        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(productModel.getChannelId(), productId);
         result.put("inventoryList", inventoryList);
         result.put("productInfo", productInfo.get("productInfo"));
         result.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(getLang()));
