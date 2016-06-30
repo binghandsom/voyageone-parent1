@@ -322,13 +322,13 @@ define([
          * popup弹出切换主数据类目
          * @param popupNewCategory
          */
-        function openCategoryMapping(popupNewCategory) {
+        function openCategoryMapping(popupNewCategoryFnc) {
             _chkProductSel(null, _openCategoryMapping);
 
             function _openCategoryMapping(cartId, selList) {
                 feedMappingService.getMainCategories()
                     .then(function (res) {
-                        popupNewCategory({
+                        popupNewCategoryFnc({
                             categories: res.data,
                             from: null
                         }).then(function (res) {
@@ -354,7 +354,10 @@ define([
                     var data = {
                         prodIds: productIds,
                         catId: context.selected.catId,
-                        catPath: context.selected.catPath
+                        catPath: context.selected.catPath,
+                        pCatId: context.selected.catId,
+                        pCatPath: context.selected.catPath,
+                        isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if (res.data.isChangeCategory) {
@@ -701,9 +704,9 @@ define([
                         categories: res.data
                     });
                 }).then(function (context) {
-                $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                $scope.vm.searchInfo.pCatId = context.selected.catId;
-            });
+                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatId = context.selected.catId;
+                });
         }
 
         /**
@@ -717,10 +720,9 @@ define([
                         categories: res.data,
                         from: null
                     }).then(function (res) {
-                            $scope.vm.searchInfo.mCatPath = res.selected.catPath;
-                            $scope.vm.searchInfo.mCatId = res.selected.catId;
-                        }
-                    );
+                        $scope.vm.searchInfo.mCatPath = res.selected.catPath;
+                        $scope.vm.searchInfo.mCatId = res.selected.catId;
+                    });
                 });
         }
 
