@@ -135,7 +135,7 @@ public class CmsBtJmPromotionProduct3Service {
             }
         }
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
-        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < BeiJingDateUtil.getCurrentBeiJingDate().getTime()) {
             result.setResult(false);
             result.setMsg("预热已经开始,不能修改价格!");
             return result;
@@ -160,7 +160,7 @@ public class CmsBtJmPromotionProduct3Service {
         if (parameter.getListPromotionProductId().size() == 0) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < BeiJingDateUtil.getCurrentBeiJingDate().getTime();
         daoExt.batchSynchPrice(parameter.getListPromotionProductId(),isPreStart);
     }
 
@@ -168,7 +168,7 @@ public class CmsBtJmPromotionProduct3Service {
     public CallResult synchAllPrice(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
-        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (model.getPrePeriodStart().getTime() < BeiJingDateUtil.getCurrentBeiJingDate().getTime()) {
             result.setMsg("预热已经开始,不能全量同步价格!");
             result.setResult(false);
             return result;
@@ -182,7 +182,7 @@ public class CmsBtJmPromotionProduct3Service {
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < new Date().getTime();
+        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < BeiJingDateUtil.getCurrentBeiJingDate().getTime();
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
         if (!isPreStart) {// 2.if已上传&预热未开始  then price_status=1
             daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
@@ -193,7 +193,7 @@ public class CmsBtJmPromotionProduct3Service {
     public CallResult copyDealAll(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
-        if (model.getPrePeriodStart().getTime() < new Date().getTime()) {
+        if (model.getPrePeriodStart().getTime() < BeiJingDateUtil.getCurrentBeiJingDate().getTime()) {
             result.setMsg("预热已经开始,不能全量上传!");
             result.setResult(false);
             return result;
