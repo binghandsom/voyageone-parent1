@@ -1,7 +1,5 @@
 package com.voyageone.common.configs.beans;
 
-import java.util.Date;
-
 /**
  * @description
  * @author: holysky

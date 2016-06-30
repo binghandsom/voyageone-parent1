@@ -1,9 +1,9 @@
 package com.voyageone.common.configs;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.dao.CmsChannelConfigDao;
+import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
+import com.voyageone.common.configs.dao.VmsChannelConfigDao;
 import com.voyageone.common.redis.CacheHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,33 +13,33 @@ import java.util.*;
 
 
 /**
- * CmsChannelConfig 配置文件的专用配置访问类
+ * VmsChannelConfig 配置文件的专用配置访问类
  *
- * @author chuanyu.liang, 12/11/15
+ * @author chuanyu.liang, 16/06/25
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsChannelConfigs {
+public class VmsChannelConfigs {
 
-    private static final Class selfClass = CmsChannelConfigs.class;
+    private static final Class selfClass = VmsChannelConfigs.class;
 
     private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_VmsChannelConfigs.toString();
 
     public static void reload() {
-        CmsChannelConfigDao cmsChannelConfigDao = ConfigDaoFactory.getCmsChannelConfigDao();
-        Map<String, CmsChannelConfigBean> cmsChannelConfigBeanMap = new HashMap<>();
-        cmsChannelConfigDao.selectALl()
+        VmsChannelConfigDao vmsChannelConfigDao = ConfigDaoFactory.getVmsChannelConfigDao();
+        Map<String, VmsChannelConfigBean> vmsChannelConfigBeanMap = new HashMap<>();
+        vmsChannelConfigDao.selectALl()
                 .forEach(bean ->
-                            cmsChannelConfigBeanMap.put(
+                                vmsChannelConfigBeanMap.put(
                                 buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode()),
                                 bean
                             )
                 );
-        CacheHelper.reFreshSSB(KEY, cmsChannelConfigBeanMap);
-        logger.info("cmsChannelConfig 读取数量: " + CacheHelper.getSize(KEY));
+        CacheHelper.reFreshSSB(KEY, vmsChannelConfigBeanMap);
+        logger.info("vmsChannelConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -57,9 +57,9 @@ public class CmsChannelConfigs {
      * @param channelId  channel Id
      * @param configKey  config Key
      * @param configCode config Code
-     * @return CmsChannelConfigBean
+     * @return VmsChannelConfigBean
      */
-    public static CmsChannelConfigBean getConfigBean(String channelId, String configKey, String configCode) {
+    public static VmsChannelConfigBean getConfigBean(String channelId, String configKey, String configCode) {
         return CacheHelper.getBean(KEY, buildKey(channelId, configKey, configCode), selfClass);
     }
 
@@ -68,9 +68,9 @@ public class CmsChannelConfigs {
      *
      * @param channelId  channel Id
      * @param configKey  config Key
-     * @return CmsChannelConfigBean
+     * @return VmsChannelConfigBean
      */
-    public static CmsChannelConfigBean getConfigBeanNoCode(String channelId, String configKey) {
+    public static VmsChannelConfigBean getConfigBeanNoCode(String channelId, String configKey) {
         return CacheHelper.getBean(KEY, buildKey(channelId, configKey, "0"), selfClass);
     }
 
@@ -79,9 +79,9 @@ public class CmsChannelConfigs {
      *
      * @param channelId channel Id
      * @param configKey config Key
-     * @return List<CmsChannelConfigBean>
+     * @return List<VmsChannelConfigBean>
      */
-    public static List<CmsChannelConfigBean> getConfigBeans(String channelId, String configKey) {
+    public static List<VmsChannelConfigBean> getConfigBeans(String channelId, String configKey) {
         Set<String> keyset = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keyset)) return null;
         List<String> keyList = new ArrayList<>();

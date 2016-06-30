@@ -3,7 +3,6 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
 
-    public final static String SPLIT_PART = "p";
+    public static final String SPLIT_PART = "p";
 
     protected String getCollectionName(int cartId) {
         return mongoTemplate.getCollectionName(this.collectionName, String.valueOf(cartId), SPLIT_PART);

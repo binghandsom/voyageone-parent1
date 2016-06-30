@@ -11,11 +11,10 @@ require.config({
         'angular': 'libs/angular.js/1.5.6/angular',
         'angular-cookies': 'libs/angular.js/1.5.6/angular-cookies',
         'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-        'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-        'css': 'libs/require-css/0.1.8/css'
+        'voyageone-angular-com': 'components/dist/voyageone.angular.com'
     },
     shim: {
-        'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.min.css'],
+        'angular-block-ui': ['angular'],
         'voyageone-angular-com': ['angular'],
         'angular-cookies': ['angular'],
         'angular': {exports: 'angular'}
