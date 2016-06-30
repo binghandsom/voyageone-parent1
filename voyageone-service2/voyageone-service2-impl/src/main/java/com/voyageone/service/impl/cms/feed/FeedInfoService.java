@@ -163,11 +163,6 @@ public class FeedInfoService extends BaseService {
                     orSearch.add(MongoUtils.splicingValue("skus.sku", fuzzyStr));
                     orSearch.add(MongoUtils.splicingValue("skus.clientSku", fuzzyStr));
                 }
-
-                if (strList.size() == 1) {
-                    orSearch.add(MongoUtils.splicingValue("short_description", strList.get(0), "$regex"));
-                    orSearch.add(MongoUtils.splicingValue("long_description", strList.get(0), "$regex"));
-                }
                 result.append("{" + MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
                 result.append("},");
             }
@@ -184,10 +179,17 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取brand
-        String brand = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("brand"));
-        if (brand != null) {
-            result.append("{" + MongoUtils.splicingValue("brand", brand));
-            result.append("},");
+        if(searchValue.get("brand") != null)
+        {
+            List<String> brands = (List<String>) searchValue.get("brand");
+            if (brands.size() > 0) {
+                List<String> orSearch = new ArrayList<>();
+                for (String brand : brands) {
+                    orSearch.add(MongoUtils.splicingValue("brand", brand));
+                }
+                result.append("{" + MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+                result.append("},");
+            }
         }
 
         // 获取color

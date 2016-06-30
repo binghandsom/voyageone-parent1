@@ -6,8 +6,6 @@ import org.jongo.marshall.jackson.oid.MongoObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-
 /**
  * BaseMongoModel
  * @author chuanyu.liang, 12/11/15

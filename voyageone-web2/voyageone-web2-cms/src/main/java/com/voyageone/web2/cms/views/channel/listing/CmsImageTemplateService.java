@@ -35,7 +35,7 @@ public class CmsImageTemplateService {
         // 尺寸类型下拉列表
         result.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, (String) param.get("channelId"), (String) param.get("lang")));
 
-        result.put("imageTemplateList", Types.getTypeList(Constants.comMtTypeChannel.Image_Template_Type.toString(), (String) param.get("lang")));
+        result.put("imageTemplateList", Types.getTypeList(Constants.comMtTypeChannel.IMAGE_TEMPLATE_TYPE, (String) param.get("lang")));
         return result;
     }
    public void save(CmsBtImageTemplateModel model,String userName)

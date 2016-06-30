@@ -4,20 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IdWorker {
-    private final static Logger logger = LoggerFactory.getLogger(IdWorker.class);
+    private static final Logger logger = LoggerFactory.getLogger(IdWorker.class);
 
-    public final static long Twepoch = 1288834974657L;
+    public static final long Twepoch = 1288834974657L;
 
-    final static int WorkerIdBits = 5;
-    final static int DatacenterIdBits = 5;
-    final static int SequenceBits = 12;
-    final static long MaxWorkerId = ~(-1L << WorkerIdBits);
-    final static long MaxDatacenterId = ~(-1L << DatacenterIdBits);
+    static final int WorkerIdBits = 5;
+    static final int DatacenterIdBits = 5;
+    static final int SequenceBits = 12;
+    static final long MaxWorkerId = ~(-1L << WorkerIdBits);
+    static final long MaxDatacenterId = ~(-1L << DatacenterIdBits);
 
-    private final static int WorkerIdShift = SequenceBits;
-    private final static int DatacenterIdShift = SequenceBits + WorkerIdBits;
-    public final static int TimestampLeftShift = SequenceBits + WorkerIdBits + DatacenterIdBits;
-    private final static long SequenceMask = ~(-1L << SequenceBits);
+    private static final int WorkerIdShift = SequenceBits;
+    private static final int DatacenterIdShift = SequenceBits + WorkerIdBits;
+    public static final int TimestampLeftShift = SequenceBits + WorkerIdBits + DatacenterIdBits;
+    private static final long SequenceMask = ~(-1L << SequenceBits);
 
     private long _sequence = 0L;
     private long _lastTimestamp = -1L;
