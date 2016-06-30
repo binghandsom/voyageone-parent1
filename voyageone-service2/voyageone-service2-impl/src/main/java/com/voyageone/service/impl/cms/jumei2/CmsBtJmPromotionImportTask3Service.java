@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.util.BeiJingDateUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
@@ -13,7 +13,6 @@ import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.*;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -264,7 +263,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
         else
         {
-            if(model.getPrePeriodStart().getTime()< BeiJingDateUtil.getCurrentBeiJingDate().getTime()&&saveInfo.productModel.getSynchStatus()==2)
+            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.productModel.getSynchStatus()==2)
             {
                 product.setErrorMsg("该商品预热已开始,不能导入");
                 listProducctErrorMap.add(MapUtil.toMap(product));
