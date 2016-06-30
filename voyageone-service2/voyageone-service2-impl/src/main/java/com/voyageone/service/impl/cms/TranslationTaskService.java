@@ -218,7 +218,7 @@ public class TranslationTaskService extends BaseService {
 
 
             CmsBtProductModel_Field fields = product.getCommon().getFields();
-            translationTaskBean.setCatPath("");
+            translationTaskBean.setCatPath(fields.getCatPath());
             translationTaskBean.setProductCode(fields.getCode());
             TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
             commonFields.setBrand(fields.getBrand());
