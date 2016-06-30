@@ -30,8 +30,11 @@ define([
             this.product = {
                 productId : $routeParams.productId,
                 productDetails:null,
+                translateStatus: 0,
+                hsCodeStatus: 0,
                 cartData:this.cartData,
-                masterCategory:false
+                checkFlag:null,
+                masterCategory:null
             };
         }
 
