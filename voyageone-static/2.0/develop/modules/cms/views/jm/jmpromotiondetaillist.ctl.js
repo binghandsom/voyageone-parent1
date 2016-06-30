@@ -26,15 +26,30 @@ define([
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-            jmPromotionService.get($routeParams.parentId).then(function (res) {
-                $scope.parentModel = res.data;
-                console.log($scope.parentModel);
-            });
-            jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
-                $scope.vm.tagList = res.data;
-            });
-            jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
-                $scope.vm.changeCount = res.data;
+            //jmPromotionService.get($routeParams.parentId).then(function (res) {
+            //    $scope.parentModel = res.data;
+            //    console.log($scope.parentModel);
+            //});
+            //jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
+            //    $scope.vm.tagList = res.data;
+            //});
+            //jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
+            //    $scope.vm.changeCount = res.data;
+            //});
+            jmPromotionService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
+                //CmsBtJmPromotionModel modelPromotion;
+                //List<CmsBtTagModel> listTag;//活动的tag
+                //int changeCount;//变更数量
+                //boolean isBegin;//活动是否开始
+                //boolean isEnd;//活动是否结束
+                //boolean isUpdateJM;//9：00 12：00 是否更新聚美
+                $scope.parentModel = res.data.modelPromotion;
+                $scope.vm.tagList = res.data.listTag;
+                $scope.vm.changeCount = res.data.changeCount;
+                $scope.vm.isBegin=res.isBegin;
+                $scope.vm.isEnd=res.isEnd;
+                $scope.vm.isUpdateJM=res.isUpdateJM;
+
             });
             $feedSearchService.init()
                 .then(function (res) {

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/context-web2.xml")
@@ -63,7 +65,12 @@ public class CmsBtJmApiLogTest {
     public void testGetPage() {
 
        // List<Map<String,Object>> list = service.selectPage();
-       System.out.println(DateTimeUtil.getDateMonth(new Date()));
-        System.out.println(DateTimeUtil.getDateHour(new Date()));
+     //  System.out.println(DateTimeUtil.getDateMonth(new Date()));
+      //  System.out.println(DateTimeUtil.getDateHour(new Date()));
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();
+        System.out.println(timeZone.getID());
+        System.out.println(timeZone.getDisplayName());
+        System.out.println( 8 * 3600);
     }
 }

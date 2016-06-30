@@ -69,14 +69,14 @@ public class CmsBtJmPromotionProduct3Service {
     }
     public InitResult init(InitParameter parameter) {
         InitResult result = new InitResult();
-        result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));
-        result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));
-        result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));
+        result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));//CmsBtJmPromotion
+        result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
+        result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
 
         result.setBegin(result.getModelPromotion().getPrePeriodStart().getTime() < getTime(new Date()));//活动是否看开始     用预热时间
         result.setEnd(result.getModelPromotion().getActivityEnd().getTime() < getTime(new Date()));//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(new Date()) + 8;
-        result.setUpdateJM(hour > 9 && hour < 12);
+        result.setUpdateJM(hour > 9 && hour < 12);//是否可以更新聚美
         return result;
     }
     private static Long getTime(Date d) {
