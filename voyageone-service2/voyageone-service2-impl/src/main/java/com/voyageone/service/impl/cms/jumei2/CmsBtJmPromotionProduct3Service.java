@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -70,26 +71,24 @@ public class CmsBtJmPromotionProduct3Service {
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
 
-        result.setBegin(result.getModelPromotion().getPrePeriodStart().getTime() < getTime(new Date()));//活动是否看开始     用预热时间
-        result.setEnd(result.getModelPromotion().getActivityEnd().getTime() < getTime(new Date()));//活动是否结束            用活动时间
+        long preStartLocalTime = getLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = getLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+        result.setBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        result.setEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(new Date()) + 8;
         result.setUpdateJM(hour > 9 && hour < 12);//是否可以更新聚美
         return result;
     }
-    private static Long getTime(Date d) {
-        return d.getTime() / 1000 + 8 * 3600;
-    }
     public Date getLocalDate(Date beiJingDate) {
-        long utcTime = beiJingDate.getTime() / 1000 - 8 * 3600;
+        return new Date(getLocalTime(beiJingDate));
+    }
+    public long getLocalTime(Date beiJingDate) {
+        long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();//当前时区
         long localTime = utcTime + timeZone.getRawOffset();
-        return new Date(localTime);
-        //System.out.println(timeZone.getID());
-        // System.out.println(timeZone.getDisplayName());
-        //System.out.println( 8 * 3600);
+        return localTime;
     }
-
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }
