@@ -114,6 +114,7 @@ define(function () {
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
+        "TXT_EXPORT_LIST": "Export 一览",
         "TXT_SELECT_ALL": "全选",
         "TXT_SALE_PRICE": "最终售价",
         "TXT_PRIMARY_PRODUCT": "主产品",
@@ -521,6 +522,7 @@ define(function () {
         "TXT_FeedStatus_FinishImport": "导入成功",
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
+        "TXT_FeedStatus_DateError": "Feed数据异常错误",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -708,7 +710,7 @@ define(function () {
         "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
         "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误",
-        
+
         /** 翻译页面相关 **/
         "TXT_TRANSLATION_STATUS": "商品翻译状态",
         "TXT_TRANSLATION_TASK_GET": "获取任务",
@@ -717,7 +719,15 @@ define(function () {
         "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
         "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
         "TXT_FUZZY_SEARCH_PLACE_HOLDER": "模糊查询(ProductCode，商品名称)",
-        "TXT_PRODUCT_EN_NAME": "商品名称(英语)",
-        "TXT_PRODUCT_CN_NAME": "商品名称(中文)"
+        "TXT_PRODUCT_EN_NAME": "商品名称(英文)",
+        "TXT_PRODUCT_CN_NAME": "商品名称(中文)",
+        "TXT_PRODUCT_EN_MATERIAL": "材质(英文)",
+        "TXT_PRODUCT_CN_MATERIAL": "材质(中文)",
+        "TXT_PRODUCT_EN_SHORT_DESCRIPTION": "简短描述(英文)",
+        "TXT_PRODUCT_CN_SHORT_DESCRIPTION": "简短描述(中文)",
+        "TXT_PRODUCT_EN_LONG_DESCRIPTION": "详情描述(英文)",
+        "TXT_PRODUCT_CN_LONG_DESCRIPTION": "详情描述(中文)",
+        "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
+        "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)"
     };
 });

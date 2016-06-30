@@ -572,9 +572,6 @@ a.list-group-item.hover {
     background-color:#e67e22;
     color:#fff;
 }
-.tableWordBreak{
-    word-break: break-all;
-}
 .well,
 pre {
     background-color: #eceaea;
