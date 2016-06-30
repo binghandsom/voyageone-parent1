@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
@@ -262,7 +263,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
         else
         {
-            if(model.getPrePeriodStart().getTime()<new Date().getTime()&&saveInfo.productModel.getSynchStatus()==2)
+            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.productModel.getSynchStatus()==2)
             {
                 product.setErrorMsg("该商品预热已开始,不能导入");
                 listProducctErrorMap.add(MapUtil.toMap(product));
