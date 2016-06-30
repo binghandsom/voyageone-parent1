@@ -74,10 +74,10 @@ public class CmsBtJmPromotionProduct3Service {
 
         long preStartLocalTime = BeiJingDateUtil.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
         long activityEndTime = BeiJingDateUtil.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
-        result.setBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
-        result.setEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
-        int hour = DateTimeUtil.getDateHour(BeiJingDateUtil.getCurrentBeiJingDate()) + 8;
-        result.setUpdateJM(hour > 9 && hour < 12);//是否可以更新聚美
+        result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
+        int hour = DateTimeUtil.getDateHour(BeiJingDateUtil.getCurrentBeiJingDate());
+        result.setIsUpdateJM(!(hour >= 9 && hour <= 12));//是否可以更新聚美
         return result;
     }
 

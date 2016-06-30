@@ -15,27 +15,27 @@ public class InitResult {
     boolean isBegin;//活动是否开始
     boolean isEnd;//活动是否结束
     boolean isUpdateJM;//9：00 12：00 是否更新聚美
-    public boolean isBegin() {
+    public boolean getIsBegin() {
         return isBegin;
     }
 
-    public void setBegin(boolean begin) {
+    public void setIsBegin(boolean begin) {
         isBegin = begin;
     }
 
-    public boolean isEnd() {
+    public boolean getIsEnd() {
         return isEnd;
     }
 
-    public void setEnd(boolean end) {
+    public void setIsEnd(boolean end) {
         isEnd = end;
     }
 
-    public boolean isUpdateJM() {
+    public boolean getIsUpdateJM() {
         return isUpdateJM;
     }
 
-    public void setUpdateJM(boolean updateJM) {
+    public void setIsUpdateJM(boolean updateJM) {
         isUpdateJM = updateJM;
     }
 

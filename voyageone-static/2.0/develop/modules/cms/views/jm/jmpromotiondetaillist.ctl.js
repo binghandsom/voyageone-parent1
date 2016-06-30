@@ -46,9 +46,9 @@ define([
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.vm.tagList = res.data.listTag;
                 $scope.vm.changeCount = res.data.changeCount;
-                $scope.vm.isBegin=res.isBegin;
-                $scope.vm.isEnd=res.isEnd;
-                $scope.vm.isUpdateJM=res.isUpdateJM;
+                $scope.vm.isBegin=res.data.isBegin;
+                $scope.vm.isEnd=res.data.isEnd;
+                $scope.vm.isUpdateJM=res.data.isUpdateJM;
 
             });
             $feedSearchService.init()
