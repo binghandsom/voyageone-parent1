@@ -14,9 +14,9 @@ public class CmsBtImageGroupDao extends BaseMongoDao<CmsBtImageGroupModel> {
     public List<CmsBtImageGroupModel> selectListByKeysWithAll(String channelId, int cartId, int imageType, int viewType, String brandName, String productType, String sizeType, int active) {
         String query = "{$and:[" +
                 "{'channelId':'%s'}, {'cartId':%d}, {'imageType':%d}, {'viewType':%d}, " +
-                "{$or:[{'brandName': '" + VALUE_ALL + "'}, {'brandName': '%s'}]}, " +
-                "{$or:[{'productType': '" + VALUE_ALL + "'}, {'productType': '%s'}]}, " +
-                "{$or:[{'sizeType': '" + VALUE_ALL + "'}, {'sizeType': '%s'}]}, " +
+                "{$or:[{'brandName': '" + VALUE_ALL + "'}, {'brandName': \"%s\"}]}, " +
+                "{$or:[{'productType': '" + VALUE_ALL + "'}, {'productType': \"%s\"}]}, " +
+                "{$or:[{'sizeType': '" + VALUE_ALL + "'}, {'sizeType': \"%s\"}]}, " +
                 "{'active':%d}" +
                 "]}";
 

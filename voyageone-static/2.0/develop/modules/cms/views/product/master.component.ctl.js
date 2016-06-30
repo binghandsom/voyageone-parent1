@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,platformMappingService,notify,$q,$rootScope) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -21,7 +21,7 @@ define([
                 };
 
                 initialize();
-                scope.jdCategoryMapping = jdCategoryMapping;
+                scope.masterCategoryMapping = masterCategoryMapping;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
@@ -59,49 +59,36 @@ define([
                  * @param productInfo
                  * @param popupNewCategory popup实例
                  */
-                function jdCategoryMapping(popupNewCategory) {
-                    platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
-                        .then(function (res) {
-                            return $q(function(resolve, reject) {
-                                    if (!res.data || !res.data.length) {
-                                        notify.danger("数据还未准备完毕");
-                                        reject("数据还未准备完毕");
-                                    } else {
-                                        resolve(popupNewCategory({
-                                            from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
-                                            categories: res.data,
-                                            plateSchema:true
-                                        }));
-                                    }
-                            });
-                        }).then(function (context) {
-                            if(scope.vm.platform != null){
-                                if(context.selected.catPath == scope.vm.platform.pCatPath)
-                                    return;
-                            }
+                function masterCategoryMapping(popupNewCategory) {
+                    systemCategoryService.getNewsCategoryList().then(function(res){
+                        popupNewCategory({
+                            categories: res.data
+                        }).then(function(context){
+                            scope.vm.productComm.catId = context.selected.catId;
+                            scope.vm.productComm.catPath = context.selected.catPath;
 
-                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId,catId:context.selected.catId}).then(function(resp){
-                                scope.vm.platform = resp.data.platform;
-                                scope.vm.platform.pCatPath = context.selected.catPath;
-                                scope.vm.platform.pCatId = context.selected.catId;
-                                scope.vm.checkFlag.category = 1;
-                                scope.vm.platform.pStatus == 'WaitingPublish';
-                                scope.vm.status =  "Pending";
-                            });
+                            scope.productInfo.masterCategory = true;
                         });
+                    });
                 }
 
                 /**
                  * 更新操作
                  */
                 function saveProduct(){
+
+                    if (!validSchema()) {
+                        return alert("保存失败，请查看产品的属性是否填写正确！");
+                    }
+
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
+                        console.log(resp);
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
+                    return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
 
                 /**

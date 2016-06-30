@@ -72,17 +72,17 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("fields", fields);
     }
 
-    public List<CmsBtProductModel_CommonSku> getSkus() {
+    public List<CmsBtProductModel_Sku> getSkus() {
         return getAttribute("skus");
     }
 
-    public void setSkus(List<CmsBtProductModel_CommonSku> skus) {
+    public void setSkus(List<CmsBtProductModel_Sku> skus) {
         setAttribute("skus", skus);
     }
 
-    public CmsBtProductModel_CommonSku getSku(String skuCode) {
+    public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && getSkus() != null) {
-            for (CmsBtProductModel_CommonSku sku : getSkus()) {
+            for (CmsBtProductModel_Sku sku : getSkus()) {
                 if (skuCode.equals(sku.getSkuCode())) {
                     return sku;
                 }
@@ -113,14 +113,14 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         if (SKUS.equals(key)) {
             if (value != null) {
                 List<Map<String, Object>> imageMaps = (List<Map<String, Object>>) value;
-                List<CmsBtProductModel_CommonSku> skus = new ArrayList<>();
+                List<CmsBtProductModel_Sku> skus = new ArrayList<>();
                 for (Map<String, Object> map : imageMaps) {
                     if (map != null) {
-                        CmsBtProductModel_CommonSku sku;
-                        if (map instanceof CmsBtProductModel_CommonSku) {
-                            sku = (CmsBtProductModel_CommonSku) map;
+                        CmsBtProductModel_Sku sku;
+                        if (map instanceof CmsBtProductModel_Sku) {
+                            sku = (CmsBtProductModel_Sku) map;
                         } else {
-                            sku = new CmsBtProductModel_CommonSku();
+                            sku = new CmsBtProductModel_Sku();
                             sku.putAll(map);
                         }
                         skus.add(sku);

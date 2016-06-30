@@ -170,14 +170,14 @@ public class StockSeparateService extends BaseService {
     /**
      * 导入文件数据更新变更方式
      *
-     * @param saveData    保存对象
-     * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
-     * @param taskId     任务id
-     * @param creater     创建者/更新者
-     * @param channelId   渠道id
+     * @param saveData  保存对象
+     * @param mapSku    原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
+     * @param taskId    任务id
+     * @param creater   创建者/更新者
+     * @param channelId 渠道id
      */
     @VOTransactional
-    public void importExcelFileStockUpdate(List<StockExcelBean> saveData, Map<String, List<String>> mapSku,String taskId, String creater, String channelId) {
+    public void importExcelFileStockUpdate(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String taskId, String creater, String channelId) {
         // 变更方式
         Map<String, Object> mapSaveData = new HashMap<>();
         mapSaveData.put("taskId", taskId);
@@ -211,10 +211,10 @@ public class StockSeparateService extends BaseService {
     /**
      * 导入文件数据更新(增量方式)
      *
-     * @param saveData    保存对象
-     * @param taskId      ?
-     * @param creater     创建者/更新者
-     * @param channelId   渠道id
+     * @param saveData  保存对象
+     * @param taskId    ?
+     * @param creater   创建者/更新者
+     * @param channelId 渠道id
      */
     @VOTransactional
     public void importExcelFileStockAdd(List<StockExcelBean> saveData, String taskId, String creater, String channelId) {

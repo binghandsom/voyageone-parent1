@@ -392,9 +392,18 @@ s-field textarea.s-html {
     height: 27px;
     border-top: 1px solid #ADCAE2;
     background: white;
-    color: #B97977;
+    color: #325471;
     border-radius: 0px;
 
+}
+
+.product-shema-detail .btn-nav:hover{
+    background: #325471;
+    color: white;
+}
+
+.product-shema-detail .btn-nav-pop{
+    box-shadow: 1px 1px 2px #ADCAE2;
 }
 
 .product-shema-detail span a {

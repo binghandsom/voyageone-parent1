@@ -10,7 +10,7 @@ define([
         function TaskIndexController(taskService, taskStockService, cActions, confirm, notify) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
-            var urls = cActions.cms.jmpromotion.task.taskStockService;
+            var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
             this.notify = notify;

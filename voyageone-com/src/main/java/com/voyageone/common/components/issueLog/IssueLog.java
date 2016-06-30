@@ -1,7 +1,5 @@
 package com.voyageone.common.components.issueLog;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.beans.IssueLogBean;
 import com.voyageone.common.components.issueLog.dao.IssueLogDao;

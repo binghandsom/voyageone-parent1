@@ -5,7 +5,6 @@ import com.voyageone.common.logger.VOAbsLoggable;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -94,7 +93,9 @@ public abstract class BaseDao extends VOAbsLoggable {
      */
     protected Map<String, Object> parameters(Object... parameters) {
 
-        if (parameters.length % 2 != 0) throw new IllegalArgumentException("参数数组长度错误！键值匹配的参数数组应该是偶数长度！");
+        if (parameters.length % 2 != 0) {
+            throw new IllegalArgumentException("参数数组长度错误！键值匹配的参数数组应该是偶数长度！");
+        }
 
         Map<String, Object> map = new HashMap<>();
 
