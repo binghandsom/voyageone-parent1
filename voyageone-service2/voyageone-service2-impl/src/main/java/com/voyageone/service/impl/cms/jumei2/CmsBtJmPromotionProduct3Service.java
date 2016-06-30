@@ -163,6 +163,7 @@ public class CmsBtJmPromotionProduct3Service {
         return result;
     }
 
+    @VOTransactional
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().size() == 0) return;
