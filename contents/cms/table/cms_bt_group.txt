@@ -3,7 +3,6 @@
 * cartId
 * numIId
 * platformPid
-* displayOrder
 * publishTime
 * onSaleTime
 * inStockTime
