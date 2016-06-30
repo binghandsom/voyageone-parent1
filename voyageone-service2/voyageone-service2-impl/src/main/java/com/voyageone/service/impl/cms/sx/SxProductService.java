@@ -2322,14 +2322,14 @@ public class SxProductService extends BaseService {
             }
 
             // 第一次变成inStock的时候(""->"InStock")，设置InStockTime
-            if ((beforeProductGroup.getPlatformStatus() == null || StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name()))
+            if (StringUtils.isEmpty(beforeProductGroup.getInStockTime())
                     && CmsConstants.PlatformStatus.InStock.equals(sxData.getPlatform().getPlatformStatus())) {
                 sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
             }
 
             if (!isUsJoi) {
                 // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
-                if ((beforeProductGroup.getPlatformStatus() == null || StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name()))
+                if (StringUtils.isEmpty(beforeProductGroup.getOnSaleTime())
                         && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
                     sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
                 }
