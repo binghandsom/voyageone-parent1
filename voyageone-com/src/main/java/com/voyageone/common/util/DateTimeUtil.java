@@ -557,7 +557,7 @@ public final class DateTimeUtil {
 
         return (yearOne - yearTwo) * 12 + (monthOne - monthTwo);
     }
-    
+
     /**
      * 计算两个日期的小时差
      * @param one Date
@@ -1203,7 +1203,7 @@ public final class DateTimeUtil {
             return "getGMTTimeTo :date format error";
         }
     }
-    
+
 	/***
 	 * 取得指定天数之前的日期
 	 * @param intDays int
@@ -1212,12 +1212,12 @@ public final class DateTimeUtil {
 	public static String getDateBeforeDays(int intDays) {
 		Calendar currentDate = Calendar.getInstance();
 		SimpleDateFormat simple = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-		
+
 		// 取得指定天数之前的日期
 		currentDate.add(Calendar.HOUR, -(24 * intDays));
 		return simple.format(currentDate.getTime());
 	}
-    
+
     /**
      * 取得指定时间以后多少分钟的时间。如果要得到以前多少分钟的时间，参数用负数。
      *
@@ -1227,46 +1227,46 @@ public final class DateTimeUtil {
     public static Date addMinutes(Date date, int minutes) {
         return add(date, minutes, Calendar.MINUTE);
     }
-    
+
     /**
      * 获得两个日期时间间隔（flag：0-3以外默认为0）
-     * 
-     * flag 0:天数   1:小时   2:分钟   3:秒 
-     * 
+     *
+     * flag 0:天数   1:小时   2:分钟   3:秒
+     *
      * @return long
      */
 	public static long getInterVal(String startDateTime, String endDateTime, int inputFlag) throws ParseException{
 		long intervale = 0;
-		
+
 		SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 		Date begin = df.parse(startDateTime);
 		Date end = df.parse(endDateTime);
-		
-		// 除以1000是为了转换成秒  
+
+		// 除以1000是为了转换成秒
 		long between = (end.getTime() - begin.getTime()) / 1000;
 
         int flag = inputFlag;
 		if (flag != 0 && flag != 1 && flag != 2 && flag != 3) {
 			flag = 0;
 		}
-		
+
 		// 天数
 		if (flag == 0) {
             intervale = between / (24 * 3600);
-			
+
 		// 小时
 		} else if (flag == 1) {
             intervale = between / 3600;
-			
+
 		// 分钟
 		} else if (flag == 2) {
             intervale = between / 60;
-			
+
 		// 秒
 		} else {
             intervale = between;
 		}
-		
+
 		return intervale;
 	}
 
@@ -1298,10 +1298,10 @@ public final class DateTimeUtil {
         Date a = DateTimeUtil.parse(orderDateTime, DateTimeUtil.EN_DATE_FORMAT);
         return DateTimeUtil.format(a, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
     }
-    
+
     /**
      * UNIXTIME转换成yyyy-MM-dd HH:mm:ss格式
-     * 
+     *
      * @param unixTime String
      * @return String
      */
@@ -1311,15 +1311,15 @@ public final class DateTimeUtil {
 			unixTimeL = Long.parseLong(unixTime);
 		}
 		unixTimeL = unixTimeL * 1000;
-		
+
 		SimpleDateFormat sf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
 
         return sf.format(new Date(unixTimeL));
 	}
-    
+
     /**
      * 根据Date型dateTime获得pattern格式的字符串日期
-     * 
+     *
      * @param dateTime Date
      * @param pattern String
      * @return String
@@ -1329,7 +1329,7 @@ public final class DateTimeUtil {
 		if (StringUtils.isNullOrBlank2(patternTmp)) {
             patternTmp = DEFAULT_DATETIME_FORMAT;
 		}
-		
+
 		SimpleDateFormat sf = new SimpleDateFormat(patternTmp);
 		return sf.format(dateTime);
 	}
@@ -1414,7 +1414,7 @@ public final class DateTimeUtil {
             return "getGMTTimeTo :date format error";
         }
     }
-	
+
 	/**
      * 得到当前时间TimeStamp
      *
@@ -1431,6 +1431,17 @@ public final class DateTimeUtil {
             createdDefaultDate = parse("2000-01-01 00:00:00");
         }
         return createdDefaultDate;
+    }
+
+    /**
+     * 获取更改时区后的日期
+     *
+     * @param date    日期
+     * @param zone    新时区对象
+     * @return 日期
+     */
+    public static Date changeTimeZone(Date date, TimeZone zone) {
+        return changeTimeZone(date, Calendar.getInstance().getTimeZone(), zone);
     }
 
     /**
