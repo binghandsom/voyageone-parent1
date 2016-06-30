@@ -378,7 +378,8 @@ define(function () {
                     "saveTask": "saveTask",
                     "submitTask": "submitTask",
                     "cancelTask": "cancelTask",
-                    "getFeedAttributes": "getFeedAttributes"
+                    "getFeedAttributes": "getFeedAttributes",
+                    "init": "init"
                 }
             },
             "channel": {

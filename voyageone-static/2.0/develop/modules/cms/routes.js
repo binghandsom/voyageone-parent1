@@ -198,9 +198,9 @@ define(function () {
             "controller": "storeOperationController as store"
         },
         "tools_product_translation_setting": {
-            "hash": "/tools_product/translation_setting",
-            "templateUrl": "views/translation/index.tpl.html",
-            "controllerUrl": "modules/cms/views/translation/index.ctl",
+            "hash": "/tools/product/translation_setting",
+            "templateUrl": "views/tools/product/property-translation.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/product/property-translation.ctl",
             "controller": "translationManageController as ctrl"
         },
         "tools_category_feed_to_master_mapping": {

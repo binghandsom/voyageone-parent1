@@ -477,6 +477,10 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             rslt[1] = orgChaNameList;
             rslt[2] = freeTagsList;
         }
+        if (groupsList == null || groupsList.isEmpty()) {
+            $warn("CmsAdvSearchQueryService.getGroupExtraInfo groupsList为空");
+            return rslt;
+        }
 
         for (CmsBtProductBean groupObj : groupsList) {
             String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();

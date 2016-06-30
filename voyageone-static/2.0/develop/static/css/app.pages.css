@@ -675,3 +675,10 @@ s-field textarea.s-html {
     margin-top: 6px;
     display: block;
 }
+/*表格断行*/
+
+.tableWordBreak>li {
+    word-break: break-all;
+    overflow: auto;
+    max-height: 17px;
+}
