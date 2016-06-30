@@ -109,6 +109,11 @@ s-complex[multi] s-toolbox {
     padding-left: 5px;
 }
 
+.s-not-required:after {
+    content: '\00a0';
+    padding-left: 6px;
+}
+
 s-tip {
     display: block;
     color: #ee903d;
@@ -141,4 +146,27 @@ vo-message {
     padding: 2px 6px 3px 8px;
     border-left: 2px solid #E04825;
     color: #E04825;
+}
+
+/**平台状态样式*/
+.plateform-status{
+
+}
+.plateform-status .pending{
+    background: #bebebe;
+}
+.plateform-status .ready{
+    background: #fdfd01;
+}
+.plateform-status .waiting-publish{
+    background: #dcd8c3;
+}
+.plateform-status .in-stock{
+    background: #fdbf01;
+}
+.plateform-status .on-sale{
+    background: #00afef;
+}
+.plateform-status .error{
+    background: #fd0001;
 }

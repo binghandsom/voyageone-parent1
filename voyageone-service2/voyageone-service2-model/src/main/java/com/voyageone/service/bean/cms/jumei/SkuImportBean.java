@@ -8,7 +8,8 @@ public class SkuImportBean {
     String skuCode;
     double dealPrice;
     double  marketPrice;
-
+    Double discount;
+    String errorMsg;//错误消息
     public String getProductCode() {
         return productCode;
     }
@@ -39,5 +40,20 @@ public class SkuImportBean {
 
     public void setMarketPrice(double marketPrice) {
         this.marketPrice = marketPrice;
+    }
+
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 }

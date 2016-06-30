@@ -23,7 +23,6 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -199,7 +198,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
             }
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
@@ -282,7 +281,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                         // added by morse.lu 2016/06/08 start
                     } else {
                         // 更新产品
-                        uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                        if (!sxData.isDarwin()) {
+                            uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                        }
                         // added by morse.lu 2016/06/08 end
                     }
 
@@ -311,7 +312,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 // added by morse.lu 2016/06/08 start
             } else {
                 // 更新产品
-                uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                if (!sxData.isDarwin()) {
+                    uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                }
                 // added by morse.lu 2016/06/08 end
             }
 

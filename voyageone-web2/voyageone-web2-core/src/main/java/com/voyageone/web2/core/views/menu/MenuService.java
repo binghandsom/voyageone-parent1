@@ -189,6 +189,7 @@ public class MenuService extends BaseAppService {
         menuList.add(orderMenu);
         menuList.add(reportsMenu);
         menuList.add(inventoryMenu);
+        menuList.add(shipmentMenu);
 
         return menuList;
     }

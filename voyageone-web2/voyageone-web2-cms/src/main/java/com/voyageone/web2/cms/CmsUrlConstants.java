@@ -314,6 +314,7 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
+            String EXPORT = "export";
         }
     }
 
@@ -416,6 +417,8 @@ public interface CmsUrlConstants {
             String GET_CATEGORY_DETAIL = "getCategoryDetail";
 
             String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
+
+            String GET_NEW_CATEGORY_LIST = "getNewsCategoryList";
         }
 
         interface ERROR {
@@ -519,6 +522,10 @@ public interface CmsUrlConstants {
 
             String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
 
+            String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
+
+            String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
+
         }
 
     }
@@ -558,6 +565,21 @@ public interface CmsUrlConstants {
             String CANCEL_TASK = "cancelTask";
 
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String ASSIGN = "assign";
+
+            String SAVE = "save";
+
+            String SUBMIT = "submit";
+
+            String CANCEL = "cancel";
+
+            String GET = "get";
         }
     }
 

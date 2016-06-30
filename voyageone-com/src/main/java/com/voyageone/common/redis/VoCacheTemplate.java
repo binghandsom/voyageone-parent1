@@ -2,7 +2,6 @@ package com.voyageone.common.redis;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
 /**
  * @author aooer 2016/4/5.

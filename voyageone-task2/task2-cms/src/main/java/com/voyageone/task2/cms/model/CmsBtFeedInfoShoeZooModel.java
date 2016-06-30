@@ -6,16 +6,11 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
  * Created by gjl on 2016/6/15.
  */
 public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
-    private String Auction_Title;
-    private String Inventory_Number;
-    private String UPC;
-    private String MPN;
-    private String Short_Description;
-    private String Description;
-    private String Manufacturer;
-    private String Brand;
-    private String Relationship_Name;
-    private String Variation_Parent_SKU;
+    private String auctionTitle;
+    private String description;
+    private String manufacturer;
+    private String relationshipName;
+    private String variationParentSku;
     private String brandname;
     private String categories;
     private String closuretype;
@@ -29,12 +24,11 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
     private String feedproducttype;
     private String gender;
     private String generickeywords;
-    private String ItemClassDisplayPath;
+    private String itemclassdisplaypath;
     private String itemname;
     private String itemtype;
     private String itemtypekeyword;
     private String materialtype;
-    private String model;
     private String numberofitems;
     private String productdescription;
     private String recommendedbrowsenodes;
@@ -52,88 +46,50 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
     private String toestyle;
     private String variationtheme;
     private String waterresistancelevel;
-    private String Feature_Bullets;
+    private String featureBullets;
+    private String tmallWeight;
+    private String countryOfOrigin;
 
-    public String getAuction_Title() {
-        return Auction_Title;
+
+    public String getAuctionTitle() {
+        return auctionTitle;
     }
 
-    public void setAuction_Title(String auction_Title) {
-        Auction_Title = auction_Title;
+    public void setAuctionTitle(String auctionTitle) {
+        this.auctionTitle = auctionTitle;
     }
 
-    public String getInventory_Number() {
-        return Inventory_Number;
-    }
-
-    public void setInventory_Number(String inventory_Number) {
-        Inventory_Number = inventory_Number;
-    }
-
-    public String getUPC() {
-        return UPC;
-    }
-
-    public void setUPC(String UPC) {
-        this.UPC = UPC;
-    }
-
-    public String getMPN() {
-        return MPN;
-    }
-
-    public void setMPN(String MPN) {
-        this.MPN = MPN;
-    }
-
-    public String getShort_Description() {
-        return Short_Description;
-    }
-
-    public void setShort_Description(String short_Description) {
-        Short_Description = short_Description;
-    }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getManufacturer() {
-        return Manufacturer;
+        return manufacturer;
     }
 
     public void setManufacturer(String manufacturer) {
-        Manufacturer = manufacturer;
+        this.manufacturer = manufacturer;
     }
 
-    @Override
-    public String getBrand() {
-        return Brand;
+    public String getRelationshipName() {
+        return relationshipName;
     }
 
-    @Override
-    public void setBrand(String brand) {
-        Brand = brand;
+    public void setRelationshipName(String relationshipName) {
+        this.relationshipName = relationshipName;
     }
 
-    public String getRelationship_Name() {
-        return Relationship_Name;
+    public String getVariationParentSku() {
+        return variationParentSku;
     }
 
-    public void setRelationship_Name(String relationship_Name) {
-        Relationship_Name = relationship_Name;
-    }
-
-    public String getVariation_Parent_SKU() {
-        return Variation_Parent_SKU;
-    }
-
-    public void setVariation_Parent_SKU(String variation_Parent_SKU) {
-        Variation_Parent_SKU = variation_Parent_SKU;
+    public void setVariationParentSku(String variationParentSku) {
+        this.variationParentSku = variationParentSku;
     }
 
     public String getBrandname() {
@@ -240,12 +196,12 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.generickeywords = generickeywords;
     }
 
-    public String getItemClassDisplayPath() {
-        return ItemClassDisplayPath;
+    public String getItemclassdisplaypath() {
+        return itemclassdisplaypath;
     }
 
-    public void setItemClassDisplayPath(String itemClassDisplayPath) {
-        ItemClassDisplayPath = itemClassDisplayPath;
+    public void setItemclassdisplaypath(String itemclassdisplaypath) {
+        this.itemclassdisplaypath = itemclassdisplaypath;
     }
 
     public String getItemname() {
@@ -280,15 +236,6 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.materialtype = materialtype;
     }
 
-    @Override
-    public String getModel() {
-        return model;
-    }
-
-    @Override
-    public void setModel(String model) {
-        this.model = model;
-    }
 
     public String getNumberofitems() {
         return numberofitems;
@@ -426,11 +373,27 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
         this.waterresistancelevel = waterresistancelevel;
     }
 
-    public String getFeature_Bullets() {
-        return Feature_Bullets;
+    public String getFeatureBullets() {
+        return featureBullets;
     }
 
-    public void setFeature_Bullets(String feature_Bullets) {
-        Feature_Bullets = feature_Bullets;
+    public void setFeatureBullets(String featureBullets) {
+        this.featureBullets = featureBullets;
+    }
+
+    public String getTmallWeight() {
+        return tmallWeight;
+    }
+
+    public void setTmallWeight(String tmallWeight) {
+        this.tmallWeight = tmallWeight;
+    }
+
+    public String getCountryOfOrigin() {
+        return countryOfOrigin;
+    }
+
+    public void setCountryOfOrigin(String countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
     }
 }

@@ -1191,11 +1191,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 商品Sku信息设定 ------------------------------------------------------
             List<CmsBtProductModel_Sku> mainSkuList = new ArrayList<>();
-            List<CmsBtProductModel_CommonSku> commonSkuList = new ArrayList<>();
+            List<CmsBtProductModel_Sku> commonSkuList = new ArrayList<>();
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                 // 设置单个sku的信息
                 CmsBtProductModel_Sku mainSku = new CmsBtProductModel_Sku();
-                CmsBtProductModel_CommonSku commonSku = new CmsBtProductModel_CommonSku();
+//                CmsBtProductModel_CommonSku commonSku = new CmsBtProductModel_CommonSku();
 
                 mainSku.setSkuCode(sku.getSku()); // sku
                 mainSku.setBarcode(sku.getBarcode()); // barcode
@@ -1210,10 +1210,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     mainSku.putAll(doSetCustomSkuInfo(feed, skuFieldSchemaList));
                 }
 
-                commonSku.setSkuCode(sku.getSku()); // sku
-                commonSku.setBarcode(sku.getBarcode()); // barcode
-                commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
-                commonSku.setClientSize(sku.getSize()); // ClientSize
+//                commonSku.setSkuCode(sku.getSku()); // sku
+//                commonSku.setBarcode(sku.getBarcode()); // barcode
+//                commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
+//                commonSku.setClientSize(sku.getSize()); // ClientSize
 
                 // TODO commonSku.setSize以后有空做
 
@@ -1221,11 +1221,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 mainSku.setSkuCarts(skuCarts);
 
                 mainSkuList.add(mainSku);
-                commonSkuList.add(commonSku);
+//                commonSkuList.add(commonSku);
             }
             product.setSkus(mainSkuList);
 
-            common.setSkus(commonSkuList);
+            common.setSkus(mainSkuList);
 
             // --------- platform ------------------------------------------------------
             Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
@@ -1604,12 +1604,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
                 // 遍历主数据product里的sku,看看有没有
                 boolean blnFound = false;
-                List<CmsBtProductModel_CommonSku> skuList = product.getCommon().getSkus();
+                List<CmsBtProductModel_Sku> skuList = product.getCommon().getSkus();
                 if (skuList == null) {
                     skuList = new ArrayList<>();
                     product.getCommon().setSkus(skuList);
                 }
-                for (CmsBtProductModel_CommonSku sku : skuList) {
+                for (CmsBtProductModel_Sku sku : skuList) {
                     if (feedSku.getSku().equals(sku.getSkuCode())) {
                         blnFound = true;
                         break;
@@ -1618,7 +1618,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                 if (!blnFound) {
-                    CmsBtProductModel_CommonSku sku = new CmsBtProductModel_CommonSku();
+                    CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
                     sku.setSkuCode(feedSku.getSku());
                     sku.setBarcode(feedSku.getBarcode());
                     sku.setClientSkuCode(feedSku.getClientSku());
@@ -2171,40 +2171,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         /**
-         * getProductCarts 生成ProductCarts信息
-         *
-         * @param feed 品牌方提供的数据
-         * @return ProductCarts信息
-         */
-        private List<CmsBtProductModel_Carts> getProductCarts(CmsBtFeedInfoModel feed) {
-            // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得展示用数据
-            if (typeChannelBeanList == null) {
-                return null;
-            }
-
-            List<CmsBtProductModel_Carts> carts = new ArrayList<>();
-
-            // 循环一下
-            for (TypeChannelBean shop : typeChannelBeanList) {
-                CmsBtProductModel_Carts cart = new CmsBtProductModel_Carts();
-                cart.setCartId(Integer.parseInt(shop.getValue()));
-                cart.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-                carts.add(cart);
-            }
-
-            return carts;
-        }
-        // jeff 2016/04 add end
-
-        /**
          * getIsMasterMain 是否是Main商品
          *
          * @param feed 品牌方提供的数据
          * @return 1:isMasterMain;0:isNotMasterMain
          */
-        private int
-        getIsMasterMain(CmsBtFeedInfoModel feed) {
+        private int getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
                     String.format("{\"feed.orgAtts.modelCode\":\"%s\", \"fields.isMasterMain\":1}", feed.getModel()));
             if (cnt < 1) {
@@ -2459,7 +2431,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private ProductPriceBean doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsProduct.getPlatforms();
-            List<CmsBtProductModel_CommonSku> commonSkus = cmsProduct.getCommon().getSkus();
+            List<CmsBtProductModel_Sku> commonSkus = cmsProduct.getCommon().getSkus();
 
             // jeff 2016/04 change end
             // 查看配置表, 看看是否要自动审批价格
@@ -2526,9 +2498,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 add end
 
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-                CmsBtProductModel_CommonSku commonSku = null;
+                CmsBtProductModel_Sku commonSku = null;
                 if (commonSkus != null) {
-                    for (CmsBtProductModel_CommonSku commonSkuTemp : commonSkus) {
+                    for (CmsBtProductModel_Sku commonSkuTemp : commonSkus) {
                         if (sku.getSku().equals(commonSkuTemp.getSkuCode())) {
                             commonSku = commonSkuTemp;
                             break;

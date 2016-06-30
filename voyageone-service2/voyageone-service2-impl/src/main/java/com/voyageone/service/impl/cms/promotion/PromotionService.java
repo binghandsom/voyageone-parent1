@@ -107,6 +107,22 @@ public class PromotionService extends BaseService {
     }
 
     /**
+     * 根据channelId获取promotion列表，只查询有效的活动信息(除了状态外，必须要有tag信息)
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtPromotionBean> getPromotions4AdvSearch(String channelId, Map<String, Object> params) {
+        params = params == null ? new HashMap<>() : params;
+        if (Channels.isUsJoi(channelId)) {
+            params.put("orgChannelId", channelId);
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
+        return cmsBtPromotionDaoExt.select4AdvSearch(params);
+    }
+
+    /**
      * getPromotionLogMap
      */
     public Map<String, Object> getPromotionHistory(Map<String, Object> params) {

@@ -61,21 +61,25 @@
             <artifactId>voyageone-components-tmall</artifactId>
             <version>${voyageone.components.tmall.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-liquifire</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-uscdn</artifactId>
-            <version>${voyageone.components.uscdn.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-imagecreate</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
+        <!-- liquifire START REMOVE LiquidFire liang 2016/06/29 -->
+        <!--<dependency>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>voyageone-components-liquifire</artifactId>-->
+            <!--<version>0.0.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>voyageone-components-uscdn</artifactId>-->
+            <!--<version>${voyageone.components.uscdn.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>voyageone-components-imagecreate</artifactId>-->
+            <!--<version>${voyageone.components.imagecreate.version}</version>-->
+        <!--</dependency>-->
+        <!-- liquifire END -->
+
         <dependency>
             <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-ftp</artifactId>

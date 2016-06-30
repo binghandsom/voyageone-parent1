@@ -15,6 +15,8 @@ var errorTypes = {
     required: 'INVALID_REQUIRED',
     maxlength: 'INVALID_MAXLENGTH',
     minlength: 'INVALID_MINLENGTH',
+    minbytelength: 'INVALID_MINLENGTH',
+    maxbytelength: 'INVALID_MAXLENGTH',
     max: 'INVALID_MAX',
     min: 'INVALID_MIN',
     pattern: 'INVALID_PATTERN'
@@ -34,7 +36,7 @@ angular.module("voyageone.angular.directives")
         return {
             restrict: "E",
             template: '{{$message}}',
-            require: '^form',
+            require: '^^form',
             scope: {
                 'target': '='
             },
@@ -48,7 +50,7 @@ angular.module("voyageone.angular.directives")
                 function hide() {
                     elem.fadeOut();
                 }
-                
+
                 var formName;
 
                 // 初始化时保持隐藏
@@ -71,7 +73,7 @@ angular.module("voyageone.angular.directives")
 
                         // 这一步可能获取的并不准确
                         // 因为元素的 name 有可能重复
-                        var targetElement = $('form[name="' + formName + '"] [name="' + elementName + '"]');
+                        var targetElement = $('[name="' + formName + '"] [name="' + elementName + '"]');
 
                         // 如果有友好名称的话, 就用友好的
                         var translateParam = {field: targetElement.attr('title') || elementName};
@@ -86,7 +88,7 @@ angular.module("voyageone.angular.directives")
                         }
 
                         // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                        if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
                             translateParam.value = targetElement.attr(error);
                         }
 

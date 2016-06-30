@@ -18,6 +18,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
@@ -188,12 +189,14 @@ public class CmsPromotionDetailService extends BaseAppService {
                     long productId = Long.parseLong(map.get("productId").toString());
 
                     queryObject.setQuery("{'prodId':" + productId + "}");
-                    queryObject.setProjection("{'fields.code':1,'carts':{'$elemMatch':{'cartId':" + cartId + "}}}");
+                    queryObject.setProjection("{'common.fields.code':1,'platforms.P" + cartId + ".pStatus':1}");
 
-                    List<CmsBtProductBean> modelList = productService.getListWithGroup(channelId, cartId, queryObject);
-                    if (modelList != null && modelList.size() > 0 && modelList.get(0).getCarts().size()>0) {
-//                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                        map.put("platformStatus", modelList.get(0).getCarts().get(0).getPlatformStatus());
+                    List<CmsBtProductModel> modelList = productService.getList(channelId, queryObject);
+                    if (modelList != null && modelList.size() > 0) {
+                        CmsBtProductModel_Platform_Cart cartObj = modelList.get(0).getPlatform(cartId);
+                        if (cartObj != null) {
+                            map.put("platformStatus", cartObj.getpStatus());
+                        }
                     }
                 }
             });

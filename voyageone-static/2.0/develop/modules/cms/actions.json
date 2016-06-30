@@ -21,17 +21,6 @@
       }
     },
     "search": {
-      "$searchAdvanceService": {
-        "root": "/cms/search/advance/",
-        "init": "init",
-        "search": "search",
-        "getGroupList": "getGroupList",
-        "getProductList": "getProductList",
-        "exportProducts": "exportProducts",
-        "getCustColumnsInfo": "getCustColumnsInfo",
-        "saveCustColumnsInfo": "saveCustColumnsInfo",
-        "addFreeTag": "addFreeTag"
-      },
       "$searchAdvanceService2": {
         "root": "/cms/search/advanceSearch/",
         "init": "init",
@@ -48,7 +37,8 @@
         "root": "/cms/search/feed/",
         "init": "init",
         "search": "search",
-        "updateFeedStatus": "updateFeedStatus"
+        "updateFeedStatus": "updateFeedStatus",
+        "doExport":"export"
       }
     },
     "group": {
@@ -72,7 +62,9 @@
         "changePlatformCategory":"changePlatformCategory",
         "updateProductPlatform":"updateProductPlatform",
         "updateProductPlatformChk":"updateProductPlatformChk",
-        "updateProductFeed":"updateProductFeed"
+        "updateProductFeed":"updateProductFeed",
+        "getCommonProductInfo":"getCommonProductInfo",
+        "updateCommonProductInfo":"updateCommonProductInfo"
       }
     },
     "mapping": {
@@ -144,7 +136,7 @@
       }
     },
     "jmpromotion": {
-      "jmPromotionService":{
+      "jmPromotionService": {
         "root": "/cms/jmpromotion/index",
         "init": "init",
         "get": "get",
@@ -192,7 +184,8 @@
           "root": "/cms/CmsBtJmPromotionImportTask/index",
           "getByPromotionId": "getByPromotionId"
         }
-      },
+      }
+    },
       "cmsBtJmPromotionExportTask": {
         "cmsBtJmPromotionExportTaskService": {
           "root": "/cms/CmsBtJmPromotionExportTask/index",
@@ -241,7 +234,8 @@
           "addNumiid": "addNumiid",
           "addCode": "addCode",
           "addCheck": "addCheck",
-          "add": "add"
+          "add": "add",
+          "getTemplates": "getTemplates"
         },
         "taskPriceService": {
           "root": "/cms/task/price",
@@ -292,7 +286,8 @@
             "root": "/cms/system/category",
             "getCategoryList": "getCategoryList",
             "getCategoryDetail": "getCategoryDetail",
-            "updateCategorySchema": "updateCategorySchema"
+            "updateCategorySchema": "updateCategorySchema",
+            "getNewsCategoryList":"getNewsCategoryList"
           },
           "categorySettingService": {
             "root": "/cms/system/category/setting",
@@ -476,6 +471,5 @@
           "cancel": "cancelHsCodeInfo"
         }
       }
-    }
   }
 }

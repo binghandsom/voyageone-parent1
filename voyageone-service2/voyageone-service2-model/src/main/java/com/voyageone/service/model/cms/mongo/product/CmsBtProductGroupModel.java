@@ -179,7 +179,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         CmsConstants.PlatformStatus rs = null;
         try {
             rs = (platformStatus == null || platformStatus.isEmpty()) ? null : CmsConstants.PlatformStatus.valueOf(platformStatus);
-        } catch (IllegalArgumentException exp) {
+        } catch (IllegalArgumentException ignored) {
         }
         return rs;
     }
@@ -192,7 +192,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
         CmsConstants.PlatformActive rs = null;
         try {
             rs = (platformActive == null || platformActive.isEmpty()) ? null : CmsConstants.PlatformActive.valueOf(platformActive);
-        } catch (IllegalArgumentException exp) {
+        } catch (IllegalArgumentException ignored) {
         }
         return rs;
     }
