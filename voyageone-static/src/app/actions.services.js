@@ -8,12 +8,17 @@ define(function (require) {
 
     CacheFlag.NONE = new CacheFlag(0);
     CacheFlag.ONCE = new CacheFlag(1);
-    CacheFlag.LOCAL = new CacheFlag(2);
+    CacheFlag.SESSION = new CacheFlag(2);
+    CacheFlag.LOCAL = new CacheFlag(3);
 
     function actionHashcode(md5, root, action, args) {
         var argsJson = angular.toJson(args);
         var md5Arg = root + action + argsJson;
         return '_' + md5.createHash(md5Arg);
+    }
+
+    function getActionUrl(root, action) {
+        return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
     }
 
     function CommonDataService(root, actions) {
@@ -32,12 +37,13 @@ define(function (require) {
         if (!actions)
             return null;
 
-        _class = function (ajaxService, $localStorage, md5, $q) {
-            this.ajaxService = ajaxService;
-            this.$storage = $localStorage;
-            this.md5 = md5;
-            this.$q = $q;
-            this.cached = {};
+        _class = function (ajax, $sessionStorage, $localStorage, md5, $q) {
+            this._a = ajax;
+            this._sc = $sessionStorage;
+            this._lc = $localStorage;
+            this._5 = md5;
+            this._q = $q;
+            this._c = {};
         };
 
         _.each(actions, function (content, key) {
@@ -76,30 +82,44 @@ define(function (require) {
             if (!(_cacheFlag instanceof CacheFlag))
                 _cacheFlag = CacheFlag.NONE;
 
+            _url = getActionUrl(_root, _url);
+
             _class.prototype[key] = _cacheFlag === CacheFlag.NONE ? function (args) {
-                return this.ajaxService.post(_root + _url, args).then(_resolve, _reject);
+                return this._a.post(_url, args).then(_resolve, _reject);
             } : function (args) {
                 var deferred, result;
-                var storage = this.$storage,
-                    hash = actionHashcode(this.md5, root, key, args),
-                    promise = this.cached[hash];
+                var session = this._sc,
+                    local = this._lc,
+                    hash = actionHashcode(this._5, root, key, args),
+                    promise = this._c[hash];
                 if (promise)
                     return promise;
-                deferred = this.$q.defer();
+                deferred = this._q.defer();
                 promise = deferred.promise;
-                this.cached[hash] = promise;
+                this._c[hash] = promise;
 
-                if (_cacheFlag === CacheFlag.LOCAL) {
-                    result = storage[hash];
+                switch(_cacheFlag) {
+                    case CacheFlag.SESSION:
+                        result = session[hash];
+                        break;
+                    case CacheFlag.LOCAL:
+                        result = local[hash];
+                        break;
                 }
 
                 if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
-                    this.ajaxService.post(_root + _url, args).then(function (res) {
+                    this._a.post(_url, args).then(function (res) {
                         result = _resolve(res);
-                        if (_cacheFlag === CacheFlag.LOCAL)
-                            storage[hash] = result;
+                        switch (_cacheFlag) {
+                            case CacheFlag.SESSION:
+                                session[hash] = result;
+                                break;
+                            case CacheFlag.LOCAL:
+                                local[hash] = result;
+                                break;
+                        }
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -110,7 +130,7 @@ define(function (require) {
             };
         });
 
-        return ['ajaxService', '$localStorage', 'md5', '$q', _class];
+        return ['ajaxService', '$sessionStorage', '$localStorage', 'md5', '$q', _class];
     };
 
     window.CommonDataService = CommonDataService;
