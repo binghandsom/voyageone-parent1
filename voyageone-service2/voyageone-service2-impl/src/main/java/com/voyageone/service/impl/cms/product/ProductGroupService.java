@@ -211,19 +211,19 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
                 if (isPublishedProducts.containsKey(code) && !isPublishedProducts.get(code)) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
                     if (model.getPlatformPid() != null) {
-                        bulkQueryMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
                     }
                 }
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P"+model.getCartId() + ".pPublishError", "");
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
                 if (bulkQueryMap.size() > 0) {
@@ -265,7 +265,7 @@ public class ProductGroupService extends BaseService {
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 // 设置pPublishError：如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
 
                 // 设定批量更新条件和值
                 if (bulkQueryMap.size() > 0) {
@@ -318,15 +318,15 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
                 if (isPublishedProducts.containsKey(code) && !isPublishedProducts.get(code)) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
                 }
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
                 if (bulkQueryMap.size() > 0) {

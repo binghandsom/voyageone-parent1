@@ -201,6 +201,10 @@ public class TranslationTaskService extends BaseService {
     }
 
 
+
+//    public List<Map<String,Object>> searchTask(int pageNum, int PageSize, String codeOrName,  String channelId, String userName, String status) throws BusinessException
+
+
     /**
      * 装填TranslationTaskBean
      *
@@ -312,7 +316,7 @@ public class TranslationTaskService extends BaseService {
                 prop.setFeedAttrValueEn(attrValue);
                 prop.setFeedAttrCn("");
                 prop.setFeedAttrValueCn("");
-                prop.setIsfeedAttr(true);
+                prop.setFeedAttr(true);
 
                 if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
                     FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
@@ -347,7 +351,7 @@ public class TranslationTaskService extends BaseService {
                     prop.setFeedAttrValueEn("");
                     prop.setFeedAttrCn(custProp.getFeed_prop_translation());
                     prop.setFeedAttrValueCn("");
-                    prop.setIsfeedAttr(false);
+                    prop.setFeedAttr(false);
 
                     if (cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).count() > 0) {
                         String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).findFirst().get();
