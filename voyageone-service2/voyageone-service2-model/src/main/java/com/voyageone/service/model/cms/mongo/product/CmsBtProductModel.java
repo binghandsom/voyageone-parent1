@@ -207,6 +207,17 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         }
         return platforms.get(PLATFORM_CART_PRE + cartId);
     }
+    public CmsBtProductModel_Platform_Cart getPlatformNotNull(int cartId) {
+        if (platforms == null) {
+            return new CmsBtProductModel_Platform_Cart();
+        }
+        CmsBtProductModel_Platform_Cart pcObj = platforms.get(PLATFORM_CART_PRE + cartId);
+        if (pcObj == null) {
+            return new CmsBtProductModel_Platform_Cart();
+        }
+        return pcObj;
+    }
+
     public void setPlatform(int cartId, CmsBtProductModel_Platform_Cart cart) {
         cart.setCartId(cartId);
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
