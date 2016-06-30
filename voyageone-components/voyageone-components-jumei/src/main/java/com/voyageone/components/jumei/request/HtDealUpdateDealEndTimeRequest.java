@@ -1,5 +1,6 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.common.util.BeiJingDateUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 
@@ -56,7 +57,8 @@ public class HtDealUpdateDealEndTimeRequest implements BaseJMRequest {
     }
 
     private static Long getTime(Date d) {
-        return d.getTime() / 1000- 8 * 3600;
+       return BeiJingDateUtil.toLocalTime(d)/1000;
+       // return d.getTime() / 1000- 8 * 3600;
         //Calendar now = Calendar.getInstance();
         // 取得系统时间和格林威治时间之间的偏移值
        // int diffsecond = now.getTimeZone().getRawOffset();

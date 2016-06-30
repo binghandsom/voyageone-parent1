@@ -1,4 +1,5 @@
 package com.voyageone.web2.cms.views.test;
+import com.voyageone.common.util.BeiJingDateUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmApiLogService;
 import com.voyageone.service.model.cms.CmsBtJmApiLogModel;
@@ -91,18 +92,28 @@ public class CmsBtJmApiLogTest {
         System.out.println(DateTimeUtil.getDateTime(getCurrentBeiJingDate(), "yyyy-MM-dd HH:mm:ss"));
 
     }
+
     public Date getCurrentBeiJingDate() {
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();//当前时区
-        long time =cal.getTimeInMillis() - timeZone.getRawOffset() + 8 * 3600 * 1000;
+        long time = cal.getTimeInMillis() - timeZone.getRawOffset() + 8 * 3600 * 1000;
 
         return new Date(time);
     }
+
     public Date getLocalDate(Date beiJingDate) throws ParseException {
         long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();//当前时区
         long localTime = utcTime + timeZone.getRawOffset();
         return new Date(localTime);
+    }
+
+    @Test
+    public void TestJMDate() {
+        Date  d= DateTimeUtil.parse("2016-05-12 12:05:00");
+
+        System.out.println(BeiJingDateUtil.toLocalTime(d) / 1000);
+        System.out.println(d.getTime() / 1000 - 8 * 3600);
     }
 }
