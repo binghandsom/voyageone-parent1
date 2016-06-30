@@ -13,6 +13,7 @@ public class TranslationTaskBean {
 
     private long prodId;
     private String productCode;
+    private String category;
 
     TranslationTaskBean_CommonFields commonFields;
     List<TranslationTaskBean_CustomProps> customProps;
@@ -48,5 +49,13 @@ public class TranslationTaskBean {
 
     public void setCustomProps(List<TranslationTaskBean_CustomProps> customProps) {
         this.customProps = customProps;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

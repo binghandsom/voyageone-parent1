@@ -19,7 +19,7 @@ public class TranslationTaskBean_CustomProps {
     }
 
     public void setFeedAttrCn(String feedAttrCn) {
-        this.feedAttrCn = feedAttrCn;
+        this.feedAttrCn = feedAttrCn == null ? null : feedAttrCn.trim();
     }
 
     public String getFeedAttrEn() {
@@ -27,7 +27,7 @@ public class TranslationTaskBean_CustomProps {
     }
 
     public void setFeedAttrEn(String feedAttrEn) {
-        this.feedAttrEn = feedAttrEn;
+        this.feedAttrEn = feedAttrEn == null ? null : feedAttrEn.trim();
     }
 
     public String getFeedAttrValueCn() {
@@ -35,7 +35,7 @@ public class TranslationTaskBean_CustomProps {
     }
 
     public void setFeedAttrValueCn(String feedAttrValueCn) {
-        this.feedAttrValueCn = feedAttrValueCn;
+        this.feedAttrValueCn = feedAttrValueCn == null ? null : feedAttrValueCn.trim();
     }
 
     public String getFeedAttrValueEn() {
@@ -43,7 +43,7 @@ public class TranslationTaskBean_CustomProps {
     }
 
     public void setFeedAttrValueEn(String feedAttrValueEn) {
-        this.feedAttrValueEn = feedAttrValueEn;
+        this.feedAttrValueEn = feedAttrValueEn == null ? null : feedAttrValueEn.trim();
     }
 
     public boolean isfeedAttr() {
