@@ -53,6 +53,9 @@ public class CmsBtJmPromotionExportTask3Service {
             List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
+            if (listProduct.size() == 0) {
+                model.setErrorMsg("未查到商品");
+            }
             model.setFileName(fileName);
         } catch (Exception ex) {
             model.setErrorMsg(ExceptionUtil.getErrorMsg(ex));

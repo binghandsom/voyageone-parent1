@@ -161,6 +161,7 @@
       },
       "jmPromotionDetailService": {
         "root": "/cms/jmpromotion/detail",
+        "init":"init",
         "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
         "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
         "delete": "delete",
@@ -185,7 +186,10 @@
         "batchDeleteProduct": "batchDeleteProduct",
         "deleteAllProduct": "deleteAllProduct",
         "getProductView": "getProductView",
-        "updateDealPrice": "updateDealPrice"
+        "updateDealPrice": "updateDealPrice",
+        "updatePromotionProduct":"updatePromotionProduct",
+        "updatePromotionProductTag":"updatePromotionProductTag",
+        "selectChangeCountByPromotionId":"selectChangeCountByPromotionId"
       },
       "cmsBtJmPromotionImportTask": {
         "cmsBtJmPromotionImportTaskService": {

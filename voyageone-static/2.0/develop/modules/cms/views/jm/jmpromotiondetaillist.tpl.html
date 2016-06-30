@@ -31,7 +31,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label ng-scope" translate="TXT_JM_PROMOTION_CHANGED_COUNT"></label>
                                     <div class="col-sm-8">
-                                       <inpuut type="number" class="form-control" readonly>12</inpuut>
+                                       <inpuut type="number" class="form-control" readonly>{{vm.changeCount}}</inpuut>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -76,7 +76,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_JOIN_JM_CODE_SKU_SEARCH"></label>
                                     <div class="col-sm-8">
-                                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="searchInfo.voCategoryName"></textarea>
+                                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="searchInfo.code"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">品牌</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen class="form-control" ng-model="searchInfo.brand"
+                                        <select search-contains="true" multiple chosen  class="form-control" ng-model="searchInfo.listBrandName"
                                                 ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
@@ -113,10 +113,10 @@
                                     <label class="col-sm-3 control-label">折扣</label>
 
                                     <div class="col-sm-8 form-inline">
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.beginDiscount"
+                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
                                                                                  placeholder="from"></div>
                                         &nbsp;~&nbsp;
-                                        <div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="searchInfo.endDiscount"
+                                        <div class="input-group col-sm-4"><input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
                                                                                  placeholder="to"></div>
                                     </div>
                                 </div>
@@ -127,9 +127,9 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">价格</label>
                                     <div class="col-sm-8" style="padding-left:0px">
-                                        <label class="checkbox-inline c-radio" style="margin-left:4px">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span
-                                                class="fa fa-check"></span>&nbsp;MSRP</label>
+                                        <!--<label class="checkbox-inline c-radio" style="margin-left:4px">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="msrp"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;MSRP</label>-->
                                         <!--<label class="checkbox-inline c-radio">-->
                                         <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="marketPrice"><span-->
                                         <!--class="fa fa-check"></span>&nbsp;市场价</label>-->
@@ -137,12 +137,23 @@
                                         <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="dealPrice"><span-->
                                         <!--class="fa fa-check"></span>&nbsp;团购价</label>-->
 
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span
-                                                class="fa fa-check"></span>&nbsp;中国指导价格</label>
-                                        <label class="checkbox-inline c-radio">
-                                            <input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span
-                                                class="fa fa-check"></span>&nbsp;中国最终售价</label>
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="retailPrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;中国指导价格</label>-->
+                                        <!--<label class="checkbox-inline c-radio">-->
+                                            <!--<input name="priceType" type="radio" ng-model="searchInfo.priceType" value="salePrice"><span-->
+                                                <!--class="fa fa-check"></span>&nbsp;中国最终售价</label>-->
+                                        <select class="form-control" ng-model="searchInfo.priceType">
+                                            <option value="" translate="TXT_SELECT_NO_VALUE"></option>
+                                            <option value="dealPrice">当前活动售价</option>
+                                            <option value="salePrice">中国最终售价</option>
+                                            <option value="retailPrice">中国指导售价</option>
+                                            <option value="msrpRmb">中国官方售价</option>
+                                        </select>
+                                        <!--<li>海外官网价格:{{model.msrpUsd}}</li>-->
+                                        <!--<li>中国官网售价:{{model.msrpRmb}}</li>-->
+                                        <!--<li>中国指导售价:{{model.retailPrice}}</li>-->
+                                        <!--<li>中国最终售价:{{model.salePrice}}</li>-->
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -161,15 +172,15 @@
                                     <label class="col-sm-3 control-label" translate="TXT_PROMOTION_PRODUCT_STATUS"></label>
                                     <div class="col-sm-8">
                                         <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" value="0">
+                                            <input type="checkbox" value="0" ng-model="searchInfo.synchStatus0">
                                             <span class="fa fa-check"></span> 未上传
                                         </label>
                                         <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" value="2">
+                                            <input type="checkbox" value="2" ng-model="searchInfo.synchStatus2">
                                             <span class="fa fa-check"></span> 已上传
                                         </label>
                                         <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" value="3">
+                                            <input type="checkbox" value="3" ng-model="searchInfo.synchStatus3">
                                             <span class="fa fa-check"></span> 上传失败
                                         </label>
                                     </div>
@@ -185,10 +196,11 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">产品变更标签</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="searchInfo.selectedChanged">
+                                        <select class="form-control" ng-model="searchInfo.updateStatus">
                                             <option value="" translate="TXT_SELECT_NO_VALUE"></option>
-                                            <option value="">有变更</option>
-                                            <option value="">无变更</option>
+                                            <option value="1">有变更</option>
+                                            <option value="0">无变更</option>
+                                            <option value="2">已变更</option>
                                         </select>
                                     </div>
                                 </div>
@@ -249,6 +261,7 @@
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="openJmPromotionDetailWin()">编辑专场</a></li>
+
                 </ul>
             </div>
         </div>
@@ -277,6 +290,7 @@
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
+                                    <th class="text-left">备注</th>
                                     <th class="text-left">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -294,8 +308,8 @@
                                         {{model.productLongName}}  </a>
                                     </td>
                                     <td>
-                                        <select multiple chosen class="form-control" ng-model="searchInfo.tagIdList"
-                                                ng-options="m.id as m.tagName for m in vm.tagList">
+                                        <select multiple chosen class="form-control"  ng-change="changeSelectTag(model)" ng-model="model.tagNameList"
+                                                ng-options="m.tagName as m.tagName for m in vm.tagList">
                                         </select>
                                     </td>
                                     <!--<td class="text-left">{{model.promotionTag}}</td>-->
@@ -340,6 +354,7 @@
                                             </div>
                                         </a>
                                     </td>
+                                    <td>{{comment}}</td>
                                     <td >{{getStatus(model)}}</td>
                                     <td class="text-center">
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>

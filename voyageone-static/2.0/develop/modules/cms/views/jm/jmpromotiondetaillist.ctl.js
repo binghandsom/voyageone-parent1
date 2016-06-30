@@ -3,6 +3,7 @@
  */
 define([
     'angularAMD',
+    'underscore',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService, $feedSearchService) {
@@ -15,7 +16,8 @@ define([
             modelList: [],
             cmsBtJmPromotionImportTaskList: [],
             cmsBtJmPromotionExportTaskList: [],
-            tagList: []
+            tagList: [],
+            changeCount:0
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
@@ -24,14 +26,30 @@ define([
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-            console.log("aa");
-            console.log($routeParams);
-            jmPromotionService.get($routeParams.parentId).then(function (res) {
-                $scope.parentModel = res.data;
-                console.log($scope.parentModel);
-            });
-            jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
-                $scope.vm.tagList = res.data;
+            //jmPromotionService.get($routeParams.parentId).then(function (res) {
+            //    $scope.parentModel = res.data;
+            //    console.log($scope.parentModel);
+            //});
+            //jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
+            //    $scope.vm.tagList = res.data;
+            //});
+            //jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
+            //    $scope.vm.changeCount = res.data;
+            //});
+            jmPromotionService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
+                //CmsBtJmPromotionModel modelPromotion;
+                //List<CmsBtTagModel> listTag;//活动的tag
+                //int changeCount;//变更数量
+                //boolean isBegin;//活动是否开始
+                //boolean isEnd;//活动是否结束
+                //boolean isUpdateJM;//9：00 12：00 是否更新聚美
+                $scope.parentModel = res.data.modelPromotion;
+                $scope.vm.tagList = res.data.listTag;
+                $scope.vm.changeCount = res.data.changeCount;
+                $scope.vm.isBegin=res.isBegin;
+                $scope.vm.isEnd=res.isEnd;
+                $scope.vm.isUpdateJM=res.isUpdateJM;
+
             });
             $feedSearchService.init()
                 .then(function (res) {
@@ -224,24 +242,19 @@ define([
             Form.submit();
         };
         function loadSearchInfo() {
-            $scope.searchInfo.synchStateList = [];
-            if ($scope.searchInfo.synchState0) {
-                $scope.searchInfo.synchStateList.push(0)
+            $scope.searchInfo.synchStatusList = [];
+            $scope.searchInfo.errorStatus=undefined;
+            if ($scope.searchInfo.synchStatus0) {
+                $scope.searchInfo.synchStatusList.push(0)
+                $scope.searchInfo.synchStatusList.push(1)
             }
-            if ($scope.searchInfo.synchState1) {
-                $scope.searchInfo.synchStateList.push(1)
+            if ($scope.searchInfo.synchStatus2) {
+                $scope.searchInfo.synchStatusList.push(2)
             }
-            if ($scope.searchInfo.synchState2) {
-                $scope.searchInfo.synchStateList.push(2)
-            }
-            if ($scope.searchInfo.synchState3) {
-                $scope.searchInfo.synchStateList.push(3)
-            }
-            if ($scope.searchInfo.synchState4) {
-                $scope.searchInfo.synchStateList.push(4)
+            if ($scope.searchInfo.synchStatus3) {
+                $scope.searchInfo.errorStatus=3;
             }
         }
-
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
             if (model.synchStatus == 1) {
@@ -317,7 +330,7 @@ define([
                         alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                     }
                     else {
-                        alert($translate.instant('TXT_FAIL'));
+                        alert(res.data.msg);
                     }
                 }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
@@ -356,7 +369,7 @@ define([
                         alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
                     }
                     else {
-                        alert($translate.instant('TXT_FAIL'));
+                        alert(res.data.msg);
                     }
                 }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
@@ -409,7 +422,7 @@ define([
                         alert($translate.instant('TXT_SUCCESS'));
                     }
                     else {
-                        alert($translate.instant('TXT_FAIL'));
+                        alert(res.data.msg);
                     }
                 }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
@@ -430,7 +443,7 @@ define([
                 alert("请选择修改价格的商品!");
                 return;
             }
-            popups.openPriceModify({search: $scope.search, listPromotionProductId: listPromotionProductId})
+            popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
         }
         $scope.openProductDetailWin = function (object) {
             popups.openJmProductDetail(object).then(function () {
@@ -445,7 +458,9 @@ define([
             popups.openJmPromotionDetail({id: $routeParams.parentId});
         }
         $scope.openDealExtensionWin = function () {
-            popups.openDealExtension($scope.parentModel);
+            popups.openDealExtension($scope.parentModel).then(function () {
+                $scope.search();
+            });;
         }
 
         $scope.getErrorMsg = function (errorMsg) {
@@ -465,6 +480,26 @@ define([
                 return m.maxMarketPrice;
 
             return m.maxMarketPrice + "~" + m.minMarketPrice;
+        }
+        $scope.changeSelectTag=function(m) {
+            var productTagList = [];
+            for (var i = 0; i < m.tagNameList.length; i++) {
+                var tagName = m.tagNameList[i];
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName});
+            }
+            var parameter = {};
+            parameter.tagList = productTagList;
+            parameter.id = m.id;
+            jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
+                 //   alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+            //$scope.vm.tagList.
+            // alert(m.tagNameList.toString());
         }
         /**
          * popup弹出选择聚美平台数据类目

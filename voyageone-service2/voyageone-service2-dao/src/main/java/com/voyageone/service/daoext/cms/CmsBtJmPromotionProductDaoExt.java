@@ -39,10 +39,10 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int selectCountByWhere(Map<String, Object> ma);//add
 
-    CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     //add  不包含本次活动
-    Boolean existsCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+    Boolean existsCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
@@ -50,12 +50,17 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
-    int batchSynchPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    //1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
+    int batchSynchPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId,@Param("isPreStart")boolean isPreStart);
 
     int synchAllPrice(int promotionId);
 
+    //1. if未上传  then synch_status=1
     int batchCopyDeal(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    //2.if已上传&预热未开始  then price_status=1
+    int batchCopyDealUpdatePrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
+    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
     int copyDealAll(int promotionId);
 
     int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
@@ -63,7 +68,6 @@ public interface CmsBtJmPromotionProductDaoExt {
     int deleteAllProduct(int promotionId);
 
     List<CmsBtJmPromotionProductModel> selectJMCopyList(int promotionId);
-
     /**
      * 获取jm_hash_id
      *
@@ -73,6 +77,12 @@ public interface CmsBtJmPromotionProductDaoExt {
      */
     List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode);
     //是否存在在销售的商品
-    CmsBtJmPromotionProductModel getOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    CmsBtJmPromotionProductModel selectOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
+//获取变更数量
+    int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);
+
+    //获取本活动商品在其他活动处于在售状态的商品
+    CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
     //jm2 end
 }

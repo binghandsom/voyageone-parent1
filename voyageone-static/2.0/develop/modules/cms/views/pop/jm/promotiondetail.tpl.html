@@ -45,7 +45,7 @@
                 <label class="col-sm-3 control-label vo_reqfield">活动开始时间</label>
                 <div class="col-sm-7" >
                     <input  type="datetime-local" class="form-control"  ng-readonly="editModel.model.status!=0"  datepicker-popup ng-model="editModel.model.activityStart" name="activityStart" required
-                            max-date="model.activityStart" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker1" ng-required="true" close-text="Close" />
+                            max-date="editModel.model.activityStart" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker1" ng-required="true" close-text="Close" />
                 </div>
                 <span class="input-group-btn">
                     <button type="button" ng-disabled="editModel.model.status!=0"  class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -55,7 +55,7 @@
                     <label class="col-sm-3 control-label vo_reqfield">活动结束时间</label>
                     <div class="col-sm-7" >
                         <input  type="datetime-local" class="form-control" ng-readonly="editModel.model.status!=0"  datepicker-popup ng-model="editModel.model.activityEnd" name="activityEnd" required
-                                min-date="mdoel.activityStart"   date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker2" ng-required="true" close-text="Close" />
+                                min-date="editModel.mdoel.activityStart"   date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker2" ng-required="true" close-text="Close" />
                     </div>
                     <span class="input-group-btn">
                         <button type="button" ng-disabled="editModel.model.status!=0" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
