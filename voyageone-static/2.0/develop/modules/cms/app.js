@@ -21,7 +21,8 @@ define([
         'ui.indeterminate',
         'ngStorage',
         'angularFileUpload',
-        'localytics.directives'
+        'localytics.directives',
+        'angular-md5'
     ])
 
     // define
