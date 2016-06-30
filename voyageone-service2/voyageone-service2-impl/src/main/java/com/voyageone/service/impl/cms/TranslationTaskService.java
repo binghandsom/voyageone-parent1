@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -222,7 +221,7 @@ public class TranslationTaskService extends BaseService {
 
 
             CmsBtProductModel_Field fields = product.getCommon().getFields();
-            translationTaskBean.setCatPath(fields.getCatPath());
+            translationTaskBean.setCatPath(product.getCommon().getCatPath());
             translationTaskBean.setProductCode(fields.getCode());
             TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
             commonFields.setBrand(fields.getBrand());
