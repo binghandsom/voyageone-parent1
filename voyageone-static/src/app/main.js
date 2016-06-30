@@ -54,7 +54,8 @@ require.config({
             'angular-chosen',
             'ngStorage',
             'vo-libs-angular',
-            'md5'
+            'md5',
+            'notify'
         ]
     },
     deps: ['vms']

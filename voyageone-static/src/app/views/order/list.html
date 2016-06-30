@@ -59,19 +59,19 @@
                 <table class="table table-fixed table-vo">
                     <thead>
                     <tr>
-                        <th style="width: 30px"></th>
+                        <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>
                         <th class="td-1">ORDER ID</th>
                         <th class="td-2">ORDER DATE</th>
                         <th class="td-1">SKU</th>
                         <th class="td-3">DESCRIPTION</th>
                         <th class="td-1">STATUS</th>
                         <th class="td-1">PRICE</th>
-                        <th style="width: 180px">ACTION</th>
+                        <th style="width: 200px">ACTION</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat-start="item in ctrl.data">
-                        <td class="text-right"><span ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '-' : '+'"></span></td>
+                        <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td>{{item.orderId}}</td>
                         <td>{{item.orderDate}}</td>
                         <td><strong><span>{{item.details.length}}</span> SKU</strong></td>
@@ -83,7 +83,7 @@
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
-                    <tr ng-show="item.collapse" ng-repeat="detail in item.details" ng-repeat-end>
+                    <tr ng-show="!item.collapse" ng-repeat="detail in item.details" ng-repeat-end>
                         <td></td>
                         <td>{{detail.orderId}}</td>
                         <td>{{detail.orderDate}}</td>
