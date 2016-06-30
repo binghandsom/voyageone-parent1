@@ -2,11 +2,10 @@ package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -59,6 +58,8 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmPromotionTagProductDaoExt daoExtCmsBtJmPromotionTagProduct;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -66,7 +67,21 @@ public class CmsBtJmPromotionProduct3Service {
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
         return daoExt.selectPageByWhere(map);
     }
+    public InitResult init(InitParameter parameter) {
+        InitResult result = new InitResult();
+        result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));
+        result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));
+        result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));
 
+        result.setBegin(result.getModelPromotion().getPrePeriodStart().getTime() < getTime(new Date()));//活动是否看开始     用预热时间
+        result.setEnd(result.getModelPromotion().getActivityEnd().getTime() < getTime(new Date()));//活动是否结束            用活动时间
+        int hour = DateTimeUtil.getDateHour(new Date()) + 8;
+        result.setUpdateJM(hour > 9 && hour < 12);
+        return result;
+    }
+    private static Long getTime(Date d) {
+        return d.getTime() / 1000 + 8 * 3600;
+    }
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }

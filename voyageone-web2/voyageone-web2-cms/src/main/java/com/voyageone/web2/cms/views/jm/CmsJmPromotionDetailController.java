@@ -4,9 +4,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
@@ -63,7 +61,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     @Autowired
     CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
     //end 2
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
+     public AjaxResponse init(@RequestBody InitParameter parameter) {
+        InitResult result=new InitResult();
+         return success(service3.init(parameter));
+     }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPageByWhere(params));

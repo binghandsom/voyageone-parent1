@@ -1,4 +1,5 @@
 package com.voyageone.web2.cms.views.test;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmApiLogService;
 import com.voyageone.service.model.cms.CmsBtJmApiLogModel;
 import org.junit.Test;
@@ -6,6 +7,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/context-web2.xml")
@@ -60,6 +63,7 @@ public class CmsBtJmApiLogTest {
     public void testGetPage() {
 
        // List<Map<String,Object>> list = service.selectPage();
-
+       System.out.println(DateTimeUtil.getDateMonth(new Date()));
+        System.out.println(DateTimeUtil.getDateHour(new Date()));
     }
 }

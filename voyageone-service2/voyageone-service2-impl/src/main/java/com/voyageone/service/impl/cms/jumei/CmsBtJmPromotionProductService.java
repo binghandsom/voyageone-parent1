@@ -4,6 +4,8 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitResult;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -62,6 +64,7 @@ public class CmsBtJmPromotionProductService {
     public List<MapModel> getListByWhere(Map<String, Object> map) {
         return daoExt.selectListByWhere(map);
     }
+
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
         if(map.containsKey("code"))
