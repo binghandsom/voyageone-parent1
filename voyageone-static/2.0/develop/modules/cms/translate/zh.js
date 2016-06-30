@@ -114,6 +114,7 @@ define(function () {
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
+        "TXT_EXPORT_LIST": "Export 一览",
         "TXT_SELECT_ALL": "全选",
         "TXT_SALE_PRICE": "最终售价",
         "TXT_PRIMARY_PRODUCT": "主产品",
@@ -521,6 +522,7 @@ define(function () {
         "TXT_FeedStatus_FinishImport": "导入成功",
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
+        "TXT_FeedStatus_DateError": "Feed数据异常错误",
 
 
         "BTN_CREATE_TASK": "新建任务",

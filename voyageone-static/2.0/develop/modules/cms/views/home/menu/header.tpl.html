@@ -30,9 +30,9 @@
         <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" target=".navbar-collapse" role="search">
             <div class="form-group">
                 <div class="input-group">
-                    <input type="text" ng-model="header.searchValue" class="form-control input-sm bg-light no-border rounded padder" placeholder="{{'TXT_MSG_SEARCH' | translate}}">
+                    <input type="text" ng-model="header.searchValue" class="form-control input-sm bg-light no-border rounded padder" enter-click="#search" placeholder="{{'TXT_MSG_SEARCH' | translate}}">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-sm bg-light rounded" ng-click="goSearchPage(header.searchValue)"><i class="fa fa-search"></i></button>
+                        <button type="submit" id="search" class="btn btn-sm bg-light rounded" ng-click="goSearchPage(header.searchValue)"><i class="fa fa-search"></i></button>
                     </span>
                 </div>
             </div>

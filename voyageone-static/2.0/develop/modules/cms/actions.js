@@ -1,4 +1,12 @@
 define(function () {
+
+    var CACHE = {
+        NONE: 0,
+        ONCE: 1,
+        SESSION: 2,
+        LOCAL: 3
+    };
+
     return {
         "core": {
             "access": {
@@ -15,10 +23,14 @@ define(function () {
         },
         "cms": {
             "home": {
-                "menu": {
-                    "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-                    "getPlatformType": "/cms/home/menu/getPlatformType",
-                    "setPlatformType": "/cms/home/menu/setPlatformType"
+                "$menuService": {
+                    "root": "/cms/home/menu/",
+                    "getCategoryInfo": {
+                        url: "getCategoryInfo",
+                        cache: CACHE.SESSION
+                    },
+                    "getPlatformType": "getPlatformType",
+                    "setPlatformType": "setPlatformType"
                 }
             },
             "search": {
@@ -39,7 +51,9 @@ define(function () {
                     "init": "init",
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
-                    "doExport": "export"
+                    "doExport": "export",
+                    "exportSearch":"exportSearch",
+                    "download":"download"
                 }
             },
             "group": {
