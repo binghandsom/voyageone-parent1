@@ -33,10 +33,10 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //cartId
-    public int getCartId() {
+    public Integer getCartId() {
         return getIntAttribute("cartId");
     }
-    public void setCartId(int cartId) {
+    public void setCartId(Integer cartId) {
         setAttribute("cartId", cartId);
     }
 

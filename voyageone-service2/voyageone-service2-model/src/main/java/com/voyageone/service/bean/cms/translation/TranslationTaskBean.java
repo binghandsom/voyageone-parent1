@@ -13,7 +13,8 @@ public class TranslationTaskBean {
 
     private long prodId;
     private String productCode;
-    private String category;
+    private String feedCategory;
+    private String catPath;
 
     TranslationTaskBean_CommonFields commonFields;
     List<TranslationTaskBean_CustomProps> customProps;
@@ -51,11 +52,19 @@ public class TranslationTaskBean {
         this.customProps = customProps;
     }
 
-    public String getCategory() {
-        return category;
+    public String getFeedCategory() {
+        return feedCategory;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setFeedCategory(String category) {
+        this.feedCategory = category;
+    }
+
+    public String getCatPath() {
+        return catPath;
+    }
+
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
     }
 }

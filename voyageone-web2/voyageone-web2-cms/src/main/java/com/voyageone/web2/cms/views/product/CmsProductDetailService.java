@@ -619,12 +619,12 @@ public class CmsProductDetailService extends BaseAppService {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if(platformCategory == null || platformCategory.size() == 0) return;
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
-            if(platform.getFields() == null || platform.getFields().size() == 0){
-                List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase( Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
-                if(temp != null && temp.size()>0 && !StringUtil.isEmpty(temp.get(0).getCatId())){
+            if ((platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
+                List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase(Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
+                if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
                     platform.setpCatPath(temp.get(0).getCatPath());
-                    productService.updateProductPlatform(oldProduct.getChannelId(),oldProduct.getProdId(),platform,modifier);
+                    productService.updateProductPlatform(oldProduct.getChannelId(), oldProduct.getProdId(), platform, modifier);
                 }
             }
         });

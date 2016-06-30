@@ -12,7 +12,7 @@ public class TranslationTaskBean_CustomProps {
     private String feedAttrEn;
     private String feedAttrValueCn;
     private String feedAttrValueEn;
-    private boolean isfeedAttr;
+    private boolean feedAttr;
 
     public String getFeedAttrCn() {
         return feedAttrCn;
@@ -46,11 +46,11 @@ public class TranslationTaskBean_CustomProps {
         this.feedAttrValueEn = feedAttrValueEn == null ? null : feedAttrValueEn.trim();
     }
 
-    public boolean isfeedAttr() {
-        return isfeedAttr;
+    public boolean isFeedAttr() {
+        return feedAttr;
     }
 
-    public void setIsfeedAttr(boolean isfeedAttr) {
-        this.isfeedAttr = isfeedAttr;
+    public void setFeedAttr(boolean feedAttr) {
+        this.feedAttr = feedAttr;
     }
 }
