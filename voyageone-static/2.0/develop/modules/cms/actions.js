@@ -3,7 +3,8 @@ define(function () {
     var CACHE = {
         NONE: 0,
         ONCE: 1,
-        LOCAL: 2
+        SESSION: 2,
+        LOCAL: 3
     };
 
     return {
@@ -26,7 +27,7 @@ define(function () {
                     "root": "/cms/home/menu/",
                     "getCategoryInfo": {
                         url: "getCategoryInfo",
-                        cache: CACHE.ONCE
+                        cache: CACHE.SESSION
                     },
                     "getPlatformType": "getPlatformType",
                     "setPlatformType": "setPlatformType"
