@@ -315,7 +315,7 @@ public class BaseJomgoPartTemplate {
     }
 
     public long count(final String strQuery, String collectionName) {
-        return count(collectionName, NO_PARAMETERS, collectionName);
+        return count(strQuery, NO_PARAMETERS, collectionName);
     }
 
     public long count(final String strQuery, Object[] parameters, String collectionName) {
