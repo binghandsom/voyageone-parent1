@@ -36,16 +36,16 @@
                                     <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;获取任务</h3>
                                 </div>
                                 <div class="panel-body" style="background-color: #F8F8F8;">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" novalidate>
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
                                             <div class="col-sm-3">
                                                 <select class="form-control" ng-model="ctrl.getTaskInfo.qty">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                    <option value="0">{{'TXT_INVENTORY'|translate}}</option>
+                                                    <option value="1">{{'TXT_INVENTORY'|translate}}</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6" ng-if="ctrl.getTaskInfo.qty">
                                                 <label class="checkbox-inline c-radio ng-binding">
                                                     <input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.order" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;升序
                                                 </label>
@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div class="col-sm-8">
-                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" ng-pattern="/^(\d+)$/">
+                                                <input type="text" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" ng-pattern="/^[0-9]{1,2}$/">
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
@@ -133,14 +133,14 @@
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
                     <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
-                        <td class="text-center mfb-xt">48307</td>
+                        <td class="text-center mfb-xt">{{$index + 1}}</td>
                         <td style="overflow: hidden;" class="text-center mfb-x">
                             <a ng-if="list.common.fields.images1.length > 0"><img class="thumb-xs m-b-xs" ng-src="{{list.common.fields.images1[0]}}" ng-click="openFeedImagedetail($index)"></a>
                         </td>
                         <td class="text-center mfb-xxt">
                             <ul>
                                 <li class="text-left" ng-bind="list.common.fields.code"></li>
-                                <li class="text-left">牛肉</li>
+                                <li class="text-left">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
                             </ul>
                         </td>
                         <td class="text-left mfb-xxs">
@@ -149,10 +149,10 @@
                             </select>
                         </td>
                         <td class="text-left mfb-xxs">
-                            <ul>
-                                <li>Jewelry.com 925银镶嵌立方锆石耳坠 女款简约耳环 欧美耳饰</li>
-                                <li>Bracelets-Bangles-Diamond</li>
-                                <li>饰品/流行首饰/时尚饰品新>耳饰>耳环</li>
+                            <ul class="tableWordBreak">
+                                <li>{{list.common.fields.productNameCn?list.common.fields.productNameCn : list.common.fields.productNameEn}}</li>
+                                <li>{{list.feed.catPath}}</li>
+                                <li>{{list.common.catPath}}</li>
                             </ul>
                         </td>
                         <td class="text-center mfb-xt">
