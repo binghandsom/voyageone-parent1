@@ -226,7 +226,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
+                if (bulkUpdateMap.size() > 0) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -268,7 +268,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
 
                 // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
+                if (bulkUpdateMap.size() > 0) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -329,7 +329,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
+                if (bulkUpdateMap.size() > 0) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
