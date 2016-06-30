@@ -13,10 +13,10 @@ public class BeiJingDateUtil {
       return toBeiJingDate(new Date());
     }
     //当前时区时间To北京时间
-    public static Date toBeiJingDate(Date date) {
+    public static Date toBeiJingDate(Date localDate) {
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();//当前时区
-        long time = date.getTime() - timeZone.getRawOffset() + 8 * 3600 * 1000;
+        long time = localDate.getTime() - timeZone.getRawOffset() + 8 * 3600 * 1000;//北京时区时间戳
         return new Date(time);
     }
     //北京时间To本地时区时间
@@ -25,10 +25,10 @@ public class BeiJingDateUtil {
     }
     //北京时间To本地时区时间戳
     public static long toLocalTime(Date beiJingDate) {
-        long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
+        long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;//UTC时间戳
         Calendar cal = Calendar.getInstance();
         TimeZone timeZone = cal.getTimeZone();//当前时区
-        long localTime = utcTime + timeZone.getRawOffset();
+        long localTime = utcTime + timeZone.getRawOffset();//本地时区时间戳
         return localTime;
     }
 }
