@@ -319,7 +319,11 @@ public class BaseJomgoPartTemplate {
     }
 
     public long count(final String strQuery, Object[] parameters, String collectionName) {
-        return getCollection(collectionName).count(strQuery, parameters);
+        Object[] parametersTemp = parameters;
+        if (parametersTemp == null) {
+            parametersTemp = NO_PARAMETERS;
+        }
+        return getCollection(collectionName).count(strQuery, parametersTemp);
     }
 
     public WriteResult insert(Object objectToSave, String collectionName) {
