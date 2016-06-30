@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class BaseJomgoPartTemplate {
 
+    private static final Object[] NO_PARAMETERS = new Object[0];
+
     protected MongoTemplate mongoTemplate;
 
     protected Jongo jongo;
@@ -313,7 +315,11 @@ public class BaseJomgoPartTemplate {
     }
 
     public long count(final String strQuery, String collectionName) {
-        return getCollection(collectionName).count(strQuery);
+        return count(collectionName, NO_PARAMETERS, collectionName);
+    }
+
+    public long count(final String strQuery, Object[] parameters, String collectionName) {
+        return getCollection(collectionName).count(strQuery, parameters);
     }
 
     public WriteResult insert(Object objectToSave, String collectionName) {
