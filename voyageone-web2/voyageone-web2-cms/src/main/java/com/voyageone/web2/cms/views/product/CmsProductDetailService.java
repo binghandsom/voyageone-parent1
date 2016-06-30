@@ -151,7 +151,7 @@ public class CmsProductDetailService extends BaseAppService {
         this.fillFieldOptions(subSkuFields, channelId, language);
 
         // TODO 取得Sku的库存
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(productValueModel.getOrgChannelId(), productValueModel.getFields().getCode());
 
         //获取sku schemaValue
         Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
@@ -178,6 +178,7 @@ public class CmsProductDetailService extends BaseAppService {
         productInfo.setProductStatus(productStatus);
         productInfo.setModified(productValueModel.getModified());
         productInfo.setProductCode(productValueModel.getFields().getCode());
+        productInfo.setOrgChannelId(productValueModel.getOrgChannelId());
 
         Map<String, Object> infoMap = new HashMap<>();
         infoMap.put("productInfo", productInfo);
