@@ -25,7 +25,6 @@ require.config({
         'ngload': 'libs/angularAMD/0.2.1/ngload.min',
         'jquery': 'libs/jquery/2.2.4/jquery',
         'underscore': 'libs/underscore.js/1.8.3/underscore',
-        'css': 'libs/require-css/0.1.8/css',
         'json': 'libs/requirejs-plugins/1.0.3/json',
         'text': 'libs/require-text/2.0.12/text',
         'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
@@ -43,7 +42,7 @@ require.config({
         'angular-animate': ['angular'],
         'angular-cookies': ['angular'],
         'angular-translate': ['angular'],
-        'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.min.css'],
+        'angular-block-ui': ['angular'],
         'angular-ui-bootstrap': ['angular'],
         'angular-ngStorage': ['angular'],
         'angular-file-upload': ['angular'],
@@ -52,7 +51,7 @@ require.config({
         'filestyle': ['jquery'],
         'json': ['text'],
         'angularAMD': ['angular', 'ngload'],
-        'chosen': ['jquery', 'css!libs/chosen/1.4.2/chosen.min.css'],
+        'chosen': ['jquery'],
         'angular-chosen': ['angular', 'chosen']
     },
     deps: ['cms']
