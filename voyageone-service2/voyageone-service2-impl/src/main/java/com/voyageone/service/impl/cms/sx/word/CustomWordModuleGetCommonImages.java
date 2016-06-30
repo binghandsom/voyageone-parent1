@@ -51,9 +51,9 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
                                     sxData.getCartId(),
                                     Integer.valueOf(imageType),
                                     Integer.valueOf(viewType),
-                                    sxData.getMainProduct().getFields().getBrand(),
-                                    sxData.getMainProduct().getFields().getProductType(),
-                                    sxData.getMainProduct().getFields().getSizeType(),
+                                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
                                     useOriUrl);
 
         for (String url : urls) {

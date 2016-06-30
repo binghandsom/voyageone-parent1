@@ -79,7 +79,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         if (extParameter != null && extParameter.length > 0) {
             // 获取指定product的图片(如果没找到, 那么就使用主商品的图片)
             for (CmsBtProductModel product : sxData.getProductList()) {
-                if (product.getFields().getCode().equals(extParameter[0])) {
+                if (product.getCommon().getFields().getCode().equals(extParameter[0])) {
                     // modified by morse.lu 2016/06/02 start
 //                    productImages = product.getFields().getImages(imageType);
                     // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
