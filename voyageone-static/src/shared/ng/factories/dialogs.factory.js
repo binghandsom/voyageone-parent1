@@ -25,7 +25,8 @@ angular.module("vo.factories").factory("$dialogs", function ($uibModal, $filter,
             controller: ["$scope", function (scope) {
                 _.extend(scope, options);
             }],
-            size: options.size || 'sm'
+            size: options.size || 'sm',
+            backdrop: 'static'
         });
         options.close = function () {
             modalInstance.dismiss("close");
