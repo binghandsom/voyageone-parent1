@@ -41,10 +41,6 @@ public class TranslationTaskService extends BaseService {
 
     private static final int  EXPIRE_HOURS = -48;
 
-    private static final  String  TASK_COMPLETE = "1";
-
-    private static final  String  TASK_IMCOMPLETE = "0";
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
@@ -143,7 +139,7 @@ public class TranslationTaskService extends BaseService {
             TranslationTaskBean_CommonFields cnFields =  bean.getCommonFields();
 
             //读cms_mt_feed_custom_prop
-            List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean.getCategory());
+            List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean.getFeedCategory());
 
             //去除掉feedCustomPropList中的垃圾数据
             if(feedCustomPropList != null && feedCustomPropList.size() > 0) {
@@ -205,6 +201,10 @@ public class TranslationTaskService extends BaseService {
     }
 
 
+
+//    public List<Map<String,Object>> searchTask(int pageNum, int PageSize, String codeOrName,  String channelId, String userName, String status) throws BusinessException
+
+
     /**
      * 装填TranslationTaskBean
      *
@@ -218,9 +218,11 @@ public class TranslationTaskService extends BaseService {
             String channelId = product.getChannelId();
             //装填Bean
             translationTaskBean.setProdId(product.getProdId());
-            translationTaskBean.setCategory(product.getFeed().getCatPath());
+            translationTaskBean.setFeedCategory(product.getFeed().getCatPath());
+
 
             CmsBtProductModel_Field fields = product.getCommon().getFields();
+            translationTaskBean.setCatPath(fields.getCatPath());
             translationTaskBean.setProductCode(fields.getCode());
             TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
             commonFields.setBrand(fields.getBrand());
@@ -314,7 +316,7 @@ public class TranslationTaskService extends BaseService {
                 prop.setFeedAttrValueEn(attrValue);
                 prop.setFeedAttrCn("");
                 prop.setFeedAttrValueCn("");
-                prop.setIsfeedAttr(true);
+                prop.setFeedAttr(true);
 
                 if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
                     FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
@@ -349,7 +351,7 @@ public class TranslationTaskService extends BaseService {
                     prop.setFeedAttrValueEn("");
                     prop.setFeedAttrCn(custProp.getFeed_prop_translation());
                     prop.setFeedAttrValueCn("");
-                    prop.setIsfeedAttr(false);
+                    prop.setFeedAttr(false);
 
                     if (cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).count() > 0) {
                         String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).findFirst().get();
