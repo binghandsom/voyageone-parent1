@@ -18,8 +18,7 @@
                                             <div class="form-group"><!-- 查询brand品牌 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
-                                                    <select search-contains="true" class="form-control"
-                                                            ng-model="vm.searchInfo.brand"
+                                                    <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brand"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
@@ -89,12 +88,12 @@
                                                 <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
                                                 <div class="col-sm-8 form-inline" style="padding-left:0px">
                                                     <div class="col-sm-5">
-                                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+                                                        <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
                                                                 ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                                    <div class="col-sm-5"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,7 +154,7 @@
                                             <div class="form-group"><!-- 查询自由标签 -->
                                                 <div class="col-sm-3 text-right">
                                                     <!--4 是自由标签-->
-                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag('4'), false)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openTagManagement(openFreeTag({'tagTypeSel':'4','cartId':vm.searchInfo.cartId}), false)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TAG_FREE' |translate}}
                                                     </button>
                                                 </div>
@@ -169,7 +168,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8 col-sm-offset-3 bg-white table-bordered table-responsive" ng-model="vm.searchInfo.freeTags" style=" min-height: 40px;  max-height: 160px;">
+                                                <div class="col-sm-8 col-sm-offset-3" ng-model="vm.searchInfo.freeTags" style=" min-height: 40px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;">
                                                     <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}</label>
                                                 </div>
                                             </div>
@@ -268,7 +267,7 @@
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="vm.searchInfo.pCatStatus"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.pCatStatus" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">
@@ -278,14 +277,14 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
+                                                <input type="text" class="form-control" style="padding:0px" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="vm.searchInfo.shopCatStatus"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.shopCatStatus" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">
@@ -294,7 +293,7 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7 bg-white table-bordered table-responsive" style="min-height: 40px; max-height: 160px;">
+                                            <div class="col-sm-7" style="min-height: 42px; max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
                                             </div>
                                         </div>
@@ -311,13 +310,13 @@
                                                     </div>
                                                     <div>
                                                         <!--2 是活动标签-->
-                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag('2'), true)">
+                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag({'tagTypeSel':'2','cartId':vm.searchInfo.cartId}), true)">
                                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7 bg-white table-bordered table-responsive" style=" min-height: 40px;  max-height: 160px;">
+                                            <div class="col-sm-7" style="min-height: 42px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm._promotionTags" style="display: inline-block;">{{promotionTag.tagPathName}}</label>
                                             </div>
                                         </div>
@@ -610,9 +609,6 @@
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li ng-if="cartBean.value==27&&cartBean.cartType!=3">
-                                    <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>
-                                </li>
                                 <!--最终售价 暂时不做-->
                                 <!--<li>-->
                                     <!--<a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>-->
@@ -636,7 +632,7 @@
                         </div>
                     </div>
                     <!--tab-->
-                    <uib-tab ng-click="vm.currTab = 'product'">
+                    <uib-tab ng-click="vm.currTab = 'product'" active="vm.currTab2">
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
                         </tab-heading>
                         <!-- Products table and controls -->

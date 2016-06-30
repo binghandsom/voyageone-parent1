@@ -35,9 +35,17 @@ public class FieldUtil {
             switch(inputField.getType()) {
                 case COMPLEX:
                     fieldList = ((ComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((ComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
                 case MULTICOMPLEX:
                     fieldList = ((MultiComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((MultiComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
             }
 
@@ -70,9 +78,17 @@ public class FieldUtil {
             switch(inputField.getType()) {
                 case COMPLEX:
                     fieldList = ((ComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((ComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
                 case MULTICOMPLEX:
                     fieldList = ((MultiComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((MultiComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
             }
 

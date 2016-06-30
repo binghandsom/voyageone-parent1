@@ -13,7 +13,8 @@ define([
             propertyInfo: {
                 property: {},
                 productIds: context.productIds,
-                isSelAll: context.isSelAll
+                isSelAll: context.isSelAll,
+                cartId: context.cartId
             },
             properties: []
         };
@@ -29,10 +30,10 @@ define([
 
         function save () {
             if ($scope.vm.propertyInfo.property) {
-                $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function () {
+                $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function (res) {
                     notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     //$scope.$close();
-                    $modalInstance.close('');
+                    $modalInstance.close(res);
                 });
             }
         }

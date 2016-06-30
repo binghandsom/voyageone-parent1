@@ -3,7 +3,8 @@
 * creater
 * modified
 * modifier
-* channelId ->channelId
+* channelId    ->channelId
+* orgChannelId ->原始channelId
 * prodId    ->产品Id
 * catId     ->暂时保留（用于天猫国际类目，以后删除）
 * catPath   ->暂时保留（用于天猫国际类目，以后删除）
@@ -57,12 +58,17 @@
     * hsCodeStatus
     * hsCodeSetter
     * hsCodeSetTime
+    * codeDiff ->20160627,商品特质英文（颜色/口味/香型等）
+    * hsCodeCross ->20160627,税号跨境申报（10位）
+    * usageEn ->20160627,使用说明英语
+    * usageCn ->20160627,使用说明中文
   * skus[]
     * skuCode
     * barcode
     * clientSku
     * clientSize
     * size
+    * sizeNick  ->20160627,售卖用尺码别名
     * clientMsrpPrice     ->客户建议零售价
     * clientRetailPrice   ->客户指导价
     * clientNetPrice      ->客户成本价
@@ -118,7 +124,6 @@
 	  * pProductId
 	  * pNumIId
 	  * pStatus
-	  * pPublishError
 	  * pBrandId
 	  * pBrandName
 	  * pPublishTime
@@ -138,7 +143,6 @@
 		  * productMediumName
 		  * productShortName
 		  * originCn
-		  * property
 		  * attribute
 		  * beforeDate
 		  * suitPeople
@@ -151,6 +155,7 @@
           * priceRetail ->各平台的销售指导价
 		  * priceSale   ->各平台的中国最终售价
 		  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
+		  * property
 		  * jmSpuNo
 		  * jmSkuNo
 	  * sellerCats[]

@@ -8,19 +8,20 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.dao.OrderChannelDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtConfigHistoryDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.CmsBtConfigHistory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class ChannelService {
+public class ChannelService extends BaseService {
 
-    @Resource
+    @Autowired
     OrderChannelDao channelDao;
 
-    @Resource
+    @Autowired
     CmsBtConfigHistoryDao historyDao;
 
     /**

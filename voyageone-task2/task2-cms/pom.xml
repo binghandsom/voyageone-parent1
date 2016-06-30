@@ -17,22 +17,11 @@
             <artifactId>task2-base</artifactId>
             <version>${voyageone.task2.base.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-ftp</artifactId>
-            <version>${voyageone.components.ftp.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-imagecreate</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
 
     </dependencies>
     <build>
@@ -58,18 +47,26 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.voyageone.task2.VOCms2Startup</mainClass>
-                                </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                                    <resource>META-INF/spring.handlers</resource>
-                                </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                                    <resource>META-INF/spring.schemas</resource>
-                                </transformer>
-                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <includes>
+                                        <include>com/voyageone/**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <!--<transformers>-->
+                                <!--<transformer-->
+                                        <!--implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+                                    <!--<mainClass>com.voyageone.task2.VOCms2Startup</mainClass>-->
+                                <!--</transformer>-->
+                                <!--<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
+                                    <!--<resource>META-INF/spring.handlers</resource>-->
+                                <!--</transformer>-->
+                                <!--<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
+                                    <!--<resource>META-INF/spring.schemas</resource>-->
+                                <!--</transformer>-->
+                            <!--</transformers>-->
                         </configuration>
                     </execution>
                 </executions>

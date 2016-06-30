@@ -40,14 +40,17 @@
     </select>
 
     <select id="selectExportListByPromotionId" resultType="MapModel">
-       SELECT b.*,a.`deal_price`,a.`market_price`
+       SELECT b.*,a.`deal_price`,a.`market_price`,b.jm_sku_no,c.jm_hash_id
         FROM `cms_bt_jm_promotion_sku` AS a
         JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id`
+        join  cms_bt_jm_promotion_product as c on a.cms_bt_jm_promotion_product_id=c.id
         WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}
     </select>
     <update id="batchUpdateDealPrice">
-        UPDATE cms_bt_jm_promotion_sku set deal_Price=${dealPrice}
-        WHERE   cms_bt_jm_promotion_product_id in
+        UPDATE cms_bt_jm_promotion_sku  AS a
+        JOIN `cms_bt_jm_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code` AND a.`sku_code`=b.sku_code
+        SET a.deal_Price=${dealPrice},a.`discount`=a.deal_Price/a.`market_price`
+        WHERE   a.cms_bt_jm_promotion_product_id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}

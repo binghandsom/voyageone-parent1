@@ -550,8 +550,10 @@ define([
          */
         $scope.openAddToPromotion = function (promotion, selList, context) {
             var productIds = [];
+            var selAllFlg = 0;
             if (context && context.isSelAll) {
                 // 全选
+                selAllFlg = 1;
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -562,7 +564,8 @@ define([
             return openModel(popActions.bulkUpdate.addToPromotion, {
                 "promotion": promotion,
                 "productIds": productIds,
-                "products": selList
+                "products": selList,
+                "isSelAll": selAllFlg
             });
         };
 
@@ -574,14 +577,18 @@ define([
             var params = null;
             if (context && context.isSelAll) {
                 // 全选
-                params = {"productIds": productIds, 'isSelAll': 1};
+                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId};
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
                     });
                 }
-                params = {"productIds": productIds};
+                if (context) {
+                    params = {"productIds": productIds, "cartId": context.cartId};
+                } else {
+                    params = {"productIds": productIds, "cartId": null};
+                }
             }
             return openModel(popActions.bulkUpdate.fieldEdit, params);
         };

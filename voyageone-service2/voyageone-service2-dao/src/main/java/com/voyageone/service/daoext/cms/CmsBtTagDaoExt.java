@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jerry 15/12/14
@@ -60,10 +61,20 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
 
         return selectList("select_one_by_tag_name", paraIn);
     }
-    public List<CmsBtTagBean> selectListByChannelIdAndTagType(String channelId,String tagType) {
-        return selectList("select_list_by_channel_id_and_tag_type", parameters("channelId", channelId, "tagType", tagType));
+
+    public List<CmsBtTagBean> selectListByChannelIdAndTagType(Map<String, Object> params) {
+        return selectList("select_list_by_channel_id_and_tag_type", params);
     }
-    public List<CmsBtTagModel>  selectCmsBtTagByTagInfo(String channelId,String parentTagId,String tagType) {
+
+    public List<CmsBtTagBean> selectListByChannelIdAndTagType2(Map<String, Object> params) {
+        return selectList("select_list_by_channel_id_and_tag_type2", params);
+    }
+
+    public List<CmsBtTagBean> selectListByChannelIdAndParentTag(Map<String, Object> params) {
+        return selectList("select_list_by_channel_id_and_parent_tag", params);
+    }
+
+    public List<CmsBtTagModel> selectCmsBtTagByTagInfo(String channelId,String parentTagId,String tagType) {
         return selectList("select_one_by_tag_info", parameters("channelId", channelId, "parentTagId", parentTagId,"tagType",tagType));
     }
 

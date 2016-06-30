@@ -24,6 +24,7 @@
         <result column="modifier" property="modifier" jdbcType="VARCHAR"/>
         <result column="cartName" property="cartName" jdbcType="VARCHAR"/>
         <result column="promotion_id" property="promotionId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
         <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel">
             <id column="tag_id" property="id" jdbcType="INTEGER"/>
             <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
@@ -85,6 +86,7 @@
     <select id="select_cms_bt_promotion_by_condtion" resultMap="PromotionMap" parameterType="Map">
         select
         <include refid="promotion_fields"/>
+        d.status,
         b.name as cartName,
         c.id as tag_id,
         c.channel_id as tag_channel_id,
@@ -101,6 +103,7 @@
             or c.channel_id = #{orgChannelId}
         </if>
         )
+        left join voyageone_cms2.cms_bt_jm_promotion d on a.promotion_id = d.id and a.channel_id = d.channel_id
         where
         a.active = 1
         and (a.channel_id = #{channelId}
@@ -131,6 +134,34 @@
             and #{createdEnd,jdbcType=VARCHAR} >= a.created
         </if>
         order by  id desc
+    </select>
+
+    <!-- 查询有效活动信息(高级检索-加入促销活动下拉列表用)（查询JM活动时使用另外的sql） -->
+    <select id="select_cms_bt_promotion_4_adv_search" resultMap="PromotionMap" parameterType="Map">
+        select
+        a.id,
+        a.promotion_name,
+        a.activity_start,
+        a.activity_end,
+        a.ref_tag_id
+        from voyageone_cms2.cms_bt_promotion a
+        inner join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id  and (c.channel_id = #{channelId}
+            <if test="orgChannelId != null and orgChannelId != ''">
+                or c.channel_id = #{orgChannelId}
+            </if>
+            )
+        where
+        a.active = 1
+        and a.promotion_status = 0
+        and c.active = 1
+        and c.tag_status = 0
+        and a.cart_id = #{cartId,jdbcType=INTEGER}
+        and (a.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or a.channel_id = #{orgChannelId}
+        </if>
+        )
+        order by id desc
     </select>
 
     <!-- 插入 -->

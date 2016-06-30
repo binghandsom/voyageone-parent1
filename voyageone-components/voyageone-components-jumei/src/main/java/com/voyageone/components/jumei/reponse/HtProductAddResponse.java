@@ -21,10 +21,21 @@ public class HtProductAddResponse extends BaseJMResponse {
     private String jumei_product_id;  // 聚美生成的产品Id
     private String jm_hash_id;  // 聚美生成的hash_id
     private String error_code;
+
+
+    private String codes;
     private String errorMsg;
     private String body;
     private List<HtProductAddResponse_Spu> spus;
 
+
+    public String getCodes() {
+        return codes;
+    }
+
+    public void setCodes(String codes) {
+        this.codes = codes;
+    }
 
     public boolean getIs_Success() {
         return is_Success;
@@ -62,7 +73,12 @@ public class HtProductAddResponse extends BaseJMResponse {
         return body;
     }
 
+
+
     public void setBody(String body) throws IOException {
+        error_code = "";
+        codes = "";
+
         this.body = body;
         try {
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
@@ -71,10 +87,22 @@ public class HtProductAddResponse extends BaseJMResponse {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
                     this.setError_code(String.valueOf(errorMap.get("code")));
-                } else if (errorMap.containsKey("codes")) {
-                    this.setError_code(String.valueOf(errorMap.get("codes")));
+                }
+                if (errorMap.containsKey("codes")) {
+                    Map<String, Object> codesMap = (Map<String, Object>)errorMap.get("codes");
+                    codes = (codesMap.keySet()).toString();
+                }
+
+                if(!StringUtils.isNullOrBlank2(codes)) {
+                    if (StringUtils.isNullOrBlank2(error_code)) {
+                        error_code = codes;
+                    } else {
+                        error_code = error_code + "," + codes;
+                    }
                 }
             }
+
+
             // 取得聚美生成的产品Id jumei_product_id
             if (map.containsKey("product")) {
                 Map<String, Object> productMap = (Map<String, Object>) map.get("product");

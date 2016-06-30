@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
@@ -9,6 +10,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
@@ -20,10 +22,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UploadToUSJoiService extends BaseTaskService{
+public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     ProductGroupService productGroupService;
@@ -73,8 +72,8 @@ public class UploadToUSJoiService extends BaseTaskService{
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        for(OrderChannelBean channelBean:Channels.getUsJoiChannelList()) {
-            List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100,  Integer.parseInt(channelBean.getOrder_channel_id()));
+        for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
+            List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(channelBean.getOrder_channel_id()));
             cmsBtSxWorkloadModels.forEach(this::upload);
         }
     }
@@ -82,26 +81,28 @@ public class UploadToUSJoiService extends BaseTaskService{
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
         try {
-            $info(String.format("channelId:%s  groupId:%d  复制到%s 开始",sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s 开始", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             List<CmsBtProductBean> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
-            $info("productModels"+productModels.size());
+
+            $info("productModels" + productModels.size());
             //从group中过滤出需要上的usjoi的产品
             productModels = getUSjoiProductModel(productModels, sxWorkLoadBean.getCartId());
-            if(productModels.size() == 0){
+            if (productModels.size() == 0) {
                 throw new BusinessException("没有找到需要上新的SKU");
-            }else{
-                $info("有"+productModels.size()+"个产品要复制");
+            } else {
+                $info("有" + productModels.size() + "个产品要复制");
             }
 
 
             for (CmsBtProductModel productModel : productModels) {
+                productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),CmsBtProductModel.class);
                 productModel.set_id(null);
 
                 final List<Integer> cartIds;
                 OrderChannelBean usJoiBean = Channels.getChannel(usJoiChannelId);
-                if(usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())){
+                if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
                     cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-                }else{
+                } else {
                     cartIds = new ArrayList<>();
                 }
 
@@ -109,7 +110,10 @@ public class UploadToUSJoiService extends BaseTaskService{
                 if (pr == null) {
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
-                    productModel.setCarts(new ArrayList<>());
+                    productModel.setSales(new CmsBtProductModel_Sales());
+                    productModel.setSellerCats(new CmsBtProductModel_SellerCats());
+                    productModel.setTags(new ArrayList<>());
+                    productModel.setBatchField(new CmsBtProductModel_BatchField());
                     creatGroup(productModel, usJoiChannelId);
 
                     List<ProductPriceBean> productPrices = new ArrayList<>();
@@ -145,7 +149,20 @@ public class UploadToUSJoiService extends BaseTaskService{
                     });
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
-                    productModel.setCarts(new ArrayList<CmsBtProductModel_Carts>());
+
+                    // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
+                    CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(sxWorkLoadBean.getCartId());
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    platform.setpCatId(null);
+                    platform.setpCatPath(null);
+                    platform.setpBrandId(null);
+                    platform.setpBrandName(null);
+                    productModel.platformClear();
+                    if (platform != null) {
+                        final CmsBtProductModel finalProductModel = productModel;
+                        cartIds.forEach(cart -> finalProductModel.setPlatform(cart, platform));
+                    }
+
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                     ProductPriceBean priceBean = new ProductPriceBean();
@@ -157,9 +174,9 @@ public class UploadToUSJoiService extends BaseTaskService{
                 } else {
                     List<ProductPriceBean> productPrices = new ArrayList<>();
                     List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
-                    for(CmsBtProductModel_Sku sku:productModel.getSkus()){
+                    for (CmsBtProductModel_Sku sku : productModel.getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getSku(sku.getSkuCode());
-                        if(oldSku == null){
+                        if (oldSku == null) {
                             ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
                             skuPriceBean.setSkuCode(sku.getSkuCode());
@@ -185,10 +202,10 @@ public class UploadToUSJoiService extends BaseTaskService{
                             skuPriceBeans.add(skuPriceBean);
                             sku.setSkuCarts(cartIds);
                             pr.getSkus().add(sku);
-                        }else{
-                            if(oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
+                        } else {
+                            if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
                                     || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0
-                                    || oldSku.getPriceSale().compareTo(sku.getPriceSale()) != 0){
+                                    || oldSku.getPriceSale().compareTo(sku.getPriceSale()) != 0) {
                                 ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
 
                                 skuPriceBean.setSkuCode(sku.getSkuCode());
@@ -210,7 +227,7 @@ public class UploadToUSJoiService extends BaseTaskService{
                         }
                     }
 
-                    if(skuPriceBeans.size() > 0) {
+                    if (skuPriceBeans.size() > 0) {
                         ProductUpdateBean requestModel = new ProductUpdateBean();
                         requestModel.setProductModel(pr);
                         requestModel.setModifier(sxWorkLoadBean.getModifier());
@@ -223,23 +240,70 @@ public class UploadToUSJoiService extends BaseTaskService{
                         productPrices.add(priceBean);
                         productSkuService.updatePrices(usJoiChannelId, productPrices, sxWorkLoadBean.getModifier());
                     }
+
+                    final CmsBtProductModel finalProductModel1 = productModel;
+                    cartIds.forEach(cart -> {
+                        CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cart);
+                        CmsBtProductModel_Platform_Cart newPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
+                        if (platformCart == null) {
+                            newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                            newPlatform.setpCatId(null);
+                            newPlatform.setpCatPath(null);
+                            newPlatform.setpBrandId(null);
+                            newPlatform.setpBrandName(null);
+                            newPlatform.setCartId(cart);
+                            productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform,getTaskName());
+                        } else {
+                            if(platformCart.getSkus() == null){
+                                platformCart.setSkus(newPlatform.getSkus());
+                            }else{
+                                for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
+                                    boolean updateFlg = false;
+                                    if(platformCart.getSkus() != null) {
+                                        for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
+                                            if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
+                                                oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
+                                                oldSku.put("priceRetail", newSku.get("priceRetail"));
+                                                updateFlg = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(!updateFlg){
+                                        platformCart.getSkus().add(newSku);
+                                    }
+                                    platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
+                                    platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
+                                    platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
+                                    platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
+                                }
+                            }
+                            productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), platformCart,getTaskName());
+                        }
+                    });
+
+                    if (pr.getCommon() == null || pr.getCommon().size() == 0) {
+                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(),getTaskName(),false);
+                    }
+
                 }
             }
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
-        }catch (Exception e){
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
+        } catch (Exception e) {
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(),usJoiChannelId));
+            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
-            issueLog.log(e, ErrorType.BatchJob,SubSystem.CMS);
+            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             throw e;
         }
     }
 
     /**
      * 找出需要上到minmall的产品和sku
+     *
      * @param productModels 产品列表
      * @return 产品列表
      */
@@ -278,7 +342,7 @@ public class UploadToUSJoiService extends BaseTaskService{
         return groupObj;
     }
 
-    private void creatGroup(CmsBtProductModel cmsBtProductModel,String usJoiChannel) {
+    private void creatGroup(CmsBtProductModel cmsBtProductModel, String usJoiChannel) {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
         // 获取当前channel, 有多少个platform
@@ -299,7 +363,7 @@ public class UploadToUSJoiService extends BaseTaskService{
             //   如果已经有存在的话: 直接用哪个group id
             //   如果没有的话: 取一个最大的 + 1
             if (platform == null) {
-            // 创建一个platform
+                // 创建一个platform
                 platform = new CmsBtProductGroupModel();
                 // cart id
                 platform.setCartId(Integer.parseInt(shop.getValue()));
@@ -334,24 +398,24 @@ public class UploadToUSJoiService extends BaseTaskService{
             } else {
                 platform.getProductCodes().add(cmsBtProductModel.getFields().getCode());
 
-                if(platform.getPriceMsrpSt() == null || platform.getPriceMsrpSt().compareTo(cmsBtProductModel.getFields().getPriceMsrpSt()) > 0){
+                if (platform.getPriceMsrpSt() == null || platform.getPriceMsrpSt().compareTo(cmsBtProductModel.getFields().getPriceMsrpSt()) > 0) {
                     platform.setPriceMsrpSt(cmsBtProductModel.getFields().getPriceMsrpSt());
                 }
-                if(platform.getPriceMsrpEd() == null || platform.getPriceMsrpEd().compareTo(cmsBtProductModel.getFields().getPriceMsrpEd()) < 0){
+                if (platform.getPriceMsrpEd() == null || platform.getPriceMsrpEd().compareTo(cmsBtProductModel.getFields().getPriceMsrpEd()) < 0) {
                     platform.setPriceMsrpEd(cmsBtProductModel.getFields().getPriceMsrpEd());
                 }
 
-                if(platform.getPriceRetailSt() == null || platform.getPriceRetailSt().compareTo(cmsBtProductModel.getFields().getPriceRetailSt()) > 0){
+                if (platform.getPriceRetailSt() == null || platform.getPriceRetailSt().compareTo(cmsBtProductModel.getFields().getPriceRetailSt()) > 0) {
                     platform.setPriceRetailSt(cmsBtProductModel.getFields().getPriceRetailSt());
                 }
-                if(platform.getPriceRetailEd() == null || platform.getPriceRetailEd().compareTo(cmsBtProductModel.getFields().getPriceRetailEd()) < 0){
+                if (platform.getPriceRetailEd() == null || platform.getPriceRetailEd().compareTo(cmsBtProductModel.getFields().getPriceRetailEd()) < 0) {
                     platform.setPriceRetailEd(cmsBtProductModel.getFields().getPriceRetailEd());
                 }
 
-                if(platform.getPriceSaleSt() == null || platform.getPriceSaleSt().compareTo(cmsBtProductModel.getFields().getPriceSaleSt()) > 0){
+                if (platform.getPriceSaleSt() == null || platform.getPriceSaleSt().compareTo(cmsBtProductModel.getFields().getPriceSaleSt()) > 0) {
                     platform.setPriceSaleSt(cmsBtProductModel.getFields().getPriceSaleSt());
                 }
-                if(platform.getPriceSaleEd() == null || platform.getPriceSaleEd().compareTo(cmsBtProductModel.getFields().getPriceSaleEd()) < 0){
+                if (platform.getPriceSaleEd() == null || platform.getPriceSaleEd().compareTo(cmsBtProductModel.getFields().getPriceSaleEd()) < 0) {
                     platform.setPriceSaleEd(cmsBtProductModel.getFields().getPriceSaleEd());
                 }
 

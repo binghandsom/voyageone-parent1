@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
@@ -21,6 +23,7 @@ import java.util.Map;
  */
 @Service
 public class CmsChannelTagService extends BaseAppService {
+
     @Autowired
     private TagService tagService;
 
@@ -40,19 +43,24 @@ public class CmsChannelTagService extends BaseAppService {
         //返回数据类型
         return result;
     }
+
     /**
      * 根据channelId取得素有的标签并对其进行分类
      *
-     * @param param Map
+     * @param params Map
      * @return ret
      */
-    public List<CmsBtTagBean> getTagInfoByChannelId(Map param) {
+    public List<CmsBtTagBean> getTagInfoByChannelId(Map params) {
         //公司平台销售渠道
-        String channelId = (String) param.get("channelId");
-        //标签类型
-        String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
+        String channelId = (String) params.get("channelId");
+        if (Channels.isUsJoi(channelId)) {
+            params.put("orgChannelId", channelId);
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
         //取得所有的标签类型
-        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(channelId, tagTypeSelectValue);
+        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(params);
 
         //返回数据类型
         return convertToTree(categoryList);

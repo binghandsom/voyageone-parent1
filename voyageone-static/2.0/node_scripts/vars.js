@@ -2,7 +2,7 @@ var extend = require('extend');
 
 var versions = {
     // 整个工程版本号
-    publish: "2.1.0",
+    publish: "2.2.0",
     // voyageone-angular-com.js的版本号
     angularCom: "2.0.0",
     // voyageone-com.js的版本号

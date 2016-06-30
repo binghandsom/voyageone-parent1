@@ -6,7 +6,7 @@
 s-field textarea.form-control {
     height: 100px;
 }
-s-field textarea.schema-field-html {
+s-field textarea.s-html {
     height: 200px;
 }
 
@@ -270,13 +270,13 @@ s-field textarea.schema-field-html {
     border-radius: 2.5px;
     box-shadow: 1px 1px 2px #888;
 }
-
+/*欢迎页面首页数据展示*/
 .stat-boxes {
     display: inline-block;
     list-style: none outside none;
     margin: 4px 0 0 -48px;
     text-align: center;
-    min-height: 144px;
+    min-height: 216px;
 }
 
 @media screen and (max-width: 1441px) {
@@ -380,6 +380,32 @@ s-field textarea.schema-field-html {
     line-height: 24px;
 }
 
+/**限制宽度，防止图片布局混乱*/
+@media screen and (max-width: 1280px) {
+    body{
+        min-width: 1280px;
+    }
+}
+
+.product-shema-detail .btn-nav{
+    width: 100%;
+    height: 27px;
+    border-top: 1px solid #ADCAE2;
+    background: white;
+    color: #325471;
+    border-radius: 0px;
+
+}
+
+.product-shema-detail .btn-nav:hover{
+    background: #325471;
+    color: white;
+}
+
+.product-shema-detail .btn-nav-pop{
+    box-shadow: 1px 1px 2px #ADCAE2;
+}
+
 .product-shema-detail span a {
     color: #e67e22;
     text-decoration: underline;
@@ -388,6 +414,15 @@ s-field textarea.schema-field-html {
 
 .product-shema-detail button span {
     font-size: 12px;
+}
+
+.product-shema-detail .product-title{
+    position: absolute;
+    margin-top: -43px;
+    margin-left: 11px;
+    font-size: 15px;
+    background: white;
+    color: #e67e22;
 }
 
 .product-shema-detail .nav span.tagFlag {
@@ -415,7 +450,6 @@ s-field textarea.schema-field-html {
 .product-shema-detail .ng-number {
     width: 150px;
     text-align: right;
-    margin: 0 auto;
 }
 
 .product-shema-detail .bs-docs-sidebar {
@@ -426,6 +460,13 @@ s-field textarea.schema-field-html {
     border: 1px solid #ADCAE2;
     background: #fff;
     opacity: .5;
+}
+
+.product-shema-detail .master-sidebar {
+    top: 130px;
+    right: 40px;
+    z-index: 9;
+    opacity: initial;
 }
 
 .product-shema-detail .bs-docs-sidebar:hover {
@@ -473,6 +514,42 @@ s-field textarea.schema-field-html {
 
 .tm-sku-detail schema-field {
     min-width: 125px;
+}
+
+.product-shema-detail .fa-5x{
+    font-size: 2em;
+    height: 50px;
+}
+
+.product-shema-detail .panel-primary a{
+    color: #337ab7
+}
+
+.product-shema-detail .panel-green{
+     background-color: #5cb75c;
+    color: white;
+ }
+
+.product-shema-detail .panel-green a{
+    color: #5cb75c;
+}
+
+.product-shema-detail .panel-yellow{
+    background-color: #efac4e;
+    color: white;
+}
+
+.product-shema-detail .panel-yellow a{
+    color: #efac4e;
+}
+
+.product-shema-detail .panel-red{
+    background-color: #d8534f;
+    color: white;
+}
+
+.product-shema-detail .panel-red a{
+    color: #d8534f;
 }
 
 /*uib-tab样式*/
@@ -575,4 +652,55 @@ s-field textarea.schema-field-html {
     -webkit-border-radius: 2px 0 2px 2px;
     -moz-border-radius: 2px 0 2px 2px;
     border-radius: 2px 0 2px 2px;
+}
+
+.data-display-boxes {
+    display: inline-block;
+    list-style: none outside none;
+    margin: 0 0 0 -48px;
+    text-align: center;
+    min-height: 127px;
+}
+
+@media screen and (max-width: 1441px) {
+    .data-display-boxes {
+        min-height: 127px;
+    }
+}
+
+.data-display-boxes li {
+    background-color: #F6F6F6;
+    background-image: -webkit-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -moz-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -ms-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: -o-linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    background-image: linear-gradient(top, #F9F9F9 0%, #EDEDED 100%);
+    border: 1px solid #d5d5d5;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 18px;
+    margin: 0 4px 4px;
+}
+
+.data-display-boxes .data {
+    font-size: 12px;
+    padding: 4px 0 4px 0;
+    text-align: center;
+    width: 120px;
+    color: #666666;
+    text-shadow: 0 1px 0 #ffffff;
+    float: left;
+}
+@media screen and (min-width: 1441px) {
+    .data-display-boxes .data {
+        width: 163px;
+    }
+}
+
+.data-display-boxes .data strong {
+    font-size: 26px;
+    margin-bottom: 3px;
+    margin-top: 6px;
+    display: block;
 }

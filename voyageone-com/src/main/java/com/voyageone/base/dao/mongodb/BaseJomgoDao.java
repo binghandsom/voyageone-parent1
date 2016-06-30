@@ -10,14 +10,14 @@ import com.mongodb.CommandResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.common.util.DateTimeUtil;
+import org.apache.commons.collections.IteratorUtils;
+import org.jongo.Aggregate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * BaseJomgoDao
@@ -132,4 +132,16 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
         return mongoTemplate.executeCommand(jsonCommand);
     }
 
+    /**
+     * 聚合查询<br>
+     * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> aggregateToObj(Class entityClass, String collectionName, JomgoAggregate... aggregates) {
+        Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
+        for (int i=1; i<aggregates.length; i++) {
+            aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());
+        }
+        return IteratorUtils.toList(aggr.as(entityClass));
+    }
 }

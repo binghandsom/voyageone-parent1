@@ -5,7 +5,7 @@ define([
     'angularAMD'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService, $modalInstance) {
+    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
         // 从后台取得的全部列
         $scope.cus = {
             customProps:[],
@@ -16,7 +16,7 @@ define([
          * 初始化数据.
          */
         $scope.initialize = function () {
-            $searchAdvanceService.getCustColumnsInfo().then(function (res) {
+            $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
                 $scope.cus.customProps = res.data.customProps;
                 $scope.cus.commonProps = res.data.commonProps;
                 $scope.cus.salesTypeList = res.data.salesTypeList;
@@ -58,7 +58,7 @@ define([
             params.customProps = customProps;
             params.commonProps = commonProps;
             params.selSalesTypeList = selSalesTypeList;
-            $searchAdvanceService.saveCustColumnsInfo(params).then(function() {
+            $searchAdvanceService2.saveCustColumnsInfo(params).then(function() {
                 $modalInstance.close('');
             });
         };
@@ -67,6 +67,22 @@ define([
             $modalInstance.dismiss();
         }
 
+        // 全选框的操作
+        $scope.chkSelStatus = function (stsType) {
+            if (stsType == 1) {
+                _.forEach($scope.cus.commonProps, function (data) {
+                    data.isChk = $scope.cus.all_commonData;
+                });
+            } else if (stsType == 2) {
+                _.forEach($scope.cus.customProps, function (data) {
+                    data.isChk = $scope.cus.all_customData;
+                });
+            } else if (stsType == 3) {
+                _.forEach($scope.cus.salesTypeList, function (data) {
+                    data.isChk = $scope.cus.all_salesType;
+                });
+            }
+        };
     });
 
 });

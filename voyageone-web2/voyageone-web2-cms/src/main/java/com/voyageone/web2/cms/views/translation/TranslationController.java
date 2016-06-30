@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.translation;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
+import com.voyageone.service.impl.cms.TranslationTaskService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -17,6 +19,10 @@ import java.util.Map;
 
 /**
  * Created by lewis on 15-12-16.
+ *
+ * @author Ethan Shi
+ * @version 2.2.0
+ *
  */
 @RestController
 @RequestMapping(method = RequestMethod.POST,value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
@@ -25,6 +31,10 @@ public class TranslationController extends CmsController{
     @Autowired
     TranslationService feedPropsTranslateService;
 
+    @Autowired
+    TranslationTaskService translationTaskService;
+
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
     public AjaxResponse doGetTasks() {
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
@@ -38,18 +48,20 @@ public class TranslationController extends CmsController{
         return success(translateTaskBeanInfo);
     }
 
-
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN_TASKS)
     public AjaxResponse doAssignTask(@RequestBody TranslateTaskBean request){
         return success(feedPropsTranslateService.assignTask(getUser(),request));
     }
 
+    @Deprecated
     // 保存翻译内容
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
         return success(feedPropsTranslateService.saveTask(getUser(), requestBean, "0"));
     }
 
+    @Deprecated
     // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
@@ -66,6 +78,7 @@ public class TranslationController extends CmsController{
      * @param requestBean
      * @return
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_FEED_ATTRIBUTES)
     public AjaxResponse doGetFeedAttributes(@RequestBody ProductTranslationBean requestBean) {
         return success(feedPropsTranslateService.getFeedAttributes(getUser().getSelChannelId(),requestBean.getProductCode()));
@@ -108,6 +121,7 @@ public class TranslationController extends CmsController{
      *  使用mongo:cms_bt_product_cxxx表
      * @apiSampleRequest off
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
     public AjaxResponse doSearchTasks(@RequestBody Map requestBean) {
         return success(feedPropsTranslateService.searchUserTasks(getUser(), requestBean));
@@ -143,8 +157,38 @@ public class TranslationController extends CmsController{
      *  使用mongo:cms_bt_product_cxxx表
      * @apiSampleRequest off
      */
+    @Deprecated
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.CANCEL_TASK)
     public AjaxResponse doCancelTasks(@RequestBody Map requestBean) {
         return success(feedPropsTranslateService.cancelUserTask(getUser(), (String) requestBean.get("prodCode")));
     }
+
+
+    /**
+     * 初始化页面
+     *
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.INIT)
+    public AjaxResponse doInit()
+    {
+
+        String channelId = this.getUser().getSelChannelId();
+        String user =this.getUser().getUserName();
+        Map<String,Object> translateTaskInitResponse = new HashMap<>();
+
+        translateTaskInitResponse.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
+        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId,user));
+
+        return success(translateTaskInitResponse);
+    }
+
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE)
+    public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean){
+        return success(null);
+    }
+
+
+
 }

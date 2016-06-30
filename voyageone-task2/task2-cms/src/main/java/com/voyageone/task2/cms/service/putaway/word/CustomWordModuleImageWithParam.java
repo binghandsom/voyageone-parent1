@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -9,7 +8,6 @@ import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.UnsupportedEncodingException;
@@ -26,9 +24,6 @@ import java.util.Set;
 public class CustomWordModuleImageWithParam extends CustomWordModule {
 
     public final static String moduleName = "ImageWithParam";
-
-    @Autowired
-    private ImageCreateService imageCreateService;
 
     public CustomWordModuleImageWithParam() {
         super(moduleName);

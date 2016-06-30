@@ -7,7 +7,9 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmProductDaoExt {
-    public CmsBtJmProductModel selectByProductCodeChannelId(@Param("productCode") String productCode, @Param("channelId") String channelId);
+    CmsBtJmProductModel selectByProductCodeChannelId(@Param("productCode") String productCode, @Param("channelId") String channelId);
 
-    public List<CmsBtJmProductModel> selectByProductCodeListChannelId(@Param("productCodes") List<String> productCodes, @Param("channelId") String channelId);
+    List<CmsBtJmProductModel> selectByProductCodeListChannelId(@Param("productCodes") List<String> productCodes, @Param("channelId") String channelId);
+
+    Boolean existsCode(@Param("productCode") String productCode, @Param("channelId") String channelId);
 }

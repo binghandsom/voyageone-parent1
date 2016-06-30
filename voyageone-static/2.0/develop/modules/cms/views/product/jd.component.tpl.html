@@ -66,16 +66,16 @@
                                 </span>&nbsp;
 
                                 <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}}】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
                                     {{ cartInfo.value==27?"聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。":"" }}
                                 </div>
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope">
                             <label class="col-md-2 control-label">Group Info</label>
-                            <div class="col-md-8" ng-repeat="image in vm.mastData.images">
+                            <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-xs-6 col-md-2">
+                                    <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
                                         <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
                                             <img src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                         </a>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope">
-                                <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                             </button>
                             <div class="col-md-8">
                                 <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
@@ -94,7 +94,7 @@
                             </div>
                         </div>
                         <div class="form-group ng-scope ng-isolate-scope" ng-if="cartInfo.value != 27">
-                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)" ng-disabled = "vm.platform.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
+                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                             </button>
                             <div class="col-md-8">
                                 <div class="panel panel-default">
@@ -124,8 +124,8 @@
                             <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
                             <div class="col-md-8">
                                 <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
+                                <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                 </div>
                             </div>
                         </div>
@@ -167,58 +167,67 @@
                 </div>
 
                 <hr>
-                <!------------------------------------------------以下为产品schema------------------------------------------------------->
+                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                <!------------------------------------------------以下为产品Schema------------------------------------------------------->
 
                 <div class="container-fluid" id="{{cartInfo.name}}2">
                     <div class="col-sm-7">
                         <ng-form name="schemaForm" novalidate>
-                            <schema data="vm.platform.schemaFields"></schema>
+                            <schema data="vm.platform.schemaFields.item"></schema>
+                            <schema data="vm.platform.schemaFields.product"></schema>
                         </ng-form>
                     </div>
                 </div>
 
+                <br>
                 <hr>
-                <!------------------------------------------------以下为产品schema------------------------------------------------------->
+                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Sku属性</span>
+                <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="{{cartInfo.name}}3">
                     <div class="table-responsive">
-                        <table class="table text-left">
-                            <thead>
-                            <tr>
-
-                                <th><input class="sku_check" type="checkbox" ng-click="selectAll()">All</th>
-                                <th class="text-center">skuCode</th>
-                                <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
-                                <th class="text-center">size</th>
-                                <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
-                                <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
-                                <th class="text-center">容量/尺码</th>
-                                <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
-                                <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
-                                <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
-                                <th><input class="sku_check" type="checkbox" ng-model="entity.isSale"></th>
-                                <td class="text-center">{{entity.skuCode}}</td>
-                                <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
-                                <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                <td class="text-center"><input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"></td>
-                                <td class="text-center">{{entity.priceRetail}}</td>
-                                <td class="text-center"></td>
-                                <td class="text-center" ng-if="cartInfo.value == 27">
-                                    <select ng-model="entity.property" class="form-control">
-                                        <option value="OTHER" ng-selected="{{entity.property == null}}">其他</option>
-                                        <option value="FORMAL">正装</option>
-                                        <option value="MS">中小样</option>
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <input class="form-control ng-number" type="number" ng-model="entity.priceSale"></td>
-                                <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <ng-form name="skuForm" novalidate>
+                            <table class="table text-left">
+                                <thead>
+                                <tr>
+                                    <th><input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag">All</th>
+                                    <th class="text-center">skuCode</th>
+                                    <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
+                                    <th class="text-center">size</th>
+                                    <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                    <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
+                                    <th class="text-center">容量/尺码</th>
+                                    <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
+                                    <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                    <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
+                                    <td><input class="sku_check" type="checkbox" ng-model="entity.isSale"></td>
+                                    <td class="text-center">{{entity.skuCode}}</td>
+                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
+                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                    <td class="text-center">
+                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                        <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
+                                    </td>
+                                    <td class="text-center">{{entity.priceRetail}}</td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center" ng-if="cartInfo.value == 27">
+                                        <select ng-model="entity.property" class="form-control">
+                                            <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
+                                            <option value="FORMAL">正装</option>
+                                            <option value="MS">中小样</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-center">
+                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                        <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required></td>
+                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </ng-form>
                     </div>
                     <div class="text-warnings" style="padding-left:0px">
                         例：{{cartInfo.name}}上新时的容量/尺码是根据设置在【尺码表管理页面】里的匹配关系来进行转化的。

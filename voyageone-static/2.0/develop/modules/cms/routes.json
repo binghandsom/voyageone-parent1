@@ -127,21 +127,16 @@
     "controllerUrl": "modules/cms/views/channel/category/index.ctl",
     "controller": "categoryController as ctrl"
   },
-  "search_advance": {
-    "hash": "/search/advance",
-    "templateUrl": "views/search/advance.tpl.html",
-    "controllerUrl": "modules/cms/views/search/advance.ctl"
-  },
   "search_advance_new": {
     "hash": "/search/advanceSearch",
     "templateUrl": "views/search/advanceSearch.tpl.html",
     "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
   },
   "search_advance_param": {
-    "url": "/search/advance/",
-    "hash": "/search/advance/:type/:value/:catType",
-    "templateUrl": "views/search/advance.tpl.html",
-    "controllerUrl": "modules/cms/views/search/advance.ctl"
+    "url": "/search/advanceSearch/",
+    "hash": "/search/advanceSearch/:type/:value/:catType",
+    "templateUrl": "views/search/advanceSearch.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
   },
   "marketing_error_upload_error_list": {
     "hash": "/marketing_error/upload_error_list/:type",
@@ -204,7 +199,8 @@
   "tools_product_translation_setting": {
     "hash": "/tools_product/translation_setting",
     "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl"
+    "controllerUrl": "modules/cms/views/translation/index.ctl",
+    "controller": "translationManageController as ctrl"
   },
   "tools_category_feed_to_master_mapping": {
     "hash": "/tools_category/feed_to_master_mapping",

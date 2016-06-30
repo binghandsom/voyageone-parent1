@@ -37,8 +37,9 @@ public class UploadToUSJoiServiceTest {
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
         sxWorkLoadBean.setChannelId("017");
-        sxWorkLoadBean.setGroupId(138906L);
+        sxWorkLoadBean.setGroupId(662789L);
         sxWorkLoadBean.setModifier("james");
+        sxWorkLoadBean.setCartId(929);
 
         uploadToUSJoiService.upload(sxWorkLoadBean);
     }
@@ -78,6 +79,11 @@ public class UploadToUSJoiServiceTest {
 
     @Test
     public void testOnStartup1() throws Exception {
+
+    }
+
+    @Test
+    public void testUpload1() throws Exception {
 
     }
 }
