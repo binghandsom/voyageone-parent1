@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
 
-    public final static String SPLIT_PART = "c";
+    public static final String SPLIT_PART = "c";
 
     protected String getCollectionName(String channelId) {
         return mongoTemplate.getCollectionName(this.collectionName, channelId, SPLIT_PART);

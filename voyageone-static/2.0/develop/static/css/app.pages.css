@@ -369,7 +369,7 @@ s-field textarea.s-html {
     border-left: 6px solid #5cb85c;
 }
 
-/**平台schema*/
+/**产品详情*/
 .product-shema-detail .nav span {
     display: inline-block;
     width: 135px;
@@ -378,6 +378,11 @@ s-field textarea.s-html {
     color: white;
     text-align: center;
     line-height: 24px;
+}
+
+.panel-default .panel-detail-head{
+    background: #e67e22;
+    color: white;
 }
 
 /**限制宽度，防止图片布局混乱*/
@@ -514,42 +519,6 @@ s-field textarea.s-html {
 
 .tm-sku-detail schema-field {
     min-width: 125px;
-}
-
-.product-shema-detail .fa-5x{
-    font-size: 2em;
-    height: 50px;
-}
-
-.product-shema-detail .panel-primary a{
-    color: #337ab7
-}
-
-.product-shema-detail .panel-green{
-     background-color: #5cb75c;
-    color: white;
- }
-
-.product-shema-detail .panel-green a{
-    color: #5cb75c;
-}
-
-.product-shema-detail .panel-yellow{
-    background-color: #efac4e;
-    color: white;
-}
-
-.product-shema-detail .panel-yellow a{
-    color: #efac4e;
-}
-
-.product-shema-detail .panel-red{
-    background-color: #d8534f;
-    color: white;
-}
-
-.product-shema-detail .panel-red a{
-    color: #d8534f;
 }
 
 /*uib-tab样式*/

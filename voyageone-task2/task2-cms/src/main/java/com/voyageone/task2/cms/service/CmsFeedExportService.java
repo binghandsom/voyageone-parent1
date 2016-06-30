@@ -90,6 +90,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             book.write(outputStream);
             cmsBtExportTaskModel.setStatus(1);
             cmsBtExportTaskModel.setFileName(fileName);
+            cmsBtExportTaskModel.setComment("");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             cmsBtExportTaskModel.setComment(CommonUtil.getMessages(e));
