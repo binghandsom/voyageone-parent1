@@ -53,10 +53,9 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     Integer pageSize = 1;
 
-    String templatePath = "/usr/feed.xlsx";
+    String templatePath = CmsBtExportTaskService.templatePath;
 
-    String outPath = "/usr/";
-
+    String outPath = CmsBtExportTaskService.savePath;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {

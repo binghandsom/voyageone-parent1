@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtExportTaskDao" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtExportTaskDaoExt" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtExportTaskModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `task_type`, `parameter`, `status`, `file_name`, `comment`, `created`, 
@@ -176,6 +176,48 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
+        from cms_bt_export_task
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by created desc
+        <if test="pageStart != null">
+            Limit #{pageStart},#{pageSize}
+        </if>
+    </select>
+
+    <select id="selectCnt" resultType="integer"  >
+        select
+            count(1)
         from cms_bt_export_task
         <where >
             <if test="channelId != null" >

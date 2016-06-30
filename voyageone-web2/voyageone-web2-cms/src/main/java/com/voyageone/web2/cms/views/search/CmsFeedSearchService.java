@@ -8,12 +8,12 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -44,6 +44,9 @@ public class CmsFeedSearchService extends BaseAppService {
     private CmsFeedCustPropService cmsFeedCustPropService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private MqSender sender;
 
     @Autowired
     private CmsMtChannelValuesService cmsMtChannelValuesService;
@@ -180,6 +183,7 @@ public class CmsFeedSearchService extends BaseAppService {
         List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
         if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
         }else{
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
