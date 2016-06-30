@@ -1,52 +1,32 @@
-define(['vms'], function (vms) {
+define([
+    'vms',
+    './list.mock.service'
+], function (vms) {
     vms.controller('OrderListController', (function () {
 
-        function OrderListController(alert, notify) {
-            this.data = [
-                {
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                ]
-                },{
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                    ]
-                },{
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                        {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                    ]
-                },
-                {
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                ]
-                },
-                {
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                ]
-                },
-                {
-                    orderId: 89567824, orderDate: '2016-06-29 15:30:07', totalPrice: 6000, details: [
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000},
-                    {sku: 'LKF3958', desc: 'dqaiojgioqjiojdiowqjiojwioqjfiojqwio', status: 'Open', price: 1000}
-                ]
-                }
-            ];
-
+        function OrderListController(alert, notify, orderListService) {
             this.alert = alert;
             this.notify = notify;
+            this.orderListService = orderListService;
+
+            var now = new Date();
+            var onwDay = 24 * 60 * 60 * 1000;
+            var twoDay = 2 * onwDay;
+            var threeDay = 3 * onwDay;
+            now = new Date(now.valueOf() + now.getTimezoneOffset() * 60000);
+            this.orderListService.getAll().then((data) => this.data = data.map((item) => {
+                item.className = '';
+                if (item.status === 'cancel')
+                    item.className = 'bg-gainsboro';
+                else {
+                    var date = new Date(item.orderDate);
+                    if ((now - date) >= threeDay)
+                        item.className = 'bg-danger';
+                    else if ((now - date) >= twoDay)
+                        item.className = 'bg-warning';
+                }
+                return item;
+            }));
         }
 
         OrderListController.prototype.toggleAll = function () {

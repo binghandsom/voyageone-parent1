@@ -70,7 +70,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat-start="item in ctrl.data">
+                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td>{{item.orderId}}</td>
                         <td>{{item.orderDate}}</td>
@@ -83,7 +83,7 @@
                             <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
-                    <tr ng-show="!item.collapse" ng-repeat="detail in item.details" ng-repeat-end>
+                    <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.details" ng-repeat-end>
                         <td></td>
                         <td>{{detail.orderId}}</td>
                         <td>{{detail.orderDate}}</td>

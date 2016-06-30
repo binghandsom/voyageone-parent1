@@ -276,3 +276,6 @@ a {
 .bg-info {
   background-color: #5bc0de;
 }
+.bg-gainsboro {
+  background-color: gainsboro;
+}
