@@ -3,10 +3,6 @@ package com.voyageone.components.channeladvisor.webservice;//
 // (powered by Fernflower decompiler)
 //
 
-
-import com.voyageone.components.channeladvisor.bean.*;
-import com.voyageone.components.channeladvisor.webservice.APICredentials;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
