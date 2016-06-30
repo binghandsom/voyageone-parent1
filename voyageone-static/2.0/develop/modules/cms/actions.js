@@ -1,4 +1,11 @@
 define(function () {
+
+    var CACHE = {
+        NONE: 0,
+        ONCE: 1,
+        LOCAL: 2
+    };
+
     return {
         "core": {
             "access": {
@@ -15,10 +22,14 @@ define(function () {
         },
         "cms": {
             "home": {
-                "menu": {
-                    "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-                    "getPlatformType": "/cms/home/menu/getPlatformType",
-                    "setPlatformType": "/cms/home/menu/setPlatformType"
+                "$menuService": {
+                    "root": "/cms/home/menu/",
+                    "getCategoryInfo": {
+                        url: "getCategoryInfo",
+                        cache: CACHE.ONCE
+                    },
+                    "getPlatformType": "getPlatformType",
+                    "setPlatformType": "setPlatformType"
                 }
             },
             "search": {
