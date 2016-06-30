@@ -39,7 +39,9 @@ define(function () {
                     "init": "init",
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
-                    "doExport": "export"
+                    "doExport": "export",
+                    "exportSearch":"exportSearch",
+                    "download":"download"
                 }
             },
             "group": {

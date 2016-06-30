@@ -315,6 +315,8 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
             String EXPORT = "export";
+            String EXPORTSEARCH = "exportSearch";
+            String DOWNLOAD = "download";
         }
     }
 

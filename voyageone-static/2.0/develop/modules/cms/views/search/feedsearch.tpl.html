@@ -119,6 +119,9 @@
                                         <div class="row">
                                             <label class="checkbox-inline c-radio">
                                                 <input name="priceType" type="radio" value="3" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
+                                            </label>&emsp;
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="priceType" type="radio" value="8" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_DateError' | translate}}
                                             </label>
                                         </div>
                                     </div>
@@ -256,12 +259,12 @@
     <!----------------------------------------------------- 显 示 表 格 ------------------------------------------------------->
     <div>
         <tabset class="tab-container vo_nav-tabs">
-            <tab ng-click="vm.currTab = 'group'">
+            <tab ng-click="vm.currTab = 'group'" active ="vm.currTab == 'group'" >
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                 <div class="box">
                     <div class="box-body">
                         <div class="form-inline m-b-xs text-left">
-                            <button class="btn btn-default" style="margin-top:4px" ng-click="doExport()">
+                            <button ng-disabled="!vm.feedPageOption.total|| vm.feedPageOption.total == 0" class="btn btn-default" style="margin-top:4px" ng-click="doExport()">
                                 <i class="fa fa-cog"></i>&nbsp;Excel导出
                             </button>&nbsp;
                         </div>
@@ -360,6 +363,41 @@
                     </div><!-- /.box-body -->
                     <div class="col-sm-12 m-t-lg m-b-lg">
                         <vpagination config="vm.feedPageOption"></vpagination>
+                    </div>
+                </div>
+            </tab>
+            <tab ng-click="vm.currTab = 'export'" active ="vm.currTab == 'export'">
+                <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
+                <div class="box">
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
+                                <thead>
+                                <tr>
+                                    <th class="text-right" style="width:38px">No.</th>
+                                    <th class="text-left mfb-xxt">导出文件名</th>
+                                    <th class="text-left mfb-xxt">导出申请时间</th>
+                                    <th class="text-left mfb-xxt">Excel生成时间</th>
+                                    <th class="text-left mfb-xxt">导出申请者</th>
+                                    <th class="text-left mfb-xxx">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr><td colspan="16"><div if-no-rows="vm.exportList.length"></div></td></tr>
+                                <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
+                                    <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
+                                    <td class="text-left mfb-xxt" style="overflow: hidden;"><a href="javascript:void(0)" ng-click="openOtherDownload(exportInfo.fileName)">{{exportInfo.fileName}}</a></td>
+                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.created}}</td>
+                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.creater}}</td>
+                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportStatus[exportInfo.status]}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- /.box-body -->
+                    <div class="col-sm-12 m-t-lg m-b-lg">
+                        <vpagination config="vm.expotPageOption"></vpagination>
                     </div>
                 </div>
             </tab>
