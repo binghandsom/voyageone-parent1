@@ -249,28 +249,28 @@ public class TranslationService extends BaseAppService {
         for (CmsBtProductModel productModel:cmsBtProductModels){
             ProductTranslationBean translationBean = new ProductTranslationBean();
 
-            translationBean.setLongDescription(productModel.getFields().getLongDesEn());
-            translationBean.setProductName(productModel.getFields().getProductNameEn());
-            translationBean.setShortDescription(productModel.getFields().getShortDesEn());
+            translationBean.setLongDescription(productModel.getCommon().getFields().getLongDesEn());
+            translationBean.setProductName(productModel.getCommon().getFields().getProductNameEn());
+            translationBean.setShortDescription(productModel.getCommon().getFields().getShortDesEn());
 
-            translationBean.setLongTitle(StringUtils.isEmpty(productModel.getFields().getLongTitle()) ? productModel.getFields().getOriginalTitleCn() : productModel.getFields().getLongTitle());
-            translationBean.setMiddleTitle(productModel.getFields().getMiddleTitle());
-            translationBean.setShortTitle(productModel.getFields().getShortTitle());
-            translationBean.setLongDesCn(StringUtils.isEmpty(productModel.getFields().getLongDesCn()) ? productModel.getFields().getOriginalDesCn(): productModel.getFields().getLongDesCn());
-            translationBean.setShortDesCn(productModel.getFields().getShortDesCn());
-            translationBean.setModel(productModel.getFields().getModel());
-            translationBean.setProductCode(productModel.getFields().getCode());
-            translationBean.setClientProductUrl((String) productModel.getFields().get("clientProductUrl"));
+            translationBean.setLongTitle(StringUtils.isEmpty(productModel.getCommon().getFields().getLongTitle()) ? productModel.getFields().getOriginalTitleCn() : productModel.getFields().getLongTitle());
+            translationBean.setMiddleTitle(productModel.getCommon().getFields().getMiddleTitle());
+            translationBean.setShortTitle(productModel.getCommon().getFields().getShortTitle());
+            translationBean.setLongDesCn(StringUtils.isEmpty(productModel.getCommon().getFields().getLongDesCn()) ? productModel.getCommon().getFields().getOriginalDesCn(): productModel.getFields().getLongDesCn());
+            translationBean.setShortDesCn(productModel.getCommon().getFields().getShortDesCn());
+            translationBean.setModel(productModel.getCommon().getFields().getModel());
+            translationBean.setProductCode(productModel.getCommon().getFields().getCode());
+            translationBean.setClientProductUrl(productModel.getCommon().getFields().getClientProductUrl());
 
             // 设置商品图片
-            translationBean.setProductImage(productModel.getFields().getImages1().get(0).getName());
+            translationBean.setProductImage(productModel.getCommon().getFields().getImages1().get(0).getName());
             List<List<String>> imageList = new ArrayList<>(4);
-            List<CmsBtProductModel_Field_Image> images1 = productModel.getFields().getImages1();
-            List<CmsBtProductModel_Field_Image> images2 = productModel.getFields().getImages2();
-            List<CmsBtProductModel_Field_Image> images3 = productModel.getFields().getImages3();
-            List<CmsBtProductModel_Field_Image> images4 = productModel.getFields().getImages4();
-            List<CmsBtProductModel_Field_Image> images5 = productModel.getFields().getImages5();
-            List<CmsBtProductModel_Field_Image> images6 = productModel.getFields().getImages6();
+            List<CmsBtProductModel_Field_Image> images1 = productModel.getCommon().getFields().getImages1();
+            List<CmsBtProductModel_Field_Image> images2 = productModel.getCommon().getFields().getImages2();
+            List<CmsBtProductModel_Field_Image> images3 = productModel.getCommon().getFields().getImages3();
+            List<CmsBtProductModel_Field_Image> images4 = productModel.getCommon().getFields().getImages4();
+            List<CmsBtProductModel_Field_Image> images5 = productModel.getCommon().getFields().getImages5();
+            List<CmsBtProductModel_Field_Image> images6 = productModel.getCommon().getFields().getImages6();
             List<String> images1Arr = new ArrayList<>(images1.size());
             List<String> images2Arr = new ArrayList<>(images2.size());
             List<String> images3Arr = new ArrayList<>(images3.size());
@@ -305,8 +305,8 @@ public class TranslationService extends BaseAppService {
 
             translationBean.setModifiedTime(productModel.getModified());
             translationBean.setProdId(productModel.getProdId());
-            translationBean.setTranslator(productModel.getFields().getTranslator());
-            translationBean.setTranSts(NumberUtils.toInt(productModel.getFields().getTranslateStatus()));
+            translationBean.setTranslator(productModel.getCommon().getFields().getTranslator());
+            translationBean.setTranSts(NumberUtils.toInt(productModel.getCommon().getFields().getTranslateStatus()));
 
 //            // 设置该商品在MT上面的groupId
 //            for (CmsBtProductModel_Group_Platform platForm : productModel.getGroups().getPlatforms()) {
