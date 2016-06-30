@@ -28,7 +28,7 @@ public class CmsAddChannelCategoryController  extends CmsController {
     public AjaxResponse init (@RequestBody Map<String, Object> params){
         //取得channelId
         params.put("channelId", this.getUser().getSelChannelId());
-        Map result = cmsAddChannelCategoryService.getChannelCategory(params,getLang());
+        Map result = cmsAddChannelCategoryService.getChannelCategory(params, getCmsSession());
         return success(result);
     }
 

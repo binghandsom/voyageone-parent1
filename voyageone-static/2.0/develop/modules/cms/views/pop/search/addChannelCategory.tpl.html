@@ -14,23 +14,22 @@
                         <label class="">{{'TXT_CART_NAME' | translate}}</label>
                     </div>
                     <div class="col-sm-7">
-                        <select class="form-control" ng-model="ctrl.cartId" ng-options="cart.value as cart.name for cart in ctrl.cartList" ng-change="ctrl.init()">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        <select class="form-control" disabled>
+                            <option value="1">{{ctrl.cartName}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="column_overflow col-sm-12" style="border:1px solid silver">
+                <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden">
                     <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.catId">
                         <div class="m-t-xs" ng-if="category.isParent == 1">
                             <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
                             <label class=" ">{{category.catName}}</label>
                         </div>
-                        <div class="m-t-xs" ng-if="category.isParent == 0"
-                             ng-controller="selectRowsCtrl">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-checked="ctrl.isSelectCid[category.catId]"
-                                       ng-model="ctrl.isSelectCid[category.catId]">
-                                <span class="fa fa-check"></span>&nbsp;
+                        <div class="m-t-xs" ng-if="category.isParent == 0">
+                            <label class="">
+                                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
+                                &nbsp;
                                 <label>{{category.catName}}</label>
                             </label>
                         </div>
@@ -59,11 +58,11 @@
             <i class="fa fa-minus icon-small text-vo"></i>&nbsp;
             <label class=" ">{{category.catName}}</label>
         </div>
-        <div class="m-t-xs" ng-if="category.isParent == 0" ng-controller="selectRowsCtrl">
-            <label class="checkbox-inline c-checkbox">
-                <input type="checkbox" ng-checked="ctrl.isSelectCid[category.catId]"
-                       ng-model="ctrl.isSelectCid[category.catId]" ng-click=" ">
-                <span class="fa fa-check"></span>&nbsp;
+        <div class="m-t-xs" ng-if="category.isParent == 0">
+            <label class="">
+                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
+                &nbsp;
                 <label>{{category.catName}}</label>
             </label>
         </div>
