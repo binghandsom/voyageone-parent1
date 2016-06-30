@@ -87,8 +87,17 @@ public class CmsBtJmApiLogTest {
         System.out.println(DateTimeUtil.getDateTime(d, "yyyy-MM-dd HH:mm:ss"));
         System.out.println(DateTimeUtil.getDateTime(d1, "yyyy-MM-dd HH:mm:ss"));
 
-    }
+        System.out.println(DateTimeUtil.getDateTime(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println(DateTimeUtil.getDateTime(getCurrentBeiJingDate(), "yyyy-MM-dd HH:mm:ss"));
 
+    }
+    public Date getCurrentBeiJingDate() {
+        Calendar cal = Calendar.getInstance();
+        TimeZone timeZone = cal.getTimeZone();//当前时区
+        long time =cal.getTimeInMillis() - timeZone.getRawOffset() + 8 * 3600 * 1000;
+
+        return new Date(time);
+    }
     public Date getLocalDate(Date beiJingDate) throws ParseException {
         long utcTime = beiJingDate.getTime() - 8 * 3600 * 1000;
         Calendar cal = Calendar.getInstance();
