@@ -65,7 +65,8 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
-                    "updateCommonProductInfo": "updateCommonProductInfo"
+                    "updateCommonProductInfo": "updateCommonProductInfo",
+                    "updateLock":"updateLock"
                 }
             },
             "mapping": {
