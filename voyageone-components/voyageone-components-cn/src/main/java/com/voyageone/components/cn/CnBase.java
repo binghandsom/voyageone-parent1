@@ -14,9 +14,9 @@ import com.voyageone.components.ComponentBase;
 public abstract class CnBase extends ComponentBase {
 
 
-    protected final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
+    protected static final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
 
-    protected final String trustStore_jc_password = "voyage1#";
+    protected static final String trustStore_jc_password = "voyage1#";
 
     protected String post(String apiAction, Object parameter, ShopBean shopBean) throws Exception {
         return post(apiAction, parameter, 3, 1000, shopBean);

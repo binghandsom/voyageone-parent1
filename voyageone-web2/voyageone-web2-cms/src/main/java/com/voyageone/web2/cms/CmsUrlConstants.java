@@ -489,7 +489,7 @@ public interface CmsUrlConstants {
             String UPLOAD_IMAGE = "uploadImage";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
-            String ROOT = "/cms/pop/add_to_channel_category/";
+            String ROOT = "/cms/pop/add_to_channel_category";
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
         }
@@ -525,6 +525,8 @@ public interface CmsUrlConstants {
             String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
 
             String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
+
+            String UPDATE_LOCK = "updateLock";
 
         }
 

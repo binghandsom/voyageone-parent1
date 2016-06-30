@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * Created by gjl on 2016/5/24.
  */
+@Deprecated
 public class CmsBtProductModel_SellerCats  extends BaseMongoMap<String, Object> {
     public int getCartId() {
         return getAttribute("cartId");
