@@ -10,7 +10,8 @@ public enum SubSystem {
     CMS(4),
     CORE(5),
     IMS(6),
-    SYNSHIP(7);
+    SYNSHIP(7),
+    VMS(8);
 
     private int id;
 
@@ -38,6 +39,8 @@ public enum SubSystem {
                 return SubSystem.IMS;
             case 7:
                 return SubSystem.SYNSHIP;
+            case 8:
+                return SubSystem.VMS;
             default:
                 return null;
         }

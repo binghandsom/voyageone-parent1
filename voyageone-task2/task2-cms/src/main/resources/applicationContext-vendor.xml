@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task.xsd">
+    <task:scheduled-tasks scheduler="cms-job-scheduler">
+
+        <!-- mq resume task 每5分钟运行一次 -->
+        <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
+        <!--<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>-->
+
+        <!-- vms batch add    -->
+        <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
+        <task:scheduled ref="VmsFeedImportJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+
+    </task:scheduled-tasks>
+
+    <!-- 必须需要 -->
+    <task:scheduler id="cms-job-scheduler" pool-size="3"/>
+</beans>
