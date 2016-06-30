@@ -98,7 +98,7 @@ public class JomgoQuery extends BaseCondition {
             return query;
         }
         if (queryStrList != null && queryStrList.size() > 0) {
-            return "{" + StringUtils.join(queryStrList, ',');
+            return "{" + StringUtils.join(queryStrList, ',') + "}";
         }
         return "";
     }

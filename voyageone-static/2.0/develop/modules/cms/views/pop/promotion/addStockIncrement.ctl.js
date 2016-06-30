@@ -90,8 +90,8 @@ define([
             }
         }
         //Save保存按钮
-        $scope.saveTask =function(){
-            taskStockIncrementService.saveTask($scope.vm).then(function(res){
+        $scope.save =function(){
+            taskStockIncrementService.save($scope.vm).then(function(res){
                 $scope.$close();
                 ctrl.search();
             });

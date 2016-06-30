@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.google.common.base.Joiner;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
@@ -99,6 +100,20 @@ public class TranslationTaskService extends BaseService {
                         "'common.fields.translator':'%s'}", userName);
         taskSummary.setUserCompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
         return  taskSummary;
+    }
+
+    public TranslationTaskBean getTaskById(String channelId, String userName, int prodId) throws BusinessException
+    {
+
+        String queryStr = String.format("{'common.fields.isMasterMain':1," +
+                "'prodId':'%s'," +
+                "'common.fields.translator':'%s', "+
+                " }", prodId, userName);
+
+        CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
+
+        TranslationTaskBean translationTaskBean = fillTranslationTaskBean(product);
+        return  translationTaskBean;
     }
 
     /**
@@ -200,8 +215,85 @@ public class TranslationTaskService extends BaseService {
     }
 
 
+    /**
+     * 检索用户的历史任务
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param keyWord
+     * @param channelId
+     * @param userName
+     * @param status
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String, Object> searchTask(int pageNum, int pageSize, String keyWord,  String channelId, String userName, String status) throws BusinessException
+    {
+        List<Map<String,Object>> list = new ArrayList<>();
+        Map<String,Object> result = new HashMap<>();
 
-//    public List<Map<String,Object>> searchTask(int pageNum, int PageSize, String codeOrName,  String channelId, String userName, String status) throws BusinessException
+        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
+        String translateTimeStr = DateTimeUtil.format(date, null);
+
+        JomgoQuery queryObj = new JomgoQuery();
+
+        queryObj.addQuery("'common.fields.isMasterMain':1,'common.fields.translator':#");
+        queryObj.addParameters(userName);
+        if(!StringUtils.isNullOrBlank2(keyWord))
+        {
+            queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]");
+            queryObj.addParameters(keyWord, keyWord, keyWord);
+        }
+
+        if(StringUtils.isNullOrBlank2(status))
+        {
+            queryObj.addQuery("'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}}, {'common.fields.translateStatus':'1'}]");
+            queryObj.addParameters(translateTimeStr);
+        }
+        else if(status.equals("1"))
+        {
+            queryObj.addQuery("'common.fields.translateStatus':'1'");
+        }
+        else if(status.equals("0"))
+        {
+            queryObj.addQuery("'common.fields.translateStatus':'0'");
+            queryObj.addQuery("'common.fields.translateTime':{'$gt':#}");
+            queryObj.addParameters(translateTimeStr);
+        }
+
+        queryObj.setSkip(pageSize *(pageNum-1)).setLimit(pageNum);
+
+        List<CmsBtProductModel>  products = cmsBtProductDao.select(queryObj, channelId);
+
+        if(products != null && products.size() >0)
+        {
+            for (CmsBtProductModel product: products) {
+                HashMap<String, Object> map = new HashMap<>();
+                CmsBtProductModel_Field fields = product.getCommon().getFields();
+
+                map.put("prodId", product.getProdId());
+                map.put("translateStatus",fields.getTranslateStatus() == null? "0" : fields.getTranslateStatus());
+                List<CmsBtProductModel_Field_Image> img1 = fields.getImages1();
+                if (img1 != null && img1.size() > 0) {
+                    map.put("image1", img1.get(0).getName());
+                }
+                else
+                {
+                    map.put("image1", "");
+                }
+                map.put("feeCategory", product.getFeed().getCatPath());
+                map.put("code", fields.getCode());
+                map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? ( fields.getProductNameEn() )  : fields.getOriginalTitleCn());
+                map.put("catPath", fields.getCatPath() == null? "" : fields.getCatPath());
+                map.put("translator", fields.getTranslator());
+                map.put("translateTime", fields.getTranslateTime());
+                list.add(map);
+            }
+        }
+        result.put("taskList", list);
+        result.put("total", 100);
+        return result;
+    }
 
 
     /**
