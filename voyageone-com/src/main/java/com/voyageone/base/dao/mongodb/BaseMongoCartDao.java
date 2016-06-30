@@ -82,6 +82,10 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.count(strQuery, getCollectionName(cartId));
     }
 
+    public long countByQuery(final String strQuery, Object[] parameters, int cartId) {
+        return mongoTemplate.count(strQuery, parameters, getCollectionName(cartId));
+    }
+
     public WriteResult deleteById(String id, int cartId) {
         return mongoTemplate.removeById(id, getCollectionName(cartId));
     }

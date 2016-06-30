@@ -211,19 +211,32 @@ public class TranslationController extends CmsController{
     }
 
 
+    /**
+     * 检索历史任务
+     *
+     * @param requestBean
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH)
     public AjaxResponse doSearch(@RequestBody Map requestBean){
         int pageNum = Integer.valueOf(requestBean.getOrDefault("pageNum", 1).toString());
         int pageSize = Integer.valueOf(requestBean.getOrDefault("pageSize", 10).toString());
-        String codeOrName = requestBean.get("codeOrName").toString();
-        String translateStatus = requestBean.get("translateStatus").toString();
+        String keyWord = requestBean.getOrDefault("keyWord","").toString();
+        String translateStatus = requestBean.getOrDefault("translateStatus", "").toString();
 
-
-
-        return success(null);
+        String channelId = this.getUser().getSelChannelId();
+        String user =this.getUser().getUserName();
+        return success(translationTaskService.searchTask(pageNum,pageSize,keyWord,channelId, user,translateStatus));
     }
 
 
+    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET)
+    public AjaxResponse doGet(@RequestBody Map requestBean) {
+
+        int prodId = Integer.valueOf(requestBean.getOrDefault("pageNum", 1).toString());
+        return success(null);
+
+    }
 
 
 

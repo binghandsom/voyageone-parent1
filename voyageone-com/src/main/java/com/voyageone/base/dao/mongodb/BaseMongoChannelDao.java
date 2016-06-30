@@ -85,6 +85,10 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.count(strQuery, getCollectionName(channelId));
     }
 
+    public long countByQuery(final String strQuery, Object[] parameters, String channelId) {
+        return mongoTemplate.count(strQuery, parameters, getCollectionName(channelId));
+    }
+
     public WriteResult deleteById(String id, String channelId) {
         return mongoTemplate.removeById(id, getCollectionName(channelId));
     }

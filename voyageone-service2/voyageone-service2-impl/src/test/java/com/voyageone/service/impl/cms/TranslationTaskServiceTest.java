@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -38,7 +40,6 @@ public class TranslationTaskServiceTest {
     public void testGetCurrentTask() throws Exception {
         TranslationTaskBean result  = translationTaskService.getCurrentTask("010", "will");
         System.out.println(JsonUtil.bean2Json(result));
-
     }
 
     @Test
@@ -63,5 +64,19 @@ public class TranslationTaskServiceTest {
         result = translationTaskService.saveTask(result, "010","will", "0");
 
         System.out.println(JsonUtil.bean2Json(result));
+    }
+
+    @Test
+    public void testSearchTask() throws Exception {
+
+        Map<String, Object> result = translationTaskService.searchTask(1,10,"","010","will","");
+        System.out.println(JsonUtil.bean2Json(result));
+        result = translationTaskService.searchTask(1,10,"手镯","010","will","0");
+        System.out.println(JsonUtil.bean2Json(result));
+        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","0");
+        System.out.println(JsonUtil.bean2Json(result));
+        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","1");
+        System.out.println(JsonUtil.bean2Json(result));
+
     }
 }

@@ -11,6 +11,10 @@
 
 angular.module("voyageone.angular.vresources", []).provider("$vresources", function ($provide) {
 
+    function getActionUrl(root, action) {
+        return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+
     function actionHashcode(md5, root, action, args) {
         var argsJson = angular.toJson(args);
         var md5Arg = root + action + argsJson;
@@ -38,9 +42,10 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
             return;
         }
 
-        _ServiceClass = function (ajax, $localStorage, md5, $q) {
+        _ServiceClass = function (ajax, $sessionStorage, $localStorage, md5, $q) {
             this._a = ajax;
-            this._s = $localStorage;
+            this._sc = $sessionStorage;
+            this._lc = $localStorage;
             this._5 = md5;
             this._q = $q;
             this._c = {};
@@ -79,14 +84,17 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                     return res;
                 };
 
-            if (!_cacheFlag || _cacheFlag > 2)
+            if (!_cacheFlag || _cacheFlag > 3)
                 _cacheFlag = 0;
 
+            _url = getActionUrl(_root, _url);
+
             _ServiceClass.prototype[key] = _cacheFlag === 0 ? function (args) {
-                return this._a.post(_root + _url, args).then(_resolve, _reject);
+                return this._a.post(_url, args).then(_resolve, _reject);
             } : function (args) {
                 var deferred, result;
-                var storage = this._s,
+                var session = this._sc,
+                    local = this._lc,
                     hash = actionHashcode(this._5, root, key, args),
                     promise = this._c[hash];
                 if (promise)
@@ -95,17 +103,23 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 promise = deferred.promise;
                 this._c[hash] = promise;
 
-                if (_cacheFlag === 2) {
-                    result = storage[hash];
-                }
+                result = _cacheFlag === 2 ? session[hash] : (_cacheFlag === 3 ? local[hash] : null);
 
                 if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
-                    this._a.post(_root + _url, args).then(function (res) {
+                    this._a.post(_url, args).then(function (res) {
                         result = _resolve(res);
-                        if (_cacheFlag === 2)
-                            storage[hash] = result;
+                        
+                        switch (_cacheFlag) {
+                            case 2:
+                                session[hash] = result;
+                                break;
+                            case 3:
+                                local[hash] = result;
+                                break;
+                        }
+                        
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -116,7 +130,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
             };
         });
 
-        $provide.service(name, ['ajaxService', '$localStorage', 'md5', '$q', _ServiceClass]);
+        $provide.service(name, ['ajaxService', '$sessionStorage', '$localStorage', 'md5', '$q', _ServiceClass]);
     }
 
     this.$get = function () {
