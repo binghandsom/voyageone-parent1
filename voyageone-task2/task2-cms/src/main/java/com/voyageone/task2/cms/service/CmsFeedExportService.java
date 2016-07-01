@@ -63,6 +63,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
         CmsBtExportTaskModel cmsBtExportTaskModel = new CmsBtExportTaskModel();
         cmsBtExportTaskModel.setModified(new Date());
         cmsBtExportTaskModel.setModifier(getTaskName());
+        messageMap.remove("created");
+        messageMap.remove("modified");
         BeanUtils.populate(cmsBtExportTaskModel, messageMap);
         Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
         Long cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);

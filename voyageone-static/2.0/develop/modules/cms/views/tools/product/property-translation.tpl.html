@@ -41,35 +41,38 @@
                                 </div>
                                 <div class="panel-body" style="background-color: #F8F8F8; padding: 21px;">
                                     <form class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label text-left">{{'TXT_DISTRIBUTION_RULE' | translate}}</label>
-                                            <div class="col-sm-3">
+                                        <div class="col-sm-7">
+                                            <div class="form-group">
+                                                <label class="col-sm-12 control-label text-left">{{'TXT_DISTRIBUTION_RULE' | translate}}</label>
                                                 <select class="form-control" ng-model="ctrl.vm.assignInfo.sortCondition"
                                                         ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-3">
-                                                <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="Asc" ng-model="ctrl.vm.assignInfo.sort"
-                                                           class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="Desc" ng-model="ctrl.vm.assignInfo.sort"
-                                                           class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_DESC' | translate}}
-                                                </label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <div class="col-sm-12" style="margin-top: 9px">
+                                                    <label class="checkbox-inline c-radio ng-binding">
+                                                        <input name="sortOne" type="radio" value="asc" ng-model="ctrl.vm.assignInfo.sort"
+                                                               class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}
+                                                    </label>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <label class="checkbox-inline c-radio ng-binding">
+                                                        <input name="sortOne" type="radio" value="desc" ng-model="ctrl.vm.assignInfo.sort"
+                                                               class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_DESC' | translate}}
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <!--<label class="col-sm-3 control-label">{{'TXT_ITEM_CODE' | translate}}</label>-->
-                                            <div class="col-sm-11">
-                                                <input class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.vm.assignInfo.codeOrName">
+                                            <div class="col-sm-7">
+                                                <input class="form-control" placeholder="{{'TXT_FUZZY_SEARCH_PLACE_HOLDER' | translate}}" ng-model="ctrl.vm.assignInfo.codeOrName">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
+                                            <!--</div>-->
+                                            <!--<div class="form-group">-->
+                                            <div class="col-sm-2" style="margin-bottom: -7px;">
                                                 <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}
                                                 </button>
                                             </div>
@@ -81,32 +84,49 @@
                         <div class="col-sm-4">
                             <div class="panel panel-default">
                                 <div class="panel-heading" style="background-color: #666666;">
-                                    <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;个人翻译成果搜索</h3>
+                                    <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'TXT_TRANSLATION_SEARCH' | translate}}</h3>
                                 </div>
-                                <div class="panel-body" style="background-color: #F8F8F8;padding: 21px;">
-                                    <form class="form-horizontal m-l-md">
-                                        <div class="form-group">
-                                            <label class="col-sm-4 control-label text-left"
-                                                   translate="TXT_TRANSSTS_ATTRIBUTE"></label>
-                                            <div class="col-sm-7">
-                                                <select class="form-control" ng-model="ctrl.vm.searchInfo.tranSts">
-                                                    <option value="">{{'TXT_TRANSLATION_SEARCH_SELECT_ALL' | translate}}</option>
-                                                    <option value="0">{{'TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED' | translate}}</option>
-                                                    <option value="1">{{'TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED' | translate}}</option>
-                                                </select>
+                                <div class="panel-body" style="background-color: #F8F8F8;padding: 21px">
+                                    <form class="form-horizontal m-l-md" novalidate>
+                                        <div class="col-sm-10">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label text-left">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control" ng-model="ctrl.vm.searchInfo.tranSts">
+                                                        <option value="">{{'TXT_TRANSLATION_SEARCH_SELECT_ALL' | translate}}</option>
+                                                        <option value="0">{{'TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED' | translate}}</option>
+                                                        <option value="1">{{'TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED' | translate}}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-11">
-                                                <input class="form-control" placeholder="模糊查询(ProductCode，商品名称)" ng-model="ctrl.vm.searchInfo.searchCondition"/>
+                                        <div class="col-sm-10">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label text-left">{{'TXT_PAGER_SIZE' | translate}}</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control" ng-model="ctrl.vm.searchInfo.pageSize">
+                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="20">20行</option>
+                                                        <option value="50">50行</option>
+                                                        <option value="100">100行</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <button class="btn btn-default col-sm-offset-4" ng-click="ctrl.clearConditions()"><i
-                                                class="fa fa-remove"></i>&nbsp;清空
-                                        </button>
-                                        <button class="btn btn-vo" type="button" ng-click="ctrl.search()">
-                                            <i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}
-                                        </button>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" placeholder="{{'TXT_FUZZY_SEARCH_PLACE_HOLDER' | translate}}"
+                                                   ng-model="ctrl.vm.searchInfo.searchCondition"/>
+                                        </div>
+                                        <div class="col-sm-6" style="margin-bottom: -7px">
+                                            <div class="form-group">
+                                                <button class="btn btn-default col-sm-offset-1" ng-click="ctrl.clearConditions()"><i
+                                                        class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}
+                                                </button>
+                                                <button class="btn btn-vo" type="button" ng-click="ctrl.search()">
+                                                    <i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -118,8 +138,16 @@
     </div>
     <div class="box">
         <div class="panel panel-default">
+
             <div class="container-fluid m-t-xs m-b-x">
-                <uib-tabset class="tab-container vo_nav-tabs" ng-show="!ctrl.searchBtnClicked">
+                <uib-tabset class="container-fluid m-t-xs m-b-x" ng-show="!ctrl.searchBtnClicked && !self.vm.taskDetail">
+                    <div class="text-center text-hs">
+                        <h4 class="text-vo"><i class="icon fa fa-warning">
+                        </i>{{'TXT_ALERT' | translate}}</h4>
+                        {{'TXT_MSG_NO_DATE' | translate}}z
+                    </div>
+                </uib-tabset>
+                <uib-tabset class="tab-container vo_nav-tabs" ng-show="!ctrl.searchBtnClicked && self.vm.taskDetail">
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px">
                         <div class="form-group" style="margin-top: 3px">
                             <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE'|translate}}</button>
@@ -266,34 +294,32 @@
                 <table class="table table-hover-new table-hover table_main" ng-show="ctrl.searchBtnClicked">
                     <thead>
                     <tr>
-                        <th class="mfb-xt text-center ng-scope">No.</th>
                         <th class="mfb-xt text-center ng-scope">Status</th>
                         <th class="mfb-xt text-center ng-scope">Image</th>
                         <th class="mfb-xt text-center ng-scope">Feed Category</th>
                         <th class="mfb-xt text-center ng-scope">Code</th>
                         <th class="mfb-xt text-center ng-scope">Name</th>
                         <th class="mfb-xt text-center ng-scope">Main Category</th>
-                        <th class="mfb-xt text-center ng-scope">UpdateTime</th>
+                        <th class="mfb-xt text-center ng-scope">TranslateTime</th>
                     </tr>
                     </thead>
-                    <tbody ng-if="ctrl.vm.taskList.length == 0">
+                    <tbody ng-if="ctrl.vm.taskList || ctrl.vm.taskList.length == 0">
                     <tr style="padding-left:0px">
                         <td colspan="8">
                             <div if-no-rows="ctrl.hsCodeList.length"></div>
                         </td>
                     </tr>
                     </tbody>
-                    <tbody ng-if="ctrl.vm.taskList.length > 0">
-                        <tr ng-repeat="task in ctrl.vm.taskList">
-                            <th class="mfb-xt text-center ng-scope">No.</th>
-                            <th class="mfb-xt text-center ng-scope">Status</th>
-                            <th class="mfb-xt text-center ng-scope">Image</th>
-                            <th class="mfb-xt text-center ng-scope">Feed Category</th>
-                            <th class="mfb-xt text-center ng-scope">Code</th>
-                            <th class="mfb-xt text-center ng-scope">Name</th>
-                            <th class="mfb-xt text-center ng-scope">Main Category</th>
-                            <th class="mfb-xt text-center ng-scope">UpdateTime</th>
-                        </tr>
+                    <tbody ng-if="ctrl.vm.taskList.length > 0" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
+                    <tr ng-repeat="task in ctrl.vm.taskList">
+                        <th class="mfb-xt text-center">{{task.translateStatus}}</th>
+                        <th class="mfb-xt text-center"><img ng-src="{{task.imgUrl}}"/></th>
+                        <th class="mfb-xt text-center">{{task.category}}</th>
+                        <th class="mfb-xt text-center"><a ng-click="">{{task.code}}</a></th>
+                        <th class="mfb-xt text-center">{{task.name}}</th>
+                        <th class="mfb-xt text-center">{{task.MainCategory}}</th>
+                        <th class="mfb-xt text-center">{{task.translateTime}}</th>
+                    </tr>
                     </tbody>
                 </table>
             </div>
