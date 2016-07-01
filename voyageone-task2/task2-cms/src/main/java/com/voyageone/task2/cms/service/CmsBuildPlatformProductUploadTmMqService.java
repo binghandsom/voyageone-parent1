@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -470,18 +471,18 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
             for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
                 // 获取价格
-                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+                if (ListUtils.notNull(sxProductModel.getCommon().getSkus())) {
                     // 没有sku的code, 跳过
                     continue;
                 }
-                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+                Double dblPrice = Double.parseDouble(sxProductModel.getCommon().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
 
                 // 设置特价宝
                 CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
                 cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
                 cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
                 cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
-                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
                 cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
                 cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
                 cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
