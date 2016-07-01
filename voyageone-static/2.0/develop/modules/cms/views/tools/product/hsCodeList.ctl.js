@@ -18,7 +18,7 @@ define([
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
                 qty: "1",
-                order: "",
+                order: "-1",
                 code: "",
                 hsCodeTaskCnt: 10
             };
