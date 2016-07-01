@@ -50,8 +50,8 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (CmsBtProductModel prodObj : prodList) {
             // 对每个产品统计其sku数据
-            String prodCode = prodObj.getFields().getCode();
-            List<CmsBtProductModel_Sku> skusList = prodObj.getSkus();
+            String prodCode = prodObj.getCommon().getFields().getCode();
+            List<CmsBtProductModel_Sku> skusList = prodObj.getCommon().getSkus();
             if (skusList == null || skusList.isEmpty()) {
                 $warn(String.format("CmsFindProdOrdersInfoService 该产品无sku数据！ + channel_id=%s, code=%s", channelId, prodCode));
                 continue;

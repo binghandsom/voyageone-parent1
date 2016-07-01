@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -214,10 +215,10 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCatId());
+            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
             if (cmsMtPlatformMappingModel == null) {
                 String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
-                        channelId, cartId, mainProduct.getCatId());
+                        channelId, cartId, mainProduct.getCommon().getCatId());
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
@@ -470,18 +471,18 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
             for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
                 // 获取价格
-                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+                if (ListUtils.notNull(sxProductModel.getCommon().getSkus())) {
                     // 没有sku的code, 跳过
                     continue;
                 }
-                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+                Double dblPrice = Double.parseDouble(sxProductModel.getCommon().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
 
                 // 设置特价宝
                 CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
                 cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
                 cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
                 cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
-                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
                 cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
                 cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
                 cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());

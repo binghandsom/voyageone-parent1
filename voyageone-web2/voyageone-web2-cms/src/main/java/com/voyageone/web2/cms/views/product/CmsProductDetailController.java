@@ -6,6 +6,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +44,8 @@ public class CmsProductDetailController extends CmsController {
         Map<String, Object> result = new HashMap<>();
 
         Map<String, Object> productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
-        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(channelId, productId);
+        CmsProductInfoBean productModel = (CmsProductInfoBean)productInfo.get("productInfo");
+        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(productModel.getChannelId(), productId);
         result.put("inventoryList", inventoryList);
         result.put("productInfo", productInfo.get("productInfo"));
         result.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(getLang()));

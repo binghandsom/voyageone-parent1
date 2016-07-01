@@ -323,7 +323,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                      }
 
                      // 获取类目属性匹配关系(指定的主类目)
-                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCatPath());
+                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getCatPath() != null) {
                          newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      }
@@ -395,8 +395,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                     // product中包含的那个sku 还延用原来的Code，Mode
                                     BeanUtils.copyProperties(splitFeed, originalFeed);
                                     BeanUtils.copyProperties(splitSku, feedSku);
-                                    splitFeed.setCode(cmsProduct.getFields().getCode());
-                                    splitFeed.setModel(cmsProduct.getFields().getModel());
+                                    splitFeed.setCode(cmsProduct.getCommon().getFields().getCode());
+                                    splitFeed.setModel(cmsProduct.getCommon().getFields().getModel());
                                     splitSkus.add(splitSku);
                                     splitFeed.setSkus(splitSkus);
                                     feedList.add(splitFeed);
@@ -482,7 +482,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 存在
                         blnProductExist = true;
                         // 获取类目属性匹配关系(指定的主类目)
-                        mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCatPath());
+                        mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
                         if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getCatPath() != null) {
                             newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
                         }
@@ -620,7 +620,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     }
 
-                    $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                    $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
                     // jeff 2016/04 add start
                     updateCnt++;
                     // jeff 2016/04 add end
@@ -650,7 +650,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     productService.createProduct(channelId, cmsProduct, getTaskName());
 
-                    $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                    $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
                     // jeff 2016/04 add start
                     insertCnt++;
                     // jeff 2016/04 add end

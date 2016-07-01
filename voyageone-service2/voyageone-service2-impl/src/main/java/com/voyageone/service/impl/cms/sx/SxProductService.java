@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -259,7 +260,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -701,7 +702,7 @@ public class SxProductService extends BaseService {
 //            }
             // 2016/06/02 Update by desmond end
             // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
                 continue;
             }
@@ -1308,7 +1309,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
@@ -1656,7 +1657,8 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
-            if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+            //// TODO: 16/6/30 edward 因为不知道怎么修改所以请上新组修改
+            if (!productModel.getPlatform(cartId).getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
             for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
@@ -2302,17 +2304,12 @@ public class SxProductService extends BaseService {
         if (uploadStatus) {
             // 设置共通属性
             sxData.getPlatform().setNumIId(numIId);
-            if (!isUsJoi) {
-                // 一般店铺上新时(更新商品失败时，不更新platformStatus)
-                if (platformStatus != null) {
-                    sxData.getPlatform().setPlatformStatus(platformStatus);
-                }
-            } else {
-                // USJoi店铺上新时,固定设为下架
-                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+            // 一般店铺上新时(更新商品失败时，不更新platformStatus)
+            if (platformStatus != null) {
+                sxData.getPlatform().setPlatformStatus(platformStatus);
             }
             if (!StringUtils.isEmpty(platformPid)) {
-                sxData.getPlatform().setModifier(platformPid);
+                sxData.getPlatform().setPlatformPid(platformPid);
             }
             sxData.getPlatform().setModifier(modifier);
 
@@ -2327,19 +2324,18 @@ public class SxProductService extends BaseService {
                 sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
             }
 
-            if (!isUsJoi) {
-                // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
-                if (StringUtils.isEmpty(beforeProductGroup.getOnSaleTime())
-                        && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
-                    sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
-                }
-                // 一般店铺上新成功后回写productGroup及product表的状态
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+            // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
+            if (StringUtils.isEmpty(beforeProductGroup.getOnSaleTime())
+                    && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
+                sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
+            }
 
-                // 回写ims_bt_product表(numIId)
+            // 一般店铺上新成功后回写productGroup及product表的状态
+            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+
+            // 回写ims_bt_product表(numIId)(USJOI和聚美平台不回写这个表)
+            if (!isUsJoi && CartEnums.Cart.JM.getValue() != sxData.getCartId()) {
                 this.updateImsBtProduct(sxData, modifier);
-            } else {
-                productGroupService.updateUSJoiGroupsPlatformStatus(sxData.getPlatform());
             }
 
             // 写入履历

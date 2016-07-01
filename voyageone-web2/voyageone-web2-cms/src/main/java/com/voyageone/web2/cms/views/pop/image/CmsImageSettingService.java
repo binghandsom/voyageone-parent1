@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.pop.image;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -83,14 +82,14 @@ public class CmsImageSettingService extends BaseAppService {
             CmsBtImagesModel newModel = new CmsBtImagesModel();
             newModel.setChannelId(orderChannelId);
             newModel.setOriginalUrl("本地图片上传:" + file.getOriginalFilename());
-            newModel.setCode(cmsBtProductModel.getFields().getCode());
+            newModel.setCode(cmsBtProductModel.getCommon().getFields().getCode());
             newModel.setUpdFlg(1);
             newModel.setCreater(userName);
             newModel.setImgName(imageName);
             imagesService.insert(newModel);
 
             // 上新
-            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
+//            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
                 productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, userName);
 
             // 更新产品数据
@@ -114,15 +113,15 @@ public class CmsImageSettingService extends BaseAppService {
         Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
         CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
-        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getFields().getImages(fieldImageType);
+        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getCommon().getFields().getImages(fieldImageType);
 
         images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(),DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString),  imageType.substring(imageType.length() - 1));
+        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(),DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getCommon().getFields().getCode()).replaceAll(Constants.EmptyString),  imageType.substring(imageType.length() - 1));
 
         images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
 
-        cmsBtProductModel.getFields().setImages(fieldImageType, images);
+        cmsBtProductModel.getCommon().getFields().setImages(fieldImageType, images);
 
         return imageName;
 

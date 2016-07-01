@@ -166,7 +166,7 @@ public class CmsProductDetailService extends BaseAppService {
         this.fillFieldOptions(subSkuFields, channelId, language);
 
         // TODO 取得Sku的库存
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(productValueModel.getOrgChannelId(), productValueModel.getFields().getCode());
 
         //获取sku schemaValue
         Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
@@ -193,6 +193,7 @@ public class CmsProductDetailService extends BaseAppService {
         productInfo.setProductStatus(productStatus);
         productInfo.setModified(productValueModel.getModified());
         productInfo.setProductCode(productValueModel.getFields().getCode());
+        productInfo.setOrgChannelId(productValueModel.getOrgChannelId());
 
         Map<String, Object> infoMap = new HashMap<>();
         infoMap.put("productInfo", productInfo);
@@ -234,10 +235,10 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
-        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+//        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
             // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
-            channelId = prodObj.getOrgChannelId();
-        }
+            channelId = StringUtils.isEmpty(prodObj.getOrgChannelId()) ? channelId : prodObj.getOrgChannelId();
+//        }
         Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<>(0);
@@ -544,15 +545,15 @@ public class CmsProductDetailService extends BaseAppService {
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
-        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getFields().getCode(), 0);
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), 0);
         List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
-            CmsBtProductModel product = cmsBtProduct.getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
+            CmsBtProductModel product = cmsBtProduct.getCommon().getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getFields().getImages1().get(0).get("image1"));
+                image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 images.add(image);
             }

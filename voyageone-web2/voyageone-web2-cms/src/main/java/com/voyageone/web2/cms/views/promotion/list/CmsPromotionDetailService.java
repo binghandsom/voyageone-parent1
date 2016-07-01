@@ -253,7 +253,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 } else {
                     cmsBtProductModel = temp.get(map.get("productId").toString());
                 }
-                CmsBtProductModel_Sku sku = cmsBtProductModel.getSku(map.get("productSku").toString());
+                CmsBtProductModel_Sku sku = cmsBtProductModel.getCommon().getSku(map.get("productSku").toString());
                 if (sku != null) {
                     map.put("size", sku.getSize());
                 }

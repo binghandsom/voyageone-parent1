@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -103,12 +102,22 @@ public class TranslationTaskService extends BaseService {
         return  taskSummary;
     }
 
+
+    /**
+     * 按proId获取翻译任务详情
+     *
+     * @param channelId
+     * @param userName
+     * @param prodId
+     * @return
+     * @throws BusinessException
+     */
     public TranslationTaskBean getTaskById(String channelId, String userName, int prodId) throws BusinessException
     {
 
-        String queryStr = String.format("{'common.fields.isMasterMain':1," +
-                "'prodId':'%s'," +
-                "'common.fields.translator':'%s', "+
+        String queryStr = String.format("{'common.fields.isMasterMain':1, " +
+                "'prodId':%s, " +
+                "'common.fields.translator':'%s' "+
                 " }", prodId, userName);
 
         CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
@@ -116,6 +125,41 @@ public class TranslationTaskService extends BaseService {
         TranslationTaskBean translationTaskBean = fillTranslationTaskBean(product);
         return  translationTaskBean;
     }
+
+
+
+    public TranslationTaskBean assignTask(String channelId, String userName ,String priority, String sort, String  keyWrod) throws BusinessException
+    {
+        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
+        String translateTimeStr = DateTimeUtil.format(date, null);
+
+        //先查是否有任务未完成
+        String queryStr = String.format("{'common.fields.isMasterMain':1," +
+                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translator':'%s', "+
+                "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
+
+        long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
+
+        if(cnt > 0)
+        {
+            throw new BusinessException("当前任务还未完成，不能领取新的任务！");
+        }
+
+        //再查是否有过期任务，优先分配过期任务
+        queryStr = String.format("{'common.fields.isMasterMain':1," +
+                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translator':'%s'}", userName);
+
+        CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
+
+        TranslationTaskBean translationTaskBean = fillTranslationTaskBean(product);
+
+        return translationTaskBean;
+    }
+
+
+
 
     /**
      * 取当前任务
@@ -127,8 +171,6 @@ public class TranslationTaskService extends BaseService {
      */
     public TranslationTaskBean getCurrentTask(String channelId, String userName) throws BusinessException
     {
-
-
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
@@ -143,6 +185,17 @@ public class TranslationTaskService extends BaseService {
         return  translationTaskBean;
     }
 
+
+    /**
+     * 保存翻译任务
+     *
+     * @param bean
+     * @param channelId
+     * @param userName
+     * @param status
+     * @return
+     * @throws BusinessException
+     */
     public TranslationTaskBean  saveTask(TranslationTaskBean bean, String channelId, String userName, String status) throws BusinessException
     {
 
@@ -266,6 +319,8 @@ public class TranslationTaskService extends BaseService {
 
         List<CmsBtProductModel>  products = cmsBtProductDao.select(queryObj, channelId);
 
+        long total = cmsBtProductDao.countByQuery(queryObj.getQuery(), queryObj.getParameters(), channelId);
+
         if(products != null && products.size() >0)
         {
             for (CmsBtProductModel product: products) {
@@ -285,14 +340,14 @@ public class TranslationTaskService extends BaseService {
                 map.put("feeCategory", product.getFeed().getCatPath());
                 map.put("code", fields.getCode());
                 map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? ( fields.getProductNameEn() )  : fields.getOriginalTitleCn());
-                map.put("catPath", fields.getCatPath() == null? "" : fields.getCatPath());
+                map.put("catPath", product.getCommon().getCatPath() == null? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
                 map.put("translateTime", fields.getTranslateTime());
                 list.add(map);
             }
         }
         result.put("taskList", list);
-        result.put("total", 100);
+        result.put("total", total);
         return result;
     }
 
@@ -314,7 +369,7 @@ public class TranslationTaskService extends BaseService {
 
 
             CmsBtProductModel_Field fields = product.getCommon().getFields();
-            translationTaskBean.setCatPath(fields.getCatPath());
+            translationTaskBean.setCatPath(product.getCommon().getCatPath());
             translationTaskBean.setProductCode(fields.getCode());
             TranslationTaskBean_CommonFields commonFields = new TranslationTaskBean_CommonFields();
             commonFields.setBrand(fields.getBrand());
