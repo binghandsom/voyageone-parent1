@@ -982,6 +982,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
 
+    /**
+     * 填充skulist
+     *
+     * @param list
+     * @param product
+     * @return
+     */
     private List<CmsBtJmSkuModel> fillCmsBtJmSkuModelList(List<CmsBtJmSkuModel> list, CmsBtProductModel product)
     {
         String channelId =  product.getChannelId();
