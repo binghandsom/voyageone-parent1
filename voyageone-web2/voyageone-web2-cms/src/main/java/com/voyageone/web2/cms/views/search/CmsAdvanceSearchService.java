@@ -37,10 +37,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -157,22 +154,18 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
-     * limitSize表示只检索指定的件数<br>
+     * skip表示开始检索的位置，0代表从第一位开始检索<br>
+     * limitSize表示只检索指定的件数，0代表不限制件数<br>
      * 另外，注意：这里虽然返回的是CmsBtProductModel，但是实际上只有两个属性有值，common.fields.code和platforms.Pxx.mainProductCode （没办法，只能如此，框架所限没法返回简单的Map对象）
      */
-    public List<CmsBtProductModel> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int limitSize) {
+    public List<CmsBtProductModel> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int skip, int limitSize) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'common.fields.code':1,'platforms.P" + searchValue.getCartId() + ".mainProductCode':1,'_id':0}");
         queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
-        if (searchValue.getProductPageNum() > 0) {
-            queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
-            if (limitSize > 0) {
-                queryObject.setLimit(limitSize);
-            } else {
-                queryObject.setLimit(searchValue.getProductPageSize());
-            }
-        }
+        queryObject.setSkip(skip);
+        queryObject.setLimit(limitSize);
+
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", userInfo.getSelChannelId(), queryObject.toString()));
         }
@@ -365,18 +358,22 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 返回当前页的group列表，这里是分页查询<br>
      * 这里不是直接去检索group表，而是根据CmsBtProductModel中的mainProductCode过滤而来
+     * 注意要过滤重复code
      */
-    public List<String> getGroupCodeList(List<CmsBtProductModel> prodObjList, CmsSearchInfoBean2 searchValue, int cartId) {
+    public List<String> getGroupCodeList(List<CmsBtProductModel> prodObjList, int cartId, int staIdx, int endIdx) {
         if (prodObjList == null || prodObjList.isEmpty()) {
             $warn("CmsAdvanceSearchService.getGroupCodeList prodObjList");
             return new ArrayList<>(0);
         }
-        List<String> grpCodeList = prodObjList.stream().map(prodObj -> prodObj.getPlatformNotNull(cartId).getStringAttribute("mainProductCode")).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
+        List<String> prodCodeList = prodObjList.stream().map(prodObj -> prodObj.getPlatformNotNull(cartId).getStringAttribute("mainProductCode")).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).distinct().collect(Collectors.toList());
 
-        if (searchValue.getGroupPageNum() > 0) {
-            grpCodeList = grpCodeList.subList(0, searchValue.getGroupPageSize());
+        if (endIdx > 0) {
+            if (endIdx > prodCodeList.size()) {
+                endIdx = prodCodeList.size();
+            }
+            return prodCodeList.subList(staIdx, endIdx);
         }
-        return grpCodeList;
+        return prodCodeList;
     }
 
     /**
