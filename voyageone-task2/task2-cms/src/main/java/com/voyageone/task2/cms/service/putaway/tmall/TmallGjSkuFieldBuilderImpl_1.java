@@ -144,131 +144,131 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
         }
     }
 
-    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal {
-        BuildSkuResult buildSkuResult = new BuildSkuResult();
-        contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
-
-        ComplexMappingBean skuMappingComplex = (ComplexMappingBean) skuMapping;
-        List<MappingBean> subMappingBeans = skuMappingComplex.getSubMappings();
-        Map<String, Field> fieldMap = ((MultiComplexField)skuField).getFieldMap();
-
-        Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
-        for (MappingBean mappingBean : subMappingBeans) {
-            String propId = mappingBean.getPlatformPropId();
-            skuSubMappingMap.put(propId, mappingBean);
-        }
-
-        List<ComplexValue> complexValues = new ArrayList<>();
-        for (SxProductBean sxProduct : sxProducts) {
-            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
-            for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
-                //CmsBtProductModel_Sku 是Map<String, Object>的子类
-                expressionParser.setSkuPropContext(cmsSkuProp);
-                ComplexValue skuFieldValue = new ComplexValue();
-                complexValues.add(skuFieldValue);
-
-                buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
-
-//                {
-//                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
-//                    for (Field fff : fList) {
-//                        if (fff.getId().equals("in_prop_161712509")) {
-//                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
-//                            break;
+//    private Field buildSkuProp(Field skuField, List<SxProductBean> sxProducts, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields) throws TaskSignal {
+//        BuildSkuResult buildSkuResult = new BuildSkuResult();
+//        contextBuildCustomFields.setBuildSkuResult(buildSkuResult);
+//
+//        ComplexMappingBean skuMappingComplex = (ComplexMappingBean) skuMapping;
+//        List<MappingBean> subMappingBeans = skuMappingComplex.getSubMappings();
+//        Map<String, Field> fieldMap = ((MultiComplexField)skuField).getFieldMap();
+//
+//        Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
+//        for (MappingBean mappingBean : subMappingBeans) {
+//            String propId = mappingBean.getPlatformPropId();
+//            skuSubMappingMap.put(propId, mappingBean);
+//        }
+//
+//        List<ComplexValue> complexValues = new ArrayList<>();
+//        for (SxProductBean sxProduct : sxProducts) {
+//            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCmsBtProductModel().getSkus();
+//            for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
+//                //CmsBtProductModel_Sku 是Map<String, Object>的子类
+//                expressionParser.setSkuPropContext(cmsSkuProp);
+//                ComplexValue skuFieldValue = new ComplexValue();
+//                complexValues.add(skuFieldValue);
+//
+//                buildSkuSize(skuFieldValue, cmsSkuProp, buildSkuResult, skuSubMappingMap.get(sku_sizeField.getId()));
+//
+////                {
+////                    List<Field> fList = ((MultiComplexField) skuField).getFieldList();
+////                    for (Field fff : fList) {
+////                        if (fff.getId().equals("in_prop_161712509")) {
+////                            skuFieldValue.setInputFieldValue("in_prop_161712509", "0克拉");
+////                            break;
+////                        }
+////                    }
+////                }
+//
+//
+//                for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
+//                    String propId = mappingBean.getPlatformPropId();
+//                    if (propId.equals(sku_sizeField.getId())) {
+//                        continue;
+//                    } else if (propId.equals(sku_quantityField.getId())) {
+//                        int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
+//                        skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
+//                    } else {
+//                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                        String propValue = expressionParser.parse(ruleExpression, null);
+//                        if (propValue == null) {
+//                            continue;
+//                        }
+//                        Field subField = fieldMap.get(propId);
+//                        // 这里的程序有问题的, 没考虑到mapping里的platform属性减少了的情况. 临时加入一个判断避免一下
+//                        if (subField != null) {
+//                            if (subField.getType() == FieldTypeEnum.INPUT) {
+//                                skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+//                            } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                                skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+//                            }
 //                        }
 //                    }
 //                }
-
-
-                for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
-                    String propId = mappingBean.getPlatformPropId();
-                    if (propId.equals(sku_sizeField.getId())) {
-                        continue;
-                    } else if (propId.equals(sku_quantityField.getId())) {
-                        int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
-                        skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
-                    } else {
-                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                        String propValue = expressionParser.parse(ruleExpression, null);
-                        if (propValue == null) {
-                            continue;
-                        }
-                        Field subField = fieldMap.get(propId);
-                        // 这里的程序有问题的, 没考虑到mapping里的platform属性减少了的情况. 临时加入一个判断避免一下
-                        if (subField != null) {
-                            if (subField.getType() == FieldTypeEnum.INPUT) {
-                                skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                            } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                                skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        ((MultiComplexField)skuField).setComplexValues(complexValues);
-        contextBuildCustomFields.getCustomFields().add(skuField);
-        return skuField;
-    }
-
-    private Field buildSizeExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean sizeExtendMapping) throws TaskSignal {
-        BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
-        Map<String, Field> fieldMap = ((MultiComplexField)skuExtendField).getFieldMap();
-
-        // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
-//        List<Object> masterWordEvaluationContextList = (List<Object>)(expressionParser.getMasterWordCmsBtProduct().getFields().get("prop_extend_9066257"));
-//        Map<String, Object> masterWordEvaluationContext = (Map<String, Object>)(masterWordEvaluationContextList.get(0));
-        // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
-
-        List<ComplexValue> complexValues = new ArrayList<>();
-        for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
-        {
-            // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
-            Map<String, Object> masterWordEvaluationContext = entry.getValue();
-            expressionParser.pushMasterPropContext(masterWordEvaluationContext);
-            // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
-
-            expressionParser.setSkuPropContext(entry.getValue());
-            ComplexValue complexValue = new ComplexValue();
-
-            if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
-                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
-            } else {
-                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
-            }
-
-            for (MappingBean mappingBean : ((ComplexMappingBean)sizeExtendMapping).getSubMappings()) {
-                String propId = mappingBean.getPlatformPropId();
-                if (propId.equals(skuExtend_sizeField.getId())) {
-                    continue;
-                } else {
-                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                    String propValue = expressionParser.parse(ruleExpression, null);
-                    Field subField = fieldMap.get(propId);
-                    if (subField.getType() == FieldTypeEnum.INPUT) {
-                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
-                    }
-                }
-            }
-
-            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
-            expressionParser.popMasterPropContext();
-            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
-
-            complexValues.add(complexValue);
-        }
-
-        // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
-//        expressionParser.popMasterPropContext();
-        // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
-
-        ((MultiComplexField)skuExtendField).setComplexValues(complexValues);
-        contextBuildCustomFields.getCustomFields().add(skuExtendField);
-        return skuExtendField;
-    }
+//            }
+//        }
+//
+//        ((MultiComplexField)skuField).setComplexValues(complexValues);
+//        contextBuildCustomFields.getCustomFields().add(skuField);
+//        return skuField;
+//    }
+//
+//    private Field buildSizeExtendProp(Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap, TmallUploadRunState.TmallContextBuildCustomFields contextBuildCustomFields, MappingBean sizeExtendMapping) throws TaskSignal {
+//        BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
+//        Map<String, Field> fieldMap = ((MultiComplexField)skuExtendField).getFieldMap();
+//
+//        // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
+////        List<Object> masterWordEvaluationContextList = (List<Object>)(expressionParser.getMasterWordCmsBtProduct().getFields().get("prop_extend_9066257"));
+////        Map<String, Object> masterWordEvaluationContext = (Map<String, Object>)(masterWordEvaluationContextList.get(0));
+//        // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
+//
+//        List<ComplexValue> complexValues = new ArrayList<>();
+//        for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
+//        {
+//            // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
+//            Map<String, Object> masterWordEvaluationContext = entry.getValue();
+//            expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+//            // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
+//
+//            expressionParser.setSkuPropContext(entry.getValue());
+//            ComplexValue complexValue = new ComplexValue();
+//
+//            if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
+//            } else {
+//                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
+//            }
+//
+//            for (MappingBean mappingBean : ((ComplexMappingBean)sizeExtendMapping).getSubMappings()) {
+//                String propId = mappingBean.getPlatformPropId();
+//                if (propId.equals(skuExtend_sizeField.getId())) {
+//                    continue;
+//                } else {
+//                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                    String propValue = expressionParser.parse(ruleExpression, null);
+//                    Field subField = fieldMap.get(propId);
+//                    if (subField.getType() == FieldTypeEnum.INPUT) {
+//                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+//                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+//                    }
+//                }
+//            }
+//
+//            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+//            expressionParser.popMasterPropContext();
+//            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
+//
+//            complexValues.add(complexValue);
+//        }
+//
+//        // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+////        expressionParser.popMasterPropContext();
+//        // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
+//
+//        ((MultiComplexField)skuExtendField).setComplexValues(complexValues);
+//        contextBuildCustomFields.getCustomFields().add(skuExtendField);
+//        return skuExtendField;
+//    }
 
     @Override
     public boolean isYourFood(List platformProps, int cartId) {
@@ -296,11 +296,11 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
             }
         }
 
-        skuField = buildSkuProp(skuField, processSxProducts, skuMappingBean, skuInventoryMap, tmallContextBuildCustomFields);
+//        skuField = buildSkuProp(skuField, processSxProducts, skuMappingBean, skuInventoryMap, tmallContextBuildCustomFields);
         skuInfoFields.add(skuField);
 
         if (skuExtendField != null) {
-            Field skuExtendField = buildSizeExtendProp(skuProductMap, tmallContextBuildCustomFields, skuExtendMappingBean);
+//            Field skuExtendField = buildSizeExtendProp(skuProductMap, tmallContextBuildCustomFields, skuExtendMappingBean);
             skuInfoFields.add(skuExtendField);
         }
         return skuInfoFields;

@@ -261,9 +261,53 @@
         <tabset class="tab-container vo_nav-tabs">
             <tab ng-click="vm.currTab = 'group'" active ="vm.currTab == 'group'" >
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
-                <div class="box">
-                    <div class="box-body">
-                        <div class="form-inline m-b-xs text-left">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                        <input type="checkbox" ng-model="vm.searchInfo.isAll">
+                                        <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
+                                    </label>
+                                    &nbsp;
+                                    <div class="btn-group" uib-dropdown>
+                                        <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
+                                            <i class="fa fa-exchange"></i>&nbsp;变更Feed产品状态&nbsp;<span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(1)">等待导入</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(0)">不导入</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    &nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" ng-disabled="!vm.feedPageOption.total|| vm.feedPageOption.total == 0" class="btn btn-pop btn-default"  ng-click="doExport()">
+                                            <i class="fa fa-cog"></i>&nbsp;Excel导出
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 text-right">
+                                    <div class="text-warnings">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;运营将Feed产品状态变更为“等待导入”情景举例：初选后，入围预定售卖范围的产品等
+                                    </div>
+                                    <div class="text-warnings">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;运营将Feed产品状态变更为“不导入”情景举例：品牌方禁止售卖的产品；不适应中国市场的产品；不适合跨境售卖的产品等
+                                    </div>
+<!--                                    <div class="btn-group">
+                                        <button class="btn btn-pop btn-default" ng-click="updateFeedStatus()">
+                                            <i class="fa fa-cog"></i>&nbsp;导入主数据
+                                        </button>
+                                    </div>-->
+
+                                </div>
+                            </div>
+                        </div>
+<!--                        <div class="form-inline m-b-xs text-left">
                             <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                 <input type="checkbox" ng-model="vm.searchInfo.isAll">
                                 <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
@@ -272,81 +316,87 @@
                                 <i class="fa fa-cog"></i>&nbsp;Excel导出
                             </button>&nbsp;
                         </div>
-                        <!--right-btn-->
                         <div class="form-inline m-b-xs text-right">
                             <button class="btn btn-default" style="margin-top:4px" ng-click="updateFeedStatus()">
                                 <i class="fa fa-cog"></i>&nbsp;导入主数据
                             </button>&nbsp;
-                        </div><!-- /right-btn -->
-                        <div class="table-responsive">
+                        </div>-->
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive box">
                             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
-                                <tr>
-                                    <th class="text-right" style="width:38px">No.</th>
-                                    <th class="text-left" style="width:66px;padding-left:0px">Select</th>
+                                <tr><!--24-->
+                                    <th class="text-right mfb-x" style="width:38px">No.</th>
+                                    <th class="text-left mfb-x" style="width:66px;padding-left:0px">Select</th>
                                     <th class="text-center mfb-x">图片</th>
-                                    <th class="text-left mfb-xxt">Category</th>
-                                    <th class="text-center mfb-xxt">Code</th>
-                                    <th class="text-left mfb-xxt">Name</th>
-                                    <th class="text-left mfb-xxt">Model</th>
-                                    <th class="text-left mfb-xxt">Status</th>
-                                    <th class="text-left mfb-xxt">Inventory</th>
-                                    <th class="text-left mfb-xxx">Short Description</th>
-                                    <th class="text-left mfb-xxx">Long Description</th>
-                                    <th class="text-left mfb-xxt">Color</th>
+                                    <th class="text-left mfb-x">Category</th>
+                                    <th class="text-center mfb-x">Code</th>
+                                    <th class="text-left mfb-x">Name</th>
+                                    <th class="text-left mfb-x">Model</th>
+                                    <th class="text-left mfb-x">Status</th>
+                                    <th class="text-left mfb-x">Inventory</th>
+                                    <th class="text-left mfb-x">Short Description</th>
+                                    <th class="text-left mfb-x">Long Description</th>
+                                    <th class="text-left mfb-x">Color</th>
                                     <th class="text-left mfb-x">Origin</th>
                                     <th class="text-left mfb-x">Product Type</th>
                                     <th class="text-left mfb-x">Size Type</th>
                                     <th class="text-left mfb-x">Brand</th>
-                                    <th class="text-right mfb-xxt">MSRP(USD)</th>
-                                    <th class="text-right mfb-xxt">Retail Price(USD)</th>
-                                    <th class="text-right mfb-xxt">Cost Price(USD)</th>
-                                    <th class="text-right mfb-xxt">MSRP(RMB)</th>
-                                    <th class="text-right mfb-xxt">Retail Price(RMB)</th>
+                                    <th class="text-right mfb-x">MSRP(USD)</th>
+                                    <th class="text-right mfb-x">Retail Price(USD)</th>
+                                    <th class="text-right mfb-x">Cost Price(USD)</th>
+                                    <th class="text-right mfb-x">MSRP(RMB)</th>
+                                    <th class="text-right mfb-x">Retail Price(RMB)</th>
                                     <th class="text-center mfb-x">SKU 数</th>
-                                    <th class="text-center" style="width:140px;">创建时间</th>
-                                    <th class="text-center" style="width:160px;">更新时间</th>
+                                    <th class="text-center mfb-xxt">创建时间</th>
+                                    <th class="text-center mfb-xxt">更新时间</th>
                                 </tr>
                                 </thead>
+
+                    <!--<div class="box-body" if-no-rows="vm.feedList.length">-->
+
                                 <tbody>
-                                <tr><td colspan="16"><div if-no-rows="vm.feedList.length"></div></td></tr>
+                                <tr>
+                                    <td if-no-rows="vm.feedList.length" colspan="24" style="padding: 0px"></td>
+                                </tr>
                                 <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
-                                    <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
-                                    <td style="overflow: hidden;padding-left:0px" class="text-left">
+                                    <td class="text-right mfb-x">{{$index + 1}}</td>
+                                    <td class="text-left mfb-x">
                                         <label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
                                             <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
                                                    ng-click="selectOne(feedInfo._id, vm.feedSelList)">
                                             <span class="fa fa-check"></span>
                                         </label>
                                     </td>
-                                    <td style="overflow: hidden;"  ng-controller="popupCtrl" class="text-center mfb-x">
+                                    <td class="text-center mfb-x" ng-controller="popupCtrl">
                                         <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                                     </td>
-                                    <td style="overflow: hidden;" class="text-left mfb-xxt">{{feedInfo.category}}</td>
-                                    <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
-                                    <td class="text-center mfb-xxt" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.name}}</td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.model}}</td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{feedInfo.qty}}</td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;">
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.category}}</td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
+                                    <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.name}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.model}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;"><key-value type="feedStatus" ng-model="feedInfo.updFlg"></key-value></td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.qty}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">
                                         <span ng-if="feedInfo.shortDescription.length > 50"><popover-text content="feedInfo.shortDescription" direct="left" size="50"></popover-text></span>
                                         <span ng-if="feedInfo.shortDescription.length <= 50">{{feedInfo.shortDescription}}</span>
                                     </td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;">
+                                    <td class="text-left mfb-x" style="overflow: hidden;">
                                         <span ng-if="feedInfo.longDescription.length > 50"><popover-text content="feedInfo.longDescription" direct="left" size="50"></popover-text></span>
                                         <span ng-if="feedInfo.longDescription.length <= 50">{{feedInfo.longDescription}}</span>
                                     </td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;">{{feedInfo.color}}</td>
+                                    <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.color}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.origin}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.productType}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.sizeType}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.brand}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceNet}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientMsrp}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceClientRetail}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceNet}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceMsrp}}</td>
+                                    <td class="text-right mfb-x" style="overflow: hidden;">{{feedInfo.skus[0].priceCurrent}}</td>
                                     <td class="text-center mfb-x" style="overflow: hidden;">
                                         <small ng-controller="showPopoverCtrl" popover-html="showInfo(feedInfo._popSkuInfo)" popover-trigger="mouseenter" popover-placement="left" class="ng-scope">
                                             <div class="table_main">
@@ -356,48 +406,52 @@
                                             </div>
                                         </small>
                                     </td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.created}}</td>
-                                    <td class="text-right" style="overflow: hidden;">{{feedInfo.modified}}</td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <!--</div>-->
+                            <div class="col-sm-12 m-t-lg m-b-lg">
+                                <vpagination config="vm.feedPageOption"></vpagination>
+                            </div>
                         </div>
-                    </div><!-- /.box-body -->
-                    <div class="col-sm-12 m-t-lg m-b-lg">
-                        <vpagination config="vm.feedPageOption"></vpagination>
                     </div>
                 </div>
             </tab>
             <tab ng-click="vm.currTab = 'export'" active ="vm.currTab == 'export'">
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
-                <div class="box">
-                    <div class="box-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
-                                <thead>
-                                <tr>
-                                    <th class="text-right" style="width:38px">No.</th>
-                                    <th class="text-left mfb-xxt">导出文件名</th>
-                                    <th class="text-left mfb-xxt">导出申请时间</th>
-                                    <th class="text-left mfb-xxt">Excel生成时间</th>
-                                    <th class="text-left mfb-xxt">导出申请者</th>
-                                    <th class="text-left mfb-xxx">操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr><td colspan="16"><div if-no-rows="vm.exportList.length"></div></td></tr>
+                <div class="table-responsive box">
+
+                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main"  ng-controller="popupCtrl">
+                        <thead>
+                        <tr>
+                            <th class="text-center mfb-xxt">No.</th>
+                            <th class="text-left mfb-xxt">导出文件名</th>
+                            <th class="text-left mfb-xxt">导出申请时间</th>
+                            <th class="text-left mfb-xxt">Excel生成时间</th>
+                            <th class="text-left mfb-xxt">导出申请者</th>
+                            <th class="text-center mfb-xxt">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+
+                    <div class="box-body" if-no-rows="vm.exportList.length">
+                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                            <tbody>
                                 <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
-                                    <td style="overflow: hidden;" class="text-right">{{$index + 1}}</td>
-                                    <td class="text-left mfb-xxt" style="overflow: hidden;"><a href="javascript:void(0)" ng-click="openOtherDownload(exportInfo.fileName)">{{exportInfo.fileName}}</a></td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.created}}</td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.fileName?exportInfo.modified:''}}</td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportInfo.creater}}</td>
-                                    <td class="text-left mfb-xxt"style="overflow: hidden;">{{exportStatus[exportInfo.status]}}</td>
+                                    <td class="text-center mfb-xxt">{{$index + 1}}</td>
+                                    <td class="text-left mfb-xxt"><a href="javascript:void(0)" ng-click="openOtherDownload(exportInfo.fileName)">{{exportInfo.fileName}}</a></td>
+                                    <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
+                                    <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                    <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
+                                    <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div><!-- /.box-body -->
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="col-sm-12 m-t-lg m-b-lg">
                         <vpagination config="vm.expotPageOption"></vpagination>
                     </div>
@@ -406,4 +460,4 @@
         </tabset>
     </div>
 
-</div><!-- end .wrapper-md -->
+</div>

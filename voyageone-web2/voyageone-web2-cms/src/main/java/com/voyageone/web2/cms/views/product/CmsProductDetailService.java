@@ -555,6 +555,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
+        mastData.put("lock",cmsBtProduct.getLock());
 
         // 获取各个平台的状态
         List<Map<String, Object>> platformList = new ArrayList<>();

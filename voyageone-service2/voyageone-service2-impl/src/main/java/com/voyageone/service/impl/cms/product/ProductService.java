@@ -541,6 +541,10 @@ public class ProductService extends BaseService {
      * 最后批量添加数据
      */
     public void insertSxWorkLoad(String channelId, List<String> prodCodeList, List<Integer> cartIdList, String modifier) {
+        if (prodCodeList.isEmpty() || cartIdList.isEmpty()) {
+            $warn("insertSxWorkLoad: 参数为空");
+            return;
+        }
         List<CmsBtProductGroupModel> newGroupList = new ArrayList<>();
         // 获取所有的可上新的平台group信息
         List<CmsBtSxWorkloadModel> models = new ArrayList<>();

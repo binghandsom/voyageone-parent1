@@ -555,23 +555,6 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/translation/tasks";
 
-            String GET_TASKS = "getTasks";
-
-            String SEARCH_HISTORY_TASKS = "searchHistoryTasks";
-
-            String ASSIGN_TASKS = "assignTasks";
-
-            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
-
-            String SAVE_TASK = "saveTask";
-
-            String SUBMIT_TASK = "submitTask";
-
-            String CANCEL_TASK = "cancelTask";
-
-            String GET_FEED_ATTRIBUTES = "getFeedAttributes";
-
-
             String INIT = "init";
 
             String SEARCH = "search";
@@ -581,8 +564,6 @@ public interface CmsUrlConstants {
             String SAVE = "save";
 
             String SUBMIT = "submit";
-
-            String CANCEL = "cancel";
 
             String GET = "get";
         }

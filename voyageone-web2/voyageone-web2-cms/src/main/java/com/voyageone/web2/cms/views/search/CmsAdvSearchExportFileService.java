@@ -60,7 +60,6 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     private final static String[] _DynCol = { "Numiid", "Category", "MSRP", "RetailPrice", "SalePrice" };
     private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color" };
 
-
     /**
      * 获取数据文件内容
      */
@@ -77,7 +76,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         // 获取product列表
-        List<CmsBtProductModel> prodObjList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean, 0);
+        List<CmsBtProductModel> prodObjList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean, 0, 0);
         List<String> prodCodeList = searchIndexService.convertToCodeList(prodObjList);
         long recCount = prodCodeList.size();
 
@@ -86,7 +85,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(prodObjList, searchValue, cartId);
+            prodCodeList = searchIndexService.getGroupCodeList(prodObjList, cartId, 0, 0);
             recCount = prodCodeList.size();
         }
 

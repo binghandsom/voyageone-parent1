@@ -1200,7 +1200,22 @@ public class SxProductService extends BaseService {
             CmsBtProductModel mainProduct = expressionParser.getSxData().getMainProduct();
             ComplexMappingBean complexMappingBean = (ComplexMappingBean) mappingBean;
             if (field.getType() == FieldTypeEnum.COMPLEX) {
-                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                // modified by morse.lu 2016/07/01 start
+//                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                Map<String, Object> masterWordEvaluationContext;
+                try {
+                    // 从各自平台fields里去取
+                    masterWordEvaluationContext = (Map<String, Object>) mainProduct.getPlatform(expressionParser.getSxData().getCartId()).getFields().get(complexMappingBean.getMasterPropId());
+                    if (masterWordEvaluationContext == null) {
+                        // 各自平台fields里取不到，从common的fields里去取
+                        masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]Complex类型,但product的fields里对应的值不是Map!", complexMappingBean.getMasterPropId()));
+                    masterWordEvaluationContext = null;
+                }
+                // modified by morse.lu 2016/07/01 end
+
                 if (masterWordEvaluationContext != null) {
                     expressionParser.pushMasterPropContext(masterWordEvaluationContext);
                 }
@@ -1230,7 +1245,21 @@ public class SxProductService extends BaseService {
                     expressionParser.popMasterPropContext();
                 }
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                // modified by morse.lu 2016/07/01 start
+//                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                List<Map<String, Object>> masterWordEvaluationContexts = null;
+                try {
+                    // 没有设过一层，或者当前层没有对应的值，那么从各自平台fields里去取
+                    masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getPlatform(expressionParser.getSxData().getCartId()).getFields().get(complexMappingBean.getMasterPropId());
+                    if (masterWordEvaluationContexts == null) {
+                        // 各自平台fields里取不到，从common的fields里去取
+                        masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]MultiComplex类型,但product的fields里对应的值不是List!", complexMappingBean.getMasterPropId()));
+                    masterWordEvaluationContexts = null;
+                }
+                // modified by morse.lu 2016/07/01 end
 
                 if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
                     $info("No value found for MultiComplex field: " + field.getId());
@@ -1940,7 +1969,7 @@ public class SxProductService extends BaseService {
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
 
         // common里的tmallWirelessActive,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        String tmallWirelessActive = "1"; // TODO: 之后从common里取tmallWirelessActive
+        String tmallWirelessActive = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getTmallWirelessActive());
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, tmallWirelessActive, expressionParser.getSxData());

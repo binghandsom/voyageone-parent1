@@ -22,7 +22,8 @@ define([
         'ngStorage',
         'angularFileUpload',
         'localytics.directives',
-        'angular-md5'
+        'angular-md5',
+        'angular-drag'
     ])
 
     // define

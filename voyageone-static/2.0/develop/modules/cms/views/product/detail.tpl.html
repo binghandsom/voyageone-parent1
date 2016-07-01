@@ -2,27 +2,32 @@
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-heading panel-detail-head">&nbsp;<i class="fa fa-sitemap"></i>&emsp;产品详情</div>
-            <div class="panel-body">
+            <!--<div class="panel-body">-->
                 <div class="container-fluid m-t-sm m-l-xs m-r-xs">
-                    <div class="col-sm-12">
-                        <div class="col-sm-8 form-inline pull-left m-b-xs m-r-sm">
-                            <label class="m-t-xs col-sm-1"><strong>Lock:</strong></label>
-                            <div class="col-sm-2 text-left">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="col-sm-2"><strong>Lock:</strong></label>
+                            <div class="col-sm-10 text-left">
                                 <!----------on_off_switch---------->
                                 <div class="onoffswitch">
                                     <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox"
                                            id="switchIsTranslated"
-                                           ng-model="vm.productDetails.productStatus.translateStatus">
-                                    <label class="onoffswitch-label" for="switchIsTranslated">
+                                           ng-model="ctrl.product.lockStatus" ng-click="ctrl.lockProduct()">
+                                    <label class="onoffswitch-label" for="switchIsTranslated" >
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
                                     </label>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <span class="text-warnings" style="padding-left:0px">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <!--</div>-->
         </div>
     </div>
 

@@ -7,6 +7,20 @@ define(function () {
         LOCAL: 3
     };
 
+    function once(action) {
+        return {
+            url: action,
+            cache: CACHE.ONCE
+        };
+    }
+
+    function session(action) {
+        return {
+            url: action,
+            cache: CACHE.SESSION
+        };
+    }
+
     return {
         "core": {
             "access": {
@@ -25,10 +39,7 @@ define(function () {
             "home": {
                 "$menuService": {
                     "root": "/cms/home/menu/",
-                    "getCategoryInfo": {
-                        url: "getCategoryInfo",
-                        cache: CACHE.SESSION
-                    },
+                    "getCategoryInfo": session('getCategoryInfo'),
                     "getPlatformType": "getPlatformType",
                     "setPlatformType": "setPlatformType"
                 }
@@ -79,7 +90,8 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
-                    "updateCommonProductInfo": "updateCommonProductInfo"
+                    "updateCommonProductInfo": "updateCommonProductInfo",
+                    "updateLock":"updateLock"
                 }
             },
             "mapping": {
