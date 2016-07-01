@@ -185,9 +185,10 @@ public class CmsConstants {
      * 上新的任务表中的上新状态值
      */
     public interface SxWorkloadPublishStatusNum {
-        int initNum = 0;
-        int okNum = 1;
-        int errorNum = 2;
+        int initNum = 0;        // 上新对象
+        int okNum = 1;          // 上新成功
+        int errorNum = 2;       // 上新失败
+        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
     }
 
 }
