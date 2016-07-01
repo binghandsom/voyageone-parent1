@@ -245,12 +245,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
-                $error(String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s] [sxData:null]", channelId, groupId));
-                // 回写详细错误信息表(cms_bt_business_log)用
-                sxData = new SxData();
-                sxData.setChannelId(channelId);
-                sxData.setCartId(cartId);
-                sxData.setGroupId(groupId);
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
             // 如果取得上新对象商品信息出错时，报错
@@ -568,7 +562,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
                 // 上新成功时状态回写操作
-                sxProductService.doUploadFinalProc(false, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
+                sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -592,7 +586,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //                // 回写workload表   (失败2)
 //                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 上新出错时状态回写操作
-                sxProductService.doUploadFinalProc(false, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
+                sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
                 return;
             }
         } catch (Exception ex) {
@@ -620,7 +614,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
 
             // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(false, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
+            sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
             return;
         }
 
