@@ -75,7 +75,7 @@ public class TranslationTaskService extends BaseService {
         String queryStr = String.format("{'common.fields.translateStatus':'0'," +
                 "'common.fields.isMasterMain':1," +
                 " '$or': [{'common.fields.translator':''} ,  " +
-                "{'common.fields.translateTime':{'$gt':'%s'}} , " +
+                "{'common.fields.translateTime':{'$lte':'%s'}} , " +
                 "{'common.fields.translator':{'$exists' : false}}, " +
                 "{'common.fields.translateTime':{'$exists' : false}}]}", translateTimeStr);
 
@@ -127,8 +127,18 @@ public class TranslationTaskService extends BaseService {
     }
 
 
-
-    public TranslationTaskBean assignTask(String channelId, String userName ,String priority, String sort, String  keyWrod) throws BusinessException
+    /**
+     *
+     *
+     * @param channelId
+     * @param userName
+     * @param priority
+     * @param sort
+     * @param keyWord
+     * @return
+     * @throws BusinessException
+     */
+    public TranslationTaskBean assignTask(String channelId, String userName ,String priority, String sort, String  keyWord) throws BusinessException
     {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
@@ -153,8 +163,38 @@ public class TranslationTaskService extends BaseService {
 
         CmsBtProductModel  product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
 
-        TranslationTaskBean translationTaskBean = fillTranslationTaskBean(product);
+        TranslationTaskBean translationTaskBean = new TranslationTaskBean();
 
+        if(product != null) {
+            translationTaskBean = fillTranslationTaskBean(product);
+            return translationTaskBean;
+        }
+
+        JomgoQuery queryObj = new JomgoQuery();
+
+        queryObj.addQuery("common.fields.isMasterMain':1,common.fields.translateStatus':'0'");
+
+        if(!StringUtils.isNullOrBlank2(keyWord))
+        {
+            queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]");
+            queryObj.addParameters(keyWord, keyWord, keyWord);
+        }
+
+        if(!StringUtils.isNullOrBlank2(priority)) {
+            if(priority.equalsIgnoreCase("quantity")) {
+                if (sort.equalsIgnoreCase("asc")) {
+                    queryObj.setSort("'common.fields.quantity' : 1");
+                } else {
+                    queryObj.setSort("'common.fields.quantity' : -1");
+                }
+            }
+        }
+
+        product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+
+        if(product != null) {
+            translationTaskBean = fillTranslationTaskBean(product);
+        }
         return translationTaskBean;
     }
 
