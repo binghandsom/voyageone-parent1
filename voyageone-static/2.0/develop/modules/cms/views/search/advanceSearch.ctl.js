@@ -688,6 +688,27 @@ define([
             }
         }
 
+        // 设置最终售价
+        $scope.toopenSalePrice = function (openSalePriceFnc, cartId) {
+            _chkProductSel(parseInt(cartId), _toopenSalePrice);
+
+            function _toopenSalePrice(cartId, _selProdList) {
+                var productIds = [];
+                if (_selProdList && _selProdList.length) {
+                    _.forEach(_selProdList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall ? 1 : 0;
+
+                openSalePriceFnc({'property':property, 'cartList':$scope.vm.cartList}).then(
+                function () {
+                    $scope.search();
+                });
+            }
+        }
+
         /**
          * popup弹出选择平台数据类目
          * @param popupNewCategory
