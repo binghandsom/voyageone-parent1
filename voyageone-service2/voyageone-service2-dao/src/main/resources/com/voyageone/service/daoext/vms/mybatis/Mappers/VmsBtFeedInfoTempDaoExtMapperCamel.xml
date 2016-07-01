@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtFeedInfoTempModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `row`, `sku`, `parent_id`, `relationship_type`, `variation_theme`,
+        `title`, `product_id`, `price`, `msrp`, `quantity`, `images`, `description`, `short_description`,
+        `product_origin`, `category`, `weight`, `brand`, `materials`, `vendor_product_url`,
+        `attribute_key_1`, `attribute_value_1`, `attribute_key_2`, `attribute_value_2`, `attribute_key_3`,
+        `attribute_value_3`, `attribute_key_4`, `attribute_value_4`, `attribute_key_5`, `attribute_value_5`,
+        `attribute_key_6`, `attribute_value_6`, `attribute_key_7`, `attribute_value_7`, `attribute_key_8`,
+        `attribute_value_8`, `attribute_key_9`, `attribute_value_9`, `attribute_key_10`,
+        `attribute_value_10`, `attribute_key_11`, `attribute_value_11`, `attribute_key_12`,
+        `attribute_value_12`, `attribute_key_13`, `attribute_value_13`, `attribute_key_14`,
+        `attribute_value_14`, `attribute_key_15`, `attribute_value_15`, `attribute_key_16`,
+        `attribute_value_16`, `attribute_key_17`, `attribute_value_17`, `attribute_key_18`,
+        `attribute_value_18`, `attribute_key_19`, `attribute_value_19`, `attribute_key_20`,
+        `attribute_value_20`, `md5`, `update_flg`, `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from vms_bt_feed_info_temp
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="row != null" >
+                and `row` = #{row,jdbcType=INTEGER}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="parentId != null" >
+                and `parent_id` = #{parentId,jdbcType=VARCHAR}
+            </if>
+            <if test="relationshipType != null" >
+                and `relationship_type` = #{relationshipType,jdbcType=VARCHAR}
+            </if>
+            <if test="variationTheme != null" >
+                and `variation_theme` = #{variationTheme,jdbcType=VARCHAR}
+            </if>
+            <if test="title != null" >
+                and `title` = #{title,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=VARCHAR}
+            </if>
+            <if test="price != null" >
+                and `price` = #{price,jdbcType=VARCHAR}
+            </if>
+            <if test="msrp != null" >
+                and `msrp` = #{msrp,jdbcType=VARCHAR}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=VARCHAR}
+            </if>
+            <if test="images != null" >
+                and `images` = #{images,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="shortDescription != null" >
+                and `short_description` = #{shortDescription,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productOrigin != null" >
+                and `product_origin` = #{productOrigin,jdbcType=VARCHAR}
+            </if>
+            <if test="category != null" >
+                and `category` = #{category,jdbcType=VARCHAR}
+            </if>
+            <if test="weight != null" >
+                and `weight` = #{weight,jdbcType=VARCHAR}
+            </if>
+            <if test="brand != null" >
+                and `brand` = #{brand,jdbcType=VARCHAR}
+            </if>
+            <if test="materials != null" >
+                and `materials` = #{materials,jdbcType=VARCHAR}
+            </if>
+            <if test="vendorProductUrl != null" >
+                and `vendor_product_url` = #{vendorProductUrl,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey1 != null" >
+                and `attribute_key_1` = #{attributeKey1,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue1 != null" >
+                and `attribute_value_1` = #{attributeValue1,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey2 != null" >
+                and `attribute_key_2` = #{attributeKey2,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue2 != null" >
+                and `attribute_value_2` = #{attributeValue2,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey3 != null" >
+                and `attribute_key_3` = #{attributeKey3,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue3 != null" >
+                and `attribute_value_3` = #{attributeValue3,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey4 != null" >
+                and `attribute_key_4` = #{attributeKey4,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue4 != null" >
+                and `attribute_value_4` = #{attributeValue4,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey5 != null" >
+                and `attribute_key_5` = #{attributeKey5,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue5 != null" >
+                and `attribute_value_5` = #{attributeValue5,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey6 != null" >
+                and `attribute_key_6` = #{attributeKey6,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue6 != null" >
+                and `attribute_value_6` = #{attributeValue6,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey7 != null" >
+                and `attribute_key_7` = #{attributeKey7,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue7 != null" >
+                and `attribute_value_7` = #{attributeValue7,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey8 != null" >
+                and `attribute_key_8` = #{attributeKey8,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue8 != null" >
+                and `attribute_value_8` = #{attributeValue8,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey9 != null" >
+                and `attribute_key_9` = #{attributeKey9,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue9 != null" >
+                and `attribute_value_9` = #{attributeValue9,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey10 != null" >
+                and `attribute_key_10` = #{attributeKey10,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue10 != null" >
+                and `attribute_value_10` = #{attributeValue10,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey11 != null" >
+                and `attribute_key_11` = #{attributeKey11,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue11 != null" >
+                and `attribute_value_11` = #{attributeValue11,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey12 != null" >
+                and `attribute_key_12` = #{attributeKey12,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue12 != null" >
+                and `attribute_value_12` = #{attributeValue12,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey13 != null" >
+                and `attribute_key_13` = #{attributeKey13,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue13 != null" >
+                and `attribute_value_13` = #{attributeValue13,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey14 != null" >
+                and `attribute_key_14` = #{attributeKey14,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue14 != null" >
+                and `attribute_value_14` = #{attributeValue14,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey15 != null" >
+                and `attribute_key_15` = #{attributeKey15,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue15 != null" >
+                and `attribute_value_15` = #{attributeValue15,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey16 != null" >
+                and `attribute_key_16` = #{attributeKey16,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue16 != null" >
+                and `attribute_value_16` = #{attributeValue16,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey17 != null" >
+                and `attribute_key_17` = #{attributeKey17,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue17 != null" >
+                and `attribute_value_17` = #{attributeValue17,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey18 != null" >
+                and `attribute_key_18` = #{attributeKey18,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue18 != null" >
+                and `attribute_value_18` = #{attributeValue18,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey19 != null" >
+                and `attribute_key_19` = #{attributeKey19,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue19 != null" >
+                and `attribute_value_19` = #{attributeValue19,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attributeKey20 != null" >
+                and `attribute_key_20` = #{attributeKey20,jdbcType=VARCHAR}
+            </if>
+            <if test="attributeValue20 != null" >
+                and `attribute_value_20` = #{attributeValue20,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="md5 != null" >
+                and `md5` = #{md5,jdbcType=VARCHAR}
+            </if>
+            <if test="updateFlg != null" >
+                and `update_flg` = #{updateFlg,jdbcType=VARCHAR}
+            </if>
+            limit 0,100
+        </where>
+    </select>
+
+    <insert id="insertList" parameterType="java.util.List">
+        insert into vms_bt_feed_info_temp(
+                `channel_id`,
+                `row`,
+                `sku`,
+                `parent_id`,
+                `relationship_type`,
+                `variation_theme`,
+                `title`,
+                `product_id`,
+                `price`,
+                `msrp`,
+                `quantity`,
+                `images`,
+                `description`,
+                `short_description`,
+                `product_origin`,
+                `category`,
+                `weight`,
+                `brand`,
+                `materials`,
+                `vendor_product_url`,
+                `attribute_key_1`,
+                `attribute_value_1`,
+                `attribute_key_2`,
+                `attribute_value_2`,
+                `attribute_key_3`,
+                `attribute_value_3`,
+                `attribute_key_4`,
+                `attribute_value_4`,
+                `attribute_key_5`,
+                `attribute_value_5`,
+                `attribute_key_6`,
+                `attribute_value_6`,
+                `attribute_key_7`,
+                `attribute_value_7`,
+                `attribute_key_8`,
+                `attribute_value_8`,
+                `attribute_key_9`,
+                `attribute_value_9`,
+                `attribute_key_10`,
+                `attribute_value_10`,
+                `attribute_key_11`,
+                `attribute_value_11`,
+                `attribute_key_12`,
+                `attribute_value_12`,
+                `attribute_key_13`,
+                `attribute_value_13`,
+                `attribute_key_14`,
+                `attribute_value_14`,
+                `attribute_key_15`,
+                `attribute_value_15`,
+                `attribute_key_16`,
+                `attribute_value_16`,
+                `attribute_key_17`,
+                `attribute_value_17`,
+                `attribute_key_18`,
+                `attribute_value_18`,
+                `attribute_key_19`,
+                `attribute_value_19`,
+                `attribute_key_20`,
+                `attribute_value_20`,
+                `md5`,
+                `update_flg`,
+                `created`,
+                `creater`,
+                `modified`,
+                `modifier`
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+               (#{item.channelId},
+                #{item.row,jdbcType=INTEGER},
+                #{item.sku},
+                #{item.parentId},
+                #{item.relationshipType},
+                #{item.variationTheme},
+                #{item.title},
+                #{item.productId},
+                #{item.price},
+                #{item.msrp},
+                #{item.quantity},
+                #{item.images},
+                #{item.description},
+                #{item.shortDescription},
+                #{item.productOrigin},
+                #{item.category},
+                #{item.weight},
+                #{item.brand},
+                #{item.materials},
+                #{item.vendorProductUrl},
+                #{item.attributeKey1},
+                #{item.attributeValue1},
+                #{item.attributeKey2},
+                #{item.attributeValue2},
+                #{item.attributeKey3},
+                #{item.attributeValue3},
+                #{item.attributeKey4},
+                #{item.attributeValue4},
+                #{item.attributeKey5},
+                #{item.attributeValue5},
+                #{item.attributeKey6},
+                #{item.attributeValue6},
+                #{item.attributeKey7},
+                #{item.attributeValue7},
+                #{item.attributeKey8},
+                #{item.attributeValue8},
+                #{item.attributeKey9},
+                #{item.attributeValue9},
+                #{item.attributeKey10},
+                #{item.attributeValue10},
+                #{item.attributeKey11},
+                #{item.attributeValue11},
+                #{item.attributeKey12},
+                #{item.attributeValue12},
+                #{item.attributeKey13},
+                #{item.attributeValue13},
+                #{item.attributeKey14},
+                #{item.attributeValue14},
+                #{item.attributeKey15},
+                #{item.attributeValue15},
+                #{item.attributeKey16},
+                #{item.attributeValue16},
+                #{item.attributeKey17},
+                #{item.attributeValue17},
+                #{item.attributeKey18},
+                #{item.attributeValue18},
+                #{item.attributeKey19},
+                #{item.attributeValue19},
+                #{item.attributeKey20},
+                #{item.attributeValue20},
+                #{item.md5},
+                #{item.updateFlg},
+                now(),
+                #{item.creater},
+                now(),
+                #{item.creater})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByChannel" parameterType="java.lang.String" >
+        delete from vms_bt_feed_info_temp
+        where `channel_id` = #{channelId}
+    </delete>
+</mapper>

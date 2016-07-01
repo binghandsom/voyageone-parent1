@@ -9,4 +9,5 @@ import java.util.Map;
 @Repository
 public interface VmsBtFeedFileDaoExt {
     List<VmsBtFeedFileModel> selectListOrderByCreateTime(Map<String, Object> map);
+
 }

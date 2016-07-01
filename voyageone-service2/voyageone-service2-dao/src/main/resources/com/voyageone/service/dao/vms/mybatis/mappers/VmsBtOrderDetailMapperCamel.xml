@@ -4,9 +4,9 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtOrderDetailModel" />
     <sql id="Base_Column_List" >
         `id`, `reservation_id`, `channel_id`, `consolidation_order_id`, `consolidation_order_time`, 
-        `order_id`, `order_time`, `client_sku`, `barcode`, `decription`, `status`, `shipment_id`, 
-        `shipment_time`, `containerizing_time`, `containerizer`, `received_time`, `receiver`, 
-        `client_msrp`, `client_net_price`, `client_retail_price`, `client_promotion_price`, 
+        `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `decription`, `status`, 
+        `shipment_id`, `shipment_time`, `containerizing_time`, `containerizer`, `received_time`, 
+        `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`, `client_promotion_price`, 
         `created`, `creater`, `modified`, `modifier`
     </sql>
 
@@ -37,6 +37,9 @@
             </if>
             <if test="orderTime != null" >
                 `order_time`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
             </if>
             <if test="clientSku != null" >
                 `client_sku`,
@@ -110,6 +113,9 @@
             </if>
             <if test="orderTime != null" >
                 #{orderTime,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
             </if>
             <if test="clientSku != null" >
                 #{clientSku,jdbcType=VARCHAR},
@@ -197,6 +203,9 @@
             </if>
             <if test="orderTime != null" >
                 `order_time` = #{orderTime,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
             <if test="clientSku != null" >
                 `client_sku` = #{clientSku,jdbcType=VARCHAR},
@@ -287,6 +296,9 @@
             <if test="orderTime != null" >
                 and `order_time` = #{orderTime,jdbcType=VARCHAR}
             </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
             <if test="clientSku != null" >
                 and `client_sku` = #{clientSku,jdbcType=VARCHAR}
             </if>
@@ -366,6 +378,9 @@
             </if>
             <if test="orderTime != null" >
                 and `order_time` = #{orderTime,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
             <if test="clientSku != null" >
                 and `client_sku` = #{clientSku,jdbcType=VARCHAR}

@@ -45,6 +45,11 @@ public class VmsBtOrderDetailModel extends BaseModel {
     protected String orderTime;
 
     /**
+     * 平台id
+     */
+    protected Integer cartId;
+
+    /**
      * 客户sku
      */
     protected String clientSku;
@@ -157,6 +162,14 @@ public class VmsBtOrderDetailModel extends BaseModel {
 
     public void setOrderTime(String orderTime) {
         this.orderTime = orderTime == null ? null : orderTime.trim();
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getClientSku() {
