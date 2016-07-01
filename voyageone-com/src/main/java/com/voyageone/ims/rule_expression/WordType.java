@@ -13,4 +13,7 @@ public enum WordType{
     FEED_ORG,
     FEED_CN,
     SKU,
+    // added by morse.lu 2016/06/27 start
+    COMMON,
+    // added by morse.lu 2016/06/27 end
 }

@@ -228,7 +228,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 //                    map.setSkuCount(cmsBtProductModel.getSkus().size());
                     CmsBtProductBean cmsBtProductModel = prodList.get(0);
                     map.setPlatformStatus(cmsBtProductModel.getGroupBean().getPlatformStatus());
-                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
+                    map.setInventory(cmsBtProductModel.getCommon().getFields().getQuantity());
                 }
             });
         }
