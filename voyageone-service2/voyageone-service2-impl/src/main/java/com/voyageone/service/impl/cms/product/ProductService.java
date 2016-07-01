@@ -499,6 +499,15 @@ public class ProductService extends BaseService {
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 
             for (Integer cartInfo : carts) {
+                // Add desmond 2016/07/01 start
+                // 由于2016/07/08版本的最新Product中product.Fields.status移到分平台product.platforms.P23.status下面去了
+                // 所以是否Approved的判断只能移到insertSxWorkLoad()方法里面去做，当一个商品的所有product都没有Approved，则不插入sx_workload表
+                if (cmsProduct.getPlatform(cartInfo) != null
+                        && !CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartInfo).getStatus())) {
+                    continue;
+                }
+                // Add desmond 2016/07/01 end
+
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 model.setChannelId(channelId);
                 if (platformsMap.get(cartInfo) != null) {
