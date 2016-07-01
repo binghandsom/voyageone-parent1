@@ -77,6 +77,8 @@
     * priceMsrp           ->中国建议零售价
     * priceRetail         ->中国指导价
 * platforms    ->平台属性
+  * P0  ->主数据
+    * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
   * P23  ->天猫国际
     * cartId
     * status
@@ -109,7 +111,8 @@
       * priceMsrp   ->各平台的MSRP售价
       * priceRetail ->各平台的销售指导价
       * priceSale   ->各平台的最终售价
-      * priceChgFlg ->价格变更状态（U/D/XU/XD）
+      * priceChgFlg ->价格变更状态（U/D/XU/XD） 这里是价格本身变更
+      * priceDiffFlg ->价格比较结果（<:2 / >:3 / =:1） 这里表示最终售价与指导价的比较结果 (string型)
       * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
     * sellerCats[]  ->店铺内分类
       * cId
@@ -155,8 +158,8 @@
 	  * userPurchaseLimit
 	* skus[]
 	  * skuCode
-        * priceMsrp   ->各平台的MSRP售价
-        * priceRetail ->各平台的销售指导价
+      * priceMsrp   ->各平台的MSRP售价
+      * priceRetail ->各平台的销售指导价
 	  * priceSale   ->各平台的中国最终售价
 	  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 	  * property
