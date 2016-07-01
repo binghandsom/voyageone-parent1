@@ -1,12 +1,15 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.jongo.query.Query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BaseJomgoPartTemplate Query Object
@@ -101,6 +104,18 @@ public class JomgoQuery extends BaseCondition {
             return "{" + StringUtils.join(queryStrList, ',') + "}";
         }
         return "";
+    }
+
+    public Map getQueryMap() {
+        //DBObject dbObject = (DBObject) JSON.parse(getQuery());
+        //return dbObject.toMap();
+        VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+        Object[] params = getParameters();
+        if (params == null) {
+            params = new Object[0];
+        }
+        Query query = queryFactory.createQuery(getQuery(), params);
+        return query.toDBObject().toMap();
     }
 
     public JomgoQuery setQuery(String query) {
