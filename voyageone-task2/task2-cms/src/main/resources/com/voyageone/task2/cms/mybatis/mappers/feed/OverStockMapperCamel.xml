@@ -47,6 +47,9 @@
     <result column="upc" property="upc" jdbcType="LONGVARCHAR" />
     <result column="shipsViaLtl" property="shipsvialtl" jdbcType="LONGVARCHAR" />
     <result column="attribute1" property="attribute1" jdbcType="LONGVARCHAR" />
+    <result column="attributeColor" property="attributeColor" jdbcType="LONGVARCHAR" />
+    <result column="attributeMetal" property="attributeMetal" jdbcType="LONGVARCHAR" />
+    <result column="attributeSize" property="attributeSize" jdbcType="LONGVARCHAR" />
     <result column="image" property="image" jdbcType="LONGVARCHAR" />
     <result column="model_image" property="modelImage" jdbcType="LONGVARCHAR" />
     <result column="model_retailerId" property="modelRetailerid" jdbcType="LONGVARCHAR" />
@@ -76,7 +79,7 @@
     "mapPrice_currency", "msrpPrice_amount", "msrpPrice_currency", "msrpExpirationDate",
     "compareAtPrice_currency", "compareAtPrice_amount", "compareAtExpirationDate", "previouslyAdvertisedPrice_amount",
     "previouslyAdvertisedPrice_currency", "shippingWidth", "shippingHeight", "shippingLength",
-    "shippingWeight", "upc", "shipsViaLtl", "attribute1", "image", "model_image", "model_retailerId",
+    "shippingWeight", "upc", "shipsViaLtl", "attribute1","attributeColor","attributeMetal","attributeSize", "image", "model_image", "model_retailerId",
     "model_title", "model_brand", "model_manufacturerName", "model_shortDescription",
     "model_longDescription", "model_leadTime", "model_adultContent", "model_countryOfOrigin",
     "model_productActiveStatus", "model_shippingSiteSale", "model_discountSiteSale",
@@ -112,7 +115,7 @@
     "previouslyAdvertisedPrice_currency", "shippingWidth",
     "shippingHeight", "shippingLength",
     "shippingWeight", "upc", "shipsViaLtl",
-    "attribute1", "image", "model_image",
+    "attribute1", "attributeColor", "attributeMetal", "attributeSize", "image", "model_image",
     "model_retailerId", "model_title", "model_brand",
     "model_manufacturerName", "model_shortDescription",
     "model_longDescription", "model_leadTime",
@@ -137,7 +140,8 @@
     #{previouslyadvertisedpriceCurrency,jdbcType=LONGVARCHAR}, #{shippingwidth,jdbcType=LONGVARCHAR},
     #{shippingheight,jdbcType=LONGVARCHAR}, #{shippinglength,jdbcType=LONGVARCHAR},
     #{shippingweight,jdbcType=LONGVARCHAR}, #{upc,jdbcType=LONGVARCHAR}, #{shipsvialtl,jdbcType=LONGVARCHAR},
-    #{attribute1,jdbcType=LONGVARCHAR}, #{image,jdbcType=LONGVARCHAR}, #{modelImage,jdbcType=LONGVARCHAR},
+    #{attribute1,jdbcType=LONGVARCHAR}, #{attributeColor,jdbcType=LONGVARCHAR},#{attributeMetal,jdbcType=LONGVARCHAR},#{attributeSize,jdbcType=LONGVARCHAR},
+    #{image,jdbcType=LONGVARCHAR}, #{modelImage,jdbcType=LONGVARCHAR},
     #{modelRetailerid,jdbcType=LONGVARCHAR}, #{modelTitle,jdbcType=LONGVARCHAR}, #{modelBrand,jdbcType=LONGVARCHAR},
     #{modelManufacturername,jdbcType=LONGVARCHAR}, #{modelShortdescription,jdbcType=LONGVARCHAR},
     #{modelLongdescription,jdbcType=LONGVARCHAR}, #{modelLeadtime,jdbcType=LONGVARCHAR},
@@ -274,6 +278,15 @@
       </if>
       <if test="attribute1 != null" >
         attribute1,
+      </if>
+      <if test="attributeColor != null" >
+        attributeColor,
+      </if>
+      <if test="attributeMetal != null" >
+        attributeMetal,
+      </if>
+      <if test="attributeSize != null" >
+        attributeSize,
       </if>
       <if test="image != null" >
         image,
@@ -454,6 +467,15 @@
       <if test="attribute1 != null" >
         #{attribute1,jdbcType=LONGVARCHAR},
       </if>
+      <if test="attributeColor != null" >
+        #{attributeColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeMetal != null" >
+        #{attributeMetal,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeSize != null" >
+        #{attributeSize,jdbcType=LONGVARCHAR},
+      </if>
       <if test="image != null" >
         #{image,jdbcType=LONGVARCHAR},
       </if>
@@ -633,6 +655,15 @@
       <if test="attribute1 != null" >
         "attribute1" = #{attribute1,jdbcType=LONGVARCHAR},
       </if>
+      <if test="attributeColor != null" >
+        "attributeColor" = #{attributeColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeMetal != null" >
+        "attributeMetal" = #{attributeMetal,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeSize != null" >
+        "attributeSize" = #{attributeSize,jdbcType=LONGVARCHAR},
+      </if>
       <if test="image != null" >
         "image" = #{image,jdbcType=LONGVARCHAR},
       </if>
@@ -730,6 +761,9 @@
     "upc" = #{upc,jdbcType=LONGVARCHAR},
     "shipsViaLtl" = #{shipsvialtl,jdbcType=LONGVARCHAR},
     "attribute1" = #{attribute1,jdbcType=LONGVARCHAR},
+    "attributeColor" = #{attributeColor,jdbcType=LONGVARCHAR},
+    "attributeMetal" = #{attributeMetal,jdbcType=LONGVARCHAR},
+    "attributeSize" = #{attributeSize,jdbcType=LONGVARCHAR},
     "image" = #{image,jdbcType=LONGVARCHAR},
     "model_image" = #{modelImage,jdbcType=LONGVARCHAR},
     "model_retailerId" = #{modelRetailerid,jdbcType=LONGVARCHAR},
@@ -833,7 +867,7 @@
     ${keyword}
   </select>
   <update id="updateFlagBySku"  parameterType="java.util.List">
-    UPDATE voyageone_cms2.cms_zz_feed_overstock_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    UPDATE voyageone_cms2.cms_zz_feed_overstock_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `clientSku` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
@@ -842,7 +876,7 @@
 
   <insert id="insertFullBySku"  parameterType="java.util.List">
     INSERT INTO voyageone_cms2.cms_zz_feed_overstock_product_full SELECT * from
-    voyageone_cms2.cms_zz_feed_overstock_product_temp where `sku` in
+    voyageone_cms2.cms_zz_feed_overstock_product_temp where `clientSku` in
     (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
@@ -854,7 +888,7 @@
     DELETE
     FROM
     voyageone_cms2.cms_zz_feed_overstock_product_full
-    where `sku` in (
+    where `clientSku` in (
     <foreach collection="list" item="itemIds" index="index" separator=",">
       #{itemIds}
     </foreach>
