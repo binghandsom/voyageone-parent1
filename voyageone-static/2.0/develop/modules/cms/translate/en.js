@@ -646,7 +646,7 @@ define(function(){
         "TXT_COMMON_SEARCH":"共通搜索条件",
         "TXT_PLATFORM_SEARCH":"平台搜索条件",
         "TXT_DIY_SEARCH":"自定义搜索条件",
-        "TXT_CATEGORY_STATUS":"类目状态",
+        "TXT_CATEGORY_STATUS":"主类目状态",
         "TXT_TAX_NO_STATUS":"税号设置状态",
         "TXT_MAIN_CATEGORY":"主类目",
         "TXT_LIST_ERROR":"错误列表",
