@@ -1,10 +1,8 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -596,23 +594,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用
                     // TODO: 等改好后下面这段内容就可以删掉了
-                    {
-                        List<BulkUpdateModel> bulkList = new ArrayList<>();
-
-                        HashMap<String, Object> updateMap = new HashMap<>();
-//                        updateMap.put("batchField.switchCategory", 0); // delete desmon 2016/07/01 已经没有batchField这个项目了
-
-                        HashMap<String, Object> queryMap = new HashMap<>();
-                        queryMap.put("prodId", cmsProduct.getProdId());
-
-                        BulkUpdateModel model = new BulkUpdateModel();
-                        model.setUpdateMap(updateMap);
-                        model.setQueryMap(queryMap);
-                        bulkList.add(model);
-
-                        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
-
-                    }
+                    // delete desmon 2016/07/01 start
+                    // 已经没有batchField这个项目了，所以不用回写这个字段了
+//                    {
+//                        List<BulkUpdateModel> bulkList = new ArrayList<>();
+//
+//                        HashMap<String, Object> updateMap = new HashMap<>();
+//                        updateMap.put("batchField.switchCategory", 0);
+//
+//                        HashMap<String, Object> queryMap = new HashMap<>();
+//                        queryMap.put("prodId", cmsProduct.getProdId());
+//
+//                        BulkUpdateModel model = new BulkUpdateModel();
+//                        model.setUpdateMap(updateMap);
+//                        model.setQueryMap(queryMap);
+//                        bulkList.add(model);
+//
+//                        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+//
+//                    }
+                    // delete desmon 2016/07/01 end
 
                     $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
                     // jeff 2016/04 add start
