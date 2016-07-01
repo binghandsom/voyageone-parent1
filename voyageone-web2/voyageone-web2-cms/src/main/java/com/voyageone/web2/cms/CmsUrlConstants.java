@@ -676,7 +676,7 @@ public interface CmsUrlConstants {
     interface TOOLS{
         interface PRODUCT {
 
-            String ROOT = "/cms/tools/product";
+            String ROOT = "/cms/tools/product/";
 
             String INIT_HS_CODE_INFO = "initHsCodeInfo";
 
