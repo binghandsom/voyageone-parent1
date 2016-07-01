@@ -119,10 +119,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             for (CmsBtProductBean cmsBtProductModel : cmsBtProductModels) {
                 CmsBtProductGroupModel productPlatform = cmsBtProductModel.getGroupBean();
-                String prodCode = cmsBtProductModel.getFields().getCode();
+                String prodCode = cmsBtProductModel.getCommon().getFields().getCode();
                 // tom 获取feed info的数据 START
                 String orgChannelId = cmsBtProductModel.getOrgChannelId(); // feed信息要从org里获取
-                String prodOrgCode = cmsBtProductModel.getFields().getOriginalCode(); // 有可能会有原始code
+                String prodOrgCode = cmsBtProductModel.getCommon().getFields().getOriginalCode(); // 有可能会有原始code
                 if (prodOrgCode == null) prodOrgCode = prodCode;
                 CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
                 // tom 获取feed info的数据 END
@@ -193,7 +193,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             if (mainSxProduct != null) {
                 workload.setCart_id(mainProductPlatform.getCartId());
-                workload.setCatId(mainProductModel.getCatId());
+                workload.setCatId(mainProductModel.getCommon().getCatId());
 
                 UpJobParamBean upJobParam = new UpJobParamBean();
                 upJobParam.setForceAdd(false);
@@ -248,9 +248,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             }
         }
         // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-        if (!StringUtils.isEmpty(cmsBtProductModel.getFields().getLock()) && "1".equals(cmsBtProductModel.getFields().getLock())) {
-            return false;
-        }
+//        if (!StringUtils.isEmpty(cmsBtProductModel.getLock()) && "1".equals(cmsBtProductModel.getFields().getLock())) {
+//            return false;
+//        }
         // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
         if (!StringUtils.isEmpty(cmsBtProductModel.getLock()) && "1".equals(cmsBtProductModel.getLock())) {
             return false;
@@ -297,7 +297,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
 
                     //成功时，publish_status设为1
-                    codeList.add(cmsBtProductModel.getFields().getCode());
+                    codeList.add(cmsBtProductModel.getCommon().getFields().getCode());
                 }
 
                 assert mainCmsProductModel != null;
@@ -349,7 +349,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 // 增加voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的 START
                 List<SxProductBean> sxProductBeenList = workLoadBean.getProcessProducts();
                 for (SxProductBean sxProductBean : sxProductBeenList) {
-                    String code = sxProductBean.getCmsBtProductModel().getFields().getCode();
+                    String code = sxProductBean.getCmsBtProductModel().getCommon().getFields().getCode();
 
                     ProductPublishBean productPublishBean = productPublishDao.selectByChannelCartCode(
                             workLoadBean.getOrder_channel_id(),
@@ -419,7 +419,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
                         cmsBtPromotionCodesBean.setChannelId(workLoadBean.getOrder_channel_id());
                         cmsBtPromotionCodesBean.setCartId(workLoadBean.getCart_id());
-                        cmsBtPromotionCodesBean.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
+                        cmsBtPromotionCodesBean.setProductCode(sxProductBean.getCmsBtProductModel().getCommon().getFields().getCode());
                         cmsBtPromotionCodesBean.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
                         cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
                         cmsBtPromotionCodesBean.setNumIid(workLoadBean.getNumId());
@@ -442,7 +442,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
 
                     //成功时，publish_status设为1
-                    codeList.add(cmsBtProductModel.getFields().getCode());
+                    codeList.add(cmsBtProductModel.getCommon().getFields().getCode());
                 }
                 // 16/4/23 这个方法是不是以前的,产品上新成功了的话,是否应该已group的方法来更新-> 失败的场合就不要更新了
 //                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
@@ -458,16 +458,16 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 String model = "";
                 if (mainCmsProductModel != null) {
                     productId = String.valueOf(mainCmsProductModel.getProdId());
-                    mainCode = mainCmsProductModel.getFields().getCode();
-                    model = mainCmsProductModel.getFields().getModel();
+                    mainCode = mainCmsProductModel.getCommon().getFields().getCode();
+                    model = mainCmsProductModel.getCommon().getFields().getModel();
                 }
                 if (workLoadBean.getMainProduct() != null
                         && workLoadBean.getMainProduct().getCmsBtProductModel() != null
-                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields() != null
-                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().size() > 0
-                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getCommon().getFields() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getCommon().getFields().size() > 0
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getCommon().getFields().getOriginalTitleCn() != null
                         ) {
-                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle());
+                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getCommon().getFields().getOriginalTitleCn());
                 }
                 cmsBusinessLogModel.setProductId(productId);
                 cmsBusinessLogModel.setCode(mainCode);

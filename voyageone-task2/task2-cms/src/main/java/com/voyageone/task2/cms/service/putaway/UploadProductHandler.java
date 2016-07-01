@@ -75,14 +75,14 @@ public class UploadProductHandler extends UploadWorkloadHandler{
 
             List<String> skus = new ArrayList<>();
             for (SxProductBean sxProductBean : workLoadBean.getProcessProducts()) {
-                skus.addAll(sxProductBean.getCmsBtProductModel().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                skus.addAll(sxProductBean.getCmsBtProductModel().getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
             }
             Map<String, Integer> skuInventoryMap = skuInventoryDao.getSkuInventory(channelId, skus);
             workLoadBean.setSkuInventoryMap(skuInventoryMap);
 
             Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap = new HashMap<>();
             for (SxProductBean sxProductBean : workLoadBean.getProcessProducts()) {
-                for (CmsBtProductModel_Sku sku : sxProductBean.getCmsBtProductModel().getSkus()) {
+                for (CmsBtProductModel_Sku sku : sxProductBean.getCmsBtProductModel().getCommon().getSkus()) {
                     skuProductMap.put(sku, sxProductBean);
                 }
             }
