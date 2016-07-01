@@ -39,6 +39,8 @@ define([
 
             $scope.vm.exportPageOption.curr = 1;
 
+            $scope.vm.searchInfo.isAll = false;
+
             $scope.vm.currTab = 'group';
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
@@ -145,7 +147,7 @@ define([
                     feedInfo.attsList = attsList;
 
                     // 设置勾选框
-                    if (feedInfo.updFlg != 0) {
+                    if (feedInfo.updFlg != 8) {
                         tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
                     }
                 });
@@ -165,12 +167,13 @@ define([
             }
             var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品" : "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
             confirm(notice).result.then(function () {
-/*                    $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':0,"searchInfo":$scope.beforSearchInfo}).then(function () {
-                        if (tempFeedSelect != null) {
-                            tempFeedSelect.clearSelectedList();
-                        }
-                        search(1);
-                    })*/
+                   $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':mark,"searchInfo":$scope.beforSearchInfo}).then(function () {
+                 if (tempFeedSelect != null) {
+                    tempFeedSelect.clearSelectedList();
+                 }
+                       $scope.vm.searchInfo.isAll = false;
+                 search(1);
+                 })
                 });
         };
 
