@@ -57,16 +57,11 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 continue;
             }
 
-            List<Integer> cartList = new ArrayList<>();
+            List<Integer> cartList2 = prodObj.getCartIdList();
             List<String> skuCodeList = new ArrayList<>();
             skusList.forEach(skuObj -> {
                 skuCodeList.add(skuObj.getSkuCode());
-                cartList.addAll(skuObj.getSkuCarts());
             });
-            List<Integer> cartList2 = cartList.stream().distinct().collect(Collectors.toList());
-            if (cartList.isEmpty() || cartList2.isEmpty()) {
-                continue;
-            }
 
             Map<String, Object> salesMap = new HashMap<>();
             List<Map<String, Object>> skuSum7List = new ArrayList<>();
