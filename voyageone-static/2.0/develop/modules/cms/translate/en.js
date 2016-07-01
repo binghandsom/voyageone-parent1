@@ -633,14 +633,17 @@ define(function(){
 
         /**工具管理*/
         "TXT_TOOLS_MANAGEMENT":"工具管理",
-        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"商品处理",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING_STATUS": "商品税号设置状态",
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
+        "TXT_NUMBER_OF_SETTED":"设置税号商品总数",
+        "TXT_NUMBER_OF_SETTED_BY_PERSONAL": "个人设置税号商品译数",
         "TXT_HS_CODE_STATUS":"税号状态",
         "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT":"税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON":"商品名称/Feed类目/主类目",
+        "TXT_HS_CODE_SETTED_SEARCH":"个人设置税号成果搜索",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW":"高级搜索",
