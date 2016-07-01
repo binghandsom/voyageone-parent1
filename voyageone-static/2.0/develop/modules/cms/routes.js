@@ -272,7 +272,7 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
         },
         "tools_product": {
-            "hash": "/tools/product",
+            "hash": "/tools/product/hscode_setting",
             "templateUrl": "views/tools/product/hsCodeList.tpl.html",
             "controllerUrl": "modules/cms/views/tools/product/hsCodeList.ctl",
             "controller": "HsCodeController as ctrl"
