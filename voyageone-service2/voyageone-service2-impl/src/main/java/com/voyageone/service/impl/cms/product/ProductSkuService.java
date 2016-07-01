@@ -358,8 +358,10 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpEd = null;
 
         for (CmsBtProductModel product : products) {
+            // update desmond 2016/07/01 start
+            // 删除group.getCartId() == 23的这种情况
             // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-            if (group.getCartId() != 23) {
+//            if (group.getCartId() != 23) {
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                     if (group.getCartId() == entry.getValue().getCartId()) {
                         if (priceSaleSt == null || entry.getValue().getpPriceSaleSt() < priceSaleSt) {
@@ -370,16 +372,16 @@ public class ProductSkuService extends BaseService {
                         }
                     }
                 }
-            } else{
-                for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
-                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
-                        priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                    }
-                    if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
-                        priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                    }
-                }
-            }
+//            } else{
+//                for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
+//                        priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+//                    }
+//                    if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
+//                        priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+//                    }
+//                }
+//            }
 
             if (group.getCartId() == 0 || group.getCartId() == 1) {
                 if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceRetailSt() != null) {
@@ -394,7 +396,7 @@ public class ProductSkuService extends BaseService {
                 }
             } else {
                 // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-                if (group.getCartId() != 23) {
+//                if (group.getCartId() != 23) {
                     for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                         if (group.getCartId() == entry.getValue().getCartId()) {
                             if (priceRetailSt == null || entry.getValue().getpPriceRetailSt() < priceRetailSt) {
@@ -405,16 +407,16 @@ public class ProductSkuService extends BaseService {
                             }
                         }
                     }
-                } else{
-                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
-                        if (priceRetailSt == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) < priceRetailSt) {
-                            priceRetailSt = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
-                        }
-                        if (priceRetailEd == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) > priceRetailEd) {
-                            priceRetailEd = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
-                        }
-                    }
-                }
+//                } else{
+//                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                        if (priceRetailSt == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) < priceRetailSt) {
+//                            priceRetailSt = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+//                        }
+//                        if (priceRetailEd == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) > priceRetailEd) {
+//                            priceRetailEd = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+//                        }
+//                    }
+//                }
             }
 
             if (group.getCartId() == 0 || group.getCartId() == 1) {
@@ -430,7 +432,7 @@ public class ProductSkuService extends BaseService {
                 }
             } else {
                 // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-                if (group.getCartId() != 23) {
+//                if (group.getCartId() != 23) {
                     for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                         if (group.getCartId() == entry.getValue().getCartId()) {
                             if (priceMsrpSt == null || entry.getValue().getpPriceMsrpSt() < priceMsrpSt) {
@@ -441,16 +443,17 @@ public class ProductSkuService extends BaseService {
                             }
                         }
                     }
-                } else{
-                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
-                        if (priceMsrpSt == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) < priceMsrpSt) {
-                            priceMsrpSt = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
-                        }
-                        if (priceMsrpEd == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) > priceMsrpEd) {
-                            priceMsrpEd = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
-                        }
-                    }
-                }
+//                } else{
+//                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                        if (priceMsrpSt == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) < priceMsrpSt) {
+//                            priceMsrpSt = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+//                        }
+//                        if (priceMsrpEd == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) > priceMsrpEd) {
+//                            priceMsrpEd = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+//                        }
+//                    }
+//                }
+                // update desmond 2016/07/01 end
             }
         }
 

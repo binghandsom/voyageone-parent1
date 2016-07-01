@@ -21,15 +21,10 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
-import com.voyageone.service.bean.cms.product.ProductPriceBean;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
@@ -370,8 +365,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (cmsProductList.size() > 1) {
                     for (CmsBtProductModel cmsProduct : cmsProductList) {
                         String sku = "";
-                        if (cmsProduct.getSkus().size() == 1) {
-                            sku = cmsProduct.getSkus().get(0).getSkuCode();
+                        if (cmsProduct.getCommon().getSkus().size() == 1) {
+                            sku = cmsProduct.getCommon().getSkus().get(0).getSkuCode();
                         }
                         if (!StringUtils.isEmpty(sku)) {
                             existProduct.put(sku, cmsProduct);
@@ -388,9 +383,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         if (cmsProductList.size() == 1) {
                             // 如果原来product中只包含一个sku，那么原来的那条还延用原来的Code
                             CmsBtProductModel cmsProduct = cmsProductList.get(0);
-                            if (cmsProduct.getSkus().size() == 1) {
+                            if (cmsProduct.getCommon().getSkus().size() == 1) {
                                 // 如果原来product中只包含一个sku （Feed的sku从1个变化为1个以上的情况）
-                                CmsBtProductModel_Sku productSku = cmsProduct.getSkus().get(0);
+                                CmsBtProductModel_Sku productSku = cmsProduct.getCommon().getSkus().get(0);
                                 if (feedSku.getSku().equals(productSku.getSkuCode())) {
                                     // product中包含的那个sku 还延用原来的Code，Mode
                                     BeanUtils.copyProperties(splitFeed, originalFeed);
@@ -436,8 +431,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                 // product中包含的那个sku 还延用原来的Code，Mode
                                 BeanUtils.copyProperties(splitFeed, originalFeed);
                                 BeanUtils.copyProperties(splitSku, feedSku);
-                                splitFeed.setCode(existProduct.get(feedSku.getSku()).getFields().getCode());
-                                splitFeed.setModel(existProduct.get(feedSku.getSku()).getFields().getModel());
+                                splitFeed.setCode(existProduct.get(feedSku.getSku()).getCommon().getFields().getCode());
+                                splitFeed.setModel(existProduct.get(feedSku.getSku()).getCommon().getFields().getModel());
                                 splitSkus.add(splitSku);
                                 splitFeed.setSkus(splitSkus);
                                 feedList.add(splitFeed);
@@ -662,7 +657,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 调用共通方法来设置价格
                 // doSetPrice(channelId, feed, cmsProduct);
-                ProductPriceBean productPriceBean = doSetPrice(channelId, feed, cmsProduct);
+                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
                 // 更新价格履历
                 // productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
@@ -677,9 +672,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // 自动上新标志位 = 1:(自动上新) 并且 商品的状态是Approved的场合
-                if ("1".equals(sxFlg) && CmsConstants.ProductStatus.Approved == CmsConstants.ProductStatus.valueOf(cmsProduct.getFields().getStatus())) {
+                // Add desmond 2016/07/01 start
+//                if ("1".equals(sxFlg) && CmsConstants.ProductStatus.Approved == CmsConstants.ProductStatus.valueOf(cmsProduct.getFields().getStatus())) {
+                // 由于2016/07/08版本的最新Product中product.Fields.status移到分平台product.platforms.P23.status下面去了
+                // 所以是否Approved的判断只能移到insertSxWorkLoad()方法里面去做，当一个商品的所有product都没有Approved，则不插入sx_workload表
+                if ("1".equals(sxFlg)) {
                     productService.insertSxWorkLoad(channelId, cmsProduct, getTaskName());
                 }
+                // Add desmond 2016/07/01 end
                 // jeff 2016/04 change end
 
                 // tom 20160510 删除 START
@@ -731,7 +731,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
                     } else {
                         //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCommon().getCatPath()));
                     }
                     // 设置更新时间,更新者
                     feed.setModifier(getTaskName());
@@ -910,10 +910,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 productCommonField.setMaterialEn(feed.getMaterial());
             }
 
-            // 产品状态
-            if (newFlg || StringUtils.isEmpty(productField.getStatus()) || "1".equals(feed.getIsFeedReImport())) {
-                productField.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
-            }
+            // delete desmond 2016/07/01 start
+            // product.field.status -> product.platforms.P23.status之后，这里不要设置，到分平台下面去设置了
+//            // 产品状态
+//            if (newFlg || StringUtils.isEmpty(productField.getStatus()) || "1".equals(feed.getIsFeedReImport())) {
+//                productField.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
+//            }
+            // delete desmond 2016/07/01 end
 
 //            {
 //                // 所有的翻译内容
@@ -1135,8 +1138,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             if (!skip_mapping_check) {
                 String catPath = mapping.getMainCategoryPath();
-                product.setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.setCatPath(catPath); // 主类目path
+                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.getCommon().setCatPath(catPath); // 主类目path
             }
             product.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID)); // 商品的id
 
@@ -1146,7 +1149,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/06 add end
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
-            CmsMtCategorySchemaModel schemaModel =  cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
+            CmsMtCategorySchemaModel schemaModel =  cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
 
             CmsBtProductModel_Common common = new CmsBtProductModel_Common();
             common.setFields(new CmsBtProductModel_Field());
@@ -1161,7 +1164,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // ProductCarts
             // product.setCarts(getProductCarts(feed));
-            product.setFields(field);
+            product.getCommon().setFields(field);
 
             if (newMapping != null) {
                 String catPath = newMapping.getMainCategoryPath();
@@ -1174,10 +1177,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (typeChannelBeanListApprove == null) {
                 return null;
             }
-            List<Integer> skuCarts = new ArrayList<>();
-            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
-                skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
-            }
+            // delete desmond 2016/07/01 start
+//            List<Integer> skuCarts = new ArrayList<>();
+//            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+//                skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
+//            }
+            // delete desmond 2016/07/01 end
 
             // SKU级属性列表
             List<String> skuFieldSchemaList = new ArrayList<>();
@@ -1218,12 +1223,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // TODO commonSku.setSize以后有空做
 
                 // 增加默认渠道
-                mainSku.setSkuCarts(skuCarts);
+                // delete desmond 2016/07/01 start
+//                mainSku.setSkuCarts(skuCarts);
+                // delete desmond 2016/07/01 end
 
                 mainSkuList.add(mainSku);
 //                commonSkuList.add(commonSku);
             }
-            product.setSkus(mainSkuList);
+            product.getCommon().setSkus(mainSkuList);
 
             common.setSkus(mainSkuList);
 
@@ -1280,11 +1287,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 platforms.put("P" + typeChannelBean.getValue(), platform);
             }
             product.setPlatforms(platforms);
-
-            // --------- batchFields ------------------------------------------------------
-            CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
-            batchField.setAttribute("switchCategory", "0"); // 初始化: 切换主类目->完成
-            product.setBatchField(batchField);
 
             // --------- 商品Feed信息设定 ------------------------------------------------------
             BaseMongoMap mainFeedOrgAtts = new BaseMongoMap();
@@ -1491,15 +1493,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             boolean numIdNoSet = doSetGroup(feed);
             if (numIdNoSet && !skip_mapping_check) {
                 String catPath = mapping.getMainCategoryPath();
-                product.setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.setCatPath(catPath); // 主类目path
+                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
+                product.getCommon().setCatPath(catPath); // 主类目path
             }
             // jeff 2016/05 add end
 
             // 注意: 价格是在外面共通方法更新的, 这里不需要更新
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
-            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
+            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
             // 更新Fields字段
             // jeff 2016/04 change start
             // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
@@ -1511,10 +1513,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             } else if (product.getCommon().getFields() == null) {
                 product.getCommon().setFields(new CmsBtProductModel_Field());
             }
-            if (product.getFields() == null) {
-                product.setFields(new CmsBtProductModel_Field());
-            }
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getFields(), product.getCommon().getFields(), isSplit, originalCode);
+            // delete desmond 2016/07/01 start 跟上面重复了
+//            if (product.getCommon().getFields() == null) {
+//                product.getCommon().setFields(new CmsBtProductModel_Field());
+//            }
+            // delete desmond 2016/07/01 end
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getCommon().getFields(), product.getCommon().getFields(), isSplit, originalCode);
             // jeff 2016/04 change end
             if (field == null) {
                 return null;
@@ -1561,7 +1565,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
                 // 遍历主数据product里的sku,看看有没有
                 boolean blnFound = false;
-                for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
                     if (feedSku.getSku().equals(sku.getSkuCode())) {
                         blnFound = true;
                         break;
@@ -1572,12 +1576,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (!blnFound) {
                     // 获取当前channel, 有多少个platform
                     List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
-                    List<Integer> skuCarts = new ArrayList<>();
-                    if (typeChannelBeanListApprove != null) {
-                        for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
-                            skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
-                        }
-                    }
+                    // delete desmond 2016/07/01 start
+//                    List<Integer> skuCarts = new ArrayList<>();
+//                    if (typeChannelBeanListApprove != null) {
+//                        for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+//                            skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
+//                        }
+//                    }
+                    // delete desmond 2016/07/01 end
 
                     CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
                     sku.setSkuCode(feedSku.getSku());
@@ -1592,10 +1598,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         sku.putAll(doSetCustomSkuInfo(feed, skuFieldSchemaList));
                     }
 
-                    // 增加默认渠道
-                    sku.setSkuCarts(skuCarts);
-
-                    product.getSkus().add(sku);
+                    product.getCommon().getSkus().add(sku);
                 }
 
             }
@@ -1913,9 +1916,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 主商品Code
                     group.setMainProductCode(feed.getCode());
 
-                    // display order
-                    group.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
-
                     // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
                     group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
 
@@ -2139,36 +2139,39 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param blnProductExist true：更新；false：新建
          * @return 更新前的价格履历Bean
          */
-        private ProductPriceBean getProductPriceBeanBefore(CmsBtProductModel cmsProduct, boolean blnProductExist) {
-
-            ProductPriceBean productPriceBeanBefore = new ProductPriceBean();
-            for (CmsBtProductModel_Sku sku : cmsProduct.getSkus()) {
-                ProductSkuPriceBean productSkuPriceBean = new ProductSkuPriceBean();
-                if (!blnProductExist) {
-                    productSkuPriceBean.setClientMsrpPrice(null);
-                    productSkuPriceBean.setClientRetailPrice(null);
-                    productSkuPriceBean.setClientNetPrice(null);
-                    productSkuPriceBean.setPriceMsrp(null);
-                    productSkuPriceBean.setPriceRetail(null);
-                    productSkuPriceBean.setPriceSale(null);
-                } else {
-                    productSkuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-                    productSkuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-                    productSkuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-                    productSkuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-                    productSkuPriceBean.setPriceRetail(sku.getPriceRetail());
-                    productSkuPriceBean.setPriceSale(sku.getPriceSale());
-                }
-                productSkuPriceBean.setSkuCode(sku.getSkuCode());
-                productPriceBeanBefore.addSkuPrice(productSkuPriceBean);
-
-            }
-
-            productPriceBeanBefore.setProductCode(cmsProduct.getFields().getCode());
-            productPriceBeanBefore.setProductId(cmsProduct.getProdId());
-
-            return productPriceBeanBefore;
-        }
+        // delete desmond 2016/07/01 start
+        // TODO 价格履历功能没有做，这个方法没人调用，以后改成sku.getPriceSale()要改成分平台下读取
+//        private ProductPriceBean getProductPriceBeanBefore(CmsBtProductModel cmsProduct, boolean blnProductExist) {
+//
+//            ProductPriceBean productPriceBeanBefore = new ProductPriceBean();
+//            for (CmsBtProductModel_Sku sku : cmsProduct.getCommon().getSkus()) {
+//                ProductSkuPriceBean productSkuPriceBean = new ProductSkuPriceBean();
+//                if (!blnProductExist) {
+//                    productSkuPriceBean.setClientMsrpPrice(null);
+//                    productSkuPriceBean.setClientRetailPrice(null);
+//                    productSkuPriceBean.setClientNetPrice(null);
+//                    productSkuPriceBean.setPriceMsrp(null);
+//                    productSkuPriceBean.setPriceRetail(null);
+//                    productSkuPriceBean.setPriceSale(null);
+//                } else {
+//                    productSkuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
+//                    productSkuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
+//                    productSkuPriceBean.setClientNetPrice(sku.getClientNetPrice());
+//                    productSkuPriceBean.setPriceMsrp(sku.getPriceMsrp());
+//                    productSkuPriceBean.setPriceRetail(sku.getPriceRetail());
+//                    productSkuPriceBean.setPriceSale(sku.getPriceSale());
+//                }
+//                productSkuPriceBean.setSkuCode(sku.getSkuCode());
+//                productPriceBeanBefore.addSkuPrice(productSkuPriceBean);
+//
+//            }
+//
+//            productPriceBeanBefore.setProductCode(cmsProduct.getCommon().getFields().getCode());
+//            productPriceBeanBefore.setProductId(cmsProduct.getProdId());
+//
+//            return productPriceBeanBefore;
+//        }
+        // delete desmond 2016/07/01 end
 
         /**
          * getIsMasterMain 是否是Main商品
@@ -2424,11 +2427,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param channelId  channel id
          * @param feed       feed信息
          * @param cmsProduct cms product信息
-         * @return Product的价格Bean
+         * @return CmsBtProductModel 以后计算价格直接用ProductModel
          */
         // jeff 2016/04 change start
         // private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
-        private ProductPriceBean doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
+        private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
             Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsProduct.getPlatforms();
             List<CmsBtProductModel_Sku> commonSkus = cmsProduct.getCommon().getSkus();
@@ -2447,13 +2450,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 blnAutoApproveFlg = true;
             }
 
-            ProductPriceBean model = new ProductPriceBean();
-            ProductSkuPriceBean skuPriceModel;
-
-            model.setProductId(cmsProduct.getProdId());
-
-            // jeff 2016/04 add start
-            model.setProductCode(cmsProduct.getFields().getCode());
+            // delete desmond 2016/07/01 start
+//            ProductPriceBean model = new ProductPriceBean();
+//            ProductSkuPriceBean skuPriceModel;
+//
+//            model.setProductId(cmsProduct.getProdId());
+//
+//            // jeff 2016/04 add start
+//            model.setProductCode(cmsProduct.getCommon().getFields().getCode());
+            // delete desmond 2016/07/01 end
 
             // 店铺级别MSRP价格计算公式
             String priceMsrpCalcFormula = "";
@@ -2507,20 +2512,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                 }
-
-                skuPriceModel = new ProductSkuPriceBean();
-
-                skuPriceModel.setSkuCode(sku.getSku());
-                // jeff 2016/04 change start
-                // skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
-                // skuPriceModel.setPriceRetail(sku.getPrice_current());
-                skuPriceModel.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
-                skuPriceModel.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula));
-                // jeff 2016/04 change end
-
-                skuPriceModel.setClientMsrpPrice(sku.getPriceClientMsrp());
-                skuPriceModel.setClientRetailPrice(sku.getPriceClientRetail());
-                skuPriceModel.setClientNetPrice(sku.getPriceNet());
+               // delete desmond 2016/07/01 start
+//                skuPriceModel = new ProductSkuPriceBean();
+//
+//                skuPriceModel.setSkuCode(sku.getSku());
+//                // jeff 2016/04 change start
+//                // skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
+//                // skuPriceModel.setPriceRetail(sku.getPrice_current());
+//                skuPriceModel.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
+//                skuPriceModel.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula));
+//                // jeff 2016/04 change end
+//
+//                skuPriceModel.setClientMsrpPrice(sku.getPriceClientMsrp());
+//                skuPriceModel.setClientRetailPrice(sku.getPriceClientRetail());
+//                skuPriceModel.setClientNetPrice(sku.getPriceNet());
+                // delete desmond 2016/07/01 end
 
                 if (commonSku != null) {
                     commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
@@ -2544,7 +2550,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                     // 设定平台的最终价格
                                     if (platformSku.get("priceSale") != null) {
                                         Double newPrice = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
-                                        Double oldPrice =  Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
+                                        Double oldPrice = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
 
                                         // 是否自动同步最终售价
                                         if (blnAutoApproveFlg) {
@@ -2597,63 +2603,66 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                 }
-
-                // jeff 2016/04 change start
-                // 如果是新的SKU, 那么: PriceRetail -> priceSale
-                if (cmsProduct.getSku(sku.getSku()) == null) {
-                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
-                    skuPriceModel.setPriceChgFlg("");
-                } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
-                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
-                    skuPriceModel.setPriceChgFlg("");
-                } else {
-                    // 之前有价格的场合, 判断是否需要把价格更新掉
-
-                    // 旧sku
-                    CmsBtProductModel_Sku oldSku = cmsProduct.getSku(sku.getSku());
-
-                    // 旧价格取得
-                    Double oldPriceSale = oldSku.getPriceSale();
-
-                    // 新的的指导价
-                    Double newPriceSale = skuPriceModel.getPriceRetail();
-
-                    // 是否自动同步最终售价
-                    if (blnAutoApproveFlg) {
-                        if (newPriceSale > oldPriceSale) {
-                            // skuPriceModel.setPriceChgFlg("U" + (newPriceSale - oldPriceSale));
-                            skuPriceModel.setPriceSale(newPriceSale);
-                        } else if (newPriceSale < oldPriceSale) {
-                            // skuPriceModel.setPriceChgFlg("D" + Math.abs(newPriceSale - oldPriceSale));
-                            skuPriceModel.setPriceSale(newPriceSale);
-                        }
-                    } else {
-
-                        // 同步的场合
-                        if (!StringUtils.isEmpty(threshold) && StringUtils.isDigit(threshold)) {
-                            // 指导价高于原来最终售价的阈值(例：10%)时，强制击穿
-                            if (newPriceSale > oldPriceSale * (1.0 + Double.parseDouble(threshold) / 100.0)) {
-                                // skuPriceModel.setPriceChgFlg("X" + (newPriceSale - oldPriceSale));
-                                skuPriceModel.setPriceSale(newPriceSale);
-                            } else {
-                                // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-                                skuPriceModel.setPriceSale(oldSku.getPriceSale());
-                            }
-                        } else {
-                            // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
-                            skuPriceModel.setPriceSale(oldSku.getPriceSale());
-                        }
-                    }
-                }
-                // jeff 2016/04 change end
-
-                model.addSkuPrice(skuPriceModel);
             }
-
-            List<ProductPriceBean> productPrices = new ArrayList<>();
-            productPrices.add(model);
-
-            productSkuService.updatePrices(channelId, productPrices, getTaskName());
+                // delete by desmond 2016/07/01 start
+//                // product.fields,product.skus被删除了，改成product.common.fields,product.common.skus
+//                // jeff 2016/04 change start
+//                // 如果是新的SKU, 那么: PriceRetail -> priceSale
+//                if (cmsProduct.getCommon().getSku(sku.getSku()) == null) {
+//                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+//                    skuPriceModel.setPriceChgFlg("");
+//                } else if (cmsProduct.getCommon().getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getCommon().getSku(sku.getSku()).getPriceSale() == 0d) {
+//                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+//                    skuPriceModel.setPriceChgFlg("");
+//                } else {
+//                    // 之前有价格的场合, 判断是否需要把价格更新掉
+//
+//                    // 旧sku
+//                    CmsBtProductModel_Sku oldSku = cmsProduct.getCommon().getSku(sku.getSku());
+//
+//                    // 旧价格取得
+//                    Double oldPriceSale = oldSku.getPriceSale();
+//
+//                    // 新的的指导价
+//                    Double newPriceSale = skuPriceModel.getPriceRetail();
+//
+//                    // 是否自动同步最终售价
+//                    if (blnAutoApproveFlg) {
+//                        if (newPriceSale > oldPriceSale) {
+//                            // skuPriceModel.setPriceChgFlg("U" + (newPriceSale - oldPriceSale));
+//                            skuPriceModel.setPriceSale(newPriceSale);
+//                        } else if (newPriceSale < oldPriceSale) {
+//                            // skuPriceModel.setPriceChgFlg("D" + Math.abs(newPriceSale - oldPriceSale));
+//                            skuPriceModel.setPriceSale(newPriceSale);
+//                        }
+//                    } else {
+//
+//                        // 同步的场合
+//                        if (!StringUtils.isEmpty(threshold) && StringUtils.isDigit(threshold)) {
+//                            // 指导价高于原来最终售价的阈值(例：10%)时，强制击穿
+//                            if (newPriceSale > oldPriceSale * (1.0 + Double.parseDouble(threshold) / 100.0)) {
+//                                // skuPriceModel.setPriceChgFlg("X" + (newPriceSale - oldPriceSale));
+//                                skuPriceModel.setPriceSale(newPriceSale);
+//                            } else {
+//                                // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
+//                                skuPriceModel.setPriceSale(oldSku.getPriceSale());
+//                            }
+//                        } else {
+//                            // 为了之后计算PriceSaleSt和PriceSaleEd，也需要赋上旧值
+//                            skuPriceModel.setPriceSale(oldSku.getPriceSale());
+//                        }
+//                    }
+//                }
+//                // jeff 2016/04 change end
+//
+//                model.addSkuPrice(skuPriceModel);
+//            }
+//
+//            List<ProductPriceBean> productPrices = new ArrayList<>();
+//            productPrices.add(model);
+//
+//            productSkuService.updatePrices(channelId, productPrices, getTaskName());
+            // delete by desmond 2016/07/01 end
             productSkuService.updatePricesNew(channelId, cmsProduct, getTaskName());
             // jeff 2016/04 add start
             // 如果发生价格强制击穿的话，更新价格强制击穿时间
@@ -2672,7 +2681,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                taskDao.updateTaskControl(param);
 //            }
 
-            return model;
+            return cmsProduct;
             // jeff 2016/04 add end
         }
 
