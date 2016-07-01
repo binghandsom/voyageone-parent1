@@ -11,25 +11,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
+ * Mapping type是Common类型的设值,与MASTER类型比，除了取值地方不同，逻辑完全一致
+ *
+ * @author morse.lu 2016/06/27
+ * @since 2.1.0
  */
-public class MasterWordParser extends VOAbsLoggable {
+public class CommonWordParser extends VOAbsLoggable {
 
     private CmsBtProductModel cmsBtProductModel;
-    private int cartId;
 
     private List<Map<String, Object>> evaluationContextStack;
 
-    public MasterWordParser(CmsBtProductModel cmsBtProductModel, int cartId) {
+    public CommonWordParser(CmsBtProductModel cmsBtProductModel) {
         evaluationContextStack = new ArrayList<>();
         this.cmsBtProductModel = cmsBtProductModel;
-        this.cartId = cartId;
     }
 
     //目前只支持解析model级别的属性
     public String parse(RuleWord ruleWord)
     {
-        if (!WordType.MASTER.equals(ruleWord.getWordType()))
+        if (!WordType.COMMON.equals(ruleWord.getWordType()))
         {
             return null;
         }
@@ -40,11 +41,7 @@ public class MasterWordParser extends VOAbsLoggable {
             Map<String, String> extra = masterWord.getExtra();
             Object plainPropValueObj = null;
             if (evaluationContextStack.isEmpty()) {
-                // modified by morse.lu 2016/06/24 start
-//                plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
-                // 优先从各自平台的fields里去取，取不到再从common的fields里取
-                plainPropValueObj = getPropValueFromProductModel(propName);
-                // modified by morse.lu 2016/06/24 end
+                plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
             } else {
                 for (int i = evaluationContextStack.size(); i>0; i--) {
                     Map<String, Object> evaluationContext = evaluationContextStack.get(i-1);
@@ -55,10 +52,7 @@ public class MasterWordParser extends VOAbsLoggable {
                 }
                 //如果evaluationContext存在，但其中的某属性为空，那么从全局取
                 if (plainPropValueObj == null) {
-                    // modified by morse.lu 2016/06/24 start
-//                    plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
-                    plainPropValueObj = getPropValueFromProductModel(propName);
-                    // modified by morse.lu 2016/06/24 end
+                    plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
                 }
             }
 
@@ -66,9 +60,6 @@ public class MasterWordParser extends VOAbsLoggable {
                 return null;
             }
             if (extra == null || extra.size() == 0) {
-                // modified by morse.lu 2016/06/24 start
-                // 追加判断ArrayList
-//                return String.valueOf(plainPropValueObj);
                 if (plainPropValueObj instanceof  ArrayList) {
                     if (((ArrayList) plainPropValueObj).size() == 0) {
                         // 检查一下, 如果没有值的话, 后面的也不用做了
@@ -78,7 +69,6 @@ public class MasterWordParser extends VOAbsLoggable {
                 } else {
                     return String.valueOf(plainPropValueObj);
                 }
-                // modified by morse.lu 2016/06/24 end
             } else {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);
@@ -103,17 +93,6 @@ public class MasterWordParser extends VOAbsLoggable {
         }
     }
 
-    /**
-     * 优先从各自平台的fields里去取，取不到再从common的fields里取
-     */
-    private Object getPropValueFromProductModel(String propName) {
-        Object plainPropValueObj = getPropValue(cmsBtProductModel.getPlatform(cartId).getFields(), propName);
-        if (plainPropValueObj == null) {
-            plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
-        }
-        return plainPropValueObj;
-    }
-
     private Object getPropValue(Map<String, Object> evaluationContext, String propName) {
         char separator = '.';
         if (evaluationContext == null) {
@@ -136,14 +115,6 @@ public class MasterWordParser extends VOAbsLoggable {
 
     public void pushEvaluationContext(Map<String, Object> evaluationContext) {
         evaluationContextStack.add(evaluationContext);
-    }
-
-    public Map<String, Object> getLastEvaluationContext() {
-        if (evaluationContextStack.size() > 0) {
-            return evaluationContextStack.get(evaluationContextStack.size() - 1);
-        } else {
-            return null;
-        }
     }
 
     public CmsBtProductModel getCmsBtProductModel() {

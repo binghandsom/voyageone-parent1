@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.sx.rule_parser;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
@@ -31,6 +32,9 @@ public class ExpressionParser extends VOAbsLoggable {
     private FeedCnWordParser feedCnWordParser;
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
+    // added by morse.lu 2016/06/27 start
+    private CommonWordParser commonWordParser;
+    // added by morse.lu 2016/06/27 end
 
     public ExpressionParser(SxProductService sxProductService, SxData sxData) {
         this.sxProductService = sxProductService;
@@ -39,10 +43,13 @@ public class ExpressionParser extends VOAbsLoggable {
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
-        this.masterWordParser = new MasterWordParser(sxData.getMainProduct());
+        this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());
         this.feedOrgWordParser = new FeedOrgWordParser(sxData.getMainProduct(), sxData.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
+        // added by morse.lu 2016/06/27 start
+        this.commonWordParser = new CommonWordParser(sxData.getMainProduct());
+        // added by morse.lu 2016/06/27 end
     }
 
     public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user, String[] extParameter) throws Exception {
@@ -60,7 +67,13 @@ public class ExpressionParser extends VOAbsLoggable {
                                 Set<String> url = new HashSet<>();
                                 url.add(plainValue);
                                 // 上传图片到天猫图片空间
-                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                                Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                                // added by morse.lu 2016/06/29 start
+                                // 返回上传后的url
+                                if (!StringUtils.isEmpty(map.get(plainValue))) {
+                                    plainValue = map.get(plainValue);
+                                }
+                                // added by morse.lu 2016/06/29 end
                             }
                         }
                         break;
@@ -86,15 +99,18 @@ public class ExpressionParser extends VOAbsLoggable {
 
                         plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
 
-                        if (plainValue != null && dictWordDefine.getIsUrl()) {
-                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-//                                plainValue = sxProductService.encodeImageUrl(plainValue);
-                                Set<String> url = new HashSet<>();
-                                url.add(plainValue);
-                                // 上传图片到天猫图片空间
-                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-                            }
-                        }
+                        // deleted by morse.lu 2016/06/29 start
+                        // 图片上传在各自字典里做了
+//                        if (!StringUtils.isEmpty(plainValue) && dictWordDefine.getIsUrl()) {
+//                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+////                                plainValue = sxProductService.encodeImageUrl(plainValue);
+//                                Set<String> url = new HashSet<>();
+//                                url.add(plainValue);
+//                                // 上传图片到天猫图片空间
+//                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            }
+//                        }
+                        // deleted by morse.lu 2016/06/29 end
 
                         break;
                     }
@@ -106,6 +122,12 @@ public class ExpressionParser extends VOAbsLoggable {
                         plainValue = skuWordParser.parse(ruleWord);
                         break;
                     }
+                    // added by morse.lu 2016/06/27 start
+                    case COMMON: {
+                        // 从product表的common下去取
+                        commonWordParser.parse(ruleWord);
+                    }
+                    // added by morse.lu 2016/06/27 end
                 }
 
                 if (plainValue != null) {
@@ -127,6 +149,10 @@ public class ExpressionParser extends VOAbsLoggable {
 
     public void pushMasterPropContext(Map<String, Object> masterPropContext) {
         masterWordParser.pushEvaluationContext(masterPropContext);
+    }
+
+    public Map<String, Object> getLastMasterPropContext() {
+        return masterWordParser.getLastEvaluationContext();
     }
 
     public void setSkuPropContext(Map<String, Object> skuPropContext) {
