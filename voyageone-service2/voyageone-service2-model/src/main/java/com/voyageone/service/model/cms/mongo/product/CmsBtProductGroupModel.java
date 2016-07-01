@@ -4,12 +4,12 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 商品Model Group Channel
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
@@ -20,13 +20,11 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Integer cartId;
     private String numIId;
     private String platformPid;
-    private Integer displayOrder;
     private String publishTime;
     private String onSaleTime;
     private String inStockTime;
     private String platformStatus;
     private String platformActive;
-
     private String mainProductCode;
     private List<String> productCodes;
     private Integer qty;
@@ -36,7 +34,6 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Double priceRetailEd;
     private Double priceSaleSt;
     private Double priceSaleEd;
-    private Map sales = new HashMap<>();
 
     public Long getGroupId() {
         return groupId;
@@ -68,14 +65,6 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     public void setPlatformPid(String platformPid) {
         this.platformPid = platformPid;
-    }
-
-    public Integer getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
     }
 
     public String getPublishTime() {
@@ -199,13 +188,5 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     public void setPlatformActive(CmsConstants.PlatformActive platformActive) {
         this.platformActive = platformActive.name();
-    }
-
-    public Map getSales() {
-        return sales;
-    }
-
-    public void setSales(Map sales) {
-        this.sales = sales;
     }
 }

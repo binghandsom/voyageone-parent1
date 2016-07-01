@@ -7,18 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CmsBtProductModel_Sales
+ * 各平台的销售数据(7天,30天,所有)
  *
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author chuanyu.liang, 2016/06/03
  * @version 2.0.0
  * @since 2.0.0
  */
 public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
 
-    public final static String CODE_SUM_7 = "code_sum_7";
-    public final static String CODE_SUM_30 = "code_sum_30";
-    public final static String CODE_SUM_ALL = "code_sum_all";
-    public final static String CARTID = "cartId_";
+    public final static String CODE_SUM_7 = "codeSum7";
+    public final static String CODE_SUM_30 = "codeSum30";
+    public final static String CODE_SUM_ALL = "codeSumAll";
+    public final static String CARTID = "cartId";
     public final static String SKUS = "skus";
 
     public CmsBtProductModel_Sales() {
@@ -38,7 +40,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public int getCodeSum7(int cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_7);
         if (codeSum != null) {
-            return (int) codeSum.get("cartId_" + cart);
+            return (int) codeSum.get(CARTID + cart);
         }
         return 0;
     }

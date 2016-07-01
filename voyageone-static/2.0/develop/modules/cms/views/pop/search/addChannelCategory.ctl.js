@@ -126,7 +126,7 @@ define([
                     var cid = cids[cids.length-1];
                     var cNames =  fullCNames[index].split(">");
                     var cName = cNames[cNames.length-1];
-                    sellerCats.push({cId:cid, cIds:cids, cName:cName, cNames:cNames});
+                    sellerCats.push({cId:cid, cIds:cids, cName:fullCNames[index], cNames:cNames});
                 });
 
                 self.$uibModalInstance.close({sellerCats:sellerCats, cartId:self.cartId});

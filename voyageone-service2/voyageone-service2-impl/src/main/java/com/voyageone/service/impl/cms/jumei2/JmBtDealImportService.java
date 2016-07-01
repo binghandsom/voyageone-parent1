@@ -147,7 +147,7 @@ public class JmBtDealImportService extends BaseService {
     }
 
     private void insertCmsBtJmProduct(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, CmsBtProductModel modelCmsBtProduct) {
-        List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getSkus();
+        List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getCommon().getSkus();
         CmsBtProductModel_Field commonField=null;
         if(modelCmsBtProduct.getCommon()!=null) {
             commonField = modelCmsBtProduct.getCommon().getFields();
@@ -228,7 +228,7 @@ public class JmBtDealImportService extends BaseService {
     }
 
     private void insertCmsBtJmSkuModel(List<JmBtSkuModel> listModelJmBtSku, CmsBtProductModel modelCmsBtProduct) {
-        List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getSkus();
+        List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getCommon().getSkus();
 
         for (JmBtSkuModel modelJmBtSku : listModelJmBtSku) {
             CmsBtProductModel_Sku cmsBtProductModel_Sku = getCmsBtProductModel_Sku(modelJmBtSku.getSku(), listCmsBtProductModel_Sku);

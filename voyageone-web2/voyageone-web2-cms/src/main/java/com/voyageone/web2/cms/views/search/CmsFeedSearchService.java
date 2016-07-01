@@ -138,6 +138,31 @@ public class CmsFeedSearchService extends BaseAppService {
         feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
     }
 
+//    public List<CmsBtFeedInfoModel> updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
+//
+//
+//        Integer searchStatus = null;
+//        if(searchValue.get("status") != null){
+//            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+//        }else{
+//            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+//        }
+//
+//        if(status == CmsConstants.FeedUpdFlgStatus.Pending){
+//            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+//                throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
+//            }
+//        }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+//            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.Succeed){
+//                throw new BusinessException("导入成功是不能设为不导入的，请重新选择状态");
+//            }
+//            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+//                throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+//            }
+//        }
+////        feedInfoService.getSearchQuery(searchValue)
+//    }
+
     /**
      * 获取排序规则
      */

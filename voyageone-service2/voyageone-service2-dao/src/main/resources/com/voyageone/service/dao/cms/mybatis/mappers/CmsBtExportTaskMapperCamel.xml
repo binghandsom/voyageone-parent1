@@ -64,7 +64,7 @@
                 #{fileName,jdbcType=VARCHAR},
             </if>
             <if test="comment != null" >
-                #{comment,jdbcType=VARCHAR},
+                #{comment,jdbcType=LONGVARCHAR},
             </if>
             <if test="created == null" >
                 now(),
@@ -109,7 +109,7 @@
                 `file_name` = #{fileName,jdbcType=VARCHAR},
             </if>
             <if test="comment != null" >
-                `comment` = #{comment,jdbcType=VARCHAR},
+                `comment` = #{comment,jdbcType=LONGVARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -156,7 +156,7 @@
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
             </if>
             <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=VARCHAR}
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -194,7 +194,7 @@
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
             </if>
             <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=VARCHAR}
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -209,7 +209,6 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
-        order by created desc
     </select>
 
 </mapper>

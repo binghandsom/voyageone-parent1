@@ -3,18 +3,17 @@ package com.voyageone.common.util;
 
 import com.voyageone.common.configs.Properties;
 import org.apache.poi.ss.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -413,7 +412,7 @@ public final class FileUtils {
         }
     }
 
-    public static List<String> uploadFile(HttpServletRequest request, String path) throws IOException {
+    public static List<String> uploadFile(HttpServletRequest request, String path,String timerstr) throws IOException {
         List<String> listFileName = new ArrayList<>();
         //创建一个通用的多部分解析器
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
@@ -433,12 +432,12 @@ public final class FileUtils {
                     if (!"".equals(myFileName.trim())) {
                         //重命名上传后的文件名
                         String fileName = file.getOriginalFilename();
-                        String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
+                        //String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
                         //定义上传路径
                         String filepath = path + "/" + timerstr + fileName;
                         File localFile = new File(filepath);
                         file.transferTo(localFile);
-                        listFileName.add(timerstr + fileName);
+                        listFileName.add(fileName);
                     }
                 }
             }

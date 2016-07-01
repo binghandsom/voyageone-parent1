@@ -63,8 +63,8 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
     public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
         super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
-        this.setProductCode(productInfo.getFields().getCode());
-        this.setProductName(StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
+        this.setProductCode(productInfo.getCommon().getFields().getCode());
+        this.setProductName(StringUtils.isEmpty(productInfo.getCommon().getFields().getOriginalTitleCn()) ? productInfo.getCommon().getFields().getProductNameEn() : productInfo.getCommon().getFields().getOriginalTitleCn());
 //        this.setProductName(productInfo.getFields().getProductNameEn());
         CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(cartId);
         if (ptfObj == null) {

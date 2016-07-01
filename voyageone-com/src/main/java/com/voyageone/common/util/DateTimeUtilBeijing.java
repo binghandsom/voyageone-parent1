@@ -1,9 +1,16 @@
 package com.voyageone.common.util;
 
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Created by dell on 2016/6/30.
+ */
 public class DateTimeUtilBeijing {
+
+
 
     private static final TimeZone beijingZone = TimeZone.getTimeZone("Asia/Shanghai");
 
@@ -14,17 +21,16 @@ public class DateTimeUtilBeijing {
 
     //当前时区时间To北京时间
     public static Date toBeiJingDate(Date localDate) {
-        return DateTimeUtil.changeTimeZone(localDate, TimeZone.getDefault(), beijingZone);
+        return DateTimeUtil.changeTimeZone(localDate, Calendar.getInstance().getTimeZone(), beijingZone);
     }
 
     //北京时间To本地时区时间
     public static Date toLocalDate(Date beiJingDate) {
-        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, TimeZone.getDefault());
+        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, Calendar.getInstance().getTimeZone());
     }
 
     //北京时间To本地时区时间戳
     public static long toLocalTime(Date beiJingDate) {
-        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, TimeZone.getDefault()).getTime();
+        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, Calendar.getInstance().getTimeZone()).getTime();
     }
-
 }

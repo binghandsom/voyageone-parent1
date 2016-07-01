@@ -79,4 +79,10 @@ public class TranslationTaskServiceTest {
         System.out.println(JsonUtil.bean2Json(result));
 
     }
+
+    @Test
+    public void testGetTaskById() throws Exception {
+        TranslationTaskBean result  = translationTaskService.getTaskById("010", "will", 5931);
+        System.out.println(JsonUtil.bean2Json(result));
+    }
 }

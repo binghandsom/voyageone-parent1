@@ -15,6 +15,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
+import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 平台Schema取得后，对应一些处理操作
@@ -155,7 +157,11 @@ public class PlatformSchemaService extends BaseService {
             put("cartId", cartId);
         }});
         List<String> listCustomField = new ArrayList<>();
-        cmsMtPlatformPropMappingCustomModels.forEach(model -> listCustomField.add(model.getPlatformPropId()));
+//        cmsMtPlatformPropMappingCustomModels.forEach(model -> listCustomField.add(model.getPlatformPropId()));
+        listCustomField = cmsMtPlatformPropMappingCustomModels.stream()
+                                .filter(model-> CustomMappingType.valueOf(model.getMappingType()) != CustomMappingType.SKU_INFO)
+                                .map(CmsMtPlatformPropMappingCustomModel::getPlatformPropId)
+                                .collect(Collectors.toList());
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
