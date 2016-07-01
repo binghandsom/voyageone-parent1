@@ -59,20 +59,20 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         Map<String, CmsBtProductModel_Sku> colorCmsSkuPropMap;
 
         //Build prop extend result
-        Map<String, ComplexValue> codeValueComplexValueMap;
+//        Map<String, ComplexValue> codeValueComplexValueMap;
 
         public BuildSkuResult() {
             colorCmsSkuPropMap = new HashMap<>();
-            codeValueComplexValueMap = new HashMap<>();
+//            codeValueComplexValueMap = new HashMap<>();
         }
 
         public Map<String, CmsBtProductModel_Sku> getColorCmsSkuPropMap() {
             return colorCmsSkuPropMap;
         }
 
-        public Map<String, ComplexValue> getCodeValueComplexValueMap() {
-            return codeValueComplexValueMap;
-        }
+//        public Map<String, ComplexValue> getCodeValueComplexValueMap() {
+//            return codeValueComplexValueMap;
+//        }
     }
 
     @Override
@@ -219,10 +219,12 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                         RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                         String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
                         Field subField = fieldMap.get(propId);
-                        if (subField.getType() == FieldTypeEnum.INPUT) {
-                            skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                        } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                        if (subField != null) {
+                            if (subField.getType() == FieldTypeEnum.INPUT) {
+                                skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+                            } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+                                skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                            }
                         }
                     }
                 }
