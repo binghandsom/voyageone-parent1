@@ -19,8 +19,8 @@ define([
                 compareType: null,
                 brand: null,
                 tags: [],
-                priceChgFlg: '0',
-                priceDiffFlg: '0',
+                priceChgFlg: '',
+                priceDiffFlg: '',
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
@@ -116,8 +116,8 @@ define([
                 compareType: null,
                 brand: null,
                 tags: [],
-                priceChgFlg: '0',
-                priceDiffFlg: '0',
+                priceChgFlg: '',
+                priceDiffFlg: '',
                 tagTypeSelectValue: '0',
                 cidValue: [],
                 promotionTagType: 1,
@@ -512,6 +512,7 @@ define([
             $scope.vm.searchInfo.priceStart = null;
             $scope.vm.searchInfo.priceType = null;
             $scope.vm.searchInfo.priceChgFlg = null;
+            $scope.vm.searchInfo.priceDiffFlg = null;
             $scope.vm.searchInfo.propertyStatus = null;
 
             $scope.vm.masterData.catList = [];

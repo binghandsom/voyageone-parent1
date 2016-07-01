@@ -141,15 +141,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 查询价格变动
-            if (searchValue.getPriceChgFlg() == 1) {
-                // 涨价
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^U'},");
-            } else if (searchValue.getPriceChgFlg() == 2) {
-                // 降价
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^D'},");
-            } else if (searchValue.getPriceChgFlg() == 3) {
-                // 击穿
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^X'},");
+            if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
+                result.append("'" + _KeyPrefix + cartId + ".skus':{'$elemMatch':{'priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}},");
+            }
+
+            // 查询价格比较（建议销售价和实际销售价）
+            if (StringUtils.isNotEmpty(searchValue.getPriceDiffFlg())) {
+                // 建议销售价等于实际销售价
+                result.append("'" + _KeyPrefix + cartId + ".skus':{'$elemMatch':{'priceDiffFlg':'" + searchValue.getPriceChgFlg() + "'}},");
             }
 
             // 获取平台属性设置状态(是否完成)
