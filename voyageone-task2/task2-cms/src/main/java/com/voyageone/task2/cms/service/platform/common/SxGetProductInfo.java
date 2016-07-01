@@ -52,7 +52,7 @@ public class SxGetProductInfo {
 		List<CmsBtProductGroupModel> platformList = new ArrayList<>();
 		for (CmsBtProductModel productModel : cmsBtProductModelList) {
 			platformList.add(grpObj);
-			skuList.addAll(productModel.getSkus());
+			skuList.addAll(productModel.getCommon().getSkus());
 		}
 		sxData.setPlatformList(platformList);
 
@@ -65,7 +65,7 @@ public class SxGetProductInfo {
 		sxData.setShopBean(shopBean);
 		// 平台类目
 		CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId(
-				channelId, sxData.getCartId(), sxData.getProductList().get(0).getCatId()
+				channelId, sxData.getCartId(), sxData.getProductList().get(0).getCommon().getCatId()
 		);
 		if (cmsMtPlatformMappingModel == null)  {
 			// TODO: 主数据与平台之间没有做过类目mapping, 无法上新
