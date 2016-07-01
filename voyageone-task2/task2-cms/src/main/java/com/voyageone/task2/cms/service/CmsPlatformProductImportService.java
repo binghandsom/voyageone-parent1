@@ -263,11 +263,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                                     // schema里没有的字段, 无需设置
                                 } else {
                                     // 设定
-                                    cmsProduct.getSkus().forEach((item)->{
-                                        if (item.getSkuCode().equals(tmallSku.get("sku_outerId"))) {
-                                            item.put(k, v);
-                                        }
-                                    });
+//                                    cmsProduct.getSkus().forEach((item)->{
+//                                        if (item.getSkuCode().equals(tmallSku.get("sku_outerId"))) {
+//                                            item.put(k, v);
+//                                        }
+//                                    });
                                 }
 
                             }
@@ -282,18 +282,18 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
             // 固定字段设定 ==========================================================================================
             // product状态: 因为已经上了第三方平台, 所以默认设置为Approved
-            cmsFields.setStatus(CmsConstants.ProductStatus.Approved);
+//            cmsFields.setStatus(CmsConstants.ProductStatus.Approved);
             // 货号
             cmsFields.setAttribute("prop_13021751", oldCmsDataBean.getModel());
             // 英文标题
             cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
             cmsFields.setOriginalTitleCn(oldCmsDataBean.getTitle_cn());
-            cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
+//            cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
             // 英文描述
             cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
             // 中文描述
-            cmsFields.setOriginalDesCn(oldCmsDataBean.getDescription_cn()); // 原本的长描述, 扔到原始中文描述里
+//            cmsFields.setOriginalDesCn(oldCmsDataBean.getDescription_cn()); // 原本的长描述, 扔到原始中文描述里
             cmsFields.setLongDesCn(oldCmsDataBean.getDescription_cn_short()); // 原本的短描述, 扔到中文长描述里
             // 图片1
             List<String> imgListString = oldCmsDataBean.getImageList(oldCmsDataBean.getImg1());
@@ -325,9 +325,9 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             cmsFields.setTranslateTime(DateTimeUtil.getNow());
 
             // product ==========================================================================================
-            cmsProduct.setFields(cmsFields);
-            cmsProduct.setCatPath(oldCmsDataBean.getCategory_path());
-            cmsProduct.setCatId(MD5.getMD5(oldCmsDataBean.getCategory_path()));
+//            cmsProduct.setFields(cmsFields);
+//            cmsProduct.setCatPath(oldCmsDataBean.getCategory_path());
+//            cmsProduct.setCatId(MD5.getMD5(oldCmsDataBean.getCategory_path()));
 
         }
 
@@ -366,11 +366,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         $info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
         // 设置sku信息
-        List<CmsBtProductModel_Sku> skus = cmsProduct.getSkus();
-        for (CmsBtProductModel_Sku sku : skus) {
-            sku.setPriceSale(oldCmsDataBean.getPrice_sale());
-        }
-        productSkuService.saveSkus(oldCmsDataBean.getChannel_id(), cmsProduct.getProdId(), skus);
+//        List<CmsBtProductModel_Sku> skus = cmsProduct.getSkus();
+//        for (CmsBtProductModel_Sku sku : skus) {
+//            sku.setPriceSale(oldCmsDataBean.getPrice_sale());
+//        }
+//        productSkuService.saveSkus(oldCmsDataBean.getChannel_id(), cmsProduct.getProdId(), skus);
 
         // 提交到product表 ==========================================================================================
         ProductUpdateBean productUpdateBean = new ProductUpdateBean();
