@@ -332,7 +332,7 @@ public class CmsBtJmPromotionService {
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier());
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier(),false);
 
         // 批量更新product表
         if (bulkList.size() > 0) {
