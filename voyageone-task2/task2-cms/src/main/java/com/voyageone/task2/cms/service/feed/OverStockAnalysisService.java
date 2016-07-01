@@ -85,7 +85,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(20);
+            request.setLimit(200);
             String sku ="";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
