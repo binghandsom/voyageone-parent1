@@ -189,7 +189,7 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
-            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 expressionParser.setSkuPropContext(cmsSkuProp);
@@ -238,7 +238,7 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         boolean hasSomeSku = false;
         Map<CmsBtProductModel_Sku, CmsBtProductModel> skuProductMap = new HashMap<>();
         for (CmsBtProductModel sxProduct : sxData.getProductList()) {
-            List<CmsBtProductModel_Sku> listSku = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> listSku = sxProduct.getCommon().getSkus();
             if (listSku.size() > 1) {
                 hasSomeSku = true;
             }
@@ -265,11 +265,11 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 
             CmsBtProductModel sxProductBean = skuProductMap.get(cmsSkuProp);
             // tom 设置当前的产品内容 START TODO: 这段写的不是优雅, 之后看情况修改
-            expressionParser.pushMasterPropContext(sxProductBean.getFields());
+            expressionParser.pushMasterPropContext(sxProductBean.getCommon().getFields());
             // tom 设置当前的产品内容 END TODO: 这段写的不是优雅, 之后看情况修改
 
             if (colorExtend_imageField != null) {
-                String propImage = sxProductBean.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = sxProductBean.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");

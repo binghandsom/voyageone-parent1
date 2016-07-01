@@ -94,7 +94,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         List<String> codeList = new ArrayList<>();
-        prodInfoList.forEach(model -> codeList.add(model.getFields().getCode()));
+        prodInfoList.forEach(model -> codeList.add(model.getCommon().getFields().getCode()));
 
         result.put("hasTags", true);
         result.put("prodCodeListStr", StringUtils.join(codeList, ", "));

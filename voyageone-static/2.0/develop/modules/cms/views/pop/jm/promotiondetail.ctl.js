@@ -17,7 +17,9 @@ define([
             if(context.id)
             {
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    $scope.editModel = res.data;
+                    console.log(res);
+                    $scope.editModel.model = res.data.model;
+                    $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);

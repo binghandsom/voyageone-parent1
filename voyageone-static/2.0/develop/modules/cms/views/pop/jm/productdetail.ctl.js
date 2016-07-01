@@ -16,7 +16,9 @@ define([
             this.alert = alert;
             this.context = context;
             this.masterData = {};
-            this.model={};
+            this.model = {};
+            this.product_status = true;
+            this.deal_status = true;
         }
         JmProductDetailController.prototype = {
             initialize: function () {
@@ -86,6 +88,16 @@ define([
             },
             close: function () {
                 this.modalInstance.close('');
+            },
+            updatePromotionProduct:function(){
+                var self = this;
+                var parameter={};
+                parameter.id=self.model.modelJmPromotionProduct.id;
+                parameter.limit=self.model.modelJmPromotionProduct.limit;
+                self.jmPromotionDetailService.updatePromotionProduct(parameter).then(function (res) {
+                    self.model.modelJmPromotionProduct.isSave=false;
+                    self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                })
             }
         };
         return JmProductDetailController;

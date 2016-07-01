@@ -9,13 +9,17 @@ import java.util.Map;
 
 /**
  * 商品共通属性
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author chuanyu.liang, 2016/06/03
  * @version 2.0.0
  * @since 2.0.0
  */
 public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
+    /** fields **/
     public final static String FIELDS = "fields";
+    /** skus **/
     public final static String SKUS = "skus";
 
     public CmsBtProductModel_Common(){};
@@ -23,6 +27,7 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
     public CmsBtProductModel_Common(Map data){
         putAll(data);
     }
+
     //主类目ID
     public String getCatId() {
         return getAttribute("catId");
@@ -39,6 +44,7 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("catPath", catPath);
     }
 
+    // 更新者
     public String getModifier() {
         return getAttribute("modifier");
     }
@@ -46,6 +52,7 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("modifier", modifier);
     }
 
+    // 更新时间
     public String getModified() {
         return getAttribute("modified");
     }
@@ -53,33 +60,36 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setAttribute("modified", modified);
     }
 
+    // fields
     public CmsBtProductModel_Field getFields()  {
-        return getAttribute("fields");
+        return getAttribute(FIELDS);
     }
-
+    public void setFields(CmsBtProductModel_Field fields) {
+        setAttribute(FIELDS, fields);
+    }
     /**
-     * 返回非空CmsBtProductModel_Field对象，
+     * 返回非空CmsBtProductModel_Field对象
      */
     public CmsBtProductModel_Field getFieldsNotNull()  {
-        CmsBtProductModel_Field obj = getAttribute("fields");
+        CmsBtProductModel_Field obj = getAttribute(FIELDS);
         if (obj == null) {
             return new CmsBtProductModel_Field();
         }
         return obj;
     }
 
-    public void setFields(CmsBtProductModel_Field fields) {
-        setAttribute("fields", fields);
-    }
-
+    // skus
     public List<CmsBtProductModel_Sku> getSkus() {
-        return getAttribute("skus");
+        return getAttribute(SKUS);
     }
-
     public void setSkus(List<CmsBtProductModel_Sku> skus) {
-        setAttribute("skus", skus);
+        setAttribute(SKUS, skus);
     }
-
+    /**
+     * 根据skuCode返回对应的单个sku数据
+     * @param skuCode skuCode
+     * @return CmsBtProductModel_CommonSku
+     */
     public CmsBtProductModel_Sku getSku(String skuCode) {
         if (skuCode != null && getSkus() != null) {
             for (CmsBtProductModel_Sku sku : getSkus()) {

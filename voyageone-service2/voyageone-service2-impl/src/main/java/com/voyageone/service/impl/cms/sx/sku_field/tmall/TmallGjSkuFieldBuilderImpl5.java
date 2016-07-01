@@ -165,7 +165,7 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
-            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 expressionParser.setSkuPropContext(cmsSkuProp);
