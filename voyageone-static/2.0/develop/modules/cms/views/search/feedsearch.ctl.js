@@ -39,6 +39,8 @@ define([
 
             $scope.vm.exportPageOption.curr = 1;
 
+            $scope.vm.searchInfo.isAll = false;
+
             $scope.vm.currTab = 'group';
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
@@ -145,7 +147,7 @@ define([
                     feedInfo.attsList = attsList;
 
                     // 设置勾选框
-                    if (feedInfo.updFlg != 0) {
+                    if (feedInfo.updFlg != 8) {
                         tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
                     }
                 });
@@ -154,22 +156,24 @@ define([
         }
 
         /**
-         * 修改feed状态
+         * 修改feed导入状态
+         * @param mark(数字类型) 1: 等待导入,0:不导入
          */
-        $scope.updateFeedStatus = function () {
+        $scope.updateFeedStatus = function (mark) {
             var selList = $scope.vm.feedSelList.selList;
             if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            confirm($translate.instant('将选定的Feed状态设为等待导入，请确认。')).result
-                .then(function () {
-                    $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':0,"searchInfo":$scope.beforSearchInfo}).then(function () {
-                        if (tempFeedSelect != null) {
-                            tempFeedSelect.clearSelectedList();
-                        }
-                        search(1);
-                    })
+            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品" : "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
+            confirm(notice).result.then(function () {
+                   $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':mark,"searchInfo":$scope.beforSearchInfo}).then(function () {
+                 if (tempFeedSelect != null) {
+                    tempFeedSelect.clearSelectedList();
+                 }
+                       $scope.vm.searchInfo.isAll = false;
+                 search(1);
+                 })
                 });
         };
 
@@ -210,7 +214,7 @@ define([
                         }
                     );
                 });
-        }
+        };
 
     };
 

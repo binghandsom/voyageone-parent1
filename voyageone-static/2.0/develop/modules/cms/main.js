@@ -31,7 +31,8 @@ require.config({
         'cms': 'modules/cms/app',
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen',
-        'md5': 'libs/angular-md5/0.1.8/angular-md5'
+        'md5': 'libs/angular-md5/0.1.8/angular-md5',
+        'angular-drag':'libs/angular-drag/angular-drag'
     },
     waitSeconds: 0,
     shim: {
@@ -54,6 +55,7 @@ require.config({
         'chosen': ['jquery'],
         'angular-chosen': ['angular', 'chosen'],
         'angular-ui-utils': ['angular'],
+        'angular-drag':['angular'],
         'md5': ['angular'],
         'cms': [
             'underscore',
@@ -72,7 +74,8 @@ require.config({
             'notify',
             'angular-chosen',
             'angular-ui-utils',
-            'md5'
+            'md5',
+            'angular-drag'
         ]
     },
     deps: ['cms']
