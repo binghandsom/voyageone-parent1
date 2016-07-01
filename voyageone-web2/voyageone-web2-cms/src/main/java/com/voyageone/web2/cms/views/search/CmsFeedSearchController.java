@@ -150,11 +150,17 @@ public class CmsFeedSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE)
     public AjaxResponse updateFeedStatus(@RequestBody Map params) {
-        List selList = (List) params.get("selList");
-        if (selList == null || selList.isEmpty()) {
-            throw new BusinessException("请至少选择一个Feed.");
+
+        Boolean isAll = (Boolean) params.get("isAll");
+        if(!isAll) {
+            List selList = (List) params.get("selList");
+            if (selList == null || selList.isEmpty()) {
+                throw new BusinessException("请至少选择一个Feed.");
+            }
+            searchService.updateFeedStatus(selList, getUser());
+        }else{
+
         }
-        searchService.updateFeedStatus(selList, getUser());
         // 返回结果信息
         return success(null);
     }
@@ -167,7 +173,7 @@ public class CmsFeedSearchController extends CmsController {
         params.setCreated(new Date());
         params.setTaskType(CmsBtExportTaskService.FEED);
         params.setStatus(0);
-        return success(searchService.export(getUser().getSelChannelId(),params,getUser().getUserName()));
+        return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
     }
 
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORTSEARCH)
@@ -185,6 +191,6 @@ public class CmsFeedSearchController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.DOWNLOAD)
     public ResponseEntity<byte[]> download(@RequestParam String fileName){
-        return genResponseEntityFromFile(fileName,CmsBtExportTaskService.savePath + fileName);
+        return genResponseEntityFromFile(fileName, CmsBtExportTaskService.savePath + fileName);
     }
 }
