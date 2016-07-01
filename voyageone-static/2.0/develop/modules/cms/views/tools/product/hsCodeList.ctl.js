@@ -59,6 +59,18 @@ define([
                 var self = this;
                 if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 self.notify.warning('请继续完善税号设置');
+            },
+
+            // 显示feed图片
+            openFeedImagedetail: function (idx) {
+                var self = this;
+                self.item = self.hsCodeList[idx];
+                if (self.item.common.fields.images1.length > 0) {
+                    var picList = [];
+                    picList[0] = self.item.common.fields.images1;
+                    var para = {'mainPic': self.item.common.fields.images1[0], 'picList': picList, 'hostUrl': 0, 'search': 'feed'};
+                    this.openImagedetail(para);
+                }
             }
         };
 
