@@ -94,7 +94,6 @@ define([
                  * 更新操作
                  */
                 function saveProduct(){
-
                     if (!validSchema()) {
                         return alert("保存失败，请查看产品的属性是否填写正确！");
                     }
@@ -106,7 +105,7 @@ define([
 
                         //通知子页面
                         scope.productInfo.checkFlag = new Date().getTime();
-                        if(scope.vm.categoryMark)
+                        if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
                         notify.success("更新成功!");
                     });

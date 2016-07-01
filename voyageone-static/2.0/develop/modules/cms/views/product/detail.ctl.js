@@ -11,19 +11,19 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
-    './tm.component.ctl',
     './feed.component.ctl',
     './master.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($scope,$routeParams, $translate, menuService,productDetailService) {
+        function ProductDetailController($scope,$routeParams, $translate, menuService,productDetailService,confirm) {
             this.scope = $scope;
             this.routeParams = $routeParams;
             this.translate = $translate;
             this.menuService = menuService;
             this.productDetailService = productDetailService;
+            this.confirm = confirm;
             this.defaultCartId = 0;
             this.platformTypes = null;
             this.cartData = {};
@@ -34,7 +34,8 @@ define([
                 hsCodeStatus: 0,
                 cartData:this.cartData,
                 checkFlag:null,
-                masterCategory:null
+                masterCategory:null,
+                lockStatus:null
             };
         }
 
@@ -58,6 +59,13 @@ define([
             },
             cartIdFilter:function(item){
                 return item.value > 20 && item.value < 900;
+            },
+            lockProduct:function(){
+                var message = ctrl.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+                this.confirm(message).result.then(function () {
+                    alert(ctrl.product.lockStatus);
+                });
+
             }
 
         };
