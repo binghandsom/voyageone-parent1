@@ -233,14 +233,14 @@ public class TranslationController extends CmsController{
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET)
     public AjaxResponse doGet(@RequestBody Map requestBean) {
 
+        String channelId = this.getUser().getSelChannelId();
+        String user =this.getUser().getUserName();
         int prodId = Integer.valueOf(requestBean.getOrDefault("pageNum", 1).toString());
+
+        Map<String,Object> translateTaskGetResponse = new HashMap<>();
+        translateTaskGetResponse.put("taskDetail", translationTaskService.getTaskById( channelId, user, prodId));
         return success(null);
-
     }
-
-
-
-
 
     /**
      * 保存任务
