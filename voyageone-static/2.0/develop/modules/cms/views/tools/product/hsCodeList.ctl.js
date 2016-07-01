@@ -62,8 +62,6 @@ define([
                 if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 self.notify.warning('请继续完善税号设置');
             },
-
-            // pop显示图片
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) {
                     return;
@@ -79,6 +77,14 @@ define([
                     }
                 }
                 this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            },
+            openHsCodeCodeDetail: function (item) {
+                // var self = this;
+                // var feedObj = self.hsCodeList[item];
+                // if (feedObj.commonNotNull.fields.length == 0) {
+                //     return;
+                // }
+                // this.openCodeDetail({'attsList': feedObj.attsList});
 
             }
         };
