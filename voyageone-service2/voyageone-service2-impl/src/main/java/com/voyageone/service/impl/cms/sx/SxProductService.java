@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -29,6 +28,7 @@ import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
@@ -132,6 +132,8 @@ public class SxProductService extends BaseService {
     private ProductGroupService productGroupService;
     @Autowired
     JumeiImageFileService jumeiImageFileService;
+    @Autowired
+    private CmsBtWorkloadHistoryDao cmsBtWorkloadHistoryDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -2772,7 +2774,7 @@ public class SxProductService extends BaseService {
 
     /**
      * 上新成功或出错时状态回写操作
-     * 上新成功时回写group, product,ims_bt_product表状态并记录履历
+     * 上新成功时回写group, product,ims_bt_product(只限天猫和京东)表状态并记录履历
      * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
      *
      * 1.一般店铺上新时成功时更新字段 (失败时只更新product表的pPublishError字段)
@@ -2805,15 +2807,15 @@ public class SxProductService extends BaseService {
      *     pPublishError（上新失败"Error"，上新成功清空），
      * 2-3.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
-     * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
+     * @param shopProp ShopBean 店铺信息
      * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param sxData SxData 上新数据
-     * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
+     * @param workload CmsBtSxWorkloadModel WorkLoad信息
      * @param numIId String 商品id
      * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
      * @param numIId String 商品id
      */
-    public void doUploadFinalProc(boolean isUsJoi, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel cmsBtSxWorkloadModel,
+    public void doUploadFinalProc(ShopBean shopProp, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel workload,
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier) {
 
@@ -2859,17 +2861,18 @@ public class SxProductService extends BaseService {
             // 一般店铺上新成功后回写productGroup及product表的状态
             productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
 
-            // 回写ims_bt_product表(numIId)(USJOI和聚美平台不回写这个表)
-            if (!isUsJoi && CartEnums.Cart.JM.getValue() != sxData.getCartId()) {
+            // 如果是天猫，京东平台的场合，回写ims_bt_product表(numIId)
+            if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())
+                    || PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
                 this.updateImsBtProduct(sxData, modifier);
             }
 
-            // 写入履历
-//          productGroupService.insertHistoryLog(beforeProductGroup, sxData.getPlatform());
+            // 写入workload履历表
+            this.insertSxWorkloadHistory(beforeProductGroup, sxData, workload);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
-            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum,
-                    cmsBtSxWorkloadModel.getModifier());
+            this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
+                    workload.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform());
@@ -2878,9 +2881,62 @@ public class SxProductService extends BaseService {
             this.insertBusinessLog(sxData, modifier);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
-            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
-                    cmsBtSxWorkloadModel.getModifier());
+            this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
+                    workload.getModifier());
         }
+    }
+
+    /**
+     * 插入履历到cms_bt_sx_workload_history表
+     *
+     * @param before CmsBtProductGroupModel 变更前
+     * @param sxData SxData sxData 上新数据
+     * @param workload CmsBtSxWorkloadModel 上新workload
+     */
+    public int insertSxWorkloadHistory(CmsBtProductGroupModel before, SxData sxData, CmsBtSxWorkloadModel workload) {
+        CmsBtWorkloadHistoryModel insModel = new CmsBtWorkloadHistoryModel();
+
+        insModel.setChannelId(sxData.getChannelId());
+        insModel.setCartId(sxData.getCartId());
+        if (sxData.getGroupId() != null) {
+            insModel.setGroupId(workload.getGroupId().intValue());
+        }
+        if (sxData.getPlatform().getProductCodes().size() > 0) {
+            insModel.setProductCodes(sxData.getPlatform().getProductCodes().stream().collect(Collectors.joining(",")));
+        }
+        insModel.setNumiid(sxData.getPlatform().getNumIId() == null ? "" : sxData.getPlatform().getNumIId());
+        insModel.setProcName(sxData.getPlatform().getModifier());
+        insModel.setProcModifier(workload.getModifier());
+        // 处理内容
+        StringBuilder sbProcContent = new StringBuilder();
+        String beforePlatformStatus = before.getPlatformStatus() == null ? "null" : before.getPlatformStatus().name();
+        String afterPlatformStatus = sxData.getPlatform().getPlatformStatus() == null ? "null" : sxData.getPlatform().getPlatformStatus().name();
+        if (!beforePlatformStatus.equals(afterPlatformStatus)) {
+            sbProcContent.append("[PlatformStatus:'");
+            sbProcContent.append(beforePlatformStatus);
+            sbProcContent.append("'->'");
+            sbProcContent.append(afterPlatformStatus);
+            sbProcContent.append("']");
+        }
+        String beforePlatformPid = StringUtils.isEmpty(before.getPlatformPid()) ? "null" : before.getPlatformPid();
+        String afterPlatformPid = StringUtils.isEmpty(sxData.getPlatform().getPlatformPid()) ? "null" : sxData.getPlatform().getPlatformPid();
+        if (!beforePlatformPid.equals(afterPlatformPid)) {
+            sbProcContent.append("[PlatformPid:'");
+            sbProcContent.append(afterPlatformPid);
+            sbProcContent.append("'->'");
+            sbProcContent.append(afterPlatformPid);
+            sbProcContent.append("']");
+        }
+        List<CmsBtProductModel> errProducts = sxData.getProductList()
+                .stream()
+                .filter(p -> p.getPlatform(sxData.getCartId()) != null && "Error".equals(p.getPlatform(sxData.getCartId()).getpPublishError()))
+                .collect(Collectors.toList());
+        if (ListUtils.notNull(errProducts)) {
+            sbProcContent.append("[pPublishError:'Error'->'']");
+        }
+        insModel.setProcContent(sbProcContent.toString());
+
+        return cmsBtWorkloadHistoryDao.insert(insModel);
     }
 
 }
