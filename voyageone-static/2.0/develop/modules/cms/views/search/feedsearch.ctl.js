@@ -7,17 +7,25 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService,cActions) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: [],
-            feedSelList: {selList: []}
+            feedSelList: {selList: []},
+            exportPageOption: {curr: 1, size:10, total: 0, fetch: exportSearch},
+            exportList: [],
         };
+        $scope.exportStatus = ["正在生成","完成","失败"];
+
+
 
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+
+        $scope.exportSearch = exportSearch;
+        $scope.doExport = doExport;
 
         var tempFeedSelect = null;
 
@@ -27,6 +35,10 @@ define([
         function initialize() {
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
+
+            $scope.vm.exportPageOption.curr = 1;
+
+            $scope.vm.currTab = 'group';
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
@@ -36,6 +48,7 @@ define([
                     $scope.vm.masterData = res.data;
                 })
                 .then(function () {
+                    exportSearch();
                     if ($routeParams.type == "1") {
                         search();
                     }
@@ -157,6 +170,29 @@ define([
                 });
         };
 
+        function doExport(){
+            var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
+            $feedSearchService.doExport(data).then(function(data){
+                $scope.vm.exportList.unshift(data.data);
+                $scope.vm.currTab = 'export';
+
+            })
+        }
+
+        function exportSearch(page){
+            $scope.vm.exportPageOption.curr = !page ? $scope.vm.exportPageOption.curr : page;
+
+            $feedSearchService.exportSearch({"pageNum":$scope.vm.exportPageOption.curr,"pageSize":$scope.vm.exportPageOption.size}).then(function (res) {
+                $scope.vm.exportList = res.data.exportList;
+                $scope.vm.exportPageOption.total = res.data.exportListTotal;
+            })
+        }
+
+        $scope.openOtherDownload = function (fileName) {
+
+            $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName":fileName});
+        };
+
         $scope.openFeedCategoryMapping = function(popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
@@ -165,11 +201,9 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree,
-                        from: ""
+                        categories: res.data.categoryTree
                     }).then(function (context) {
-                            $scope.vm.searchInfo.fCatPath = context.selected.catPath;
-                            $scope.vm.searchInfo.fCatId = context.selected.catId;
+                        $scope.vm.searchInfo.category = context.selected.catPath;
                         }
                     );
                 });
@@ -177,6 +211,6 @@ define([
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService','cActions'];
     return searchIndex;
 });

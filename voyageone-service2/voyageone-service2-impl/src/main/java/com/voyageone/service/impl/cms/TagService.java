@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 public class TagService extends BaseService {
 
     @Autowired
-    // mysql
     private CmsBtTagDaoExt cmsBtTagDaoExt;
     @Autowired
     private CmsBtTagDao cmsBtTagDao;
@@ -179,27 +179,23 @@ public class TagService extends BaseService {
     }
 
     /**
-     * 根据ChannelId检索Tags
-     */
-    public List<CmsBtTagModel> getListByChannelId(String channelId) {
-        return cmsBtTagDaoExt.selectListByChannelId(channelId);
-    }
-
-    /**
      * 根据ChannelId 和 tagType 检索Tags
      */
-    public List<CmsBtTagBean> getListByChannelIdAndTagType(String channelId, String tagType, Integer cartId) {
+    public List<CmsBtTagBean> getListByChannelIdAndTagType(Map params) {
+        //标签类型
+        String tagType = (String) params.get("tagTypeSelectValue");
         if ("4".equals(tagType)) {
             // 查询自由标签
-            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(channelId);
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
         } else if ("2".equals(tagType)) {
             // 查询Promotion标签
-            List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(channelId, cartId);
+            List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(params);
             if (categoryList == null || categoryList.isEmpty()) {
                 return categoryList;
             }
             // 再查询一遍，检查是否有子节点
-            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(channelId, categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
+            params.put("tagList", categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
+            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(params);
             if (categoryList2 != null && categoryList2.size() > 0) {
                 for (CmsBtTagBean tagBean : categoryList2) {
                     if (categoryList.indexOf(tagBean) >= 0) {
@@ -216,7 +212,6 @@ public class TagService extends BaseService {
     public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
         return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
     }
-
 
     @VOTransactional
     public int updateTagModel(CmsBtTagModel cmsBtTagModel) {

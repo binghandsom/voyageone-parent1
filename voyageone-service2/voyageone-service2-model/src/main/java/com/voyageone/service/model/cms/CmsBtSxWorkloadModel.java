@@ -15,7 +15,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtSxWorkloadModel extends BaseModel {
     protected String channelId;
 
-    protected Long groupId;
+    protected Integer groupId;
 
     protected Integer publishStatus;
 
@@ -29,11 +29,11 @@ public class CmsBtSxWorkloadModel extends BaseModel {
         this.channelId = channelId == null ? null : channelId.trim();
     }
 
-    public Long getGroupId() {
+    public Integer getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
 

@@ -4,9 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JsonUtil;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,7 +119,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
     }
 
     private double convertToDoubel(Object input) {
-        double result = 0;
+        double result = 0.00;
         if (input == null) {
             return result;
         }
@@ -154,10 +152,5 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
-    }
-
-    @Override
-    public V put(K key, V value) {
-        return super.put(key, value);
     }
 }

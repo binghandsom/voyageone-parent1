@@ -78,6 +78,7 @@
     FROM `cms_bt_jm_promotion_product`  AS a
     JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
     WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
+    ORDER by b.`product_code`,b.`vo_category_name`
 </select>
 <select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">
     SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`
@@ -96,9 +97,8 @@
 </foreach>
 </delete>
 
-
 <update id="updateDealEndTimeAll">
-    update cms_bt_jm_promotion_product set deal_end_time_status=1 where cms_bt_jm_promotion_id=#{promotionId}  and synch_status =2
+    update cms_bt_jm_promotion_product set deal_end_time_status=1 where cms_bt_jm_promotion_id=#{promotionId}
 </update>
 <update id="updateDealEndTime">
     UPDATE  `cms_bt_jm_promotion_product` set deal_end_time_state=1 WHERE `cms_bt_jm_promotion_id`=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)
@@ -111,7 +111,7 @@
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
         ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
-        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,
+        ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
         (SELECT MAX(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxDealPrice,
         (SELECT min(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minDealPrice,
         (SELECT MAX(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxMarketPrice,
@@ -123,11 +123,35 @@
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
-            <if test="productCode!=null">
-                and    b.product_code  like CONCAT(#{productCode},'%')
+            <if test="codeList!=null and codeList.length!=0">
+                and (   b.product_code  in <foreach item="item" index="i" collection="codeList"
+                                                    open="(" separator="," close=")">
+                    #{item}
+                     </foreach>
+                or    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  in <foreach item="item" index="i" collection="codeList"
+                                                                                                                               open="(" separator="," close=")">
+                        #{item}
+                    </foreach> )
+                )
+            </if>
+            <if test="productNameCn!=null">
+                and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
+                       or  b.product_long_name like CONCAT(#{productNameCn},'%')
+                       or  b.product_medium_name like CONCAT(#{productNameCn},'%')
+                       or  b.product_short_name like CONCAT(#{productNameCn},'%')
+                      )
+            </if>
+            <if test="listBrandName!=null and listBrandName.size()!=0">
+                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                                              open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
+            </if>
+            <if test="pCatPath!=null">
+                and b.category_name like  CONCAT(#{pCatPath},'%')
             </if>
             <if test="tagIdList!=null and tagIdList.size()!=0">
             and  a.id in (SELECT `cms_bt_jm_promotion_product_id`  FROM `cms_bt_jm_promotion_tag_product`
@@ -136,17 +160,32 @@
                 #{item}
             </foreach>)
             </if>
-            <if test="synchStatus!=null">
-                and a.synch_status=#{synchStatus}
+            <if test="updateStatus!=null">
+                and a.update_status=#{updateStatus}
             </if>
-
+            <choose>
+                <when test="synchStatusList!=null and synchStatusList.size()!=0">
+                    and ( a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                   open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                    <if test="errorStatus!=null">
+                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3
+                    </if> )
+                </when>
+                <when test="errorStatus!=null">
+                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
             <if test="beginDiscount!=null">
-                and a.discount>=#{beginDiscount}
+                and a.discount>=(#{beginDiscount}/10)
             </if>
             <if test="endDiscount!=null">
-                and  a.discount&lt;=#{endDiscount}
+                and  a.discount&lt;=(#{endDiscount}/10)
             </if>
-            <if test="priceType=='msrp'">
+            <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
                     and   b.msrp_rmb>=#{beginPrice}
                 </if>
@@ -170,20 +209,20 @@
                     and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="productNameCn!=null">
-                and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
+            <if test="priceType=='dealPrice'">
+                <if test="beginPrice!=null">
+                    and  a.deal_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and  a.deal_price&lt;=#{endPrice}
+                </if>
             </if>
-            <if test="state!=null">
-                and  a.state=#{state}
-            </if>
-            <if test="brandName!=null">
-                and  b.brand_name=#{brandName}
-            </if>
+
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}
             </if>
         </where>
-        order by a.id desc
+        order by a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
@@ -196,39 +235,83 @@
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
-            <if test="productCode!=null">
-                and    b.product_code  like CONCAT(#{productCode},'%')
+            <if test="codeList!=null and codeList.length!=0">
+                and (   b.product_code  in <foreach item="item" index="i" collection="codeList"
+                                                    open="(" separator="," close=")">
+                #{item}
+            </foreach>
+                or    a.id in (select cms_bt_jm_promotion_product_id from cms_bt_jm_promotion_sku  where sku_code  in <foreach item="item" index="i" collection="codeList"
+                                                                                                                               open="(" separator="," close=")">
+                #{item}
+            </foreach> )
+                )
+            </if>
+            <if test="productNameCn!=null">
+                and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
+                or  b.product_long_name like CONCAT(#{productNameCn},'%')
+                or  b.product_medium_name like CONCAT(#{productNameCn},'%')
+                or  b.product_short_name like CONCAT(#{productNameCn},'%')
+                )
+            </if>
+            <if test="listBrandName!=null and listBrandName.size()!=0">
+                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                                              open="(" separator="," close=")">
+                #{item}
+            </foreach>
             </if>
             <if test="voCategoryName!=null">
                 and b.vo_category_name =#{voCategoryName}
             </if>
-            <if test="synchStateList.size()!=0">
-                and  a.synch_state in
-                <foreach item="item" index="i" collection="synchStateList"
-                         open="(" separator="," close=")">
-                    #{item}
-                </foreach>
+            <if test="pCatPath!=null">
+                and b.category_name like  CONCAT(#{pCatPath},'%')
             </if>
+            <if test="tagIdList!=null and tagIdList.size()!=0">
+                and  a.id in (SELECT `cms_bt_jm_promotion_product_id`  FROM `cms_bt_jm_promotion_tag_product`
+                WHERE `cms_bt_tag_id` in   <foreach item="item" index="i" collection="tagIdList"
+                                                    open="(" separator="," close=")">
+                #{item}
+            </foreach>)
+            </if>
+            <if test="updateStatus!=null">
+                and a.update_status=#{updateStatus}
+            </if>
+            <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
+                                                open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            </if>
+            <!--<if test="errorStatus!=null">-->
+            <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
+            <!--</if>-->
             <if test="beginDiscount!=null">
-                and a.discount>=#{beginDiscount}
+                and a.discount>=(#{beginDiscount}/10)
             </if>
             <if test="endDiscount!=null">
-                and  a.discount&lt;=#{endDiscount};
+                and  a.discount&lt;=(#{endDiscount}/10)
             </if>
-            <if test="priceType=='msrp'">
+            <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
-                    and   b.msrp>=#{beginPrice}
+                    and   b.msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp&lt;=#{endPrice}
+                    and   b.msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="priceType=='marketPrice'">
+            <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    a.market_price>=#{beginPrice}
+                    and    b.retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   a.market_price&lt;=#{endPrice}
+                    and   b.retail_price&lt;=#{endPrice}
+                </if>
+            </if>
+            <if test="priceType=='salePrice'">
+                <if test="beginPrice!=null">
+                    and  b.sale_price>=#{beginPrice}
+                </if>
+                <if test="endPrice!=null">
+                    and  b.sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='dealPrice'">
@@ -239,19 +322,15 @@
                     and  a.deal_price&lt;=#{endPrice}
                 </if>
             </if>
-            <if test="productNameCn!=null">
-                and   b.product_name_cn  like CONCAT(#{productNameCn},'%')
-            </if>
-            <if test="state!=null">
-                and  a.state=#{state}
-            </if>
-            <if test="brandName!=null">
-                and  b.brand_name=#{brandName}
-            </if>
+
             <if test="colorEn!=null">
                 and    b.color_en=#{colorEn}
             </if>
         </where>
+    </select>
+
+    <select id="selectDateRepeatByCode" resultMap="ResultMap">
+        SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
 
     <select id="existsCode" resultType="Boolean">
@@ -272,13 +351,21 @@
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
         JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
-        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price
+        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price,a.update_state=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
+    <update id="updateAvgPriceByPromotionProductId">
+        UPDATE cms_bt_jm_promotion_product  AS a
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount FROM `cms_bt_jm_promotion_sku`
+        WHERE  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId}) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
+        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        WHERE    a.id =#{cmsBtJmPromotionProductId}
+    </update>
+
     <update id="batchSynchPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
         WHERE    id in
@@ -286,6 +373,9 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
+        <if test="isPreStart==true">
+          and   synch_status!=2
+        </if>
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
@@ -293,15 +383,26 @@
     </update>
     <update id="batchCopyDeal">
         UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE   synch_status=0 and  id in
+        WHERE   synch_status in (0,3) and  id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
-        </foreach>
+        </foreach>;
+    </update>
+    <update id="batchCopyDealUpdatePrice">
+        UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
+        WHERE    id in  <foreach item="item" index="i" collection="listPromotionProductId"
+                                 open="(" separator="," close=")">#{item}</foreach>
+        and synch_status=2;
     </update>
     <update id="copyDealAll">
-        UPDATE cms_bt_jm_promotion_product set synch_status=1,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,1)
+        UPDATE cms_bt_jm_promotion_product set synch_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+
+        UPDATE cms_bt_jm_promotion_product set price_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (2);
     </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product
@@ -323,11 +424,20 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and activity_end = 1 and jm_hash_id is not null
+        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  NOW() &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
     </select>
 
-    <select id="getOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
+    <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
   SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   NOW() &lt;=`activity_end`  AND   NOW()>=`activity_start` AND `synch_status`=2 limit 1
+    </select>
+    <select id="selectOnSaleByNoPromotionId" resultType="CmsBtJmPromotionProductModel">
+        SELECT a.* FROM `cms_bt_jm_promotion_product` AS a
+       JOIN cms_bt_jm_promotion_product AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code`  and b.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
+        WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND   NOW() &lt;=a.`activity_end`  AND   NOW()>=a.`activity_start` AND a.`synch_status`=2 limit 1
+    </select>
+    <select id="selectChangeCountByPromotionId" resultType="int">
+        SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
+WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
     <!--jm2 end-->
 </mapper>

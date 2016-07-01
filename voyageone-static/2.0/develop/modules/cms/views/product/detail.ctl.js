@@ -18,8 +18,8 @@ define([
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, menuService,productDetailService) {
-
+        function ProductDetailController($scope,$routeParams, $translate, menuService,productDetailService) {
+            this.scope = $scope;
             this.routeParams = $routeParams;
             this.translate = $translate;
             this.menuService = menuService;
@@ -30,8 +30,11 @@ define([
             this.product = {
                 productId : $routeParams.productId,
                 productDetails:null,
+                translateStatus: 0,
+                hsCodeStatus: 0,
                 cartData:this.cartData,
-                testData:"test Data beta0"
+                checkFlag:null,
+                masterCategory:null
             };
         }
 
@@ -54,7 +57,7 @@ define([
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
-                return item.value > 23 && item.value < 900;
+                return item.value > 20 && item.value < 900;
             }
 
         };

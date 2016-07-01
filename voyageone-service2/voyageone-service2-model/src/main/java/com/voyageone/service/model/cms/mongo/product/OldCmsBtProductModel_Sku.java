@@ -15,12 +15,12 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtProductModel_CommonSku extends BaseMongoMap<String, Object> {
+public class OldCmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
-    public CmsBtProductModel_CommonSku() {
+    public OldCmsBtProductModel_Sku() {
     }
 
-    public CmsBtProductModel_CommonSku(Map m) {
+    public OldCmsBtProductModel_Sku(Map m) {
         this.putAll(m);
     }
 

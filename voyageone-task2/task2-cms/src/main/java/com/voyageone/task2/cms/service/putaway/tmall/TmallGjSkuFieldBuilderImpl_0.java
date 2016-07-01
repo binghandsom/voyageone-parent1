@@ -234,7 +234,7 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
             SxProductBean sxProductBean = skuProductMap.get(cmsSkuProp);
 
-            String propImage = sxProductBean.getCmsBtProductModel().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+            String propImage = sxProductBean.getCmsBtProductModel().getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
             if (propImage != null && !"".equals(propImage)) {
                 String codePropFullImageUrl = UploadImageHandler.encodeImageUrl(String.format(codeImageTemplate, propImage));
                 complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);

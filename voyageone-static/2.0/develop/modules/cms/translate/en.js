@@ -84,7 +84,6 @@ define(function(){
         "TXT_FEED_CONNECTION_SETTING": "Feed匹配关系设置",
         "TXT_PLATFORM_CONNECTION_SETTING": "平台匹配关系设置",
         "TXT_DICTIONARY_INDEX": "字典一览",
-        "TXT_CHANNEL_MANAGER": "店铺管理",
         "TXT_ATTRIBUTE":"属性",
         "TXT_CUSTOM_ATTRIBUTE_MANAGER": "自定义属性设置",
         "TXT_COMMON_ATTRIBUTE_MANAGER": "共通属性设置",
@@ -115,6 +114,7 @@ define(function(){
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
+        "TXT_EXPORT_LIST": "Export 一览",
         "TXT_SELECT_ALL": "全选",
         "TXT_SALE_PRICE": "最终售价",
         "TXT_PRIMARY_PRODUCT": "主产品",
@@ -222,6 +222,7 @@ define(function(){
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
+        "TXT_PROMOTION_COMMENTS":"活动备注",
         "TXT_PROMOTION_PC_ID":"聚美专场PC端ID",
         "TXT_PROMOTION_APP_ID":"聚美专场App端ID",
         "TXT_MSRP": "官方售价",
@@ -365,9 +366,9 @@ define(function(){
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
         "TXT_UN_TRANSLATION": "未分配总数",
-        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但为完成总数",
+        "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但未完成总数",
         "TXT_TRANSLATED": "完成翻译总数",
-        "TXT_DISTRIBUTION_RULE": "分发规则",
+        "TXT_DISTRIBUTION_RULE": "优先规则",
         "TXT_MAIN_PRODUCT": "主商品",
         "TXT_GET_TASK_COUNT": "获取任务数量",
         "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "产品标题 / 长描述",
@@ -522,6 +523,7 @@ define(function(){
         "TXT_FeedStatus_FinishImport": "导入成功",
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
+        "TXT_FeedStatus_DateError": "Feed数据异常错误",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -635,7 +637,6 @@ define(function(){
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
         "TXT_HS_CODE_STATUS":"税号状态",
-        "TXT_PRODUCT_CODE":"产品code",
         "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT":"税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
@@ -709,6 +710,33 @@ define(function(){
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED":"未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION":"没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误"
+        "TXT_CONFIRM_ALL_STORE_PUT_ON":"此操作将会导致全店铺商品上下架，确认无误",
+        "TXT_ITEM_CODE": "商品Code",
+
+        /** 翻译页面相关 **/
+        "TXT_TRANSLATION_STATUS": "商品翻译状态",
+        "TXT_TRANSLATION_TASK_GET": "获取任务",
+        "TXT_TRANSLATION_SEARCH": "个人翻译成果搜索",
+        "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
+        "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
+        "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
+        "TXT_FUZZY_SEARCH_PLACE_HOLDER": "模糊查询(ProductCode，商品名称)",
+        "TXT_PRODUCT_EN_NAME": "商品名称(英文)",
+        "TXT_PRODUCT_CN_NAME": "商品名称(中文)",
+        "TXT_PRODUCT_EN_MATERIAL": "材质(英文)",
+        "TXT_PRODUCT_CN_MATERIAL": "材质(中文)",
+        "TXT_PRODUCT_EN_SHORT_DESCRIPTION": "简短描述(英文)",
+        "TXT_PRODUCT_CN_SHORT_DESCRIPTION": "简短描述(中文)",
+        "TXT_PRODUCT_EN_LONG_DESCRIPTION": "详情描述(英文)",
+        "TXT_PRODUCT_CN_LONG_DESCRIPTION": "详情描述(中文)",
+        "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
+        "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)",
+        
+        /**聚美专场*/
+        "TXT_JM_PROMOTION_NAME":"聚美专场名称",
+        "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",
+        "TXT_JOIN_JM_PROMOTION_PRESALE_TIME":"预热时间",
+        "TXT_PROMOTION_PRODUCT_STATUS":"产品活动状态",
+        "TXT_JOIN_JM_CODE_SKU_SEARCH":"Code/SKU"
     };
 });

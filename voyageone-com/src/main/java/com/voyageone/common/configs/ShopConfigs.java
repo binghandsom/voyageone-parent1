@@ -21,7 +21,7 @@ import java.util.*;
 public class ShopConfigs {
     private static final Class selfClass = ShopConfigs.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigConfigs.toString();

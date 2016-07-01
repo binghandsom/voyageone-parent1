@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 各平台的产品数据
+ *
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author james.li on 2016/6/1.
  * @version 2.0.0
  */
@@ -33,11 +37,19 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //cartId
-    public int getCartId() {
+    public Integer getCartId() {
         return getIntAttribute("cartId");
     }
-    public void setCartId(int cartId) {
+    public void setCartId(Integer cartId) {
         setAttribute("cartId", cartId);
+    }
+
+    //status
+    public String getStatus() {
+        return getAttribute("status");
+    }
+    public void setStatus(String status) {
+        setAttribute("status", status);
     }
 
     //pCatId
@@ -64,12 +76,20 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pCatStatus", pCatStatus);
     }
 
-    // 是否为主商品
-    public int getpIsMain() {
+    //是否为主商品
+    public Integer getpIsMain() {
         return getAttribute("pIsMain");
     }
-    public void setpIsMain(int pIsMain) {
+    public void setpIsMain(Integer pIsMain) {
         setAttribute("pIsMain", pIsMain);
+    }
+
+    //主商品code
+    public String getMainProductCode() {
+        return getAttribute("mainProductCode");
+    }
+    public void setMainProductCode(String mainProductCode) {
+        setAttribute("mainProductCode", mainProductCode);
     }
 
     //pProductId
@@ -86,14 +106,6 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setpNumIId(String pNumIId) {
         setAttribute("pNumIId", pNumIId);
-    }
-
-    //status
-    public String getStatus() {
-        return getAttribute("status");
-    }
-    public void setStatus(String status) {
-        setAttribute("status", status);
     }
 
     //pStatus
@@ -224,14 +236,6 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats){
         setAttribute("sellerCats",sellerCats);
-    }
-
-    //tag
-    public List<String> getTag(){
-        return getAttribute("tag");
-    }
-    public void setTag(List<String> tag){
-        setAttribute("tag",tag);
     }
 
     @Override

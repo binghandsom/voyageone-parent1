@@ -5,8 +5,6 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;

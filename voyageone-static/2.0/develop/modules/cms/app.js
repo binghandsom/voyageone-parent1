@@ -2,42 +2,30 @@ define([
     'angularAMD',
     'angular',
     'underscore',
-    'json!modules/cms/routes.json',
-    'json!modules/cms/actions.json',
+    'modules/cms/routes',
+    'modules/cms/actions',
     'modules/cms/translate/en',
-    'modules/cms/translate/zh',
-    'voyageone-angular-com',
-    'voyageone-com',
-    'angular-block-ui',
-    'angular-ui-bootstrap',
-    'angular-ngStorage',
-    'angular-route',
-    'angular-sanitize',
-    'angular-animate',
-    'angular-translate',
-    'angular-cookies',
-    'angular-file-upload',
-    'filestyle',
-    'notify',
-    'angular-chosen'
+    'modules/cms/translate/zh'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
-            'ngRoute',
-            'ngAnimate',
-            'ngCookies',
-            'ngSanitize',
-            'pascalprecht.translate',
-            'blockUI',
-            'voyageone.angular',
-            'voyageone.angular.vresources',
-            'ui.bootstrap',
-            'ngStorage',
-            'angularFileUpload',
-            'localytics.directives'
-        ])
+        'ngRoute',
+        'ngAnimate',
+        'ngCookies',
+        'ngSanitize',
+        'pascalprecht.translate',
+        'blockUI',
+        'voyageone.angular',
+        'voyageone.angular.vresources',
+        'ui.bootstrap',
+        'ui.indeterminate',
+        'ngStorage',
+        'angularFileUpload',
+        'localytics.directives',
+        'angular-md5'
+    ])
 
-        // define
+    // define
         .constant('$actions', cActions)
         .constant('cActions', cActions)
         .constant('cRoutes', cRoutes)
@@ -159,7 +147,7 @@ define([
         }
     }
 
-    function menuService($q, ajaxService, cookieService, translateService, cActions) {
+    function menuService($q, ajaxService, cookieService, translateService, cActions, $menuService) {
 
         this.getMenuHeaderInfo = getMenuHeaderInfo;
         this.setMenu = setMenu;
@@ -186,7 +174,7 @@ define([
                     //if (!_.isEmpty(cookieService.language()))
                     //    userlanguage = cookieService.language();
                     //else if (!_.isEmpty(data.userInfo.language))
-                        userlanguage = data.userInfo.language;
+                    userlanguage = data.userInfo.language;
 
                     // 设置画面用户显示的语言
                     _.forEach(data.languageList, function (language) {
@@ -261,12 +249,9 @@ define([
          * @returns {*}
          */
         function getCategoryInfo() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getCategoryInfo().then(function (res) {
+                return res.data;
+            });
         }
 
         /**
@@ -274,45 +259,25 @@ define([
          * @returns {*}
          */
         function getPlatformType() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getPlatformType)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getPlatformType().then(function (res) {
+                return res.data;
+            });
         }
-
-        ///**
-        // * get categoryTree.
-        // * @returns {*}
-        // */
-        //function getCategoryTree() {
-        //    var defer = $q.defer();
-        //    ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-        //        .then(function (response) {
-        //            defer.resolve(response.data);
-        //        });
-        //    return defer.promise;
-        //}
 
         /**
-         *
          * set platformType.
-         * @param cTypeId
-         * @returns {*}
          */
         function setPlatformType(cType) {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setPlatformType, {"cTypeId": cType.add_name2, "cartId": parseInt(cType.value)})
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.setPlatformType({
+                "cTypeId": cType.add_name2,
+                "cartId": parseInt(cType.value)
+            }).then(function (res) {
+                return res.data;
+            });
         }
-
     }
 
-    function headerCtrl($scope,$rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -331,8 +296,8 @@ define([
                 vm.applicationList = data.applicationList;
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
-                $rootScope.menuTree=data.menuTree;
-                $rootScope.application=data.userInfo.application;
+                $rootScope.menuTree = data.menuTree;
+                $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
             });
         }
@@ -371,7 +336,7 @@ define([
          * search by input value.
          */
         function goSearchPage(value) {
-            if(value){
+            if (value) {
                 //searchInfoFactory.catId(null);
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
@@ -420,7 +385,7 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes,cookieService) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, cookieService) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
@@ -455,9 +420,9 @@ define([
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
          *
          */
-        function goSearchPage(catPath,catId) {
+        function goSearchPage(catPath, catId) {
             var catPath = encodeURIComponent(catPath);
-            switch($rootScope.platformType.cTypeId){
+            switch ($rootScope.platformType.cTypeId) {
                 case "MT":
                     $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
                     break;

@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,platformMappingService,notify,$q,$rootScope) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -17,11 +17,14 @@ define([
             link: function (scope) {
                 scope.vm = {
                     mastData:null,
-                    productComm:null
+                    productComm:null,
+                    categoryMark:null,
+                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[]}
                 };
 
                 initialize();
-                scope.jdCategoryMapping = jdCategoryMapping;
+                scope.masterCategoryMapping = masterCategoryMapping;
+                scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
@@ -59,49 +62,58 @@ define([
                  * @param productInfo
                  * @param popupNewCategory popup实例
                  */
-                function jdCategoryMapping(popupNewCategory) {
-                    platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
-                        .then(function (res) {
-                            return $q(function(resolve, reject) {
-                                    if (!res.data || !res.data.length) {
-                                        notify.danger("数据还未准备完毕");
-                                        reject("数据还未准备完毕");
-                                    } else {
-                                        resolve(popupNewCategory({
-                                            from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
-                                            categories: res.data,
-                                            plateSchema:true
-                                        }));
-                                    }
-                            });
-                        }).then(function (context) {
-                            if(scope.vm.platform != null){
-                                if(context.selected.catPath == scope.vm.platform.pCatPath)
-                                    return;
-                            }
+                function masterCategoryMapping(popupNewCategory) {
+                    systemCategoryService.getNewsCategoryList().then(function(res){
+                        popupNewCategory({
+                            categories: res.data
+                        }).then(function(context){
+                            //判断类目是否改变
+                            scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
 
-                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId,catId:context.selected.catId}).then(function(resp){
-                                scope.vm.platform = resp.data.platform;
-                                scope.vm.platform.pCatPath = context.selected.catPath;
-                                scope.vm.platform.pCatId = context.selected.catId;
-                                scope.vm.checkFlag.category = 1;
-                                scope.vm.platform.pStatus == 'WaitingPublish';
-                                scope.vm.status =  "Pending";
-                            });
+                            scope.vm.productComm.catId = context.selected.catId;
+                            scope.vm.productComm.catPath = context.selected.catPath;
+
                         });
+                    });
+                }
+
+                /**
+                 * 添加图片
+                 */
+                function openProImageSetting(imageType,openImageSetting) {
+                    openImageSetting({
+                        product:  scope.vm.productDetails,
+                        imageType: imageType
+                    }).then(function(context){
+                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        scope.vm.productDetails = context.productInfo;
+                    });
                 }
 
                 /**
                  * 更新操作
                  */
                 function saveProduct(){
+
+                    if (!validSchema()) {
+                        return alert("保存失败，请查看产品的属性是否填写正确！");
+                    }
+
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        scope.vm.productComm.modified = resp.data.modified;
+                        scope.productInfo.translateStatus = resp.data.translateStatus == null ? 0 : +resp.data.translateStatus;
+                        scope.productInfo.hsCodeStatus =  resp.data.hsCodeStatus == null ? 0: +resp.data.hsCodeStatus ;
+
+                        //通知子页面
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        if(scope.vm.categoryMark)
+                            scope.productInfo.masterCategory = new Date().getTime();
+                        notify.success("更新成功!");
                     });
                 }
 
                 function validSchema(){
-                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
+                    return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
 
                 /**

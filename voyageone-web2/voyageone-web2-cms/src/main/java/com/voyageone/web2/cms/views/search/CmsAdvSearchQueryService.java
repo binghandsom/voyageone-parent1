@@ -477,6 +477,10 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             rslt[1] = orgChaNameList;
             rslt[2] = freeTagsList;
         }
+        if (groupsList == null || groupsList.isEmpty()) {
+            $warn("CmsAdvSearchQueryService.getGroupExtraInfo groupsList为空");
+            return rslt;
+        }
 
         for (CmsBtProductBean groupObj : groupsList) {
             String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
@@ -511,7 +515,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             boolean hasChg = false;
-            List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
+            List<CmsBtProductModel_Sku> skus = groupObj.getCommon().getSkus();
             if (skus != null) {
                 for (CmsBtProductModel_Sku skuObj : skus) {
                     String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));

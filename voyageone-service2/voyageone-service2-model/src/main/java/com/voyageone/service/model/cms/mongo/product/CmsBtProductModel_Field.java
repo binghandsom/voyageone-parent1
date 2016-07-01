@@ -2,9 +2,6 @@ package com.voyageone.service.model.cms.mongo.product;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +9,18 @@ import java.util.Map;
 
 /**
  * 的商品Model Fields
- * @author chuanyu.liang, 12/11/15
- * @version 2.0.0
- * @since 2.0.0
+ * @author edward.lin 2016/06/29
+ * @version 2.2.0
  */
 public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
+
+    //model 款号
+    public String getModel() {
+        return getAttribute("model");
+    }
+    public void setModel(String model) {
+        setAttribute("model",model);
+    }
 
     //code 产品code
     public String getCode() {
@@ -42,6 +46,22 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("brand", brand);
     }
 
+    //主数据平台是否为主商品
+    public int getIsMasterMain() {
+        return getIntAttribute("isMasterMain");
+    }
+    public void setIsMasterMain(int isMasterMain) {
+        setAttribute("isMasterMain", isMasterMain);
+    }
+
+    //尺码表
+    public String getSizeChart() {
+        return getAttribute("sizeChart");
+    }
+    public void setSizeChart(String sizeChart) {
+        setAttribute("sizeChart", sizeChart);
+    }
+
     //产品名称（英文）
     public String getProductNameEn() {
         return getAttribute("productNameEn");
@@ -50,100 +70,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("productNameEn", productNameEn);
     }
 
-    //产品名称（中文）
-    public String getProductNameCn() {
-        return getAttribute("productNameCn");
-    }
-    public void setProductNameCn(String productNameCn) {
-        setAttribute("productNameCn", productNameCn);
-    }
-
     //产品名称（原始中文标题）
     public String getOriginalTitleCn() {
         return getAttribute("originalTitleCn");
     }
     public void setOriginalTitleCn(String originalTitleCn) {
         setAttribute("originalTitleCn", originalTitleCn);
-    }
-
-    //longTitle 长标题
-    public String getLongTitle() {
-        return getAttribute("longTitle");
-    }
-    public void setLongTitle(String longTitle) {
-        setAttribute("longTitle", longTitle);
-    }
-
-    //middleTitle 中标题
-    public String getMiddleTitle() {
-        return getAttribute("middleTitle");
-    }
-    public void setMiddleTitle(String middleTitle) {
-        setAttribute("middleTitle", middleTitle);
-    }
-
-    //shortTitle 短标题
-    public String getShortTitle() {
-        return getAttribute("shortTitle");
-    }
-    public void setShortTitle(String shortTitle) {
-        setAttribute("shortTitle", shortTitle);
-    }
-
-    //model 款号
-    public String getModel() {
-        return getAttribute("model");
-    }
-    public void setModel(String model) {
-        setAttribute("model",model);
-    }
-
-    //color 颜色
-    public String getColor() {
-        return getAttribute("color");
-    }
-    public void setColor(String color) {
-        setAttribute("color", color);
-    }
-
-    //origin 产地
-    public String getOrigin() {
-        return getAttribute("origin");
-    }
-    public void setOrigin(String origin) {
-        setAttribute("origin", origin);
-    }
-
-    //适合人群
-    public String getSizeType() {
-        return getAttribute("sizeType");
-    }
-    public void setSizeType(String sizeType) {
-        setAttribute("sizeType", sizeType);
-    }
-
-    //产品分类
-    public String getProductType() {
-        return getAttribute("productType");
-    }
-    public void setProductType(String productType) {
-        setAttribute("productType", productType);
-    }
-
-    //产品库存
-    public Integer getQuantity() {
-        return getIntAttribute("quantity");
-    }
-    public void setQuantity(Integer quantity) {
-        setAttribute("quantity", quantity);
-    }
-
-    //originalDesCn 原始中文描述
-    public String getOriginalDesCn() {
-        return getAttribute("originalDesCn");
-    }
-    public void setOriginalDesCn(String originalDesCn) {
-        setAttribute("originalDesCn", originalDesCn);
     }
 
     //shortDesEn 简短描述(英语)
@@ -194,6 +126,38 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("materialCn", materialCn);
     }
 
+    //color 颜色
+    public String getColor() {
+        return getAttribute("color");
+    }
+    public void setColor(String color) {
+        setAttribute("color", color);
+    }
+
+    //origin 产地
+    public String getOrigin() {
+        return getAttribute("origin");
+    }
+    public void setOrigin(String origin) {
+        setAttribute("origin", origin);
+    }
+
+    //产品分类
+    public String getProductType() {
+        return getAttribute("productType");
+    }
+    public void setProductType(String productType) {
+        setAttribute("productType", productType);
+    }
+
+    //适合人群
+    public String getSizeType() {
+        return getAttribute("sizeType");
+    }
+    public void setSizeType(String sizeType) {
+        setAttribute("sizeType", sizeType);
+    }
+
     //hsCodeCrop 税号集货
     public String getHsCodeCrop() {
         return getAttribute("hsCodeCrop");
@@ -210,68 +174,20 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("hsCodePrivate", hsCodePrivate);
     }
 
-    //msrp价格区间
-    public Double getPriceMsrpSt() {
-        return getDoubleAttribute("priceMsrpSt");
+    //hsCodeCross 税号跨境申报（10位）
+    public String getHsCodeCross() {
+        return getAttribute("hsCodeCross");
     }
-    public void setPriceMsrpSt(Double priceMsrpSt) {
-        setAttribute("priceMsrpSt", priceMsrpSt);
-    }
-    public Double getPriceMsrpEd() {
-        return getDoubleAttribute("priceMsrpEd");
-    }
-    public void setPriceMsrpEd(Double priceMsrpEd) {
-        setAttribute("priceMsrpEd", priceMsrpEd);
+    public void setHsCodeCross(String hsCodeCross) {
+        setAttribute("hsCodeCross", hsCodeCross);
     }
 
-    //建议市场价格区间
-    public Double getPriceRetailSt() {
-        return getDoubleAttribute("priceRetailSt");
+    //产品库存
+    public Integer getQuantity() {
+        return getIntAttribute("quantity");
     }
-    public void setPriceRetailSt(Double priceRetailSt) {
-        setAttribute("priceRetailSt", priceRetailSt);
-    }
-    public Double getPriceRetailEd() {
-        return getDoubleAttribute("priceRetailEd");
-    }
-    public void setPriceRetailEd(Double priceRetailEd) {
-        setAttribute("priceRetailEd", priceRetailEd);
-    }
-
-    //销售价格价格区间
-    public Double getPriceSaleSt() {
-        return getDoubleAttribute("priceSaleSt");
-    }
-    public void setPriceSaleSt(Double priceSaleSt) {
-        setAttribute("priceSaleSt", priceSaleSt);
-    }
-    public Double getPriceSaleEd() {
-        return getDoubleAttribute("priceSaleEd");
-    }
-    public void setPriceSaleEd(Double priceSaleEd) {
-        setAttribute("priceSaleEd", priceSaleEd);
-    }
-
-    //当前销售价格价格区间 暂时不使用
-    public Double getCurPriceSt() {
-        return getDoubleAttribute("curPriceSt");
-    }
-    public void setCurPriceSt(Double curPriceSt) {
-        setAttribute("curPriceSt", curPriceSt);
-    }
-    public Double getCurPriceEd() {
-        return getDoubleAttribute("curPriceSt");
-    }
-    public void setCurPriceEd(Double curPriceSt) {
-        setAttribute("curPriceSt", curPriceSt);
-    }
-
-    //priceChange 价格审批flg 0:变更（未审批） 1:审批完成   Feed过来的新商品，就认为审批完成
-    public Integer getPriceChange() {
-        return getAttribute("priceChange");
-    }
-    public void setPriceChange(Integer priceChange) {
-        setAttribute("priceChange", priceChange);
+    public void setQuantity(Integer quantity) {
+        setAttribute("quantity", quantity);
     }
 
     // clientProductUrl 官方网站链接
@@ -434,54 +350,33 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("images8", images8);
     }
 
-    //lock商品
-    public String getLock() {
-        Object lock = getAttribute("lock");
-        if (lock == null) {
-            return "";
-        }
-        return lock.toString();
+    //msrp价格区间
+    public Double getPriceMsrpSt() {
+        return getDoubleAttribute("priceMsrpSt");
+    }
+    public void setPriceMsrpSt(Double priceMsrpSt) {
+        setAttribute("priceMsrpSt", priceMsrpSt);
+    }
+    public Double getPriceMsrpEd() {
+        return getDoubleAttribute("priceMsrpEd");
+    }
+    public void setPriceMsrpEd(Double priceMsrpEd) {
+        setAttribute("priceMsrpEd", priceMsrpEd);
     }
 
-    public void setLock(String lock) {
-        if (lock == null) {
-            lock = "";
-        }
-        setAttribute("lock", lock);
+    //建议市场价格区间
+    public Double getPriceRetailSt() {
+        return getDoubleAttribute("priceRetailSt");
     }
-
-    //状态 new/pending/ready/approved/deleted
-    public String getStatus() {
-        return getAttribute("status");
+    public void setPriceRetailSt(Double priceRetailSt) {
+        setAttribute("priceRetailSt", priceRetailSt);
     }
-    public void setStatus(String status) {
-        setAttribute("status", status);
+    public Double getPriceRetailEd() {
+        return getDoubleAttribute("priceRetailEd");
     }
-    public void setStatus(CmsConstants.ProductStatus status) {
-        String value = null;
-        if (status != null) {
-            value = status.toString();
-        }
-        setAttribute("status", value);
+    public void setPriceRetailEd(Double priceRetailEd) {
+        setAttribute("priceRetailEd", priceRetailEd);
     }
-
-    //editStatus "0":未完成；"1":完成
-    public String getEditStatus() {
-        return getAttribute("editStatus");
-    }
-    public void setEditStatus(String editStatus) {
-        setAttribute("editStatus", editStatus);
-    }
-
-
-    // 主数据平台是否为主商品
-    public int getIsMasterMain() {
-        return getIntAttribute("isMasterMain");
-    }
-    public void setIsMasterMain(int isMasterMain) {
-        setAttribute("isMasterMain", isMasterMain);
-    }
-
 
     //categoryStatus "0":未完成；"1":完成
     public String getCategoryStatus() {
@@ -555,6 +450,38 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("hsCodeSetTime", hsCodeSetTime);
     }
 
+    // codeDiff
+    public String getCodeDiff() {
+        return getAttribute("codeDiff");
+    }
+    public void setCodeDiff(String codeDiff) {
+        setAttribute("codeDiff", codeDiff);
+    }
+
+    // usageEn 使用方法英文
+    public String getUsageEn() {
+        return getAttribute("usageEn");
+    }
+    public void setUsageEn(String usageEn) {
+        setAttribute("usageEn", usageEn);
+    }
+
+    // usageCn 使用方法中文
+    public String getUsageCn() {
+        return getAttribute("usageCn");
+    }
+    public void setUsageCn(String usageCn) {
+        setAttribute("usageCn", usageCn);
+    }
+
+    // tmallWirelessActive
+    public Integer getTmallWirelessActive() {
+        return getIntAttribute("tmallWirelessActive");
+    }
+    public void setTmallWirelessActive(Integer tmallWirelessActive) {
+        setAttribute("tmallWirelessActive", tmallWirelessActive);
+    }
+
     @Override
     public Object put(String key, Object value) {
         if (key != null && key.startsWith("images")) {
@@ -571,13 +498,5 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
             }
         }
         return super.put(key, value);
-    }
-
-    public int getMasterGroupQuantity() {
-        return getAttribute("masterGroupQuantity") != null ? Integer.parseInt(getAttribute("masterGroupQuantity").toString()) : 0;
-    }
-
-    public void setMasterGroupQuantity(int qty) {
-        setAttribute("masterGroupQuantity", qty);
     }
 }

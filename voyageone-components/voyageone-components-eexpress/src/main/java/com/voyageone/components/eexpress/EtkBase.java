@@ -4,8 +4,6 @@ import com.voyageone.common.configs.beans.CarrierBean;
 import com.voyageone.common.configs.beans.PostResponse;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.ComponentBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EtkBase extends ComponentBase {
 	

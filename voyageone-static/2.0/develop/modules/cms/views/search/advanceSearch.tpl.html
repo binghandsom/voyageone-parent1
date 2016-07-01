@@ -18,8 +18,7 @@
                                             <div class="form-group"><!-- 查询brand品牌 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
-                                                    <select search-contains="true" class="form-control"
-                                                            ng-model="vm.searchInfo.brand"
+                                                    <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brand"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
@@ -134,7 +133,7 @@
                                             </div>
                                             <div class="form-group"><!-- 查询主类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-pop btn-default" ng-click="openMasterCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openMasterCategoryMapping(popupCategoryNew)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_MAIN_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
@@ -610,9 +609,6 @@
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li ng-if="cartBean.value==27&&cartBean.cartType!=3">
-                                    <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit,cartBean.value)">{{'TXT_PRODUCTS_PROPERTY_CHANGE'|translate}}</a>
-                                </li>
                                 <!--最终售价 暂时不做-->
                                 <!--<li>-->
                                     <!--<a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>-->
@@ -636,7 +632,7 @@
                         </div>
                     </div>
                     <!--tab-->
-                    <uib-tab ng-click="vm.currTab = 'product'">
+                    <uib-tab ng-click="vm.currTab = 'product'" active="vm.currTab2">
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}
                         </tab-heading>
                         <!-- Products table and controls -->

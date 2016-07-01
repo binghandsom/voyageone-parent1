@@ -1,5 +1,11 @@
 package com.voyageone.service.bean.cms.translation;
 
+
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Ethan Shi on 2016/6/28.
  *
@@ -22,10 +28,17 @@ public class TranslationTaskBean_CommonFields
     private String longDesCn;
     private String usageEn;
     private String usageCn;
-    private String images1;
+    private List<CmsBtProductModel_Field_Image> images1;
+    private List<CmsBtProductModel_Field_Image> images2;
+    private List<CmsBtProductModel_Field_Image> images3;
+    private List<CmsBtProductModel_Field_Image> images4;
+    private List<CmsBtProductModel_Field_Image> images5;
+    private List<CmsBtProductModel_Field_Image> images6;
+    private List<CmsBtProductModel_Field_Image> images7;
+    private List<CmsBtProductModel_Field_Image> images8;
     private String clientProductUrl;
     private String translator;
-    private int translateStatus;
+    private String translateStatus;
     private String translateTime;
 
 
@@ -133,14 +146,6 @@ public class TranslationTaskBean_CommonFields
         this.usageCn = usageCn;
     }
 
-    public String getImages1() {
-        return images1;
-    }
-
-    public void setImages1(String images1) {
-        this.images1 = images1;
-    }
-
     public String getClientProductUrl() {
         return clientProductUrl;
     }
@@ -157,11 +162,11 @@ public class TranslationTaskBean_CommonFields
         this.translator = translator;
     }
 
-    public int getTranslateStatus() {
+    public String getTranslateStatus() {
         return translateStatus;
     }
 
-    public void setTranslateStatus(int translateStatus) {
+    public void setTranslateStatus(String translateStatus) {
         this.translateStatus = translateStatus;
     }
 
@@ -171,5 +176,69 @@ public class TranslationTaskBean_CommonFields
 
     public void setTranslateTime(String translateTime) {
         this.translateTime = translateTime;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages1() {
+        return images1;
+    }
+
+    public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
+        this.images1 = images1;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages2() {
+        return images2;
+    }
+
+    public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
+        this.images2 = images2;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages3() {
+        return images3;
+    }
+
+    public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
+        this.images3 = images3;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages4() {
+        return images4;
+    }
+
+    public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
+        this.images4 = images4;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages5() {
+        return images5;
+    }
+
+    public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
+        this.images5 = images5;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages6() {
+        return images6;
+    }
+
+    public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
+        this.images6 = images6;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages7() {
+        return images7;
+    }
+
+    public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
+        this.images7 = images7;
+    }
+
+    public List<CmsBtProductModel_Field_Image> getImages8() {
+        return images8;
+    }
+
+    public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
+        this.images8 = images8;
     }
 }

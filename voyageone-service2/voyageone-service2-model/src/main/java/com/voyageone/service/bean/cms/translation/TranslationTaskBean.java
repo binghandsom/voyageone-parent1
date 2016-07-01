@@ -11,18 +11,20 @@ import java.util.List;
  */
 public class TranslationTaskBean {
 
-    private int prodId;
+    private long prodId;
     private String productCode;
+    private String feedCategory;
+    private String catPath;
 
     TranslationTaskBean_CommonFields commonFields;
-    List<TranslationTaskBean_CustomProps> CustomProps;
+    List<TranslationTaskBean_CustomProps> customProps;
 
 
-    public int getProdId() {
+    public long getProdId() {
         return prodId;
     }
 
-    public void setProdId(int prodId) {
+    public void setProdId(long prodId) {
         this.prodId = prodId;
     }
 
@@ -43,10 +45,26 @@ public class TranslationTaskBean {
     }
 
     public List<TranslationTaskBean_CustomProps> getCustomProps() {
-        return CustomProps;
+        return customProps;
     }
 
     public void setCustomProps(List<TranslationTaskBean_CustomProps> customProps) {
-        CustomProps = customProps;
+        this.customProps = customProps;
+    }
+
+    public String getFeedCategory() {
+        return feedCategory;
+    }
+
+    public void setFeedCategory(String category) {
+        this.feedCategory = category;
+    }
+
+    public String getCatPath() {
+        return catPath;
+    }
+
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
     }
 }

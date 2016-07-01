@@ -9,7 +9,7 @@
  * @User:    tony-piao
  * @Version: 2.1.0, 2016-6-24
  */
-angular.module('voyageone.angular.directives').directive('platformStatus', function ($q) {
+angular.module('voyageone.angular.directives').directive('platformStatus', function () {
 
         function StatusController($scope, $attrs) {
 
@@ -22,7 +22,7 @@ angular.module('voyageone.angular.directives').directive('platformStatus', funct
             this.statusData = this.$scope.data;
             //对Error进行处理
             if(!this.statusData)
-                return
+                return;
 
             if(this.statusData.pPublishError)
                 this.statusData.pStatus = "Error";

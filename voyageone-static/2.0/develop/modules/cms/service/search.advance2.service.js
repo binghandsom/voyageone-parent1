@@ -7,8 +7,7 @@ define([
     'underscore',
     'modules/cms/enums/Carts'
 ], function (angularAMD, _, Carts) {
-    angularAMD
-        .service('searchAdvanceService2', searchAdvanceService2);
+    angularAMD.service('searchAdvanceService2', searchAdvanceService2);
 
     function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
 
@@ -115,9 +114,9 @@ define([
          * @param data
          * @returns {*}
          */
-        function addFreeTag(tagPath, prodIdList) {
+        function addFreeTag(tagPath, prodIdList, selAllFlg) {
             var defer = $q.defer();
-            var data = {"tagPath":tagPath, "prodIdList":prodIdList};
+            var data = {"tagPath":tagPath, "prodIdList":prodIdList, "isSelAll":selAllFlg};
 
             $searchAdvanceService2.addFreeTag(data).then(function (res) {
                 defer.resolve (res);
@@ -337,6 +336,9 @@ define([
                 var cartArr = [];
                 if (productInfo.platforms) {
                     _.forEach(productInfo.platforms, function (data) {
+                        if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
+                            return;
+                        }
                         var cartItem = {};
                         cartItem.cartId = parseInt(data.cartId);
                         cartItem.platformStatus = data.pStatus;
@@ -370,7 +372,6 @@ define([
                     });
                 }
                 productInfo.carts = cartArr;
-
                 if (productInfo.carts) {
                     _.forEach(productInfo.carts, function (data) {
                         var cartInfo = Carts.valueOf(data.cartId);

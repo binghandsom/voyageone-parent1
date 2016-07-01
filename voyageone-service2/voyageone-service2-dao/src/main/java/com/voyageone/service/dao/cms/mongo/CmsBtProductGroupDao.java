@@ -40,4 +40,15 @@ public class CmsBtProductGroupDao extends BaseMongoChannelDao<CmsBtProductGroupM
         result.putAll(rsMap);
         return coll.update(params, new BasicDBObject("$set", result), false, true);
     }
+
+    /**
+     * 根据渠道和平台,取得所对应的group下面产品code数大于1的所有group列表
+     * @param channelId 渠道Id
+     * @param cartId 平台Id
+     * @return 该渠道及对应的平台group列表
+     */
+    public List<CmsBtProductGroupModel> selectGroupInfoByMoreProductCodes(String channelId, Integer cartId) {
+        String query = "{\"cartId\": "+cartId+", \"productCodes.1\": {$exists:true}}";
+        return select(query, channelId);
+    }
 }

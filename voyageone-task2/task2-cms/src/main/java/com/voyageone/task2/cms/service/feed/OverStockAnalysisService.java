@@ -85,11 +85,10 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(200);
+            request.setLimit(20);
             String sku ="";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
-                $info(JacksonUtil.bean2Json(result));
                 int statusCode = result.getStatusCode();
                 ProductsType productsType = result.getEntity();
                 List<ProductType> productTypeList = productsType.getProduct();
@@ -199,7 +198,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             }
                                             sb.append(variationAttributeType.getName()+":"+sbValue+"|");
                                         }
-                                        superFeedverStockBean.setAttribute(sb.deleteCharAt(sb.length() - 1).toString());
+                                        superFeedverStockBean.setAttribute1(sb.deleteCharAt(sb.length() - 1).toString());
                                     }
                                     //SKU_Image
                                     List<ImageType>  imageTypeList =variationType.getImages().getImage();
@@ -270,6 +269,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
+                break;
             }
         }
         if (superfeed.size() >0) {

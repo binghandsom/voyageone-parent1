@@ -21,6 +21,7 @@ import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.util.MapModel;
@@ -65,12 +66,12 @@ public class CmsBtJmPromotionService {
         return dao.select(id);
     }
     @VOTransactional
-   public void delete(int id) {
-       CmsBtJmPromotionModel model = dao.select(id);
-       model.setActive(0);
-       dao.update(model);
-       saveCmsBtPromotion(model);
-   }
+    public void delete(int id) {
+        CmsBtJmPromotionModel model = dao.select(id);
+        model.setActive(0);
+        dao.update(model);
+        saveCmsBtPromotion(model);
+    }
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
     }
@@ -222,11 +223,13 @@ public class CmsBtJmPromotionService {
         modelTag.setTagStatus(0);
         modelTag.setParentTagId(0);
         modelTag.setSortOrder(0);
-        modelTag.setTagPath("");
-        modelTag.setTagPathName("");
+        modelTag.setTagPath(String.format("-%s-", ""));
+        modelTag.setTagPathName(String.format("-%s-", model.getName()));
         modelTag.setModifier(model.getModifier());
         //Tag追加  活动名称
-         daoCmsBtTag.insert(modelTag);
+        daoCmsBtTag.insert(modelTag);
+        modelTag.setTagPath(String.format("-%s-", modelTag.getId()));
+        daoCmsBtTag.update(modelTag);
         return modelTag.getId();
     }
 
@@ -273,11 +276,11 @@ public class CmsBtJmPromotionService {
      * @param creater   创建人
      */
     public List<String> addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
-                                         Double discount,
-                                         Integer priceType,
-                                         String tagName,
-                                         String tagId,
-                                         String creater) {
+                                                 Double discount,
+                                                 Integer priceType,
+                                                 String tagName,
+                                                 String tagId,
+                                                 String creater) throws IllegalAccessException {
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
@@ -290,21 +293,21 @@ public class CmsBtJmPromotionService {
         // 检查之前有没有上新到聚美上面
         List<String> errCodes = new ArrayList();
         List<String>productCodes = new ArrayList<>();
-        orginProducts.forEach(item -> productCodes.add(item.getFields().getCode()));
+        orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
         List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
         if(cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size())
         {
             for(CmsBtProductModel orginProduct :orginProducts){
                 boolean flg =false;
                 for(CmsBtJmProductModel cmsBtJmProductModel :cmsBtJmProductModels){
-                    if(orginProduct.getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())){
+                    if(orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())){
                         flg = true;
                         products.add(orginProduct);
                         break;
                     }
                 }
                 if(!flg){
-                    errCodes.add(orginProduct.getFields().getCode());
+                    errCodes.add(orginProduct.getCommon().getFields().getCode());
                 }
             }
         }else{
@@ -327,9 +330,10 @@ public class CmsBtJmPromotionService {
             if (!product.getTags().contains(tagId))
                 bulkList.add(buildBulkUpdateTag(product, tagId, creater));
         });
-
+        List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
+        List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport);
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier());
 
         // 批量更新product表
         if (bulkList.size() > 0) {
@@ -345,7 +349,7 @@ public class CmsBtJmPromotionService {
     SynshipComMtValueChannelDao synshipComMtValueChannelDao;
 
     private ProductImportBean buildProductFrom(CmsBtProductModel model,CmsBtJmPromotionModel promotion) {
-        CmsBtProductModel_Field fields = model.getFields();
+        CmsBtProductModel_Field fields = model.getCommon().getFields();
         ProductImportBean bean = new ProductImportBean();
         bean.setAppId(promotion.getActivityAppId());
         bean.setPcId(promotion.getActivityPcId());
@@ -365,17 +369,20 @@ public class CmsBtJmPromotionService {
 
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
-        return model.getSkus().stream().map(oldSku -> {
+        return model.getPlatform(CartType.JUMEI.getCartId()).getSkus().stream().map(oldSku -> {
             SkuImportBean bean = new SkuImportBean();
-            bean.setProductCode(model.getFields().getCode());
-            bean.setSkuCode(oldSku.getSkuCode());
-            bean.setMarketPrice(oldSku.getPriceMsrp());
+            bean.setProductCode(model.getCommon().getFields().getCode());
+            String skuCode = oldSku.getStringAttribute("skuCode");
+            bean.setSkuCode(skuCode);
+            Double priceMsrp = oldSku.getDoubleAttribute("priceMsrp");
+            Double priceSale = oldSku.getDoubleAttribute("priceSale");
+            bean.setMarketPrice(priceMsrp);
             Double finalPrice;
             if (discount != null) {
                 final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
-                finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getPriceSale() * discountCopy));
+                finalPrice = Math.ceil(priceTypeCopy == 1 ? (priceMsrp * discountCopy) : (priceSale * discountCopy));
             } else {
-                finalPrice = oldSku.getPriceSale();
+                finalPrice = priceSale;
             }
             bean.setDealPrice(finalPrice);
             bean.setDiscount(discount);
@@ -397,7 +404,7 @@ public class CmsBtJmPromotionService {
         if(model.getCommon() != null && model.getCommon().size() >0) {
             bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
         }else{
-            bulkQueryMap.put("common.fields.code", model.getFields().getCode());
+            bulkQueryMap.put("common.fields.code", model.getCommon().getFields().getCode());
         }
 
         // 设置更新值

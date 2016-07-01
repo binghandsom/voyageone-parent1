@@ -1,17 +1,16 @@
 package com.voyageone.web2.cms.views.pop.image;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformImagesService;
@@ -49,8 +48,6 @@ public class CmsImageSettingService extends BaseAppService {
     @Autowired
     PlatformImagesService platformImagesService;
     @Autowired
-    ImageCreateService imageCreateService;
-    @Autowired
     ImagesService imagesService;
 
     public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
@@ -85,14 +82,14 @@ public class CmsImageSettingService extends BaseAppService {
             CmsBtImagesModel newModel = new CmsBtImagesModel();
             newModel.setChannelId(orderChannelId);
             newModel.setOriginalUrl("本地图片上传:" + file.getOriginalFilename());
-            newModel.setCode(cmsBtProductModel.getFields().getCode());
+            newModel.setCode(cmsBtProductModel.getCommon().getFields().getCode());
             newModel.setUpdFlg(1);
             newModel.setCreater(userName);
             newModel.setImgName(imageName);
             imagesService.insert(newModel);
 
             // 上新
-            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
+//            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
                 productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, userName);
 
             // 更新产品数据
@@ -116,24 +113,15 @@ public class CmsImageSettingService extends BaseAppService {
         Pattern special_symbol = Pattern.compile(URL_FORMAT);
 
         CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
-        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getFields().getImages(fieldImageType);
+        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getCommon().getFields().getImages(fieldImageType);
 
         images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
 
-        String imageName;
-        int size = images.size();
-        while (true){
-            size++;
-            imageName = String.format("%s-%s-%s%d", user.getSelChannelId(), special_symbol.matcher(cmsBtProductModel.getFields().getCode()).replaceAll(Constants.EmptyString), imageType.substring(imageType.length() - 1), size);
-            final String finalImageName = imageName;
-            if(images.stream().filter(cmsBtProductModel_field_image -> finalImageName.equalsIgnoreCase(cmsBtProductModel_field_image.getName())).collect(Collectors.toList()).size() == 0){
-                break;
-            }
-        }
+        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(),DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getCommon().getFields().getCode()).replaceAll(Constants.EmptyString),  imageType.substring(imageType.length() - 1));
 
         images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
 
-        cmsBtProductModel.getFields().setImages(fieldImageType, images);
+        cmsBtProductModel.getCommon().getFields().setImages(fieldImageType, images);
 
         return imageName;
 

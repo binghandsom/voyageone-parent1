@@ -1,25 +1,18 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.SellerCatService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
@@ -30,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 /**
  * @author gjl 2016/5/23.
@@ -43,8 +37,6 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     @Autowired
     private SellerCatService sellerCatService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -55,38 +47,93 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     /**
      * 数据页面初始化
      */
-    public Map getChannelCategory(Map<String, Object> params,String lang) {
-        Map<String, Object> data = new HashMap<>();
-        //产品code
-        List<String> codeList = (List) params.get("code");
+    public Map getChannelCategory(Map<String, Object> params, CmsSessionBean cmsSession) {
         //channelId
         String channelId = (String) params.get("channelId");
+        Map<String, Object> data = new HashMap<>();
+        //产品code
+        List<String> codeList = null;
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
+        } else {
+            codeList = (List) params.get("code");
+        }
+        if (codeList == null || codeList.isEmpty()) {
+            $warn("没有code条件 params=" + params.toString());
+            throw new BusinessException("未选择商品");
+        }
+
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
+        if (cartId == 0) {
+            $warn("getChannelCategory cartI==0 " + params.toString());
+            throw new BusinessException("未选择平台");
+        }
         //取得类目达标下面的个数
         data.put("cnt", getSellerCatCnt(cartId));
-        if(codeList.size()==1){
-            //选择一条记录．根据code在cms_bt_product取得对应的属性记录
-            for (String code : codeList) {
-                //取得商品code
-                //根据商品code取得对应的类目达标属性
-                CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
-                //取得叶子类目的catId
-                List isSelectCidList = (List) cmsBtProductModel.getSellerCats().get("cIds");
-                Map<String, Object> isSelectCidMap = new HashMap<>();
-                if (isSelectCidList != null) {
-                    for (Object anIsSelectCidList : isSelectCidList) {
-                        //取得选择的cid
-                        isSelectCidMap.put(anIsSelectCidList.toString(), true);
+
+        //取得商品code
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true}}");
+        query.setParameters(codeList);
+        query.setProjection("{'platforms.P" + cartId + ".sellerCats.cId':1}");
+        //根据商品code取得对应的类目达标属性
+        List<CmsBtProductModel> prodList = cmsBtProductDao.select(query, channelId);
+        if (prodList == null || prodList.isEmpty()) {
+            $warn("getChannelCategory cmsBtProductModel == null " + params.toString());
+            throw new BusinessException("所选商品无指定平台的数据");
+        }
+
+        // 设置各个分类的勾选情况
+        List<CmsBtSellerCatModel> orgSellCatList = sellerCatService.getSellerCatsByChannelCart(channelId, cartId, false);
+        for (CmsBtSellerCatModel selCatObj : orgSellCatList) {
+            selCatObj.setCartId(0);
+        }
+        Map<String, Boolean> orgChkStsMap = new HashMap<>(orgSellCatList.size());
+        Map<String, Boolean> orgDispMap = new HashMap<>(orgSellCatList.size());
+
+        for (CmsBtProductModel prodObj : prodList) {
+            // 取得分类信息
+            List<CmsBtProductModel_SellerCat> sellCatsList = prodObj.getPlatform(cartId).getSellerCats();
+            if (sellCatsList == null || sellCatsList.isEmpty()) {
+                $debug("getChannelCategory 指定商品无sellerCats数据 " + params.toString());
+                continue;
+            }
+
+            for (CmsBtProductModel_SellerCat selectObj : sellCatsList) {
+                //取得选择的cid
+                for (CmsBtSellerCatModel selCatObj : orgSellCatList) {
+                    if (org.apache.commons.lang3.StringUtils.trimToEmpty(selCatObj.getCatId()).equals(selectObj.getcId())) {
+                        selCatObj.setCartId(selCatObj.getCartId() + 1);
                     }
                 }
-                data.put("isSelectCid", isSelectCidMap);
             }
         }
+
+        for (CmsBtSellerCatModel selectObj : orgSellCatList) {
+            orgChkStsMap.put(selectObj.getCatId(), false);
+            orgDispMap.put(selectObj.getCatId(), false);
+
+            if (selectObj.getCartId() < codeList.size() && selectObj.getCartId() > 0) {
+                orgDispMap.put(selectObj.getCatId(), true);
+            }
+            if (selectObj.getCartId() == codeList.size()) {
+                orgChkStsMap.put(selectObj.getCatId(), true);
+            }
+        }
+        data.put("orgChkStsMap", orgChkStsMap);
+        data.put("orgDispMap", orgDispMap);
+
         //取得店铺渠道
-        List<TypeChannelBean> cartList= TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, lang);
-        data.put("cartList",cartList);
-        //根据channelId在cms_bt_seller_cat取得对应的达标数据
+        data.put("cartName", Carts.getCart(cartId).getName());
+
+        //根据channelId在cms_bt_seller_cat取得对应的店铺内分类数据(树型结构)
         List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         data.put("channelCategoryList", channelCategoryList);
         return data;
@@ -104,19 +151,20 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         }
 
         List<String> codeList = (List) params.get("productIds");
-        if (isSelAll == 1 && (codeList == null || codeList.isEmpty())) {
+        if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
         }
         if (codeList == null || codeList.isEmpty()) {
-            $error("没有code条件 params=" + params.toString());
+            $warn("没有code条件 params=" + params.toString());
             return null;
         }
 
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
         if (cartId <= 0) {
-            cartId = (Integer) cmsSession.getPlatformType().get("cartId");
+            $warn("未选择平台/店铺 params=" + params.toString());
+            return null;
         }
         saveChannelCategory(params, codeList, cartId);
         return null;
@@ -149,7 +197,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         queryMap.put("common.fields.code", queryMap1);
         queryMap.put("platforms.P" + cartId, queryMap2); // 要过滤掉platforms.Pxx未设置的情况
 
-        WriteResult rslt = cmsBtProductDao.update(channelId, queryMap, updateMap2);
+        WriteResult rslt = productService.updateProduct(channelId, queryMap, updateMap2);
         $debug("更新店铺内分类结果：" + rslt.toString());
 
         //取得approved的code插入
@@ -169,11 +217,11 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             // 类目选择check
             throw new BusinessException("7000090", cnt);
         }
-    };
+    }
 
     /**
      * 取得最大达标个数
-     * @param cartId
+     * @param cartId int
      * @return cnt
      */
     private String getSellerCatCnt(int cartId) {
@@ -187,7 +235,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 同一店铺不同渠道的叶子类目插入形式不同
-     * @param cartId
+     * @param cartId int
      * @return cnt
      */
     private String getSellerCatCategoryCid(int cartId) {

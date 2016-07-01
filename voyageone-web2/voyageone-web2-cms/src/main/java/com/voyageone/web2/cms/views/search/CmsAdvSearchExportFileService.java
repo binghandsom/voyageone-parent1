@@ -9,9 +9,9 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.ImagesService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseAppService;
@@ -48,9 +48,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     @Autowired
     private CmsAdvanceSearchService searchIndexService;
     @Autowired
-    private CmsBtImagesDaoExt cmsBtImagesDaoExt;
+    private ImagesService imagesService;
     @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
+    private ProductGroupService productGroupService;
 
     // DB检索页大小
     private final static int SELECT_PAGE_SIZE = 2000;
@@ -77,7 +77,8 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         // 获取product列表
-        List<String> prodCodeList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean);
+        List<CmsBtProductModel> prodObjList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean, 0);
+        List<String> prodCodeList = searchIndexService.convertToCodeList(prodObjList);
         long recCount = prodCodeList.size();
 
         if (searchValue.getFileType() == 2) {
@@ -85,7 +86,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, searchValue, cartId);
+            prodCodeList = searchIndexService.getGroupCodeList(prodObjList, searchValue, cartId);
             recCount = prodCodeList.size();
         }
 
@@ -273,8 +274,8 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             }
             codeList.add(fields.getCode());
         }
-        List<Map> imgList = cmsBtImagesDaoExt.selectImagesByCode(channelId, codeList);
-        codeList = null;
+        List<Map> imgList = imagesService.getImagesByCode(channelId, codeList);
+
         Map<String, String> codeImgMap = new HashMap<>(imgList.size());
         for (Map imgItem : imgList) {
             codeImgMap.put((String) imgItem.get("code"), (String) imgItem.get("original_url"));
@@ -402,7 +403,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         queryObject.setQuery("{'channelId':#,'mainProductCode':{$in:#},'cartId':{$in:#}}");
         queryObject.setParameters(channelId, codeList, cartIdList);
         queryObject.setProjection("{'_id':0,'cartId':1,'mainProductCode':1,'numIId':1,'priceMsrpSt':1,'priceMsrpEd':1,'priceRetailSt':1,'priceRetailEd':1,'priceSaleSt':1,'priceSaleEd':1}");
-        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
+        List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, queryObject);
 
         // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/groupList-template.xlsx
         Sheet sheet = book.getSheetAt(0);
@@ -491,7 +492,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (fields == null) {
                 continue;
             }
-            List<CmsBtProductModel_CommonSku> skuList = item.getCommon().getSkus();
+            List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
             if (skuList == null || skuList.isEmpty()) {
                 continue;
             }
@@ -506,7 +507,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             int index = 0;
 
             // 内容输出
-            for (CmsBtProductModel_CommonSku skuItem : skuList) {
+            for (CmsBtProductModel_Sku skuItem : skuList) {
                 Row row = FileUtils.row(sheet, startRowIndex++);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getSkuCode());
                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getBarcode());

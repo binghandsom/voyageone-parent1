@@ -13,7 +13,9 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
+import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,8 @@ public class CmsAddToPromotionService extends BaseAppService {
     private ProductTagService productTagService;
     @Autowired
     private PromotionDetailService promotionDetailService;
+    @Autowired
+    private CmsAdvanceSearchService advanceSearchService;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         //fix error by holysky
@@ -90,7 +94,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         List<String> codeList = new ArrayList<>();
-        prodInfoList.forEach(model -> codeList.add(model.getFields().getCode()));
+        prodInfoList.forEach(model -> codeList.add(model.getCommon().getFields().getCode()));
 
         result.put("hasTags", true);
         result.put("prodCodeListStr", StringUtils.join(codeList, ", "));
@@ -100,19 +104,38 @@ public class CmsAddToPromotionService extends BaseAppService {
     /**
      * addToPromotion
      */
-    public void addToPromotion(Map<String, Object> params, UserSessionBean userInfo) {
+    public void addToPromotion(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
         String channelId = userInfo.getSelChannelId();
         String modifier = userInfo.getUserName();
 
         Integer promotionId = Integer.valueOf(params.get("promotionId").toString());
         Integer tagId = Integer.valueOf(params.get("tagId").toString());
         Integer cartId = Integer.valueOf(params.get("cartId").toString());
-        List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-        List<Map<String, String>> products = (ArrayList<Map<String, String>>) params.get("products");
+        if (cartId == 0) {
+            $warn("addToPromotion cartId为空 params=" + params.toString());
+            throw new BusinessException("未选择平台");
+        }
+
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+        List<Long> productIds = null;
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), cmsSession);
+        } else {
+            productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+        }
+        if (productIds == null || productIds.isEmpty()) {
+            $warn("addToPromotion 未选择商品 params=" + params.toString());
+            throw new BusinessException("未选择商品");
+        }
 
         // 获取promotion信息
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
+            $warn("addToPromotion promotionId不存在 params=" + params.toString());
             throw new BusinessException("promotionId不存在：" + promotionId);
         }
 
@@ -120,19 +143,19 @@ public class CmsAddToPromotionService extends BaseAppService {
         List<CmsBtTagModel> tags = selectListByParentTagId(promotion.getRefTagId());
         CmsBtTagModel tagInfo = searchTag(tags, tagId);
         if (tagInfo == null) {
+            $warn("addToPromotion tagInfo不存在 params=" + params.toString());
             throw new BusinessException("Tag不存在：" + tagInfo.getTagPathName());
         }
 
         // 给产品数据添加活动标签
         productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, "tags", modifier);
-        products.forEach(item -> {
+        productIds.forEach(item -> {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);
             request.setChannelId(promotion.getChannelId());
             request.setOrgChannelId(channelId);
             request.setCartId(cartId);
-            request.setProductId(Long.valueOf(String.valueOf(item.get("id"))));
-            request.setProductCode(String.valueOf(item.get("code")));
+            request.setProductId(item);
             request.setPromotionId(promotionId);
             request.setPromotionPrice(0.00);
             request.setTagId(tagInfo.getId());
