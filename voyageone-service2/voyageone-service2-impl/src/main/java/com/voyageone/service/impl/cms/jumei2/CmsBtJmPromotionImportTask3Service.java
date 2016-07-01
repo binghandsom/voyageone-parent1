@@ -82,7 +82,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private  CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
     @Autowired
     private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
-
+    @Autowired
+    CmsBtPromotionDao daoCmsBtPromotion;
     @Autowired
     CmsBtJmPromotionImportSave3Service serviceCmsBtJmPromotionImportSave3;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
@@ -178,6 +179,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         return  result;
     }
 
+
+
     //check
     public void check(CmsBtJmPromotionModel model, List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,boolean isImport) throws IllegalAccessException {
         //product
@@ -229,11 +232,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         //check
         check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check 移除不能导入的product
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
+
+        CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
         //初始化
         ProductSaveInfo saveInfo = null;
         for (ProductImportBean product : listProductImport) {
             saveInfo = loadSaveInfo(model, listSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
-            loadCmsBtPromotionCodes(saveInfo, model, listSkuImport, product, userName);
+            loadCmsBtPromotionCodes(saveInfo, listSkuImport, product,modelPromotion, userName);
             if (saveInfo != null) {
                 listSaveInfo.add(saveInfo);
             }
@@ -250,7 +255,14 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
         }
     }
-
+    public CmsBtPromotionModel  getCmsBtPromotionModel(int jmPromotionId)
+    {
+        Map<String, Object> map = new HashMap<>();
+        map.put("promotionId",jmPromotionId);
+        map.put("cartId", CartEnums.Cart.JM.getValue());
+        CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
+        return  promotion;
+    }
     private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
         ProductSaveInfo saveInfo = new ProductSaveInfo();
         List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
@@ -322,15 +334,15 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         return saveInfo;
     }
 
-    private void loadCmsBtPromotionCodes(ProductSaveInfo saveInfo,CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product,String userName) {
+    private void loadCmsBtPromotionCodes(ProductSaveInfo saveInfo, List<SkuImportBean> listSkuImport, ProductImportBean product, CmsBtPromotionModel modelPromotion,String userName) {
         // 获取Product信息 mongo
         JomgoQuery query = new JomgoQuery();
-        CmsBtProductModel productInfo = productService.getProductByCode(model.getChannelId(), product.getProductCode());
+        CmsBtProductModel productInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
         query.setQuery("{\"productCodes\":\"" + product.getProductCode() + "\",\"cartId\":" + CartEnums.Cart.JM.getValue() + "}");
-        CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(model.getChannelId(), query);
+        CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
        if(productInfo==null) return;
         //1.CmsBtPromotionCodesModel
-        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), model.getId(), model.getChannelId());
+        CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId(), modelPromotion.getChannelId());
         if (modelCodes == null) {
             modelCodes = new CmsBtPromotionCodesModel();
             modelCodes.setId(0);
@@ -338,7 +350,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             modelCodes.setCreated(new Date());
             modelCodes.setCatPath(productInfo.getCatPath());
             modelCodes.setProductModel(productInfo.getFields().getModel());
-            modelCodes.setPromotionId(model.getId());
+            modelCodes.setPromotionId(modelPromotion.getId());
             modelCodes.setOrgChannelId(productInfo.getOrgChannelId());
             if (groupModel != null) {
                 modelCodes.setNumIid(groupModel.getNumIId());
@@ -358,13 +370,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
 
         //2.CmsBtPromotionGroupsModel
-        CmsBtPromotionGroupsModel modelGroups = getCmsBtPromotionGroupsModel(model.getId(), model.getChannelId(), productInfo.getFields().getModel());
+        CmsBtPromotionGroupsModel modelGroups = getCmsBtPromotionGroupsModel(modelPromotion.getId(), modelPromotion.getChannelId(), productInfo.getFields().getModel());
         if (modelGroups == null) {
             modelGroups = new CmsBtPromotionGroupsModel();
             modelGroups.setCatPath(productInfo.getCatPath());
             modelGroups.setProductModel(productInfo.getFields().getModel());
             modelGroups.setSynFlg("0");
-            modelGroups.setPromotionId(model.getId());
+            modelGroups.setPromotionId(modelPromotion.getId());
             modelGroups.setOrgChannelId(productInfo.getOrgChannelId());
             modelGroups.setCreater(userName);
             modelGroups.setModifier(userName);
@@ -382,7 +394,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
         //3.CmsBtPromotionSkusModel
         for (SkuImportBean skuImport : listSkuImport) {
-            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(model.getId(), model.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
+            CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), modelPromotion.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
             if(skusModel==null) {
                 skusModel=new CmsBtPromotionSkusModel();
                 skusModel.setProductId(Integer.getInteger(productInfo.getProdId().toString()));
@@ -392,7 +404,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 skusModel.setCatPath(productInfo.getCatPath());
                 skusModel.setProductModel(productInfo.getFields().getModel());
                 skusModel.setSynFlg("0");
-                skusModel.setPromotionId(model.getId());
+                skusModel.setPromotionId(modelPromotion.getId());
                 skusModel.setOrgChannelId(productInfo.getOrgChannelId());
                 skusModel.setCreater(userName);
                 skusModel.setModifier(userName);
