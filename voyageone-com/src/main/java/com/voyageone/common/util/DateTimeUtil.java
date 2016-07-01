@@ -1441,7 +1441,7 @@ public final class DateTimeUtil {
      * @return 日期
      */
     public static Date changeTimeZone(Date date, TimeZone zone) {
-        return changeTimeZone(date, Calendar.getInstance().getTimeZone(), zone);
+        return changeTimeZone(date, TimeZone.getDefault(), zone);
     }
 
     /**
