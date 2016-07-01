@@ -17,6 +17,7 @@ define([
             exportList: [],
         };
         $scope.exportStatus = ["正在生成","完成","失败"];
+        $scope.beforSearchInfo={};
 
 
 
@@ -101,6 +102,8 @@ define([
                 $scope.vm.feedList = res.data.feedList;
                 $scope.vm.feedPageOption.total = res.data.feedListTotal;
 
+                $scope.beforSearchInfo = angular.copy($scope.vm.searchInfo);
+
                 if (tempFeedSelect == null) {
                     tempFeedSelect = new selectRowsFactory();
                 } else {
@@ -155,13 +158,13 @@ define([
          */
         $scope.updateFeedStatus = function () {
             var selList = $scope.vm.feedSelList.selList;
-            if (selList && selList.length == 0) {
+            if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
             confirm($translate.instant('将选定的Feed状态设为等待导入，请确认。')).result
                 .then(function () {
-                    $feedSearchService.updateFeedStatus({'selList': selList}).then(function () {
+                    $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':0,"searchInfo":$scope.beforSearchInfo}).then(function () {
                         if (tempFeedSelect != null) {
                             tempFeedSelect.clearSelectedList();
                         }

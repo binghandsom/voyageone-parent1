@@ -89,6 +89,8 @@ public interface CmsBtProductConstants {
 		priceChgFlg,
 		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
 		isSale,
+		/* size */
+		size,
 	}
 
 	/**
