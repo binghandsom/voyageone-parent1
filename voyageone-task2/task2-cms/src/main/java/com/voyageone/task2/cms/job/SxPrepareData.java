@@ -48,18 +48,18 @@ public class SxPrepareData {
         CmsBtProductBean product = new CmsBtProductBean(channelId);
         product.setProdId(productId);
 
-        product.setCatId(catId);
-        product.setCatPath("-100-10000-" + catId + "-");
+        product.getCommon().setCatId(catId);
+        product.getCommon().setCatPath("-100-10000-" + catId + "-");
         String code = "code-" + productId;
 //        String code = "code-beixindiaodai-" + productId;
-        CmsBtProductModel_Field fields = product.getFields();
+        CmsBtProductModel_Field fields = product.getCommon().getFields();
         fields.setCode(code);
         fields.setBrand(brand);
         fields.setAttribute("productName", "Stud Zirconia in Sterling Silver " + code);
 
-        fields.setLongTitle("Stud Earrings with Cubic Silver- 长标题" + code);
-        fields.setMiddleTitle("Stud Earrings with Cubic Silver- 中标题" + code);
-        fields.setShortTitle("Stud Earrings with Cubic Silver- 短标题" + code);
+//        fields.setLongTitle("Stud Earrings with Cubic Silver- 长标题" + code);
+//        fields.setMiddleTitle("Stud Earrings with Cubic Silver- 中标题" + code);
+//        fields.setShortTitle("Stud Earrings with Cubic Silver- 短标题" + code);
 
         fields.setModel("model-aa-" + code);
         fields.setColor("Color" + code);
@@ -77,23 +77,23 @@ public class SxPrepareData {
         images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_b"));
         images.add(new CmsBtProductModel_Field_Image("image1", "DTW68F16_001_c"));
 
-        fields.setPriceSaleSt(500.00);
-        fields.setPriceSaleEd(800.00);
+//        fields.setPriceSaleSt(500.00);
+//        fields.setPriceSaleEd(800.00);
 
         CmsBtProductGroupModel groups = product.getGroupBean();
         groups.setGroupId(groupId);
         groups.setCartId(23);
         groups.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
 
-        List<CmsBtProductModel_Sku> skus = product.getSkus();
+        List<CmsBtProductModel_Sku> skus = product.getCommon().getSkus();
         for (int i=1; i<3; i++) {
             CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
             sku.setSkuCode(code + "-sku-" + i);
-            sku.setPriceSale(500.00 + i);
+//            sku.setPriceSale(500.00 + i);
             List<Integer> skuCarts = new ArrayList<>();
             skuCarts.add(21);
             skuCarts.add(23);
-            sku.setSkuCarts(skuCarts);
+//            sku.setSkuCarts(skuCarts);
             sku.setAttribute("sku_MarketTime", "2015-05-14");
 
             if (i%3 == 0) {

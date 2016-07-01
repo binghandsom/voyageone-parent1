@@ -29,7 +29,7 @@ public class AliSxGetPlatformValue {
 
 			// 非达尔文的商品直接用model
 			// TODO: 达尔文商品需要先去这个地方检索一下: https://product.tmall.com/futures/futuresItem.htm
-			String styleCode = sxData.getProductList().get(0).getFields().getModel();
+			String styleCode = sxData.getProductList().get(0).getCommon().getFields().getModel();
 			inputField.setValue(styleCode);
 
 			return inputField;
@@ -39,7 +39,7 @@ public class AliSxGetPlatformValue {
 			SingleCheckField singleCheckField = (SingleCheckField) field;
 
 			singleCheckField.setValue(
-					sxGetPlatformValueCommon.getBrand(sxData.getChannelId(), sxData.getCartId(), sxData.getProductList().get(0).getFields().getBrand())
+					sxGetPlatformValueCommon.getBrand(sxData.getChannelId(), sxData.getCartId(), sxData.getProductList().get(0).getCommon().getFields().getBrand())
 			);
 
 			return singleCheckField;

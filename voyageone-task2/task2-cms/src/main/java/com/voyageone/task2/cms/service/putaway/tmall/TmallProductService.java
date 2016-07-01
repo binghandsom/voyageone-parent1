@@ -199,12 +199,12 @@ public class TmallProductService {
         }
 
         Long categoryCode = Long.valueOf(tcb.getPlatformCId());
-        String brandCode = brandMapDao.cmsBrandToPlatformBrand(channelId, cartId, cmsMainProduct.getFields().getBrand());
+        String brandCode = brandMapDao.cmsBrandToPlatformBrand(channelId, cartId, cmsMainProduct.getCommon().getFields().getBrand());
 
         if (brandCode == null || "".equals(brandCode))
         {
             String abortCause = "Job abort: can not find brand_code by brandId "
-                    + cmsMainProduct.getFields().getBrand()
+                    + cmsMainProduct.getCommon().getFields().getBrand()
                     + ", workload:" + workLoadBean;
             logger.error(abortCause);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
@@ -1064,12 +1064,12 @@ public class TmallProductService {
             tcb.setPlatformUploadRunState(tmallUploadRunState);
         }
 
-        String brandCode = brandMapDao.cmsBrandToPlatformBrand(channelId, cartId, mainCmsProduct.getFields().getBrand());
+        String brandCode = brandMapDao.cmsBrandToPlatformBrand(channelId, cartId, mainCmsProduct.getCommon().getFields().getBrand());
 
         if (brandCode == null || "".equals(brandCode))
         {
             logger.info("Job abort: can not find brand_code by brandId " +
-                    mainCmsProduct.getFields().getBrand() + ", workload:" + workLoadBean);
+                    mainCmsProduct.getCommon().getFields().getBrand() + ", workload:" + workLoadBean);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No brand found"));
         }
         else {
@@ -1976,7 +1976,7 @@ public class TmallProductService {
                     expressionParser.popMasterPropContext();
                 }
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) cmsMainProduct.getFields().get(complexMappingBean.getMasterPropId());
+                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) cmsMainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
 
                 if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
                     logger.info("No value found for MultiComplex field: " + field.getId());
