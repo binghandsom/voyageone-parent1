@@ -730,7 +730,8 @@ define(function(){
         "TXT_PRODUCT_EN_LONG_DESCRIPTION": "详情描述(英文)",
         "TXT_PRODUCT_CN_LONG_DESCRIPTION": "详情描述(中文)",
         "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
-        "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)"
+        "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)",
+        
         /**聚美专场*/
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",
         "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",
