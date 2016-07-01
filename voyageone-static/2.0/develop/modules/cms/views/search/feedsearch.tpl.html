@@ -277,10 +277,10 @@
                                         </button>
                                         <ul uib-dropdown-menu>
                                             <li>
-                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(1)">等待导入</a>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(0)">等待导入</a>
                                             </li>
                                             <li>
-                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(0)">不导入</a>
+                                                <a href="javascript:void(0)" ng-click="updateFeedStatus(3)">不导入</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -363,7 +363,7 @@
                                 <tr ng-if="vm.feedList.length > 0" ng-repeat="feedInfo in vm.feedList">
                                     <td class="text-right mfb-x">{{$index + 1}}</td>
                                     <td class="text-left mfb-x">
-                                        <label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=0">
+                                        <label class="checkbox-inline c-checkbox" ng-if="feedInfo.updFlg!=8">
                                             <input ng-model="vm.feedSelList.selFlag[feedInfo._id]" type="checkbox" ng-controller="selectRowsCtrl"
                                                    ng-click="selectOne(feedInfo._id, vm.feedSelList)">
                                             <span class="fa fa-check"></span>
