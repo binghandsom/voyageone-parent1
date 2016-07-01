@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.sx.rule_parser;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
@@ -66,7 +67,13 @@ public class ExpressionParser extends VOAbsLoggable {
                                 Set<String> url = new HashSet<>();
                                 url.add(plainValue);
                                 // 上传图片到天猫图片空间
-                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                                Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                                // added by morse.lu 2016/06/29 start
+                                // 返回上传后的url
+                                if (!StringUtils.isEmpty(map.get(plainValue))) {
+                                    plainValue = map.get(plainValue);
+                                }
+                                // added by morse.lu 2016/06/29 end
                             }
                         }
                         break;
@@ -92,15 +99,18 @@ public class ExpressionParser extends VOAbsLoggable {
 
                         plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
 
-                        if (plainValue != null && dictWordDefine.getIsUrl()) {
-                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-//                                plainValue = sxProductService.encodeImageUrl(plainValue);
-                                Set<String> url = new HashSet<>();
-                                url.add(plainValue);
-                                // 上传图片到天猫图片空间
-                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-                            }
-                        }
+                        // deleted by morse.lu 2016/06/29 start
+                        // 图片上传在各自字典里做了
+//                        if (!StringUtils.isEmpty(plainValue) && dictWordDefine.getIsUrl()) {
+//                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+////                                plainValue = sxProductService.encodeImageUrl(plainValue);
+//                                Set<String> url = new HashSet<>();
+//                                url.add(plainValue);
+//                                // 上传图片到天猫图片空间
+//                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            }
+//                        }
+                        // deleted by morse.lu 2016/06/29 end
 
                         break;
                     }

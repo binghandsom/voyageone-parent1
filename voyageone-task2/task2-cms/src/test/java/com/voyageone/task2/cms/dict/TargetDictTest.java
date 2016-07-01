@@ -21,7 +21,8 @@ public class TargetDictTest {
 	@Test
 	public void startupTest() {
 
-		doCreateJson("详情页描述", false, doDict_详情页描述());
+//		doCreateJson("详情页描述", false, doDict_详情页描述());
+		doCreateJson("无线描述", false, doDict_无线描述());
 
 	}
 
@@ -233,6 +234,153 @@ public class TargetDictTest {
 
 		return ruleRoot;
 	}
+
+    private RuleExpression doDict_无线描述() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+        {
+            // start
+            String kv = "{\"wireless_desc\":{";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+//        {
+//            // K-V 模板
+//            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//
+//            <field id="xxx_enable" name="是否启用" type="singleCheck">
+//                <options>
+//                <option displayName="启用" value="true"/>
+//                <option displayName="不启用" value="false"/>
+//                </options>
+//            </field>
+//        }
+
+        {
+            // item_info 商品信息
+            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // coupon 优惠
+            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"xxx\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // hot_recommanded 同店推荐
+//            <field id="hot_recommanded_id" name="选择模板" type="singleCheck">
+//                <options>
+//                <option displayName="商品推荐" value="520277"/>
+//                </options>
+//            </field>
+            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"520277\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // shop_discount 店铺活动
+            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"xxx\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // user_define 自定义
+            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // item_picture 商品图片
+            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+
+            for (int i = 0; i < 5; i++) {
+                // 5张产品图片
+                int j = i + 1;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("产品图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+            for (int i = 5; i < 10; i++) {
+                // 5张商品图片
+                int j = i - 4;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("商品图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+            for (int i = 10; i < 15; i++) {
+                // 5张无线商品图片
+                int j = i - 9;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("无线商品图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+            for (int i = 15; i < 20; i++) {
+                // 5张无线自定义图片
+                int j = i - 14;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("无线自定义图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // end
+            String endStr = "}";
+            TextWord endWord = new TextWord(endStr);
+            ruleRoot.addRuleWord(endWord);
+        }
+
+        {
+            // end
+            String kv = "}}";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        return ruleRoot;
+    }
 
 	/**
 	 * 获取手绘图的默认图

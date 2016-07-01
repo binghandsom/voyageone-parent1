@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetCommonImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetCommonImages;
@@ -12,6 +13,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -70,11 +72,19 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
             }
         }
 
+        Map<String, String> map = null;
         Set<String> imageSet = new HashSet<>(urls);
         if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId()) && useOriUrl) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
         } else if (imageSet.size() > 0 && shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId()) && useOriUrl) {
-            sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+            map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
+        }
+        if (map != null) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (!StringUtils.isEmpty(entry.getValue())) {
+                    parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
         return parseResult;

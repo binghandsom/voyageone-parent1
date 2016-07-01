@@ -15,11 +15,9 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
 import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
 import com.voyageone.components.imagecreate.service.ImageCreateService;
@@ -790,7 +788,7 @@ public class SxProductService extends BaseService {
                     Map<String, BaseMongoMap<String, Object>> mapProductModelSku = new HashMap<>();
                     // modified by morse.lu 2016/06/24 start
 //                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-                    List<CmsBtProductModel_CommonSku> productModelSku = productModel.getCommon().getSkus();
+                    List<CmsBtProductModel_Sku> productModelSku = productModel.getCommon().getSkus();
                     // modified by morse.lu 2016/06/24 end
                     productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
                     // added by morse.lu 2016/06/15 end
@@ -887,7 +885,7 @@ public class SxProductService extends BaseService {
             // 所有sku取得
             List<String> skus = new ArrayList<>();
             for (CmsBtProductModel productModel : sxData.getProductList()) {
-                skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_CommonSku::getSkuCode).collect(Collectors.toList()));
+                skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
             }
             // wms逻辑库存取得
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
@@ -1728,7 +1726,7 @@ public class SxProductService extends BaseService {
                             throw new BusinessException(errorCause);
                         }
                         CmsBtProductModel sxProduct = processProducts.get(0);
-                        List<CmsBtProductModel_CommonSku> cmsBtProductModelSkus = sxProduct.getCommon().getSkus();
+                        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = sxProduct.getCommon().getSkus();
                         if (cmsBtProductModelSkus.size() != 1) {
                             String errorCause = "包含商品外部编码的类目必须只有一个sku";
                             $error(errorCause);
@@ -1835,10 +1833,240 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
+                // modified by morse.lu 2016/06/29 start
+                case ITEM_DESCRIPTION: {
+                    Field field = processFields.get(0);
+                    setDescriptionFieldValue(field, expressionParser, shopBean, user);
+                    retMap.put(field.getId(), field);
+                    break;
+                }
+                case ITEM_WIRELESS_DESCRIPTION: {
+                    Field field = processFields.get(0);
+                    setWirelessDescriptionFieldValue(field, expressionParser, shopBean, user);
+                    retMap.put(field.getId(), field);
+                    break;
+                }
+                // modified by morse.lu 2016/06/29 end
             }
         }
 
         return retMap;
+    }
+
+    /**
+     * 商品描述设值
+     * 只填写内容这一属性
+     *
+     * @param field 商品描述的field
+     */
+    private void setDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // 详情页描述 (以后可能会根据不同商品信息，取不同的[详情页描述])
+        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        // 详情页描述-空白
+        String descriptionBlankValue = resolveDict("详情页描述-空白内容", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String errorMsg = String.format("类目[%s]的商品描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+
+        if (field.getType() == FieldTypeEnum.INPUT) {
+            InputField inputField = (InputField) field;
+            inputField.setValue(descriptionValue);
+        } else if (field.getType() == FieldTypeEnum.COMPLEX) {
+            ComplexField complexField = (ComplexField) field;
+            ComplexValue complexValue = new ComplexValue();
+            complexField.setComplexValue(complexValue);
+
+            boolean isFirst = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
+            for (Field subField : complexField.getFields()) {
+                // 商品参数,商品展示,视频推介等
+                if (subField.getType() == FieldTypeEnum.COMPLEX) {
+                    ComplexField subComplexField = (ComplexField) subField;
+                    boolean hasContent = false; // 是否有内容这个Field,没有的话说明id或者结构发生变化啦
+                    for (Field contentField : subComplexField.getFields()) {
+                        if (contentField.getType() == FieldTypeEnum.INPUT  && contentField.getId().indexOf("content") > 0) {
+                            // 内容属性,把[详情页描述]填进去
+                            hasContent = true;
+                            boolean isRequest = false;
+                            for (Rule rule : contentField.getRules()) {
+                                if ("requiredRule".equalsIgnoreCase(rule.getName()) && Boolean.parseBoolean(rule.getValue())) {
+                                    isRequest = true;
+                                    break;
+                                }
+                            }
+
+                            if (isRequest) {
+                                Field valueSubField = deepCloneField(subField);
+                                complexValue.put(valueSubField);
+                                ComplexField valueSubComplexField = (ComplexField) valueSubField;
+                                ComplexValue subComplexValue = new ComplexValue();
+                                valueSubComplexField.setComplexValue(subComplexValue);
+                                Field valueContentField = deepCloneField(contentField);
+                                subComplexValue.put(valueContentField);
+
+                                if (isFirst) {
+                                    isFirst = false;
+                                    ((InputField) valueContentField).setValue(descriptionValue);
+                                } else {
+                                    ((InputField) valueContentField).setValue(descriptionBlankValue);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    if (!hasContent) {
+                        sxData.setErrorMessage(errorMsg);
+                        throw new BusinessException(errorMsg);
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+            }
+        } else {
+            sxData.setErrorMessage(errorMsg);
+            throw new BusinessException(errorMsg);
+        }
+    }
+
+    /**
+     * 无线描述设值
+     *
+     * @param field 无线描述的field
+     * @param
+     */
+    public void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
+        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        if (StringUtils.isEmpty(descriptionValue)) {
+            // 字典表里未设定，先什么都不做吧
+            return;
+        }
+        Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
+
+        // common里的tmallWirelessActive,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
+        String tmallWirelessActive = "1"; // TODO: 之后从common里取tmallWirelessActive
+
+        // 开始设值
+        setWirelessDescriptionFieldValueWithLoop(field, mapValue, tmallWirelessActive, expressionParser.getSxData());
+    }
+
+    /**
+     * 循环无线描述field进行设值
+     */
+    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, String tmallWirelessActive, SxData sxData) throws Exception {
+        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+        if (!mapValue.containsKey(field.getId())) {
+            $warn(errorMsg);
+            return;
+//            sxData.setErrorMessage(errorMsg);
+//            throw new BusinessException(errorMsg);
+        }
+
+        Object objVal = mapValue.get(field.getId());
+
+        switch (field.getType()) {
+            case INPUT: {
+                if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                    InputField inputField = (InputField) field;
+                    if ("1".equals(tmallWirelessActive)) {
+                        // 启用,根据字典设定的值设置（mapValue）
+                        inputField.setValue(String.valueOf(objVal));
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case SINGLECHECK: {
+                if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    if (!"1".equals(tmallWirelessActive)) {
+                        // 不启用
+                        if (field.getId().indexOf("enable") > 0) {
+                            // 是否启用的field
+                            singleCheckField.setValue("false");
+                        }
+                    } else {
+                        // 根据字典设定的值设置（mapValue）
+                        singleCheckField.setValue(String.valueOf(objVal));
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case MULTIINPUT:
+                break;
+            case MULTICHECK: {
+                if (objVal instanceof List) {
+                    if ("1".equals(tmallWirelessActive)) {
+                        // 启用,根据字典设定的值设置（mapValue）
+                        MultiCheckField multiCheckField = (MultiCheckField) field;
+                        for (Object val : (List) objVal) {
+                            multiCheckField.addValue(String.valueOf(val));
+                        }
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case COMPLEX: {
+                if (objVal instanceof Map) {
+                    ComplexField complexField = (ComplexField) field;
+                    ComplexValue complexValue = new ComplexValue();
+                    complexField.setComplexValue(complexValue);
+
+                    for (Field subField : complexField.getFields()) {
+                        Field valueField = deepCloneField(subField);
+                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, tmallWirelessActive, sxData);
+                        complexValue.put(valueField);
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case MULTICOMPLEX: {
+                if (objVal instanceof List) {
+                    MultiComplexField multiComplexField = (MultiComplexField) field;
+                    List<ComplexValue> complexValues = new ArrayList<>();
+                    multiComplexField.setComplexValues(complexValues);
+
+                    for (Object val : (List) objVal) {
+                        ComplexValue complexValue = new ComplexValue();
+                        complexValues.add(complexValue);
+
+                        if (val instanceof Map) {
+                            for (Field subField : multiComplexField.getFields()) {
+                                Field valueField = deepCloneField(subField);
+                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, tmallWirelessActive, sxData);
+                                complexValue.put(valueField);
+                            }
+                        } else {
+                            sxData.setErrorMessage(errorMsg);
+                            throw new BusinessException(errorMsg);
+                        }
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case LABEL:
+                break;
+            default:
+                return;
+        }
     }
 
     private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
