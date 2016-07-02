@@ -4,6 +4,7 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.CmsConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,22 +19,22 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     private Long groupId;
     private Integer cartId;
-    private String numIId;
-    private String platformPid;
-    private String publishTime;
-    private String onSaleTime;
-    private String inStockTime;
-    private String platformStatus;
-    private String platformActive;
-    private String mainProductCode;
-    private List<String> productCodes;
-    private Integer qty;
-    private Double priceMsrpSt;
-    private Double priceMsrpEd;
-    private Double priceRetailSt;
-    private Double priceRetailEd;
-    private Double priceSaleSt;
-    private Double priceSaleEd;
+    private String numIId = "";
+    private String platformPid = "";
+    private String publishTime = "";
+    private String onSaleTime = "";
+    private String inStockTime = "";
+    private String platformStatus = "";
+    private String platformActive = "";
+    private String mainProductCode = "";
+    private List<String> productCodes = new ArrayList<>();
+    private Integer qty = 0;
+    private Double priceMsrpSt = 0.00;
+    private Double priceMsrpEd = 0.00;
+    private Double priceRetailSt = 0.00;
+    private Double priceRetailEd = 0.00;
+    private Double priceSaleSt = 0.00;
+    private Double priceSaleEd = 0.00;
 
     public Long getGroupId() {
         return groupId;

@@ -2,6 +2,7 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.*;
@@ -51,7 +52,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     //orgChannelId
     public String getOrgChannelId() {
-        return orgChannelId == null ? this.channelId : orgChannelId;
+        return StringUtils.isEmpty(orgChannelId) ? this.channelId : orgChannelId;
     }
     public void setOrgChannelId(String orgChannelId) {
         this.orgChannelId = orgChannelId;

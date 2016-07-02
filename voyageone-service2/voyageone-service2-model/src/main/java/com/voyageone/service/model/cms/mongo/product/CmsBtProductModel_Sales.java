@@ -37,10 +37,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSum7(Map codeSum7) {
         setAttribute(CODE_SUM_7, codeSum7);
     }
-    public int getCodeSum7(int cart) {
+    public Integer getCodeSum7(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_7);
         if (codeSum != null) {
-            return (int) codeSum.get(CARTID + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -52,10 +52,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSum30(BaseMongoMap codeSum30) {
         setAttribute(CODE_SUM_30, codeSum30);
     }
-    public int getCodeSum30(int cart) {
+    public Integer getCodeSum30(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_30);
         if (codeSum != null) {
-            return (int) codeSum.get(CARTID + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -67,10 +67,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSumAll(BaseMongoMap codeSumAll) {
         setAttribute(CODE_SUM_ALL, codeSumAll);
     }
-    public int getCodeSumAll(int cart) {
+    public Integer getCodeSumAll(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_ALL);
         if (codeSum != null) {
-            return (int) codeSum.get(CARTID + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -83,7 +83,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setSkus(List<CmsBtProductModel_Sales_Sku> skus) {
         setAttribute("skus", skus);
     }
-    public CmsBtProductModel_Sales_Sku getSkuSum(int cart, String skuCode) {
+    public CmsBtProductModel_Sales_Sku getSkuSum(Integer cart, String skuCode) {
         List<CmsBtProductModel_Sales_Sku> skus = getAttribute(SKUS);
         if (skus != null) {
             for (CmsBtProductModel_Sales_Sku sku : skus) {
@@ -95,7 +95,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
         return null;
     }
 
-    public int getSkuSum(int cart, String skuCode, Integer days) {
+    public Integer getSkuSum(Integer cart, String skuCode, Integer days) {
         List<CmsBtProductModel_Sales_Sku> skus = getAttribute(SKUS);
         if (skus != null) {
             for (CmsBtProductModel_Sales_Sku sku : skus) {
