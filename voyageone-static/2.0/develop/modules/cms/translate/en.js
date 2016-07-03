@@ -735,7 +735,11 @@ define(function(){
         "TXT_PRODUCT_CN_LONG_DESCRIPTION": "详情描述(中文)",
         "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
         "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)",
-        
+        "TXT_PRODUCT_ORIGINAL_URL": "查看品牌方商品页面",
+        "TXT_NOT_MATCHED_PROPERTY": "未匹配属性",
+        "TXT_MATCHED_PROPERTY": "已匹配属性",
+        "TXT_NOT_TRANSLATED_PROPERTY": "未翻译属性",
+
         /**聚美专场*/
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",
         "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",

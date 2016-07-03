@@ -4,28 +4,41 @@
  */
 define([
     'cms',
-    'angular'
+    'angular',
+    'modules/cms/controller/popup.ctl'
 ], function (cms, angular) {
     cms.controller('translationManageController', (function () {
-        function TranslationManageController($translate, translationService, notify, confirm, alert) {
-            this.translate = $translate;
+        function TranslationManageController(translationService, notify, confirm, alert, popups) {
             this.translationService = translationService;
             this.notify = notify;
             this.confirm = confirm;
             this.alert = alert;
+            this.popups = popups;
             this.searchBtnClicked = false;
+            this.searchPageSizeOption = [
+                {name: "10行", value: 10},
+                {name: "20行", value: 20},
+                {name: "50行", value: 50},
+                {name: "100行", value: 100}
+            ];
+            this.searchPageSettings = {
+                curr: 1,
+                total: 0,
+                size: 10,
+                keyWord: "",
+                translateStatus: "",
+                fetch: this.searchPage.bind(this)
+            };
+            this.assignInfo = {
+                codeOrName: "",
+                priority: "",
+                sort: ""
+            };
             this.vm = {
                 taskInfo: {},
                 taskList: [],
                 taskDetail: {},
-                searchInfo: {
-                    pageSize: 20
-                },
-                assignInfo: {
-                    codeOrName: "",
-                    priority: "",
-                    sort: ""
-                }
+                sortFieldOptions: []
             };
         }
 
@@ -33,18 +46,25 @@ define([
             init: function () {
                 var self = this;
                 self.translationService.init().then(function (res) {
-                    self.vm = res.data;
-                    self.vm.taskDetail = {};
-                    if (self.vm.taskDetail == {})
-                        alert(self.vm.taskDetail);
+                    self.vm.taskInfo = res.data.taskInfo;
+                    self.vm.taskDetail = res.data.taskDetail;
+                    self.vm.sortFieldOptions = res.data.sortFieldOptions;
+                    self.vm.taskSummary = res.data.taskSummary;
+                    self.assignInfo = {
+                        codeOrName: "",
+                        sort: "desc"
+                    };
+                    self.assignInfo.priority = self.vm.sortFieldOptions[0].value;
                 })
             },
 
-            // 分发翻译任务.
+            // 获取任务.
             assign: function () {
                 var self = this;
-                self.translationService.assign(self.vm.assignInfo).then(function (res) {
-                    self.vm = res.data;
+                self.searchBtnClicked = false;
+                self.translationService.assign(self.assignInfo).then(function (res) {
+                    self.vm.taskDetail = res.data.taskDetail;
+                    self.vm.taskSummary = res.data.taskSummary;
                 })
             },
 
@@ -53,12 +73,13 @@ define([
                 var self = this;
                 var req = angular.copy(self.vm.taskDetail);
                 req.customProps = req.customProps.filter(function (customProp) {
+                    //TODO feedAttr可能需要改变 注意相应页面也要跟着改
                     return (customProp.feedAttr && customProp.feedAttrCn);
                 });
                 self.translationService.save(req).then(function (res) {
                     self.vm.taskSummary = res.data.taskSummary;
                     self.vm.taskDetail = res.data.taskDetail;
-                    self.alert("保存成功.");
+                    self.notify.success("保存成功.");
                 });
             },
 
@@ -70,51 +91,83 @@ define([
                     return (customProp.feedAttr && customProp.feedAttrCn);
                 });
                 self.translationService.submit(req).then(function (res) {
-                    self.vm.taskInfo.productTranslationBeanList.splice(index, 1);
-                    self.vm.taskInfo.totalDoneCount = res.data.totalDoneCount;
-                    self.vm.taskInfo.totalUndoneCount = res.data.totalUndoneCount;
-                    self.vm.taskInfo.userDoneCount = res.data.userDoneCount;
-                    self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    self.vm.prodPageOption.total = self.vm.prodPageOption.total - 1;
+                    self.vm.taskInfo = res.data.taskInfo;
+                    self.vm.taskSummary = res.data.taskSummary;
+                    self.notify.success("提交成功");
                 })
             },
 
             // 查询历史任务.
             search: function () {
                 var self = this;
+                var searchInfo = {
+                    keyWord: self.searchPageSettings.keyWord,
+                    translateStatus: self.searchPageSettings.translateStatus,
+                    pageSize: self.searchPageSettings.size,
+                    pageNum: self.searchPageSettings.curr
+                };
                 self.searchBtnClicked = true;
-                self.vm.taskList = [
-                    {
-                        "prodId": 5954,
-                        "translateStatus": 1,
-                        "imgUrl": "http://XXX/XXXX/XXX.jpg",
-                        "category": "Bracelets-Anklets-No Stone",
-                        "code": "1FMA3324Y11",
-                        "name": "Just Gold Beaded Anklet in 14K Two-Tone Gold",
-                        "totalDistributeUndoneCount": 907,
-                        "MainCategory": "Bracelets-Anklets-No Stone",
-                        "translator": "XXX",
-                        "translateTime": "2016-06-27 12:07:33"
-                    },
-                    {
-                        "prodId": 5955,
-                        "translateStatus": 0,
-                        "imgUrl": "http://XXX/XXXX/XXX.jpg",
-                        "category": "Bracelets-Anklets-No Stone",
-                        "code": "1FMA3324Y11",
-                        "name": "Just Gold Beaded Anklet in 14K Two-Tone Gold",
-                        "totalDistributeUndoneCount": 907,
-                        "MainCategory": "Bracelets-Anklets-No Stone",
-                        "translator": "XXX",
-                        "translateTime": "2016-06-27 12:07:33"
-                    }
-                ]
+                self.translationService.search(searchInfo).then(function (res) {
+                    self.vm.taskList = res.data.taskList;
+                    self.searchPageSettings.total = res.data.total;
+                })
+            },
+
+            // 查询页数跳转
+            searchPage: function(page) {
+                var self = this;
+                self.searchPageSettings.curr = !page ? self.searchPageSettings.curr : page;
+                var searchInfo = {
+                    keyWord: self.searchPageSettings.keyWord,
+                    translateStatus: self.searchPageSettings.translateStatus,
+                    pageSize: self.searchPageSettings.size,
+                    pageNum: self.searchPageSettings.curr
+                };
+                self.translationService.search(searchInfo).then(function (res) {
+                    self.vm.taskList = res.data.taskList;
+                    self.searchPageSettings.total = res.data.total;
+                })
+            },
+
+            // 跳转Code编辑页面.
+            get: function (task) {
+                var self = this;
+                self.translationService.get(task).then(function (res) {
+                    self.searchBtnClicked = false;
+                    self.vm.taskDetail = res.data.taskDetail;
+                })
             },
 
             // 清空查询条件.
             clearConditions: function () {
                 var self = this;
-                self.vm.searchInfo = {};
+                self.searchPageSettings.curr = 1;
+                self.searchPageSettings.size = 10;
+                self.searchPageSettings.keyWord = "";
+                self.searchPageSettings.translateStatus = "";
+            },
+
+            // 图片popup
+            popUpImages: function (item) {
+                if (item == undefined || item.commonFields == undefined) {
+                    return;
+                }
+                var picList = [];
+                for (var attr in item.commonFields) {
+                    if (attr.indexOf("images1") >= 0) {
+                        var image = _.map(item.commonFields[attr], function (entity) {
+                            var imageKeyName = "image" + attr.substring(6, 7);
+                            return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+                        });
+                        picList.push(image);
+                    }
+                }
+                this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            },
+
+            // 跳转链接
+            openUrl: function (url) {
+                window.open(url);
             }
         };
 
