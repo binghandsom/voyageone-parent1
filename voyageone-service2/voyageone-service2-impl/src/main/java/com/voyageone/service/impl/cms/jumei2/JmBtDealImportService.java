@@ -318,7 +318,7 @@ public class JmBtDealImportService extends BaseService {
         platform.setpPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         platform.setpAttributeStatus("1");
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
-        platform.setpStatus(CmsConstants.PlatformStatus.InStock.name());
+        platform.setpStatus(CmsConstants.PlatformStatus.InStock);
 
         //fields
         BaseMongoMap<String, Object> fields = platform.getFields() == null ? new BaseMongoMap<>() : platform.getFields();
@@ -357,7 +357,7 @@ public class JmBtDealImportService extends BaseService {
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
 
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("fields.code", modelJmBtProduct.getProductCode());
+        queryMap.put("common.fields.code", modelJmBtProduct.getProductCode());
         queryMap.put("channelId", modelJmBtProduct.getChannelId());
 
         BulkUpdateModel model = new BulkUpdateModel();

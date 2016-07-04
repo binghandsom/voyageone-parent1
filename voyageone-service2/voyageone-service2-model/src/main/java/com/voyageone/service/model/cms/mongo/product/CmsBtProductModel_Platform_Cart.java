@@ -1,6 +1,7 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.StringUtils;
 
 import java.util.ArrayList;
@@ -111,11 +112,17 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //pStatus
-    public String getpStatus() {
-        return getStringAttribute("pStatus");
+    public CmsConstants.PlatformStatus getpStatus() {
+        String pStatus = getStringAttribute("pStatus");
+        CmsConstants.PlatformStatus rs = null;
+        try {
+            rs = (pStatus == null || pStatus.isEmpty()) ? null : CmsConstants.PlatformStatus.valueOf(pStatus);
+        } catch (IllegalArgumentException ignored) {
+        }
+        return rs;
     }
-    public void setpStatus(String pStatus) {
-        setStringAttribute("pStatus", pStatus);
+    public void setpStatus(CmsConstants.PlatformStatus pStatus) {
+        setAttribute("pStatus", pStatus.name());
     }
 
     //pPublishError

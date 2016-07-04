@@ -348,8 +348,8 @@ public class ProductService extends BaseService {
             queryStr = String.format("{\"prodId\" : %s}", prodId);
             queryMap.put("prodId", prodId);
         } else if (!StringUtils.isEmpty(productCode)) {
-            queryStr = String.format("{\"fields.code\" : \"%s\" }", productCode);
-            queryMap.put("fields.code", productCode);
+            queryStr = String.format("{\"common.fields.code\" : \"%s\" }", productCode);
+            queryMap.put("common.fields.code", productCode);
         }
 
         if (StringUtils.isEmpty(queryStr)) {
@@ -358,7 +358,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjectionExt("prodId", "modified", "fields.status"); // TODO--这里不应该再从fields取status
+        queryObject.setProjectionExt("prodId", "modified"); // TODO--这里不应该再从fields取status
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -380,11 +380,11 @@ public class ProductService extends BaseService {
          */
         String catId = productModel.getCommon().getCatId();
         if (catId != null) {
-            updateMap.put("catId", catId);
+            updateMap.put("common.catId", catId);
         }
         String catPath = productModel.getCommon().getCatPath();
         if (catPath != null) {
-            updateMap.put("catPath", catPath);
+            updateMap.put("common.catPath", catPath);
         }
 
         String modified = DateTimeUtil.getNowTimeStamp();
@@ -399,7 +399,7 @@ public class ProductService extends BaseService {
          */
         CmsBtProductModel_Field fields = productModel.getCommon().getFields();
         if (fields != null && !fields.isEmpty()) {
-            BasicDBObject fieldObj = fields.toUpdateBasicDBObject("fields.");
+            BasicDBObject fieldObj = fields.toUpdateBasicDBObject("common.fields.");
             updateMap.putAll(fieldObj);
         }
 
@@ -408,6 +408,12 @@ public class ProductService extends BaseService {
          */
         CmsBtProductModel_Feed feed = productModel.getFeed();
         if (feed != null) {
+            if (!StringUtils.isEmpty(feed.getCatId())) {
+                updateMap.put("feed.catId", feed.getCatId());
+            }
+            if (!StringUtils.isEmpty(feed.getCatPath())) {
+                updateMap.put("feed.catPath", feed.getCatPath());
+            }
             if (feed.getOrgAtts() != null && feed.getOrgAtts().size() > 0) {
                 BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
                 updateMap.putAll(orgAttsObj);

@@ -10,7 +10,7 @@
 //* catPath   ->暂时保留（用于天猫国际类目，以后删除）
 //* fields    ->暂时保留（用于TG上新）
 //* skus      ->暂时保留（用于TG上新）
-* lock    ->锁住该产品，不能进行任何操作(暂时功能不开放)
+* lock    ->锁住该产品，不能进行任何操作(暂时功能不开放),1:lock, 0:unLock
 * comment   ->添加产品注释(暂时功能不开放)
 * common    ->共通属性
   * catId    ->新的主类目Id
@@ -103,6 +103,7 @@
     * pPriceSaleSt
     * pPriceSaleEd
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
+    * modified -> 最终更新时间
     * fields
       * 平台特有fields属性
     * skus[]
@@ -143,6 +144,7 @@
     * pPriceSaleSt
     * pPriceSaleEd
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
+    * modified ->最终更新时间
 	* fields
 	  * productNameCn
 	  * productNameEn

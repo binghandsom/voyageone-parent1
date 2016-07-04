@@ -308,4 +308,44 @@ public class CategoryTreeAllService extends BaseService {
         }
         return null;
     }
+
+    /**
+     * 根据平台种类Id及类目名称返回对应的类目信息.
+     * @param channelId 店铺Id
+     * @param catPath 类目路径
+     * @param platformId 平台种类Id
+     * @return
+     */
+    public CmsMtCategoryTreeAllModel findCategoryByPlatformId(String channelId, String catPath, String platformId) {
+        CmsMtCategoryTreeAllModel result = new CmsMtCategoryTreeAllModel();
+        // 根据channelId取得channel与Category的对应关系
+        List<CmsMtChannelCategoryConfigModel> mappings = channelCategoryService.getByChannelId(channelId);
+
+        // 根据channel与Category的对应关系(多个catId),取得CategoryTree
+        for (CmsMtChannelCategoryConfigModel mapping : mappings) {
+            String catId = mapping.getCategoryId();
+            CmsMtCategoryTreeAllModel model = cmsMtCategoryTreeAllDao.selectByCatId(catId);
+            if (model != null) {
+                result = findCategoryByPlatform (model, catPath, platformId);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 根据category从tree中找到节点
+     */
+    public CmsMtCategoryTreeAllModel findCategoryByPlatform(CmsMtCategoryTreeAllModel tree, String catPath, String platformId) {
+
+        if (tree.getatIdByPlatformInfo(platformId, catPath) != null) {
+            return tree;
+        }
+
+        for (CmsMtCategoryTreeAllModel CmsMtCategoryTreeAllModel : tree.getChildren()) {
+            return findCategoryByPlatform(CmsMtCategoryTreeAllModel, catPath, platformId);
+        }
+
+        return null;
+    }
 }

@@ -97,7 +97,7 @@ public class ProductSkuService extends BaseService {
             queryObject.setQuery("{\"prodId\":" + productId + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else if (StringUtils.isEmpty(productCode)) {
-            queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
+            queryObject.setQuery("{\"common.fields.code\":\"" + productCode + "\"}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
@@ -119,7 +119,7 @@ public class ProductSkuService extends BaseService {
                 if (productId != null) {
                     queryMap.append("prodId", productId);
                 } else {
-                    queryMap.append("fields.code", productCode);
+                    queryMap.append("common.fields.code", productCode);
                 }
                 if (StringUtils.isEmpty(model.getSkuCode())) {
                     throw new RuntimeException("SkuCode not found!");
@@ -263,7 +263,7 @@ public class ProductSkuService extends BaseService {
                 // 再找到所有产品fields信息
                 String[] codeArr = new String[codeList.size()];
                 codeArr = codeList.toArray(codeArr);
-                List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{\"common.fields\":1,\"platform\":1}", channelId);
+                List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "},{\"common.fields\":1,\"platform\":1}", channelId);
                 bulkList.add(calculateNewPriceRange(prodList, grpObj, modifier));
             }
         });
@@ -279,7 +279,7 @@ public class ProductSkuService extends BaseService {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (ProductPriceBean model : productPrices) {
             // 先根据产品id找到产品code
-            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{\"prodId\":" + model.getProductId() + "},{\"fields.code\":1}", channelId);
+            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{\"prodId\":" + model.getProductId() + "},{\"common.fields.code\":1}", channelId);
             // 再根据产品code从group表中找出其所在group的信息
             List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{\"productCodes\":\"" + findModel.getCommon().getFields().getCode() + "\"},{\"productCodes\":1,\"groupId\":1}", channelId);
             grpList.forEach(grpObj -> {
@@ -289,7 +289,7 @@ public class ProductSkuService extends BaseService {
                     // 再找到所有产品fields信息
                     String[] codeArr = new String[codeList.size()];
                     codeArr = codeList.toArray(codeArr);
-                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{\"fields\":1}", channelId);
+                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "},{\"common.fields\":1}", channelId);
                     bulkList.add(calculatePriceRange(prodList, grpObj.getGroupId()));
                 }
             });
@@ -499,8 +499,8 @@ public class ProductSkuService extends BaseService {
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else {
-            productQueryMap.put("fields.code", model.getProductCode());
-            queryObject.setQuery("{\"fields.code\":\"" + model.getProductCode() + "\"}");
+            productQueryMap.put("common.fields.code", model.getProductCode());
+            queryObject.setQuery("{\"common.fields.code\":\"" + model.getProductCode() + "\"}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
