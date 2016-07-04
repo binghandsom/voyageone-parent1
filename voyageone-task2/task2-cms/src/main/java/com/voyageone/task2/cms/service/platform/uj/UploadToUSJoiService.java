@@ -22,7 +22,6 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
@@ -51,9 +50,6 @@ public class UploadToUSJoiService extends BaseTaskService {
     private ProductService productService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-
-    @Autowired
-    private SxProductService sxProductService;
 
     @Autowired
     private ProductSkuService productSkuService;
