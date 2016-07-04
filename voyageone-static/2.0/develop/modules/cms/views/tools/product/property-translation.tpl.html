@@ -19,15 +19,15 @@
                                             <div class="data"><strong>{{ctrl.vm.taskSummary.unassginedCount}}</strong> {{'TXT_UN_TRANSLATION' | translate}}</div>
                                         </li>
                                         <li>
-                                            <div class="data"><strong>{{ctrl.vm.taskSummary.imcompeleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
+                                            <div class="data"><strong>{{ctrl.vm.taskSummary.incompleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
                                         </li>
                                     </ul>
                                     <ul class="data-display-boxes" style="min-height: 0;">
                                         <li>
-                                            <div class="data"><strong>{{ctrl.vm.taskSummary.compeleteCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
+                                            <div class="data"><strong>{{ctrl.vm.taskSummary.completeCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
                                         </li>
                                         <li>
-                                            <div class="data"><strong>{{ctrl.vm.taskSummary.userCompeleteCount}}</strong> {{'TXT_PERSONAL_FINISHED_TRANSLATION' | translate}}
+                                            <div class="data"><strong>{{ctrl.vm.taskSummary.userCompleteCount}}</strong> {{'TXT_PERSONAL_FINISHED_TRANSLATION' | translate}}
                                             </div>
                                         </li>
                                     </ul>
@@ -139,14 +139,14 @@
     <div class="box">
         <div class="panel panel-default">
             <div class="container-fluid m-t-xs m-b-x">
-                <uib-tabset class="container-fluid m-t-xs m-b-x" ng-show="!ctrl.searchBtnClicked && (ctrl.vm.taskDetail.prodId == 0)">
+                <uib-tabset class="container-fluid m-t-xs m-b-x" ng-show="!ctrl.searchBtnClicked && (ctrl.vm.taskDetail == null)">
                     <div class="text-center text-hs">
                         <h4 class="text-vo"><i class="icon fa fa-warning">
                         </i>{{'TXT_ALERT' | translate}}</h4>
                         {{'TXT_MSG_NO_DATE' | translate}}
                     </div>
                 </uib-tabset>
-                <uib-tabset class="tab-container vo_nav-tabs" ng-show="!ctrl.searchBtnClicked && !(ctrl.vm.taskDetail.prodId == 0)">
+                <uib-tabset class="tab-container vo_nav-tabs" ng-show="!ctrl.searchBtnClicked && !(ctrl.vm.taskDetail == null)">
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px">
                         <div class="form-group" style="margin-top: 3px">
                             <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE'|translate}}</button>
@@ -308,7 +308,7 @@
                             </div>
                             <div class="col-sm-12 product-shema-detail">
                                 <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_MATCHED_PROPERTY' | translate}}</span>
+                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_TRANSLATED_PROPERTY' | translate}}</span>
                             </div>
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'true'}" ng-if="!customProp.feedAttrCn">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrEn}}</label>
@@ -341,21 +341,21 @@
                         </tbody>
                         <tbody ng-if="ctrl.vm.taskList.length > 0" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
                         <tr ng-repeat="task in ctrl.vm.taskList">
-                            <td class="mfb-xt text-center">{{task.translateStatus}}</td>
+                            <td class="mfb-xt text-center">{{ctrl.getStatusNameFromStatusValue(task.translateStatus)}}</td>
                             <td class="mfb-xt text-center">
                                 <a ng-if="task.images1" ng-click="ctrl.popUpImages(task)">
                                 <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{task.image1}}"></a>
                             </td>
-                            <td class="mfb-xt text-center">{{task.category}}</td>
+                            <td class="mfb-xt text-center">{{task.feedCategory}}</td>
                             <td class="mfb-xt text-center"><a ng-click="ctrl.get(task)">{{task.code}}</a></td>
-                            <td class="mfb-xt text-center">{{task.name}}</td>
-                            <td class="mfb-xt text-center">{{task.MainCategory}}</td>
-                            <td class="mfb-xt text-center">{{task.translateTime}}</td>
+                            <td class="mfb-xt text-center">{{task.productName}}</td>
+                            <td class="mfb-xt text-center">{{task.catPath}}</td>
+                            <td class="mfb-xt text-center"></td>
                         </tr>
                         </tbody>
                     </table>
                     <div class="col-sm-12 m-t-lg m-b-lg">
-                        <vpagination config="ctrl.searchPageSettings"></vpagination>
+                        <vpagination config="ctrl.searchPageSettings" >{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
                     </div>
                 </uib-tabset>
             </div>

@@ -484,10 +484,11 @@ public class TranslationTaskService extends BaseService {
 
             List<CustomPropBean> props = getCustomProp(product);
             translationTaskBean.setCustomProps(props);
+
+            return translationTaskBean;
         }
         return null;
     }
-
 
     /**
      * 获取CustomProp
