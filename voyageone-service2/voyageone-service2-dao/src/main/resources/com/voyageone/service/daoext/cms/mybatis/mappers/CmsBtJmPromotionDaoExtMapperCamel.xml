@@ -56,4 +56,8 @@
           and   a.activity_end >= now()
           and b.active = 1
     </select>
+
+    <select id="selectEndList">
+        SELECT * FROM `cms_bt_jm_promotion` WHERE `recovery_status`=0 AND `activity_end` &lt;#{nowDate}  limit 10
+    </select>
 </mapper>
