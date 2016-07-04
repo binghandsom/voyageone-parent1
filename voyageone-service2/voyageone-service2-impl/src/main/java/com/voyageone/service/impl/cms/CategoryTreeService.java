@@ -209,8 +209,10 @@ public class CategoryTreeService extends BaseService {
                 node.setParentCatId(befNode == null ? "0" : befNode.getCatId());
                 node.setIsParent(i < c.length - 1 ? 1 : 0);
                 node.setChildren(new ArrayList<>());
-                if(befNode.getChildren() == null) befNode.setChildren(new ArrayList<>());
-                befNode.getChildren().add(node);
+                if (befNode != null) {
+                    if (befNode.getChildren() == null) befNode.setChildren(new ArrayList<>());
+                    befNode.getChildren().add(node);
+                }
                 befNode = node;
                 chgFlg = true;
             } else {
@@ -270,7 +272,7 @@ public class CategoryTreeService extends BaseService {
     /**
      * 根据category从tree中找到节点
      */
-    public CmsMtCategoryTreeModel findCategorySingleSku(CmsMtCategoryTreeModel tree, String catPath, List result) {
+    public CmsMtCategoryTreeModel findCategorySingleSku(CmsMtCategoryTreeModel tree, String catPath, List<String> result) {
         for (CmsMtCategoryTreeModel CmsMtCategoryTreeModel : tree.getChildren()) {
             if (CmsMtCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 if ("1".equals(CmsMtCategoryTreeModel.getSingleSku())) {
