@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -145,6 +146,15 @@ public class CmsProductDetailController extends CmsController {
 
         String lock = (String) requestMap.get("lock");
         productService.updateProductLock(getUser().getSelChannelId(),prodId,lock,getUser().getUserName());
+
+        return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_FEED_ATTS)
+    public AjaxResponse updateProductAtts(@RequestBody Map requestMap){
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+        List<CustomPropBean> cnProps = (List<CustomPropBean>) requestMap.get("feedInfo");
+        productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
 
         return success(null);
     }
