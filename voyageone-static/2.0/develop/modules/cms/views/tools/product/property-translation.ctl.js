@@ -107,7 +107,7 @@ define([
                 self.translationService.save(req).then(function (res) {
                     self.vm.taskSummary = res.data.taskSummary;
                     self.vm.taskDetail = res.data.taskDetail;
-                    self.notify.success("保存成功.");
+                    self.notify.success('TXT_SAVE_SUCCESS');
                 });
             },
 
@@ -123,7 +123,7 @@ define([
                 self.translationService.submit(req).then(function (res) {
                     self.vm.taskInfo = res.data.taskInfo;
                     self.vm.taskSummary = res.data.taskSummary;
-                    self.notify.success("提交成功");
+                    self.notify.success('TXT_SUBMIT_SUCCESS');
                 })
             },
 
@@ -219,10 +219,10 @@ define([
              */
             getStatusNameFromStatusValue: function (status) {
                 if (status == 0)
-                    return "未翻译";
+                    return 'TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED';
                 else if (status == 1)
-                    return "已翻译";
-                else return "未知";
+                    return 'TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED';
+                else return 'TXT_UNKNOWN';
             },
 
             /**

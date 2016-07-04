@@ -17,6 +17,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ public class TranslationTaskService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao CmsBtProductGroupDao;
+    @Autowired
+    private ProductService productService;
 
     /**
      * 计算翻译任务的汇总信息
@@ -476,100 +479,12 @@ public class TranslationTaskService extends BaseService {
             commonFields.setTranslateTime(getString(fields.getTranslateTime()));
             translationTaskBean.setCommonFields(commonFields);
 
-            List<CustomPropBean> props = getCustomProp(product);
+            List<CustomPropBean> props = productService.getCustomProp(product);
             translationTaskBean.setCustomProps(props);
 
             return translationTaskBean;
         }
         return null;
-    }
-
-    /**
-     * 获取CustomProp
-     *
-     * @param product
-     * @return
-     */
-    public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
-
-        String channelId = product.getChannelId();
-        CmsBtProductModel_Field fields = product.getCommon().getFields();
-
-        CmsBtProductModel_Feed productFeed = product.getFeed();
-        BaseMongoMap<String, Object> cnAttrs = productFeed.getCnAtts();
-
-        List<CustomPropBean> props = new ArrayList<>();
-
-        //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getCode());
-        Map<String, List<String>> feedAttr = feedInfo.getAttribute();
-
-        //读cms_mt_feed_custom_prop
-        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
-
-        //去除掉feedCustomPropList中的垃圾数据
-        if (feedCustomPropList != null && feedCustomPropList.size() > 0) {
-            feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
-                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original()))).collect(Collectors.toList());
-        } else {
-            feedCustomPropList = new ArrayList<>();
-        }
-
-        //合并feedAttr和feedCustomPropList
-        for (String attrKey : feedAttr.keySet()) {
-            List<String> valueList = feedAttr.get(attrKey);
-            CustomPropBean prop = new CustomPropBean();
-            prop.setFeedAttrEn(attrKey);
-            String attrValue = Joiner.on(",").skipNulls().join(valueList);
-            prop.setFeedAttrValueEn(attrValue);
-            prop.setFeedAttrCn("");
-            prop.setFeedAttrValueCn("");
-            prop.setFeedAttr(true);
-
-            if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
-                FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
-                prop.setFeedAttrCn(feedCustProp.getFeed_prop_translation());
-                if (cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).count() > 0) {
-                    //如果product已经保存过
-                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).findFirst().get();
-                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
-                } else {
-                    //取默认值
-                    Map<String, List<String>> defaultValueMap = feedCustProp.getMapPropValue();
-                    List<String> vList = defaultValueMap.get(attrValue);
-                    if (vList != null) {
-                        if (vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).count() > 0) {
-                            String cnAttValue = vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).findFirst().get();
-                            prop.setFeedAttrValueCn(cnAttValue);
-                        }
-                    }
-
-                }
-            }
-
-            props.add(prop);
-        }
-
-        //仅存在于cms_mt_feed_custom_prop中，不存在于feed attributes中的项目
-        for (FeedCustomPropWithValueBean custProp : feedCustomPropList) {
-            String feedKey = custProp.getFeed_prop_original();
-            if (feedAttr.keySet().stream().filter(w -> w.equals(feedKey)).count() == 0) {
-                CustomPropBean prop = new CustomPropBean();
-                prop.setFeedAttrEn(feedKey);
-                prop.setFeedAttrValueEn("");
-                prop.setFeedAttrCn(custProp.getFeed_prop_translation());
-                prop.setFeedAttrValueCn("");
-                prop.setFeedAttr(false);
-
-                if (cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).count() > 0) {
-                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).findFirst().get();
-                    prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
-                }
-                props.add(prop);
-            }
-
-        }
-        return props;
     }
 
 }

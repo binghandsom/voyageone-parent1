@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div class="col-sm-8">
-                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="0" max="10" maxlength="2">
+                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt">
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
@@ -85,7 +85,6 @@
                                             <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="ctrl.searchInfo.hsCodeStatus">
-                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="1">已设置</option>
                                                     <option value="0">未设置</option>
                                                 </select>
@@ -148,7 +147,7 @@
                         </td>
                         <td class="text-left mfb-xxs v-middle">
                             <ul class="tableWordBreak">
-                                <li>{{list.common.fields.productNameCn?list.common.fields.productNameCn : list.common.fields.productNameEn}}</li>
+                                <li>{{list.common.fields.originalTitleCn?list.common.fields.originalTitleCn : list.common.fields.productNameEn}}</li>
                                 <li>{{list.feed.catPath}}</li>
                                 <li>{{list.common.catPath}}</li>
                             </ul>
