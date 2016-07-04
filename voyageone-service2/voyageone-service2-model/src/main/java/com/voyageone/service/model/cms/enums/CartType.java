@@ -13,12 +13,25 @@ public enum CartType {
 
     TAOBAO("Taobao", "淘宝", "TB", 20),
 
+    OFFLINE("Off Line", "线下订单", "OF", 22),
+
     TMALLG("TMallG", "天猫国际", "TG", 23),
 
     JINGDONG("JingDong", "京东", "JD", 24),
+
     JINGDONGG("JingDongG", "京东国际", "JG", 26),
 
-    MINIMALL("MiniMall", "MiniMall", "MM", 28),
+    JUMEI("JuMei", "聚美优品", "JM", 27),
+
+    USJOI_JGJ("US Joi JGJ", "US Joi匠心界(JG)", "JGJ", 28),
+
+    USJOI_JGY("US Joi JGY", "US Joi悦境(JG)", "JGY", 29),
+
+    TMALL_MINIMALL("Tmall MiniMall", "Tmall MiniMall(JG)", "JGY", 30),
+
+    USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "JGJ", 928),
+
+    USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "JGY", 929),
 
     MASTER("Master", "主数据", "MT", 0),
 

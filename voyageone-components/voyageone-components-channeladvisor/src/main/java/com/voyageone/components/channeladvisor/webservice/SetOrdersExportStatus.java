@@ -1,8 +1,5 @@
 package com.voyageone.components.channeladvisor.webservice;
 
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfInt;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

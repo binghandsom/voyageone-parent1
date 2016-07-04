@@ -1,8 +1,15 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.jongo.query.Query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * BaseJomgoPartTemplate Query Object
@@ -23,7 +30,7 @@ public class JomgoQuery extends BaseCondition {
      * query condition
      */
     private String query;
-
+    private List<String> queryStrList = null;
     /**
      * query condition
      */
@@ -90,7 +97,25 @@ public class JomgoQuery extends BaseCondition {
     }
 
     public String getQuery() {
-        return query;
+        if (query != null) {
+            return query;
+        }
+        if (queryStrList != null && queryStrList.size() > 0) {
+            return "{" + StringUtils.join(queryStrList, ',') + "}";
+        }
+        return "";
+    }
+
+    public Map getQueryMap() {
+        //DBObject dbObject = (DBObject) JSON.parse(getQuery());
+        //return dbObject.toMap();
+        VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+        Object[] params = getParameters();
+        if (params == null) {
+            params = new Object[0];
+        }
+        Query query = queryFactory.createQuery(getQuery(), params);
+        return query.toDBObject().toMap();
     }
 
     public JomgoQuery setQuery(String query) {
@@ -111,6 +136,36 @@ public class JomgoQuery extends BaseCondition {
      */
     public void setParameters(Object... parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * 添加查询条件（使用此方法时不应再使用setQuery()）
+     * 使用方法示例：
+     *     如最终的查询语句为: ("{'prodId':{$in:#},'platforms.P23':{$exists:true},'platforms.P23.pAttributeStatus':#}"
+     *     则调用时应为   jqObj.addQuery("'prodId':{$in:#}");
+     *                   jqObj.addParameters(prodIdList);    // 这里的prodIdList可以是数组或List
+     *                   jqObj.addQuery("'platforms.P23':{$exists:true}");
+     *                   jqObj.addQuery("'platforms.P23.pAttributeStatus':#");
+     *                   jqObj.addParameters(attrSts);
+     * @param queryStr
+     */
+    public void addQuery(String queryStr) {
+        if (queryStrList == null) {
+            queryStrList = new ArrayList<>();
+        }
+        queryStrList.add(queryStr);
+    }
+
+    /**
+     * 添加查询参数，应与addQuery()配对使用
+     * @param parameters
+     */
+    public void addParameters(Object... parameters) {
+        if (this.parameters == null) {
+            this.parameters = parameters;
+        } else {
+            this.parameters = ArrayUtils.addAll(this.parameters, parameters);
+        }
     }
 
     public String getSort() {
@@ -152,7 +207,7 @@ public class JomgoQuery extends BaseCondition {
     public String toString() {
         StringBuilder rs = new StringBuilder();
         rs.append("JomgoQuery =: { query:=");
-        rs.append(query);
+        rs.append(getQuery());
         rs.append("; parameters:=");
         rs.append(Arrays.toString(parameters));
         rs.append("; projection:=");

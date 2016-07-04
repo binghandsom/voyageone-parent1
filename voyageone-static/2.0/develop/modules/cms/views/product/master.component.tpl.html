@@ -1,7 +1,7 @@
 <div class="product-shema-detail">
-    <form class="form-horizontal" name="productFieldForm" novalidate>
+    <div class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
-                <div class="container-fluid"  id="{{cartInfo.name}}1">
+                <div class="container-fluid"  id="master1">
                     <div class="row wrapper">
                         <!----------------------------------------历史按钮---------------------------------------------->
                         <div class="col-md-12 form-group">
@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-sm-7">
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">平台状态</label>
+                                <label class="col-md-2 control-label"><strong>平台状态</strong></label>
                                 <div class="col-md-8">
                                     <span class='label m-l-sm'>
                                         <span ng-repeat='entity in vm.mastData.platformList'>
@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">Group Info</label>
+                                <label class="col-md-2 control-label"><strong>Group Info</strong></label>
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
@@ -44,7 +44,7 @@
                                     <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.productComm.pCatPath" disabled>
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.productComm.catPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
@@ -54,14 +54,14 @@
                         <!----------------------------------------右侧悬浮框-------------------------------------------->
                         <div class="col-sm-2">
                             <div  style="float: right;">
-                                <nav class="bs-docs-sidebar master-sidebar">
-                                    <h3>导航栏</h3>
+                                <nav class="bs-docs-sidebar master-sidebar" drag>
+                                    <h3 drag-handle>导航栏</h3>
                                     <ul class="nav bs-docs-sidenav">
                                         <li class="">
                                             <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
                                         </li>
                                         <li class="">
-                                            <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">平台属性</a>
+                                            <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">产品属性</a>
                                         </li>
                                         <li>
                                         </li>
@@ -76,7 +76,7 @@
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
-                <div class="container-fluid" id="{{cartInfo.name}}2">
+                <div class="container-fluid" id="master2">
                     <div class="col-sm-7">
                         <ng-form name="schemaForm" novalidate>
                             <schema data="vm.productComm.schemaFields"></schema>
@@ -112,7 +112,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -132,11 +132,11 @@
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6)+ ')'}">
 
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.image6 | limitTo: 10"
+                                                        <div  ng-repeat="image in vm.tempImage.image6 track by image| limitTo: 10"
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -159,7 +159,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting(vm.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -182,7 +182,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -205,7 +205,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +228,7 @@
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
-                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting(vm.productDetails,'image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        <button ng-controller="popupCtrl" ng-click="openProImageSetting('image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -255,5 +255,5 @@
                 </div>
             <br>
         </div>
-    </form>
+    </div>
 </div>

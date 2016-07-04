@@ -369,7 +369,7 @@ s-field textarea.s-html {
     border-left: 6px solid #5cb85c;
 }
 
-/**平台schema*/
+/**产品详情*/
 .product-shema-detail .nav span {
     display: inline-block;
     width: 135px;
@@ -378,6 +378,11 @@ s-field textarea.s-html {
     color: white;
     text-align: center;
     line-height: 24px;
+}
+
+.panel-default .panel-detail-head{
+    background: #e67e22;
+    color: white;
 }
 
 /**限制宽度，防止图片布局混乱*/
@@ -454,6 +459,7 @@ s-field textarea.s-html {
 
 .product-shema-detail .bs-docs-sidebar {
     position: fixed;
+    width: 95px ! important;
     right: 40px;
     color: white;
     margin-top: 80px;
@@ -462,11 +468,13 @@ s-field textarea.s-html {
     opacity: .5;
 }
 
-.product-shema-detail .master-sidebar {
+.product-shema-detail .master-sidebar,
+.product-shema-detail .feed-sidebar{
     top: 130px;
     right: 40px;
     z-index: 9;
     opacity: initial;
+    white-space: nowrap;
 }
 
 .product-shema-detail .bs-docs-sidebar:hover {
@@ -480,11 +488,12 @@ s-field textarea.s-html {
     margin: 0;
     height: 30px;
     line-height: 30px;
+    cursor: move;
 }
 
 .product-shema-detail .bs-docs-sidebar .nav {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .product-shema-detail .bs-docs-sidebar .nav > li > a {
@@ -514,42 +523,6 @@ s-field textarea.s-html {
 
 .tm-sku-detail schema-field {
     min-width: 125px;
-}
-
-.product-shema-detail .fa-5x{
-    font-size: 2em;
-    height: 50px;
-}
-
-.product-shema-detail .panel-primary a{
-    color: #337ab7
-}
-
-.product-shema-detail .panel-green{
-     background-color: #5cb75c;
-    color: white;
- }
-
-.product-shema-detail .panel-green a{
-    color: #5cb75c;
-}
-
-.product-shema-detail .panel-yellow{
-    background-color: #efac4e;
-    color: white;
-}
-
-.product-shema-detail .panel-yellow a{
-    color: #efac4e;
-}
-
-.product-shema-detail .panel-red{
-    background-color: #d8534f;
-    color: white;
-}
-
-.product-shema-detail .panel-red a{
-    color: #d8534f;
 }
 
 /*uib-tab样式*/
@@ -703,4 +676,11 @@ s-field textarea.s-html {
     margin-bottom: 3px;
     margin-top: 6px;
     display: block;
+}
+/*表格断行*/
+
+.tableWordBreak>li {
+    word-break: break-all;
+    overflow: auto;
+    max-height: 17px;
 }

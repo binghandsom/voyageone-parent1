@@ -93,6 +93,11 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                     if (mapSesponse.containsKey("jumei_hash_id")) {
                         this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
                     }
+                    if(mapSesponse.containsKey("new_hash_id"))
+                    {
+                        this.setJumei_hash_id(mapSesponse.get("new_hash_id").toString());
+                    }
+                    //new_hash_id":"ht1467198383p2442298"
                 }
                 else
                 {

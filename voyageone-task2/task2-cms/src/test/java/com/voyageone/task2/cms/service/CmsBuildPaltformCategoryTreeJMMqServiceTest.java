@@ -31,7 +31,7 @@ public class CmsBuildPaltformCategoryTreeJMMqServiceTest {
     public void testOnStartup() throws Exception {
 
         Map<String,Object> messageMap = new HashMap<>();
-        messageMap.put("channelId","016");
+        messageMap.put("channelId","018");
 //        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob, messageMap);
         cmsBuildPaltformCategoryTreeJMMqService.onStartup(messageMap);
     }

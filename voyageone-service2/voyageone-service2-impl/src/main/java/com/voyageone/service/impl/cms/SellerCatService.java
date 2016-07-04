@@ -21,18 +21,15 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.toMap;
 
 
 /**
@@ -64,6 +61,9 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+
+    @Autowired
+    private ProductService productService;
 
 
     private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
@@ -255,20 +255,8 @@ public class SellerCatService extends BaseService {
     private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
         if (list != null) {
             for (CmsBtProductModel product : list) {
-                if (product.getFields().getStatus().equals("Approved")) {
-                    List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + product.getFields().getCode() + "\"}", channelId);
-                    Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
-                    CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                    model.setChannelId(channelId);
-                    model.setGroupId(platformsMap.get(cartId));
-                    model.setCartId(cartId);
-                    model.setPublishStatus(0);
-                    model.setCreater(modifier);
-                    model.setModifier(modifier);
-                    cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(model);
-                }
-
+                productService.insertSxWorkLoad(channelId, product, modifier);
             }
         }
     }

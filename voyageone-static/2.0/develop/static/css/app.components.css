@@ -150,7 +150,8 @@ vo-message {
 
 /**平台状态样式*/
 .plateform-status{
-
+    display: inline-block;
+    margin-top: 6px;
 }
 .plateform-status .pending{
     background: #bebebe;

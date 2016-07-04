@@ -14,21 +14,21 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
+import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
@@ -132,6 +132,8 @@ public class SxProductService extends BaseService {
     private ProductGroupService productGroupService;
     @Autowired
     JumeiImageFileService jumeiImageFileService;
+    @Autowired
+    private CmsBtWorkloadHistoryDao cmsBtWorkloadHistoryDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -147,7 +149,11 @@ public class SxProductService extends BaseService {
      *
      * @param skuSourceList 排序对象
      */
-    public void sortSkuInfo(List<CmsBtProductModel_Sku> skuSourceList) {
+    // modified by morse.lu 2016/06/28 start
+    // product表结构变化
+//    public void sortSkuInfo(List<CmsBtProductModel_Sku> skuSourceList) {
+    public void sortSkuInfo(List<? extends BaseMongoMap<String, Object>> skuSourceList) {
+        // modified by morse.lu 2016/06/28 end
 
         // Map<size, sort> 为了将来可能会从DB取得设定，先做成Map
         Map<String, Integer> mapSort = new HashMap<>();
@@ -156,8 +162,12 @@ public class SxProductService extends BaseService {
         }
 
         skuSourceList.sort((a, b) -> {
-            String sizeA = a.getSize();
-            String sizeB = b.getSize();
+            // modified by morse.lu 2016/06/28 start
+//            String sizeA = a.getSize();
+//            String sizeB = b.getSize();
+            String sizeA = StringUtils.null2Space(a.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            String sizeB = StringUtils.null2Space(b.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            // modified by morse.lu 2016/06/28 end
 
             Integer sortA = getSizeSort(sizeA, mapSort);
             Integer sortB = getSizeSort(sizeB, mapSort);
@@ -174,6 +184,26 @@ public class SxProductService extends BaseService {
             }
 
             return sortA.compareTo(sortB);
+        });
+    }
+
+    /**
+     * 根据skuCode进行排序
+     *
+     * @param listSku 要排序的list
+     * @param sortKey skuCode的list，用于排序
+     */
+    public void sortListBySkuCode(List<BaseMongoMap<String, Object>> listSku, List<String> sortKey) {
+        listSku.sort((a, b) -> {
+            int aIndex = sortKey.indexOf(a.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+            int bIndex = sortKey.indexOf(b.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+
+            if (aIndex == -1) aIndex = 99999;
+            if (bIndex == -1) bIndex = 99999;
+
+            if (aIndex < bIndex) return -1;
+            else if (aIndex == bIndex) return 0;
+            else return 1;
         });
     }
 
@@ -259,7 +289,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -297,7 +327,10 @@ public class SxProductService extends BaseService {
         // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
         List<CmsBtProductModel> sxProductList = sxData.getProductList();
         for (CmsBtProductModel sxProduct : sxProductList) {
+            // modified by morse.lu 2016/06/24 start
+//            String code = sxProduct.getFields().getCode();
             String code = sxProduct.getCommon().getFields().getCode();
+            // modified by morse.lu 2016/06/24 end
 
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
                     sxData.getMainProduct().getOrgChannelId(),   // ims表要用OrgChannelId
@@ -612,14 +645,23 @@ public class SxProductService extends BaseService {
         List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
         List<CmsBtProductModel> removeProductList = new ArrayList<>(); // product删除对象(如果该product下没有允许在该平台上上架的sku，删除)
         for (CmsBtProductModel productModel : productModelList) {
+            // modified by morse.lu 2016/06/28 start
+            // product表结构变化
+//            if (mainProductCode.equals(productModel.getFields().getCode())) {
             if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
+                // modified by morse.lu 2016/06/28 end
                 // 主商品
                 sxData.setMainProduct(productModel);
                 // modified by morse.lu 2016/06/07 start
 //                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, productModel.getFields().getCode());
                 String orgChannelId = productModel.getOrgChannelId(); // feed信息要从org里获取
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                String prodOrgCode = productModel.getFields().getOriginalCode(); // 有可能会有原始code
+//                if (prodOrgCode == null) prodOrgCode = productModel.getFields().getCode();
                 String prodOrgCode = productModel.getCommon().getFields().getOriginalCode(); // 有可能会有原始code
                 if (prodOrgCode == null) prodOrgCode = productModel.getCommon().getFields().getCode();
+                // modified by morse.lu 2016/06/28 end
                 CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
@@ -701,7 +743,7 @@ public class SxProductService extends BaseService {
 //            }
             // 2016/06/02 Update by desmond end
             // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-            if (!StringUtils.isEmpty(productModel.getFields().getLock()) && "1".equals(productModel.getFields().getLock())) {
+            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
                 continue;
             }
@@ -740,44 +782,47 @@ public class SxProductService extends BaseService {
 //                    }
 //                    // added by morse.lu 2016/06/13 start
 //                } else {
-//                    // 天猫以外平台的时候（天猫以后也会变成这样的结构）
-//                    // added by morse.lu 2016/06/15 start
-//                    Map<String, BaseMongoMap<String, Object>> mapProductModelSku = new HashMap<>();
+                    // 天猫以外平台的时候（天猫以后也会变成这样的结构）
+                    // added by morse.lu 2016/06/15 start
+                    Map<String, BaseMongoMap<String, Object>> mapProductModelSku = new HashMap<>();
+                    // modified by morse.lu 2016/06/24 start
 //                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
-//                    productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
-//                    // added by morse.lu 2016/06/15 end
-//                    List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
-//                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
-//                    if (productPlatformSku != null) {
-//                        productPlatformSku.forEach(sku -> {
-//                            if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-//                                // modified by morse.lu 2016/06/15 start
-////                            skus.add(sku);
-//                                // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
-//                                // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
-//                                BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
-//                                skus.add(mapSku);
-//                                // modified by morse.lu 2016/06/15 end
-//                            }
-//                        });
-//                    }
-//
-//                    if (skus.size() > 0) {
-//                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
-//                        skuList.addAll(skus);
-//                    } else {
-//                        // 该product下没有允许在该平台上上架的sku
-//                        removeProductList.add(productModel);
-//                    }
+                    List<CmsBtProductModel_Sku> productModelSku = productModel.getCommon().getSkus();
+                    // modified by morse.lu 2016/06/24 end
+                    productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
+                    // added by morse.lu 2016/06/15 end
+                    List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
+                    List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                    if (productPlatformSku != null) {
+                        productPlatformSku.forEach(sku -> {
+                            if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                // modified by morse.lu 2016/06/15 start
+//                            skus.add(sku);
+                                // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
+                                // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
+                                BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+                                skus.add(mapSku);
+                                // modified by morse.lu 2016/06/15 end
+                            }
+                        });
+                    }
+
+                    if (skus.size() > 0) {
+                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+                        skuList.addAll(skus);
+                    } else {
+                        // 该product下没有允许在该平台上上架的sku
+                        removeProductList.add(productModel);
+                    }
 //                }
-//                // added by morse.lu 2016/06/13 end
+                // added by morse.lu 2016/06/13 end
             }
-            {
-                // {}2
-                // 暂时sku不判断是不是能在该平台上上架，且都从外面的skus里取
-                skuList.addAll(productModel.getCommon().getSkus());
-            }
+//            {
+//                // {}2
+//                // 暂时sku不判断是不是能在该平台上上架，且都从外面的skus里取
+//                skuList.addAll(productModel.getSkus());
+//            }
             // modified by morse.lu 2016/06/15 end
         }
 
@@ -803,7 +848,10 @@ public class SxProductService extends BaseService {
     }
 
     /**
-     * mapping
+     * 新版上新schema设值
+     * Step1:custom值
+     * Step2:Mapping
+     * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
      * @param cmsMtPlatformMappingModel
@@ -823,20 +871,20 @@ public class SxProductService extends BaseService {
             fieldsMap.put(field.getId(), field);
         }
 
-        // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
         Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
 
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
+        // Step1:custom
+        // 暂时除sku的Mapping改成不Mapping以外的逻辑都不修正 morse.lu 2016-06-24
         Map<CustomMappingType, List<Field>> mappingTypePropsMap = getCustomPlatformProps(fieldsMap, expressionParser, mapSp, isItem);
         if (!mappingTypePropsMap.isEmpty()) {
             // 所有sku取得
             List<String> skus = new ArrayList<>();
             for (CmsBtProductModel productModel : sxData.getProductList()) {
-                //skus.addAll(productModel.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-                skus.addAll(productModel.getCommon().getSkus().stream().map(p -> p.getSkuCode()).collect(Collectors.toList()));
+                skus.addAll(productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
             }
             // wms逻辑库存取得
             List<WmsBtInventoryCenterLogicModel> skuInventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(sxData.getChannelId(), skus);
@@ -852,22 +900,53 @@ public class SxProductService extends BaseService {
             }
         }
 
-        Map<String, MappingBean> mapProp = new HashMap<>();
+        // Step2:Mapping
+        // 改成循环Mapping
+//        Map<String, MappingBean> mapProp = new HashMap<>();
         List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
         for (MappingBean mappingBean : propMapings) {
-            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
+            // modified by morse.lu 2016/06/24 start
+//            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
+            Field field = fieldsMap.get(mappingBean.getPlatformPropId());
+            if (field == null) {
+                continue;
+            }
+            mapSp.put(field.getId(), field);
+            if ("hscode".equals(field.getId())) {
+                // HS海关代码
+                if (!sxData.isHasSku()) {
+                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                    ((InputField) field).setValue(propValue.split(",")[0]);
+                    retMap.put(field.getId(), field);
+                }
+                continue;
+            }
+            Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+            if (resolveField != null) {
+                if (retMap == null) {
+                    retMap = new HashMap<>();
+                }
+                retMap.putAll(resolveField);
+            }
+            // modified by morse.lu 2016/06/24 end
         }
 
-        for(Field field : fields) {
+        // Step3:schema的上记Step1,2以外的全部field
+        for (Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
-                // 特殊字段
-
+                // 特殊字段 + Mapping字段
+                continue;
             } else {
-                MappingBean mappingBean = mapProp.get(field.getId());
-                if (mappingBean == null) {
-                    continue;
-                }
-                Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                // 直接取product表的fields的值
+                // modified by morse.lu 2016/06/24 start
+//                MappingBean mappingBean = mapProp.get(field.getId());
+//                if (mappingBean == null) {
+//                    continue;
+//                }
+//                Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                Map<String, Field> resolveField = resolveMappingFromProductField(field, shopBean, expressionParser, user);
+                // modified by morse.lu 2016/06/24 end
                 if (resolveField != null) {
                     if (retMap == null) {
                         retMap = new HashMap<>();
@@ -1123,7 +1202,22 @@ public class SxProductService extends BaseService {
             CmsBtProductModel mainProduct = expressionParser.getSxData().getMainProduct();
             ComplexMappingBean complexMappingBean = (ComplexMappingBean) mappingBean;
             if (field.getType() == FieldTypeEnum.COMPLEX) {
-                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                // modified by morse.lu 2016/07/01 start
+//                Map<String, Object> masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                Map<String, Object> masterWordEvaluationContext;
+                try {
+                    // 从各自平台fields里去取
+                    masterWordEvaluationContext = (Map<String, Object>) mainProduct.getPlatform(expressionParser.getSxData().getCartId()).getFields().get(complexMappingBean.getMasterPropId());
+                    if (masterWordEvaluationContext == null) {
+                        // 各自平台fields里取不到，从common的fields里去取
+                        masterWordEvaluationContext = (Map<String, Object>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]Complex类型,但product的fields里对应的值不是Map!", complexMappingBean.getMasterPropId()));
+                    masterWordEvaluationContext = null;
+                }
+                // modified by morse.lu 2016/07/01 end
+
                 if (masterWordEvaluationContext != null) {
                     expressionParser.pushMasterPropContext(masterWordEvaluationContext);
                 }
@@ -1153,7 +1247,21 @@ public class SxProductService extends BaseService {
                     expressionParser.popMasterPropContext();
                 }
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                // modified by morse.lu 2016/07/01 start
+//                List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                List<Map<String, Object>> masterWordEvaluationContexts = null;
+                try {
+                    // 没有设过一层，或者当前层没有对应的值，那么从各自平台fields里去取
+                    masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getPlatform(expressionParser.getSxData().getCartId()).getFields().get(complexMappingBean.getMasterPropId());
+                    if (masterWordEvaluationContexts == null) {
+                        // 各自平台fields里取不到，从common的fields里去取
+                        masterWordEvaluationContexts = (List<Map<String, Object>>) mainProduct.getCommon().getFields().get(complexMappingBean.getMasterPropId());
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]MultiComplex类型,但product的fields里对应的值不是List!", complexMappingBean.getMasterPropId()));
+                    masterWordEvaluationContexts = null;
+                }
+                // modified by morse.lu 2016/07/01 end
 
                 if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
                     $info("No value found for MultiComplex field: " + field.getId());
@@ -1220,6 +1328,180 @@ public class SxProductService extends BaseService {
 
         return retMap;
     }
+
+    /**
+     * 新版上新Field设值，不再根据Mapping，直接从product表platform下fields里取值
+     * 做一个假的MASTER类型的WordParse的方式去处理
+     */
+    private Map<String, Field> resolveMappingFromProductField(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        Map<String, Field> retMap = null;
+        SxData sxData = expressionParser.getSxData();
+
+        switch (field.getType()) {
+            case INPUT: {
+                retMap = new HashMap();
+                String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
+                if (null == expressionValue) {
+                    return null;
+                }
+
+                InputField inputField = (InputField) field;
+                inputField.setValue(expressionValue);
+                retMap.put(field.getId(), inputField);
+                break;
+            }
+            case SINGLECHECK: {
+                retMap = new HashMap();
+                String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
+                if (null == expressionValue) {
+                    return null;
+                }
+
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+                singleCheckField.setValue(expressionValue);
+                retMap.put(field.getId(), singleCheckField);
+                break;
+            }
+            case MULTIINPUT:
+                break;
+            case MULTICHECK: {
+                retMap = new HashMap();
+                String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
+                if (null == expressionValue) {
+                    return null;
+                }
+
+                String[] valueArrays = ExpressionParser.decodeString(expressionValue);
+
+                MultiCheckField multiCheckField = (MultiCheckField)field;
+                for (String val : valueArrays) {
+                    multiCheckField.addValue(val);
+                }
+                retMap.put(field.getId(), multiCheckField);
+
+                break;
+            }
+            case COMPLEX: {
+                retMap = new HashMap();
+                String fieldId = field.getId();
+                Map<String, Object> masterWordEvaluationContext;
+                try {
+                    masterWordEvaluationContext = expressionParser.getLastMasterPropContext();
+                    if (masterWordEvaluationContext != null) {
+                        // 看看有没有上一层，有的话先从这层去取值
+                        masterWordEvaluationContext = (Map<String, Object>) masterWordEvaluationContext.get(fieldId);
+                    }
+                    if (masterWordEvaluationContext == null) {
+                        // 没有设过一层，或者当前层没有对应的值，那么从各自平台fields里去取
+                        masterWordEvaluationContext = (Map<String, Object>) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get(fieldId);
+                        if (masterWordEvaluationContext == null) {
+                            // 各自平台fields里取不到，从common的fields里去取
+                            masterWordEvaluationContext = (Map<String, Object>) sxData.getMainProduct().getCommon().getFields().get(fieldId);
+                        }
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]Complex类型,但product的fields里对应的值不是Map!", fieldId));
+                    masterWordEvaluationContext = null;
+                }
+
+                if (masterWordEvaluationContext != null) {
+                    // 找到的话，设置这一层Map
+                    expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+                }
+
+                ComplexField complexField = (ComplexField) field;
+                ComplexValue complexValue = new ComplexValue();
+                complexField.setComplexValue(complexValue);
+
+                for (Field subField : complexField.getFields()) {
+                    Field valueField = deepCloneField(subField);
+                    Map<String, Field> res = resolveMappingFromProductField(valueField, shopBean, expressionParser, user);
+                    if (res != null) {
+                        retMap.putAll(res);
+                    }
+                    complexValue.put(valueField);
+                }
+
+                if (masterWordEvaluationContext != null) {
+                    // 这一层结束
+                    expressionParser.popMasterPropContext();
+                }
+                break;
+            }
+            case MULTICOMPLEX: {
+                retMap = new HashMap();
+                String fieldId = field.getId();
+                List<Map<String, Object>> masterWordEvaluationContexts = null;
+                try {
+                    Map<String, Object> masterWordEvaluationContext = expressionParser.getLastMasterPropContext();
+                    if (masterWordEvaluationContext != null) {
+                        // 看看有没有上一层，有的话先从这层去取值
+                        masterWordEvaluationContexts = (List<Map<String, Object>>) masterWordEvaluationContext.get(fieldId);
+                    }
+                    if (masterWordEvaluationContexts == null) {
+                        // 没有设过一层，或者当前层没有对应的值，那么从各自平台fields里去取
+                        masterWordEvaluationContexts = (List<Map<String, Object>>) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get(fieldId);
+                        if (masterWordEvaluationContexts == null) {
+                            // 各自平台fields里取不到，从common的fields里去取
+                            masterWordEvaluationContexts = (List<Map<String, Object>>) sxData.getMainProduct().getCommon().getFields().get(fieldId);
+                        }
+                    }
+                } catch (ClassCastException ex) {
+                    $error(String.format("类型不正确,[field_id=%s]MultiComplex类型,但product的fields里对应的值不是List!", fieldId));
+                    masterWordEvaluationContexts = null;
+                }
+
+                if (masterWordEvaluationContexts == null) {
+                    $error("No value found for MultiComplex field: " + field.getId());
+                    return null;
+                }
+
+                MultiComplexField multiComplexField = (MultiComplexField) field;
+                List<ComplexValue> complexValues = new ArrayList<>();
+                multiComplexField.setComplexValues(complexValues);
+
+                int index = 0;
+                for (Map<String, Object> masterWordEvaluationContext : masterWordEvaluationContexts) {
+                    expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+                    ComplexValue complexValue = new ComplexValue();
+                    complexValues.add(complexValue);
+
+                    for (Field subField : multiComplexField.getFields()) {
+                        Field valueField = deepCloneField(subField);
+                        Map<String, Field> res = resolveMappingFromProductField(valueField, shopBean, expressionParser, user);
+                        if (res != null) {
+                            for (Map.Entry<String, Field> entry : res.entrySet()) {
+                                retMap.put(field.getId() + "_" + String.valueOf(index) + "_" + entry.getKey(), entry.getValue());
+                            }
+                        }
+                        complexValue.put(valueField);
+                    }
+
+                    expressionParser.popMasterPropContext();
+                    index++;
+                }
+                break;
+            }
+            case LABEL:
+                break;
+            default:
+                return null;
+        }
+
+        return retMap;
+    }
+
+    /**
+     * 取product表platform下fields里的数据
+     * 直接create一个Master的RuleExpression的方式去做
+     */
+    public String getProductValueByMasterMapping(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        RuleExpression rule = new RuleExpression();
+        MasterWord masterWord = new MasterWord(field.getId());
+        rule.addRuleWord(masterWord);
+        return expressionParser.parse(rule, shopBean, user, null);
+    }
+
 
     private Field deepCloneField(Field field) throws Exception {
         try {
@@ -1308,7 +1590,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
@@ -1584,10 +1866,259 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
+                // modified by morse.lu 2016/06/29 start
+                case ITEM_DESCRIPTION: {
+                    Field field = processFields.get(0);
+                    setDescriptionFieldValue(field, expressionParser, shopBean, user);
+                    retMap.put(field.getId(), field);
+                    break;
+                }
+                case ITEM_WIRELESS_DESCRIPTION: {
+                    Field field = processFields.get(0);
+                    setWirelessDescriptionFieldValue(field, expressionParser, shopBean, user);
+                    retMap.put(field.getId(), field);
+                    break;
+                }
+                // modified by morse.lu 2016/06/29 end
             }
         }
 
         return retMap;
+    }
+
+    /**
+     * 商品描述设值
+     * 只填写内容这一属性
+     *
+     * @param field 商品描述的field
+     */
+    private void setDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // 详情页描述 (以后可能会根据不同商品信息，取不同的[详情页描述])
+        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        // 详情页描述-空白
+        String descriptionBlankValue = resolveDict("详情页描述-空白内容", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String errorMsg = String.format("类目[%s]的商品描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+
+        if (field.getType() == FieldTypeEnum.INPUT) {
+            InputField inputField = (InputField) field;
+            inputField.setValue(descriptionValue);
+        } else if (field.getType() == FieldTypeEnum.COMPLEX) {
+            ComplexField complexField = (ComplexField) field;
+            ComplexValue complexValue = new ComplexValue();
+            complexField.setComplexValue(complexValue);
+
+            boolean isFirst = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
+            Field fieldDef = null;
+            for (Field subField : complexField.getFields()) {
+                // 商品参数,商品展示,视频推介等
+                if (subField.getType() == FieldTypeEnum.COMPLEX) {
+                    ComplexField subComplexField = (ComplexField) subField;
+                    boolean hasContent = false; // 是否有内容这个Field,没有的话说明id或者结构发生变化啦
+                    for (Field contentField : subComplexField.getFields()) {
+                        if (contentField.getType() == FieldTypeEnum.INPUT  && contentField.getId().indexOf("content") > 0) {
+                            // 内容属性,把[详情页描述]填进去
+                            hasContent = true;
+                            boolean isRequest = false;
+                            for (Rule rule : contentField.getRules()) {
+                                if ("requiredRule".equalsIgnoreCase(rule.getName()) && Boolean.parseBoolean(rule.getValue())) {
+                                    isRequest = true;
+                                    break;
+                                }
+                            }
+
+                            if (isRequest || contentField.getId().equals("desc_module_5_cat_mod_content") ) {
+                                // 必须，或者是商品参数(用于默认项)
+                                Field valueSubField = deepCloneField(subField);
+                                complexValue.put(valueSubField);
+                                ComplexField valueSubComplexField = (ComplexField) valueSubField;
+                                ComplexValue subComplexValue = new ComplexValue();
+                                valueSubComplexField.setComplexValue(subComplexValue);
+                                Field valueContentField = deepCloneField(contentField);
+                                subComplexValue.put(valueContentField);
+                                fieldDef = valueContentField;
+
+                                if (isFirst && isRequest) {
+                                    isFirst = false;
+                                    ((InputField) valueContentField).setValue(descriptionValue);
+                                } else {
+                                    ((InputField) valueContentField).setValue(descriptionBlankValue);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    if (!hasContent) {
+                        sxData.setErrorMessage(errorMsg);
+                        throw new BusinessException(errorMsg);
+                    }
+                } else if (subField.getType() == FieldTypeEnum.MULTICOMPLEX) {
+                    // 目前只有一个叫自定义模块的，暂时不做
+                    continue;
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+            }
+
+            if (isFirst) {
+                // 没有必须的,姑且先放在一个叫"商品参数"的field里面,不确定是不是每个都有这个属性,以后发生特例再说
+                if (fieldDef != null) {
+                    ((InputField) fieldDef).setValue(descriptionValue);
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(String.format("类目[%s]的商品描述里没有必须属性,且没有一个叫\"商品参数\"的属性", sxData.getMainProduct().getCommon().getCatPath()));
+                }
+            }
+        } else {
+            sxData.setErrorMessage(errorMsg);
+            throw new BusinessException(errorMsg);
+        }
+    }
+
+    /**
+     * 无线描述设值
+     *
+     * @param field 无线描述的field
+     * @param
+     */
+    private void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
+        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        if (StringUtils.isEmpty(descriptionValue)) {
+            // 字典表里未设定，先什么都不做吧
+            return;
+        }
+        Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
+
+        // common里的tmallWirelessActive,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
+        String tmallWirelessActive = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getTmallWirelessActive());
+
+        // 开始设值
+        setWirelessDescriptionFieldValueWithLoop(field, mapValue, tmallWirelessActive, expressionParser.getSxData());
+    }
+
+    /**
+     * 循环无线描述field进行设值
+     */
+    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, String tmallWirelessActive, SxData sxData) throws Exception {
+        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+        if (!mapValue.containsKey(field.getId())) {
+            $warn(errorMsg);
+            return;
+//            sxData.setErrorMessage(errorMsg);
+//            throw new BusinessException(errorMsg);
+        }
+
+        Object objVal = mapValue.get(field.getId());
+        if (objVal == null) {
+            return;
+        }
+
+        switch (field.getType()) {
+            case INPUT: {
+                if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                    InputField inputField = (InputField) field;
+                    if ("1".equals(tmallWirelessActive)) {
+                        // 启用,根据字典设定的值设置（mapValue）
+                        inputField.setValue(String.valueOf(objVal));
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case SINGLECHECK: {
+                if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    if (!"1".equals(tmallWirelessActive)) {
+                        // 不启用
+                        if (field.getId().indexOf("enable") > 0) {
+                            // 是否启用的field
+                            singleCheckField.setValue("false");
+                        }
+                    } else {
+                        // 根据字典设定的值设置（mapValue）
+                        singleCheckField.setValue(String.valueOf(objVal));
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case MULTIINPUT:
+                break;
+            case MULTICHECK: {
+                if (objVal instanceof List) {
+                    if ("1".equals(tmallWirelessActive)) {
+                        // 启用,根据字典设定的值设置（mapValue）
+                        MultiCheckField multiCheckField = (MultiCheckField) field;
+                        for (Object val : (List) objVal) {
+                            multiCheckField.addValue(String.valueOf(val));
+                        }
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case COMPLEX: {
+                if (objVal instanceof Map) {
+                    ComplexField complexField = (ComplexField) field;
+                    ComplexValue complexValue = new ComplexValue();
+                    complexField.setComplexValue(complexValue);
+
+                    for (Field subField : complexField.getFields()) {
+                        Field valueField = deepCloneField(subField);
+                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, tmallWirelessActive, sxData);
+                        complexValue.put(valueField);
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case MULTICOMPLEX: {
+                if (objVal instanceof List) {
+                    MultiComplexField multiComplexField = (MultiComplexField) field;
+                    List<ComplexValue> complexValues = new ArrayList<>();
+                    multiComplexField.setComplexValues(complexValues);
+
+                    for (Object val : (List) objVal) {
+                        ComplexValue complexValue = new ComplexValue();
+                        complexValues.add(complexValue);
+
+                        if (val instanceof Map) {
+                            for (Field subField : multiComplexField.getFields()) {
+                                Field valueField = deepCloneField(subField);
+                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, tmallWirelessActive, sxData);
+                                complexValue.put(valueField);
+                            }
+                        } else {
+                            sxData.setErrorMessage(errorMsg);
+                            throw new BusinessException(errorMsg);
+                        }
+                    }
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(errorMsg);
+                }
+
+                break;
+            }
+            case LABEL:
+                break;
+            default:
+                return;
+        }
     }
 
     private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
@@ -1656,12 +2187,20 @@ public class SxProductService extends BaseService {
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (CmsBtProductModel productModel : productlList) {
-            if (!productModel.getCommon().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+            //// TODO: 16/6/30 edward 因为不知道怎么修改所以请上新组修改
+            if (!productModel.getPlatform(cartId).getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
                 continue;
             }
-            for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getCommon().getSkus()) {
+            // modified by morse.lu 2016/06/28 start
+            // product表结构变化
+//            for (CmsBtProductModel_Sku cmsBtProductModelSku : productModel.getSkus()) {
+            for (BaseMongoMap<String, Object> cmsBtProductModelSku : productModel.getPlatform(cartId).getSkus()) {
+                // modified by morse.lu 2016/06/28 end
                 int skuQuantity = 0;
-                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
+                // modified by morse.lu 2016/06/28 start
+//                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getSkuCode());
+                Integer skuQuantityInteger = skuInventoryMap.get(cmsBtProductModelSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                // modified by morse.lu 2016/06/28 end
                 if (skuQuantityInteger != null) {
                     skuQuantity = skuQuantityInteger;
                 }
@@ -1669,7 +2208,10 @@ public class SxProductService extends BaseService {
                 try {
                     skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName).toString());
                 } catch (Exception e) {
-                    $warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
+                    // modified by morse.lu 2016/06/28 start
+//                    $warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
+                    $warn("No price for sku " + cmsBtProductModelSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                    // modified by morse.lu 2016/06/28 end
                 }
                 if (onePrice - 0d == 0) {
                     onePrice = skuPrice;
@@ -2006,12 +2548,24 @@ public class SxProductService extends BaseService {
 //        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(product.getChannelId(), CmsConstants.ChannelConfig.PRODUCT_IMAGE_RULE);
         List<CmsBtProductModel_Field_Image> productImages;
         if (CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType) {
+            // modified by morse.lu 2016/06/27 start
+            // 表结构变化，改从common下的fields里去取
+//            productImages = product.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
             productImages = product.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE);
+            // modified by morse.lu 2016/06/27 end
             if (productImages == null || productImages.isEmpty() || StringUtils.isEmpty(productImages.get(0).getName())) {
+                // modified by morse.lu 2016/06/27 start
+                // 表结构变化，改从common下的fields里去取
+//                productImages = product.getFields().getImages(imageType);
                 productImages = product.getCommon().getFields().getImages(imageType);
+                // modified by morse.lu 2016/06/27 end
             }
         } else {
+            // modified by morse.lu 2016/06/27 start
+            // 表结构变化，改从common下的fields里去取
+//            productImages = product.getFields().getImages(imageType);
             productImages = product.getCommon().getFields().getImages(imageType);
+            // modified by morse.lu 2016/06/27 end
         }
         return productImages;
     }
@@ -2244,7 +2798,7 @@ public class SxProductService extends BaseService {
 
     /**
      * 上新成功或出错时状态回写操作
-     * 上新成功时回写group, product,ims_bt_product表状态并记录履历
+     * 上新成功时回写group, product,ims_bt_product(只限天猫和京东)表状态并记录履历
      * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
      *
      * 1.一般店铺上新时成功时更新字段 (失败时只更新product表的pPublishError字段)
@@ -2277,15 +2831,15 @@ public class SxProductService extends BaseService {
      *     pPublishError（上新失败"Error"，上新成功清空），
      * 2-3.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
      *
-     * @param isUsJoi boolean 是否是子店铺上新到US JOI(是:true,否:false)
+     * @param shopProp ShopBean 店铺信息
      * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param sxData SxData 上新数据
-     * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
+     * @param workload CmsBtSxWorkloadModel WorkLoad信息
      * @param numIId String 商品id
      * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
      * @param numIId String 商品id
      */
-    public void doUploadFinalProc(boolean isUsJoi, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel cmsBtSxWorkloadModel,
+    public void doUploadFinalProc(ShopBean shopProp, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel workload,
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier) {
 
@@ -2302,17 +2856,12 @@ public class SxProductService extends BaseService {
         if (uploadStatus) {
             // 设置共通属性
             sxData.getPlatform().setNumIId(numIId);
-            if (!isUsJoi) {
-                // 一般店铺上新时(更新商品失败时，不更新platformStatus)
-                if (platformStatus != null) {
-                    sxData.getPlatform().setPlatformStatus(platformStatus);
-                }
-            } else {
-                // USJoi店铺上新时,固定设为下架
-                sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+            // 一般店铺上新时(更新商品失败时，不更新platformStatus)
+            if (platformStatus != null) {
+                sxData.getPlatform().setPlatformStatus(platformStatus);
             }
             if (!StringUtils.isEmpty(platformPid)) {
-                sxData.getPlatform().setModifier(platformPid);
+                sxData.getPlatform().setPlatformPid(platformPid);
             }
             sxData.getPlatform().setModifier(modifier);
 
@@ -2322,32 +2871,32 @@ public class SxProductService extends BaseService {
             }
 
             // 第一次变成inStock的时候(""->"InStock")，设置InStockTime
-            if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
+            if (StringUtils.isEmpty(beforeProductGroup.getInStockTime())
                     && CmsConstants.PlatformStatus.InStock.equals(sxData.getPlatform().getPlatformStatus())) {
                 sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
             }
 
-            if (!isUsJoi) {
-                // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
-                if (StringUtils.isEmpty(beforeProductGroup.getPlatformStatus().name())
-                        && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
-                    sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
-                }
-                // 一般店铺上新成功后回写productGroup及product表的状态
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
-
-                // 回写ims_bt_product表(numIId)
-                this.updateImsBtProduct(sxData, modifier);
-            } else {
-                productGroupService.updateUSJoiGroupsPlatformStatus(sxData.getPlatform());
+            // 第一次变成OnSale的时候(""->"OnSale")，设置OnStockTime
+            if (StringUtils.isEmpty(beforeProductGroup.getOnSaleTime())
+                    && CmsConstants.PlatformStatus.OnSale.equals(sxData.getPlatform().getPlatformStatus())) {
+                sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
             }
 
-            // 写入履历
-//          productGroupService.insertHistoryLog(beforeProductGroup, sxData.getPlatform());
+            // 一般店铺上新成功后回写productGroup及product表的状态
+            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+
+            // 如果是天猫，京东平台的场合，回写ims_bt_product表(numIId)
+            if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())
+                    || PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+                this.updateImsBtProduct(sxData, modifier);
+            }
+
+            // 写入workload履历表
+            this.insertSxWorkloadHistory(beforeProductGroup, sxData, workload);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
-            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum,
-                    cmsBtSxWorkloadModel.getModifier());
+            this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
+                    workload.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform());
@@ -2356,9 +2905,62 @@ public class SxProductService extends BaseService {
             this.insertBusinessLog(sxData, modifier);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
-            this.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
-                    cmsBtSxWorkloadModel.getModifier());
+            this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
+                    workload.getModifier());
         }
+    }
+
+    /**
+     * 插入履历到cms_bt_sx_workload_history表
+     *
+     * @param before CmsBtProductGroupModel 变更前
+     * @param sxData SxData sxData 上新数据
+     * @param workload CmsBtSxWorkloadModel 上新workload
+     */
+    public int insertSxWorkloadHistory(CmsBtProductGroupModel before, SxData sxData, CmsBtSxWorkloadModel workload) {
+        CmsBtWorkloadHistoryModel insModel = new CmsBtWorkloadHistoryModel();
+
+        insModel.setChannelId(sxData.getChannelId());
+        insModel.setCartId(sxData.getCartId());
+        if (sxData.getGroupId() != null) {
+            insModel.setGroupId(workload.getGroupId().intValue());
+        }
+        if (sxData.getPlatform().getProductCodes().size() > 0) {
+            insModel.setProductCodes(sxData.getPlatform().getProductCodes().stream().collect(Collectors.joining(",")));
+        }
+        insModel.setNumiid(sxData.getPlatform().getNumIId() == null ? "" : sxData.getPlatform().getNumIId());
+        insModel.setProcName(sxData.getPlatform().getModifier());
+        insModel.setProcModifier(workload.getModifier());
+        // 处理内容
+        StringBuilder sbProcContent = new StringBuilder();
+        String beforePlatformStatus = before.getPlatformStatus() == null ? "null" : before.getPlatformStatus().name();
+        String afterPlatformStatus = sxData.getPlatform().getPlatformStatus() == null ? "null" : sxData.getPlatform().getPlatformStatus().name();
+        if (!beforePlatformStatus.equals(afterPlatformStatus)) {
+            sbProcContent.append("[PlatformStatus:'");
+            sbProcContent.append(beforePlatformStatus);
+            sbProcContent.append("'->'");
+            sbProcContent.append(afterPlatformStatus);
+            sbProcContent.append("']");
+        }
+        String beforePlatformPid = StringUtils.isEmpty(before.getPlatformPid()) ? "null" : before.getPlatformPid();
+        String afterPlatformPid = StringUtils.isEmpty(sxData.getPlatform().getPlatformPid()) ? "null" : sxData.getPlatform().getPlatformPid();
+        if (!beforePlatformPid.equals(afterPlatformPid)) {
+            sbProcContent.append("[PlatformPid:'");
+            sbProcContent.append(afterPlatformPid);
+            sbProcContent.append("'->'");
+            sbProcContent.append(afterPlatformPid);
+            sbProcContent.append("']");
+        }
+        List<CmsBtProductModel> errProducts = sxData.getProductList()
+                .stream()
+                .filter(p -> p.getPlatform(sxData.getCartId()) != null && "Error".equals(p.getPlatform(sxData.getCartId()).getpPublishError()))
+                .collect(Collectors.toList());
+        if (ListUtils.notNull(errProducts)) {
+            sbProcContent.append("[pPublishError:'Error'->'']");
+        }
+        insModel.setProcContent(sbProcContent.toString());
+
+        return cmsBtWorkloadHistoryDao.insert(insModel);
     }
 
 }

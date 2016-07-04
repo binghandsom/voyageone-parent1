@@ -7,18 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CmsBtProductModel_Sales
+ * 各平台的销售数据(7天,30天,所有)
  *
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author chuanyu.liang, 2016/06/03
  * @version 2.0.0
  * @since 2.0.0
  */
 public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
 
-    public final static String CODE_SUM_7 = "code_sum_7";
-    public final static String CODE_SUM_30 = "code_sum_30";
-    public final static String CODE_SUM_ALL = "code_sum_all";
-    public final static String CARTID = "cartId_";
+    public final static String CODE_SUM_7 = "codeSum7";
+    public final static String CODE_SUM_30 = "codeSum30";
+    public final static String CODE_SUM_ALL = "codeSumAll";
+    public final static String CARTID = "cartId";
     public final static String SKUS = "skus";
 
     public CmsBtProductModel_Sales() {
@@ -35,10 +37,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSum7(Map codeSum7) {
         setAttribute(CODE_SUM_7, codeSum7);
     }
-    public int getCodeSum7(int cart) {
+    public Integer getCodeSum7(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_7);
         if (codeSum != null) {
-            return (int) codeSum.get("cartId_" + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -50,10 +52,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSum30(BaseMongoMap codeSum30) {
         setAttribute(CODE_SUM_30, codeSum30);
     }
-    public int getCodeSum30(int cart) {
+    public Integer getCodeSum30(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_30);
         if (codeSum != null) {
-            return (int) codeSum.get(CARTID + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -65,10 +67,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setCodeSumAll(BaseMongoMap codeSumAll) {
         setAttribute(CODE_SUM_ALL, codeSumAll);
     }
-    public int getCodeSumAll(int cart) {
+    public Integer getCodeSumAll(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_ALL);
         if (codeSum != null) {
-            return (int) codeSum.get(CARTID + cart);
+            return (Integer) codeSum.get(CARTID + cart);
         }
         return 0;
     }
@@ -81,7 +83,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public void setSkus(List<CmsBtProductModel_Sales_Sku> skus) {
         setAttribute("skus", skus);
     }
-    public CmsBtProductModel_Sales_Sku getSkuSum(int cart, String skuCode) {
+    public CmsBtProductModel_Sales_Sku getSkuSum(Integer cart, String skuCode) {
         List<CmsBtProductModel_Sales_Sku> skus = getAttribute(SKUS);
         if (skus != null) {
             for (CmsBtProductModel_Sales_Sku sku : skus) {
@@ -93,7 +95,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
         return null;
     }
 
-    public int getSkuSum(int cart, String skuCode, Integer days) {
+    public Integer getSkuSum(Integer cart, String skuCode, Integer days) {
         List<CmsBtProductModel_Sales_Sku> skus = getAttribute(SKUS);
         if (skus != null) {
             for (CmsBtProductModel_Sales_Sku sku : skus) {

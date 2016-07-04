@@ -352,7 +352,7 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
-            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 expressionParser.setSkuPropContext(cmsSkuProp);
@@ -422,7 +422,7 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
             }
 
             if (colorExtend_imageField != null) {
-                String propImage = sxProduct.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = sxProduct.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");

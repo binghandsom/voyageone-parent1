@@ -58,6 +58,9 @@ public class VOBsonQueryFactory implements QueryFactory {
         }
     }
 
+    public VOBsonQueryFactory() {
+        this(null, DEFAULT_TOKEN);
+    }
 
     public VOBsonQueryFactory(Marshaller marshaller) {
         this(marshaller, DEFAULT_TOKEN);

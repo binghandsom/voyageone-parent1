@@ -17,11 +17,14 @@ define([
             link: function (scope) {
                 scope.vm = {
                     mastData:null,
-                    productComm:null
+                    productComm:null,
+                    categoryMark:null,
+                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[],"image5":[],"image6":[]}
                 };
 
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
+                scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
@@ -38,7 +41,7 @@ define([
                        scope.vm.productDetails = data.productInfo;
                        scope.vm.inventoryList = data.inventoryList;
                        if ($rootScope.imageUrl == undefined) {
-                        $rootScope.imageUrl = '';
+                         $rootScope.imageUrl = '';
                        }
                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
                        scope.vm.currentImage = data.defaultImage;
@@ -47,9 +50,12 @@ define([
                         productMonitor = null;
                     });
 
-                    productDetailService.getCommonProductInfo({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
+                    productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
+
+                        scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
                     });
                 }
@@ -64,11 +70,26 @@ define([
                         popupNewCategory({
                             categories: res.data
                         }).then(function(context){
+                            //判断类目是否改变
+                            scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
+
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
 
-                            scope.productInfo.masterCategory = true;
                         });
+                    });
+                }
+
+                /**
+                 * 添加图片
+                 */
+                function openProImageSetting(imageType,openImageSetting) {
+                    openImageSetting({
+                        product:  scope.vm.productDetails,
+                        imageType: imageType
+                    }).then(function(context){
+                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        //scope.vm.productDetails = context.productInfo;
                     });
                 }
 
@@ -76,14 +97,22 @@ define([
                  * 更新操作
                  */
                 function saveProduct(){
-
                     if (!validSchema()) {
                         return alert("保存失败，请查看产品的属性是否填写正确！");
                     }
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
-                        console.log(resp);
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        scope.vm.productComm.modified = resp.data.modified;
+                        scope.productInfo.translateStatus = resp.data.translateStatus == null ? 0 : +resp.data.translateStatus;
+                        scope.productInfo.hsCodeStatus =  resp.data.hsCodeStatus == null ? 0: +resp.data.hsCodeStatus ;
+
+                        //通知子页面
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        if(!scope.vm.categoryMark)
+                            scope.productInfo.masterCategory = new Date().getTime();
+                        notify.success("更新成功!");
+                    },function(){
+                        alert("更新失败","错误提示");
                     });
                 }
 
@@ -99,8 +128,8 @@ define([
                 function pageAnchor(index,speed){
                     var offsetTop = 0;
                     if(index != 1)
-                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
-                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                        offsetTop = ($("#master"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 
             }

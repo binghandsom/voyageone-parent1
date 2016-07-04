@@ -83,7 +83,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <overWriteIfNewer>true</overWriteIfNewer>
-                            <excludeArtifactIds>task2-base</excludeArtifactIds>
+                            <excludeArtifactIds>task2-base,jconsole,tools</excludeArtifactIds>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>

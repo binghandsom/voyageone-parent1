@@ -5,7 +5,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
@@ -76,12 +75,8 @@ public class CmsAdvanceSearchController extends CmsController {
         int endIdx = params.getProductPageSize();
         // 先统计product件数
         long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
-        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession, 1000);
+        List<String> currCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
 
-        if (endIdx > productListTotal) {
-            endIdx = (int) productListTotal;
-        }
-        List<String> currCodeList = prodCodeList.subList(0, endIdx);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
@@ -101,7 +96,7 @@ public class CmsAdvanceSearchController extends CmsController {
         // 先统计group件数
         long groupListTotal = searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
         // 然后再取得当页显示用的group信息
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, params, cartId);
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(params, userInfo, cmsSession);
         List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
 
         searchIndexService.checkProcStatus(grpInfoList, getLang());
@@ -121,6 +116,8 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
         resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
 
+        cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
+        cmsSession.putAttribute("_adv_search_groupListTotal", groupListTotal);
         // 返回用户信息
         return success(resultBean);
     }
@@ -138,17 +135,13 @@ public class CmsAdvanceSearchController extends CmsController {
         Integer cartId = params.getCartId();
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
-        params.setProductPageNum(params.getGroupPageNum());
-        params.setProductPageSize(params.getGroupPageSize());
-        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession, 1000);
-
         // 获取group列表
-        // 先统计group件数
-        long groupListTotal = searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
-        // 然后再取得当页显示用的group信息
-        List<String> groupCodeList = searchIndexService.getGroupCodeList(prodCodeList, userInfo, params, cartId);
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
+        // 先统计group件数 TODO--翻页时总件数从session中取得
+        long groupListTotal = (Long) cmsSession.getAttribute("_adv_search_groupListTotal");//searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
 
+        // 然后再取得当页显示用的group信息
+        List<String> groupCodeList = searchIndexService.getGroupCodeList(params, userInfo, cmsSession);
+        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(grpInfoList, getLang());
         resultBean.put("groupList", grpInfoList);
         resultBean.put("groupListTotal", groupListTotal);
@@ -178,12 +171,12 @@ public class CmsAdvanceSearchController extends CmsController {
         Integer cartId = params.getCartId();
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
-        // 先统计product件数
-        long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
+        // 先统计product件数 TODO--翻页时总件数从session中取得
+        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal"); //searchIndexService.countProductCodeList(params, userInfo, cmsSession);
 
         // 获取product列表
-        List<String> prodCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession, 0);
-        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(prodCodeList, params, userInfo, cmsSession);
+        List<String> currCodeList = searchIndexService.getProductCodeList(params, userInfo, cmsSession);
+        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
@@ -223,6 +216,7 @@ public class CmsAdvanceSearchController extends CmsController {
         byte[] data = null;
         try {
             // 文件下载时分页查询要做特殊处理
+            p.setProductPageNum(0);
             p.setGroupPageNum(0);
             data = advSearchExportFileService.getCodeExcelFile(p, getUser(), getCmsSession(), getLang());
         } catch (Exception e) {

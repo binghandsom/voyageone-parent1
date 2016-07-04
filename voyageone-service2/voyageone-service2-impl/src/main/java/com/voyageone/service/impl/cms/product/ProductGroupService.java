@@ -5,8 +5,10 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -161,7 +163,7 @@ public class ProductGroupService extends BaseService {
         // String[] codeArr = new String[codeList.size()];
         // codeArr = codeList.toArray(codeArr);
         // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
-        queryObject.setQuery("{\"productCodes\":\"" + prodList.get(0).getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+        queryObject.setQuery("{\"productCodes\":\"" + prodList.get(0).getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
         // queryObject.setProjection("{'groupId':1,'_id':0}");
         // jeff 2016/04 change end
         List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
@@ -177,7 +179,7 @@ public class ProductGroupService extends BaseService {
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel updateGroupsPlatformStatus (CmsBtProductGroupModel model) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
 
         // 更新cms_bt_product_groups表
         this.update(model);
@@ -185,23 +187,12 @@ public class ProductGroupService extends BaseService {
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (model.getProductCodes().size() > 0) {
 
-            // 获取未上新过的产品信息,用于判断是否需要更新publishTime
-            List<CmsBtProductModel> unPublishedProducts = getUnPublishedProducts(model);
-            Map<String, Boolean> isPublishedProducts = new HashMap<>();
-            if (ListUtils.notNull(unPublishedProducts)) {
-                // 未上新过（第一次上新）
-                unPublishedProducts.stream().map(p -> isPublishedProducts.put(p.getCommon().getFields().getCode(), false));
-            }
+            // 获取未上新过的产品code信息,用于判断是否需要更新publishTime
+            List<String> unPublishedProducts = getUnPublishedProducts(model);
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (String code : model.getProductCodes()) {
-
-                // isPublishedProducts里面存放的已经是该group下面的已经Approved并且未lock住的产品列表，所以下面逻辑不需要了
-//                if (!isPublishedProducts.containsKey(code)) {
-//                    continue;
-//                }
-
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
                 bulkQueryMap.put("common.fields.code", code);
@@ -211,22 +202,24 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
-                if (isPublishedProducts.containsKey(code) && !isPublishedProducts.get(code)) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
-                    if (model.getPlatformPid() != null) {
-                        bulkQueryMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
+                if (unPublishedProducts.contains(code)) {
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishTime", DateTimeUtil.getNowTimeStamp());
+                    if (!StringUtils.isEmpty(model.getNumIId())) {
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
+                    }
+                    if (!StringUtils.isEmpty(model.getPlatformPid())) {
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
                     }
                 }
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P"+model.getCartId() + ".pPublishError", "");
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
+                if (bulkUpdateMap.size() > 0) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -249,7 +242,7 @@ public class ProductGroupService extends BaseService {
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
      * @return boolean 更新结果状态
      */
-    public boolean updateUploadErrorStatus (CmsBtProductGroupModel model) {
+    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model) {
 
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (model.getProductCodes().size() > 0) {
@@ -265,10 +258,10 @@ public class ProductGroupService extends BaseService {
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 // 设置pPublishError：如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
 
                 // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
+                if (bulkUpdateMap.size() > 0) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -287,72 +280,11 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * USJoi上新成功时更新该model对应的所有和上新有关的状态信息
+     * 获取指定product group下所有产品中，没有上新过的产品code列表
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel updateUSJoiGroupsPlatformStatus (CmsBtProductGroupModel model) {
-
-        // 更新cms_bt_product_groups表
-        this.update(model);
-
-        // 如果传入的groups包含code列表,则同时更新code的状态
-        if (model.getProductCodes().size() > 0) {
-
-            // 获取未上新过的产品信息,用于判断是否需要更新publishTime
-            List<CmsBtProductModel> unPublishedProducts = getUnPublishedProducts(model);
-            Map<String, Boolean> isPublishedProducts = new HashMap<>();
-            if (ListUtils.notNull(unPublishedProducts)) {
-                // 未上新过（第一次上新）
-                unPublishedProducts.stream().map(p -> isPublishedProducts.put(p.getCommon().getFields().getCode(), false));
-            }
-
-            // 批量更新产品的平台状态.
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (String code : model.getProductCodes()) {
-
-                // 设置批量更新条件
-                HashMap<String, Object> bulkQueryMap = new HashMap<>();
-                bulkQueryMap.put("common.fields.code", code);
-
-                // 设置更新值
-                HashMap<String, Object> bulkUpdateMap = new HashMap<>();
-                if (model.getPlatformStatus() != null) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
-                }
-                // 设置第一次上新的时候需要更新的值
-                if (isPublishedProducts.containsKey(code) && !isPublishedProducts.get(code)) {
-                    bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishTime", model.getPublishTime());
-                }
-                // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
-                // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
-                bulkQueryMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
-
-                // 设定批量更新条件和值
-                if (bulkQueryMap.size() > 0) {
-                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-                    bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-                    bulkUpdateModel.setQueryMap(bulkQueryMap);
-                    bulkList.add(bulkUpdateModel);
-                }
-            }
-
-            // 批量更新product表
-            if (bulkList.size() > 0) {
-                // 因为是回写产品状态，找不到产品时也不插入新错误的记录
-                cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
-            }
-        }
-
-        return model;
-    }
-
-    /**
-     * 获取指定product group下所有产品中，没有上新过的产品列表
-     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
-     * @return CmsBtProductGroupModel
-     */
-    public List<CmsBtProductModel> getUnPublishedProducts(CmsBtProductGroupModel model) {
+    public List<String> getUnPublishedProducts(CmsBtProductGroupModel model) {
         // 获取未上新过的产品信息,用于判断是否需要更新publishTime
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
@@ -362,7 +294,12 @@ public class ProductGroupService extends BaseService {
         queryObject.setProjection("{\"common.fields.code\": 1}");
         List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, model.getChannelId());
 
-        return products;
+        List<String> unPublishedProducts = new ArrayList<>();
+        if (ListUtils.notNull(products)) {
+            products.stream().map(p -> unPublishedProducts.add(p.getCommon().getFields().getCode()));
+        }
+
+        return unPublishedProducts;
     }
 
     /**

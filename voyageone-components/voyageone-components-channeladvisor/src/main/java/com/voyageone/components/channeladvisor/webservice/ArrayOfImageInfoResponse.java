@@ -1,8 +1,4 @@
-
 package com.voyageone.components.channeladvisor.webservice;
-
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.ImageInfoResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

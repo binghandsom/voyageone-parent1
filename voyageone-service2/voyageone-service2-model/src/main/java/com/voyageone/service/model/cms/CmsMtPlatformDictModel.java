@@ -17,8 +17,6 @@ public class CmsMtPlatformDictModel extends BaseModel {
 
     protected Integer cartId;
 
-    protected String cartName;
-
     protected String name;
 
     protected String value;
@@ -63,13 +61,5 @@ public class CmsMtPlatformDictModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
-    }
-
-    public String getCartName() {
-        return cartName;
-    }
-
-    public void setCartName(String cartName) {
-        this.cartName = cartName;
     }
 }

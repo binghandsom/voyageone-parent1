@@ -1,230 +1,248 @@
 <div class="product-shema-detail">
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
-            <div class="row wrapper">
+            <div class="wrapper">
                 <div class="container-fluid"  id="{{cartInfo.name}}1">
-                    <div class="col-md-8 form-group">
-                            <!----------------------------------check 状态------------------------------------------>
-                            <ul class="nav nav-pills">
-                                <li>
-                                    <span ng-class = "{tagFlag:vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
-                                        <i class="fa fa-check" ng-if="vm.checkFlag.translate == 1"></i>
-                                        <i class="fa fa-times" ng-if="vm.checkFlag.translate != 1"></i>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span ng-class = "{tagFlag:vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
-                                        <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
-                                        <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span ng-class = "{tagFlag:vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
-                                        <i class="fa fa-check" ng-if="vm.checkFlag.category == 1"></i>
-                                        <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span ng-class = "{tagFlag:!validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
-                                        <i class="fa fa-check" ng-if="vm.checkFlag.attribute = validSchema()"></i>
-                                        <i class="fa fa-times" ng-if="!validSchema()"></i>
-                                    </span>
-                                </li>
-                            </ul>
-                            <div class="text-warnings" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
-                                <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
-                            </div>
-                    </div>
-                    <div class="col-md-4">
-                        <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
-                        <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
-                            <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE'|translate}}</button>
-                        </div>
-                        <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
-                            <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                    vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
-                        </div>
-                        <div class="pull-right text-warnings" style="padding-left:0px">
-                            <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
-                        </div>
-                    </div>
-                    <div class="col-sm-7">
-
-                        <div class="form-group ng-scope ng-isolate-scope">
-                            <label class="col-md-2 control-label">
-                                 <span class="label m-r-sm m-l" ng-class="{'label-primary': vm.platform.pStatus == 'OnSale','label-warning': vm.platform.pStatus == 'InStock',
-                                 'label-default': vm.platform.pStatus == 'WaitingPublish' || vm.platform == null,'label-danger': vm.platform.pStatus == 'Failed'}">
-                                    &nbsp;{{cartInfo.name}}&nbsp;
-                                </span>
-                            </label>
-                            <div class="col-md-8">
-                                <span class="m-r-sm" ng-if="vm.platform.pNumIId">&nbsp;
-                                    <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
-                                </span>&nbsp;
-                                <span class="m-r-sm" ng-if="vm.platform.pStatus == 'Failed'" title="{{vm.platform.pPublishError}}">&nbsp;
-                                    {{vm.platform.pPublishError | limitTo: 30}}{{vm.platform.pPublishError.length > 30 ? '...' : ''}}
-                                </span>&nbsp;
-
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
-                                    {{ cartInfo.value==27?"聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。":"" }}
+                    <div class="row">
+                        <div class="col-md-8 form-group">
+                                <!----------------------------------check 状态------------------------------------------>
+                                <ul class="nav nav-pills">
+                                    <li>
+                                        <span ng-class = "{tagFlag:vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
+                                            <i class="fa fa-check" ng-if="vm.checkFlag.translate == 1"></i>
+                                            <i class="fa fa-times" ng-if="vm.checkFlag.translate != 1"></i>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span ng-class = "{tagFlag:vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
+                                            <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
+                                            <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span ng-class = "{tagFlag:vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
+                                            <i class="fa fa-check" ng-if="vm.checkFlag.category == 1"></i>
+                                            <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span ng-class = "{tagFlag:!validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
+                                            <i class="fa fa-check" ng-if="vm.checkFlag.attribute = validSchema()"></i>
+                                            <i class="fa fa-times" ng-if="!validSchema()"></i>
+                                        </span>
+                                    </li>
+                                </ul>
+                                <div class="text-warnings" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
                                 </div>
+                        </div>
+                        <div class="col-md-4">
+                            <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
+                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
+                                <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE'|translate}}</button>
+                            </div>
+                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
+                                <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
+                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                            </div>
+                            <div class="pull-right text-warnings" style="padding-left:0px">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
                             </div>
                         </div>
-                        <div class="form-group ng-scope ng-isolate-scope">
-                            <label class="col-md-2 control-label">Group Info</label>
-                            <div class="col-md-8">
-                                <div class="row">
-                                    <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
-                                        <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
-                                            <img src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
-                                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label">
+                                     <span class="label m-r-sm m-l" ng-class="{'label-primary': vm.platform.pStatus == 'OnSale','label-warning': vm.platform.pStatus == 'InStock',
+                                     'label-default': vm.platform.pStatus == 'WaitingPublish' || vm.platform == null,'label-danger': vm.platform.pStatus == 'Failed'}">
+                                        &nbsp;{{cartInfo.name}}&nbsp;
+                                    </span>
+                                </label>
+                                <div class="col-md-8">
+                                    <span class="m-r-sm" ng-if="vm.platform.pNumIId">&nbsp;
+                                        <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
+                                    </span>&nbsp;
+                                    <span class="m-r-sm" ng-if="vm.platform.pStatus == 'Failed'" title="{{vm.platform.pPublishError}}">&nbsp;
+                                        {{vm.platform.pPublishError | limitTo: 30}}{{vm.platform.pPublishError.length > 30 ? '...' : ''}}
+                                    </span>&nbsp;
+
+                                    <div class="text-warnings" style="padding-left:0px">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
+                                        {{ cartInfo.value==27?"聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。":"" }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group ng-scope ng-isolate-scope">
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label">Group Info</label>
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
+                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
+                                                <img src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row form-group">
                                 <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
-                            </button>
-                            <div class="col-md-8">
-                                <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group ng-scope ng-isolate-scope" ng-if="cartInfo.value != 27">
-                            <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
-                            </button>
-                            <div class="col-md-8">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                       <span class="label label-info" ng-repeat="item in vm.sellerCats" style="margin-left: 10px;">{{item.cName}}</span>
+                                </button>
+                                <div class="col-md-8">
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
+                                    <div class="text-warnings" style="padding-left:0px">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
                                 </div>
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;切换平台店铺内分类将影响整个Group中的所有商品，请慎重！
+                            </div>
+                            <div class="row form-group" ng-if="cartInfo.value != 27">
+                                <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
+                                </button>
+                                <div class="col-md-8">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                           <span class="label label-info" ng-repeat="item in vm.sellerCats" style="margin-left: 10px;">{{item.cName}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-warnings" style="padding-left:0px">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;切换平台店铺内分类将影响整个Group中的所有商品，请慎重！
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group ng-scope ng-isolate-scope">
-                            <label class="col-md-2 control-label">model</label>
-                            <div class="col-md-8">
-                                <span>
-                                    <a ng-href="#/group/detail/{vm.mastData.groupId}}" title="{{vm.mastData.model}}"
-                                       target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length > 30 ? '...' : ''}}
-                                    </a>
-                                </span>
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;拆分Group 或 切换主商品，请点击以上Number ID，进入Group详情画面编辑
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label">model</label>
+                                <div class="col-md-8">
+                                    <span>
+                                        <a ng-href="#/group/detail/{vm.mastData.groupId}}" title="{{vm.mastData.model}}"
+                                           target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length > 30 ? '...' : ''}}
+                                        </a>
+                                    </span>
+                                    <div class="text-warnings" style="padding-left:0px">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;拆分Group 或 切换主商品，请点击以上Number ID，进入Group详情画面编辑
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group ng-scope ng-isolate-scope">
-                            <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
-                            <div class="col-md-8">
-                                <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
-                                <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
+                                <div class="col-md-8">
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
+                                    <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group ng-scope ng-isolate-scope">
+                            <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_NAME"|translate}}</label>
-                            <div class="col-md-8">
-                                <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productName" disabled>
+                                <div class="col-md-8">
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productName" disabled>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group ng-scope ng-isolate-scope">
-                            <label class="col-md-2 control-label">{{"TXT_BRAND"|translate}}</label>
-                            <div class="col-md-8">
-                                <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
-                                <div class="text-warnings" style="padding-left:0px">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，然后联系IT处理
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label">{{"TXT_BRAND"|translate}}</label>
+                                <div class="col-md-8">
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
+                                    <div class="text-warnings" style="padding-left:0px">
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，然后联系IT处理
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!----------------------------------------右侧悬浮框-------------------------------------------->
-                    <div class="col-sm-2" style="float: right;">
-                        <nav class="bs-docs-sidebar">
-                            <h3>导航栏</h3>
-                            <ul class="nav bs-docs-sidenav">
-                                <li class="">
-                                    <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
-                                </li>
-                                <li class="">
-                                    <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">平台属性</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">sku属性</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-
-                </div>
-
-                <hr>
-                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
-                <!------------------------------------------------以下为产品Schema------------------------------------------------------->
-
-                <div class="container-fluid" id="{{cartInfo.name}}2">
-                    <div class="col-sm-7">
-                        <ng-form name="schemaForm" novalidate>
-                            <schema data="vm.platform.schemaFields.item"></schema>
-                            <schema data="vm.platform.schemaFields.product"></schema>
-                        </ng-form>
+                        <!----------------------------------------右侧悬浮框-------------------------------------------->
+                        <div class="col-sm-2" style="float: right;">
+                            <nav class="bs-docs-sidebar" drag>
+                                <h3 drag-handle>导航栏</h3>
+                                <ul class="nav bs-docs-sidenav">
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">商品属性</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">产品属性</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor(4,1000)">sku属性</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
+                <ng-form name="schemaForm" novalidate>
 
+                    <hr>
+                    <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</span>
+                <!------------------------------------------------以下为商品Schema------------------------------------------------------->
+                    <div class="container-fluid" id="{{cartInfo.name}}2">
+                        <div class="row">
+                            <div class="col-sm-9" ng-if="vm.platform.schemaFields.item">
+                                <schema data="vm.platform.schemaFields.item"></schema>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                    <!------------------------------------------------以下为产品Schema------------------------------------------------------->
+                    <div class="container-fluid" id="{{cartInfo.name}}3">
+                        <div class="row">
+                            <div class="col-sm-9" ng-if="vm.platform.schemaFields.product">
+                                <schema data="vm.platform.schemaFields.product"></schema>
+                            </div>
+                        </div>
+                    </div>
+
+                </ng-form>
                 <br>
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Sku属性</span>
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
-                <div class="container-fluid" id="{{cartInfo.name}}3">
+                <div class="container-fluid" id="{{cartInfo.name}}4">
                     <div class="table-responsive">
                         <ng-form name="skuForm" novalidate>
                             <table class="table text-left">
                                 <thead>
-                                <tr>
-                                    <th><input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag">All</th>
-                                    <th class="text-center">skuCode</th>
-                                    <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
-                                    <th class="text-center">size</th>
-                                    <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
-                                    <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
-                                    <th class="text-center">容量/尺码</th>
-                                    <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
-                                    <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
-                                    <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
-                                </tr>
+                                    <tr>
+                                        <th><input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag">All</th>
+                                        <th class="text-center">skuCode</th>
+                                        <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
+                                        <th class="text-center">size</th>
+                                        <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                        <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
+                                        <th class="text-center">容量/尺码</th>
+                                        <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
+                                        <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                        <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="entity in vm.platform.skus" class="ng-scope">
-                                    <td><input class="sku_check" type="checkbox" ng-model="entity.isSale"></td>
-                                    <td class="text-center">{{entity.skuCode}}</td>
-                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
-                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                    <td class="text-center">
-                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
-                                        <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
-                                    </td>
-                                    <td class="text-center">{{entity.priceRetail}}</td>
-                                    <td class="text-center"></td>
-                                    <td class="text-center" ng-if="cartInfo.value == 27">
-                                        <select ng-model="entity.property" class="form-control">
-                                            <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
-                                            <option value="FORMAL">正装</option>
-                                            <option value="MS">中小样</option>
-                                        </select>
-                                    </td>
-                                    <td class="text-center">
-                                        <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
-                                        <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required></td>
-                                    <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
-                                </tr>
+                                    <tr>
+                                        <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10"></td>
+                                    </tr>
+                                    <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
+                                        <td><input class="sku_check" type="checkbox" ng-model="entity.isSale"></td>
+                                        <td class="text-center">{{entity.skuCode}}</td>
+                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
+                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                        <td class="text-center">
+                                            <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
+                                        </td>
+                                        <td class="text-center">{{entity.priceRetail}}</td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center" ng-if="cartInfo.value == 27">
+                                            <select ng-model="entity.property" class="form-control">
+                                                <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
+                                                <option value="FORMAL">正装</option>
+                                                <option value="MS">中小样</option>
+                                            </select>
+                                        </td>
+                                        <td class="text-center">
+                                            <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required></td>
+                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </ng-form>

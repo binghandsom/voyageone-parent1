@@ -13,17 +13,14 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseAppService;
@@ -41,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -57,8 +55,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CommonPropService commonPropService;
     @Autowired
     private ProductService productService;
-    @Autowired
-    private ProductGroupService productGroupService;
     @Autowired
     private FeedCustomPropService feedCustomPropService;
     @Autowired
@@ -156,41 +152,26 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
-     * 这里为了效率考虑，不检索全部数据，只检索1000件（考虑每页最多显示100条，平均每个group最多有10个code）
      */
-    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int limitSize) {
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
-        queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
         if (searchValue.getProductPageNum() > 0) {
             queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
-            if (limitSize > 0) {
-                queryObject.setLimit(limitSize);
-            } else {
-                queryObject.setLimit(searchValue.getProductPageSize());
-            }
+            queryObject.setLimit(searchValue.getProductPageSize());
         }
+
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", userInfo.getSelChannelId(), queryObject.toString()));
         }
-        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
-        if (prodList == null || prodList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodList为空 查询条件=：" + queryObject.toString());
+        List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), queryObject);
+        if (prodObjList == null || prodObjList.isEmpty()) {
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
-
-        // 取得符合条件的产品code列表
-        List<String> codeList = new ArrayList<>(prodList.size());
-        for (CmsBtProductModel prodObj : prodList) {
-            if (prodObj.getCommon() == null) {
-                continue;
-            }
-            CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-            if (field != null && field.getCode() != null) {
-                codeList.add(field.getCode());
-            }
-        }
+        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
 
@@ -210,23 +191,14 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
         }
 
-        List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
-        if (prodList == null || prodList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodList为空 查询条件(session)=：" + queryObject.toString());
+        List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
+        if (prodObjList == null || prodObjList.isEmpty()) {
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
         // 取得符合条件的产品code列表
-        List<String> codeList = new ArrayList<>(prodList.size());
-        for (CmsBtProductModel prodObj : prodList) {
-            if (prodObj.getCommon() == null) {
-                continue;
-            }
-            CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-            if (field != null && field.getCode() != null) {
-                codeList.add(field.getCode());
-            }
-        }
+        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
 
@@ -236,15 +208,19 @@ public class CmsAdvanceSearchService extends BaseAppService {
     public List<Long> getProductIdList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
         if (searchValue == null) {
+            $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'prodId':1,'_id':0}");
+        if ($isDebugEnabled()) {
+            $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
+        }
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null || prodList.isEmpty()) {
-            $warn("CmsSearchAdvanceService.getProductIdList prodList为空");
+            $warn("高级检索 getProductIdList prodList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
@@ -257,14 +233,17 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 获取当前页的product列表
+     * 获取当前页的product列表信息
      */
     public List<CmsBtProductBean> getProductInfoList(List<String> prodCodeList, CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        if (prodCodeList == null || prodCodeList.isEmpty()) {
+            $warn("CmsAdvanceSearchService.getProductInfoList prodCodeList为空");
+            return new ArrayList<>(0);
+        }
         // 最后再获取本页实际产品信息
         JomgoQuery queryObject = new JomgoQuery();
-        String[] codeArr = new String[prodCodeList.size()];
-        codeArr = prodCodeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}");
+        queryObject.setQuery("{'common.fields.code':{$in:#}}");
+        queryObject.setParameters(prodCodeList);
 
         String plusStr = (String) cmsSessionBean.getAttribute("_adv_search_props_searchItems");
         if (plusStr == null) {
@@ -272,21 +251,22 @@ public class CmsAdvanceSearchService extends BaseAppService {
         }
         String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
         queryObject.setProjection(projStr);
-        queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
         if (prodInfoList == null || prodInfoList.isEmpty()) {
-            $warn("CmsSearchAdvanceService.getProductInfoList prodInfoList");
+            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果 param list=" + prodCodeList.toString());
             return new ArrayList<>(0);
         }
         return prodInfoList;
     }
 
     /**
-     * 检查翻译状态
+     * 检查翻译状态/设置状态，由数值转换为文字描述
      */
     public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
+            $warn("CmsAdvanceSearchService.checkProcStatus productList为空");
             return;
         }
         List<TypeBean> transStatusList = TypeConfigEnums.MastType.translationStatus.getList(lang);
@@ -346,44 +326,44 @@ public class CmsAdvanceSearchService extends BaseAppService {
         aggrList.add(new JomgoAggregate(gp2));
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList Aggregate统计无结果");
             return 0;
         }
         Map rsMap = rs.get(0);
         if (rsMap == null || rsMap.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList 统计查询无结果");
             return 0;
         }
         return (Integer) rsMap.get("count");
     }
 
     /**
-     * 返回当前页的group列表，这里是分页查询
+     * 返回当前页的group列表，这里是分页查询<br>
+     * 这里不是直接去检索group表，而是根据CmsBtProductModel中的mainProductCode过滤而来
+     * 注意要过滤重复code
      */
-    public List<String> getGroupCodeList(List<String> codeList, UserSessionBean userInfo, CmsSearchInfoBean2 searchValue, int cartId) {
-        // 在group表中过滤platforms相关信息
-        JomgoQuery qrpQuy = new JomgoQuery();
-        qrpQuy.setQuery("{'cartId':#,'productCodes':{$in:#}}");
-        qrpQuy.setParameters(cartId, codeList);
-        qrpQuy.setProjection("{'_id':0,'mainProductCode':1}");
-        if (searchValue.getGroupPageNum() > 0) {
-            qrpQuy.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
-            qrpQuy.setLimit(searchValue.getGroupPageSize());
+    public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        List<JomgoAggregate> aggrList = new ArrayList<>();
+        String qry1 = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        if (qry1 != null && qry1.length() > 0) {
+            aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
+        }
+        String sortStr = advSearchQueryService.getSortValue(searchValue, cmsSessionBean);
+        if (sortStr != null && sortStr.length() > 0) {
+            aggrList.add(new JomgoAggregate("{ $sort : " + sortStr + " }"));
+        }
+        String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode' } }";
+        aggrList.add(new JomgoAggregate(gp1));
+        aggrList.add(new JomgoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
+        aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+
+        List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
+        if (rs == null || rs.isEmpty()) {
+            $warn("高级检索 getGroupCodeList 统计无结果 param=" + searchValue.toString());
+            return null;
         }
 
-        List<CmsBtProductGroupModel> grpList = productGroupService.getList(userInfo.getSelChannelId(), qrpQuy);
-        if (grpList == null || grpList.isEmpty()) {
-            $warn("高级检索 getProductCodeList grpList为空 查询条件=：" + qrpQuy.toString());
-            return new ArrayList<String>(0);
-        }
-
-        // 将上面查询的结果放到一个List中,以返回code
-        List<String> grpCodeList = new ArrayList<String>(grpList.size());
-        for (CmsBtProductGroupModel grpObj : grpList) {
-            String pCd = grpObj.getMainProductCode();
-            grpCodeList.add(pCd);
-        }
-        return grpCodeList;
+        return rs.stream().map(rsObj -> (String) rsObj.get("_id")).collect(Collectors.toList());
     }
 
     /**

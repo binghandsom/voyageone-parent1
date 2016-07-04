@@ -53,10 +53,9 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     Integer pageSize = 1;
 
-    String templatePath = "/usr/feed.xlsx";
+    String templatePath = CmsBtExportTaskService.templatePath;
 
-    String outPath = "/usr/";
-
+    String outPath = CmsBtExportTaskService.savePath;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -64,6 +63,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
         CmsBtExportTaskModel cmsBtExportTaskModel = new CmsBtExportTaskModel();
         cmsBtExportTaskModel.setModified(new Date());
         cmsBtExportTaskModel.setModifier(getTaskName());
+        messageMap.remove("created");
+        messageMap.remove("modified");
         BeanUtils.populate(cmsBtExportTaskModel, messageMap);
         Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
         Long cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * feed info Service
@@ -179,8 +181,7 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取brand
-        if(searchValue.get("brand") != null)
-        {
+        if (searchValue.get("brand") != null) {
             List<String> brands = (List<String>) searchValue.get("brand");
             if (brands.size() > 0) {
                 List<String> orSearch = new ArrayList<>();
@@ -229,10 +230,22 @@ public class FeedInfoService extends BaseService {
             result.append("},");
         }
 
+        //
+        if (searchValue.get("ninStatus") != null) {
+            List<Integer> ninList = (List<Integer>) searchValue.get("ninStatus");
+            result.append("{updFlg:{$nin:[");
+            result.append(ninList.stream().map(integer -> integer.toString()).collect(Collectors.joining(",")));
+            result.append("]}},");
+        }
+
         if (!StringUtils.isEmpty(result.toString())) {
             return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
         } else {
             return "";
         }
+    }
+
+    public WriteResult updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
+        return cmsBtFeedInfoDao.updateAllUpdFlg(selChannelId, searchQuery, status, modifier);
     }
 }

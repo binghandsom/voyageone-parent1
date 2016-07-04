@@ -5,7 +5,7 @@
  * @User:    tony-piao
  * @Version: 0.1.0, 2016-5-24
  */
-angular.module("voyageone.angular.directives", []).directive("goTop", function() {
+angular.module("voyageone.angular.directives").directive("goTop", function() {
     return {
         restrict: "A",
         link: function(scope, element,attrs) {

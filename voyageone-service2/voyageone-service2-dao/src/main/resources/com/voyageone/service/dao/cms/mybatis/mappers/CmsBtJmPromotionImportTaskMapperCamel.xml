@@ -5,7 +5,7 @@
     <sql id="Base_Column_List" >
         `id`, `cms_bt_jm_promotion_id`, `is_import`, `file_name`, `error_msg`, `success_rows`, 
         `failures_rows`, `failures_file_Name`, `error_code`, `begin_time`, `end_time`, `creater`, 
-        `created`
+        `created`, `origin_file_name`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -52,6 +52,9 @@
                 `creater`,
             </if>
             `created`,
+            <if test="originFileName != null" >
+                `origin_file_name`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="cmsBtJmPromotionId != null" >
@@ -92,6 +95,9 @@
             </if>
             <if test="created != null" >
                 #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="originFileName != null" >
+                #{originFileName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -134,6 +140,9 @@
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="originFileName != null" >
+                `origin_file_name` = #{originFileName,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -185,6 +194,9 @@
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
+            <if test="originFileName != null" >
+                and `origin_file_name` = #{originFileName,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -228,6 +240,9 @@
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="originFileName != null" >
+                and `origin_file_name` = #{originFileName,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

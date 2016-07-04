@@ -50,23 +50,18 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (CmsBtProductModel prodObj : prodList) {
             // 对每个产品统计其sku数据
-            String prodCode = prodObj.getFields().getCode();
-            List<CmsBtProductModel_Sku> skusList = prodObj.getSkus();
+            String prodCode = prodObj.getCommon().getFields().getCode();
+            List<CmsBtProductModel_Sku> skusList = prodObj.getCommon().getSkus();
             if (skusList == null || skusList.isEmpty()) {
                 $warn(String.format("CmsFindProdOrdersInfoService 该产品无sku数据！ + channel_id=%s, code=%s", channelId, prodCode));
                 continue;
             }
 
-            List<Integer> cartList = new ArrayList<>();
+            List<Integer> cartList2 = prodObj.getCartIdList();
             List<String> skuCodeList = new ArrayList<>();
             skusList.forEach(skuObj -> {
                 skuCodeList.add(skuObj.getSkuCode());
-                cartList.addAll(skuObj.getSkuCarts());
             });
-            List<Integer> cartList2 = cartList.stream().distinct().collect(Collectors.toList());
-            if (cartList.isEmpty() || cartList2.isEmpty()) {
-                continue;
-            }
 
             Map<String, Object> salesMap = new HashMap<>();
             List<Map<String, Object>> skuSum7List = new ArrayList<>();

@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import com.voyageone.common.util.JsonUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -55,7 +57,9 @@ public class CmsSearchInfoBean2 implements Serializable {
     private int shopCatStatus = 0;
 
     // 价格变动查询用标志位
-    private int priceChgFlg = 0;
+    private String priceChgFlg = null;
+    // 价格比较查询用标志位
+    private String priceDiffFlg = null;
     private String propertyStatus;
     private int hasErrorFlg = 0;
 
@@ -82,8 +86,6 @@ public class CmsSearchInfoBean2 implements Serializable {
     private int fileType = 0;
 
     // ** 其它未定
-    // 价格比较查询用标志位
-    private int priceDiffFlg = 0;
     // MINI MALL 店铺时查询原始CHANNEL
     private String orgChaId = null;
 
@@ -114,19 +116,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.transStsFlg = transStsFlg;
     }
 
-    public int getPriceChgFlg() {
+    public String getPriceChgFlg() {
         return priceChgFlg;
     }
 
-    public void setPriceChgFlg(int priceChgFlg) {
+    public void setPriceChgFlg(String priceChgFlg) {
         this.priceChgFlg = priceChgFlg;
     }
 
-    public int getPriceDiffFlg() {
+    public String getPriceDiffFlg() {
         return priceDiffFlg;
     }
 
-    public void setPriceDiffFlg(int priceDiffFlg) {
+    public void setPriceDiffFlg(String priceDiffFlg) {
         this.priceDiffFlg = priceDiffFlg;
     }
 
@@ -481,4 +483,10 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
+    }
+
 }

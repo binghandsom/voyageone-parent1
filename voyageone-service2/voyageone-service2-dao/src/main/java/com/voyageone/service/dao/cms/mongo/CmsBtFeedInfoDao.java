@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
@@ -62,6 +63,12 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         WriteResult updateRes = mongoTemplate.updateMulti("{updFlg: 1}", String.format("{ $set: {updFlg: %d}}", updFlg),
                 getCollectionName(channelId));
         return updateRes.getN();
+    }
+
+    public WriteResult updateAllUpdFlg(String channelId, String strQuery, int updFlg, String modifier){
+        WriteResult updateRes = mongoTemplate.updateMulti(strQuery, String.format("{ $set: {updFlg: %d,modified:'%s',modifier:'%s'}}", updFlg,DateTimeUtil.getNowTimeStamp(),modifier),
+                getCollectionName(channelId));
+        return updateRes;
     }
 
     /**

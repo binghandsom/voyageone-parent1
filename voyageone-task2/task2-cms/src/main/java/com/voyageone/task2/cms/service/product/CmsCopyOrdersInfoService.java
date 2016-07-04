@@ -77,7 +77,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                 prodQryObj.setParameters(orderObj.get("sku"));
                 CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, (String) orderObj.get("channel_id"));
                 if (prodModel != null) {
-                    String productCode = prodModel.getFields().getCode();
+                    String productCode = prodModel.getCommon().getFields().getCode();
                     updateValue.put("prodCode", productCode);
                     // add prodCode
                     if (!prodCodeChannelMap.containsKey(channelId)) {

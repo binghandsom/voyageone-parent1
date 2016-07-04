@@ -1,6 +1,6 @@
 /**
  * @author tony-piao
- * 京东 & 聚美 产品概述（schema）
+ * 京东 & 聚美 & 天猫国际 产品概述（schema）
  */
 define([
     'cms'
@@ -39,18 +39,22 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
+                    //监控税号和翻译状态
+                    var checkFlag = scope.$watch("productInfo.checkFlag",function(){
+                        scope.vm.checkFlag.translate = scope.productInfo.translateStatus;
+                        scope.vm.checkFlag.tax = scope.productInfo.hsCodeStatus;
+                    });
 
-/*                    var masterCategory = scope.$watch("productInfo.masterCategory",function(data){
+                    //监控主类目
+                    var masterCategory = scope.$watch("productInfo.masterCategory",function(){
+                        getplatformData();
+                    });
+                }
 
-                        // 没有就继续等待
-                        if (!data){
-                            return;
-                        }
-
-                        alert(scope.cartInfo.value);
-
-                    });*/
-
+                /**
+                 * 构造平台数据
+                 */
+                function getplatformData(){
                     productDetailService.getProductPlatform({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
@@ -64,11 +68,8 @@ define([
                         }
 
                         _.each(scope.vm.mastData.skus,function(mSku){
-                                scope.vm.skuTemp[mSku.skuCode] = mSku;
+                            scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
-
-                        scope.vm.checkFlag.translate = scope.vm.mastData.translateStatus == null ? 0 : scope.vm.mastData.translateStatus;
-                        scope.vm.checkFlag.tax = scope.vm.mastData.hsCodeStatus == null ? 0 : scope.vm.mastData.hsCodeStatus;
 
                     });
 
@@ -128,7 +129,7 @@ define([
                     scope.vm.sellerCats.forEach(function(element){
                         selectedIds[element.cId]=true;
                     });
-                    var selList = [{"code": scope.productInfo.productDetails.productInfo.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
+                    var selList = [{"code": scope.vm.mastData.productCode, "sellerCats":scope.vm.sellerCats,"cartId":scope.cartInfo.value,"selectedIds":selectedIds,plateSchema:true}];
                     openAddChannelCategoryEdit(selList).then(function (context) {
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
@@ -202,7 +203,7 @@ define([
                     var offsetTop = 0;
                     if(index != 1)
                         offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
-                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                    $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
             }
         };
