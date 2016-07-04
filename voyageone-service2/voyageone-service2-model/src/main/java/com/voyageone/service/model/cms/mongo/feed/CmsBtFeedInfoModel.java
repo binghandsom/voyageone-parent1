@@ -52,6 +52,9 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String material;
     private String message="";
 
+    private String relationshipType;
+    private String variationTheme;
+
     public String getCategory() {
         return category;
     }
@@ -330,5 +333,21 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getRelationshipType() {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(String relationshipType) {
+        this.relationshipType = relationshipType;
+    }
+
+    public String getVariationTheme() {
+        return variationTheme;
+    }
+
+    public void setVariationTheme(String variationTheme) {
+        this.variationTheme = variationTheme;
     }
 }
