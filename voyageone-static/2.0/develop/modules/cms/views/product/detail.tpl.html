@@ -40,15 +40,21 @@
             </uib-tab>
 
             <!---------------------------------------------------feed 产品详情页面----------------------------------------------->
-            <uib-tab  active="ctrl.feed">
+<!--            <uib-tab  active="ctrl.feed">
                 <tab-heading>Feed详情</tab-heading>
                 <feed-schema product-info="ctrl.product"></feed-schema>
-            </uib-tab>
+            </uib-tab>-->
 
             <!---------------------------------------------------聚美 & 京东 & 天猫国际 产品详情页面------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+<!--            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
                 <tab-heading>{{platformType.name}}详情</tab-heading>
                 <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
+            </uib-tab>-->
+
+            <!---------------------------------------------------产品详情页面------------------------------------------->
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter2" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="true">
+                <tab-heading>{{platformType.name}}详情</tab-heading>
+                <jgj-schema product-info="ctrl.product" cart-info="platformType"></jgj-schema>
             </uib-tab>
         </uib-tabset>
     </div>

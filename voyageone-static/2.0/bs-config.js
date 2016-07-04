@@ -9,11 +9,11 @@ module.exports = {
         baseDir: "develop",
         index: "login.html"
     },
-    files: [
-        'develop/static/**/*.css',
-        'develop/modules/**/*.{html, js, css}',
-        'develop/components/**/*.js'
-    ],
+/*    files: [
+        'develop/static/!**!/!*.css',
+        'develop/modules/!**!/!*.{html, js, css}',
+        'develop/components/!**!/!*.js'
+    ],*/
     notify: false,
     browser: 'google chrome',
     middleware: [
@@ -24,9 +24,4 @@ module.exports = {
             return proxyMiddleware(req, res, next);
         }
     ]
- /*   files: [
-        'develop/static/!**!/!*.css',
-        'develop/modules/!**!/!*.{html, js, css}',
-        'develop/components/!**!/!*.js'
-    ],*/
 };
