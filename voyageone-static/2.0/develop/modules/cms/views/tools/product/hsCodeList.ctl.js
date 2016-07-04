@@ -25,7 +25,7 @@ define([
             this.searchInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
-                hsCodeStatus: "0",
+                hsCodeStatus: "1",
                 searchCondition: ""
             };
         }
@@ -41,7 +41,6 @@ define([
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
                     self.hsCodeValue = res.data.hsCodeValue;
-                    console.log(self.hsSettedData);
                 })
             },
             get: function (page) {
