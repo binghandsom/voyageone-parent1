@@ -343,11 +343,10 @@
                         <tr ng-repeat="task in ctrl.vm.taskList">
                             <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus)}}</td>
                             <td class="mfb-xt text-center v-middle">
-                                <a ng-if="task.image1" ng-click=`"ctrl.popUpImages(task)">
-                                <img alt="ProductImage v-middle" class="thumb m-b-xs" image="{{task.image1}}"></a>
+                                <img alt="ProductImage v-middle" class="thumb m-b-xs" image="{{task.image1}}">
                             </td>
                             <td class="mfb-xt text-center v-middle">{{task.feedCategory}}</td>
-                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)">{{task.code}}</a></td>
+                            <td class="mfb-xt text-center v-middle"><a class="" ng-click="ctrl.get(task)">{{task.code}}</a></td>
                             <td class="mfb-xt text-center v-middle">{{task.productName}}</td>
                             <td class="mfb-xt text-center v-middle">{{task.catPath}}</td>
                             <td class="mfb-xt text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd"}}</td>
