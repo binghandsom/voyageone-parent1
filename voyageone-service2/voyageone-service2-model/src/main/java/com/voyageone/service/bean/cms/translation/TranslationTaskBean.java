@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.cms.translation;
 
+import com.voyageone.service.bean.cms.CustomPropBean;
+
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ public class TranslationTaskBean {
     private String catPath;
 
     TranslationTaskBean_CommonFields commonFields;
-    List<TranslationTaskBean_CustomProps> customProps;
+    List<CustomPropBean> customProps;
 
 
     public long getProdId() {
@@ -44,11 +46,11 @@ public class TranslationTaskBean {
         this.commonFields = commonFields;
     }
 
-    public List<TranslationTaskBean_CustomProps> getCustomProps() {
+    public List<CustomPropBean> getCustomProps() {
         return customProps;
     }
 
-    public void setCustomProps(List<TranslationTaskBean_CustomProps> customProps) {
+    public void setCustomProps(List<CustomPropBean> customProps) {
         this.customProps = customProps;
     }
 

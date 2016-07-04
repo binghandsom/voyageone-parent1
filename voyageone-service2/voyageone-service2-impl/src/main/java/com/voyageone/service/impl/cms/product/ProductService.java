@@ -683,12 +683,12 @@ public class ProductService extends BaseService {
     public ProductForWmsBean getWmsProductsInfo(String channelId, String productSku, String[] projection) {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
-        if (projection != null && projection.length > 0) {
-            queryObject.setProjectionExt(projection);
-        }
+//        if (projection != null && projection.length > 0) {
+//            queryObject.setProjectionExt(projection);
+//        }
 
         if (!StringUtils.isEmpty(productSku)) {
-            queryObject.setQuery(String.format("{\"skus.skuCode\" : \"%s\" }", productSku));
+            queryObject.setQuery(String.format("{\"common.skus.skuCode\" : \"%s\" }", productSku));
         }
 
         ProductForWmsBean resultInfo = null;
@@ -780,29 +780,29 @@ public class ProductService extends BaseService {
                                                       String[] projection) {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
-        if (projection != null && projection.length > 0) {
-            queryObject.setProjectionExt(projection);
-        }
+//        if (projection != null && projection.length > 0) {
+//            queryObject.setProjectionExt(projection);
+//        }
 
         StringBuilder sbQuery = new StringBuilder();
 
         if (!StringUtils.isEmpty(skuIncludes)) {
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
+            sbQuery.append(MongoUtils.splicingValue("platforms.P"+cartId+".skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
         } else if (skuList != null && skuList.size() > 0) {
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray(new String[skuList.size()])));
+            sbQuery.append(MongoUtils.splicingValue("platforms.P"+cartId+".skus.skuCode", skuList.toArray(new String[skuList.size()])));
             sbQuery.append(",");
         }
 
         // 设定name的模糊查询
         if (!StringUtils.isEmpty(nameIncludes)) {
-            sbQuery.append(MongoUtils.splicingValue("fields.productNameEn", nameIncludes, "$regex"));
+            sbQuery.append(MongoUtils.splicingValue("common.fields.productNameEn", nameIncludes, "$regex"));
             sbQuery.append(",");
         }
 
         // 设定description的模糊查询
         if (!StringUtils.isEmpty(descriptionIncludes)) {
-            sbQuery.append(MongoUtils.splicingValue("fields.longDesEn", descriptionIncludes, "$regex"));
+            sbQuery.append(MongoUtils.splicingValue("common.fields.longDesEn", descriptionIncludes, "$regex"));
             sbQuery.append(",");
         }
 

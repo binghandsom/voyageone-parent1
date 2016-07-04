@@ -184,10 +184,13 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
 
-        List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
-        platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
-        platform.remove("schemaFields");
+        if(platform.get("schemaFields") !=null) {
+            List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
+
+            platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+            platform.remove("schemaFields");
+        }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
         return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true);
