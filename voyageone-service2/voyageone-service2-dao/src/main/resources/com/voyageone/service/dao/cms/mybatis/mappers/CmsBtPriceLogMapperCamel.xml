@@ -3,9 +3,9 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceLogDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPriceLogModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `product_id`, `code`, `sku`, `msrp_price`, `retail_price`, `sale_price`, 
-        `client_msrp_price`, `client_retail_price`, `client_net_price`, `comment`, `created`, 
-        `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `product_id`, `cart_id`, `code`, `sku`, `msrp_price`, `retail_price`, 
+        `sale_price`, `client_msrp_price`, `client_retail_price`, `client_net_price`, `comment`, 
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -23,6 +23,9 @@
             </if>
             <if test="productId != null" >
                 `product_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
             </if>
             <if test="code != null" >
                 `code`,
@@ -69,6 +72,9 @@
             </if>
             <if test="productId != null" >
                 #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
             </if>
             <if test="code != null" >
                 #{code,jdbcType=VARCHAR},
@@ -129,6 +135,9 @@
             </if>
             <if test="productId != null" >
                 `product_id` = #{productId,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
             <if test="code != null" >
                 `code` = #{code,jdbcType=VARCHAR},
@@ -192,6 +201,9 @@
             <if test="productId != null" >
                 and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
             <if test="code != null" >
                 and `code` = #{code,jdbcType=VARCHAR}
             </if>
@@ -244,6 +256,9 @@
             </if>
             <if test="productId != null" >
                 and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
             <if test="code != null" >
                 and `code` = #{code,jdbcType=VARCHAR}

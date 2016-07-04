@@ -9,8 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2016/6/14.
  * @version 2.0.0
@@ -23,7 +21,7 @@ public class CmsProductDetailServiceTest {
     CmsProductDetailService cmsProductDetailService;
     @Test
     public void testGetMastProductInfo() throws Exception {
-        Map<String, Object> result =  cmsProductDetailService.getMastProductInfo("010", 5938L);
+        Map<String, Object> result =  cmsProductDetailService.getMastProductInfo("010", 5938L, "cn");
         System.out.println(JacksonUtil.bean2Json(result));
     }
 }

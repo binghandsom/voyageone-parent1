@@ -1,6 +1,9 @@
 package com.voyageone.common.util;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
 import com.voyageone.common.configs.beans.ShopBean;
+import org.jongo.query.Query;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -58,4 +61,22 @@ public class JacksonUtilTest {
         System.out.println(JacksonUtil.bean2Json(aa));
     }
 
+    @Test
+    public void test222() {
+        String str = "{$and:[{$or:[{\"brand\":\"American West\"}]},{\"updFlg\":#}]}";
+        Object[] params = new Object[1];
+        params[0] = "aaa\"afasfd";
+        VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+        Query query = queryFactory.createQuery(str, params);
+        System.out.println(query.toDBObject().toMap());
+    }
+
+    @Test
+    public void test223() {
+        String str = "{$and:[{$or:[{\"brand\":\"American West\"}]},{\"updFlg\":#}]}";
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        jomgoQuery.setQuery(str);
+        jomgoQuery.addParameters("aaa\"afasfd");
+        System.out.println(jomgoQuery.getQueryMap());
+    }
 }

@@ -325,7 +325,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
         String code = "";
         try {
             /* fields */
-            CmsBtProductModel_Field fields = model.getFields();
+            CmsBtProductModel_Field fields = model.getCommon().getFields();
             code = fields.getCode();
 
             /* change fields.images */
@@ -397,8 +397,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param model model
      */
     private void approvedOperator(CmsBtProductModel model) {
-        if (CmsConstants.ProductStatus.Approved.name().equals(model.getFields().getStatus()))
-            productService.insertSxWorkLoad(model.getChannelId(), model, MODIFIER);
+        productService.insertSxWorkLoad(model.getChannelId(), model, MODIFIER);
     }
 
 

@@ -99,6 +99,8 @@ public class CmsConstants {
         String PRICE_SX_PRICE = ".sx_price";
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
+
+        String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
     }
 
     public interface DataAmount {
@@ -183,9 +185,19 @@ public class CmsConstants {
      * 上新的任务表中的上新状态值
      */
     public interface SxWorkloadPublishStatusNum {
-        int initNum = 0;
-        int okNum = 1;
-        int errorNum = 2;
+        int initNum = 0;        // 上新对象
+        int okNum = 1;          // 上新成功
+        int errorNum = 2;       // 上新失败
+        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+    }
+
+    public interface FeedUpdFlgStatus{
+        int New = 9; //新品
+        int Pending = 0; //等待导入
+        int Succeed = 1; //成功
+        int Fail = 2;     //导入失败
+        int NotIMport = 3; //不导入
+        int FeedErr = 8;  //Feed数据异常
     }
 
 }

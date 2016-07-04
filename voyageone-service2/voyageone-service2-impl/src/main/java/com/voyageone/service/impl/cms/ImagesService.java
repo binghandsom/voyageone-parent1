@@ -6,6 +6,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.service.dao.cms.CmsBtImagesDao;
+import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,11 @@ public class ImagesService extends BaseService {
 
     @Autowired
     private CmsBtImagesDao cmsBtImagesDao;
+    @Autowired
+    private CmsBtImagesDaoExt cmsBtImagesDaoExt;
 
     /**
      * 根据channelId和code返回对应的所有图片列表
-     *
-     * @param channelId
-     * @param code
-     * @return
      */
     public List<CmsBtImagesModel> selectImagesByCode(String channelId, String code) {
         Map<String, Object> map = new HashMap<>();
@@ -42,11 +41,6 @@ public class ImagesService extends BaseService {
 
     /**
      * 根据channelId和originalUrl返回对应的图片
-     *
-     * @param channelId
-     * @param code
-     * @param originalUrl
-     * @return
      */
     public CmsBtImagesModel selectImagesByOriginalUrl(String channelId, String code, String originalUrl) {
         Map<String, Object> map = new HashMap<>();
@@ -58,9 +52,6 @@ public class ImagesService extends BaseService {
 
     /**
      * 插入新图片
-     *
-     * @param record
-     * @return
      */
     public int insert(CmsBtImagesModel record) {
         return cmsBtImagesDao.insert(record);
@@ -68,9 +59,6 @@ public class ImagesService extends BaseService {
 
     /**
      * 更新图片
-     *
-     * @param record
-     * @return
      */
     public int update(CmsBtImagesModel record) {
         return cmsBtImagesDao.update(record);
@@ -78,9 +66,6 @@ public class ImagesService extends BaseService {
 
     /**
      * 根据code或者originalUrl取得该图片是否已经存在
-     *
-     * @param channelId
-     * @return
      */
     public CmsBtImagesModel getImageIsExists(String channelId, String code, String originalUrl) {
 
@@ -99,7 +84,7 @@ public class ImagesService extends BaseService {
                     ImgUtils.getImageName(image.getOriginalUrl()).equals(imageName))
                     .collect(Collectors.toList());
 
-            if (findImages.size() > 0) {
+            if (!findImages.isEmpty()) {
                 return findImages.get(0);
             }
         } else if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_URL.equals(imageCompareRule.getConfigValue1())) {
@@ -109,4 +94,10 @@ public class ImagesService extends BaseService {
         return null;
     }
 
+    /**
+     * getImagesByCode
+     */
+    public List<Map> getImagesByCode(String channelId, List<String> prodCodeList) {
+        return cmsBtImagesDaoExt.selectImagesByCode(channelId, prodCodeList);
+    }
 }

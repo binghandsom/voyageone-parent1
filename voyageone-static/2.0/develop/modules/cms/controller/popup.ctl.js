@@ -382,7 +382,9 @@ define([
             "codeDetail": {
                 "templateUrl": "views/pop/search/codeDetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
-                "controller": 'popCodeDetailCtl'
+                "controller": 'popCodeDetailCtl',
+                "backdrop": 'static',
+                "size": 'md'
             }
 
         },
@@ -550,8 +552,10 @@ define([
          */
         $scope.openAddToPromotion = function (promotion, selList, context) {
             var productIds = [];
+            var selAllFlg = 0;
             if (context && context.isSelAll) {
                 // 全选
+                selAllFlg = 1;
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -562,7 +566,8 @@ define([
             return openModel(popActions.bulkUpdate.addToPromotion, {
                 "promotion": promotion,
                 "productIds": productIds,
-                "products": selList
+                "products": selList,
+                "isSelAll": selAllFlg
             });
         };
 

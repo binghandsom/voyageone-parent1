@@ -2,18 +2,25 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.*;
+import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
+import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -21,10 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author JiangJusheng
@@ -37,6 +42,14 @@ public class CmsFeedSearchService extends BaseAppService {
     private FeedInfoService feedInfoService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
+    @Autowired
+    private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private MqSender sender;
+
+    @Autowired
+    private CmsMtChannelValuesService cmsMtChannelValuesService;
 
     // 查询产品信息时的缺省输出列
     private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'created':1,'modified':1}";
@@ -72,8 +85,10 @@ public class CmsFeedSearchService extends BaseAppService {
         for (int leng = delFlgList.size(), i = leng - 1; i >= 0; i --) {
             feedCatList.remove(delFlgList.get(i).intValue());
         }
-
+        masterData.put("sortList", CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
         masterData.put("categoryList", feedCatList);
+        masterData.put("productType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(userInfo.getSelChannelId(), CmsMtChannelValuesService.PRODUCT_TYPE));
+        masterData.put("sizeType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(userInfo.getSelChannelId(), CmsMtChannelValuesService.SIZE_TYPE));
         return masterData;
     }
 
@@ -85,9 +100,9 @@ public class CmsFeedSearchService extends BaseAppService {
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(getSearchQuery(searchValue));
+        queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         queryObject.setProjection(searchItems);
-        queryObject.setSort(sortItems);
+        queryObject.setSort(setSortValue(searchValue));
         int pageNum = (Integer) searchValue.get("pageNum");
         int pageSize = (Integer) searchValue.get("pageSize");
         queryObject.setSkip((pageNum - 1) * pageSize);
@@ -102,178 +117,113 @@ public class CmsFeedSearchService extends BaseAppService {
      * @return
      */
     public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        return feedInfoService.getCnt(userInfo.getSelChannelId(), getSearchQuery(searchValue));
+        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
     }
 
-    /**
-     * 返回页面端的检索条件拼装成mongo使用的条件
-     * @param searchValue
-     * @return
-     */
-    private String getSearchQuery(Map<String, Object> searchValue) {
-        StringBuffer result = new StringBuffer();
-
-        // 获取查询的价格类型
-        String priceType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceType"));
-        if (priceType != null) {
-            // 获取查询的价格区间下限
-            float priceSta = NumberUtils.toFloat(org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceValueSta")), -1);
-            // 获取查询的价格区间上限
-            float priceEnd = NumberUtils.toFloat(org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceValueEnd")), -1);
-            if (priceSta > -1 && priceEnd > -1 && priceEnd < priceSta) {
-                throw new BusinessException("设置的查询价格区间不正确");
-            }
-            if (priceSta > -1 || priceEnd > -1) {
-                result.append("\"skus." + priceType + "\":{" );
-                if (priceSta > -1) {
-                    result.append(MongoUtils.splicingValue("$gte", priceSta));
-                }
-                if (priceEnd > -1) {
-                    if (priceSta > -1) {
-                        result.append(",");
-                    }
-                    result.append(MongoUtils.splicingValue("$lte", priceEnd));
-                }
-                result.append("},");
-            }
-        }
-
-        // 获取createdTime start
-        String createTimeSta = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("createTimeSta"));
-        // 获取createdTime End
-        String createTimeEnd = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("createTimeEnd"));
-        if (createTimeSta != null || createTimeEnd != null) {
-            result.append("\"created\":{" );
-            if (createTimeSta != null) {
-                result.append(MongoUtils.splicingValue("$gte", createTimeSta + " 00.00.00"));
-            }
-            if (createTimeEnd != null) {
-                if (createTimeSta != null) {
-                    result.append(",");
-                }
-                result.append(MongoUtils.splicingValue("$lte", createTimeEnd + " 23.59.59"));
-            }
-            result.append("},");
-        }
-
-        // 获取updateTime start
-        String updateTimeSta = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("updateTimeSta"));
-        // 获取updateTime End
-        String updateTimeEnd = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("updateTimeEnd"));
-        if (updateTimeSta != null || updateTimeEnd != null) {
-            result.append("\"modified\":{" );
-            if (updateTimeSta != null) {
-                result.append(MongoUtils.splicingValue("$gte", updateTimeSta + " 00.00.00.000"));
-            }
-            if (updateTimeEnd != null) {
-                if (updateTimeSta != null) {
-                    result.append(",");
-                }
-                result.append(MongoUtils.splicingValue("$lte", updateTimeEnd + " 23.59.59.999"));
-            }
-            result.append("},");
-        }
-
-        // 获取category
-        String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-        if (category != null) {
-            result.append(MongoUtils.splicingValue("category", category));
-            result.append(",");
-        }
-
-        // 获取product name
-        String prodName = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("name"));
-        if (prodName != null) {
-            result.append(MongoUtils.splicingValue("name", prodName));
-            result.append(",");
-        }
-
-        // 获取输入的模糊查询字符串,用于检索code,name,model,short_description,long_description
-        List<String> strList = (List<String>) searchValue.get("fuzzyList");
-        if (strList != null && strList.size() > 0) {
-            List<String> orSearch = new ArrayList<>();
-            for (String fuzzyStr : strList) {
-                orSearch.add(MongoUtils.splicingValue("code", fuzzyStr, "$regex"));
-                orSearch.add(MongoUtils.splicingValue("name", fuzzyStr, "$regex"));
-                orSearch.add(MongoUtils.splicingValue("model", fuzzyStr, "$regex"));
-                orSearch.add(MongoUtils.splicingValue("skus.sku", fuzzyStr, "$regex"));
-                orSearch.add(MongoUtils.splicingValue("skus.clientSku", fuzzyStr, "$regex"));
-            }
-
-            if (strList.size() == 1) {
-                orSearch.add(MongoUtils.splicingValue("short_description", strList.get(0), "$regex"));
-                orSearch.add(MongoUtils.splicingValue("long_description", strList.get(0), "$regex"));
-            }
-            result.append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
-            result.append(",");
-        }
-
-        // 获取brand
-        String brand = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("brand"));
-        if (brand != null) {
-            result.append(MongoUtils.splicingValue("brand", brand));
-            result.append(",");
-        }
-
-        // 获取color
-        String color = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("color"));
-        if (color != null) {
-            result.append("'color':{'$regex': '" + color + "','$options':'i'}");
-            result.append(",");
-        }
-
-        // 获取product type
-        String productType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("productType"));
-        if (productType != null) {
-            result.append(MongoUtils.splicingValue("productType", productType));
-            result.append(",");
-        }
-
-        // 获取size type
-        String sizeType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("sizeType"));
-        if (sizeType != null) {
-            result.append(MongoUtils.splicingValue("sizeType",sizeType));
-            result.append(",");
-        }
-
-        // 获取inventory
-        String compareType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("compareType"));
-        String qtyStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("inventory"));
-        if (compareType != null && qtyStr != null) {
-            int inventory = NumberUtils.toInt(qtyStr);
-            result.append(MongoUtils.splicingValue("qty", inventory, compareType));
-            result.append(",");
-        }
-
-        // 获取status
-        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
-        if (status != null) {
-            result.append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
-            result.append(",");
-        }
-
-        if (!StringUtils.isEmpty(result.toString())) {
-            return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
-        }
-        else {
-            return "";
-        }
-    }
 
     // 批量更新FEED状态信息
-    public void updateFeedStatus(List<Map> params, UserSessionBean userInfo) {
+    public void updateFeedStatus(List<Map> params, Integer status, UserSessionBean userInfo) {
         List<String> codeList = new ArrayList<>(params.size());
         params.forEach(para -> codeList.add((String) para.get("code")));
-        HashMap paraMap1 = new HashMap(1);
+        Map<String,Object> paraMap1 = new HashMap<>(1);
         paraMap1.put("$in", codeList);
-        HashMap paraMap2 = new HashMap(1);
+        HashMap<String,Object> paraMap2 = new HashMap<>();
         paraMap2.put("code", paraMap1);
 
-        HashMap valueMap = new HashMap(1);
-        valueMap.put("updFlg", 0);
+        Map<String,Object> paraStatusMap = new HashMap<>(1);
+        if (status == CmsConstants.FeedUpdFlgStatus.Pending){
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+        }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+        }
+        paraMap2.put("updFlg",paraStatusMap);
+
+
+        HashMap<String,Object> valueMap = new HashMap<>(1);
+        valueMap.put("updFlg", status);
         valueMap.put("modified", DateTimeUtil.getNowTimeStamp());
         valueMap.put("modifier", userInfo.getUserName());
 
         feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
+    }
+
+    public void updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
+
+        Integer searchStatus = null;
+        if(searchValue.get("status") != null){
+            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+        }else{
+            if (status == CmsConstants.FeedUpdFlgStatus.Pending){
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            }
+        }
+        if(status == CmsConstants.FeedUpdFlgStatus.Pending){
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+                throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
+            }
+        }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.Succeed){
+                throw new BusinessException("导入成功是不能设为不导入的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+                throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+            }
+        }
+        String searchQuery = feedInfoService.getSearchQuery(searchValue);
+        feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(),searchQuery,status, userInfo.getUserName());
+    }
+
+    /**
+     * 获取排序规则
+     */
+    public String setSortValue(Map<String, Object> searchValue) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取排序字段1
+        if (searchValue.get("sortOneName") != null) {
+            if(!StringUtil.isEmpty(searchValue.get("sortOneName").toString())) {
+                if(searchValue.get("sortOneType") == null || StringUtil.isEmpty(searchValue.get("sortOneType").toString())){
+                    searchValue.put("sortOneType", -1);
+                }
+                result.append(MongoUtils.splicingValue("" + searchValue.get("sortOneName"), Integer.valueOf(searchValue.get("sortOneType").toString())));
+                result.append(",");
+            }
+        }
+
+        // 获取排序字段2
+        if (searchValue.get("sortTwoName") != null) {
+            if(!StringUtil.isEmpty(searchValue.get("sortTwoName").toString())) {
+                if(searchValue.get("sortTwoType") == null || StringUtil.isEmpty(searchValue.get("sortTwoType").toString())){
+                    searchValue.put("sortTwoType",-1);
+                }
+                result.append(MongoUtils.splicingValue("" + searchValue.get("sortTwoName"), Integer.valueOf(searchValue.get("sortTwoType").toString())));
+                result.append(",");
+            }
+        }
+
+        // 获取排序字段3
+        if (searchValue.get("sortThreeName") != null) {
+            if(!StringUtil.isEmpty(searchValue.get("sortThreeName").toString())) {
+                if(searchValue.get("sortThreeType") == null || StringUtil.isEmpty(searchValue.get("sortThreeType").toString())){
+                    searchValue.put("sortThreeType",-1);
+                }
+                result.append(MongoUtils.splicingValue("" + searchValue.get("sortThreeName"), Integer.valueOf(searchValue.get("sortThreeType").toString())));
+                result.append(",");
+            }
+        }
+        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length() - 1) + "}" : sortItems;
+    }
+
+    public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
+        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
+        if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
+            cmsBtExportTaskService.add(cmsBtExportTaskModel);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
+            return cmsBtExportTaskModel;
+        }else{
+            throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
+        }
     }
 }

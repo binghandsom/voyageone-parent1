@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
@@ -47,9 +46,9 @@ public class PlatformCategoryService extends BaseService {
      * 创建各渠道的平台类目层次关系.
      *
      * @param platformCatModelList List<CmsMtPlatformCategoryTreeModel>    平台类目树列表
-     * @param cartId         String            平台ID
-     * @param channelId      String            渠道ID
-     * @param taskName       String            任务名
+     * @param cartId               String            平台ID
+     * @param channelId            String            渠道ID
+     * @param taskName             String            任务名
      * @return List<CmsMtPlatformCategoryTreeModel>    平台类目层次树列表
      */
     public List<CmsMtPlatformCategoryTreeModel> buildPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> platformCatModelList, String cartId, String channelId, String taskName) {
@@ -94,12 +93,12 @@ public class PlatformCategoryService extends BaseService {
      * 更新MangoDB类目数据.
      *
      * @param savePlatformCatModels List<CmsMtPlatformCategoryTreeModel> 类目MODEL
-     * @param cartId String            平台ID
-     * @param channelId String         渠道ID
+     * @param cartId                String            平台ID
+     * @param channelId             String         渠道ID
      */
     public void setMangoDBPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels, String cartId, String channelId) {
 
-        if (savePlatformCatModels != null && savePlatformCatModels.size() > 0) {
+        if (savePlatformCatModels != null && !savePlatformCatModels.isEmpty()) {
             // 删除原有类目信息
             WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(cartId), channelId);
             $info("批量删除类目 CART_ID 为：" + cartId + "  channel id: " + channelId + " 的数据为: " + delCatRes.getN() + "条...");
@@ -125,14 +124,14 @@ public class PlatformCategoryService extends BaseService {
         List<CmsMtPlatformCategoryTreeModel> categoryTrees = this.platformCategoryDao.selectPlatformCategoriesByCartId(cartId);
 
         // 从MangoDB中取得cartId对应的类目信息叶子记录
-        for (CmsMtPlatformCategoryTreeModel root:categoryTrees){
+        for (CmsMtPlatformCategoryTreeModel root : categoryTrees) {
             Object jsonObj = JsonPath.parse(root.toString()).json();
             List<Map> leavesMap = JsonPath.read(jsonObj, "$..children[?(@.isParent == 0)]");
             allCategoryLeavesMap.addAll(leavesMap);
         }
 
         // 去掉取得的类目信息叶子记录中catId一样的重复记录
-        for (Map leafMap:allCategoryLeavesMap) {
+        for (Map leafMap : allCategoryLeavesMap) {
             CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
             try {
                 BeanUtils.populate(leafObj, leafMap);
@@ -144,7 +143,7 @@ public class PlatformCategoryService extends BaseService {
             String key = leafObj.getCatId();
 
             // 叶子类目并且不重复
-            if(!savedList.contains(key)) {
+            if (!savedList.contains(key)) {
                 savedList.add(key);
                 leafObj.setCartId(cartId);
                 allLeaves.add(leafObj);
@@ -181,7 +180,6 @@ public class PlatformCategoryService extends BaseService {
     }
 
 
-
     /**
      * 取得一级类目列表（平台数据）
      *
@@ -216,7 +214,7 @@ public class PlatformCategoryService extends BaseService {
             if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
                 return catTreeModel;
             }
-            if (catTreeModel.getChildren().size() > 0) {
+            if (!catTreeModel.getChildren().isEmpty()) {
                 CmsMtPlatformCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
                 if (category != null) return category;
             }
@@ -234,10 +232,10 @@ public class PlatformCategoryService extends BaseService {
         for (CmsMtPlatformCategoryTreeModel platformCategoryTree : platformCategoryTreeList) {
             CmsMtPlatformCategoryTreeModel model = findCategory(platformCategoryTree, catPath);
             if (model != null) {
-                return  model;
+                return model;
             }
         }
-        return  null;
+        return null;
     }
 
     /**
@@ -257,7 +255,7 @@ public class PlatformCategoryService extends BaseService {
             if (cmsMtPlatformCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return cmsMtPlatformCategoryTreeModel;
             }
-            if (cmsMtPlatformCategoryTreeModel.getChildren().size() > 0) {
+            if (!cmsMtPlatformCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtPlatformCategoryTreeModel platformCategory = findCategory(cmsMtPlatformCategoryTreeModel, catPath);
                 if (platformCategory != null) return platformCategory;
             }

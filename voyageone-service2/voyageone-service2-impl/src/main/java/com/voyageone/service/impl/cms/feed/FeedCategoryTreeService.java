@@ -4,9 +4,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +43,7 @@ public class FeedCategoryTreeService extends BaseService {
 
     /**
      * 取出该channel下所有的类目 以list方式取得（拍平）
+     *
      * @param channelId channelId
      * @return channel下所有的类目list
      */
@@ -79,7 +78,7 @@ public class FeedCategoryTreeService extends BaseService {
             categoryTree.setParentCatId("0");
             categoryTree.setIsParent(categorys.size() > 1 ? 1 : 0);
             categoryTree.setChildren(new ArrayList<>());
-            if(categorys.size() == 1){
+            if (categorys.size() == 1) {
                 categoryTree.setModified(DateTimeUtil.getNow());
                 categoryTree.setModifier(modifier);
                 cmsMtFeedCategoryTreeDao.update(categoryTree);
@@ -152,6 +151,7 @@ public class FeedCategoryTreeService extends BaseService {
     public CmsMtFeedCategoryTreeModel getFeedCategoryByCategoryId(String channelId, String topCategoryId) {
         return cmsMtFeedCategoryTreeDao.selectFeedCategoryByCategoryId(channelId, topCategoryId);
     }
+
     /**
      * 根据category从tree中找到节点
      */
@@ -161,7 +161,7 @@ public class FeedCategoryTreeService extends BaseService {
             if (cmsMtFeedCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return cmsMtFeedCategoryTreeModel;
             }
-            if (cmsMtFeedCategoryTreeModel.getChildren().size() > 0) {
+            if (!cmsMtFeedCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtFeedCategoryTreeModel category = findCategory(cmsMtFeedCategoryTreeModel, catPath);
                 if (category != null) return category;
             }
@@ -171,10 +171,11 @@ public class FeedCategoryTreeService extends BaseService {
 
     /**
      * 一棵树转成list（拍平）
+     *
      * @param cmsMtFeedCategoryTree 一棵树
      * @return 类目list
      */
-    public List<CmsMtFeedCategoryTreeModel> treeToList(CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTree){
+    public List<CmsMtFeedCategoryTreeModel> treeToList(CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTree) {
         List<CmsMtFeedCategoryTreeModel> result = new ArrayList<>();
         result.add(cmsMtFeedCategoryTree);
         cmsMtFeedCategoryTree.getChildren().forEach(item -> {
@@ -186,15 +187,16 @@ public class FeedCategoryTreeService extends BaseService {
 
     /**
      * 根据类目路径返回改路径的类目节点
+     *
      * @param channelId channelId
-     * @param catPath 类目路径
+     * @param catPath   类目路径
      */
-    public CmsMtFeedCategoryTreeModel getCategoryNote(String channelId, String catPath){
+    public CmsMtFeedCategoryTreeModel getCategoryNote(String channelId, String catPath) {
         List<String> categorys = Arrays.asList(catPath.split("-"));
-        if(categorys.size() == 0) return null;
+        if (categorys.isEmpty()) return null;
         CmsMtFeedCategoryTreeModel tree = getFeedCategoryByCategory(channelId, categorys.get(0));
-        if(categorys.size() == 1) return tree;
-        return findCategory(tree,catPath);
+        if (categorys.size() == 1) return tree;
+        return findCategory(tree, catPath);
     }
 
 }

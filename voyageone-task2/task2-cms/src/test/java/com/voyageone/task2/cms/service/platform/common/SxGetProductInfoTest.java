@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform.common;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -10,18 +11,26 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
+import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
+import com.voyageone.service.model.cms.enums.CustomMappingType;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryInvisibleFieldModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryInvisibleFieldModel_Field;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -29,6 +38,8 @@ import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
+import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmMqService;
+import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import org.junit.Test;
@@ -61,9 +72,19 @@ public class SxGetProductInfoTest {
 
     @Autowired
     private SkuFieldBuilderService skuFieldBuilderService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     @Autowired
     private CmsBuildPlatformProductUploadTmItemService cmsBuildPlatformProductUploadTmItemService;
+
+    @Autowired
+    private CmsBuildPlatformProductUploadTmMqService cmsBuildPlatformProductUploadTmMqService;
+    @Autowired
+    private CmsBuildPlatformProductUploadTmProductService uploadTmProductService;
+
+    @Autowired
+    private PlatformSchemaService platformSchemaService;
 
     @Autowired
     private SxGetProductInfo sxGetProductInfo;
@@ -89,11 +110,1592 @@ public class SxGetProductInfoTest {
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
+    @Autowired
+    private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+
+    @Autowired
+    private CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
+
+    @Autowired
+    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
+
     @Test
     public void testFuc() throws Exception {
+
         System.out.println();
         System.out.println("start:" + DateTimeUtil.getNow());
         System.out.println(getInstance().format(new Date()));
+
+//        SxData sxData = new SxData();
+//        boolean isD = uploadTmProductService.getIsDarwin(sxData, getShop("018", 23), "1205", "21466766");
+//        System.out.println(isD);
+
+        {
+            // 无线描述
+            String schema = "<itemRule>\n" +
+                    "\t<field id=\"wireless_desc\" name=\"新商品无线描述\" type=\"complex\">\n" +
+                    "\t\t<fields>\n" +
+                    "\t\t\t<field id=\"item_info\" name=\"商品信息\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"该模块直接读取您已填写的商品信息，不需要编辑。如需查看实际效果，请通过发布后查看。\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"item_info_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"item_picture\" name=\"商品图片\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"该模块最多可上传20张图片，图片类型支持png,jpg,jpeg。单个图片建议宽度为750px~1242px，高度≤1546px。\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"item_picture_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_0\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_1\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_2\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_3\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_4\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_5\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_6\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_7\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_8\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_9\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_10\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_11\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_12\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_13\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_14\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_15\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_16\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_17\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_18\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"image_hot_area_19\" type=\"complex\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"item_picture_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"item_picture_image\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t<field id=\"hot_area\" name=\"图片热区\" type=\"multiComplex\">\n" +
+                    "\t\t\t\t\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"start_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区左上角的坐标，数据范围是0-1，最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_x\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1，最多2位小数点，相对X轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"end_y\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"商品外链热区右下角的坐标，数据范围是0-1,最多2位小数点，相对Y轴的偏移百分比\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minInputNumRule\" value=\"0\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxInputNumRule\" value=\"1\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t\t<field id=\"item_id\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"输入热区关联的商品ID\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"long\"/>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t\t</fields>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"coupon\" name=\"优惠\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"您可以选择下方已经设置好的店铺优惠券模板，也可以去商家中心设置店铺优惠券模板\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"coupon_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"coupon_id\" name=\"选择模板\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"coupon_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"hot_recommanded\" name=\"同店推荐\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"您可以选择下方已经设置好的同店推荐模板，也可以去商家中心设置同店推荐模板\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"hot_recommanded_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"hot_recommanded_id\" name=\"选择模板\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"hot_recommanded_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"商品推荐\" value=\"520277\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"shop_discount\" name=\"店铺活动\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"您可以选择下方已经设置好的店铺活动模板，也可以去商家中心设置店铺活动模板\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"shop_discount_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"shop_discount_id\" name=\"选择模板\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"shop_discount_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t\t<field id=\"user_define\" name=\"自定义\" type=\"complex\">\n" +
+                    "\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t<rule name=\"devTipRule\" value=\"该模块需要您自己命名，可上传两张图片，图片格式支持png,jpg,jpeg。单个图片建议宽度为750px~1242px，高度≤1546px。\"/>\n" +
+                    "\t\t\t\t</rules>\n" +
+                    "\t\t\t\t<fields>\n" +
+                    "\t\t\t\t\t<field id=\"user_define_enable\" name=\"是否启用\" type=\"singleCheck\">\n" +
+                    "\t\t\t\t\t\t<options>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"启用\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<option displayName=\"不启用\" value=\"false\"/>\n" +
+                    "\t\t\t\t\t\t</options>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"user_define_name\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"maxValueRule\" value=\"12\"/>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"devTipRule\" value=\"仅支持中文英、数字，长度不可超过12个字符。\"/>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"user_define_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"user_define_image_0\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"user_define_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t\t<field id=\"user_define_image_1\" type=\"input\">\n" +
+                    "\t\t\t\t\t\t<rules>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"url\"/>\n" +
+                    "\t\t\t\t\t\t\t<rule name=\"disableRule\" value=\"true\">\n" +
+                    "\t\t\t\t\t\t\t\t<depend-group operator=\"and\">\n" +
+                    "\t\t\t\t\t\t\t\t\t<depend-express fieldId=\"user_define_enable\" symbol=\"!=\" value=\"true\"/>\n" +
+                    "\t\t\t\t\t\t\t\t</depend-group>\n" +
+                    "\t\t\t\t\t\t\t</rule>\n" +
+                    "\t\t\t\t\t\t</rules>\n" +
+                    "\t\t\t\t\t</field>\n" +
+                    "\t\t\t\t</fields>\n" +
+                    "\t\t\t</field>\n" +
+                    "\t\t</fields>\n" +
+                    "\t</field>\n" +
+                    "</itemRule>";
+
+            List<CmsMtPlatformPropMappingCustomModel> cmsMtPlatformPropMappingCustomModels = cmsMtPlatformPropMappingCustomDao.selectList(new HashMap<String, Object>(){{put("cartId", 23);}});
+
+            List<Field> listField = SchemaReader.readXmlForList(schema);
+            SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
+            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+
+//            sxProductService.setWirelessDescriptionFieldValue(listField.get(0), exp, getShop("018", 23), "morse");
+
+//            String descriptionValue = sxProductService.resolveDict("无线描述", exp, getShop("018", 23), "morse", null);
+//            Map map = JacksonUtil.jsonToMap("{\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},\"k2\":2}");
+//            Map map = JacksonUtil.jsonToMap(descriptionValue);
+//            Object objVal = ((Map) map.get("coupon")).get("coupon_enable");
+//            if (objVal instanceof Boolean) {
+//                System.out.println(String.valueOf(objVal));
+//            }
+//            objVal = ((Map) map.get("coupon")).get("coupon_id");
+//            if (objVal instanceof Number) {
+//                System.out.println(String.valueOf(objVal));
+//            }
+//            objVal = ((Map) map.get("hot_recommanded")).get("hot_recommanded_id");
+//            if (objVal instanceof String) {
+//                System.out.println(String.valueOf(objVal));
+//            }
+            System.out.println();
+        }
+
+//        {
+//            // 商品描述
+//            String schema = "<itemRule>\n" +
+//                    "\t<field id=\"description\" name=\"商品描述\" type=\"complex\">\n" +
+//                    "\t\t<rules>\n" +
+//                    "\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t<rule exProperty=\"include\" name=\"maxLengthRule\" unit=\"character\" value=\"25000\"/>\n" +
+//                    "\t\t\t<rule name=\"tipRule\" value=\"PC版描述最多支持发布20个有内容的描述模块\"/>\n" +
+//                    "\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t</rules>\n" +
+//                    "\t\t<fields>\n" +
+//                    "\t\t\t<field id=\"desc_module_28_cat_mod\" name=\"视频推介\" type=\"complex\">\n" +
+//                    "\t\t\t\t<fields>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_28_cat_mod_content\" name=\"视频推介内容\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"html\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_28_cat_mod_order\" name=\"视频推介排序值\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t</fields>\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"desc_module_30_cat_mod\" name=\"促销专区\" type=\"complex\">\n" +
+//                    "\t\t\t\t<fields>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_30_cat_mod_content\" name=\"促销专区内容\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"html\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_30_cat_mod_order\" name=\"促销专区排序值\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t</fields>\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"desc_module_5_cat_mod\" name=\"商品参数\" type=\"complex\">\n" +
+//                    "\t\t\t\t<fields>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_5_cat_mod_content\" name=\"商品参数内容\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"html\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_5_cat_mod_order\" name=\"商品参数排序值\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t</fields>\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"desc_module_127_cat_mod\" name=\"商品展示\" type=\"complex\">\n" +
+//                    "\t\t\t\t<fields>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_127_cat_mod_content\" name=\"商品展示内容\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"html\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_127_cat_mod_order\" name=\"商品展示排序值\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t</fields>\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"desc_module_18_cat_mod\" name=\"功能展示\" type=\"complex\">\n" +
+//                    "\t\t\t\t<fields>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_18_cat_mod_content\" name=\"功能展示内容\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"html\"/>\n" +
+//                    "\t\t\t\t\t\t\t<rule exProperty=\"include\" name=\"minLengthRule\" unit=\"character\" value=\"5\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t\t<field id=\"desc_module_18_cat_mod_order\" name=\"功能展示排序值\" type=\"input\">\n" +
+//                    "\t\t\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t\t\t\t<rule name=\"valueTypeRule\" value=\"integer\"/>\n" +
+//                    "\t\t\t\t\t\t</rules>\n" +
+//                    "\t\t\t\t\t</field>\n" +
+//                    "\t\t\t\t</fields>\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t</fields>\n" +
+//                    "\t</field>\n" +
+//                    "</itemRule>";
+//
+//            List<Field> listField = SchemaReader.readXmlForList(schema);
+//            SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
+//            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//
+//            sxProductService.setDescriptionFieldValue(listField.get(0), exp, getShop("018", 23), "morse");
+//        }
+
+        {
+//            CmsMtPlatformCategoryInvisibleFieldModel model = new CmsMtPlatformCategoryInvisibleFieldModel();
+////            model.set_id("576cdbc3983b011e18f0066e");
+//            model.setCartId(23);
+//            model.setCatId("123");
+//            List<CmsMtPlatformCategoryInvisibleFieldModel_Field> propsProduct = new ArrayList<>();
+//            CmsMtPlatformCategoryInvisibleFieldModel_Field invisibleField = new CmsMtPlatformCategoryInvisibleFieldModel_Field();
+//            invisibleField.setFieldId("product_s_s>sell_p_s>sell_p_1");
+//            propsProduct.add(invisibleField);
+//            model.setPropsProduct(propsProduct);
+//            cmsMtPlatformCategoryInvisibleFieldDao.insert(model);
+////            cmsMtPlatformCategoryInvisibleFieldDao.update(model);
+//            {
+//                CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema("23232323", 23);
+//                Map<String, Field> mapProductField = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsProduct());
+//                Map<String, Field> mapItemField = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
+//
+//                CmsMtPlatformCategoryExtendFieldModel model = new CmsMtPlatformCategoryExtendFieldModel();
+//                model.setCartId(23);
+//                model.setCatId("23232323");
+//                List<CmsMtPlatformCategoryExtendFieldModel_Field> propsProduct = new ArrayList<>();
+//                {
+//                    CmsMtPlatformCategoryExtendFieldModel_Field extendField = new CmsMtPlatformCategoryExtendFieldModel_Field();
+//                    extendField.setParentFieldId("product_s_s>sell_p_s");
+//                    Field ff = sxProductService.getFieldById(mapProductField, "product_s_s>sell_p_s>sell_p_1", ">", false);
+//                    ff.setName("new sale point2");
+//                    extendField.setField(ff);
+//                    propsProduct.add(extendField);
+//                }
+//                {
+//                    CmsMtPlatformCategoryExtendFieldModel_Field extendField = new CmsMtPlatformCategoryExtendFieldModel_Field();
+//                    extendField.setParentFieldId("product_s_s>sell_p_s");
+//                    Field ff = sxProductService.getFieldById(mapProductField, "product_s_s>sell_p_s>sell_p_2", ">", false);
+//                    ff.setName("new sale point3");
+//                    extendField.setField(ff);
+//                    propsProduct.add(extendField);
+//                }
+//                {
+//                    CmsMtPlatformCategoryExtendFieldModel_Field extendField = new CmsMtPlatformCategoryExtendFieldModel_Field();
+//                    extendField.setParentFieldId("product_s_s");
+//                    Field ff = sxProductService.getFieldById(mapProductField, "product_s_s>product_s", ">", false);
+//                    ff.setName("new 商品 name");
+//                    extendField.setField(ff);
+//                    propsProduct.add(extendField);
+//                }
+//                model.setPropsProduct(propsProduct);
+//
+//                List<CmsMtPlatformCategoryExtendFieldModel_Field> propsItem = new ArrayList<>();
+//                {
+//                    CmsMtPlatformCategoryExtendFieldModel_Field extendField = new CmsMtPlatformCategoryExtendFieldModel_Field();
+//                    extendField.setParentFieldId("");
+//                    Field ff = sxProductService.getFieldById(mapItemField, "detail", ">", false);
+//                    ff.setName("new details");
+//                    extendField.setField(ff);
+//                    propsItem.add(extendField);
+//                }
+//
+//                model.setPropsItem(propsItem);
+//                cmsMtPlatformCategoryExtendFieldDao.insert(model);
+//            }
+
+//            Map<String, Field> map1 = platformSchemaService.getMapFieldForMappingImage("23232323", 23);
+//            Map<String, List<Field>> map2 = platformSchemaService.getFieldForProductImage("23232323", 23);
+//
+//            System.out.println();
+        }
+
+//        {
+//            List<String> list = new ArrayList<>();
+//            list.add("sk2");
+//            list.add("sk3");
+//            list.add("sk1");
+//
+//            System.out.println("start sort");
+////            System.out.println(list.indexOf("sk2"));
+////            System.out.println(list.indexOf("sk3"));
+////            System.out.println(list.indexOf("sk4"));
+////            System.out.println(list.indexOf("sk1"));
+//
+//            List<BaseMongoMap<String, Object>> listSku = new ArrayList<>();
+//            for (int i = 1; i <= 4; i++) {
+//                BaseMongoMap<String, Object> map = new BaseMongoMap<>();
+//                map.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), "sk" + i);
+//                if (i == 1) {
+//                    map.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), 3);
+//                } else {
+//                    if (i != 4)
+//                    map.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), i - 1);
+//                }
+//                listSku.add(map);
+//            }
+//
+//            sxProductService.sortListBySkuCode(listSku, list);
+////            sxProductService.sortSkuInfo(listSku);
+//
+//            System.out.println();
+//        }
+
+//        {
+//            String schema = "<itemRule>\n" +
+//                    "<field id=\"infos\" name=\"品牌信息\" type=\"input\">\n" +
+//                    "\t<rules>\n" +
+//                    "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t</rules>\n" +
+//                    "</field>\n" +
+//                    "<field id=\"title\" name=\"牌\" type=\"singleCheck\">\n" +
+//                    "\t<rules>\n" +
+//                    "\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t</rules>\n" +
+//                    "</field>\n" +
+//                    "<field id=\"product_s_s\" name=\"商品\" type=\"multiComplex\">\n" +
+//                    "<fields>\n" +
+//                    "\t<field id=\"code_f\" name=\"Code\" type=\"input\">\n" +
+//                    "\t</field>\n" +
+//                    "\t<field id=\"orgin_f\" name=\"Code\" type=\"input\">\n" +
+//                    "\t</field>\n" +
+//                    "\t<field id=\"product_s\" name=\"商品\" type=\"multiComplex\">\t\t\n" +
+//                    "\t\t<fields>\n" +
+//                    "\t\t\t<field id=\"code_sf\" name=\"Code\" type=\"input\">\n" +
+//                    "\t\t\t\t<rules>\n" +
+//                    "\t\t\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t\t\t</rules>\t\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"orgin_sf\" name=\"产地\" type=\"input\">\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t</fields>\n" +
+//                    "\t</field>\n" +
+//                    "\t<field id=\"sell_p_s\" name=\"卖点\" type=\"complex\">\n" +
+//                    "\t\t<fields>\n" +
+//                    "\t\t\t<field id=\"sell_p_0\" name=\"卖点1\" type=\"input\">\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"sell_p_1\" name=\"卖点2\" type=\"input\">\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t\t<field id=\"sell_p_2\" name=\"卖点3\" type=\"input\">\n" +
+//                    "\t\t\t</field>\n" +
+//                    "\t\t</fields>\n" +
+//                    "\t</field>\n" +
+//                    "\t<field id=\"col\" name=\"颜色\" type=\"multiCheck\">\n" +
+//                    "\t\t<rules>\n" +
+//                    "\t\t<rule name=\"requiredRule\" value=\"true\"/>\n" +
+//                    "\t\t</rules>\n" +
+//                    "\t\t<options>\n" +
+//                    "\t\t<option displayName=\"蓝\" value=\"b\"/>\n" +
+//                    "\t\t<option displayName=\"红\" value=\"r\"/>\n" +
+//                    "\t\t</options>\n" +
+//                    "\t</field>\n" +
+//                    "</fields>\n" +
+//                    "</field>\n" +
+//                    "</itemRule>";
+//            List<Field> listField = SchemaReader.readXmlForList(schema);
+//            Map<String, Field> mapField = SchemaReader.readXmlForMap(schema);
+//
+//            String search_field_id = "product_s_s>product_s>code_sf";
+//            String add_field_id = "product_s_s>product_s";
+////            String search_field_id = "product_s_s>product_s";
+////            String add_field_id = "product_s_s";
+//            InputField addField = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+//            addField.setId("code_sf");
+//            addField.setValue("new");
+//
+////            Field retField = sxProductService.getFieldById(mapField, search_field_id, ">", true);
+//            sxProductService.addExtendField(mapField,add_field_id,">",addField);
+//
+//            System.out.println();
+//        }
+
+//        {
+//            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema("121418010", 23);
+//            String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+//
+//            List<Field> fields;
+//            Map<String, Field> map;
+//            try {
+//                fields = SchemaReader.readXmlForList(itemSchema);
+//                map = SchemaReader.readXmlForMap(itemSchema);
+//            } catch (TopSchemaException e) {
+//                System.out.println("error");
+//                return;
+//            }
+//            try {
+//                ((ComplexField) fields.get(1)).getFieldMap();
+//            } catch (ClassCastException e) {
+//                System.out.println("Cast error");
+//            }
+//            System.out.println("end");
+//        }
+
+//        Map<String, String> mapSize = sxProductService.getSizeMap("010", "", "Bracelets", "women");
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("335"));
+
+//        {
+//            // TM 上新
+//            Context context = Context.getContext();
+//            ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
+//            context.putAttribute("springContext", ctx);
+//
+//            String channel_id = "002";
+//            int cart_id = 23;
+//            ShopBean shopBean = getShop(channel_id, cart_id);
+//
+//            CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
+//            cmsBtSxWorkloadModel.setChannelId(channel_id);
+//            cmsBtSxWorkloadModel.setCartId(cart_id);
+//            cmsBtSxWorkloadModel.setGroupId(663055L);
+//            cmsBtSxWorkloadModel.setPublishStatus(0);
+//
+//            System.out.println("TM 上新 start");
+//            cmsBuildPlatformProductUploadTmMqService.uploadProduct(cmsBtSxWorkloadModel, shopBean);
+//            System.out.println("TM 上新 end");
+//        }
 
 //        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", "tomzhu-image-2016053101903_02");
 //        String result = HttpUtils.get(url, null);
@@ -116,17 +1718,64 @@ public class SxGetProductInfoTest {
 //            return;
 //        }
 
-        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 445666L);
-//        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
-        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//        try {
+//            System.out.println(" -> 启动中......");
+//            Context context = Context.getContext();
+//            ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
+//            context.putAttribute("springContext", ctx);
+//            System.out.println(" -> 启动完成......");
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            System.out.println(ex.getMessage());
+//        }
+//
+//        DictValueFactory dictValueFactory = new DictValueFactory();
+//        Set<DictWord> dictWords = dictValueFactory.getDictWords("010");
+//        int index = 0;
+//        for (DictWord iterDictWord : dictWords) {
+//            if (!iterDictWord.getName().equals(null)) {
+//                System.out.println(String.valueOf(index) + ":" + iterDictWord.getName());
+//            }
+//            index++;
+//        }
 
-        String channelId = sxData.getChannelId();
-        int cartId = sxData.getCartId();
-        int imageType = 3;  // 品牌故事图
-        int viewType = 1; // pc
-        String brandName = sxData.getMainProduct().getFields().getBrand();
-        String productType = sxData.getMainProduct().getFields().getProductType();
-        String sizeType = sxData.getMainProduct().getFields().getSizeType();
+//        {
+//            String completeImageUrl;
+//            try {
+//                String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", "018-10756195-41");
+//                System.out.println("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
+//                String result = HttpUtils.get(url, null);
+//                result = result.substring(result.indexOf("image"));
+//                String[] args = result.split("image\\.");
+//                Map<String, String> responseMap = new HashMap<>();
+//                for (String param : args) {
+//                    if (param.indexOf("=") > 0) {
+//                        String[] keyVal = param.split("=");
+//                        if (keyVal.length > 1) {
+//                            responseMap.put(keyVal[0], keyVal[1]);
+//                        } else {
+//                            responseMap.put(keyVal[0], "");
+//                        }
+//                    }
+//                }
+//                completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", "018-10756195-41", responseMap.get("width"), responseMap.get("height"));
+//                System.out.println("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
+//            } catch (Exception e) {
+//                throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
+//            }
+//        }
+//
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 445666L);
+////        SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
+//        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//
+//        String channelId = sxData.getChannelId();
+//        int cartId = sxData.getCartId();
+//        int imageType = 3;  // 品牌故事图
+//        int viewType = 1; // pc
+//        String brandName = sxData.getMainProduct().getFields().getBrand();
+//        String productType = sxData.getMainProduct().getFields().getProductType();
+//        String sizeType = sxData.getMainProduct().getFields().getSizeType();
 
 //        List<String> listUrls = sxProductService.getImageUrls(channelId, cartId, imageType, viewType, brandName, productType, sizeType, false);
 
@@ -572,16 +2221,16 @@ public class SxGetProductInfoTest {
 //        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
 //        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
 //
-        ShopBean shopBean = new ShopBean();
+//        ShopBean shopBean = new ShopBean();
 //        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
-        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
+//        shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
 //
 //        Map<String, Field> res = sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, exp, "morse", true);
 //        res.forEach((key, val) -> System.out.println(key + "=" + val.getValue()));
-        String res =
-                sxProductService.resolveDict("详情页描述-test.morse", exp, shopBean, "morse", null);
+//        String res =
+//                sxProductService.resolveDict("详情页描述", exp, shopBean, "morse", null);
 //                "";
-        System.out.println(res);
+//        System.out.println(res);
         // constructMappingPlatformProps end
 
 
@@ -803,28 +2452,28 @@ public class SxGetProductInfoTest {
         }
     }
 
-    /**
-     * 如果sxProductBean中含有要在该平台中上新的sku, 返回true
-     * 如果没有sku要上新，那么返回false
-     */
-    private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
-        CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
-        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
-        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
-        int cartId = cmsBtProductModelGroupPlatform.getCartId();
-
-        if (cmsBtProductModelSkus == null) {
-            return false;
-        }
-
-        for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
-            CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
-            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
-                productSkuIterator.remove();
-            }
-        }
-        return !cmsBtProductModelSkus.isEmpty();
-    }
+//    /**
+//     * 如果sxProductBean中含有要在该平台中上新的sku, 返回true
+//     * 如果没有sku要上新，那么返回false
+//     */
+//    private boolean filtProductsByPlatform(SxProductBean sxProductBean) {
+//        CmsBtProductModel cmsBtProductModel = sxProductBean.getCmsBtProductModel();
+//        CmsBtProductGroupModel cmsBtProductModelGroupPlatform = sxProductBean.getCmsBtProductModelGroupPlatform();
+//        List<CmsBtProductModel_Sku> cmsBtProductModelSkus = cmsBtProductModel.getSkus();
+//        int cartId = cmsBtProductModelGroupPlatform.getCartId();
+//
+//        if (cmsBtProductModelSkus == null) {
+//            return false;
+//        }
+//
+//        for (Iterator<CmsBtProductModel_Sku> productSkuIterator = cmsBtProductModelSkus.iterator(); productSkuIterator.hasNext();) {
+//            CmsBtProductModel_Sku cmsBtProductModel_sku = productSkuIterator.next();
+//            if (!cmsBtProductModel_sku.isIncludeCart(cartId)) {
+//                productSkuIterator.remove();
+//            }
+//        }
+//        return !cmsBtProductModelSkus.isEmpty();
+//    }
 
 
     @Test
@@ -917,4 +2566,48 @@ public class SxGetProductInfoTest {
 
     }
 
+
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+
+        return null;
+    }
+
+    /**
+     * 店铺
+     */
+    private ShopBean getShop(String order_channel_id, String cart_id) {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
+        shopBean.setPlatform("TB");
+        // target 018
+        shopBean.setAppKey("21008948");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+        shopBean.setShop_name("target店");
+        // target 018
+        // jewelry 010
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setShop_name("jewelry店");
+        // jewelry 010
+        //  PortAmerican 002
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201b033f0bdf6896ca8b52f9b679698ea4f6e3c4047b352183719539");
+//        shopBean.setShop_name("PA店");
+        //  PortAmerican 002
+        shopBean.setOrder_channel_id(order_channel_id);
+        shopBean.setCart_id(cart_id);
+        shopBean.setCart_type("3");
+        shopBean.setCart_name("TG");
+        shopBean.setComment("天猫国际");
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+
+        return shopBean;
+    }
+
+    private ShopBean getShop(String order_channel_id, int cart_id) {
+        return getShop(order_channel_id, String.valueOf(cart_id));
+    }
 }

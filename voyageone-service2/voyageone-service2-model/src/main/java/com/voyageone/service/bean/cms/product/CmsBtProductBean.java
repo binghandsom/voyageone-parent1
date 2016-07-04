@@ -2,7 +2,6 @@ package com.voyageone.service.bean.cms.product;
 
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Carts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.Map;
 public class CmsBtProductBean extends CmsBtProductModel {
 
     private CmsBtProductGroupModel groupBean = new CmsBtProductGroupModel();
-    private CmsBtProductModel_Carts cartBean = new CmsBtProductModel_Carts();
     private List<Map<String, Object>> cartStsList = new ArrayList<>();
 
     public CmsBtProductBean() {
@@ -34,14 +32,6 @@ public class CmsBtProductBean extends CmsBtProductModel {
 
     public void setGroupBean(CmsBtProductGroupModel groups) {
         this.groupBean = groups;
-    }
-
-    public CmsBtProductModel_Carts getCartBean() {
-        return cartBean;
-    }
-
-    public void setCartBean(CmsBtProductModel_Carts productCart) {
-        this.cartBean = productCart;
     }
 
     public List<Map<String, Object>> getCartStsList() {

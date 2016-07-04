@@ -170,14 +170,14 @@ public class StockSeparateService extends BaseService {
     /**
      * 导入文件数据更新变更方式
      *
-     * @param saveData    保存对象
-     * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
-     * @param taskId     任务id
-     * @param creater     创建者/更新者
-     * @param channelId   渠道id
+     * @param saveData  保存对象
+     * @param mapSku    原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
+     * @param taskId    任务id
+     * @param creater   创建者/更新者
+     * @param channelId 渠道id
      */
     @VOTransactional
-    public void importExcelFileStockUpdate(List<StockExcelBean> saveData, Map<String, List<String>> mapSku,String taskId, String creater, String channelId) {
+    public void importExcelFileStockUpdate(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String taskId, String creater, String channelId) {
         // 变更方式
         Map<String, Object> mapSaveData = new HashMap<>();
         mapSaveData.put("taskId", taskId);
@@ -195,15 +195,15 @@ public class StockSeparateService extends BaseService {
         mapSaveData.put("endFlg", "1");
         mapSaveData.put("modifier", creater);
         mapSaveData.put("channelId", channelId);
-        for (String cartId : mapSku.keySet()) {
-            mapSaveData.put("cartId", cartId);
-            List<String> listSku = mapSku.get(cartId);
+        for (Map.Entry<String, List<String>> entry : mapSku.entrySet()) {
+            mapSaveData.put("cartId", entry.getKey());
+            List<String> listSku = entry.getValue();
             int index = 0;
             for (; index + 500 < listSku.size(); index = index + 500) {
-                mapSaveData.put("skuList", mapSku.get(cartId).subList(index, index + 500));
+                mapSaveData.put("skuList", listSku.subList(index, index + 500));
                 cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(mapSaveData);
             }
-            mapSaveData.put("skuList", mapSku.get(cartId).subList(index, listSku.size()));
+            mapSaveData.put("skuList", listSku.subList(index, listSku.size()));
             cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(mapSaveData);
         }
     }
@@ -211,10 +211,10 @@ public class StockSeparateService extends BaseService {
     /**
      * 导入文件数据更新(增量方式)
      *
-     * @param saveData    保存对象
-     * @param taskId      ?
-     * @param creater     创建者/更新者
-     * @param channelId   渠道id
+     * @param saveData  保存对象
+     * @param taskId    ?
+     * @param creater   创建者/更新者
+     * @param channelId 渠道id
      */
     @VOTransactional
     public void importExcelFileStockAdd(List<StockExcelBean> saveData, String taskId, String creater, String channelId) {
@@ -240,7 +240,7 @@ public class StockSeparateService extends BaseService {
             }
         }
 
-        if (listSaveData.size() > 0) {
+        if (!listSaveData.isEmpty()) {
             cmsBtStockSeparateItemDaoExt.insertStockSeparateItemByList(listSaveData);
             listSaveData.clear();
         }
@@ -314,7 +314,7 @@ public class StockSeparateService extends BaseService {
             }
         }
 
-        if (listSaveData.size() > 0) {
+        if (!listSaveData.isEmpty()) {
             cmsBtStockSeparateIncrementItemDaoExt.insertStockSeparateIncrementItemByList(listSaveData);
             listSaveData.clear();
         }
@@ -447,7 +447,7 @@ public class StockSeparateService extends BaseService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 0) {
+        if (!allSku.isEmpty()) {
             //将数据插入cms_bt_stock_separate_item表中
             cmsBtStockSeparateItemDaoExt.insertStockSeparateItemByList(allSku);
             allSku.clear();
@@ -519,7 +519,7 @@ public class StockSeparateService extends BaseService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 0) {
+        if (!allSku.isEmpty()) {
             cmsBtStockSeparateIncrementItemDaoExt.insertStockSeparateIncrementItemByList(allSku);
             allSku.clear();
         }

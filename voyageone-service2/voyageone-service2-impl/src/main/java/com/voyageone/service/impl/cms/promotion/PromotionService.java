@@ -8,7 +8,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -104,6 +103,22 @@ public class PromotionService extends BaseService {
             params.put("channelId", channelId);
         }
         return this.getByCondition(params);
+    }
+
+    /**
+     * 根据channelId获取promotion列表，只查询有效的活动信息(除了状态外，必须要有tag信息)
+     * @param channelId
+     * @return
+     */
+    public List<CmsBtPromotionBean> getPromotions4AdvSearch(String channelId, Map<String, Object> params) {
+        params = params == null ? new HashMap<>() : params;
+        if (Channels.isUsJoi(channelId)) {
+            params.put("orgChannelId", channelId);
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
+        return cmsBtPromotionDaoExt.select4AdvSearch(params);
     }
 
     /**

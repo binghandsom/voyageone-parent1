@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.cms;
 
+import com.voyageone.common.util.JsonUtil;
+
 /**
  * @author aooer 2016/1/19.
  * @version 2.0.0
@@ -9,7 +11,6 @@ public class PromotionDetailAddBean {
 
     private Integer tagId;
     private String tagPath;
-
 
     private Integer promotionId;
     private Integer cartId;
@@ -102,4 +103,8 @@ public class PromotionDetailAddBean {
         this.modifier = modifier;
     }
 
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
+    }
 }

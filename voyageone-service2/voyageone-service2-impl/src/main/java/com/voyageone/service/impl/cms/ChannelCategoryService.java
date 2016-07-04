@@ -137,12 +137,8 @@ public class ChannelCategoryService extends BaseService {
 
     @VOTransactional
     public void saveWithListOne(List<CmsMtChannelCategoryConfigModel> models) {
-        System.out.println(JacksonUtil.bean2Json(cmsMtChannelCategoryConfigDao.select(15)));
         cmsMtChannelCategoryConfigDaoExt.insertWithList(models.subList(1, models.size()));
         cmsMtChannelCategoryConfigDao.insert(models.get(0));
-        if (true) {
-            throw new RuntimeException("bb");
-        }
     }
 
 }

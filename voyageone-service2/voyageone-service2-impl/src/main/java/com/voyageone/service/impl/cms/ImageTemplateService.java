@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 /**
- * Created by jeff.duan on 2016/5/5.
+ * @author jeff.duan
+ * @version 2.0.0, 2016/5/5.
  */
 @Service
 public class ImageTemplateService extends BaseService {
@@ -233,17 +233,17 @@ public class ImageTemplateService extends BaseService {
      */
     public void save(CmsBtImageTemplateModel model, String userName) {
         //设置默认值
-        if (ListUtils.isNull((model.getBrandName()))) {
+        if (ListUtils.isNull(model.getBrandName())) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setBrandName(lst);
         }
-        if (ListUtils.isNull((model.getProductType()))) {
+        if (ListUtils.isNull(model.getProductType())) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setProductType(lst);
         }
-        if (ListUtils.isNull((model.getSizeType()))) {
+        if (ListUtils.isNull(model.getSizeType())) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setSizeType(lst);
@@ -287,7 +287,7 @@ public class ImageTemplateService extends BaseService {
         String[] strList = templateContent.split("%s");
         String[] paramList = new String[strList.length - 1];
         for (int i = 0; i < strList.length - 1; i++) {
-            if (strList[i].indexOf(prefix) > 0) {
+            if (strList[i].contains(prefix)) {
                 paramList[i] = "test1.png";
             } else {
                 paramList[i] = "test中国&" + i;
@@ -313,7 +313,7 @@ public class ImageTemplateService extends BaseService {
         List<CmsBtImageTemplateModel> templateModelList = dao.selectTemplateForImageUpload(channelId, brandName, productType, sizeType);
 
         List<CmsBtImageTemplateModel> noParamTemplateList = templateModelList.stream().filter(cmsBtImageTemplateModel ->
-                cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
+                        cmsBtImageTemplateModel.getImageTemplateContent().split("%s").length == 2
         ).collect(Collectors.toList());
 
         // TODO: 16/5/10 根据有限顺序判断返回的只对应其中一个templateid
@@ -325,6 +325,7 @@ public class ImageTemplateService extends BaseService {
 
     /**
      * 根据imageName返回图片生成返回的url
+     *
      * @param imageName 图片名称
      * @return 完整s7路径的图片地址(http://image.sneakerhead.com/is/image/sneakerhead/xxxx-xxx)
      */
@@ -346,7 +347,7 @@ public class ImageTemplateService extends BaseService {
     /**
      * 取得显示用图片的url,其中图片名字的%s保留(http://image.sneakerhead.com/is/image/sneakerhead/%s)
      */
-    public String getDefaultImageUrl(){
+    public String getDefaultImageUrl() {
 
         // 取得显示图片用URL
         String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");

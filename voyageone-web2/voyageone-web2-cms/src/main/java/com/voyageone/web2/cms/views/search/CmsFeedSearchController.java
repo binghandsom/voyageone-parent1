@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -8,8 +11,10 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -19,11 +24,14 @@ import java.util.HashMap;
  * @version 2.0.0, 2016/04/06
  */
 @RestController
-@RequestMapping( value = CmsUrlConstants.SEARCH.FEED.ROOT,  method = RequestMethod.POST )
+@RequestMapping( value = CmsUrlConstants.SEARCH.FEED.ROOT )
 public class CmsFeedSearchController extends CmsController {
 
     @Autowired
     private CmsFeedSearchService searchService;
+
+    @Autowired
+    private CmsBtExportTaskService cmsBtExportTaskService;
 
     /**
      * @api {post} /cms/search/feed/init 2.1 初始化FEED检索画面时,获取master数据
@@ -142,12 +150,51 @@ public class CmsFeedSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE)
     public AjaxResponse updateFeedStatus(@RequestBody Map params) {
-        List selList = (List) params.get("selList");
-        if (selList == null || selList.isEmpty()) {
-            throw new BusinessException("请至少选择一个Feed.");
+
+        int cnt = 0;
+        Boolean isAll = (Boolean) params.get("isAll");
+        Integer status = (Integer) params.get("status");
+        if(!isAll) {
+            List selList = (List) params.get("selList");
+            if (selList == null || selList.isEmpty()) {
+                throw new BusinessException("请至少选择一个Feed.");
+            }
+            searchService.updateFeedStatus(selList,status, getUser());
+        }else{
+            Map<String, Object> searchValue = (Map<String, Object>) params.get("searchInfo");
+
+            searchService.updateFeedStatus(searchValue, status, getUser());
         }
-        searchService.updateFeedStatus(selList, getUser());
         // 返回结果信息
         return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORT)
+    public  AjaxResponse export(@RequestBody CmsBtExportTaskModel params) {
+        params.setChannelId(getUser().getSelChannelId());
+        params.setModifier(getUser().getUserName());
+        params.setCreater(getUser().getUserName());
+        params.setCreated(new Date());
+        params.setTaskType(CmsBtExportTaskService.FEED);
+        params.setStatus(0);
+        return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
+    }
+
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORTSEARCH)
+    public AjaxResponse exportSearch(@RequestBody Map<String,Object> params){
+        Map<String, Object> resultBean = new HashMap<String, Object>();
+        UserSessionBean userInfo = getUser();
+        Integer pageNum = (Integer) params.get("pageNum");
+        Integer pageSize = (Integer) params.get("pageSize");
+        resultBean.put("exportList", cmsBtExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
+        resultBean.put("exportListTotal", cmsBtExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName()));
+
+        // 返回feed信息
+        return success(resultBean);
+    }
+
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.DOWNLOAD)
+    public ResponseEntity<byte[]> download(@RequestParam String fileName){
+        return genResponseEntityFromFile(fileName, CmsBtExportTaskService.savePath + fileName);
     }
 }

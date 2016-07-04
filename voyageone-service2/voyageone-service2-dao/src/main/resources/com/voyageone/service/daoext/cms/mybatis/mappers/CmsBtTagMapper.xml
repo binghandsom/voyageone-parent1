@@ -231,7 +231,9 @@
             tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where
-            parent_tag_id = #{parentTagId,jdbcType=INTEGER}
+            tag.parent_tag_id = #{parentTagId,jdbcType=INTEGER}
+            and tag.active = 1
+            and tag.tag_status = 0
         order by tag.id
     </select>
 
@@ -277,10 +279,15 @@
         tag.modifier
         from voyageone_cms2.cms_bt_tag tag
         where
-        channel_id = #{channelId}
+        (tag.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or tag.channel_id = #{orgChannelId}
+        </if>
+        )
         and tag_type = '4'
         and tag.tag_path_name != ''
-        and tag.active=1
+        and tag.active = 1
+        and tag.tag_status = 0
         order by tag.id
     </select>
 
@@ -305,13 +312,24 @@
         from voyageone_cms2.cms_bt_promotion promo
         left join voyageone_cms2.cms_bt_tag tag on tag.id = promo.ref_tag_id
         where
-        promo.channel_id = #{channelId}
+        (promo.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or promo.channel_id = #{orgChannelId}
+        </if>
+        )
         <if test="cartId != null">
             and promo.cart_id = #{cartId}
         </if>
         and promo.active=1
+        and promo.promotion_status = 0
+        and tag.active = 1
+        and tag.tag_status = 0
         and tag.tag_path_name != ''
-        and tag.channel_id = #{channelId}
+        and (tag.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or tag.channel_id = #{orgChannelId}
+        </if>
+        )
         and tag_type = '2'
         order by tag.id
     </select>
@@ -342,7 +360,13 @@
         </foreach>
         )
         and tag.tag_path_name != ''
-        and tag.channel_id = #{channelId}
+        and (tag.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or tag.channel_id = #{orgChannelId}
+        </if>
+        )
+        and tag.active = 1
+        and tag.tag_status = 0
         and tag_type = '2'
         order by tag.id
     </select>

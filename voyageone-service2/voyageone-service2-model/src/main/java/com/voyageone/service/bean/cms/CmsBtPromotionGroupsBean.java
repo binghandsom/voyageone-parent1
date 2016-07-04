@@ -40,10 +40,10 @@ public class CmsBtPromotionGroupsBean extends CmsBtPromotionGroupsModel {
     public CmsBtPromotionGroupsBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel,int promotionId, String operator) {
         this();
         // catPath
-        this.setCatPath(productInfo.getCatPath());
+        this.setCatPath(productInfo.getCommon().getCatPath());
 
         // ProductModel
-        this.setProductModel(productInfo.getFields().getModel());
+        this.setProductModel(productInfo.getCommon().getFields().getModel());
         // SynFlg
 //        this.setSynFlg(false);
 

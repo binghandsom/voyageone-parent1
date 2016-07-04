@@ -141,15 +141,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 查询价格变动
-            if (searchValue.getPriceChgFlg() == 1) {
-                // 涨价
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^U'},");
-            } else if (searchValue.getPriceChgFlg() == 2) {
-                // 降价
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^D'},");
-            } else if (searchValue.getPriceChgFlg() == 3) {
-                // 击穿
-                result.append("'" + _KeyPrefix + cartId + ".priceChgFlg':{'$regex':'^X'},");
+            if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
+                result.append("'" + _KeyPrefix + cartId + ".skus':{'$elemMatch':{'priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}},");
+            }
+
+            // 查询价格比较（建议销售价和实际销售价）
+            if (StringUtils.isNotEmpty(searchValue.getPriceDiffFlg())) {
+                // 建议销售价等于实际销售价
+                result.append("'" + _KeyPrefix + cartId + ".skus':{'$elemMatch':{'priceDiffFlg':'" + searchValue.getPriceChgFlg() + "'}},");
             }
 
             // 获取平台属性设置状态(是否完成)
@@ -421,7 +420,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     /**
      * 获取排序规则
      */
-    public String setSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
+    public String getSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
         StringBuilder result = new StringBuilder();
 
         // 获取排序字段1
@@ -477,12 +476,16 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             rslt[1] = orgChaNameList;
             rslt[2] = freeTagsList;
         }
+        if (groupsList == null || groupsList.isEmpty()) {
+            $warn("CmsAdvSearchQueryService.getGroupExtraInfo groupsList为空");
+            return rslt;
+        }
 
         for (CmsBtProductBean groupObj : groupsList) {
-            CmsBtProductModel_Field fields = groupObj.getCommon().getFields();
-            String prodCode = null;
-            if (fields != null) {
-                prodCode = fields.getCode();
+            String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
+            if (prodCode == null) {
+                $warn("高级检索 getGroupExtraInfo 无产品code OBJ=:" + groupObj.toString());
+                continue;
             }
             // 从group表合并platforms信息
             StringBuilder resultPlatforms = new StringBuilder();
@@ -496,25 +499,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qrpQuy);
             CmsBtProductGroupModel groupModelMap = null;
             if (grpList == null || grpList.isEmpty()) {
-                $warn("CmsSearchAdvanceService.getGroupExtraInfo prodCode=" + prodCode);
+                $warn("高级检索 getGroupExtraInfo group查询无结果 prodCode=" + prodCode);
                 groupObj.setGroupBean(new CmsBtProductGroupModel());
             } else {
                 groupModelMap = grpList.get(0);
                 groupObj.setGroupBean(groupModelMap);
-            }
-
-            // 设置cart相关信息
-            List<CmsBtProductModel_Carts> cartList = groupObj.getCarts();
-            if (cartList != null && cartList.size() > 0) {
-                for (CmsBtProductModel_Carts cart : cartList) {
-                    if (cart.getCartId() == cartId) {
-                        groupObj.setCartBean(cart);
-                        break;
-                    }
-                }
-            }
-            if (groupObj.getCartBean() == null) {
-                groupObj.setCartBean(new CmsBtProductModel_Carts());
             }
 
             ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
@@ -525,7 +514,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             boolean hasChg = false;
-            List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
+            List<CmsBtProductModel_Sku> skus = groupObj.getCommon().getSkus();
             if (skus != null) {
                 for (CmsBtProductModel_Sku skuObj : skus) {
                     String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
@@ -558,24 +547,24 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                     }
                 }
 
-                // 查询商品在各平台状态
-                List<CmsBtProductModel_Carts> carts = groupObj.getCarts();
-                if (carts != null && carts.size() > 0) {
-                    for (CmsBtProductModel_Carts cartsObj : carts) {
-                        StringBuilder resultStr = new StringBuilder();
-                        resultStr.append(MongoUtils.splicingValue("cartId", cartsObj.getCartId()));
-                        resultStr.append(",");
-                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
-
-                        // 在group表中过滤platforms相关信息
-                        JomgoQuery qrpQuyObj = new JomgoQuery();
-                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
-                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
-                        if (grpItem != null) {
-                            cartsObj.setAttribute("numiid", grpItem.getNumIId());
-                        }
-                    }
-                }
+//                // 查询商品在各平台状态
+//                List<CmsBtProductModel_Carts> carts = groupObj.getCarts();
+//                if (carts != null && carts.size() > 0) {
+//                    for (CmsBtProductModel_Carts cartsObj : carts) {
+//                        StringBuilder resultStr = new StringBuilder();
+//                        resultStr.append(MongoUtils.splicingValue("cartId", cartsObj.getCartId()));
+//                        resultStr.append(",");
+//                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
+//
+//                        // 在group表中过滤platforms相关信息
+//                        JomgoQuery qrpQuyObj = new JomgoQuery();
+//                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
+//                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
+//                        if (grpItem != null) {
+//                            cartsObj.setAttribute("numiid", grpItem.getNumIId());
+//                        }
+//                    }
+//                }
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<>();
@@ -587,13 +576,13 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                     for (int i = 1, leng = pCdList.size(); i < leng; i++) {
                         // 根据商品code找到其主图片
                         JomgoQuery queryObj = new JomgoQuery();
-                        queryObj.setProjection("{'fields.images1':1,'prodId': 1, 'fields.code': 1,'_id':0}");
-                        queryObj.setQuery("{'fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
+                        queryObj.setProjection("{'common.fields.images1':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
+                        queryObj.setQuery("{'common.fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
                         // 如果根据code获取不到数据就跳过
                         if (prod == null)
                             continue;
-                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getFields().getImages1();
+                        List<CmsBtProductModel_Field_Image> fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
                         if (fldImgList.size() > 0) {
                             Map<String, String> map = new HashMap<>(1);
                             map.put("value", fldImgList.get(0).getName());
@@ -603,7 +592,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                         // 设定该group对应的prodId
                         Map<String, Object> proMap = new HashMap<>();
                         proMap.put("prodId", prod.getProdId());
-                        proMap.put("code", prod.getFields().getCode());
+                        proMap.put("code", prod.getCommonNotNull().getFieldsNotNull().getCode());
                         groupProdIdList.add(proMap);
                     }
                 }

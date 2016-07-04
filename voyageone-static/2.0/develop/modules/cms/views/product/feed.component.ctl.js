@@ -5,56 +5,36 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("feedSchema", function ($routeParams, $rootScope, $translate, productDetailService, notify) {
+    cms.directive("feedSchema", function (productDetailService,notify) {
         return {
             restrict: "E",
-            replace: false,
-            transclude: true,
             templateUrl : "views/product/feed.component.tpl.html",
-            /**独立的scope对象*/
-            scope: {
-                productId: "=productId"
-            },
+            scope: {productInfo: "=productInfo"},
             link: function (scope) {
+                scope.pageAnchor = pageAnchor;
+                scope.updateFeedInfo = updateFeedInfo;
 
-                scope.vm = {
-                    productDetails : null
-                };
+                /**
+                 * feed更新操作  updateProductAtts
+                 */
 
-                // 获取初始化数据
-                initialize();
-                function initialize() {
-                    var data = {productId: scope.productId};
-                    productDetailService.getProductInfo(data)
-                        .then(function (res) {
-                            scope.vm.productDetails = res.data.productInfo;
-                            scope.vm.productStatusList = res.data.productStatusList;
-                            scope.vm.inventoryList = res.data.inventoryList;
-                            scope.vm._orgChaName = res.data.orgChaName;
-                            scope.vm._isminimall = res.data.isminimall;
-                            scope.vm._isMain = res.data.isMain;
-                            if ($rootScope.imageUrl == undefined) {
-                                $rootScope.imageUrl = '';
-                            }
-                            scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-
-                            scope.vm.currentImage = res.data.defaultImage;
-                            scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
-                            scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady
-
-                        }, function (res) {
-                            scope.vm.errorMsg = res.message;
-                            scope.vm.showInfoFlag = false;
-                        })
-                }
-
-                scope.updateFeed = updateFeed;
-                function updateFeed(){
-                    productDetailService.updateProductFeed(scope.vm.productDetails).then(function(res){
-                        scope.vm.productDetails.modified = res.modified;
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                function updateFeedInfo(){
+                    productDetailService.updateProductAtts({prodId:scope.productInfo.productId,feedInfo:scope.productInfo.feedInfo}).then(function(){
+                        notify.success("更新成功!");
                     });
                 }
+                /**
+                 * 右侧导航栏
+                 * @param index div的index
+                 * @param speed 导航速度 ms为单位
+                 */
+                function pageAnchor(index,speed){
+                    var offsetTop = 0;
+                    if(index != 1)
+                        offsetTop = ($("#feed"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                }
+
             }
         };
     });

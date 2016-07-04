@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * 天猫平台产品上新服务
@@ -94,7 +95,7 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 天猫平台商品信息新增或更新(天猫)
-                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
+//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
                 // 天猫国际商品信息新增或更新(天猫国际)
                 doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
                 // 淘宝商品信息新增或更新(淘宝)
@@ -199,8 +200,18 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
+                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
+                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                // modified by morse.lu 2016/06/28 end
             }
+            // added by morse.lu 2016/06/28 start
+            // skuList也排序一下
+            sxProductService.sortSkuInfo(sxData.getSkuList());
+            // added by morse.lu 2016/06/28 end
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> productList = sxData.getProductList();
@@ -215,10 +226,10 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCatId());
+            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
             if (cmsMtPlatformMappingModel == null) {
                 String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
-                        channelId, cartId, mainProduct.getCatId());
+                        channelId, cartId, mainProduct.getCommon().getCatId());
                 $error(errMsg);
                 sxData.setErrorMessage(errMsg);
                 throw new BusinessException(errMsg);
@@ -471,18 +482,30 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
             for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
                 // 获取价格
-                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+                if (sxProductModel.getCommon().getSkus() == null || sxProductModel.getCommon().getSkus().size() == 0) {
+                    // modified by morse.lu 2016/06/28 end
                     // 没有sku的code, 跳过
                     continue;
                 }
-                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+                Double dblPrice = Double.parseDouble(sxProductModel.getPlatform(sxData.getCartId()).getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+                // modified by morse.lu 2016/06/28 end
 
                 // 设置特价宝
                 CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
                 cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
                 cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
                 cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
-                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
+                // modified by morse.lu 2016/06/28 end
                 cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
                 cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
                 cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
