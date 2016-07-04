@@ -1339,6 +1339,7 @@ public class SxProductService extends BaseService {
 
         switch (field.getType()) {
             case INPUT: {
+                retMap = new HashMap();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1350,6 +1351,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case SINGLECHECK: {
+                retMap = new HashMap();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1363,6 +1365,7 @@ public class SxProductService extends BaseService {
             case MULTIINPUT:
                 break;
             case MULTICHECK: {
+                retMap = new HashMap();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1379,6 +1382,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case COMPLEX: {
+                retMap = new HashMap();
                 String fieldId = field.getId();
                 Map<String, Object> masterWordEvaluationContext;
                 try {
@@ -1425,6 +1429,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case MULTICOMPLEX: {
+                retMap = new HashMap();
                 String fieldId = field.getId();
                 List<Map<String, Object>> masterWordEvaluationContexts = null;
                 try {
@@ -1904,6 +1909,7 @@ public class SxProductService extends BaseService {
             complexField.setComplexValue(complexValue);
 
             boolean isFirst = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
+            Field fieldDef = null;
             for (Field subField : complexField.getFields()) {
                 // 商品参数,商品展示,视频推介等
                 if (subField.getType() == FieldTypeEnum.COMPLEX) {
@@ -1921,7 +1927,8 @@ public class SxProductService extends BaseService {
                                 }
                             }
 
-                            if (isRequest) {
+                            if (isRequest || contentField.getId().equals("desc_module_5_cat_mod_content") ) {
+                                // 必须，或者是商品参数(用于默认项)
                                 Field valueSubField = deepCloneField(subField);
                                 complexValue.put(valueSubField);
                                 ComplexField valueSubComplexField = (ComplexField) valueSubField;
@@ -1929,8 +1936,9 @@ public class SxProductService extends BaseService {
                                 valueSubComplexField.setComplexValue(subComplexValue);
                                 Field valueContentField = deepCloneField(contentField);
                                 subComplexValue.put(valueContentField);
+                                fieldDef = valueContentField;
 
-                                if (isFirst) {
+                                if (isFirst && isRequest) {
                                     isFirst = false;
                                     ((InputField) valueContentField).setValue(descriptionValue);
                                 } else {
@@ -1944,9 +1952,22 @@ public class SxProductService extends BaseService {
                         sxData.setErrorMessage(errorMsg);
                         throw new BusinessException(errorMsg);
                     }
+                } else if (subField.getType() == FieldTypeEnum.MULTICOMPLEX) {
+                    // 目前只有一个叫自定义模块的，暂时不做
+                    continue;
                 } else {
                     sxData.setErrorMessage(errorMsg);
                     throw new BusinessException(errorMsg);
+                }
+            }
+
+            if (isFirst) {
+                // 没有必须的,姑且先放在一个叫"商品参数"的field里面,不确定是不是每个都有这个属性,以后发生特例再说
+                if (fieldDef != null) {
+                    ((InputField) fieldDef).setValue(descriptionValue);
+                } else {
+                    sxData.setErrorMessage(errorMsg);
+                    throw new BusinessException(String.format("类目[%s]的商品描述里没有必须属性,且没有一个叫\"商品参数\"的属性", sxData.getMainProduct().getCommon().getCatPath()));
                 }
             }
         } else {
@@ -1961,7 +1982,7 @@ public class SxProductService extends BaseService {
      * @param field 无线描述的field
      * @param
      */
-    public void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+    private void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
         String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
         if (StringUtils.isEmpty(descriptionValue)) {
@@ -1990,6 +2011,9 @@ public class SxProductService extends BaseService {
         }
 
         Object objVal = mapValue.get(field.getId());
+        if (objVal == null) {
+            return;
+        }
 
         switch (field.getType()) {
             case INPUT: {

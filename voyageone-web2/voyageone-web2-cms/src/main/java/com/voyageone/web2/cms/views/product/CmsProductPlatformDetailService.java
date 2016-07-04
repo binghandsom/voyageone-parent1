@@ -61,19 +61,25 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // platform 品牌名
         if (StringUtil.isEmpty(platformCart.getpBrandId())) {
-            Map<String, Object> parm = new HashMap<>();
-            parm.put("channelId", channelId);
-            parm.put("cartId", cartId);
-            parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
-            parm.put("active", 1);
-            CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
-            if (cmsMtBrandsMappingModel != null) {
-                platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+            if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+                Map<String, Object> parm = new HashMap<>();
+                parm.put("channelId", channelId);
+                parm.put("cartId", cartId);
+                parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
+                parm.put("active", 1);
+                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
+                if (cmsMtBrandsMappingModel != null) {
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+                }
+            }else{
+                platformCart.setpBrandName(cmsBtProduct.getCommon().getFields().getBrand());
             }
         }
 
-        platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), cartId));
+        if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), cartId));
+        }
         return platformCart;
     }
 
