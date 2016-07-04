@@ -392,17 +392,18 @@
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
-                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="0">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="2">销售价小于指导价</option>
                                                         <option value="3">销售价大于指导价</option>
-                                                        <option value="1">销售价等于指导价</option>
+                                                        <option value="1">建议销售价等于实际销售价</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-3 text-right">
-                                                <label class="control-label" translate="TXT_PROPERTY_STATUS"></label>
+                                                <label class="control-label"
+                                                       translate="TXT_PROPERTY_STATUS"></label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <select class="form-control" ng-model="vm.searchInfo.propertyStatus">
@@ -584,7 +585,7 @@
                             </button>
                             <ul uib-dropdown-menu>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupNewCategory)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupCategoryNew)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
