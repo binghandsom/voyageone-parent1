@@ -1248,13 +1248,19 @@ public class ProductService extends BaseService {
      * @param userName
      * @param hsCodeTaskCnt
      * @param retFields
-     * @return
+     * @param qtyOrder
+     *@param code @return
      */
-    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName, int hsCodeTaskCnt, String[] retFields) {
-        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","","");
+    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName
+            , int hsCodeTaskCnt, String[] retFields, String qtyOrder, String code) {
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"1","",code);
+        String qtyOrderValue = "{common.fields.quantity:"+qtyOrder+"}";
         JomgoQuery queryObject = new JomgoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
+        if(!StringUtils.isEmpty(qtyOrder)){
+            queryObject.setSort(qtyOrderValue);
+        }
         queryObject.setProjectionExt(retFields);
         queryObject.setLimit(hsCodeTaskCnt);
         return cmsBtProductDao.select(queryObject,channelId);
@@ -1293,7 +1299,7 @@ public class ProductService extends BaseService {
         //hsCodePrivate
         if(!StringUtils.isEmpty(userName)){
             if(userName.equals("notNull")){
-                sbQuery.append("common.fields.hsCodePrivate:{$in:[null],$exists:true}");
+                sbQuery.append("\"common.fields.hsCodePrivate\":{$exists:true}");
                 sbQuery.append(",");
             }else{
                 sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodePrivate", userName));
@@ -1315,8 +1321,8 @@ public class ProductService extends BaseService {
         }
         //hsCodeSetter
         if(!StringUtils.isEmpty(hsCodeSetter)){
-            if(userName.equals("notNull")){
-                sbQuery.append("common.fields.hsCodeSetter:{$in:[null],$exists:true}");
+            if(hsCodeSetter.equals("notNull")){
+                sbQuery.append("\"common.fields.hsCodeSetter\":{$exists:true}");
                 sbQuery.append(",");
             }else{
                 sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", hsCodeSetter));
