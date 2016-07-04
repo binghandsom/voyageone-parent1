@@ -39,10 +39,12 @@ public final class JacksonUtil {
             throw new SystemException(e.getMessage(), e);
         }
 
-        if (gen != null) try {
-            gen.close();
-        } catch (IOException e) {
-            throw new SystemException(e.getMessage(), e);
+        if (gen != null) {
+            try {
+                gen.close();
+            } catch (IOException e) {
+                throw new SystemException(e.getMessage(), e);
+            }
         }
 
         return sw.toString();

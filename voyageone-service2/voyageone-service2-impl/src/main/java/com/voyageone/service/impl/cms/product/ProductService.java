@@ -1324,4 +1324,29 @@ public class ProductService extends BaseService {
         }
         return props;
     }
+
+    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier){
+
+        Map<String,Object> queryMap = new HashMap<>();
+        queryMap.put("prodId",prodId);
+        Map<String,Object> rsMap = new HashMap<>();
+        String modified = DateTimeUtil.getNowTimeStamp();
+        rsMap.put("modified",modified);
+        rsMap.put("modifier",modifier);
+        if (cnProps != null) {
+                    rsMap.put("feed.customIds", cnProps.stream().filter(customPropBean -> customPropBean.isCustomPropActive()).map(CustomPropBean::getFeedAttrEn)
+                            .collect(Collectors.toList()));
+                    rsMap.put("feed.customIdsCn", cnProps.stream().filter(customPropBean -> customPropBean.isCustomPropActive()).map
+                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
+            rsMap.put("feed.orgAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
+            rsMap.put("feed.cnAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
+        }
+
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("$set", rsMap);
+
+        cmsBtProductDao.update(channelId, queryMap, updateMap);
+        insertSxWorkLoad(channelId,getProductById(channelId,prodId),modifier);
+        return modified;
+    }
 }
