@@ -150,7 +150,11 @@ public class ProductGroupService extends BaseService {
     public CmsBtProductGroupModel selectProductGroupByModelCodeAndCartId(String channelId, String modelCode, String cartId) {
         // jeff 2016/04 change start
         // String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\"}, {\"fields.code\":1}", modelCode);
-        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"fields.isMasterMain\":1},{\"fields.code\":1}", modelCode);
+        // desmond 2016/07/04 update start
+        //String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"fields.isMasterMain\":1},{\"fields.code\":1}", modelCode);
+        // 检索条件(feed.orgAtts.modelCode = modelCode && common.fields.isMasterMain = 1)
+        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"common.fields.isMasterMain\":1},{\"common.fields.code\":1}", modelCode);
+        // desmond 2016/07/04 update end
         // jeff 2016/04 change end
         List<CmsBtProductModel> prodList = cmsBtProductDao.select(query, channelId);
         if (prodList == null || prodList.isEmpty()) {
