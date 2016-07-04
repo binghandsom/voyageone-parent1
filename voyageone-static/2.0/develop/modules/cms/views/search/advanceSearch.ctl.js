@@ -19,8 +19,8 @@ define([
                 compareType: null,
                 brand: null,
                 tags: [],
-                priceChgFlg: '0',
-                priceDiffFlg: '0',
+                priceChgFlg: '',
+                priceDiffFlg: '',
                 tagTypeSelectValue: '0',
                 promotionList: [],
                 catgoryList: [],
@@ -116,8 +116,8 @@ define([
                 compareType: null,
                 brand: null,
                 tags: [],
-                priceChgFlg: '0',
-                priceDiffFlg: '0',
+                priceChgFlg: '',
+                priceDiffFlg: '',
                 tagTypeSelectValue: '0',
                 cidValue: [],
                 promotionTagType: 1,
@@ -512,6 +512,7 @@ define([
             $scope.vm.searchInfo.priceStart = null;
             $scope.vm.searchInfo.priceType = null;
             $scope.vm.searchInfo.priceChgFlg = null;
+            $scope.vm.searchInfo.priceDiffFlg = null;
             $scope.vm.searchInfo.propertyStatus = null;
 
             $scope.vm.masterData.catList = [];
@@ -685,6 +686,27 @@ define([
 
                         check(property);
                     });
+            }
+        }
+
+        // 设置最终售价
+        $scope.toopenSalePrice = function (openSalePriceFnc, cartId) {
+            _chkProductSel(parseInt(cartId), _toopenSalePrice);
+
+            function _toopenSalePrice(cartId, _selProdList) {
+                var productIds = [];
+                if (_selProdList && _selProdList.length) {
+                    _.forEach(_selProdList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
+                property.isSelAll = $scope.vm._selall ? 1 : 0;
+
+                openSalePriceFnc({'property':property, 'cartList':$scope.vm.cartList}).then(
+                function () {
+                    $scope.search();
+                });
             }
         }
 

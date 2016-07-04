@@ -14,7 +14,11 @@ public enum CustomMappingType {
     TMALL_XINGHAO(7),
     TMALL_OUT_ID(8),
     TMALL_SHOP_CATEGORY(9),
-    ITEM_STATUS(10);
+    ITEM_STATUS(10),
+    // added by morse.lu 2016/06/29 start
+    ITEM_DESCRIPTION(11),
+    ITEM_WIRELESS_DESCRIPTION(12);
+    // added by morse.lu 2016/06/29 end
 
     private int value;
 
@@ -48,6 +52,12 @@ public enum CustomMappingType {
                 return TMALL_SHOP_CATEGORY;
             case 10:
                 return ITEM_STATUS;
+            // added by morse.lu 2016/06/29 start
+            case 11:
+                return ITEM_DESCRIPTION;
+            case 12:
+                return ITEM_WIRELESS_DESCRIPTION;
+            // added by morse.lu 2016/06/29 end
             default:
                 return null;
         }

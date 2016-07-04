@@ -41,7 +41,7 @@ public class MasterWordParser {
             Map<String, String> extra = masterWord.getExtra();
             Object plainPropValueObj = null;
             if (evaluationContextStack.isEmpty()) {
-                plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
+                plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
             } else {
                 for (int i = evaluationContextStack.size(); i>0; i--) {
                     Map<String, Object> evaluationContext = evaluationContextStack.get(i-1);
@@ -52,7 +52,7 @@ public class MasterWordParser {
                 }
                 //如果evaluationContext存在，但其中的某属性为空，那么从全局取
                 if (plainPropValueObj == null) {
-                    plainPropValueObj = getPropValue(cmsBtProductModel.getFields(), propName);
+                    plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);
                 }
             }
 

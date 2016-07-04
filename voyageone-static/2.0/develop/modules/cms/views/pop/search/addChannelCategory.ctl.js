@@ -80,14 +80,23 @@ define([
                     alert("店铺内分类没有改变，不需要保存");
                     return;
                 }
+
                 //save保存时，如果店铺渠道选择的是master或feed，则显示警告：操作无效
                 if (self.cartId == 1 || self.cartId == 0) {
                     self.cartIdValid = true;
                     return;
                 }
                 var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
-                var map = flatCategories(this.channelCategoryList);
-                _.map(this.isSelectCid, function (value, key) {
+                var map = flatCategories(self.channelCategoryList);
+                for (var key in self.orgDispMap) {
+                    if (self.orgDispMap[key]) {
+                        // 如果有半选状态，则提示
+                        alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
+                        return;;
+                    }
+                }
+
+                _.map(self.orgChkStsMap, function (value, key) {
                     return {categoryId: key, selected: value};
                 }).filter(function (item) {
                     return item.selected;
@@ -117,7 +126,7 @@ define([
                     var cid = cids[cids.length-1];
                     var cNames =  fullCNames[index].split(">");
                     var cName = cNames[cNames.length-1];
-                    sellerCats.push({cId:cid, cIds:cids, cName:cName, cNames:cNames});
+                    sellerCats.push({cId:cid, cIds:cids, cName:fullCNames[index], cNames:cNames});
                 });
 
                 self.$uibModalInstance.close({sellerCats:sellerCats, cartId:self.cartId});

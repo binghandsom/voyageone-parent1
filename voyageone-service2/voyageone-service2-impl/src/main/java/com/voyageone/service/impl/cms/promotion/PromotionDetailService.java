@@ -88,7 +88,7 @@ public class PromotionDetailService extends BaseService {
         }
         else {
             productInfo = productService.getProductById(channelId, productId);
-            query.setQuery("{\"productCodes\":\"" + productInfo.getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+            query.setQuery("{\"productCodes\":\"" + productInfo.getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
             groupModel = productGroupService.getProductGroupByQuery(channelId, query);
         }
 

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtWorkloadHistoryModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `cart_id`, `group_id`, `product_codes`, `numIId`, `proc_name`, 
+        `proc_modifier`, `proc_content`, `creater`, `created`, `modifier`, `modified`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_workload_history
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtWorkloadHistoryModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_workload_history
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="groupId != null" >
+                `group_id`,
+            </if>
+            <if test="productCodes != null" >
+                `product_codes`,
+            </if>
+            <if test="numiid != null" >
+                `numIId`,
+            </if>
+            <if test="procName != null" >
+                `proc_name`,
+            </if>
+            <if test="procModifier != null" >
+                `proc_modifier`,
+            </if>
+            <if test="procContent != null" >
+                `proc_content`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            `modified`,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null" >
+                #{groupId,jdbcType=INTEGER},
+            </if>
+            <if test="productCodes != null" >
+                #{productCodes,jdbcType=VARCHAR},
+            </if>
+            <if test="numiid != null" >
+                #{numiid,jdbcType=VARCHAR},
+            </if>
+            <if test="procName != null" >
+                #{procName,jdbcType=VARCHAR},
+            </if>
+            <if test="procModifier != null" >
+                #{procModifier,jdbcType=VARCHAR},
+            </if>
+            <if test="procContent != null" >
+                #{procContent,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtWorkloadHistoryModel" >
+        update cms_bt_workload_history
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null" >
+                `group_id` = #{groupId,jdbcType=INTEGER},
+            </if>
+            <if test="productCodes != null" >
+                `product_codes` = #{productCodes,jdbcType=VARCHAR},
+            </if>
+            <if test="numiid != null" >
+                `numIId` = #{numiid,jdbcType=VARCHAR},
+            </if>
+            <if test="procName != null" >
+                `proc_name` = #{procName,jdbcType=VARCHAR},
+            </if>
+            <if test="procModifier != null" >
+                `proc_modifier` = #{procModifier,jdbcType=VARCHAR},
+            </if>
+            <if test="procContent != null" >
+                `proc_content` = #{procContent,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_workload_history
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_workload_history
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=INTEGER}
+            </if>
+            <if test="productCodes != null" >
+                and `product_codes` = #{productCodes,jdbcType=VARCHAR}
+            </if>
+            <if test="numiid != null" >
+                and `numIId` = #{numiid,jdbcType=VARCHAR}
+            </if>
+            <if test="procName != null" >
+                and `proc_name` = #{procName,jdbcType=VARCHAR}
+            </if>
+            <if test="procModifier != null" >
+                and `proc_modifier` = #{procModifier,jdbcType=VARCHAR}
+            </if>
+            <if test="procContent != null" >
+                and `proc_content` = #{procContent,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_workload_history
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=INTEGER}
+            </if>
+            <if test="productCodes != null" >
+                and `product_codes` = #{productCodes,jdbcType=VARCHAR}
+            </if>
+            <if test="numiid != null" >
+                and `numIId` = #{numiid,jdbcType=VARCHAR}
+            </if>
+            <if test="procName != null" >
+                and `proc_name` = #{procName,jdbcType=VARCHAR}
+            </if>
+            <if test="procModifier != null" >
+                and `proc_modifier` = #{procModifier,jdbcType=VARCHAR}
+            </if>
+            <if test="procContent != null" >
+                and `proc_content` = #{procContent,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+</mapper>

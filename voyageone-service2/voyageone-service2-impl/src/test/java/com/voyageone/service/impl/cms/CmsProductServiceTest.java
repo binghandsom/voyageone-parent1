@@ -1,15 +1,11 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,138 +32,138 @@ public class CmsProductServiceTest {
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
-        product.setProdId(Long.parseLong("" + index));
-        //String catId = String.valueOf(random.nextInt(1000));
-        product.setCatPath("女装>休闲服>上衣>");
-        product.setCatId(StringUtils.generCatId(product.getCatPath()));
-        String code = String.valueOf(100000 + index);
-        CmsBtProductModel_Field fields = product.getFields();
-        fields.setCode(code);
-        fields.setBrand("Jewelry" + random.nextInt(10));
-        fields.setAttribute("productName", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
-
-        fields.setLongTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + random.nextInt(100));
-        fields.setMiddleTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题" + random.nextInt(100));
-        fields.setShortTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题" + random.nextInt(100));
-
-        fields.setModel("model-aa-" + random.nextInt(100));
-        fields.setColor("Color" + random.nextInt(100));
-        fields.setOrigin("china" + random.nextInt(10));
-
-        fields.setShortDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文" + random.nextInt(100));
-        fields.setLongDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文" + random.nextInt(100));
-        fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
-        fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
-
-        fields.setHsCodeCrop("Stud Ear" + random.nextInt(10));
-        fields.setHsCodePrivate("Stud Ear" + random.nextInt(10));
-
-        fields.setPriceChange(random.nextInt(1));
-
-        List<CmsBtProductModel_Field_Image> images = fields.getImages1();
-        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
-
-        images = fields.getImages2();
-        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
-
-        images = fields.getImages3();
-        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
-
-        images = fields.getImages3();
-        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
-        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
-
-      //  fields.setLock(index % 2 == 0);
-
-
-        fields.setPriceMsrpSt(100.00 + random.nextInt(100));
-        fields.setPriceMsrpEd(200.00 + random.nextInt(100));
-        fields.setPriceRetailSt(300.00 + random.nextInt(100));
-        fields.setPriceRetailEd(400.00 + random.nextInt(100));
-        fields.setPriceSaleSt(500.00 + random.nextInt(100));
-        fields.setPriceSaleEd(600.00 + random.nextInt(100));
-        fields.setCurPriceSt(700.00 + random.nextInt(100));
-        fields.setCurPriceEd(800.00 + random.nextInt(100));
-        fields.setStatus(CmsConstants.ProductStatus.New);
-        fields.setTranslateStatus("0");
-        fields.setEditStatus("0");
-        fields.setSizeType("Men" + random.nextInt(5));
-//        fields.setInventory(100 + random.nextInt(10));
-        fields.setPriceChange(random.nextInt(1));
-
-
-//        CmsBtProductModel_Group groups = product.getGroups();
-//        groups.setMsrpStart(100.00 + random.nextInt(100));
-//        groups.setMsrpEnd(200.00 + random.nextInt(100));
-//        groups.setRetailPriceStart(300.00 + random.nextInt(100));
-//        groups.setRetailPriceEnd(400.00 + random.nextInt(100));
-//        groups.setSalePriceStart(500.00 + random.nextInt(100));
-//        groups.setSalePriceEnd(600.00 + random.nextInt(100));
-//        groups.setCurrentPriceStart(700.00 + random.nextInt(100));
-//        groups.setCurrentPriceEnd(800.00 + random.nextInt(100));
+//        product.setProdId(Long.parseLong("" + index));
+//        //String catId = String.valueOf(random.nextInt(1000));
+//        product.setCatPath("女装>休闲服>上衣>");
+//        product.setCatId(StringUtils.generCatId(product.getCatPath()));
+//        String code = String.valueOf(100000 + index);
+//        CmsBtProductModel_Field fields = product.getFields();
+//        fields.setCode(code);
+//        fields.setBrand("Jewelry" + random.nextInt(10));
+//        fields.setAttribute("productName", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
 //
-//        List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
-//        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-//        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
-//        platform.setCartId(21);
-//        platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
-//        platform.setIsMain(false);
-//        platform.setDisplayOrder(random.nextInt(100));
-//        platform.setPublishTime("2015-11-12 16:19:00");
-//        platform.setInStockTime("2015-11-18 16:19:00");
-////        platform.setStatus("InStock");
-////        platform.setPublishStatus("等待上新");
-////        platform.setComment("");
-////        platform.setInventory(random.nextInt(100));
-//        platforms.add(platform);
+//        fields.setLongTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + random.nextInt(100));
+//        fields.setMiddleTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题" + random.nextInt(100));
+//        fields.setShortTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题" + random.nextInt(100));
 //
-//        platform = new CmsBtProductModel_Group_Platform(platform);
-//        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
-//        platform.setCartId(23);
-//        platforms.add(platform);
-
-        List<CmsBtProductModel_Sku> skus = product.getSkus();
-        for (int i=1; i<3+random.nextInt(5); i++) {
-            CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
-            sku.setSkuCode(code + "-" + i);
-            sku.setBarcode("1234567890" + (100 + random.nextInt(100)));
-            sku.setPriceMsrp(100.00 + random.nextInt(100));
-            sku.setPriceRetail(300.00 + random.nextInt(100));
-            sku.setPriceSale(800.00 + random.nextInt(100));
-            List<Integer> skuCarts = new ArrayList<>();
-            skuCarts.add(21);
-            skuCarts.add(23);
-            sku.setSkuCarts(skuCarts);
-            skus.add(sku);
-        }
-
-        BaseMongoMap feedOrgAtts = product.getFeed().getOrgAtts();
-        feedOrgAtts.setAttribute("washingtype", "dry cleaning");
-        feedOrgAtts.setAttribute("collar", "mandarin collar");
-        feedOrgAtts.setAttribute("style", "campus");
-        feedOrgAtts.setAttribute("waspe", "dleaning");
-
-        BaseMongoMap feedCnAtts = product.getFeed().getCnAtts();
-        feedCnAtts.setAttribute("washingtype", "dry cleaning");
-        feedCnAtts.setAttribute("collar", "mandarin collar");
-        feedCnAtts.setAttribute("style", "campus");
-        feedCnAtts.setAttribute("waspe", "dleaning");
-
+//        fields.setModel("model-aa-" + random.nextInt(100));
+//        fields.setColor("Color" + random.nextInt(100));
+//        fields.setOrigin("china" + random.nextInt(10));
+//
+//        fields.setShortDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述中文" + random.nextInt(100));
+//        fields.setLongDesCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述中文" + random.nextInt(100));
+//        fields.setShortDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 简短描述英语" + random.nextInt(100));
+//        fields.setLongDesEn("Stud Earrings with Cubic Zirconia in Sterling Silver- 详情描述英语" + random.nextInt(100));
+//
+//        fields.setHsCodeCrop("Stud Ear" + random.nextInt(10));
+//        fields.setHsCodePrivate("Stud Ear" + random.nextInt(10));
+//
+//        fields.setPriceChange(random.nextInt(1));
+//
+//        List<CmsBtProductModel_Field_Image> images = fields.getImages1();
+//        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "xxxxx-" + random.nextInt(10) + ".jpg"));
+//
+//        images = fields.getImages2();
+//        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "yyyyy-" + random.nextInt(10) + ".jpg"));
+//
+//        images = fields.getImages3();
+//        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "uuuuu-" + random.nextInt(10) + ".jpg"));
+//
+//        images = fields.getImages3();
+//        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+//        images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
+//
+//      //  fields.setLock(index % 2 == 0);
+//
+//
+//        fields.setPriceMsrpSt(100.00 + random.nextInt(100));
+//        fields.setPriceMsrpEd(200.00 + random.nextInt(100));
+//        fields.setPriceRetailSt(300.00 + random.nextInt(100));
+//        fields.setPriceRetailEd(400.00 + random.nextInt(100));
+//        fields.setPriceSaleSt(500.00 + random.nextInt(100));
+//        fields.setPriceSaleEd(600.00 + random.nextInt(100));
+//        fields.setCurPriceSt(700.00 + random.nextInt(100));
+//        fields.setCurPriceEd(800.00 + random.nextInt(100));
+//        fields.setStatus(CmsConstants.ProductStatus.New);
+//        fields.setTranslateStatus("0");
+//        fields.setEditStatus("0");
+//        fields.setSizeType("Men" + random.nextInt(5));
+////        fields.setInventory(100 + random.nextInt(10));
+//        fields.setPriceChange(random.nextInt(1));
+//
+//
+////        CmsBtProductModel_Group groups = product.getGroups();
+////        groups.setMsrpStart(100.00 + random.nextInt(100));
+////        groups.setMsrpEnd(200.00 + random.nextInt(100));
+////        groups.setRetailPriceStart(300.00 + random.nextInt(100));
+////        groups.setRetailPriceEnd(400.00 + random.nextInt(100));
+////        groups.setSalePriceStart(500.00 + random.nextInt(100));
+////        groups.setSalePriceEnd(600.00 + random.nextInt(100));
+////        groups.setCurrentPriceStart(700.00 + random.nextInt(100));
+////        groups.setCurrentPriceEnd(800.00 + random.nextInt(100));
+////
+////        List<CmsBtProductModel_Group_Platform> platforms = groups.getPlatforms();
+////        CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
+////        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
+////        platform.setCartId(21);
+////        platform.setNumIId(String.valueOf(2000000 + random.nextInt(1000)));
+////        platform.setIsMain(false);
+////        platform.setDisplayOrder(random.nextInt(100));
+////        platform.setPublishTime("2015-11-12 16:19:00");
+////        platform.setInStockTime("2015-11-18 16:19:00");
+//////        platform.setStatus("InStock");
+//////        platform.setPublishStatus("等待上新");
+//////        platform.setComment("");
+//////        platform.setInventory(random.nextInt(100));
+////        platforms.add(platform);
+////
+////        platform = new CmsBtProductModel_Group_Platform(platform);
+////        platform.setGroupId(Long.parseLong("" + random.nextInt(1000)));
+////        platform.setCartId(23);
+////        platforms.add(platform);
+//
+//        List<CmsBtProductModel_Sku> skus = product.getSkus();
+//        for (int i=1; i<3+random.nextInt(5); i++) {
+//            CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
+//            sku.setSkuCode(code + "-" + i);
+//            sku.setBarcode("1234567890" + (100 + random.nextInt(100)));
+//            sku.setPriceMsrp(100.00 + random.nextInt(100));
+//            sku.setPriceRetail(300.00 + random.nextInt(100));
+//            sku.setPriceSale(800.00 + random.nextInt(100));
+//            List<Integer> skuCarts = new ArrayList<>();
+//            skuCarts.add(21);
+//            skuCarts.add(23);
+//            sku.setSkuCarts(skuCarts);
+//            skus.add(sku);
+//        }
+//
+//        BaseMongoMap feedOrgAtts = product.getFeed().getOrgAtts();
+//        feedOrgAtts.setAttribute("washingtype", "dry cleaning");
+//        feedOrgAtts.setAttribute("collar", "mandarin collar");
+//        feedOrgAtts.setAttribute("style", "campus");
+//        feedOrgAtts.setAttribute("waspe", "dleaning");
+//
+//        BaseMongoMap feedCnAtts = product.getFeed().getCnAtts();
+//        feedCnAtts.setAttribute("washingtype", "dry cleaning");
+//        feedCnAtts.setAttribute("collar", "mandarin collar");
+//        feedCnAtts.setAttribute("style", "campus");
+//        feedCnAtts.setAttribute("waspe", "dleaning");
+//
         return product;
     }
 
@@ -177,8 +173,8 @@ public class CmsProductServiceTest {
 
         ret = cmsProductService.getProductById("010", 22139);
         System.out.println(ret.getFeed().getCnAtts());
-        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("21")));
-        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("20")));
+//        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("21")));
+//        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("20")));
 //        System.out.println(ret.getGroups().getCurrentPriceEnd());
     }
 

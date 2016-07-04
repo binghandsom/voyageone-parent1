@@ -2,21 +2,23 @@
  * Created by sofia on 6/2/2016.
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('HsCodeController', (function () {
-        function HsCodeController(hsCodeInfoService, notify) {
+        function HsCodeController(hsCodeInfoService, notify, popups) {
             this.hsCodeInfoService = hsCodeInfoService;
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.hsCodeList = [];
             this.hsCodeValue = [];
             this.status = false;
             this.notify = notify;
+            this.popups = popups;
             this.getTaskInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
-                qty: "",
-                order: "",
+                qty: "1",
+                order: "-1",
                 code: "",
                 hsCodeTaskCnt: 10
             };
@@ -45,6 +47,7 @@ define([
             get: function (page) {
                 var self = this;
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
                 self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                 })
             },
@@ -58,6 +61,31 @@ define([
                 var self = this;
                 if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 self.notify.warning('请继续完善税号设置');
+            },
+            openHsCodeImagedetail: function (item) {
+                if (item.common == undefined || item.common.fields == undefined) {
+                    return;
+                }
+                var picList = [];
+                for (var attr in item.common.fields) {
+                    if (attr.indexOf("images1") >= 0) {
+                        var image = _.map(item.common.fields[attr], function (entity) {
+                            var imageKeyName = "image" + attr.substring(6, 7);
+                            return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+                        });
+                        picList.push(image);
+                    }
+                }
+                this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            },
+            openHsCodeCodeDetail: function (item) {
+                // var self = this;
+                // var feedObj = self.hsCodeList[item];
+                // if (feedObj.commonNotNull.fields.length == 0) {
+                //     return;
+                // }
+                // this.openCodeDetail({'attsList': feedObj.attsList});
+
             }
         };
 

@@ -228,7 +228,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 //                    map.setSkuCount(cmsBtProductModel.getSkus().size());
                     CmsBtProductBean cmsBtProductModel = prodList.get(0);
                     map.setPlatformStatus(cmsBtProductModel.getGroupBean().getPlatformStatus());
-                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty());
+                    map.setInventory(cmsBtProductModel.getCommon().getFields().getQuantity());
                 }
             });
         }
@@ -253,7 +253,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 } else {
                     cmsBtProductModel = temp.get(map.get("productId").toString());
                 }
-                CmsBtProductModel_Sku sku = cmsBtProductModel.getSku(map.get("productSku").toString());
+                CmsBtProductModel_Sku sku = cmsBtProductModel.getCommon().getSku(map.get("productSku").toString());
                 if (sku != null) {
                     map.put("size", sku.getSize());
                 }

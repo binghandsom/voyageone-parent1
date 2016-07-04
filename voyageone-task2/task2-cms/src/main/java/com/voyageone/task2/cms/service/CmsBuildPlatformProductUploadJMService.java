@@ -172,6 +172,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      */
     public void updateProduct(CmsBtSxWorkloadModel work) throws Exception {
 
+        SxData sxData =  null;
+
         try {
 
             boolean needRetry = false;
@@ -179,12 +181,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             String channelId = work.getChannelId();
             Long groupId = work.getGroupId();
             //按groupId取Product
-            SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
 
 
             if (sxData != null) {
 
-                try {
+
                     //读店铺信息
                     ShopBean shop = Shops.getShop(channelId, CART_ID);
                     if (shop == null) {
@@ -196,7 +198,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                     //对聚美来说所有的商品都是主商品
                     CmsBtProductModel product = sxData.getMainProduct();
-                    String productCode = product.getFields().getCode();
+                    String productCode = product.getCommon().getFields().getCode();
                     $info("主商品[Code:%s]! ", productCode);
 
 
@@ -345,12 +347,22 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             }
                             else
                             {
-                                $error("读取产品失败！[ProductId:%s], [ChannelId:%s], [CartId:%s]\", product.getProdId(), channelId, CART_ID");
-                                throw  new BusinessException("读取产品失败！[ProductId:%s], [ChannelId:%s], [CartId:%s]\", product.getProdId(), channelId, CART_ID");
+                                String msg = String.format("读取聚美产品信息失败！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
+                                $error(msg);
+                                throw  new BusinessException(msg);
                             }
-
                         }
-                    } else {
+                        //上新失败
+                        else
+                        {
+                            String msg = String.format("上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductAddResponse.getErrorMsg());
+                            $error(msg);
+                            throw  new BusinessException(msg);
+                        }
+
+                    }
+                    //更新产品
+                    else {
                         //先去聚美查一下product
                         JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
                         List<JmGetProductInfo_Spus> remoteSpus = null;
@@ -364,7 +376,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         }
 
                         //如果OriginHashId存在，则修改商品属性
-                        CmsBtProductModel_Field fields = product.getFields();
+                        CmsBtProductModel_Field fields = product.getCommon().getFields();
                         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
                         String brandName = fields.getBrand();
                         String productType = fields.getProductType();
@@ -400,7 +412,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode);
 
                             List<BaseMongoMap<String, Object>> newSkuList = jmCart.getSkus();
-                            List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+                            List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
                             newSkuList = mergeSkuAttr(newSkuList, commonSkus);
 
 
@@ -447,6 +459,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                             cmsBtJmSkuDao.insert(mySku);
                                         }
                                     }
+                                    //更新Spu失败
+                                    else
+                                    {
+                                        String msg = String.format("更新Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuUpdateResponse.getErrorMsg());
+                                        $error(msg);
+                                        throw  new BusinessException(msg);
+                                    }
                                     //检查Remote SPU是否有sku属性，如果没有，则添加SKU
                                     if(StringUtils.isNullOrBlank2(oldSku.getSku_no()))
                                     {
@@ -470,6 +489,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                                 mySku.setModifier(getTaskName());
                                                 cmsBtJmSkuDao.update(mySku);
                                             }
+                                        }
+                                        //增加Sku失败
+                                        else
+                                        {
+                                            String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                            $error(msg);
+                                            throw  new BusinessException(msg);
                                         }
                                     }
                                 }
@@ -510,6 +536,20 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                                             skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                         }
+                                        //增加Sku失败
+                                        else
+                                        {
+                                            String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                            $error(msg);
+                                            throw  new BusinessException(msg);
+                                        }
+                                    }
+                                    //新增Spu失败
+                                    else
+                                    {
+                                        String msg = String.format("新增Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuAddResponse.getErrorMsg());
+                                        $error(msg);
+                                        throw  new BusinessException(msg);
                                     }
                                 }
                             }
@@ -528,12 +568,25 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
                                     $info("更新Deal成功！[ProductId:%s]", product.getProdId());
                                 }
+                                //更新Deal失败
+                                else
+                                {
+                                    String msg = String.format("更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
+                                    $error(msg);
+                                    throw  new BusinessException(msg);
+                                }
                             }
+                        }
+                        //更新产品失败
+                        else
+                        {
+                            String msg = String.format("更新产品失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
+                            $error(msg);
+                            throw  new BusinessException(msg);
                         }
 
                         //保存product到MongoDB
                         saveProductPlatform(channelId, product);
-
                         sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                         sxData.getPlatform().setModifier(getTaskName());
 
@@ -552,21 +605,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     saveWorkload(work, WORK_LOAD_SUCCESS);
                     $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
-                } catch (Exception e) {
-                    //保存错误log
-                    // 如果上新数据中的errorMessage为空
-                    if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
-                        if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                            sxData.setErrorMessage(e.getStackTrace()[0].toString());
-                        }
-                        else
-                        {
-                            sxData.setErrorMessage(e.getMessage());
-                        }
-                    }
-                    sxProductService.insertBusinessLog(sxData, getTaskName());
-                    throw e;
-                }
+
             }
             else
             {
@@ -581,6 +620,27 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
         }
         catch (Exception e) {
+
+            if(sxData == null)
+            {
+                sxData = new SxData();
+                sxData.setCartId(CART_ID);
+                sxData.setChannelId(work.getChannelId());
+                sxData.setGroupId(work.getGroupId());
+            }
+
+            //保存错误log
+            // 如果上新数据中的errorMessage为空
+            if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
+                if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                    sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                }
+                else
+                {
+                    sxData.setErrorMessage(e.getMessage());
+                }
+            }
+            sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
@@ -615,11 +675,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 //        dealInfo.setAttribute(jmFields.getStringAttribute("attribute"));
         dealInfo.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
-        String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
+        String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
         dealInfo.setDescription_properties(jmDetailTemplate);
-        String jmProductTemplate = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, getTaskName(), null);
+        String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shopProp);
         dealInfo.setDescription_images(jmProductTemplate);
-        String jmUseageTemplate = sxProductService.resolveDict("聚美使用方法", expressionParser, shopProp, getTaskName(), null);
+        String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shopProp);
         dealInfo.setDescription_usage(jmUseageTemplate);
 
         List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
@@ -758,7 +818,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     private HtProductUpdateRequest fillHtProductUpdateRequest(CmsBtProductModel product,
                                                               ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
 
-        CmsBtProductModel_Field fields = product.getFields();
+        CmsBtProductModel_Field fields = product.getCommon().getFields();
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CART_ID);
         HtProductUpdateRequest htProductUpdateRequest = new HtProductUpdateRequest();
         String productId = jmCart.getpProductId();
@@ -774,7 +834,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
         //商品主图
-        String picTemplate = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
+        String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
 
         if (!StringUtils.isNullOrBlank2(picTemplate)) {
             picTemplate = picTemplate.substring(0, picTemplate.lastIndexOf(","));
@@ -802,7 +862,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         JmProductBean bean = new JmProductBean();
 
         //先从fields读，以后会从common.fields
-        CmsBtProductModel_Field fields = product.getFields();
+        CmsBtProductModel_Field fields = product.getCommon().getFields();
         String brandName = fields.getBrand();
         String productType = fields.getProductType();
         String sizeType = fields.getSizeType();
@@ -816,7 +876,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         //白底方图
-        String picTemplate = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
+        String picTemplate = getTemplate("聚美白底方图", expressionParser, shopProp);
+
         if (!StringUtils.isNullOrBlank2(picTemplate)) {
             picTemplate = picTemplate.substring(0, picTemplate.lastIndexOf(","));
             bean.setNormalImage(picTemplate);
@@ -831,11 +892,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setShipping_system_id(Integer.valueOf(shippingId));
 
 
-        String jmDetailTemplate = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
+        String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
         deal.setDescription_properties(jmDetailTemplate);
-        String jmProductTemplate = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, getTaskName(), null);
+        String jmProductTemplate = getTemplate("聚美实拍", expressionParser, shopProp);
         deal.setDescription_images(jmProductTemplate);
-        String jmUseageTemplate = sxProductService.resolveDict("聚美使用方法", expressionParser, shopProp, getTaskName(), null);
+        String jmUseageTemplate = getTemplate("聚美使用方法", expressionParser, shopProp);
         deal.setDescription_usage(jmUseageTemplate);
 
         deal.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
@@ -850,7 +911,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         Calendar rightNow = Calendar.getInstance();
         rightNow.add(Calendar.MINUTE, 30);
         deal.setEnd_time(rightNow.getTimeInMillis() / 1000);
-        List<String> skuCodeList = product.getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+        List<String> skuCodeList = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
         deal.setRebate_ratio("1");
@@ -858,7 +919,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
 
         List<BaseMongoMap<String, Object>> jmSkus = jmCart.getSkus();
-        List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+        List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
 
         //合并Common和平台的Sku属性
         jmSkus = mergeSkuAttr(jmSkus, commonSkus);
@@ -901,10 +962,37 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
 
+    /**
+     * 读取字典的模板，如果返回空字符串则抛出异常
+     *
+     * @param dictName
+     * @param expressionParser
+     * @param shopProp
+     * @return
+     * @throws Exception
+     */
+    private String getTemplate(String dictName, ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
+        String result = sxProductService.resolveDict(dictName, expressionParser, shopProp, getTaskName(), null);
+        if(StringUtils.isNullOrBlank2(result))
+        {
+            String errorMsg = String.format("取Dict失败![dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
+            throw new BusinessException(errorMsg);
+        }
+        return  result;
+    }
+
+
+    /**
+     * 填充skulist
+     *
+     * @param list
+     * @param product
+     * @return
+     */
     private List<CmsBtJmSkuModel> fillCmsBtJmSkuModelList(List<CmsBtJmSkuModel> list, CmsBtProductModel product)
     {
         String channelId =  product.getChannelId();
-        CmsBtProductModel_Field fields =  product.getFields();
+        CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
         String brandName = fields.getBrand();
         String productType = fields.getProductType();
@@ -916,7 +1004,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
 
         List<BaseMongoMap<String, Object>> jmSkus = product.getPlatform(CART_ID).getSkus();
-        List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+        List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
 
         //合并Common和平台的Sku属性
         jmSkus = mergeSkuAttr(jmSkus, commonSkus);
@@ -953,7 +1041,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         //填充cmsBtJmProductModel
         String channelId =  product.getChannelId();
-        CmsBtProductModel_Field fields =  product.getFields();
+        CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
         String brandName = fields.getBrand();
         String productType = fields.getProductType();
@@ -964,8 +1052,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
         cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
-        cmsBtJmProductModel.setVoBrandName(product.getCatId());
-        cmsBtJmProductModel.setVoCategoryName(product.getCatPath());
+        cmsBtJmProductModel.setVoBrandName(product.getCommon().getCatId());
+        cmsBtJmProductModel.setVoCategoryName(product.getCommon().getCatPath());
         cmsBtJmProductModel.setBrandName(brandName);
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);
@@ -987,7 +1075,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setMaterialCn(fields.getMaterialCn());
 
         List<BaseMongoMap<String, Object>> jmSkus = product.getPlatform(CART_ID).getSkus();
-        List<CmsBtProductModel_Sku> commonSkus = product.getSkus();
+        List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
 
         //合并Common和平台的Sku属性
         jmSkus = mergeSkuAttr(jmSkus, commonSkus);

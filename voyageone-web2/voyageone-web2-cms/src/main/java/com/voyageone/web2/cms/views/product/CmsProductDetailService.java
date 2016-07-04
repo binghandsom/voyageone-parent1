@@ -104,35 +104,33 @@ public class CmsProductDetailService extends BaseAppService {
 
         //商品各种状态.
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
-        productStatus.setApproveStatus(productValueModel.getFields().getStatus());
+//        productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if (COMPLETE_STATUS.equals(productValueModel.getFields().getTranslateStatus())) {
+        if (COMPLETE_STATUS.equals(productValueModel.getCommon().getFields().getTranslateStatus())) {
             productStatus.setTranslateStatus(true);
         } else {
             productStatus.setTranslateStatus(false);
         }
 
         // 设置是否approve标签
-        if (CmsConstants.ProductStatus.Approved.name().equals(productValueModel.getFields().getStatus())) {
-            productStatus.setIsApproved(true);
-        } else {
-            productStatus.setIsApproved(false);
-        }
+//        if (CmsConstants.ProductStatus.Approved.name().equals(productValueModel.getFields().getStatus())) {
+//            productStatus.setIsApproved(true);
+//        } else {
+//            productStatus.setIsApproved(false);
+//        }
 
         //获取商品图片信息.
         Map<String, List<CmsBtProductModel_Field_Image>> productImages = new HashMap<>();
-        productImages.put("image1", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
-        productImages.put("image2", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
-        productImages.put("image3", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
-        productImages.put("image4", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
-        productImages.put("image5", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.MOBILE_CUSTOM_IMAGE));
-        productImages.put("image6", productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE));
+        productImages.put("image1", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE));
+        productImages.put("image2", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE));
+        productImages.put("image3", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.ANGLE_IMAGE));
+        productImages.put("image4", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE));
+        productImages.put("image5", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.MOBILE_CUSTOM_IMAGE));
+        productImages.put("image6", productValueModel.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE));
 
         // 获取feed方数据.
         Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
 
-        // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel.getCatId());
 
         // 获取共通schema.
         CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
@@ -141,38 +139,26 @@ public class CmsProductDetailService extends BaseAppService {
 
         this.fillFieldOptions(comSchemaFields, channelId, language);
 
-        // 获取master schema.
-        List<Field> masterSchemaFields = categorySchemaModel.getFields();
-
-        // 向主数据schema 添加共通schema.
-        masterSchemaFields.addAll(0, comSchemaFields);
 
         //获取主数据的值.
-        Map masterSchemaValue = productValueModel.getFields();
+        Map masterSchemaValue = productValueModel.getCommon().getFields();
 
         //填充master schema
-        FieldUtil.setFieldsValueFromMap(masterSchemaFields, masterSchemaValue);
+        FieldUtil.setFieldsValueFromMap(comSchemaFields, masterSchemaValue);
 
         //没有值的情况下设定complexField、MultiComplexField的默认值.
-        setDefaultComplexValues(masterSchemaFields);
+        setDefaultComplexValues(comSchemaFields);
 
-        //获取sku schema.
-        List<Field> skuSchemaFields = this.buildSkuSchema(categorySchemaModel);
-
-        MultiComplexField skuField = (MultiComplexField) skuSchemaFields.get(0);
-
-        List<Field> subSkuFields = skuField.getFields();
-
-        this.fillFieldOptions(subSkuFields, channelId, language);
+//        this.fillFieldOptions(subSkuFields, channelId, language);
 
         // TODO 取得Sku的库存
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(productValueModel.getOrgChannelId(), productValueModel.getCommon().getFields().getCode());
 
         //获取sku schemaValue
-        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
+//        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
 
         //填充sku schema.
-        FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
+//        FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
 
         //设置feed属性值
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
@@ -181,18 +167,16 @@ public class CmsProductDetailService extends BaseAppService {
         customAttributes.setCustomIdsCn(productValueModel.getFeed().getCustomIdsCn());
         customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
 
-        productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
         productInfo.setProductId(prodId);
-        productInfo.setCategoryId(categorySchemaModel.getCatId());
-        productInfo.setCategoryFullPath(categorySchemaModel.getCatFullPath());
-        productInfo.setSkuFields(skuField);
         productInfo.setCustomAttributes(customAttributes);
         productInfo.setFeedInfoModel(feedInfoModel);
         productInfo.setProductImages(productImages);
         productInfo.setProductStatus(productStatus);
         productInfo.setModified(productValueModel.getModified());
-        productInfo.setProductCode(productValueModel.getFields().getCode());
+        productInfo.setProductCode(productValueModel.getCommon().getFields().getCode());
+        productInfo.setOrgChannelId(productValueModel.getOrgChannelId());
+
 
         Map<String, Object> infoMap = new HashMap<>();
         infoMap.put("productInfo", productInfo);
@@ -212,9 +196,9 @@ public class CmsProductDetailService extends BaseAppService {
         boolean isMain = false;
 
         // 根据产品code找到group
-        CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, "{'cartId':" + cartId + ",'productCodes':'" + productValueModel.getFields().getCode() + "'}");
+        CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, "{'cartId':" + cartId + ",'productCodes':'" + productValueModel.getCommon().getFields().getCode() + "'}");
         if (grpObj != null) {
-            if (productValueModel.getFields().getCode().equals(grpObj.getMainProductCode())) {
+            if (productValueModel.getCommon().getFields().getCode().equals(grpObj.getMainProductCode())) {
                 isMain = true;
             }
         }
@@ -222,7 +206,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         // 设置默认第一张图片
         String defaultImageUrl = imageTemplateService.getDefaultImageUrl();
-        Map<String, Object> defaultImage = productValueModel.getFields().getImages1().get(0);
+        Map<String, Object> defaultImage = productValueModel.getCommon().getFields().getImages1().get(0);
         if (defaultImage.size() > 0)
             infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))));
 
@@ -234,11 +218,11 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
-        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
+//        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
             // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
-            channelId = prodObj.getOrgChannelId();
-        }
-        Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
+            channelId = StringUtils.isEmpty(prodObj.getOrgChannelId()) ? channelId : prodObj.getOrgChannelId();
+//        }
+        Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getCommon().getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<>(0);
         if (skuList == null || skuList.isEmpty()) {
@@ -273,10 +257,10 @@ public class CmsProductDetailService extends BaseAppService {
 
         CmsBtProductModel_Field masterFieldsValue = buildCmsBtProductModel_field(requestMap, masterFields);
 
-        productModel.setCatId(requestMap.get("categoryId").toString());
+        productModel.getCommon().setCatId(requestMap.get("categoryId").toString());
         productModel.setProdId(Long.valueOf(requestMap.get("productId").toString()));
-        productModel.setCatPath(requestMap.get("categoryFullPath").toString());
-        productModel.setFields(masterFieldsValue);
+        productModel.getCommon().setCatPath(requestMap.get("categoryFullPath").toString());
+        productModel.getCommon().setFields(masterFieldsValue);
         productModel.setFeed(feedModel);
         productModel.setModified(requestMap.get("modified").toString());
 
@@ -296,25 +280,26 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public String updateProductSkuInfo(String channelId, String user, String categoryId, Long productId, String modified, String categoryFullPath, Map skuFieldMap) {
 
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+//        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+//
+//        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuFieldMap);
+//
+//        productModel.setCatId(categoryId);
+//        productModel.setProdId(productId);
+//        productModel.setCatPath(categoryFullPath);
+//        productModel.setSkus(skuValues);
+//        productModel.setModified(modified);
+//
+//        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+//        productUpdateBean.setProductModel(productModel);
+//        productUpdateBean.setModifier(user);
+//        String newModified = DateTimeUtil.getNowTimeStamp();
+//        productUpdateBean.setModified(newModified);
+//
+//        productService.updateProduct(channelId, productUpdateBean);
 
-        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuFieldMap);
-
-        productModel.setCatId(categoryId);
-        productModel.setProdId(productId);
-        productModel.setCatPath(categoryFullPath);
-        productModel.setSkus(skuValues);
-        productModel.setModified(modified);
-
-        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
-        productUpdateBean.setProductModel(productModel);
-        productUpdateBean.setModifier(user);
-        String newModified = DateTimeUtil.getNowTimeStamp();
-        productUpdateBean.setModified(newModified);
-
-        productService.updateProduct(channelId, productUpdateBean);
-
-        return newModified;
+//        return newModified;
+        return null;
     }
 
     /**
@@ -322,94 +307,95 @@ public class CmsProductDetailService extends BaseAppService {
      */
     public Map<String, Object> updateProductAllInfo(String channelId, String userName, Map requestMap) {
 
-        String categoryId = requestMap.get("categoryId").toString();
-        Long productId = Long.valueOf(requestMap.get("productId").toString());
-        String categoryFullPath = requestMap.get("categoryFullPath").toString();
-        Map skuMap = (Map) requestMap.get("skuFields");
-        String modified = requestMap.get("modified").toString();
-
-        List<Map<String, Object>> masterFieldsList = (List<Map<String, Object>>) requestMap.get("masterFields");
-        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
-        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuMap);
-
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
-
-        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
-
-        List<Field> masterFields = buildMasterFields(masterFieldsList);
-
-        CmsBtProductModel_Field masterFieldsValue = buildCmsBtProductModel_field(requestMap, masterFields);
-
-        productModel.setCatId(categoryId);
-        productModel.setProdId(productId);
-        productModel.setCatPath(categoryFullPath);
-        productModel.setFields(masterFieldsValue);
-//        productModel.setFeed(feedModel);
-        productModel.setSkus(skuValues);
-        productModel.setModified(modified);
-
-        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
-        productUpdateBean.setProductModel(productModel);
-        productUpdateBean.setModifier(userName);
-        String newModified = DateTimeUtil.getNowTimeStamp();
-        productUpdateBean.setModified(newModified);
-
-        // 更新product数据
-        CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
-
-        //执行product的carts更新 TODO--这里需要讨论是否要再更新
-        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-            // 执行carts更新
-            productUpdateBean.getProductModel().getSkus().forEach(sku -> {
-                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929 || s == 28 || s == 29)).collect(Collectors.toList());
-                sku.setSkuCarts(newCarts);
-            });
-        }
-
-        productService.updateProduct(channelId, productUpdateBean);
-
-        CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
-
-        //执行product上新
-        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-
-            // 插入上新程序
-            productService.insertSxWorkLoad(channelId, newProduct, userName);
-
-            // 插入全店特价宝
-            // todo 插入全店特价宝要修正
-//            if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
-//                    || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
-//                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
-//                cmsBtPromotionCodesBean.setProductId(productId);
-//                cmsBtPromotionCodesBean.setProductCode(newProduct.getFields().getCode());
-//                cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
-//                cmsBtPromotionCodesBean.setPromotionId(0);
-//                cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
-//                cmsBtPromotionCodesBean.setChannelId(channelId);
-//                cmsBtPromotionCodesBean.setCartId(CartType.TMALLG.getCartId());
-//                cmsBtPromotionCodesBean.setModifier(userName);
-//                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
-//            }
-        }
-
-        // Translation状态从完成-》未完成
-        if ("1".equalsIgnoreCase(oldProduct.getFields().getTranslateStatus()) && "0".equalsIgnoreCase(newProduct.getFields().getTranslateStatus())) {
-            Map<String, Object> updObj = new HashMap<>();
-            updObj.put("common.fields.translateStatus", "0");
-            updObj.put("common.fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-            productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
-        }
-
-        // 设置返回值
-        Map<String, Object> result = new HashMap<>();
-        // 设置返回新的时间戳
-        result.put("modified", newModified);
-        // 设置返回approve状态
-        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
-        // 设置返回status状态
-        result.put("approveStatus", newProduct.getFields().getStatus());
-        return result;
+//        String categoryId = requestMap.get("categoryId").toString();
+//        Long productId = Long.valueOf(requestMap.get("productId").toString());
+//        String categoryFullPath = requestMap.get("categoryFullPath").toString();
+//        Map skuMap = (Map) requestMap.get("skuFields");
+//        String modified = requestMap.get("modified").toString();
+//
+//        List<Map<String, Object>> masterFieldsList = (List<Map<String, Object>>) requestMap.get("masterFields");
+//        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
+//        List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuMap);
+//
+//        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
+//
+//        CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
+//
+//        List<Field> masterFields = buildMasterFields(masterFieldsList);
+//
+//        CmsBtProductModel_Field masterFieldsValue = buildCmsBtProductModel_field(requestMap, masterFields);
+//
+//        productModel.setCatId(categoryId);
+//        productModel.setProdId(productId);
+//        productModel.setCatPath(categoryFullPath);
+//        productModel.setFields(masterFieldsValue);
+////        productModel.setFeed(feedModel);
+//        productModel.setSkus(skuValues);
+//        productModel.setModified(modified);
+//
+//        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+//        productUpdateBean.setProductModel(productModel);
+//        productUpdateBean.setModifier(userName);
+//        String newModified = DateTimeUtil.getNowTimeStamp();
+//        productUpdateBean.setModified(newModified);
+//
+//        // 更新product数据
+//        CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
+//
+//        //执行product的carts更新 TODO--这里需要讨论是否要再更新
+//        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+//            // 执行carts更新
+//            productUpdateBean.getProductModel().getSkus().forEach(sku -> {
+//                List<Integer> newCarts = sku.getSkuCarts().stream().filter(s -> (s == 23 || s == 928 || s == 929 || s == 28 || s == 29)).collect(Collectors.toList());
+//                sku.setSkuCarts(newCarts);
+//            });
+//        }
+//
+//        productService.updateProduct(channelId, productUpdateBean);
+//
+//        CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
+//
+//        //执行product上新
+//        if (productUpdateBean.getProductModel().getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+//
+//            // 插入上新程序
+//            productService.insertSxWorkLoad(channelId, newProduct, userName);
+//
+//            // 插入全店特价宝
+//            // todo 插入全店特价宝要修正
+////            if (oldProduct.getFields().getPriceSaleEd().compareTo(newProduct.getFields().getPriceSaleEd()) != 0
+////                    || oldProduct.getFields().getPriceSaleSt().compareTo(newProduct.getFields().getPriceSaleSt()) != 0) {
+////                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+////                cmsBtPromotionCodesBean.setProductId(productId);
+////                cmsBtPromotionCodesBean.setProductCode(newProduct.getFields().getCode());
+////                cmsBtPromotionCodesBean.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
+////                cmsBtPromotionCodesBean.setPromotionId(0);
+////                cmsBtPromotionCodesBean.setNumIid(oldProduct.getGroups().getNumIId());
+////                cmsBtPromotionCodesBean.setChannelId(channelId);
+////                cmsBtPromotionCodesBean.setCartId(CartType.TMALLG.getCartId());
+////                cmsBtPromotionCodesBean.setModifier(userName);
+////                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+////            }
+//        }
+//
+//        // Translation状态从完成-》未完成
+//        if ("1".equalsIgnoreCase(oldProduct.getFields().getTranslateStatus()) && "0".equalsIgnoreCase(newProduct.getFields().getTranslateStatus())) {
+//            Map<String, Object> updObj = new HashMap<>();
+//            updObj.put("common.fields.translateStatus", "0");
+//            updObj.put("common.fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+//            productService.updateTranslation(channelId, newProduct.getFields().getCode(), updObj, userName);
+//        }
+//
+//        // 设置返回值
+//        Map<String, Object> result = new HashMap<>();
+//        // 设置返回新的时间戳
+//        result.put("modified", newModified);
+//        // 设置返回approve状态
+//        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+//        // 设置返回status状态
+//        result.put("approveStatus", newProduct.getFields().getStatus());
+//        return result;
+        return null;
     }
 
     public Map<String, Object> updateProductFeedInfo(String channelId, String userName, Map requestMap) {
@@ -450,10 +436,10 @@ public class CmsProductDetailService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
         // 设置返回新的时间戳
         result.put("modified", newModified);
-        // 设置返回approve状态
-        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
-        // 设置返回status状态
-        result.put("approveStatus", newProduct.getFields().getStatus());
+//        // 设置返回approve状态
+//        result.put("isApproved", CmsConstants.ProductStatus.Approved.name().equals(newProduct.getFields().getStatus()));
+//        // 设置返回status状态
+//        result.put("approveStatus", newProduct.getFields().getStatus());
         return result;
     }
 
@@ -544,15 +530,15 @@ public class CmsProductDetailService extends BaseAppService {
         // 取得产品信息
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
-        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getFields().getCode(), 0);
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), 0);
         List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
-            CmsBtProductModel product = cmsBtProduct.getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
+            CmsBtProductModel product = cmsBtProduct.getCommon().getFields().getCode().equalsIgnoreCase(s1) ? cmsBtProduct : productService.getProductByCode(channelId, s1);
             if (product != null) {
                 Map<String, Object> image = new HashMap<String, Object>();
                 image.put("productCode", s1);
-                image.put("imageName", product.getFields().getImages1().get(0).get("image1"));
+                image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 images.add(image);
             }
@@ -569,6 +555,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
+        mastData.put("lock",cmsBtProduct.getLock());
 
         // 获取各个平台的状态
         List<Map<String, Object>> platformList = new ArrayList<>();
@@ -624,7 +611,7 @@ public class CmsProductDetailService extends BaseAppService {
      * 获取 feed info model.
      */
     private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
-        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productValueModel.getFields().getOriginalCode() == null ? productValueModel.getFields().getCode() : productValueModel.getFields().getOriginalCode());
+        CmsBtFeedInfoModel feedInfoModel = feedInfoService.getProductByCode(channelId, productValueModel.getCommon().getFields().getOriginalCode() == null ? productValueModel.getCommon().getFields().getCode() : productValueModel.getCommon().getFields().getOriginalCode());
         Map<String, String> feedAttributes = new HashMap<>();
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
@@ -716,7 +703,7 @@ public class CmsProductDetailService extends BaseAppService {
     private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel, Map<String, Integer> inventoryList) {
         List<Map<String, Object>> skuValueModel = new ArrayList<>();
 
-        List<CmsBtProductModel_Sku> valueSkus = productValueModel.getSkus();
+        List<CmsBtProductModel_Sku> valueSkus = productValueModel.getCommon().getSkus();
 
         for (CmsBtProductModel_Sku model_sku : valueSkus) {
             model_sku.setQty(inventoryList.get(model_sku.getSkuCode()) == null ? 0 : inventoryList.get(model_sku.getSkuCode()));
@@ -817,7 +804,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         if (requestMap.get("productStatus") != null) {
             Map status = (Map) requestMap.get("productStatus");
-            masterFieldsValue.setStatus(status.get("approveStatus").toString());
+//            masterFieldsValue.setStatus(status.get("approveStatus").toString());
             masterFieldsValue.setTranslateStatus(status.get("translateStatus").toString());
 //            masterFieldsValue.setEditStatus(status.get("editStatus").toString());
         }

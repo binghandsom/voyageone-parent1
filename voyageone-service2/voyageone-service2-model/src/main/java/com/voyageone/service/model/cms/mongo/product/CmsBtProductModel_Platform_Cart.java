@@ -1,12 +1,17 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * 各平台的产品数据
+ *
+ * @author linanbin on 6/29/2016
+ * @version 2.2.0
  * @author james.li on 2016/6/1.
  * @version 2.0.0
  */
@@ -26,10 +31,10 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
 
     //modified
     public String getModified(){
-        return getAttribute("modified");
+        return getStringAttribute("modified");
     }
     public void setModified(String modified){
-        setAttribute("modified", modified);
+        setStringAttribute("modified", modified);
     }
 
     //cartId
@@ -37,127 +42,137 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getIntAttribute("cartId");
     }
     public void setCartId(Integer cartId) {
-        setAttribute("cartId", cartId);
-    }
-
-    //pCatId
-    public String getpCatId() {
-        return getAttribute("pCatId");
-    }
-    public void setpCatId(String pCatId) {
-        setAttribute("pCatId", pCatId);
-    }
-
-    //pCatPath
-    public String getpCatPath() {
-        return getAttribute("pCatPath");
-    }
-    public void setpCatPath(String pCatPath) {
-        setAttribute("pCatPath", pCatPath);
-    }
-
-    //pCatStatus
-    public String getpCatStatus() {
-        return getAttribute("pCatStatus");
-    }
-    public void setpCatStatus(String pCatStatus) {
-        setAttribute("pCatStatus", pCatStatus);
-    }
-
-    // 是否为主商品
-    public int getpIsMain() {
-        return getAttribute("pIsMain");
-    }
-    public void setpIsMain(int pIsMain) {
-        setAttribute("pIsMain", pIsMain);
-    }
-
-    //pProductId
-    public String getpProductId() {
-        return getAttribute("pProductId");
-    }
-    public void setpProductId(String pProductId) {
-        setAttribute("pProductId", pProductId);
-    }
-
-    //pNumIId
-    public String getpNumIId() {
-        return getAttribute("pNumIId");
-    }
-    public void setpNumIId(String pNumIId) {
-        setAttribute("pNumIId", pNumIId);
+        setStringAttribute("cartId", cartId);
     }
 
     //status
     public String getStatus() {
-        return getAttribute("status");
+        return getStringAttribute("status");
     }
     public void setStatus(String status) {
-        setAttribute("status", status);
+        setStringAttribute("status", status);
+    }
+
+    //pCatId
+    public String getpCatId() {
+        return getStringAttribute("pCatId");
+    }
+    public void setpCatId(String pCatId) {
+        setStringAttribute("pCatId", pCatId);
+    }
+
+    //pCatPath
+    public String getpCatPath() {
+        return getStringAttribute("pCatPath");
+    }
+    public void setpCatPath(String pCatPath) {
+        setStringAttribute("pCatPath", pCatPath);
+    }
+
+    //pCatStatus
+    public String getpCatStatus() {
+        String pCatStatus = getStringAttribute("pCatStatus");
+        return StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus;
+    }
+    public void setpCatStatus(String pCatStatus) {
+        setStringAttribute("pCatStatus", StringUtils.isEmpty(pCatStatus) ? "0" : pCatStatus);
+    }
+
+    //是否为主商品
+    public Integer getpIsMain() {
+        return getIntAttribute("pIsMain");
+    }
+    public void setpIsMain(Integer pIsMain) {
+        setAttribute("pIsMain", pIsMain == null ? 0 : pIsMain);
+    }
+
+    //主商品code
+    public String getMainProductCode() {
+        return getStringAttribute("mainProductCode");
+    }
+    public void setMainProductCode(String mainProductCode) {
+        setStringAttribute("mainProductCode", mainProductCode);
+    }
+
+    //pProductId
+    public String getpProductId() {
+        return getStringAttribute("pProductId");
+    }
+    public void setpProductId(String pProductId) {
+        setStringAttribute("pProductId", pProductId);
+    }
+
+    //pNumIId
+    public String getpNumIId() {
+        return getStringAttribute("pNumIId");
+    }
+    public void setpNumIId(String pNumIId) {
+        setStringAttribute("pNumIId", pNumIId);
     }
 
     //pStatus
     public String getpStatus() {
-        return getAttribute("pStatus");
+        return getStringAttribute("pStatus");
     }
     public void setpStatus(String pStatus) {
-        setAttribute("pStatus", pStatus);
+        setStringAttribute("pStatus", pStatus);
     }
 
     //pPublishError
     public String getpPublishError() {
-        return getAttribute("pPublishError");
+        return getStringAttribute("pPublishError");
     }
     public void setpPublishError(String pPublishError) {
-        setAttribute("pPublishError", pPublishError);
+        setStringAttribute("pPublishError", pPublishError);
     }
 
     //pBrandId
     public String getpBrandId() {
-        return getAttribute("pBrandId");
+        return getStringAttribute("pBrandId");
     }
     public void setpBrandId(String pBrandId) {
-        setAttribute("pBrandId", pBrandId);
+        setStringAttribute("pBrandId", pBrandId);
     }
 
     //pBrandName
     public String getpBrandName() {
-        return getAttribute("pBrandName");
+        return getStringAttribute("pBrandName");
     }
     public void setpBrandName(String pBrandName) {
-        setAttribute("pBrandName", pBrandName);
+        setStringAttribute("pBrandName", pBrandName);
     }
 
     //pPublishTime
     public String getpPublishTime() {
-        return getAttribute("pPublishTime");
+        return getStringAttribute("pPublishTime");
     }
     public void setpPublishTime(String pPublishTime) {
-        setAttribute("pPublishTime", pPublishTime);
+        setStringAttribute("pPublishTime", pPublishTime);
     }
 
     //pAttributeStatus
     public String getpAttributeStatus() {
-        return getAttribute("pAttributeStatus");
+        String pAttributeStatus = getStringAttribute("pAttributeStatus");
+        return StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus;
     }
     public void setpAttributeStatus(String pAttributeStatus) {
-        setAttribute("pAttributeStatus", pAttributeStatus);
+        setStringAttribute("pAttributeStatus", StringUtils.isEmpty(pAttributeStatus) ? "0" : pAttributeStatus);
     }
 
     //pAttributeSetter
     public String getpAttributeSetter() {
-        return getAttribute("pAttributeSetter");
+        return getStringAttribute("pAttributeSetter");
     }
     public void setpAttributeSetter(String pAttributeSetter) {
-        setAttribute("pAttributeSetter", pAttributeSetter);
+        setStringAttribute("pAttributeSetter", pAttributeSetter);
     }
 
     //pAttributeSetTime
     public String getpAttributeSetTime() {
-        return getAttribute("pAttributeSetTime");
+        return getStringAttribute("pAttributeSetTime");
     }
     public void setpAttributeSetTime(String pAttributeSetTime) {
-        setAttribute("pAttributeSetTime", pAttributeSetTime);
+        setStringAttribute("pAttributeSetTime", pAttributeSetTime);
     }
 
     //MSRP价格区间
@@ -165,13 +180,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceMsrpSt");
     }
     public void setpPriceMsrpSt(Double pPriceMsrpSt) {
-        setAttribute("pPriceMsrpSt", pPriceMsrpSt);
+        setStringAttribute("pPriceMsrpSt", pPriceMsrpSt);
     }
     public Double getpPriceMsrpEd() {
         return getDoubleAttribute("pPriceMsrpEd");
     }
     public void setpPriceMsrpEd(Double pPriceMsrpEd) {
-        setAttribute("pPriceMsrpEd", pPriceMsrpEd);
+        setStringAttribute("pPriceMsrpEd", pPriceMsrpEd);
     }
 
     //建议市场价格区间
@@ -179,13 +194,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceRetailSt");
     }
     public void setpPriceRetailSt(Double priceRetailSt) {
-        setAttribute("pPriceRetailSt", priceRetailSt);
+        setStringAttribute("pPriceRetailSt", priceRetailSt);
     }
     public Double getpPriceRetailEd() {
         return getDoubleAttribute("pPriceRetailEd");
     }
     public void setpPriceRetailEd(Double priceRetailEd) {
-        setAttribute("pPriceRetailEd", priceRetailEd);
+        setStringAttribute("pPriceRetailEd", priceRetailEd);
     }
 
     //销售价格价格区间
@@ -193,13 +208,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceSaleSt");
     }
     public void setpPriceSaleSt(Double priceSaleSt) {
-        setAttribute("pPriceSaleSt", priceSaleSt);
+        setStringAttribute("pPriceSaleSt", priceSaleSt);
     }
     public Double getpPriceSaleEd() {
         return getDoubleAttribute("pPriceSaleEd");
     }
     public void setpPriceSaleEd(Double priceSaleEd) {
-        setAttribute("pPriceSaleEd", priceSaleEd);
+        setStringAttribute("pPriceSaleEd", priceSaleEd);
     }
 
     //fields
@@ -224,14 +239,6 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
     public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats){
         setAttribute("sellerCats",sellerCats);
-    }
-
-    //tag
-    public List<String> getTag(){
-        return getAttribute("tag");
-    }
-    public void setTag(List<String> tag){
-        setAttribute("tag",tag);
     }
 
     @Override

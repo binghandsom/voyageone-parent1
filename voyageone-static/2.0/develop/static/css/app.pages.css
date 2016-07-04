@@ -459,6 +459,7 @@ s-field textarea.s-html {
 
 .product-shema-detail .bs-docs-sidebar {
     position: fixed;
+    width: 95px ! important;
     right: 40px;
     color: white;
     margin-top: 80px;
@@ -485,6 +486,7 @@ s-field textarea.s-html {
     margin: 0;
     height: 30px;
     line-height: 30px;
+    cursor: move;
 }
 
 .product-shema-detail .bs-docs-sidebar .nav {
@@ -672,4 +674,11 @@ s-field textarea.s-html {
     margin-bottom: 3px;
     margin-top: 6px;
     display: block;
+}
+/*表格断行*/
+
+.tableWordBreak>li {
+    word-break: break-all;
+    overflow: auto;
+    max-height: 17px;
 }

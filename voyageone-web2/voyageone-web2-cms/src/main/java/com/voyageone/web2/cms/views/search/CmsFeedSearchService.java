@@ -8,12 +8,12 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -44,6 +44,9 @@ public class CmsFeedSearchService extends BaseAppService {
     private CmsFeedCustPropService cmsFeedCustPropService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private MqSender sender;
 
     @Autowired
     private CmsMtChannelValuesService cmsMtChannelValuesService;
@@ -119,20 +122,57 @@ public class CmsFeedSearchService extends BaseAppService {
 
 
     // 批量更新FEED状态信息
-    public void updateFeedStatus(List<Map> params, UserSessionBean userInfo) {
+    public void updateFeedStatus(List<Map> params, Integer status, UserSessionBean userInfo) {
         List<String> codeList = new ArrayList<>(params.size());
         params.forEach(para -> codeList.add((String) para.get("code")));
-        HashMap paraMap1 = new HashMap(1);
+        Map<String,Object> paraMap1 = new HashMap<>(1);
         paraMap1.put("$in", codeList);
-        HashMap paraMap2 = new HashMap(1);
+        HashMap<String,Object> paraMap2 = new HashMap<>();
         paraMap2.put("code", paraMap1);
 
-        HashMap valueMap = new HashMap(1);
-        valueMap.put("updFlg", 0);
+        Map<String,Object> paraStatusMap = new HashMap<>(1);
+        if (status == CmsConstants.FeedUpdFlgStatus.Pending){
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+        }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+        }
+        paraMap2.put("updFlg",paraStatusMap);
+
+
+        HashMap<String,Object> valueMap = new HashMap<>(1);
+        valueMap.put("updFlg", status);
         valueMap.put("modified", DateTimeUtil.getNowTimeStamp());
         valueMap.put("modifier", userInfo.getUserName());
 
         feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
+    }
+
+    public int updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
+
+        Integer searchStatus = null;
+        if(searchValue.get("status") != null){
+            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+        }else{
+            if (status == CmsConstants.FeedUpdFlgStatus.Pending){
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            }
+        }
+        if(status == CmsConstants.FeedUpdFlgStatus.Pending){
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+                throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
+            }
+        }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.Succeed){
+                throw new BusinessException("导入成功是不能设为不导入的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+                throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+            }
+        }
+        String searchQuery = feedInfoService.getSearchQuery(searchValue);
+        return feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(),searchQuery,status, userInfo.getUserName());
     }
 
     /**
@@ -180,6 +220,7 @@ public class CmsFeedSearchService extends BaseAppService {
         List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
         if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
         }else{
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");

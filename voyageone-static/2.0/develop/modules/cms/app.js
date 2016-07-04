@@ -22,7 +22,8 @@ define([
         'ngStorage',
         'angularFileUpload',
         'localytics.directives',
-        'angular-md5'
+        'angular-md5',
+        'angular-drag'
     ])
 
     // define
@@ -147,7 +148,7 @@ define([
         }
     }
 
-    function menuService($q, ajaxService, cookieService, translateService, cActions) {
+    function menuService($q, ajaxService, cookieService, translateService, cActions, $menuService) {
 
         this.getMenuHeaderInfo = getMenuHeaderInfo;
         this.setMenu = setMenu;
@@ -249,12 +250,9 @@ define([
          * @returns {*}
          */
         function getCategoryInfo() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getCategoryInfo().then(function (res) {
+                return res.data;
+            });
         }
 
         /**
@@ -262,45 +260,22 @@ define([
          * @returns {*}
          */
         function getPlatformType() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getPlatformType)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getPlatformType().then(function (res) {
+                return res.data;
+            });
         }
-
-        ///**
-        // * get categoryTree.
-        // * @returns {*}
-        // */
-        //function getCategoryTree() {
-        //    var defer = $q.defer();
-        //    ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-        //        .then(function (response) {
-        //            defer.resolve(response.data);
-        //        });
-        //    return defer.promise;
-        //}
 
         /**
-         *
          * set platformType.
-         * @param cTypeId
-         * @returns {*}
          */
         function setPlatformType(cType) {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setPlatformType, {
+            return $menuService.setPlatformType({
                 "cTypeId": cType.add_name2,
                 "cartId": parseInt(cType.value)
-            })
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            }).then(function (res) {
+                return res.data;
+            });
         }
-
     }
 
     function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {

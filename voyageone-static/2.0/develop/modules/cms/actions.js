@@ -1,4 +1,26 @@
 define(function () {
+
+    var CACHE = {
+        NONE: 0,
+        ONCE: 1,
+        SESSION: 2,
+        LOCAL: 3
+    };
+
+    function once(action) {
+        return {
+            url: action,
+            cache: CACHE.ONCE
+        };
+    }
+
+    function session(action) {
+        return {
+            url: action,
+            cache: CACHE.SESSION
+        };
+    }
+
     return {
         "core": {
             "access": {
@@ -15,10 +37,11 @@ define(function () {
         },
         "cms": {
             "home": {
-                "menu": {
-                    "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-                    "getPlatformType": "/cms/home/menu/getPlatformType",
-                    "setPlatformType": "/cms/home/menu/setPlatformType"
+                "$menuService": {
+                    "root": "/cms/home/menu/",
+                    "getCategoryInfo": session('getCategoryInfo'),
+                    "getPlatformType": "getPlatformType",
+                    "setPlatformType": "setPlatformType"
                 }
             },
             "search": {
@@ -39,7 +62,9 @@ define(function () {
                     "init": "init",
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
-                    "doExport": "export"
+                    "doExport": "export",
+                    "exportSearch":"exportSearch",
+                    "download":"download"
                 }
             },
             "group": {
@@ -65,7 +90,8 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
-                    "updateCommonProductInfo": "updateCommonProductInfo"
+                    "updateCommonProductInfo": "updateCommonProductInfo",
+                    "updateLock":"updateLock"
                 }
             },
             "mapping": {
@@ -356,14 +382,21 @@ define(function () {
             "translation": {
                 "translationService": {
                     "root": "/cms/translation/tasks",
-                    "getTasks": "getTasks",
-                    "searchHistoryTasks": "searchHistoryTasks",
-                    "assignTasks": "assignTasks",
-                    "copyFormMainProduct": "copyFormMainProduct",
-                    "saveTask": "saveTask",
-                    "submitTask": "submitTask",
-                    "cancelTask": "cancelTask",
-                    "getFeedAttributes": "getFeedAttributes"
+                    // "getTasks": "getTasks",
+                    // "searchHistoryTasks": "searchHistoryTasks",
+                    // "assignTasks": "assignTasks",
+                    // "copyFormMainProduct": "copyFormMainProduct",
+                    // "saveTask": "saveTask",
+                    // "submitTask": "submitTask",
+                    // "cancelTask": "cancelTask",
+                    // "getFeedAttributes": "getFeedAttributes",
+                    "init": "init",
+                    "assign": "assign",
+                    "save": "save",
+                    "search": "search",
+                    "get": "get",
+                    "submit": "submit"
+
                 }
             },
             "channel": {

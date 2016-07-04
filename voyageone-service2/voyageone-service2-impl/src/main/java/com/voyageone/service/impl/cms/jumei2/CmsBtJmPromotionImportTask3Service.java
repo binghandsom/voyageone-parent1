@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
@@ -137,7 +138,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         check(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap);//check 移除不能导入的product
 
         //save
-        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport);
+        saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport,listProducctErrorMap, listSkuErrorMap,modelCmsBtJmPromotionImportTask.getCreater());
 
         //导出未通过check的记录
         if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
@@ -146,7 +147,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
-            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size());
+            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size()+listSkuErrorMap.size());
         }
         if (listProductImport.size() == 0) {
             modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
@@ -160,8 +161,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
        //product
         List<ProductImportBean> listErroProduct = new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            if (daoExtCmsBtJmPromotionProduct.existsCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd()) == Boolean.TRUE) { //活动日期重叠
-                product.setErrorMsg("活动日期有重叠");//取一个活动id
+            CmsBtJmPromotionProductModel modelPromotionProduct= daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            if (modelPromotionProduct!=null) { //活动日期重叠
+                product.setErrorMsg("活动日期有重叠,JMPromotionId:"+modelPromotionProduct.getCmsBtJmPromotionId()+"存在该商品");//取一个活动id
                 listErroProduct.add(product);
             } else if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
@@ -179,19 +181,26 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
                 listErroSku.add(sku);
             }
+            else if(sku.getDealPrice()>=sku.getMarketPrice())
+            {
+               sku.setErrorMsg("skuCode:" + sku.getSkuCode()+"请重新确认价格，市场价必须大于团购价！");
+                listErroSku.add(sku);
+            }
         }
-        listProductModel.removeAll(listErroSku);
+        listSkuModel.removeAll(listErroSku);
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
 
     //save
-    public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport) {
+    public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
         //初始化
         ProductSaveInfo saveInfo = null;
         for (ProductImportBean product : listProductImport) {
-            saveInfo = loadSaveInfo(model, listSkuImport, product);
-            listSaveInfo.add(saveInfo);
+            saveInfo = loadSaveInfo(model, listSkuImport, product,listProducctErrorMap,listSkuErrorMap,userName);
+            if(saveInfo!=null) {
+                listSaveInfo.add(saveInfo);
+            }
         }
 
         //保存
@@ -207,6 +216,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         } else {
             daoCmsBtJmPromotionProduct.update(info.productModel);
         }
+        daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.productModel.getId());//求价格 折扣 平均值
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.skuList) {
             sku.setCmsBtJmPromotionProductId(info.productModel.getId());
@@ -225,23 +235,16 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
     }
 
-    private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product) {
+    private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listSkuImport, ProductImportBean product, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
         ProductSaveInfo saveInfo = new ProductSaveInfo();
+        List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
         saveInfo.productModel = daoExtCmsBtJmPromotionProduct.selectByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.productModel == null) {
             saveInfo.productModel = new CmsBtJmPromotionProductModel();
             saveInfo.productModel.setId(0);
-            saveInfo.productModel.setCreater("system");
+            saveInfo.productModel.setCreater(userName);
             saveInfo.productModel.setCreated(new Date());
             saveInfo.productModel.setJmHashId("");
-            saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
-            saveInfo.productModel.setProductCode(product.getProductCode());
-            saveInfo.productModel.setAppId(product.getAppId());
-            saveInfo.productModel.setPcId(product.getPcId());
-            saveInfo.productModel.setChannelId(model.getChannelId());
-            saveInfo.productModel.setActivityStart(model.getActivityStart());
-            saveInfo.productModel.setActivityEnd(model.getActivityEnd());
-            saveInfo.productModel.setPromotionTag(product.getPromotionTag());
             saveInfo.productModel.setErrorMsg("");
             saveInfo.productModel.setPriceStatus(0);
             saveInfo.productModel.setDealPrice(new BigDecimal(0));
@@ -250,11 +253,39 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setSkuCount(0);
             saveInfo.productModel.setQuantity(0);
             saveInfo.productModel.setDealEndTimeStatus(0);
+            saveInfo.productModel.setActivityStart(model.getActivityStart());
+            saveInfo.productModel.setActivityEnd(model.getActivityEnd());
+            saveInfo.productModel.setProductCode(product.getProductCode());
+            saveInfo.productModel.setCmsBtJmPromotionId(model.getId());
+            saveInfo.productModel.setChannelId(model.getChannelId());
+            saveInfo.productModel.setSynchStatus(0);
+            saveInfo.productModel.setLimit(product.getLimit());
         }
-
+        else
+        {
+            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.productModel.getSynchStatus()==2)
+            {
+                product.setErrorMsg("该商品预热已开始,不能导入");
+                listProducctErrorMap.add(MapUtil.toMap(product));
+               for(SkuImportBean skuImport:listProductSkuImport)
+               {
+                   skuImport.setErrorMsg("预热已开始,不能导入");
+                   listSkuErrorMap.add(MapUtil.toMap(skuImport));
+               }
+                return null;
+            }
+        }
+        saveInfo.productModel.setAppId(product.getAppId());
+        saveInfo.productModel.setPcId(product.getPcId());
+        if (saveInfo.productModel.getSynchStatus() == 2) {
+            if (product.getLimit() != saveInfo.productModel.getLimit()) {
+                saveInfo.productModel.setUpdateStatus(1);//已经变更
+            }
+        }
         saveInfo.productModel.setLimit(product.getLimit());
-        saveInfo.productModel.setModifier("system");
-
+        saveInfo.productModel.setPromotionTag(product.getPromotionTag());
+        saveInfo.productModel.setModifier(userName);
+        saveInfo.productModel.setModified(new Date());
         if (saveInfo.productModel.getPromotionTag() == null) {
             saveInfo.productModel.setPromotionTag("");
         }
@@ -262,8 +293,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         loadSaveTag(product.getPromotionTag(), saveInfo, model);
 
         //初始化CmsBtJmPromotionSkuModel
-        List<SkuImportBean> listSku = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());
-        loadSaveSku(saveInfo, listSku);
+
+        loadSaveSku(saveInfo, listProductSkuImport, userName);
 
         if (saveInfo.skuList.size() > 0) {
             saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());
@@ -271,7 +302,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setDiscount(saveInfo.skuList.get(0).getDiscount());//折扣
             saveInfo.productModel.setSkuCount(saveInfo.skuList.size());
         }
-
         return saveInfo;
     }
 
@@ -298,7 +328,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         map.put("orgChannelId", channelId);
         return daoCmsBtPromotionCodes.selectOne(map);
     }
-    private void loadSaveSku(ProductSaveInfo saveInfo, List<SkuImportBean> listImport) {
+    private void loadSaveSku(ProductSaveInfo saveInfo, List<SkuImportBean> listImport,String userName) {
         CmsBtJmPromotionSkuModel skuModel = null;
         for (SkuImportBean skuImportBean : listImport) {
             if (saveInfo.productModel.getId() != null && saveInfo.productModel.getId() > 0) {
@@ -306,22 +336,35 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
             if (skuModel == null) {
                 skuModel = new CmsBtJmPromotionSkuModel();
+                skuModel.setSynchStatus(0);
+                skuModel.setUpdateState(0);
+                skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
+                skuModel.setChannelId(saveInfo.productModel.getChannelId());
+                skuModel.setSkuCode(skuImportBean.getSkuCode());
+                skuModel.setCreated(new Date());
+                skuModel.setCreater(userName);
+                skuModel.setProductCode(skuImportBean.getProductCode());
+                skuModel.setErrorMsg("");
+                if (saveInfo.productModel.getSynchStatus() == 2) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更     新增了一个sku
+                }
             }
-            skuModel.setCmsBtJmPromotionId(saveInfo.productModel.getCmsBtJmPromotionId());
+            if (saveInfo.productModel.getSynchStatus() == 2) {
+                if (skuModel.getDealPrice().doubleValue() != skuImportBean.getDealPrice()) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更
+                }
+                if (skuModel.getMarketPrice().doubleValue() != skuImportBean.getMarketPrice()) {
+                    skuModel.setUpdateState(1);//已变更
+                    saveInfo.productModel.setUpdateStatus(1);//已变更
+                }
+            }
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));
-            skuModel.setChannelId(saveInfo.productModel.getChannelId());
-            skuModel.setSkuCode(skuImportBean.getSkuCode());
-            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(),skuModel.getMarketPrice(),2));//折扣
+            skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
             skuModel.setModified(new Date());
-            skuModel.setModifier("system");
-            skuModel.setCreated(new Date());
-            skuModel.setCreater("system");
-            skuModel.setProductCode(skuImportBean.getProductCode());
-            skuModel.setErrorMsg("");
-            skuModel.setSynchStatus(0);
-            skuModel.setUpdateState(0);
+            skuModel.setModifier(userName);
             saveInfo.skuList.add(skuModel);
             skuModel = null;
         }
