@@ -259,7 +259,6 @@ public class TranslationTaskService extends BaseService {
             } else {
                 feedCustomPropList = new ArrayList<>();
             }
-
             Set<String> custPropKeySet = feedCustomPropList.stream().map
                     (FeedCustomPropWithValueBean::getFeed_prop_original).collect(Collectors.toSet());
             //根据feedCustomPropList精简cnProps

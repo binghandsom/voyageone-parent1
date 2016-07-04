@@ -179,7 +179,8 @@ define([
 
             // 时间戳转换
             getDateTimeFromTimeStamp: function (timeStamp) {
-                return new Date(timeStamp);
+                var date = new Date(timeStamp);
+                return date;
             },
 
             // 跳转链接
