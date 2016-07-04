@@ -76,8 +76,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         // 获取product列表
-        List<CmsBtProductModel> prodObjList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean, 0, 0);
-        List<String> prodCodeList = searchIndexService.convertToCodeList(prodObjList);
+        List<String> prodCodeList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean);
         long recCount = prodCodeList.size();
 
         if (searchValue.getFileType() == 2) {
@@ -85,7 +84,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(prodObjList, cartId, 0, 0);
+            prodCodeList = searchIndexService.getGroupCodeList(searchValue, userInfo, cmsSessionBean);
             recCount = prodCodeList.size();
         }
 
@@ -113,7 +112,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
-        queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);

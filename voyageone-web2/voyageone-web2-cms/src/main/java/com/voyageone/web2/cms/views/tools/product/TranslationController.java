@@ -6,8 +6,6 @@ import com.voyageone.service.impl.cms.TranslationTaskService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.ProductTranslationBean;
-import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,15 +20,14 @@ import java.util.Map;
  *
  * @author Ethan Shi
  * @version 2.2.0
- *
  */
 @RestController
-@RequestMapping(method = RequestMethod.POST,value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
-public class TranslationController extends CmsController{
+@RequestMapping(method = RequestMethod.POST, value = CmsUrlConstants.TRANSLATION.TASKS.ROOT)
+public class TranslationController extends CmsController {
 
-    private static final  String  TASK_COMPLETE = "1";
+    private static final String TASK_COMPLETE = "1";
 
-    private static final  String  TASK_INCOMPLETE = "0";
+    private static final String TASK_INCOMPLETE = "0";
 
 
     @Autowired
@@ -43,16 +40,15 @@ public class TranslationController extends CmsController{
      * @return
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.INIT)
-    public AjaxResponse doInit()
-    {
+    public AjaxResponse doInit() {
 
         String channelId = this.getUser().getSelChannelId();
-        String user =this.getUser().getUserName();
-        Map<String,Object> translateTaskInitResponse = new HashMap<>();
+        String user = this.getUser().getUserName();
+        Map<String, Object> translateTaskInitResponse = new HashMap<>();
 
         translateTaskInitResponse.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
         translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-        translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId,user));
+        translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId, user));
 
         return success(translateTaskInitResponse);
     }
@@ -64,7 +60,7 @@ public class TranslationController extends CmsController{
      * @return
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE)
-    public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean){
+    public AjaxResponse doSave(@RequestBody TranslationTaskBean requestBean) {
         return success(save(requestBean, TASK_INCOMPLETE));
     }
 
@@ -75,7 +71,7 @@ public class TranslationController extends CmsController{
      * @return
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT)
-    public AjaxResponse doSubmit(@RequestBody TranslationTaskBean requestBean){
+    public AjaxResponse doSubmit(@RequestBody TranslationTaskBean requestBean) {
         return success(save(requestBean, TASK_COMPLETE));
     }
 
@@ -87,15 +83,15 @@ public class TranslationController extends CmsController{
      * @return
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH)
-    public AjaxResponse doSearch(@RequestBody Map requestBean){
+    public AjaxResponse doSearch(@RequestBody Map requestBean) {
         int pageNum = Integer.valueOf(requestBean.getOrDefault("pageNum", 1).toString());
         int pageSize = Integer.valueOf(requestBean.getOrDefault("pageSize", 10).toString());
-        String keyWord = requestBean.getOrDefault("keyWord","").toString();
+        String keyWord = requestBean.getOrDefault("keyWord", "").toString();
         String translateStatus = requestBean.getOrDefault("translateStatus", "").toString();
 
         String channelId = this.getUser().getSelChannelId();
-        String user =this.getUser().getUserName();
-        return success(translationTaskService.searchTask(pageNum,pageSize,keyWord,channelId, user,translateStatus));
+        String user = this.getUser().getUserName();
+        return success(translationTaskService.searchTask(pageNum, pageSize, keyWord, channelId, user, translateStatus));
     }
 
 
@@ -109,11 +105,11 @@ public class TranslationController extends CmsController{
     public AjaxResponse doGet(@RequestBody Map requestBean) {
 
         String channelId = this.getUser().getSelChannelId();
-        String user =this.getUser().getUserName();
+        String user = this.getUser().getUserName();
         int prodId = Integer.valueOf(requestBean.get("prodId").toString());
 
-        Map<String,Object> translateTaskGetResponse = new HashMap<>();
-        translateTaskGetResponse.put("taskDetail", translationTaskService.getTaskById( channelId, user, prodId));
+        Map<String, Object> translateTaskGetResponse = new HashMap<>();
+        translateTaskGetResponse.put("taskDetail", translationTaskService.getTaskById(channelId, user, prodId));
         return success(translateTaskGetResponse);
     }
 
@@ -122,15 +118,18 @@ public class TranslationController extends CmsController{
     public AjaxResponse doAssign(@RequestBody Map requestBean) {
 
         String channelId = this.getUser().getSelChannelId();
-        String user =this.getUser().getUserName();
+        String user = this.getUser().getUserName();
 
-        String keyWord = requestBean.getOrDefault("keyWord","").toString();
-        String priority = requestBean.getOrDefault("priority","").toString();
-        String sort = requestBean.getOrDefault("sort","").toString();
+        String keyWord = requestBean.getOrDefault("keyWord", "").toString();
+        String priority = requestBean.getOrDefault("priority", "").toString();
+        String sort = requestBean.getOrDefault("sort", "").toString();
 
-        Map<String,Object> translateTaskAssignResponse = new HashMap<>();
+        Map<String, Object> translateTaskAssignResponse = new HashMap<>();
+
+        // vantis 2016/7/3 应该先获取任务 并进行相应保存后再获取TaskSummary
+        translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask(channelId, user, priority,
+                sort, keyWord));
         translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-        translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask( channelId, user, priority, sort, keyWord));
         return success(translateTaskAssignResponse);
     }
 
@@ -143,13 +142,13 @@ public class TranslationController extends CmsController{
      */
     private Map<String, Object> save(@RequestBody TranslationTaskBean requestBean, String status) {
         String channelId = this.getUser().getSelChannelId();
-        String user =this.getUser().getUserName();
-        Map<String,Object> translateTaskSaveResponse = new HashMap<>();
+        String user = this.getUser().getUserName();
+        Map<String, Object> translateTaskSaveResponse = new HashMap<>();
+
+        translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId, user, status));
         translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-        translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId,user, status));
         return translateTaskSaveResponse;
     }
-
 
 
 }

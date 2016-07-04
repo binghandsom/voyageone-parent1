@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div class="col-sm-8">
-                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="0" max="10" maxlength="2">
+                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt">
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
@@ -85,9 +85,8 @@
                                             <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="ctrl.searchInfo.hsCodeStatus">
-                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                    <option value="0">已设置</option>
-                                                    <option value="1">未设置</option>
+                                                    <option value="1">已设置</option>
+                                                    <option value="0">未设置</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -131,29 +130,29 @@
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
                     <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
-                        <td class="text-center mfb-xt">{{$index + 1}}</td>
-                        <td style="overflow: hidden;" class="text-center mfb-x">
-                            <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb-xs m-b-xs" image="{{list.common.fields.images1[0].image1}}"></a>
+                        <td class="text-center mfb-xt v-middle">{{$index + 1}}</td>
+                        <td style="overflow: hidden;" class="text-center mfb-x v-middle">
+                            <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb" image="{{list.common.fields.images1[0].image1}}"></a>
                         </td>
-                        <td class="text-center mfb-xxt">
+                        <td class="text-center mfb-xxt v-middle">
                             <ul>
                                 <li class="text-left"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
                                 <li class="text-left">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
                             </ul>
                         </td>
-                        <td class="text-left mfb-xxs">
+                        <td class="text-left mfb-xxs v-middle">
                             <select class="form-control" ng-options="value.value for value in ctrl.hsCodeValue" ng-model="list.selectedValue">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </td>
-                        <td class="text-left mfb-xxs">
+                        <td class="text-left mfb-xxs v-middle">
                             <ul class="tableWordBreak">
-                                <li>{{list.common.fields.productNameCn?list.common.fields.productNameCn : list.common.fields.productNameEn}}</li>
+                                <li>{{list.common.fields.originalTitleCn?list.common.fields.originalTitleCn : list.common.fields.productNameEn}}</li>
                                 <li>{{list.feed.catPath}}</li>
                                 <li>{{list.common.catPath}}</li>
                             </ul>
                         </td>
-                        <td class="text-center mfb-xt">
+                        <td class="text-center mfb-xt v-middle">
                             <button class="btn btn-vo btn-xs ng-binding" title="点击保存当前设置" ng-click="ctrl.save(list)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
                         </td>
                     </tr>

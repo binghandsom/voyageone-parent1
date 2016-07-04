@@ -91,7 +91,8 @@ define(function () {
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
-                    "updateLock":"updateLock"
+                    "updateLock":"updateLock",
+                    "updateProductAtts":"updateProductAtts"
                 }
             },
             "mapping": {
@@ -382,15 +383,21 @@ define(function () {
             "translation": {
                 "translationService": {
                     "root": "/cms/translation/tasks",
-                    "getTasks": "getTasks",
-                    "searchHistoryTasks": "searchHistoryTasks",
-                    "assignTasks": "assignTasks",
-                    "copyFormMainProduct": "copyFormMainProduct",
-                    "saveTask": "saveTask",
-                    "submitTask": "submitTask",
-                    "cancelTask": "cancelTask",
-                    "getFeedAttributes": "getFeedAttributes",
-                    "init": "init"
+                    // "getTasks": "getTasks",
+                    // "searchHistoryTasks": "searchHistoryTasks",
+                    // "assignTasks": "assignTasks",
+                    // "copyFormMainProduct": "copyFormMainProduct",
+                    // "saveTask": "saveTask",
+                    // "submitTask": "submitTask",
+                    // "cancelTask": "cancelTask",
+                    // "getFeedAttributes": "getFeedAttributes",
+                    "init": "init",
+                    "assign": "assign",
+                    "save": "save",
+                    "search": "search",
+                    "get": "get",
+                    "submit": "submit"
+
                 }
             },
             "channel": {

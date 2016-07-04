@@ -27,6 +27,8 @@ define([
 		this.getCommonProductInfo = getCommonProductInfo;
 		this.updateCommonProductInfo = updateCommonProductInfo;
 		this.updateLock = updateLock;
+		this.updateProductAtts = updateProductAtts;
+
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -316,6 +318,21 @@ define([
 			return defer.promise;
 		}
 
+		/**
+		 * feed修改操作
+		 * @param { prodId:"",feedInfo:""} 产品id，feed产品信息
+		 * @returns
+		 * */
+		function updateProductAtts(req){
+			var defer = $q.defer();
+			$productDetailService.updateProductAtts(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
 	}
 
 

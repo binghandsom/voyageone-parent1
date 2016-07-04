@@ -147,7 +147,7 @@ public class CmsFeedSearchService extends BaseAppService {
         feedInfoService.updateFeedInfo(userInfo.getSelChannelId(), paraMap2, valueMap);
     }
 
-    public int updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
+    public void updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
 
         Integer searchStatus = null;
         if(searchValue.get("status") != null){
@@ -172,7 +172,7 @@ public class CmsFeedSearchService extends BaseAppService {
             }
         }
         String searchQuery = feedInfoService.getSearchQuery(searchValue);
-        return feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(),searchQuery,status, userInfo.getUserName());
+        feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(),searchQuery,status, userInfo.getUserName());
     }
 
     /**

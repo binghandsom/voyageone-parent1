@@ -22,7 +22,6 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
@@ -81,7 +80,6 @@ public class CmsProductDetailService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private ImageTemplateService imageTemplateService;
-
     @Autowired
     private CategoryTreeAllService categoryTreeAllService;
 
@@ -478,14 +476,14 @@ public class CmsProductDetailService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<Long> productIds = null;
+        List<String> prodCodes = null;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            productIds = advanceSearchService.getProductIdList(userInfo.getSelChannelId(), cmsSession);
+            prodCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         } else {
-            productIds = CommonUtil.changeListType((List<Integer>) requestMap.get("prodIds"));
+            prodCodes = (List<String>) requestMap.get("prodIds");
         }
-        if (productIds == null || productIds.isEmpty()) {
+        if (prodCodes == null || prodCodes.isEmpty()) {
             $error("切换类目 没有prod id条件 params=" + requestMap.toString());
             resultMap.put("isChangeCategory", false);
             return resultMap;
@@ -505,19 +503,23 @@ public class CmsProductDetailService extends BaseAppService {
 
         for (Integer cartId : cartList) {
             JomgoUpdate updObj = new JomgoUpdate();
-            updObj.setQuery("{'prodId':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
-            updObj.setQueryParameters(productIds);
+            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
+            updObj.setQueryParameters(prodCodes);
 
             if (pCatId == null || pCatPath == null) {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath);
             } else {
-                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + "'.pCatId:#,'platforms.P" + cartId + "'.pCatPath:#}}");
+                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + ".pCatId':#,'platforms.P" + cartId + ".pCatPath':#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath, pCatId, pCatPath);
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("切换类目结果 " + rs.toString());
+            $debug("切换类目 product更新结果 " + rs.toString());
         }
+
+        String feeUpdStr = "{'code':{$in:['" + StringUtils.join(prodCodes, "','") + "']}}";
+        WriteResult wrs = feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(), feeUpdStr, 1, userInfo.getUserName());
+        $debug("切换类目 feed更新结果 " + wrs.toString());
 
         // 获取更新结果
         resultMap.put("isChangeCategory", true);
@@ -573,6 +575,11 @@ public class CmsProductDetailService extends BaseAppService {
         }
         mastData.put("platformList", platformList);
 
+        mastData.put("feedInfo", productService.getCustomProp(cmsBtProduct));
+
+        List<Map<String, Object>> inventoryList = getProdSkuCnt(channelId, prodId);
+        mastData.put("inventoryList", inventoryList);
+
         result.put("productComm", productComm);
         result.put("mastData", mastData);
         return result;
@@ -587,7 +594,15 @@ public class CmsProductDetailService extends BaseAppService {
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
         if ((oldProduct.getCommon().getCatId() == null && commonModel.getCatId() != null) || !oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
-            changeMastCategory(commonModel, oldProduct,modifier);
+            changeMastCategory(commonModel, oldProduct, modifier);
+
+            // 更新 feedinfo表中的updFlg 重新出发 feed->mast
+            HashMap<String,Object> paraMap = new HashMap<>(1);
+            paraMap.put("code",oldProduct.getCommon().getFields().getCode());
+            HashMap<String,Object> valueMap = new HashMap<>(1);
+            valueMap.put("updFlg", 0);
+            feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
+
         }
         return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
     }
