@@ -37,8 +37,6 @@ public class TagService extends BaseService {
      */
     @VOTransactional
     public int addTag(CmsTagInfoBean request) {
-        // 返回值Tag设定
-//        CmsBtTagModel tag = null;
         // 执行结果
         boolean ret = true;
 
