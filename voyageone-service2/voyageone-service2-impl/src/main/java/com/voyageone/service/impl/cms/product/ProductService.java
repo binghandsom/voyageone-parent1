@@ -1033,7 +1033,7 @@ public class ProductService extends BaseService {
             String diffFlg = "1";
             if(sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")){
                 diffFlg = "2";
-            }else if(sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")){
+            }else if(sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")){
                 diffFlg = "3";
             }
             sku.setAttribute("priceDiffFlg",diffFlg);

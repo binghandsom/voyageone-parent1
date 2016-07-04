@@ -7,7 +7,6 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeAllDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -36,9 +35,6 @@ public class CategoryTreeAllService extends BaseService {
     @Autowired
     private CmsMtCategoryTreeAllDao cmsMtCategoryTreeAllDao;
 
-    @Autowired
-    private CmsMtPlatformCategoryDao platformCategoryDao;
-
     /**
      * 取得Category Tree 根据channelId
      */
@@ -46,7 +42,7 @@ public class CategoryTreeAllService extends BaseService {
         List<CmsMtCategoryTreeAllBean> result = new ArrayList<>();
         // 根据channelId取得channel与Category的对应关系
         List<CmsMtChannelCategoryConfigModel> mappings = channelCategoryService.getByChannelId(channelId);
-        Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = null;
+        //Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = null;
 
         // 根据channel与Category的对应关系(多个catId),取得CategoryTree
         for (CmsMtChannelCategoryConfigModel mapping : mappings) {
@@ -55,7 +51,7 @@ public class CategoryTreeAllService extends BaseService {
             CmsMtCategoryTreeAllBean bean = null;
             if (model != null) {
                 // ModelToBean，将主类目对应的平台类目信息进行转换（platformId转换成对应的cartId），并且根据channelId对应的平台类目信息，加上这个平台类目是否申请的标志位
-                bean = changeModelToBean(model, channelId, applyPlatformCategoryMap, lang);
+                bean = changeModelToBean(model, channelId, null, lang);
             }
             if (bean != null) {
                 result.add(bean);
@@ -93,7 +89,7 @@ public class CategoryTreeAllService extends BaseService {
 
             // 生成这个主类目下，以对应的各个cartId为单位的平台类目信息
             for(TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
-                Map platformCategory = new HashMap<>();
+                Map<String, Object> platformCategory = new HashMap<>();
                 platformCategory.put("cartId", String.valueOf(typeChannelBean.getValue()));
                 platformCategory.put("cartName", String.valueOf(typeChannelBean.getName()));
                 CartBean cartBean = Carts.getCart(Integer.parseInt(typeChannelBean.getValue()));
@@ -120,7 +116,7 @@ public class CategoryTreeAllService extends BaseService {
         bean.setPlatformCategory(platformCategoryList);
 
         // 这个类目的子类目也要这样做
-        if (model.getChildren() != null && model.getChildren().size() > 0) {
+        if (model.getChildren() != null && !model.getChildren().isEmpty()) {
             for (CmsMtCategoryTreeAllModel child : model.getChildren()) {
                 CmsMtCategoryTreeAllBean childBean = changeModelToBean(child, channelId, applyPlatformCategoryMap, lang);
                 bean.getChildren().add(childBean);
@@ -248,7 +244,7 @@ public class CategoryTreeAllService extends BaseService {
             if (CmsMtCategoryTreeAllModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return CmsMtCategoryTreeAllModel;
             }
-            if (CmsMtCategoryTreeAllModel.getChildren().size() > 0) {
+            if (!CmsMtCategoryTreeAllModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeAllModel category = findCategory(CmsMtCategoryTreeAllModel, catPath);
                 if (category != null) return category;
             }
@@ -259,7 +255,7 @@ public class CategoryTreeAllService extends BaseService {
     /**
      * 根据category从tree中找到节点
      */
-    public CmsMtCategoryTreeAllModel findCategorySingleSku(CmsMtCategoryTreeAllModel tree, String catPath, List result) {
+    public CmsMtCategoryTreeAllModel findCategorySingleSku(CmsMtCategoryTreeAllModel tree, String catPath, List<String> result) {
         for (CmsMtCategoryTreeAllModel CmsMtCategoryTreeAllModel : tree.getChildren()) {
             if (CmsMtCategoryTreeAllModel.getCatPath().equalsIgnoreCase(catPath)) {
                 if ("1".equals(CmsMtCategoryTreeAllModel.getSingleSku())) {
@@ -267,7 +263,7 @@ public class CategoryTreeAllService extends BaseService {
                 }
                 return CmsMtCategoryTreeAllModel;
             }
-            if (CmsMtCategoryTreeAllModel.getChildren().size() > 0) {
+            if (!CmsMtCategoryTreeAllModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeAllModel category = findCategorySingleSku(CmsMtCategoryTreeAllModel, catPath, result);
                 if (category != null) {
                     if ("1".equals(CmsMtCategoryTreeAllModel.getSingleSku())) {
@@ -305,7 +301,7 @@ public class CategoryTreeAllService extends BaseService {
             if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
                 return catTreeModel;
             }
-            if (catTreeModel.getChildren().size() > 0) {
+            if (!catTreeModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeAllModel category = findCategoryByCatId(catTreeModel, catId);
                 if (category != null) return category;
             }

@@ -145,7 +145,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap, modelCmsBtJmPromotionImportTask.getCreater());
 
             //导出未通过check的记录
-            if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
+            if (listProducctErrorMap.size() > 0 || listSkuErrorMap.size() > 0) {
                 String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 String errorfilePath = importPath + "/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
@@ -265,9 +265,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setJmHashId("");
             saveInfo.productModel.setErrorMsg("");
             saveInfo.productModel.setPriceStatus(0);
-            saveInfo.productModel.setDealPrice(new BigDecimal(0));
-            saveInfo.productModel.setMarketPrice(new BigDecimal(0));
-            saveInfo.productModel.setDiscount(new BigDecimal(0));
+            saveInfo.productModel.setDealPrice(BigDecimal.valueOf(0));
+            saveInfo.productModel.setMarketPrice(BigDecimal.valueOf(0));
+            saveInfo.productModel.setDiscount(BigDecimal.valueOf(0));
             saveInfo.productModel.setSkuCount(0);
             saveInfo.productModel.setQuantity(0);
             saveInfo.productModel.setDealEndTimeStatus(0);
@@ -376,8 +376,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                     saveInfo.productModel.setUpdateStatus(1);//已变更
                 }
             }
-            skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
-            skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
+            skuModel.setDealPrice(BigDecimal.valueOf(skuImportBean.getDealPrice()));
+            skuModel.setMarketPrice(BigDecimal.valueOf(skuImportBean.getMarketPrice()));
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier(userName);
