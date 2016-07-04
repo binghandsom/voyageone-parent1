@@ -739,6 +739,9 @@ define(function(){
         "TXT_NOT_MATCHED_PROPERTY": "未匹配属性",
         "TXT_MATCHED_PROPERTY": "已匹配属性",
         "TXT_NOT_TRANSLATED_PROPERTY": "未翻译属性",
+        "TXT_SUBMIT_SUCCESS": "提交成功",
+        "TXT_SAVE_SUCCESS": "保存成功",
+        "TXT_UNKNOWN": "未知",
 
         /**聚美专场*/
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",

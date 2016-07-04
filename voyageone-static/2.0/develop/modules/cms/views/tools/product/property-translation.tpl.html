@@ -104,7 +104,8 @@
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label text-left">{{'TXT_PAGER_SIZE' | translate}}</label>
                                                 <div class="col-sm-8">
-                                                    <select class="form-control" ng-model="ctrl.searchPageSettings.size" ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
+                                                    <select class="form-control" ng-model="ctrl.searchPageSettings.size"
+                                                            ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
                                                         <option value=number:10>10行</option>
                                                         <option value=20>20行</option>
                                                         <option value=50>50行</option>
@@ -165,7 +166,7 @@
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
-                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i>  {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
+                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
                                         </button>
                                     </div>
                                     <div class="form-group">
@@ -189,7 +190,7 @@
                                 </div>
                                 <div class="col-sm-2 imageContainer">
                                     <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
-                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
+                                        <img alt="ProductImage" class="thumb-xl m-b-xs" ng-src="{{root + ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
                                 </div>
                             </div>
                             <div class="col-sm-12 product-shema-detail">
@@ -341,12 +342,12 @@
                         </tbody>
                         <tbody ng-if="ctrl.vm.taskList.length > 0" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
                         <tr ng-repeat="task in ctrl.vm.taskList">
-                            <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus)}}</td>
+                            <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
                             <td class="mfb-xt text-center v-middle">
                                 <img alt="ProductImage v-middle" class="thumb m-b-xs" image="{{task.image1}}">
                             </td>
                             <td class="mfb-xt text-center v-middle">{{task.feedCategory}}</td>
-                            <td class="mfb-xt text-center v-middle"><a class="" ng-click="ctrl.get(task)">{{task.code}}</a></td>
+                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)" class="a-link"> {{task.code}}</a></td>
                             <td class="mfb-xt text-center v-middle">{{task.productName}}</td>
                             <td class="mfb-xt text-center v-middle">{{task.catPath}}</td>
                             <td class="mfb-xt text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd"}}</td>
@@ -354,7 +355,7 @@
                         </tbody>
                     </table>
                     <div class="col-sm-12 m-t-lg m-b-lg">
-                        <vpagination config="ctrl.searchPageSettings" >{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
+                        <vpagination config="ctrl.searchPageSettings">{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
                     </div>
                 </uib-tabset>
             </div>
