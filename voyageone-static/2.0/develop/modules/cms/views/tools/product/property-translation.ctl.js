@@ -179,7 +179,7 @@ define([
 
             // 时间戳转换
             getDateTimeFromTimeStamp: function (timeStamp) {
-                var date = new Date(timeStamp);
+                var date = new Date(timeStamp * 1000);
                 return date;
             },
 

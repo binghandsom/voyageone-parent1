@@ -25,7 +25,7 @@ define([
             this.searchInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
-                hsCodeStatus: "0",
+                hsCodeStatus: "1",
                 searchCondition: ""
             };
         }
@@ -39,9 +39,8 @@ define([
 
                 self.hsCodeInfoService.init(data).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
-                    self.hsCodeList = self.hsSettedData.hsCodeList;
-                    self.hsCodeValue = self.hsSettedData.hsCodeValue;
-                    console.log(self.hsSettedData);
+                    self.hsCodeList = res.data.hsCodeList;
+                    self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
             get: function (page) {
