@@ -432,7 +432,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     sizeStr = getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType);
                                     htSpuUpdateRequest.setSize(sizeStr);
-                                    htSpuUpdateRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
+                                    htSpuUpdateRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"-"+channelId);
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                                     HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
@@ -446,6 +446,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                             mySku.setCmsSize(skuMap.getStringAttribute("size"));
                                             mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                             mySku.setModifier(getTaskName());
+                                            mySku.setModified(new Date());
                                             cmsBtJmSkuDao.update(mySku);
                                         }
                                         else
@@ -455,7 +456,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                             mySku.setJmSpuNo(oldSku.getSpu_no());
                                             mySku.setJmSkuNo(oldSku.getSku_no());
                                             mySku.setModifier(getTaskName());
-                                            mySku.setModifier(getTaskName());
+                                            mySku.setModified(new Date());
                                             cmsBtJmSkuDao.insert(mySku);
                                         }
                                     }
@@ -487,6 +488,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                                 CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
                                                 mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
                                                 mySku.setModifier(getTaskName());
+                                                mySku.setModified(new Date());
                                                 cmsBtJmSkuDao.update(mySku);
                                             }
                                         }
@@ -498,11 +500,40 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                             throw  new BusinessException(msg);
                                         }
                                     }
+                                    //更新SKU
+                                    else
+                                    {
+                                        HtSkuUpdateRequest htSkuUpdateRequest = new HtSkuUpdateRequest();
+                                        htSkuUpdateRequest.setJumei_sku_no(oldSku.getSku_no());
+                                        htSkuUpdateRequest.setJumei_hash_id(originHashId);
+                                        htSkuUpdateRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
+                                        HtSkuUpdateResponse htSkuUpdateResponse = jumeiHtSkuService.update(shop, htSkuUpdateRequest);
+                                        if (htSkuUpdateResponse != null && htSkuUpdateResponse.is_Success()) {
+                                            $info("更新Sku成功！[skuCode:%s]", skuMap.getStringAttribute("skuCode"));
+                                            if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
+                                            {
+                                                CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
+                                                mySku.setJmSkuNo(oldSku.getSku_no());
+                                                mySku.setSkuCode(skuMap.getStringAttribute("skuCode"));
+                                                mySku.setModifier(getTaskName());
+                                                mySku.setModified(new Date());
+                                                cmsBtJmSkuDao.update(mySku);
+                                            }
+                                        }
+                                        //更新Sku失败
+                                        else
+                                        {
+                                            String msg = String.format("更新Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), oldSku.getSku_no());
+                                            $error(msg);
+                                            throw  new BusinessException(msg);
+                                        }
+
+                                    }
                                 }
                                 //新SPU需要增加
                                 else {
                                     HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
-                                    htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
+                                    htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode") +"-" +channelId);
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
@@ -929,7 +960,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
-            spu.setUpc_code(jmSku.getStringAttribute("barcode")+"vo");
+            spu.setUpc_code(jmSku.getStringAttribute("barcode")+"-"+channelId);
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             String size = jmSku.getStringAttribute("size");
