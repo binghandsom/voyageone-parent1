@@ -265,8 +265,7 @@ public class TranslationTaskService extends BaseService {
             //根据feedCustomPropList精简cnProps
             List<CustomPropBean> cnProps = bean.getCustomProps();
             if (custPropKeySet != null && custPropKeySet.size() > 0) {
-                cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors
-                        .toList());
+                cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
             }
 
 
@@ -294,16 +293,12 @@ public class TranslationTaskService extends BaseService {
                 rsMap.put("modified", DateTimeUtil.getNow());
 
                 if (cnProps != null) {
-                    rsMap.put("feed.customIds", cnProps.stream().map(CustomPropBean::getFeedAttrEn)
-                            .collect(Collectors.toList()));
-                    rsMap.put("feed.customIdsCn", cnProps.stream().map
-                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
-                    rsMap.put("feed.orgAtts", cnProps.stream().collect(toMap
-                            (CustomPropBean::getFeedAttrEn,
-                                    CustomPropBean::getFeedAttrValueEn)));
-                    rsMap.put("feed.cnAtts", cnProps.stream().collect(toMap
-                            (CustomPropBean::getFeedAttrEn,
-                                    CustomPropBean::getFeedAttrValueCn)));
+//                    rsMap.put("feed.customIds", cnProps.stream().map(CustomPropBean::getFeedAttrEn)
+//                            .collect(Collectors.toList()));
+//                    rsMap.put("feed.customIdsCn", cnProps.stream().map
+//                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
+                    rsMap.put("feed.orgAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
+                    rsMap.put("feed.cnAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
                 }
 
                 Map<String, Object> updateMap = new HashMap<>();
@@ -510,13 +505,11 @@ public class TranslationTaskService extends BaseService {
         Map<String, List<String>> feedAttr = feedInfo.getAttribute();
 
         //读cms_mt_feed_custom_prop
-        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo
-                .getCategory());
+        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
 
         //去除掉feedCustomPropList中的垃圾数据
         if (feedCustomPropList != null && feedCustomPropList.size() > 0) {
-            feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w
-                    .getFeed_prop_translation()) &&
+            feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
                     !StringUtils.isNullOrBlank2(w.getFeed_prop_original()))).collect(Collectors.toList());
         } else {
             feedCustomPropList = new ArrayList<>();
@@ -534,8 +527,7 @@ public class TranslationTaskService extends BaseService {
             prop.setFeedAttr(true);
 
             if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
-                FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w
-                        .getFeed_prop_original().equals(attrKey)).findFirst().get();
+                FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
                 prop.setFeedAttrCn(feedCustProp.getFeed_prop_translation());
                 if (cnAttrs.keySet().stream().filter(w -> w.equals(attrKey)).count() > 0) {
                     //如果product已经保存过
@@ -547,8 +539,7 @@ public class TranslationTaskService extends BaseService {
                     List<String> vList = defaultValueMap.get(attrValue);
                     if (vList != null) {
                         if (vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).count() > 0) {
-                            String cnAttValue = vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w))
-                                    .findFirst().get();
+                            String cnAttValue = vList.stream().filter(w -> !StringUtils.isNullOrBlank2(w)).findFirst().get();
                             prop.setFeedAttrValueCn(cnAttValue);
                         }
                     }
