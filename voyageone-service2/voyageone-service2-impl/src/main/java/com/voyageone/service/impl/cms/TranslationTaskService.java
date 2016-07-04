@@ -82,18 +82,18 @@ public class TranslationTaskService extends BaseService {
                 "'common.fields.translator':{'$exists' : true}," +
                 "'common.fields.translator':{'$ne' : ''}," +
                 "'common.fields.translateTime':{'$gt':'%s'}}", translateTimeStr);
-        taskSummary.setImcompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
+        taskSummary.setIncompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //完成翻译总商品数
         queryStr = "{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'1'}";
-        taskSummary.setCompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
+        taskSummary.setCompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //个人完成翻译商品数
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'1'," +
                 "'common.fields.translator':'%s'}", userName);
-        taskSummary.setUserCompeleteCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
+        taskSummary.setUserCompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
         return taskSummary;
     }
 
@@ -379,7 +379,7 @@ public class TranslationTaskService extends BaseService {
                 } else {
                     map.put("image1", "");
                 }
-                map.put("feeCategory", product.getFeed().getCatPath());
+                map.put("feedCategory", product.getFeed().getCatPath());
                 map.put("code", fields.getCode());
                 map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? (fields
                         .getProductNameEn()) : fields.getOriginalTitleCn());
