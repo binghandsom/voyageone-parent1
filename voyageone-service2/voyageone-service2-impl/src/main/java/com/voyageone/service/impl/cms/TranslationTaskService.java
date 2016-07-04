@@ -71,7 +71,7 @@ public class TranslationTaskService extends BaseService {
                 "{'common.fields.translator':{'$exists' : false}}, " +
                 "{'common.fields.translateTime':{'$exists' : false}}]}", translateTimeStr);
 
-        taskSummary.setUnassginedCount(Long.valueOf(cmsBtProductDao.countByQuery(queryStr, channelId)).intValue());
+        taskSummary.setUnassginedCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //已分配但未完成的任务
         queryStr = String.format("{'common.fields.isMasterMain':1," +
@@ -151,8 +151,8 @@ public class TranslationTaskService extends BaseService {
             }
 
             if (!StringUtils.isNullOrBlank2(priority)) {
-                if (priority.equalsIgnoreCase("quantity")) {
-                    if (sort.equalsIgnoreCase("asc")) {
+                if ("quantity".equalsIgnoreCase(priority)) {
+                    if ("asc".equalsIgnoreCase(sort)) {
                         queryObj.setSort("{'common.fields.quantity' : 1}");
                     } else {
                         queryObj.setSort("{'common.fields.quantity' : -1}");
@@ -223,8 +223,8 @@ public class TranslationTaskService extends BaseService {
             //去除掉feedCustomPropList中的垃圾数据
             if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
                 feedCustomPropList = feedCustomPropList.stream()
-                        .filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
-                                .isNullOrBlank2(w.getFeed_prop_original())))
+                        .filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
+                                .isNullOrBlank2(w.getFeed_prop_original()))
                         .collect(Collectors.toList());
             } else {
                 feedCustomPropList = new ArrayList<>();
@@ -307,9 +307,9 @@ public class TranslationTaskService extends BaseService {
             queryObj.addQuery("'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}}, " +
                     "{'common.fields.translateStatus':'1'}]");
             queryObj.addParameters(translateTimeStr);
-        } else if (status.equals("1")) {
+        } else if ("1".equals(status)) {
             queryObj.addQuery("'common.fields.translateStatus':'1'");
-        } else if (status.equals("0")) {
+        } else if ("0".equals(status)) {
             queryObj.addQuery("'common.fields.translateStatus':'0'");
             queryObj.addQuery("'common.fields.translateTime':{'$gt':#}");
             queryObj.addParameters(translateTimeStr);
@@ -336,8 +336,7 @@ public class TranslationTaskService extends BaseService {
                 }
                 map.put("feedCategory", product.getFeed().getCatPath());
                 map.put("code", fields.getCode());
-                map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? (fields
-                        .getProductNameEn()) : fields.getOriginalTitleCn());
+                map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? fields.getProductNameEn() : fields.getOriginalTitleCn());
                 map.put("catPath", product.getCommon().getCatPath() == null ? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
                 SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
