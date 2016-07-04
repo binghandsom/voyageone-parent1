@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.service.dao.cms.CmsBtExportTaskDao;
 import com.voyageone.service.daoext.cms.CmsBtExportTaskDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;

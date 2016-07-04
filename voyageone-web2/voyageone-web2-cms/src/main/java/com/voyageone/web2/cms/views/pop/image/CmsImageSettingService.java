@@ -93,11 +93,7 @@ public class CmsImageSettingService extends BaseAppService {
                 productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, userName);
 
             // 更新产品数据
-            ProductUpdateBean requestModel = new ProductUpdateBean();
-            requestModel.setProductModel(cmsBtProductModel);
-            requestModel.setModifier(user.getUserName());
-            requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-            productService.updateProduct(user.getSelChannelId(), requestModel);
+            productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(),user.getUserName(),false);
             response.put("imageName", imageName);
             response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
             return response;
