@@ -22,6 +22,7 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -153,8 +154,7 @@ public class TranslationTaskService extends BaseService {
 
         CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
 
-        if (product == null)
-        {
+        if (product == null) {
             //没有过期任务，按优先级参数分配
             JomgoQuery queryObj = new JomgoQuery();
 
@@ -179,13 +179,12 @@ public class TranslationTaskService extends BaseService {
             product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
         }
 
-        if(product == null)
-        {
+        if (product == null) {
             throw new BusinessException("当前没有待领取的翻译任务！");
         }
 
         //修改任务状态
-        else{
+        else {
             Map<String, Object> rsMap = new HashMap<>();
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -386,7 +385,13 @@ public class TranslationTaskService extends BaseService {
                         .getProductNameEn()) : fields.getOriginalTitleCn());
                 map.put("catPath", product.getCommon().getCatPath() == null ? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
-                map.put("translateTime", fields.getTranslateTime());
+                SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
+                try {
+                    Date translateTime = sdf.parse(fields.getTranslateTime());
+                    map.put("translateTime", translateTime.getTime() / 1000);
+                } catch (Exception e) {
+                    map.put("translateTime", fields.getTranslateTime());
+                }
                 list.add(map);
             }
         }
@@ -395,9 +400,8 @@ public class TranslationTaskService extends BaseService {
         return result;
     }
 
-    private String getString(String str)
-    {
-        return  StringUtils.isNullOrBlank2(str) ? "" : str;
+    private String getString(String str) {
+        return StringUtils.isNullOrBlank2(str) ? "" : str;
     }
 
     /**
@@ -493,7 +497,7 @@ public class TranslationTaskService extends BaseService {
      */
     public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
 
-        String channelId =  product.getChannelId();
+        String channelId = product.getChannelId();
         CmsBtProductModel_Field fields = product.getCommon().getFields();
 
         CmsBtProductModel_Feed productFeed = product.getFeed();
