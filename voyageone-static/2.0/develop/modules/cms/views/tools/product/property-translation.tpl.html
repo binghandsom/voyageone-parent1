@@ -190,7 +190,7 @@
                                 </div>
                                 <div class="col-sm-2 imageContainer">
                                     <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
-                                        <img alt="ProductImage" class="thumb-xl m-b-xs" ng-src="{{root + ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
+                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
                                 </div>
                             </div>
                             <div class="col-sm-12 product-shema-detail">
@@ -347,7 +347,7 @@
                                 <img alt="ProductImage v-middle" class="thumb m-b-xs" image="{{task.image1}}">
                             </td>
                             <td class="mfb-xt text-center v-middle">{{task.feedCategory}}</td>
-                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)" class="a-link"> {{task.code}}</a></td>
+                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)" class="a a-link"> {{task.code}}</a></td>
                             <td class="mfb-xt text-center v-middle">{{task.productName}}</td>
                             <td class="mfb-xt text-center v-middle">{{task.catPath}}</td>
                             <td class="mfb-xt text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd"}}</td>
