@@ -478,12 +478,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("usageCn", usageCn);
     }
 
-    // tmallWirelessActive
-    public Integer getTmallWirelessActive() {
-        return getIntAttribute("tmallWirelessActive");
+    // appSwitch
+    public Integer getAppSwitch() {
+        return getIntAttribute("appSwitch");
     }
-    public void setTmallWirelessActive(Integer tmallWirelessActive) {
-        setStringAttribute("tmallWirelessActive", tmallWirelessActive == null ? 0 : tmallWirelessActive);
+    public void setAppSwitch(Integer appSwitch) {
+        setAttribute("appSwitch", appSwitch == null ? 0 : appSwitch);
     }
 
     @Override
