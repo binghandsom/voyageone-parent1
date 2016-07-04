@@ -13,6 +13,7 @@ public class CustomPropBean {
     private String feedAttrValueCn;
     private String feedAttrValueEn;
     private boolean feedAttr;
+    private boolean customPropActive;
 
     public String getFeedAttrCn() {
         return feedAttrCn;
@@ -52,5 +53,13 @@ public class CustomPropBean {
 
     public void setFeedAttr(boolean feedAttr) {
         this.feedAttr = feedAttr;
+    }
+
+    public boolean isCustomPropActive() {
+        return customPropActive;
+    }
+
+    public void setCustomPropActive(boolean customPropActive) {
+        this.customPropActive = customPropActive;
     }
 }
