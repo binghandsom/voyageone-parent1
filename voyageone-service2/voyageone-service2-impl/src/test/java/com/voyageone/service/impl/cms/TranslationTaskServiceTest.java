@@ -2,17 +2,17 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CommonFields;
-import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CustomProps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,10 +53,10 @@ public class TranslationTaskServiceTest {
         fields.setOriginalTitleCn(fields.getOriginalTitleCn()+ "__测试");
         fields.setShortDesCn(fields.getShortDesCn()+ "__测试");
 
-        List<TranslationTaskBean_CustomProps> props = result.getCustomProps();
+        List<CustomPropBean> props = result.getCustomProps();
         props = props.stream().filter(w-> (!StringUtils.isNullOrBlank2(w.getFeedAttrCn()) && !StringUtils.isNullOrBlank2(w.getFeedAttrEn()))).collect(Collectors.toList());
 
-        for (TranslationTaskBean_CustomProps prop: props) {
+        for (CustomPropBean prop: props) {
             prop.setFeedAttrValueCn(prop.getFeedAttrValueCn()+ "__测试");
         }
         result.setCustomProps(props);
