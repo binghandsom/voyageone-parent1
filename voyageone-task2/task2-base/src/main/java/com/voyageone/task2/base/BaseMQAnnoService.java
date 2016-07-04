@@ -13,6 +13,7 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.NDC;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -119,6 +120,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     private TaskControlEnums.Status process(Message message) {
         TaskControlEnums.Status status = TaskControlEnums.Status.START;
         try {
+            NDC.push(getTaskName());
             String messageStr = new String(message.getBody(), "UTF-8");
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
             onStartup(messageMap);
@@ -141,10 +143,11 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
         }
-//        finally {
-//            // 任务监控历史记录添加:结束
+        finally {
+            // 任务监控历史记录添加:结束
 //            taskDao.insertTaskHistory(taskID, status.getIs());
-//        }
+            NDC.remove();
+        }
         return status;
     }
 
