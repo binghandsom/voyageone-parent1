@@ -58,16 +58,16 @@ public class CmsImageSettingController extends CmsController {
             throw new BusinessException("图片上传失败");
         }
 
-        int cartId = (int) getCmsSession().getPlatformType().get("cartId");
-        Map productInfo = productPropsEditService.getProductInfo(getUser().getSelChannelId(), productId, cartId, getLang());
-        CmsProductInfoBean cmsProductInfoBean = (CmsProductInfoBean) productInfo.get("productInfo");
+//        int cartId = (int) getCmsSession().getPlatformType().get("cartId");
+//        Map productInfo = productPropsEditService.getProductInfo(getUser().getSelChannelId(), productId, cartId, getLang());
+//        CmsProductInfoBean cmsProductInfoBean = (CmsProductInfoBean) productInfo.get("productInfo");
 
-        List<CmsBtProductModel_Field_Image> images = cmsProductInfoBean.getProductImages().get(imageType);
-        if(images.size() > 0){
-            images.remove(images.size() - 1);
-        }
-        response.put("productInfo", productInfo.get("productInfo"));
-        productInfo.remove("productInfo");
+//        List<CmsBtProductModel_Field_Image> images = cmsProductInfoBean.getProductImages().get(imageType);
+//        if(images.size() > 0){
+//            images.remove(images.size() - 1);
+//        }
+//        response.put("productInfo", productInfo.get("productInfo"));
+//        productInfo.remove("productInfo");
         input.close();
 
         // 返回用户信息
