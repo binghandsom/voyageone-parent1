@@ -14,13 +14,28 @@ define([
             this.confirm = confirm;
             this.alert = alert;
             this.popups = popups;
+
+            /**
+             * 搜索按钮点击检测 控制下方子页面内容显示
+             * @type {boolean}
+             */
             this.searchBtnClicked = false;
+
+            /**
+             * 历史任务搜索结果每页行数选项
+             * @type {*[]}
+             */
             this.searchPageSizeOption = [
                 {name: "10行", value: 10},
                 {name: "20行", value: 20},
                 {name: "50行", value: 50},
                 {name: "100行", value: 100}
             ];
+
+            /**
+             * 历史任务搜索设定
+             * @type {{curr: number, total: number, size: number, keyWord: string, translateStatus: string, fetch: (function(this:TranslationManageController))}}
+             */
             this.searchPageSettings = {
                 curr: 1,
                 total: 0,
@@ -29,11 +44,21 @@ define([
                 translateStatus: "",
                 fetch: this.searchPage.bind(this)
             };
+
+            /**
+             * 获取任务设定
+             * @type {{codeOrName: string, priority: string, sort: string}}
+             */
             this.assignInfo = {
                 codeOrName: "",
                 priority: "",
                 sort: ""
             };
+
+            /**
+             * 后端内容
+             * @type {{taskInfo: {}, taskList: Array, taskDetail: {}, sortFieldOptions: Array}}
+             */
             this.vm = {
                 taskInfo: {},
                 taskList: [],
@@ -58,7 +83,9 @@ define([
                 })
             },
 
-            // 获取任务.
+            /**
+             * 获取任务
+             */
             assign: function () {
                 var self = this;
                 self.searchBtnClicked = false;
@@ -68,7 +95,9 @@ define([
                 })
             },
 
-            // 暂存当前任务
+            /**
+             * 暂存当前任务
+             */
             save: function () {
                 var self = this;
                 var req = angular.copy(self.vm.taskDetail);
@@ -78,11 +107,13 @@ define([
                 self.translationService.save(req).then(function (res) {
                     self.vm.taskSummary = res.data.taskSummary;
                     self.vm.taskDetail = res.data.taskDetail;
-                    self.notify.success("保存成功.");
+                    self.notify.success('TXT_SAVE_SUCCESS');
                 });
             },
 
-            // 提交当前任务.
+            /**
+             * 提交当前任务
+             */
             submit: function () {
                 var self = this;
                 var req = angular.copy(self.vm.taskDetail);
@@ -92,11 +123,13 @@ define([
                 self.translationService.submit(req).then(function (res) {
                     self.vm.taskInfo = res.data.taskInfo;
                     self.vm.taskSummary = res.data.taskSummary;
-                    self.notify.success("提交成功");
+                    self.notify.success('TXT_SUBMIT_SUCCESS');
                 })
             },
 
-            // 查询历史任务.
+            /**
+             * 查询历史任务
+             */
             search: function () {
                 var self = this;
                 var searchInfo = {
@@ -112,7 +145,10 @@ define([
                 })
             },
 
-            // 查询页数跳转
+            /**
+             * 变更搜索结果页页数
+             * @param page
+             */
             searchPage: function (page) {
                 var self = this;
                 self.searchPageSettings.curr = !page ? self.searchPageSettings.curr : page;
@@ -128,7 +164,10 @@ define([
                 })
             },
 
-            // 跳转Code编辑页面.
+            /**
+             * 跳转Code的翻译页面
+             * @param task 对应列表中的行内容
+             */
             get: function (task) {
                 var self = this;
                 self.translationService.get(task).then(function (res) {
@@ -137,7 +176,9 @@ define([
                 })
             },
 
-            // 清空查询条件.
+            /**
+             * 清空查询条件
+             */
             clearConditions: function () {
                 var self = this;
                 self.searchPageSettings.curr = 1;
@@ -146,7 +187,10 @@ define([
                 self.searchPageSettings.translateStatus = "";
             },
 
-            // 图片popup
+            /**
+             * 图片popUp
+             * @param item
+             */
             popUpImages: function (item) {
                 if (item == undefined || item.commonFields == undefined) {
                     return;
@@ -168,22 +212,33 @@ define([
                 this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
             },
 
-            // 翻译状态转换
+            /**
+             * 翻译状态转换
+             * @param status
+             * @returns {*}
+             */
             getStatusNameFromStatusValue: function (status) {
                 if (status == 0)
-                    return "未翻译";
+                    return 'TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED';
                 else if (status == 1)
-                    return "已翻译";
-                else return "未知";
+                    return 'TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED';
+                else return 'TXT_UNKNOWN';
             },
 
-            // 时间戳转换
+            /**
+             * 时间戳转换
+             * @param timeStamp Unix时间戳
+             * @returns {Date}
+             */
             getDateTimeFromTimeStamp: function (timeStamp) {
-                var date = new Date(timeStamp);
+                var date = new Date(timeStamp * 1000);
                 return date;
             },
 
-            // 跳转链接
+            /**
+             * 跳转链接
+             * @param url
+             */
             openUrl: function (url) {
                 window.open(url);
             }

@@ -86,8 +86,8 @@
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="ctrl.searchInfo.hsCodeStatus">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                    <option value="0">已设置</option>
-                                                    <option value="1">未设置</option>
+                                                    <option value="1">已设置</option>
+                                                    <option value="0">未设置</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@
                         <td style="overflow: hidden;" class="text-center mfb-x v-middle">
                             <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb" image="{{list.common.fields.images1[0].image1}}"></a>
                         </td>
-                        <td class="text-center mfb-xxt">
+                        <td class="text-center mfb-xxt v-middle">
                             <ul>
                                 <li class="text-left"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
                                 <li class="text-left">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
@@ -146,7 +146,7 @@
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </td>
-                        <td class="text-left mfb-xxs">
+                        <td class="text-left mfb-xxs v-middle">
                             <ul class="tableWordBreak">
                                 <li>{{list.common.fields.productNameCn?list.common.fields.productNameCn : list.common.fields.productNameEn}}</li>
                                 <li>{{list.feed.catPath}}</li>

@@ -144,9 +144,9 @@ public class TranslationController extends CmsController {
         String channelId = this.getUser().getSelChannelId();
         String user = this.getUser().getUserName();
         Map<String, Object> translateTaskSaveResponse = new HashMap<>();
+
+        translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId, user, status));
         translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-        translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId, user,
-                status));
         return translateTaskSaveResponse;
     }
 

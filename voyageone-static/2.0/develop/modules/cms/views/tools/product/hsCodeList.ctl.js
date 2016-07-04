@@ -25,7 +25,7 @@ define([
             this.searchInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
-                hsCodeStatus: "0",
+                hsCodeStatus: "1",
                 searchCondition: ""
             };
         }
@@ -37,11 +37,8 @@ define([
                 _.extend(data, {"hsCodeStatus": this.searchInfo.hsCodeStatus});
                 _.extend(data, {"searchCondition": this.searchInfo.searchCondition});
 
-                self.hsCodeInfoService.init(data).then(function (res) {
-                    self.hsSettedData = res.data.taskSummary;
-                    self.hsCodeList = self.hsSettedData.hsCodeList;
-                    self.hsCodeValue = self.hsSettedData.hsCodeValue;
-                    console.log(self.hsSettedData);
+                self.hsCodeInfoService.init(data).then(function () {
+                    self.search();
                 })
             },
             get: function (page) {
@@ -55,6 +52,9 @@ define([
                 var self = this;
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
+                    self.hsSettedData = res.data.taskSummary;
+                    self.hsCodeList = res.data.hsCodeList;
+                    self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
             save: function (list) {

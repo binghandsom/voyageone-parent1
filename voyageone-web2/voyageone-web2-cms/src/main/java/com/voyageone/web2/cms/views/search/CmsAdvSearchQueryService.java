@@ -420,7 +420,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     /**
      * 获取排序规则
      */
-    public String setSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
+    public String getSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
         StringBuilder result = new StringBuilder();
 
         // 获取排序字段1
