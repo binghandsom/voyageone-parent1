@@ -360,7 +360,7 @@ public class TranslationTaskService extends BaseService {
             queryObj.addParameters(translateTimeStr);
         }
 
-        queryObj.setSkip(pageSize * (pageNum - 1)).setLimit(pageNum);
+        queryObj.setSkip(pageSize * (pageNum - 1)).setLimit(pageSize);
 
         List<CmsBtProductModel> products = cmsBtProductDao.select(queryObj, channelId);
 

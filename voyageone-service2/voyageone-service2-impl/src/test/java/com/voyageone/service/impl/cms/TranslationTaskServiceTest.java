@@ -31,7 +31,7 @@ public class TranslationTaskServiceTest {
 
     @Test
     public void testGetTaskSummary() throws Exception {
-        TaskSummaryBean result = translationTaskService.getTaskSummary("010", "salley.yang");
+        TaskSummaryBean result = translationTaskService.getTaskSummary("010", "will");
         System.out.println(JsonUtil.bean2Json(result));
 
     }
@@ -71,12 +71,12 @@ public class TranslationTaskServiceTest {
 
         Map<String, Object> result = translationTaskService.searchTask(1,10,"","010","will","");
         System.out.println(JsonUtil.bean2Json(result));
-        result = translationTaskService.searchTask(1,10,"手镯","010","will","0");
-        System.out.println(JsonUtil.bean2Json(result));
-        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","0");
-        System.out.println(JsonUtil.bean2Json(result));
-        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","1");
-        System.out.println(JsonUtil.bean2Json(result));
+//        result = translationTaskService.searchTask(1,10,"手镯","010","will","0");
+//        System.out.println(JsonUtil.bean2Json(result));
+//        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","0");
+//        System.out.println(JsonUtil.bean2Json(result));
+//        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","1");
+//        System.out.println(JsonUtil.bean2Json(result));
 
     }
 
@@ -85,4 +85,5 @@ public class TranslationTaskServiceTest {
         TranslationTaskBean result  = translationTaskService.getTaskById("010", "will", 5931);
         System.out.println(JsonUtil.bean2Json(result));
     }
+
 }
