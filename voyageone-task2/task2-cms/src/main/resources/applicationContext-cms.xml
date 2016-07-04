@@ -6,108 +6,108 @@
           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
           http://www.springframework.org/schema/task
           http://www.springframework.org/schema/task/spring-task.xsd">
-    <!--<task:scheduled-tasks scheduler="cms-job-scheduler">-->
+    <task:scheduled-tasks scheduler="cms-job-scheduler">
 
-        <!--&lt;!&ndash; mq resume task 每5分钟运行一次 &ndash;&gt;-->
-        <!--&lt;!&ndash;<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>&ndash;&gt;-->
+        <!-- mq resume task 每5分钟运行一次 -->
+        <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
+        <!--<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>-->
 
-        <!--&lt;!&ndash; cms2 batch add    &ndash;&gt;-->
-        <!--&lt;!&ndash; 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- cms2 batch add    -->
+        <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
+        <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 上新 &ndash;&gt;-->
-        <!--<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 上新 -->
+        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 京东上新 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 京东上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 聚美上新 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 聚美上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadJMJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 取得平台类目:手动batch &ndash;&gt;-->
-        <!--<task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 取得平台类目:手动batch -->
+        <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 取得平台类目的schema:手动batch &ndash;&gt;-->
-        <!--<task:scheduled ref="getPlatformCategorySchemaTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 取得平台类目的schema:手动batch -->
+        <task:scheduled ref="getPlatformCategorySchemaTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 生成主数据的schema:手动batch &ndash;&gt;-->
-        <!--<task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 生成主数据的schema:手动batch -->
+        <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 主数据到平台的默认mapping数据做成:手动batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 * * * ?"/>-->
+        <!-- 主数据到平台的默认mapping数据做成:手动batch -->
+        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 * * * ?"/>
 
-        <!--&lt;!&ndash; 从天猫拉取商品数据, 插入到主数据 (用于旧系统迁移到新系统):手动batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsPlatformProductImportJob" method="run" cron="0 0/3 0-23 * * ?"/>-->
+        <!-- 从天猫拉取商品数据, 插入到主数据 (用于旧系统迁移到新系统):手动batch -->
+        <task:scheduled ref="CmsPlatformProductImportJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; cms2的图片推送到Scene7&ndash;&gt;-->
-        <!--<task:scheduled ref="CmsImagePostScene7Job" method="run" cron="0/30 * * * * ?"/>-->
+        <!-- cms2的图片推送到Scene7-->
+        <task:scheduled ref="CmsImagePostScene7Job" method="run" cron="0/30 * * * * ?"/>
 
-        <!--&lt;!&ndash; 价格披露 v2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 价格披露 v2 -->
+        <task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 特价宝  &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 特价宝  -->
+        <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 库存数据导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/10 * * * ?"/>-->
+        <!-- 库存数据导入 cms2 -->
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="25 0/10 * * * ?"/>
 
-        <!--&lt;!&ndash; Jewelry feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>-->
+        <!-- Jewelry feed 导入 cms2 -->
+        <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; Shoe City feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 10 0/1 * * ?"/>-->
+        <!-- Shoe City feed 导入 cms2 -->
+        <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 10 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; BHFO feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="0 30 0/1 * * ?"/>-->
+        <!-- BHFO feed 导入 cms2 -->
+        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="0 30 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; SummerGuru feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 50 0/1 * * ?"/>-->
+        <!-- SummerGuru feed 导入 cms2 -->
+        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 50 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; ShoeZoo feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>-->
+        <!-- ShoeZoo feed 导入 cms2 -->
+        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; OverStock feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>-->
+        <!-- OverStock feed 导入 cms2 -->
+        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
-        <!--&lt;!&ndash; Target feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>-->
+        <!-- Target feed 导入 cms2 -->
+        <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 维他命 feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>-->
+        <!-- 维他命 feed 导入 cms2 -->
+        <task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>
 
-        <!--&lt;!&ndash; Gilt feed 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>-->
+        <!-- Gilt feed 导入 cms2 -->
+        <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!--&lt;!&ndash; DFO 导入 cms2 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>-->
+        <!-- DFO 导入 cms2 -->
+        <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!--&lt;!&ndash; 产品数据上新到USJoi &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>-->
+        <!-- 产品数据上新到USJoi -->
+        <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
 
-        <!--&lt;!&ndash; 库存隔离batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsStockSeparateJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 库存隔离batch -->
+        <task:scheduled ref="CmsStockSeparateJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 库存还原batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsStockRevertJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 库存还原batch -->
+        <task:scheduled ref="CmsStockRevertJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 增量库存隔离batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsStockIncrementJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 增量库存隔离batch -->
+        <task:scheduled ref="CmsStockIncrementJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 设定活动结束的隔离数据状态为等待还原batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 设定活动结束的隔离数据状态为等待还原batch -->
+        <task:scheduled ref="CmsStockWaitingRevertJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 图片上传到平台batch &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 图片上传到平台batch -->
+        <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!--&lt;!&ndash; 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>-->
+        <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
 
-        <!--&lt;!&ndash; 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
 
-    <!--</task:scheduled-tasks>-->
+    </task:scheduled-tasks>
 
     <!-- 必须需要 -->
     <task:scheduler id="cms-job-scheduler" pool-size="3"/>
