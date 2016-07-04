@@ -36,7 +36,7 @@
                                     <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;{{'BTN_GET_TASK'|translate}}</h3>
                                 </div>
                                 <div class="panel-body" style="background-color: #F8F8F8;">
-                                    <form class="form-horizontal" novalidate>
+                                    <form class="form-horizontal" novalidate name="validForm">
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_RULE_OF_PRE"></label>
                                             <div class="col-sm-3">
@@ -62,12 +62,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
-                                            <div class="col-sm-8">
-                                                <input type="number" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt">
+                                            <div ng-class="{'col-sm-8':validForm.taskCount.$valid,'col-sm-3':!validForm.taskCount.$valid}">
+                                                <input type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2" required>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <vo-message target="validForm.taskCount"></vo-message>
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
-                                            <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                            <button class="btn btn-success" ng-click="ctrl.get()" ng-disabled="!validForm.taskCount.$valid"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -85,6 +88,7 @@
                                             <label class="col-sm-4 control-label text-left" translate="TXT_HS_CODE_STATUS"></label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" ng-model="ctrl.searchInfo.hsCodeStatus">
+                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     <option value="1">已设置</option>
                                                     <option value="0">未设置</option>
                                                 </select>
@@ -129,7 +133,7 @@
                     </tr>
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
-                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
+                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.common.fields.hsCodeSetter ? '#cfcaca': 'white'}">
                         <td class="text-center mfb-xt v-middle">{{$index + 1}}</td>
                         <td style="overflow: hidden;" class="text-center mfb-x v-middle">
                             <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb" image="{{list.common.fields.images1[0].image1}}"></a>
@@ -141,7 +145,7 @@
                             </ul>
                         </td>
                         <td class="text-left mfb-xxs v-middle">
-                            <select class="form-control" ng-options="value.value for value in ctrl.hsCodeValue" ng-model="list.selectedValue">
+                            <select class="form-control" ng-options="value.value as value.value for value in ctrl.hsCodeValue" ng-model="list.common.fields.hsCodeSetter">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </td>
