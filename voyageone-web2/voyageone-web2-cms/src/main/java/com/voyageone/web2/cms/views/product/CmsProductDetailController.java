@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -153,9 +154,10 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_FEED_ATTS)
     public AjaxResponse updateProductAtts(@RequestBody Map requestMap){
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
-        List<CustomPropBean> cnProps = (List<CustomPropBean>) requestMap.get("feedInfo");
-        productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
-
+        if(requestMap.get("feedInfo") != null){
+            List<CustomPropBean> cnProps =  JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
+            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
+        }
         return success(null);
     }
 }
