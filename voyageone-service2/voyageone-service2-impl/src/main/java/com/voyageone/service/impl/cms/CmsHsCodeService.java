@@ -35,6 +35,7 @@ public class CmsHsCodeService extends BaseService {
             "common.fields.code",
             "common.catPath",
             "common.fields.productNameEn",
+            "common.fields.originalTitleCn",
             "feed.catPath",
             "common.fields.materialCn",
             "common.fields.materialEn",
@@ -129,14 +130,14 @@ public class CmsHsCodeService extends BaseService {
         String code = (String) param.get("code");
         //获取任务数
         int hsCodeTaskCnt = (Integer) param.get("hsCodeTaskCnt");
-        //HsCodeCheck
-        checkHsCode(hsCodeTaskCnt, lang);
         //显示第几页
         int curr = (Integer) param.get("curr");
         //每页显示的数目
         int size = (Integer) param.get("size");
         //主数据
         int cartId = 1;
+        //HsCodeCheck
+        checkHsCode(hsCodeTaskCnt, lang);
         //根据获取任务数去取得对应的code
         List<CmsBtProductModel> hsCodeList = getHsCodeInfo(channelId, "0", "", hsCodeTaskCnt, RET_FIELDS, qtyOrder, code);
         //取得codeList结果集
@@ -153,10 +154,12 @@ public class CmsHsCodeService extends BaseService {
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
         //更新cms_bt_product表的hsCodeInfo
         if (allCodeList.size() > 0) {
-            updateHsCodeInfo(channelId, allCodeList, userName, "0", hsCodeSetTime);
+            updateHsCodeInfo(channelId, allCodeList, userName, "0","",hsCodeSetTime);
         }
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
+        //税号个人
+        data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
         //等待设置税一览
         data.put("hsCodeList", getTotalHsCodeList(channelId, userName, "0", "", curr, size, RET_FIELDS));
         //返回数据类型
@@ -198,11 +201,12 @@ public class CmsHsCodeService extends BaseService {
      * @param hsCodeStatus
      * @param hsCodeSetTime
      */
-    private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetTime) {
+    private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetter, String hsCodeSetTime) {
 
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("common.fields.hsCodePrivate", userName);
         updateMap.put("common.fields.hsCodeStatus", hsCodeStatus);
+        updateMap.put("common.fields.hsCodeSetter", hsCodeSetter);
         updateMap.put("common.fields.hsCodeSetTime", hsCodeSetTime);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (String code : allCodeList) {
@@ -228,6 +232,7 @@ public class CmsHsCodeService extends BaseService {
             // 类目选择check
             throw new BusinessException("获取任务最好是加上最大值check，默认为10，最大不能超过50", 50);
         }
+
     }
 
     /**
@@ -259,6 +264,7 @@ public class CmsHsCodeService extends BaseService {
      */
     public void saveHsCodeInfo(String channelId, String userName, Map param) {
         String code = (String) param.get("code");
+        String hsCodeSetter = (String) param.get("hsCodeSetter");
         String hsCodeStatus = "1";
         //当前日期及时间
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
@@ -269,7 +275,7 @@ public class CmsHsCodeService extends BaseService {
         //根据获取任务的主code同步到master同一个Group下所有code
         List<String> allCodeList = getAllCodeList(codeList, channelId, cartId);
         //更新cms_bt_product表的hsCodeInfo
-        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetTime);
+        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetter,hsCodeSetTime);
     }
 
     /**
