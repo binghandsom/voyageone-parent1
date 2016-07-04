@@ -4,10 +4,11 @@ define([
 ], function (vms) {
     vms.controller('OrderListController', (function () {
 
-        function OrderListController(alert, notify, orderListService) {
+        function OrderListController(alert, notify, orderListService, popups) {
             this.alert = alert;
             this.notify = notify;
             this.orderListService = orderListService;
+            this.popups = popups;
 
             var now = new Date();
             var onwDay = 24 * 60 * 60 * 1000;
@@ -39,7 +40,9 @@ define([
                 self.notify.success('已经 展开/收缩所有');
             });
         };
-
+        OrderListController.prototype.popAddShipment = function () {
+            this.popups.openAddShipment();
+        };
         return OrderListController;
 
     }()));
