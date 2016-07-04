@@ -42,7 +42,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getIntAttribute("cartId");
     }
     public void setCartId(Integer cartId) {
-        setStringAttribute("cartId", cartId);
+        setAttribute("cartId", cartId);
     }
 
     //status
@@ -180,13 +180,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceMsrpSt");
     }
     public void setpPriceMsrpSt(Double pPriceMsrpSt) {
-        setStringAttribute("pPriceMsrpSt", pPriceMsrpSt);
+        setAttribute("pPriceMsrpSt", pPriceMsrpSt);
     }
     public Double getpPriceMsrpEd() {
         return getDoubleAttribute("pPriceMsrpEd");
     }
     public void setpPriceMsrpEd(Double pPriceMsrpEd) {
-        setStringAttribute("pPriceMsrpEd", pPriceMsrpEd);
+        setAttribute("pPriceMsrpEd", pPriceMsrpEd);
     }
 
     //建议市场价格区间
@@ -194,13 +194,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceRetailSt");
     }
     public void setpPriceRetailSt(Double priceRetailSt) {
-        setStringAttribute("pPriceRetailSt", priceRetailSt);
+        setAttribute("pPriceRetailSt", priceRetailSt);
     }
     public Double getpPriceRetailEd() {
         return getDoubleAttribute("pPriceRetailEd");
     }
     public void setpPriceRetailEd(Double priceRetailEd) {
-        setStringAttribute("pPriceRetailEd", priceRetailEd);
+        setAttribute("pPriceRetailEd", priceRetailEd);
     }
 
     //销售价格价格区间
@@ -208,37 +208,37 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         return getDoubleAttribute("pPriceSaleSt");
     }
     public void setpPriceSaleSt(Double priceSaleSt) {
-        setStringAttribute("pPriceSaleSt", priceSaleSt);
+        setAttribute("pPriceSaleSt", priceSaleSt);
     }
     public Double getpPriceSaleEd() {
         return getDoubleAttribute("pPriceSaleEd");
     }
     public void setpPriceSaleEd(Double priceSaleEd) {
-        setStringAttribute("pPriceSaleEd", priceSaleEd);
+        setAttribute("pPriceSaleEd", priceSaleEd);
     }
 
     //fields
     public BaseMongoMap<String, Object> getFields() {
-        return getAttribute("fields");
+        return getAttribute(FIELDS);
     }
     public void setFields(BaseMongoMap<String, Object> fields) {
-        setAttribute("fields", fields);
+        setAttribute(FIELDS, fields);
     }
 
     //skus
     public List<BaseMongoMap<String, Object>> getSkus(){
-        return getAttribute("skus");
+        return getAttribute(SKUS);
     }
     public void setSkus(List<BaseMongoMap<String, Object>> skus){
-        setAttribute("skus",skus);
+        setAttribute(SKUS,skus);
     }
 
     //sellerCats
     public List<CmsBtProductModel_SellerCat> getSellerCats(){
-        return getAttribute("sellerCats");
+        return getAttribute(SELLER_CATS);
     }
     public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats){
-        setAttribute("sellerCats",sellerCats);
+        setAttribute(SELLER_CATS,sellerCats);
     }
 
     @Override

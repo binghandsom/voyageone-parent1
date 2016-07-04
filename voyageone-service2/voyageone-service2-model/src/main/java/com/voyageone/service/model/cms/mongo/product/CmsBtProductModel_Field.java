@@ -188,7 +188,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getIntAttribute("quantity");
     }
     public void setQuantity(Integer quantity) {
-        setStringAttribute("quantity", quantity == null ? 0 : quantity);
+        setAttribute("quantity", quantity == null ? 0 : quantity);
     }
 
     // clientProductUrl 官方网站链接
@@ -356,13 +356,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceMsrpSt");
     }
     public void setPriceMsrpSt(Double priceMsrpSt) {
-        setStringAttribute("priceMsrpSt", priceMsrpSt);
+        setAttribute("priceMsrpSt", priceMsrpSt);
     }
     public Double getPriceMsrpEd() {
         return getDoubleAttribute("priceMsrpEd");
     }
     public void setPriceMsrpEd(Double priceMsrpEd) {
-        setStringAttribute("priceMsrpEd", priceMsrpEd);
+        setAttribute("priceMsrpEd", priceMsrpEd);
     }
 
     //建议市场价格区间
@@ -370,13 +370,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceRetailSt");
     }
     public void setPriceRetailSt(Double priceRetailSt) {
-        setStringAttribute("priceRetailSt", priceRetailSt);
+        setAttribute("priceRetailSt", priceRetailSt);
     }
     public Double getPriceRetailEd() {
         return getDoubleAttribute("priceRetailEd");
     }
     public void setPriceRetailEd(Double priceRetailEd) {
-        setStringAttribute("priceRetailEd", priceRetailEd);
+        setAttribute("priceRetailEd", priceRetailEd);
     }
 
     //categoryStatus "0":未完成；"1":完成
