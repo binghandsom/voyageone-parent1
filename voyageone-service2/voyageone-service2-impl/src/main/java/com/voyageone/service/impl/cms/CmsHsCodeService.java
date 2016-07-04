@@ -262,7 +262,9 @@ public class CmsHsCodeService extends BaseService {
      * @param userName
      * @param param
      */
-    public void saveHsCodeInfo(String channelId, String userName, Map param) {
+    public Map<String, Object> saveHsCodeInfo(String channelId, String userName, Map param) {
+        //返回数据类型
+        Map<String, Object> data = new HashMap<>();
         String code = (String) param.get("code");
         String hsCodeSetter = (String) param.get("hsCodeSetter");
         String hsCodeStatus = "1";
@@ -275,7 +277,10 @@ public class CmsHsCodeService extends BaseService {
         //根据获取任务的主code同步到master同一个Group下所有code
         List<String> allCodeList = getAllCodeList(codeList, channelId, cartId);
         //更新cms_bt_product表的hsCodeInfo
-        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetter,hsCodeSetTime);
+        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetter, hsCodeSetTime);
+        //商品税号设置状态
+        data.put("taskSummary", getTaskSummary(channelId, userName));
+        return data;
     }
 
     /**

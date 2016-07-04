@@ -1346,6 +1346,7 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
+        insertSxWorkLoad(channelId,getProductById(channelId,prodId),modifier);
         return modified;
     }
 }
