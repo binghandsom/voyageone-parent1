@@ -33,7 +33,7 @@ public class CmsHsCodeService extends BaseService {
      */
     private static String[] RET_FIELDS = {
             "common.fields.code",
-            "common.catPath",
+            "catPath",
             "common.fields.productNameEn",
             "feed.catPath",
             "common.fields.materialCn",
@@ -331,7 +331,7 @@ public class CmsHsCodeService extends BaseService {
         //condition
         if(!StringUtils.isEmpty(condition)){
             //String.format("'fields.productNameEn':{$regex:'%s'},'fields.code':{$regex:'%s'}", condition, condition);
-            sbQuery.append(String.format("'fields.productNameEn':{$regex:'%s'},'fields.code':{$regex:'%s'}", condition, condition));
+            sbQuery.append(String.format("'common.fields.productNameEn':{$regex:'%s'},'common.fields.code':{$regex:'%s'}", condition, condition));
             sbQuery.append(",");
         }
         //channelId

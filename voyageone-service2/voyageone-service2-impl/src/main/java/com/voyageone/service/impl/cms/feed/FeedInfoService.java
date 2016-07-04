@@ -245,7 +245,7 @@ public class FeedInfoService extends BaseService {
         }
     }
 
-    public int updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
+    public WriteResult updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
         return cmsBtFeedInfoDao.updateAllUpdFlg(selChannelId, searchQuery, status, modifier);
     }
 }
