@@ -39,8 +39,8 @@ define([
 
                 self.hsCodeInfoService.init(data).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
-                    self.hsCodeList = self.hsSettedData.hsCodeList;
-                    self.hsCodeValue = self.hsSettedData.hsCodeValue;
+                    self.hsCodeList = res.data.hsCodeList;
+                    self.hsCodeValue = res.data.hsCodeValue;
                     console.log(self.hsSettedData);
                 })
             },
