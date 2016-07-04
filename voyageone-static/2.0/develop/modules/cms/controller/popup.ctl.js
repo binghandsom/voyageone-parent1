@@ -382,7 +382,9 @@ define([
             "codeDetail": {
                 "templateUrl": "views/pop/search/codeDetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
-                "controller": 'popCodeDetailCtl'
+                "controller": 'popCodeDetailCtl',
+                "backdrop": 'static',
+                "size": 'md'
             }
 
         },

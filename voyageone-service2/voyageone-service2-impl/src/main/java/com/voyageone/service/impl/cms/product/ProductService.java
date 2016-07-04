@@ -499,6 +499,15 @@ public class ProductService extends BaseService {
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
 
             for (Integer cartInfo : carts) {
+                // Add desmond 2016/07/01 start
+                // 由于2016/07/08版本的最新Product中product.Fields.status移到分平台product.platforms.P23.status下面去了
+                // 所以是否Approved的判断只能移到insertSxWorkLoad()方法里面去做，当一个商品的所有product都没有Approved，则不插入sx_workload表
+                if (cmsProduct.getPlatform(cartInfo) != null
+                        && !CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartInfo).getStatus())) {
+                    continue;
+                }
+                // Add desmond 2016/07/01 end
+
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 model.setChannelId(channelId);
                 if (platformsMap.get(cartInfo) != null) {
@@ -1207,13 +1216,19 @@ public class ProductService extends BaseService {
      * @param userName
      * @param hsCodeTaskCnt
      * @param retFields
-     * @return
+     * @param qtyOrder
+     *@param code @return
      */
-    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName, int hsCodeTaskCnt, String[] retFields) {
-        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"","","");
+    public List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName
+            , int hsCodeTaskCnt, String[] retFields, String qtyOrder, String code) {
+        String parameter = getSearchQuery(channelId,userName,hsCodeStatus,"1","",code);
+        String qtyOrderValue = "{common.fields.quantity:"+qtyOrder+"}";
         JomgoQuery queryObject = new JomgoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
+        if(!StringUtils.isEmpty(qtyOrder)){
+            queryObject.setSort(qtyOrderValue);
+        }
         queryObject.setProjectionExt(retFields);
         queryObject.setLimit(hsCodeTaskCnt);
         return cmsBtProductDao.select(queryObject,channelId);
@@ -1252,7 +1267,7 @@ public class ProductService extends BaseService {
         //hsCodePrivate
         if(!StringUtils.isEmpty(userName)){
             if(userName.equals("notNull")){
-                sbQuery.append("common.fields.hsCodePrivate:{$in:[null],$exists:true}");
+                sbQuery.append("\"common.fields.hsCodePrivate\":{$exists:true}");
                 sbQuery.append(",");
             }else{
                 sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodePrivate", userName));
@@ -1274,8 +1289,8 @@ public class ProductService extends BaseService {
         }
         //hsCodeSetter
         if(!StringUtils.isEmpty(hsCodeSetter)){
-            if(userName.equals("notNull")){
-                sbQuery.append("common.fields.hsCodeSetter:{$in:[null],$exists:true}");
+            if(hsCodeSetter.equals("notNull")){
+                sbQuery.append("\"common.fields.hsCodeSetter\":{$exists:true}");
                 sbQuery.append(",");
             }else{
                 sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", hsCodeSetter));

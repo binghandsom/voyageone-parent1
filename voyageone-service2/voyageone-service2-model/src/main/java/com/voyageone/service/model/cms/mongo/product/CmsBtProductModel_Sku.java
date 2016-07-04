@@ -24,50 +24,50 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
     //skuCode
     public String getSkuCode() {
-        return getAttribute("skuCode");
+        return getStringAttribute("skuCode");
     }
     public void setSkuCode(String skuCode) {
-        setAttribute("skuCode", skuCode);
+        setStringAttribute("skuCode", skuCode);
     }
 
     //clientSkuCode
     public String getClientSkuCode() {
-        return getAttribute("clientSkuCode");
+        return getStringAttribute("clientSkuCode");
     }
     public void setClientSkuCode(String clientSkuCode) {
-        setAttribute("clientSkuCode", clientSkuCode);
+        setStringAttribute("clientSkuCode", clientSkuCode);
     }
 
     //barcode
     public String getBarcode() {
-        return getAttribute("barcode");
+        return getStringAttribute("barcode");
     }
     public void setBarcode(String barcode) {
-        setAttribute("barcode", barcode);
+        setStringAttribute("barcode", barcode);
     }
 
     //size
     public String getSize() {
-        return getAttribute("size");
+        return getStringAttribute("size");
     }
     public void setSize(String size) {
-        setAttribute("size", size);
+        setStringAttribute("size", size);
     }
 
     //clientSize
     public String getClientSize() {
-        return getAttribute("clientSize");
+        return getStringAttribute("clientSize");
     }
     public void setClientSize(String clientSize) {
-        setAttribute("clientSize", clientSize);
+        setStringAttribute("clientSize", clientSize);
     }
 
     //sizeNick
     public String getSizeNick() {
-        return getAttribute("sizeNick");
+        return getStringAttribute("sizeNick");
     }
     public void setSizeNick(String sizeNick) {
-        setAttribute("sizeNick", sizeNick);
+        setStringAttribute("sizeNick", sizeNick);
     }
 
     //clientMsrpPrice
@@ -75,7 +75,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("clientMsrpPrice");
     }
     public void setClientMsrpPrice (Double clientMsrpPrice) {
-        setAttribute("clientMsrpPrice", clientMsrpPrice);
+        setStringAttribute("clientMsrpPrice", clientMsrpPrice);
     }
 
     //clientRetailPrice
@@ -83,7 +83,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("clientRetailPrice");
     }
     public void setClientRetailPrice (Double clientRetailPrice) {
-        setAttribute("clientRetailPrice", clientRetailPrice);
+        setAttribute("clientRetailPrice", clientRetailPrice == null ? 0.00 : clientRetailPrice);
     }
 
     //clientNetPrice
@@ -91,7 +91,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("clientNetPrice");
     }
     public void setClientNetPrice (Double clientNetPrice) {
-        setAttribute("clientNetPrice", clientNetPrice);
+        setAttribute("clientNetPrice", clientNetPrice == null ? 0.00 : clientNetPrice);
     }
 
     //priceMsrp
@@ -99,7 +99,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceMsrp");
     }
     public void setPriceMsrp(Double priceMsrp) {
-        setAttribute("priceMsrp", priceMsrp);
+        setAttribute("priceMsrp", priceMsrp == null ? 0.00 : priceMsrp);
     }
 
     //priceRetail
@@ -107,7 +107,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceRetail");
     }
     public void setPriceRetail(Double priceRetail) {
-        setAttribute("priceRetail", priceRetail);
+        setAttribute("priceRetail", priceRetail == null ? 0.00 : priceRetail);
     }
 
     //qty
@@ -115,6 +115,6 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getAttribute("qty");
     }
     public void setQty(Integer qty) {
-        setAttribute("qty", qty);
+        setAttribute("qty", qty == null ? 0 : qty);
     }
 }

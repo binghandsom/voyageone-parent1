@@ -11,24 +11,24 @@
                     <label class="">{{'TXT_CART_NAME' | translate}}</label>
                 </div>
                 <div class="col-sm-7">
-                    <select class="form-control" ng-model="ctrl.cartId" ng-options="cart.value as cart.name for cart in ctrl.cartList" ng-change="ctrl.init()">
+                    <select class="form-control" ng-model="vm.cartId" ng-options="cart.value as cart.name for cart in vm.cartList" disabled>
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-3 text-right">
-                    <label class="control-label" ng-click="openFreeTag('')">{{'TXT_BASE_PRICE' |translate}}</label>
+                    <label class="control-label">{{'TXT_BASE_PRICE' |translate}}</label>
                 </div>
                 <div class="col-sm-8">
                     <div class="col-sm-6">
                         <label class="checkbox-inline c-radio">
-                            <input type="radio"><span class="fa fa-check"></span> {{'TXT_MSRP_PRICE'|translate}}
+                            <input type="radio" value="priceMsrp" ng-model="vm.priceType" ng-click="chkPriceType('1','TXT_MSRP_PRICE')"><span class="fa fa-check"></span> {{'TXT_MSRP_PRICE'|translate}}
                         </label>
                     </div>
                     <div class="col-sm-6">
                         <label class="checkbox-inline c-radio">
-                            <input type="radio"><span class="fa fa-check"></span> {{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
+                            <input type="radio" value="priceRetail" ng-model="vm.priceType" ng-click="chkPriceType('2','TXT_RETAIL_PRICE_WITH_COLON')"><span class="fa fa-check"></span> {{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
                         </label>
                     </div>
                 </div>
@@ -37,12 +37,12 @@
                 <div class="col-sm-8 col-sm-offset-3">
                     <div class="col-sm-6">
                         <label class="checkbox-inline c-radio">
-                            <input type="radio"><span class="fa fa-check"></span> {{'TXT_SALE_PRICE'|translate}}
+                            <input type="radio" value="priceSale" ng-model="vm.priceType" ng-click="chkPriceType('3','TXT_SALE_PRICE')"><span class="fa fa-check"></span> {{'TXT_SALE_PRICE'|translate}}
                         </label>
                     </div>
                     <div class="col-sm-6">
                         <label class="checkbox-inline c-radio">
-                            <input type="radio"><span class="fa fa-check"></span> {{'TXT_NONE'|translate}}
+                            <input type="radio" value="" ng-model="vm.priceType" ng-click="chkPriceType('4','')"><span class="fa fa-check"></span> {{'TXT_NONE'|translate}}
                         </label>
                     </div>
                 </div>
@@ -53,23 +53,23 @@
                 </div>
                 <div class="col-sm-8">
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option value="0" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            <option value="">*</option>
-                            <option value="">+</option>
-                            <option value="">-</option>
-                            <option value="">=</option>
+                        <select class="form-control" ng-model="vm.optType" ng-disabled="vm._optStatus" ng-change="chkOptionType()">
+                            <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="*">*</option>
+                            <option value="+">+</option>
+                            <option value="-">-</option>
+                            <option value="=">=</option>
                         </select>
                     </div>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" placeholder="请输入数字">
+                        <input type="text" class="form-control" ng-model="vm.priceValue" placeholder="请输入数字">
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-8 col-sm-offset-3">
                     <label class="checkbox-inline c-checkbox">
-                        <input type="checkbox" checked><span class="fa fa-check"></span> {{'TXT_ROUND_UP'|translate}}&nbsp;&nbsp;
+                        <input type="checkbox" checked ng-model="vm.isRoundUp"><span class="fa fa-check"></span> {{'TXT_ROUND_UP'|translate}}&nbsp;&nbsp;
                     </label>
                 </div>
             </div>
@@ -77,9 +77,9 @@
                 <div class="col-sm-3 text-right">
                     <label class="control-label">{{'TXT_FINAL_SALE_PRICE' | translate}}</label>
                 </div>
-                <div class="col-sm-1 text-center m-t-xs"> =</div>
-                <div class="col-sm-5">
-                   <input type="text" class="form-control">
+                <div class="col-sm-1 text-center m-t-xs"> = </div>
+                <div class="col-sm-5 m-t-xs">
+                   {{vm._typeText}}&nbsp;&nbsp;{{vm._opeText}}&nbsp;&nbsp;{{vm.priceValue}}
                 </div>
             </div>
         </form>

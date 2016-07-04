@@ -66,7 +66,7 @@ public class CmsHsCodeService extends BaseAppService {
         //未设置总数:等待设置税号的商品总数（包含 未分配+已分配但是已过期）
         data.put("notAssignedTotalHsCodeCnt", productService.getTotalHsCodeCnt(channelId, "", "0","1",""));
         //已分配但未完成总数:已经被分配，但是未过期（无法释放）的商品总数
-        data.put("alreadyAssignedTotalHsCodeCnt", productService.getTotalHsCodeCnt(channelId, "notNull", "0","1","notNull"));
+        data.put("alreadyAssignedTotalHsCodeCnt", productService.getTotalHsCodeCnt(channelId, "notNull", "0","1",""));
         //设置税号商品总数:当前Channel已经被设置税号的商品总数
         data.put("setChannelTotalHsCodeCnt", productService.getTotalHsCodeCnt(channelId, "notNull", "1","1","notNull"));
         //个人设置税号商品译数:当前用户税号设置总数
@@ -112,10 +112,8 @@ public class CmsHsCodeService extends BaseAppService {
          * code(当前商品code)
          * hsCodeTaskCnt(获取任务数)
          */
-        //优先规则
-        String qty = (String) param.get("qty");
         //循序(升序 降序)
-        String order =(String) param.get("order");
+        String qtyOrder =(String) param.get("order");
         //商品Code
         String code =(String) param.get("code");
         //获取任务数
@@ -129,7 +127,7 @@ public class CmsHsCodeService extends BaseAppService {
         //主数据
         int cartId = 1;
         //根据获取任务数去取得对应的code
-        List<CmsBtProductModel> hsCodeList =productService.getHsCodeInfo(channelId, "0", "",hsCodeTaskCnt,RET_FIELDS);
+        List<CmsBtProductModel> hsCodeList =productService.getHsCodeInfo(channelId, "0", "",hsCodeTaskCnt,RET_FIELDS,qtyOrder,code);
         //取得codeList结果集
         List<String> codeList = new ArrayList<>();
         //取得获取任务的信息
@@ -143,7 +141,9 @@ public class CmsHsCodeService extends BaseAppService {
         //当前日期及时间
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
         //更新cms_bt_product表的hsCodeInfo
-        productService.updateHsCodeInfo(channelId, allCodeList, userName,"",hsCodeSetTime);
+        if(allCodeList.size()>0){
+            productService.updateHsCodeInfo(channelId, allCodeList, userName,"",hsCodeSetTime);
+        }
         //等待设置税一览
         data.put("hsCodeList", productService.getTotalHsCodeList(channelId, userName,"0", "", curr, size, RET_FIELDS));
         //返回数据类型
@@ -187,7 +187,7 @@ public class CmsHsCodeService extends BaseAppService {
      * @param userName
      * @param param
      */
-    public Map<String, Object> saveHsCodeInfo(String channelId, String userName, Map param) {
+    public void saveHsCodeInfo(String channelId, String userName, Map param) {
         String code=(String) param.get("code");
         String hsCodeStatus = "1";
         //当前日期及时间
@@ -200,6 +200,5 @@ public class CmsHsCodeService extends BaseAppService {
         List<String> allCodeList=getAllCodeList(codeList, channelId, cartId);
         //更新cms_bt_product表的hsCodeInfo
         productService.updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetTime);
-        return null;
     }
 }

@@ -633,14 +633,17 @@ define(function(){
 
         /**工具管理*/
         "TXT_TOOLS_MANAGEMENT":"工具管理",
-        "TXT_TOOLS_MANAGEMENT_PRODUCT_PROCESSING":"商品处理",
+        "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING_STATUS": "商品税号设置状态",
         "TXT_TOOLS_MANAGEMENT_HS_CODE_SETTING":"商品税号设置",
         "TXT_NUMBER_OF_WAITED_FOR_SETTED":"等待设置税号数",
+        "TXT_NUMBER_OF_SETTED":"设置税号商品总数",
+        "TXT_NUMBER_OF_SETTED_BY_PERSONAL": "个人设置税号商品译数",
         "TXT_HS_CODE_STATUS":"税号状态",
         "TXT_PRODUCT_CODE_MATERIAL": "product code/材质",
         "TXT_HSCODE_PRODUCT_NAME_UNIT":"税号/品名/单位",
         "TXT_RULE_OF_PRE":"优先规则",
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON":"商品名称/Feed类目/主类目",
+        "TXT_HS_CODE_SETTED_SEARCH":"个人设置税号成果搜索",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW":"高级搜索",
@@ -660,12 +663,13 @@ define(function(){
         "TXT_CHANGE_FOR_JD_PLATFORM":"京东国际平台级变更",
         "TXT_CHANGE_FOR_JM_PLATFORM":"聚美国际平台级变更",
         "TXT_BULK_APPROVAL":"开始进行批量审批处理，是否继续？",
+        "TXT_BULK_SETSALEPRICE": "开始进行批量设置最终售价，是否继续？",
         "TXT_NONE":"none",
         "TXT_EXPRESSION":"表达式",
         "TXT_SALES_SORT":"销量排序",
         "TXT_7_DAYS":"7天",
         "TXT_30_DAYS":"30天",
-        "TXT_ROUND_UP":"四舍五入",
+        "TXT_ROUND_UP":"向上取整",
         "TXT_ALL_PUT_ON|OFF":"全店铺上下架",
         "TXT_PUT_ON/PUT_OFF":"上下架",
         "TXT_PUT_ON":"上架",
@@ -731,7 +735,11 @@ define(function(){
         "TXT_PRODUCT_CN_LONG_DESCRIPTION": "详情描述(中文)",
         "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
         "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)",
-        
+        "TXT_PRODUCT_ORIGINAL_URL": "查看品牌方商品页面",
+        "TXT_NOT_MATCHED_PROPERTY": "未匹配属性",
+        "TXT_MATCHED_PROPERTY": "已匹配属性",
+        "TXT_NOT_TRANSLATED_PROPERTY": "未翻译属性",
+
         /**聚美专场*/
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",
         "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",

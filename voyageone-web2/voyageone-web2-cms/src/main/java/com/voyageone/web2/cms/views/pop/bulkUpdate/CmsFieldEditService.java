@@ -36,6 +36,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,7 @@ public class CmsFieldEditService extends BaseAppService {
             productCodes = (ArrayList<String>) params.get("productIds");
         }
         if (productCodes == null || productCodes.isEmpty()) {
-            $error("没有code条件 params=" + params.toString());
+            $warn("没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
@@ -117,7 +118,7 @@ public class CmsFieldEditService extends BaseAppService {
                 hsCode = (String) valObj.get("value");
             }
             if (hsCode == null || hsCode.isEmpty()) {
-                $error("没有设置变更项目 params=" + params.toString());
+                $warn("没有设置变更项目 params=" + params.toString());
                 rsMap.put("ecd", 2);
                 return rsMap;
             }
@@ -154,19 +155,19 @@ public class CmsFieldEditService extends BaseAppService {
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
         if (productCodes == null || productCodes.isEmpty()) {
-            $error("没有code条件 params=" + params.toString());
+            $warn("没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
 
         String prop_id = (String) params.get("putFlg");
         if (prop_id == null || prop_id.isEmpty()) {
-            $error("没有设置上下架操作");
+            $warn("没有设置上下架操作");
             rsMap.put("ecd", 2);
             return rsMap;
         }
         if (!"1".equals(prop_id) && !"0".equals(prop_id)) {
-            $error("没有设置上下架操作");
+            $warn("没有设置上下架操作");
             rsMap.put("ecd", 2);
             return rsMap;
         }
@@ -183,7 +184,7 @@ public class CmsFieldEditService extends BaseAppService {
             cartList.add(cartId);
         }
 
-        // 获取产品的信息
+        // 更新产品的信息
         JomgoUpdate updObj = new JomgoUpdate();
         updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#},'platformActive':{$ne:#}}");
         updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
@@ -248,7 +249,7 @@ public class CmsFieldEditService extends BaseAppService {
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
         if (productCodes == null || productCodes.isEmpty()) {
-            $error("没有code条件 params=" + params.toString());
+            $warn("没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
@@ -515,5 +516,121 @@ public class CmsFieldEditService extends BaseAppService {
             optionsField.setOptions(options);
         }
         return optionsField;
+    }
+
+    /**
+     * 批量修改属性.(修改商品最终售价)
+     */
+    public Map<String, Object> setProductSalePrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        Map<String, Object> rsMap = new HashMap<>();
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+            $warn("没有code条件 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        if (cartId == null || cartId == 0) {
+            $warn("没有cartId条件 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        String priceType = (String) params.get("priceType");
+        String optionType = (String) params.get("optionType");
+        BigDecimal priceValue = new BigDecimal((String) params.get("priceValue"));
+        boolean isRoundUp = "1".equals((String) params.get("isRoundUp")) ? true : false;
+
+        // 获取产品的信息
+        JomgoQuery qryObj = new JomgoQuery();
+        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
+        qryObj.setParameters(productCodes);
+        qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
+
+        List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
+        for (CmsBtProductModel prodObj : prodObjList) {
+            List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
+            for (BaseMongoMap skuObj : skuList) {
+                if (StringUtils.isEmpty(priceType)) {
+                    Double rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
+                    if (rs != null) {
+                        skuObj.setAttribute("priceSale", rs);
+                    }
+                } else {
+                    Object basePrice = skuObj.getAttribute(priceType);
+                    if (basePrice != null) {
+                        BigDecimal baseVal = new BigDecimal(basePrice.toString());
+                        Double rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
+                        if (rs != null) {
+                            skuObj.setAttribute("priceSale", rs);
+                        }
+                    }
+                }
+            }
+
+            // 更新产品的信息
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':#}");
+            updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
+            updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
+            updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("批量修改商品价格 结果1=：" + rs.toString());
+        }
+
+        // TODO--需要记录价格变更履历
+
+        // 再查询这批商品是否可上新
+        List<String> codeList = new ArrayList<>();
+        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true},'platforms.P" + cartId + ".status':'Approved'}");
+        qryObj.setParameters(productCodes);
+        qryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
+        for (CmsBtProductModel prodObj : prodObjList) {
+            codeList.add(prodObj.getCommon().getFields().getCode());
+        }
+
+        if (codeList.size() > 0) {
+            // 插入上新程序
+            List<Integer> cartIdList = new ArrayList<>(1);
+            cartIdList.add(cartId);
+            productService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdList, userInfo.getUserName());
+        }
+        rsMap.put("ecd", 0);
+        return rsMap;
+    }
+
+    private Double getFinalSalePrice(BigDecimal baseVal, String optionType, BigDecimal priceValue, boolean isRoundUp) {
+        BigDecimal rs = null;
+        if ("=".equals(optionType) || baseVal == null) {
+            rs = priceValue;
+        } else if ("+".equals(optionType)) {
+            rs = baseVal.add(priceValue);
+        } else if ("-".equals(optionType)) {
+            rs = baseVal.subtract(priceValue);
+        } else if ("*".equals(optionType)) {
+            rs = baseVal.multiply(priceValue);
+        } else if ("/".equals(optionType)) {
+            rs = baseVal.divide(priceValue, 2, BigDecimal.ROUND_CEILING);
+        }
+        if (rs == null) {
+            return null;
+        } else {
+            if (isRoundUp) {
+                return rs.setScale(0, BigDecimal.ROUND_CEILING).doubleValue();
+            } else {
+                return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
+            }
+        }
     }
 }

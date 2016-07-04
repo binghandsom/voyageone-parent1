@@ -368,17 +368,9 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-5"><input type="text"
-                                                                                         class="form-control"
-                                                                                         ng-model="vm.searchInfo.priceStart"
-                                                                                         ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
-                                                </div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-5"><input type="text"
-                                                                                         class="form-control"
-                                                                                         ng-model="vm.searchInfo.priceEnd"
-                                                                                         ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
-                                                </div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
@@ -386,17 +378,31 @@
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
-                                                        <option value="0" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                        <option value="2">降价</option>
-                                                        <option value="3">击穿</option>
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="U">涨价</option>
+                                                        <option value="D">降价</option>
+                                                        <option value="XU">向上击穿</option>
+                                                        <option value="XD">向下击穿</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" ng-if="vm._cart_display">
+                                            <label class="col-sm-3 control-label">价格比较</label>
+                                            <div class="col-sm-8">
+                                                <div>
+                                                    <select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="2">销售价小于指导价</option>
+                                                        <option value="3">销售价大于指导价</option>
+                                                        <option value="1">销售价等于指导价</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-3 text-right">
-                                                <label class="control-label"
-                                                       translate="TXT_PROPERTY_STATUS"></label>
+                                                <label class="control-label" translate="TXT_PROPERTY_STATUS"></label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <select class="form-control" ng-model="vm.searchInfo.propertyStatus">
@@ -610,7 +616,7 @@
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="openSalePrice('')">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
+                                    <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff,cartBean.value)">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>

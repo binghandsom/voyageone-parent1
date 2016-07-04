@@ -151,15 +151,19 @@ public class CmsFeedSearchController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.UPDATE)
     public AjaxResponse updateFeedStatus(@RequestBody Map params) {
 
+        int cnt = 0;
         Boolean isAll = (Boolean) params.get("isAll");
+        Integer status = (Integer) params.get("status");
         if(!isAll) {
             List selList = (List) params.get("selList");
             if (selList == null || selList.isEmpty()) {
                 throw new BusinessException("请至少选择一个Feed.");
             }
-            searchService.updateFeedStatus(selList, getUser());
+            searchService.updateFeedStatus(selList,status, getUser());
         }else{
+            Map<String, Object> searchValue = (Map<String, Object>) params.get("searchInfo");
 
+            cnt = searchService.updateFeedStatus(searchValue, status, getUser());
         }
         // 返回结果信息
         return success(null);

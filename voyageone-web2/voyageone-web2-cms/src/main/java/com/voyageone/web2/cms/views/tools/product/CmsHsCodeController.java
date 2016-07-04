@@ -84,9 +84,9 @@ public class CmsHsCodeController extends CmsController {
         //当前用户名称
         String userName=this.getUser().getUserName();
         //取得尺码关系一览初始化
-        Map<String, Object> resultBean=cmsHsCodeService.saveHsCodeInfo(channelId,userName,param);
+        cmsHsCodeService.saveHsCodeInfo(channelId,userName,param);
         //返回数据的类型
-        return success(resultBean);
+        return success(param);
     }
 }
 
