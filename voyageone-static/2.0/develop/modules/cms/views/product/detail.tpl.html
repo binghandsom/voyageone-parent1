@@ -9,11 +9,11 @@
                             <label class="col-sm-2"><strong>Lock:</strong></label>
                             <div class="col-sm-10 text-left">
                                 <!----------on_off_switch---------->
-                                <div class="onoffswitch">
+                                <div class="onoffswitch" id="productLock">
                                     <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox"
                                            id="switchIsTranslated"
-                                           ng-model="ctrl.product.lockStatus" ng-click="ctrl.lockProduct()">
-                                    <label class="onoffswitch-label" for="switchIsTranslated" >
+                                           ng-model="ctrl.product.lockStatus" ng-click="ctrl.lockProduct('productLock')">
+                                    <label class="onoffswitch-label" for="switchIsTranslated">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
                                     </label>
@@ -36,7 +36,7 @@
             <!---------------------------------------------------master 产品详情页面---------------------------------------------->
             <uib-tab  active="ctrl.master">
                 <tab-heading>Master产品详情</tab-heading>
-                <master-schema product-info="ctrl.product" cart-info="ctrl.cartData['_0']"></master-schema>
+                <master-schema product-info="ctrl.product"></master-schema>
             </uib-tab>
 
             <!---------------------------------------------------feed 产品详情页面----------------------------------------------->
@@ -45,7 +45,7 @@
                 <feed-schema product-info="ctrl.product"></feed-schema>
             </uib-tab>
 
-            <!---------------------------------------------------聚美&京东&天猫国际 产品详情页面------------------------------------------->
+            <!---------------------------------------------------聚美 & 京东 & 天猫国际 产品详情页面------------------------------------------->
             <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
                 <tab-heading>{{platformType.name}}详情</tab-heading>
                 <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>

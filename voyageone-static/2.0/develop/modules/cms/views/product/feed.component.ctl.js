@@ -31,19 +31,11 @@ define([
 
                         // 有了就保存, 然后触发下一步
                         scope.vm.productDetails = data.productInfo;
-                        scope.vm.productStatusList = data.productStatusList;
-                        scope.vm.inventoryList = data.inventoryList;
-                        scope.vm._orgChaName = data.orgChaName;
-                        scope.vm._isminimall = data.isminimall;
-                        scope.vm._isMain = data.isMain;
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
                         scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-
-                        scope.vm.currentImage = data.defaultImage;
                         scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
-                        scope.vm.showInfoFlag = scope.vm.productDetails.productDataIsReady;
 
                         disposeDataWatcher();
                         disposeDataWatcher = null;

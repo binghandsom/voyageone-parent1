@@ -58,12 +58,20 @@ define([
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
-                return item.value > 20 && item.value < 900;
+                return item.value > 20 && item.value < 2000;
             },
-            lockProduct:function(){
-                var message = ctrl.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+            lockProduct:function(domId){
+                var self = this;
+                var message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
                 this.confirm(message).result.then(function () {
-                    alert(ctrl.product.lockStatus);
+                    var lock = self.product.lockStatus ? "1" : "0";
+                    self.productDetailService.updateLock({prodId:self.product.productId,lock:lock}).then(function(){
+                        var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
+                        $("#".concat(domId)).notify(notice, {className: "success",position:"top right"});
+                    });
+
+                },function(){
+                    self.product.lockStatus = false;
                 });
 
             }

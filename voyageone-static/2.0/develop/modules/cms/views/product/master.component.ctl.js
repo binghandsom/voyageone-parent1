@@ -19,7 +19,7 @@ define([
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[]}
+                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[],"image5":[],"image6":[]}
                 };
 
                 initialize();
@@ -41,7 +41,7 @@ define([
                        scope.vm.productDetails = data.productInfo;
                        scope.vm.inventoryList = data.inventoryList;
                        if ($rootScope.imageUrl == undefined) {
-                        $rootScope.imageUrl = '';
+                         $rootScope.imageUrl = '';
                        }
                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
                        scope.vm.currentImage = data.defaultImage;
@@ -50,9 +50,11 @@ define([
                         productMonitor = null;
                     });
 
-                    productDetailService.getCommonProductInfo({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
+                    productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
+
+                        scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
                     });
                 }
@@ -86,7 +88,7 @@ define([
                         imageType: imageType
                     }).then(function(context){
                         scope.vm.tempImage[context.imageType].push(context.base64);
-                        scope.vm.productDetails = context.productInfo;
+                        //scope.vm.productDetails = context.productInfo;
                     });
                 }
 
@@ -108,6 +110,8 @@ define([
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
                         notify.success("更新成功!");
+                    },function(){
+                        alert("系统异常错误","错误提示");
                     });
                 }
 
@@ -123,8 +127,8 @@ define([
                 function pageAnchor(index,speed){
                     var offsetTop = 0;
                     if(index != 1)
-                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
-                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                        offsetTop = ($("#master"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 
             }
