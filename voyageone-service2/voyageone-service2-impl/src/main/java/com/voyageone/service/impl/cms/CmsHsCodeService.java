@@ -35,6 +35,7 @@ public class CmsHsCodeService extends BaseService {
             "common.fields.code",
             "common.catPath",
             "common.fields.productNameEn",
+            "common.fields.originalTitleCn",
             "feed.catPath",
             "common.fields.materialCn",
             "common.fields.materialEn",
