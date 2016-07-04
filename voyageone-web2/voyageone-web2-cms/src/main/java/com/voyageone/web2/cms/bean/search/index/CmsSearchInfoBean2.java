@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import com.voyageone.common.util.JsonUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -481,4 +483,10 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
+    }
+
 }

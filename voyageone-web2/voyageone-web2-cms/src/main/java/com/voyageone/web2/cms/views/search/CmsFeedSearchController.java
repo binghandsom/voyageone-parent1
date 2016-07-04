@@ -163,7 +163,7 @@ public class CmsFeedSearchController extends CmsController {
         }else{
             Map<String, Object> searchValue = (Map<String, Object>) params.get("searchInfo");
 
-            cnt = searchService.updateFeedStatus(searchValue, status, getUser());
+            searchService.updateFeedStatus(searchValue, status, getUser());
         }
         // 返回结果信息
         return success(null);

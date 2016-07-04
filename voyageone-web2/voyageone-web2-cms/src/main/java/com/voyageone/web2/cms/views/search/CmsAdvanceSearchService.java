@@ -168,7 +168,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         }
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), queryObject);
         if (prodObjList == null || prodObjList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodObjList 查询条件=：" + queryObject.toString());
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
         List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
@@ -193,7 +193,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
         if (prodObjList == null || prodObjList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodObjList 查询条件(session)=：" + queryObject.toString());
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
@@ -220,7 +220,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null || prodList.isEmpty()) {
-            $warn("CmsSearchAdvanceService.getProductIdList prodList为空");
+            $warn("高级检索 getProductIdList prodList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
@@ -255,7 +255,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
         if (prodInfoList == null || prodInfoList.isEmpty()) {
-            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果");
+            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果 param list=" + prodCodeList.toString());
             return new ArrayList<>(0);
         }
         return prodInfoList;
@@ -326,12 +326,12 @@ public class CmsAdvanceSearchService extends BaseAppService {
         aggrList.add(new JomgoAggregate(gp2));
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList Aggregate统计无结果");
             return 0;
         }
         Map rsMap = rs.get(0);
         if (rsMap == null || rsMap.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList 统计查询无结果");
             return 0;
         }
         return (Integer) rsMap.get("count");
@@ -359,7 +359,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 getGroupCodeList 统计无结果 param=" + searchValue.toString());
             return null;
         }
 
