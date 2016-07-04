@@ -91,7 +91,8 @@ define(function () {
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
-                    "updateLock":"updateLock"
+                    "updateLock":"updateLock",
+                    "updateProductAtts":"updateProductAtts"
                 }
             },
             "mapping": {
