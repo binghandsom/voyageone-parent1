@@ -56,17 +56,17 @@ define([
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
-                    self.hsCodeValue = res.data.hsCodeValue;
                     self.prodPageOption.total = res.data.total;
+                    self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
             save: function (list) {
                 var self = this;
-                if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                if (list.common.fields.hsCodeSetter.value) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 else {
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
-                self.hsCodeInfoService.save({"code":list.common.fields.code,"hsCodeSetter":list.selectedValue.value}).then(function () {
+                self.hsCodeInfoService.save({"code":list.common.fields.code,"hsCodeSetter":list.common.fields.hsCodeSetter.value}).then(function () {
 
                 })
             },
