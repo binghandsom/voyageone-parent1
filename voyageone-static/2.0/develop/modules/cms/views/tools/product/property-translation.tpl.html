@@ -104,7 +104,8 @@
                                             <div class="form-group">
                                                 <label class="col-sm-4 control-label text-left">{{'TXT_PAGER_SIZE' | translate}}</label>
                                                 <div class="col-sm-8">
-                                                    <select class="form-control" ng-model="ctrl.searchPageSettings.size" ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
+                                                    <select class="form-control" ng-model="ctrl.searchPageSettings.size"
+                                                            ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
                                                         <option value=number:10>10行</option>
                                                         <option value=20>20行</option>
                                                         <option value=50>50行</option>
@@ -165,7 +166,7 @@
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
-                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i>  {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
+                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
                                         </button>
                                     </div>
                                     <div class="form-group">
@@ -281,10 +282,10 @@
                     </uib-tab>
                     <uib-tab>
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_FEED_ATTRIBUTE'|translate}}</tab-heading>
-                        <div class="col-sm-12 product-shema-detail">
-                            <hr>
-                            <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_MATCHED_PROPERTY' | translate}}</span>
-                        </div>
+                        <!--<div class="col-sm-12 product-shema-detail">-->
+                            <!--<hr>-->
+                            <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_MATCHED_PROPERTY' | translate}}</span>-->
+                        <!--</div>-->
                         <form name="feedAttributeForm" class="form-horizontal">
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'false'}">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrCn}}</label>
@@ -294,7 +295,7 @@
                             </div>
                             <div class="col-sm-12 product-shema-detail">
                                 <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_MATCHED_PROPERTY' | translate}}</span>
+                                <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_MATCHED_PROPERTY' | translate}}</span>-->
                             </div>
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'true'}" ng-if="customProp.feedAttrCn">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrEn}}</label>
@@ -306,10 +307,10 @@
                                     <input class="form-control" ng-model="customProp.feedAttrValueCn">
                                 </div>
                             </div>
-                            <div class="col-sm-12 product-shema-detail">
-                                <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_TRANSLATED_PROPERTY' | translate}}</span>
-                            </div>
+                            <!--<div class="col-sm-12 product-shema-detail">-->
+                                <!--<hr>-->
+                                <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_TRANSLATED_PROPERTY' | translate}}</span>-->
+                            <!--</div>-->
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'true'}" ng-if="!customProp.feedAttrCn">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrEn}}</label>
                                 <div class="col-sm-3">
@@ -341,12 +342,12 @@
                         </tbody>
                         <tbody ng-if="ctrl.vm.taskList.length > 0" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
                         <tr ng-repeat="task in ctrl.vm.taskList">
-                            <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus)}}</td>
+                            <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
                             <td class="mfb-xt text-center v-middle">
-                                <img alt="ProductImage v-middle" class="thumb m-b-xs" image="{{task.image1}}">
+                                <img alt="ProductImage" class="thumb m-b-xs" image="{{task.image1}}">
                             </td>
                             <td class="mfb-xt text-center v-middle">{{task.feedCategory}}</td>
-                            <td class="mfb-xt text-center v-middle"><a class="" ng-click="ctrl.get(task)">{{task.code}}</a></td>
+                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)" class="a a-link"> {{task.code}}</a></td>
                             <td class="mfb-xt text-center v-middle">{{task.productName}}</td>
                             <td class="mfb-xt text-center v-middle">{{task.catPath}}</td>
                             <td class="mfb-xt text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd"}}</td>
@@ -354,7 +355,7 @@
                         </tbody>
                     </table>
                     <div class="col-sm-12 m-t-lg m-b-lg">
-                        <vpagination config="ctrl.searchPageSettings" >{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
+                        <vpagination config="ctrl.searchPageSettings">{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
                     </div>
                 </uib-tabset>
             </div>

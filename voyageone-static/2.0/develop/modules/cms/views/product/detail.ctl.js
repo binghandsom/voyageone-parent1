@@ -36,7 +36,8 @@ define([
                 cartData:this.cartData,
                 checkFlag:null,
                 masterCategory:null,
-                lockStatus:null
+                lockStatus:null,
+                feedInfo:null
             };
         }
 

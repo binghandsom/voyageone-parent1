@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -245,7 +244,7 @@ public class FeedInfoService extends BaseService {
         }
     }
 
-    public int updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
+    public WriteResult updateAllUpdFlg(String selChannelId, String searchQuery, Integer status, String modifier) {
         return cmsBtFeedInfoDao.updateAllUpdFlg(selChannelId, searchQuery, status, modifier);
     }
 }

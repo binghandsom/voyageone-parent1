@@ -348,7 +348,7 @@ define([
                     var productIds = [];
                     if (selList) {
                         _.forEach(selList, function (object) {
-                            productIds.push(object.id);
+                            productIds.push(object.code);
                         });
                     }
                     var data = {

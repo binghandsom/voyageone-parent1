@@ -468,11 +468,13 @@ s-field textarea.s-html {
     opacity: .5;
 }
 
-.product-shema-detail .master-sidebar {
+.product-shema-detail .master-sidebar,
+.product-shema-detail .feed-sidebar{
     top: 130px;
     right: 40px;
     z-index: 9;
     opacity: initial;
+    white-space: nowrap;
 }
 
 .product-shema-detail .bs-docs-sidebar:hover {
