@@ -54,6 +54,7 @@ define([
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
 
+                        scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
                     });
@@ -111,7 +112,7 @@ define([
                             scope.productInfo.masterCategory = new Date().getTime();
                         notify.success("更新成功!");
                     },function(){
-                        alert("系统异常错误","错误提示");
+                        alert("更新失败","错误提示");
                     });
                 }
 
