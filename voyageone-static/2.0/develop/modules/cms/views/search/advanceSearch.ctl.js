@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
 
         $scope.vm = {
             searchInfo: {
@@ -67,7 +67,6 @@ define([
         $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategoryFromAdSearch;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
-        //$scope.getTagList = getTagList;
         $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
@@ -326,23 +325,20 @@ define([
             _chkProductSel(null, _openCategoryMapping);
 
             function _openCategoryMapping(cartId, selList) {
-                feedMappingService.getMainCategories()
-                    .then(function (res) {
-                        popupNewCategoryFnc({
-                            categories: res.data,
-                            from: null
-                        }).then(function (res) {
-                                bindCategory(res, selList)
-                            }
-                        );
+                systemCategoryService.getNewsCategoryList().then(function(res) {
+                    popupNewCategoryFnc({
+                        categories: res.data
+                    }).then(function(context) {
+                        bindCategory(context.selected, selList);
                     });
+                });
             }
         }
 
         /**
          * 类目变更
          */
-        function bindCategory(context, selList) {
+        function bindCategory(selectedCat, selList) {
             confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                 .then(function () {
                     var productIds = [];
@@ -351,12 +347,15 @@ define([
                             productIds.push(object.code);
                         });
                     }
+                    var pCatList = selectedCat.platformCategory;
+                    if (pCatList == undefined || pCatList == null || pCatList == '') {
+                        pCatList = [];
+                    }
                     var data = {
                         prodIds: productIds,
-                        catId: context.selected.catId,
-                        catPath: context.selected.catPath,
-                        pCatId: context.selected.catId,
-                        pCatPath: context.selected.catPath,
+                        catId: selectedCat.catId,
+                        catPath: selectedCat.catPath,
+                        pCatList: pCatList,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
@@ -461,20 +460,6 @@ define([
             }
             return selList;
         }
-
-        ///**
-        // * 查询指定标签类型下的所有标签(list形式)
-        // */
-        //function getTagList() {
-        //    if ($scope.vm.searchInfo.tagTypeSelectValue == '0' || $scope.vm.searchInfo.tagTypeSelectValue == '' || $scope.vm.searchInfo.tagTypeSelectValue == undefined) {
-        //        $scope.vm.masterData.tagList = [];
-        //        return;
-        //    }
-        //    channelTagService.getTagList({'tagTypeSelectValue': $scope.vm.searchInfo.tagTypeSelectValue})
-        //        .then(function (res) {
-        //            $scope.vm.masterData.tagList = res.data;
-        //        });
-        //}
 
         /**
          * 查询指定店铺cart类型下的所有类目(list形式)
@@ -735,10 +720,10 @@ define([
          * popup弹出选择主类目数据
          * @param popupNewCategory
          */
-        function openMasterCategoryMapping(popupNewCategory) {
-            feedMappingService.getMainCategories()
+        function openMasterCategoryMapping(popupCategoryFnc) {
+            systemCategoryService.getNewsCategoryList()
                 .then(function (res) {
-                    popupNewCategory({
+                    popupCategoryFnc({
                         categories: res.data,
                         from: null
                     }).then(function (res) {
@@ -835,6 +820,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
     return searchIndex;
 });

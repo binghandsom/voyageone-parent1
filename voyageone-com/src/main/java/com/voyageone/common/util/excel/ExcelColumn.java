@@ -1,7 +1,6 @@
 package com.voyageone.common.util.excel;
 
 import com.voyageone.common.util.CamelUtil;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.util.StringUtils;
 
 /**
@@ -13,46 +12,47 @@ public class ExcelColumn<T> {
     String columnName;
     String camelColumnName;
     EnumExcelColumnType columnType;
-    boolean isNull=true;
+    boolean isNull = true;
     int orderIndex;
     FunctionFormatter<Object, T, Integer, Object> formatter;
     double columnWidth;
     short colorIndex;//HSSFColor.LIGHT_YELLOW.index  颜色索引值
 
-    public ExcelColumn()
-    {
+    public ExcelColumn() {
 
     }
-    public ExcelColumn(String columnName,String tableName, String text)
-    {
-        this.columnName=columnName;
-        this.camelColumnName= CamelUtil.underlineToCamel(this.columnName);
-        this.tableName=tableName;
-        this.text=text;
+
+    public ExcelColumn(String columnName, String tableName, String text) {
+        this.columnName = columnName;
+        this.camelColumnName = CamelUtil.underlineToCamel(this.columnName);
+        this.tableName = tableName;
+        this.text = text;
     }
-    public ExcelColumn(String columnName,String tableName, String text,boolean isNull) {
+
+    public ExcelColumn(String columnName, String tableName, String text, boolean isNull) {
         this(columnName, tableName, text);
         this.isNull = isNull;
     }
-    public ExcelColumn(String columnName, int orderIndex, String tableName, String text)
-    {
-        this.columnName=columnName;
-        this.camelColumnName= CamelUtil.underlineToCamel(this.columnName);
-        this.orderIndex=orderIndex;
-        this.tableName=tableName;
-        this.text=text;
+
+    public ExcelColumn(String columnName, int orderIndex, String tableName, String text) {
+        this.columnName = columnName;
+        this.camelColumnName = CamelUtil.underlineToCamel(this.columnName);
+        this.orderIndex = orderIndex;
+        this.tableName = tableName;
+        this.text = text;
     }
-    public ExcelColumn(String columnName, int orderIndex, String tableName, String text,boolean isNull)
-    {
-        this(columnName,orderIndex,tableName,text);
-        this.isNull=isNull;
+
+    public ExcelColumn(String columnName, int orderIndex, String tableName, String text, boolean isNull) {
+        this(columnName, orderIndex, tableName, text);
+        this.isNull = isNull;
     }
-    public ExcelColumn(String columnName, int orderIndex, String tableName, String text,EnumExcelColumnType columnType,boolean isNull)
-    {
-        this(columnName,orderIndex,tableName,text);
-        this.columnType=columnType;
-        this.isNull=isNull;
+
+    public ExcelColumn(String columnName, int orderIndex, String tableName, String text, EnumExcelColumnType columnType, boolean isNull) {
+        this(columnName, orderIndex, tableName, text);
+        this.columnType = columnType;
+        this.isNull = isNull;
     }
+
     public String getText() {
         return text;
     }
@@ -78,9 +78,8 @@ public class ExcelColumn<T> {
     }
 
     public String getCamelColumnName() {
-        if(StringUtils.isEmpty(camelColumnName))
-        {
-            return  this.getColumnName();
+        if (StringUtils.isEmpty(camelColumnName)) {
+            return this.getColumnName();
         }
         return camelColumnName;
     }
@@ -128,9 +127,11 @@ public class ExcelColumn<T> {
     public void setColumnWidth(double columnWidth) {
         this.columnWidth = columnWidth;
     }
+
     public short getColorIndex() {
         return colorIndex;
     }
+
     public void setColorIndex(short colorIndex) {
         this.colorIndex = colorIndex;
     }
