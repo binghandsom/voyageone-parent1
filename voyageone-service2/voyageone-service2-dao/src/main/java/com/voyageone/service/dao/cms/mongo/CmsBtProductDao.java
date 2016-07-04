@@ -102,12 +102,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
     }
 
-    @Override
-    public WriteResult update(BaseMongoModel model) {
-        throw new BusinessException("not suppert");
-        // return update(model);
-    }
-
     /**
      * 检查该产品的数据是否已经准备完成.
      *
@@ -145,21 +139,18 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId ) {
-        String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId) {
+        String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
-
 
 
         for (CmsBtProductModel product : allProduct) {
 
             List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
 
-            for(int i = sellerCatList.size() - 1 ; i >= 0 ; i--)
-            {
-                if(sellerCatList.get(i).getcId().equals(catModel.getCatId()))
-                {
+            for (int i = sellerCatList.size() - 1; i >= 0; i--) {
+                if (sellerCatList.get(i).getcId().equals(catModel.getCatId())) {
                     sellerCatList.remove(i);
                     break;
                 }
@@ -167,7 +158,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
 
             HashMap<String, Object> rsMap = new HashMap<>();
-            rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+            rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
 
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -197,20 +188,18 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             String cId = catModel.getCatId();
             //如果包含修改过的cId,则需要修改cName和cNames
             if (cIds.stream().filter(w -> w.equals(cId)).count() > 0) {
-                for(int i = 0 ; i < cIds.size(); i++)
-                {
-                    if(cIds.get(i).equals(cId))
-                    {
-                        cNames.set(i , catModel.getCatName());
+                for (int i = 0; i < cIds.size(); i++) {
+                    if (cIds.get(i).equals(cId)) {
+                        cNames.set(i, catModel.getCatName());
                         break;
                     }
                 }
-               cat.setcName(Joiner.on(">").join(cNames));
+                cat.setcName(Joiner.on(">").join(cNames));
             }
         }
 
         HashMap<String, Object> rsMap = new HashMap<>();
-        rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+        rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", product.getProdId());
@@ -241,7 +230,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             }
 
-            String queryStr = "{'channelId':'" + channelId + "','platforms.P"+cartId+".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
+            String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
 
             List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
@@ -253,5 +242,22 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             return allProduct;
         }
         return null;
+    }
+
+    @Override
+    public WriteResult update(BaseMongoModel model) {
+        throw new BusinessException("not suppert");
+        // return update(model);
+    }
+
+    /**
+     * 执行数据更新。(注: 覆盖父类方法便于切面捕捉该方法)
+     * @param channelId 渠道 id
+     * @param paraMap 更新条件
+     * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
+     */
+    @Override
+    public WriteResult update(String channelId, Map paraMap, Map rsMap) {
+        return super.update(channelId, paraMap, rsMap);
     }
 }
