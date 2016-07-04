@@ -1250,6 +1250,11 @@ public class ProductService extends BaseService {
             feedCustomPropList = new ArrayList<>();
         }
 
+        List<String>  customIds = product.getFeed().getCustomIds();
+
+        customIds = customIds == null ? new ArrayList<>() : customIds;
+
+
         //合并feedAttr和feedCustomPropList
         for (String attrKey : feedAttr.keySet()) {
             List<String> valueList = feedAttr.get(attrKey);
@@ -1260,6 +1265,7 @@ public class ProductService extends BaseService {
             prop.setFeedAttrCn("");
             prop.setFeedAttrValueCn("");
             prop.setFeedAttr(true);
+            prop.setCustomPropActive(false);
 
             if (feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).count() > 0) {
                 FeedCustomPropWithValueBean feedCustProp = feedCustomPropList.stream().filter(w -> w.getFeed_prop_original().equals(attrKey)).findFirst().get();
@@ -1280,10 +1286,16 @@ public class ProductService extends BaseService {
                     }
 
                 }
+
+                if(customIds.stream().filter(w->w.equals(attrKey)).count() >0)
+                {
+                    prop.setCustomPropActive(true);
+                }
             }
 
             props.add(prop);
         }
+
 
         //仅存在于cms_mt_feed_custom_prop中，不存在于feed attributes中的项目
         for (FeedCustomPropWithValueBean custProp : feedCustomPropList) {
@@ -1295,10 +1307,16 @@ public class ProductService extends BaseService {
                 prop.setFeedAttrCn(custProp.getFeed_prop_translation());
                 prop.setFeedAttrValueCn("");
                 prop.setFeedAttr(false);
+                prop.setCustomPropActive(false);
 
-                if (cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).count() > 0) {
-                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedAttr)).findFirst().get();
+                if (cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).count() > 0) {
+                    String cnAttKey = cnAttrs.keySet().stream().filter(w -> w.equals(feedKey)).findFirst().get();
                     prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
+                }
+
+                if(customIds.stream().filter(w->w.equals(feedKey)).count() >0)
+                {
+                    prop.setCustomPropActive(true);
                 }
                 props.add(prop);
             }
