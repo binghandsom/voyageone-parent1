@@ -356,4 +356,12 @@
         delete from vms_bt_feed_info_temp
         where `channel_id` = #{channelId}
     </delete>
+
+    <update id="updateStatus" parameterType="com.voyageone.service.model.vms.VmsBtFeedInfoTempModel" >
+        update vms_bt_feed_info_temp
+        <set >
+            `update_flg` = #{updateFlg}
+        </set>
+        where `channel_id` = #{channelId,jdbcType=VARCHAR} and `parent_id` = #{parentId,jdbcType=VARCHAR}
+    </update>
 </mapper>

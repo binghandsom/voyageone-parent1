@@ -20,4 +20,6 @@ public interface VmsBtFeedInfoTempDaoExt {
     int deleteByChannel(String channelId);
 
     List<VmsBtFeedInfoTempModel> selectList(Map<String, Object> map);
+
+    int updateStatus(VmsBtFeedInfoTempModel record);
 }

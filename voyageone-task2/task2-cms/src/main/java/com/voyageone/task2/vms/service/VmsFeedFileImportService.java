@@ -19,6 +19,7 @@ import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.dao.vms.VmsBtFeedInfoTempDao;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
@@ -108,6 +109,9 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
     @Autowired
     private VmsBtFeedInfoTempDaoExt vmsBtFeedInfoTempDaoExt;
+
+    @Autowired
+    private FeedToCmsService feedToCmsService;
 
     @Autowired
     protected TransactionRunner transactionRunner;
@@ -231,6 +235,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
             // Error错误
             List<Map<String, Object>> errorList = new ArrayList<>();
             int i=1;
+            int codeCnt = 0;
             // 取得需要处理的Code级别的数据,每次取得固定件数
             while (true) {
                 Map<String, Object> param = new HashMap<>();
@@ -243,30 +248,60 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     break;
                 }
                 $info("++***************" + String.valueOf(i*100));
+                List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
                 for (VmsBtFeedInfoTempModel codeModel : codeList) {
-                    if (!StringUtils.isEmpty(codeModel.getSku())) {
-                        Map<String, Object> param1 = new HashMap<>();
-                        param1.put("channelId", channel.getOrder_channel_id());
-                        param1.put("parentId", codeModel.getSku());
-                        param1.put("updateFlg", "0");
-                        List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param1);
-                        checkByCodeGroup(codeModel, skuModels, errorList);
+                    Map<String, Object> param1 = new HashMap<>();
+                    param1.put("channelId", channel.getOrder_channel_id());
+                    param1.put("parentId", codeModel.getSku());
+                    param1.put("updateFlg", "0");
+                    List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param1);
+                    CmsBtFeedInfoModel model = checkByCodeGroup(codeModel, skuModels, errorList);
+                    if (model != null) {
+                        feedInfoModelList.add(model);
                     }
+                    if (errorList.size() == 0) {
+                        // 更新VmsBtFeedInfoTemp表状态为1：update完了
+                        // 更新Code级别数据
+                        VmsBtFeedInfoTempModel updateCodeModel = new VmsBtFeedInfoTempModel();
+                        // 更新条件
+                        updateCodeModel.setId(codeModel.getId());
+                        // 更新对象
+                        updateCodeModel.setUpdateFlg("1");
+                        vmsBtFeedInfoTempDao.update(updateCodeModel);
+                        // 更新Sku级别数据
+                        VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
+                        // 更新条件
+                        updateSkuModel.setChannelId(channel.getOrder_channel_id());
+                        updateSkuModel.setParentId(codeModel.getSku());
+                        // 更新对象
+                        updateSkuModel.setUpdateFlg("1");
+                        vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
+
+                    }
+                }
+
+                if (errorList.size() == 0 && feedInfoModelList.size() > 0) {
+                    Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
+                    List<CmsBtFeedInfoModel> succeed = response.get("succeed");
+                    codeCnt += succeed.size();
                 }
                 i++;
             }
+            $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
 
         }
 
         /**
-         * check数据，并保存FeedInfo对象列表
+         * check数据，没有问题的话，保存为FeedInfo对象
          *
          * @param codeModel Code级别数据
          * @param skuModels Sku级别数据
          * @param errorList 所有Error内容
          *
+         * @return FeedInfo对象
+         *
          */
-        private void checkByCodeGroup(VmsBtFeedInfoTempModel codeModel, List<VmsBtFeedInfoTempModel> skuModels, List<Map<String, Object>> errorList) {
+        private CmsBtFeedInfoModel checkByCodeGroup(VmsBtFeedInfoTempModel codeModel, List<VmsBtFeedInfoTempModel> skuModels, List<Map<String, Object>> errorList) {
 
             // CodeModel是否同时也是Sku
             boolean isSkuLevel = false;
@@ -339,7 +374,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
             }
             // 去掉最后一个分隔符[-]
             if (!StringUtils.isEmpty(category)) {
-                category.substring(category.length() - 1);
+                category = category.substring(0, category.length() - 1);
             }
             // 如果这行是Code,那么category是必须的
             if (StringUtils.isEmpty(category)) {
@@ -377,7 +412,155 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
             // Vendor-Product-Url
             String vendorProductUrl = codeModel.getVendorProductUrl();
+
             // AttributeKey
+
+            Map<String, List<String>> attributeMap = new HashMap<>();
+            makeAttributeMap(attributeMap, codeModel);
+
+
+            // 如果这行Code是Sku的话还需要CheckSku
+            if (isSkuLevel) {
+                // sku的共通属性check
+                checkSkuCommon(codeModel, errorList);
+            }
+
+            // 再Check Sku应该有的那些内容
+            if (skuModels != null && skuModels.size() > 0) {
+                // 同一parent-id下,Sku的唯一标识的集合
+                List<String> skuKeys = new ArrayList<>();
+                for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
+                    // sku的共通属性check
+                    checkSkuCommon(skuTemp, errorList);
+
+                    // variation-theme
+                    String variationTheme = skuTemp.getVariationTheme();
+                    // 如果存在多个sku，那么variation-theme必须指定
+                    if (skuModels.size() >= 2 && StringUtils.isEmpty(variationTheme)) {
+                        // variation-theme is Required.
+                        addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(VARIATION_THEME)}, skuTemp.getRow(), columnMap.get(VARIATION_THEME));
+                    }
+
+                    // check同一parent-id下面每个Sku的唯一标识
+                    if (!StringUtils.isEmpty(variationTheme)) {
+
+                        // 从Attribute属性里 找到唯一标识
+                        Map<String, String> skuKeyMap = getSkuKey(skuTemp);
+
+                        // 没有设定Sku唯一标识的情况下
+                        if (skuKeyMap.get("Value") == null) {
+                            // %s(variation-theme) must be set in attribute.
+                            addErrorMessage(errorList, "8000008", new Object[]{variationTheme}, skuTemp.getRow(), "attribute");
+                        }
+
+                        // Sku唯一标识重复的情况下
+                        if (!StringUtils.isEmpty(skuKeyMap.get("Value"))) {
+                            if (skuKeys.contains(skuKeyMap.get("Value"))) {
+                                // %s must be a unique value in same parent-id.
+                                addErrorMessage(errorList, "8000010", new Object[]{variationTheme}, skuTemp.getRow(), "attribute-key-" + skuKeyMap.get("AttributeNum"));
+                            } else {
+                                skuKeys.add(skuKeyMap.get("Value"));
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            // check没有错误的情况下，生成CmsBtFeedInfoModel
+            CmsBtFeedInfoModel feedInfo = null;
+            if (!errorFlg) {
+                feedInfo = new CmsBtFeedInfoModel();
+                feedInfo.setChannelId(channel.getOrder_channel_id());
+                feedInfo.setCode(sku);
+                feedInfo.setModel(sku);
+                feedInfo.setCategory(category);
+                feedInfo.setCatId(MD5.getMD5(category));
+                feedInfo.setName(title);
+                feedInfo.setImage(Arrays.asList(images.split(",")));
+                feedInfo.setLongDescription(description);
+                feedInfo.setShortDescription(shortDescription);
+                feedInfo.setOrigin(productOrigin);
+                feedInfo.setWeight(weight);
+                feedInfo.setBrand(brand);
+                feedInfo.setMaterial(materials);
+                feedInfo.setClientProductURL(vendorProductUrl);
+                // TODO 要建一张Category和ProductType的Mapping表
+                feedInfo.setProductType("");
+                if (attributeMap.get("color") != null) {
+                    feedInfo.setColor(attributeMap.get("color").get(0));
+                } else {
+                    feedInfo.setColor("");
+                }
+                if (attributeMap.get("gender") != null) {
+                    feedInfo.setSizeType(attributeMap.get("gender").get(0));
+                } else {
+                    feedInfo.setSizeType("No Size Type");
+                }
+                feedInfo.setAttribute(attributeMap);
+
+                // 加入Sku
+                List<CmsBtFeedInfoModel_Sku> skusModel = new ArrayList<>();
+                feedInfo.setSkus(skusModel);
+                if (isSkuLevel) {
+                    // 创建Sku
+                    CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
+                    skuModel.setBarcode(codeModel.getProductId());
+                    skuModel.setClientSku(codeModel.getSku());
+                    skuModel.setSku(codeModel.getSku());
+                    skuModel.setSize("One Size");
+                    skuModel.setImage(Arrays.asList(images.split(",")));
+                    skuModel.setQty(new Integer(codeModel.getQuantity()));
+                    skuModel.setRelationshipType("");
+                    skuModel.setVariationTheme("");
+                    if (!StringUtils.isEmpty(codeModel.getMsrp())) {
+                        skuModel.setPriceClientMsrp(new BigDecimal(codeModel.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    } else {
+                        skuModel.setPriceClientMsrp(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    }
+                    skuModel.setPriceClientRetail(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+                } else {
+                    for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
+                        // 创建Sku
+                        CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
+                        skuModel.setBarcode(skuTemp.getProductId());
+                        skuModel.setClientSku(skuTemp.getSku());
+                        Map<String, String> skuKeyMap = getSkuKey(skuTemp);
+                        skuModel.setSku(feedInfo.getCode() + "-" + skuKeyMap.get("Value"));
+                        skuModel.setSize(skuKeyMap.get("Value"));
+                        skuModel.setImage(Arrays.asList(images.split(",")));
+                        skuModel.setQty(new Integer(skuTemp.getQuantity()));
+                        skuModel.setRelationshipType(skuTemp.getRelationshipType());
+                        skuModel.setVariationTheme(skuTemp.getVariationTheme());
+                        if (!StringUtils.isEmpty(skuTemp.getMsrp())) {
+                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        } else {
+                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        }
+
+                        skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+                        skusModel.add(skuModel);
+                    }
+                }
+            }
+
+            return feedInfo;
+        }
+
+        /**
+         * 做出AttributeMap
+         *
+         * @param attributeMap 做出的AttributeMap
+         * @param codeModel VmsBtFeedInfoTempModel
+         *
+         * @return 可变主题对应Attribute的序号和内容
+         *
+         */
+        private void makeAttributeMap(Map<String, List<String>> attributeMap, VmsBtFeedInfoTempModel codeModel) {
             String attributeKey1 = codeModel.getAttributeKey1();
             String attributeKey2 = codeModel.getAttributeKey2();
             String attributeKey3 = codeModel.getAttributeKey3();
@@ -419,61 +602,207 @@ public class VmsFeedFileImportService extends BaseTaskService {
             String attributeValue18 = codeModel.getAttributeValue18();
             String attributeValue19 = codeModel.getAttributeValue19();
             String attributeValue20 = codeModel.getAttributeValue20();
-
-            // 如果这行Code是Sku的话还需要CheckSku
-            if (isSkuLevel) {
-//            checkSkuCommon(codeModel);
+            if (!StringUtils.isEmpty(attributeKey1)) {
+                attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
             }
-
-
-            // check没有错误的情况下，生成CmsBtFeedInfoModel
-            if (!errorFlg) {
-                CmsBtFeedInfoModel feedInfo = new CmsBtFeedInfoModel();
-                feedInfo.setCode(sku);
-                feedInfo.setModel(sku);
-                feedInfo.setCategory(category);
-                feedInfo.setCatId(MD5.getMD5(category));
-                feedInfo.setName(title);
-                feedInfo.setImage(Arrays.asList(images.split(",")));
-                feedInfo.setLongDescription(description);
-                feedInfo.setShortDescription(shortDescription);
-                feedInfo.setOrigin(productOrigin);
-                feedInfo.setWeight(weight);
-                feedInfo.setBrand(brand);
-                feedInfo.setMaterial(materials);
-                feedInfo.setClientProductURL(vendorProductUrl);
-                // feedInfo.setAttribute(attributeMap);
-
-                // 加入Sku
-                if (skuModels != null && skuModels.size() > 0) {
-                    List<CmsBtFeedInfoModel_Sku> skusModel = new ArrayList<>();
-                    feedInfo.setSkus(skusModel);
-                    for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
-                        // 创建Sku
-                        CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
-                        skuModel.setBarcode(skuTemp.getProductId());
-                        skuModel.setClientSku(skuTemp.getSku());
-                        // skuModel.setSku(feedInfo.getCode() + skuKey);
-                        // skuModel.setSize(skuKey);
-                        skuModel.setImage(Arrays.asList(images.split(",")));
-                        skuModel.setQty(new Integer(skuTemp.getQuantity()));
-                        if (!StringUtils.isEmpty(skuTemp.getMsrp())) {
-//                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                        } else {
-//                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                        }
-
-//                        skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//                        skuModel.setPriceCurrent(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-
-                        skusModel.add(skuModel);
-                    }
-                }
+            if (!StringUtils.isEmpty(attributeKey2)) {
+                attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey3)) {
+                attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey4)) {
+                attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey5)) {
+                attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey6)) {
+                attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey7)) {
+                attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey8)) {
+                attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey9)) {
+                attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey10)) {
+                attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey11)) {
+                attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey12)) {
+                attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey13)) {
+                attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey14)) {
+                attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey15)) {
+                attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey16)) {
+                attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey17)) {
+                attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey18)) {
+                attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey19)) {
+                attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+            }
+            if (!StringUtils.isEmpty(attributeKey20)) {
+                attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
             }
         }
 
         /**
-         * check数据，并保存FeedInfo对象列表
+         * 从Attribute属性中找出可变主题
+         *
+         * @param skuModel sku级别数据
+         *
+         * @return 可变主题对应Attribute的序号和内容
+         *
+         */
+        private Map<String, String> getSkuKey(VmsBtFeedInfoTempModel skuModel) {
+            Map<String, String> returnMap = new HashMap<>();
+            // 可变主题
+            String variationTheme = skuModel.getVariationTheme();
+
+            // AttributeKey
+            String attributeKey1 = skuModel.getAttributeKey1();
+            if (variationTheme.equals(attributeKey1)) {
+                returnMap.put("AttributeNum", "1");
+                returnMap.put("Value", skuModel.getAttributeValue1());
+                return returnMap;
+            }
+            String attributeKey2 = skuModel.getAttributeKey2();
+            if (variationTheme.equals(attributeKey2)) {
+                returnMap.put("AttributeNum", "2");
+                returnMap.put("Value", skuModel.getAttributeValue2());
+                return returnMap;
+            }
+            String attributeKey3 = skuModel.getAttributeKey3();
+            if (variationTheme.equals(attributeKey3)) {
+                returnMap.put("AttributeNum", "3");
+                returnMap.put("Value", skuModel.getAttributeValue3());
+                return returnMap;
+            }
+            String attributeKey4 = skuModel.getAttributeKey4();
+            if (variationTheme.equals(attributeKey4)) {
+                returnMap.put("AttributeNum", "4");
+                returnMap.put("Value", skuModel.getAttributeValue4());
+                return returnMap;
+            }
+            String attributeKey5 = skuModel.getAttributeKey5();
+            if (variationTheme.equals(attributeKey5)) {
+                returnMap.put("AttributeNum", "5");
+                returnMap.put("Value", skuModel.getAttributeValue5());
+                return returnMap;
+            }
+            String attributeKey6 = skuModel.getAttributeKey6();
+            if (variationTheme.equals(attributeKey6)) {
+                returnMap.put("AttributeNum", "6");
+                returnMap.put("Value", skuModel.getAttributeValue6());
+                return returnMap;
+            }
+            String attributeKey7 = skuModel.getAttributeKey7();
+            if (variationTheme.equals(attributeKey7)) {
+                returnMap.put("AttributeNum", "7");
+                returnMap.put("Value", skuModel.getAttributeValue7());
+                return returnMap;
+            }
+            String attributeKey8 = skuModel.getAttributeKey8();
+            if (variationTheme.equals(attributeKey8)) {
+                returnMap.put("AttributeNum", "8");
+                returnMap.put("Value", skuModel.getAttributeValue8());
+                return returnMap;
+            }
+            String attributeKey9 = skuModel.getAttributeKey9();
+            if (variationTheme.equals(attributeKey9)) {
+                returnMap.put("AttributeNum", "9");
+                returnMap.put("Value", skuModel.getAttributeValue9());
+                return returnMap;
+            }
+            String attributeKey10 = skuModel.getAttributeKey10();
+            if (variationTheme.equals(attributeKey10)) {
+                returnMap.put("AttributeNum", "10");
+                returnMap.put("Value", skuModel.getAttributeValue10());
+                return returnMap;
+            }
+            String attributeKey11 = skuModel.getAttributeKey11();
+            if (variationTheme.equals(attributeKey11)) {
+                returnMap.put("AttributeNum", "11");
+                returnMap.put("Value", skuModel.getAttributeValue11());
+                return returnMap;
+            }
+            String attributeKey12 = skuModel.getAttributeKey12();
+            if (variationTheme.equals(attributeKey12)) {
+                returnMap.put("AttributeNum", "12");
+                returnMap.put("Value", skuModel.getAttributeValue12());
+                return returnMap;
+            }
+            String attributeKey13 = skuModel.getAttributeKey13();
+            if (variationTheme.equals(attributeKey13)) {
+                returnMap.put("AttributeNum", "13");
+                returnMap.put("Value", skuModel.getAttributeValue13());
+                return returnMap;
+            }
+            String attributeKey14 = skuModel.getAttributeKey14();
+            if (variationTheme.equals(attributeKey14)) {
+                returnMap.put("AttributeNum", "14");
+                returnMap.put("Value", skuModel.getAttributeValue14());
+                return returnMap;
+            }
+            String attributeKey15 = skuModel.getAttributeKey15();
+            if (variationTheme.equals(attributeKey15)) {
+                returnMap.put("AttributeNum", "15");
+                returnMap.put("Value", skuModel.getAttributeValue15());
+                return returnMap;
+            }
+            String attributeKey16 = skuModel.getAttributeKey16();
+            if (variationTheme.equals(attributeKey16)) {
+                returnMap.put("AttributeNum", "16");
+                returnMap.put("Value", skuModel.getAttributeValue16());
+                return returnMap;
+            }
+            String attributeKey17 = skuModel.getAttributeKey17();
+            if (variationTheme.equals(attributeKey17)) {
+                returnMap.put("AttributeNum", "17");
+                returnMap.put("Value", skuModel.getAttributeValue17());
+                return returnMap;
+            }
+            String attributeKey18 = skuModel.getAttributeKey18();
+            if (variationTheme.equals(attributeKey18)) {
+                returnMap.put("AttributeNum", "18");
+                returnMap.put("Value", skuModel.getAttributeValue18());
+                return returnMap;
+            }
+            String attributeKey19 = skuModel.getAttributeKey19();
+            if (variationTheme.equals(attributeKey19)) {
+                returnMap.put("AttributeNum", "19");
+                returnMap.put("Value", skuModel.getAttributeValue19());
+                return returnMap;
+            }
+            String attributeKey20 = skuModel.getAttributeKey20();
+            if (variationTheme.equals(attributeKey20)) {
+                returnMap.put("AttributeNum", "20");
+                returnMap.put("Value", skuModel.getAttributeValue20());
+                return returnMap;
+            }
+            return returnMap;
+        }
+
+        /**
+         * checkSku数据
          *
          * @param codeModel Code级别数据
          * @param errorList 所有Error内容
@@ -878,68 +1207,68 @@ public class VmsFeedFileImportService extends BaseTaskService {
 //            return isSuccess;
 //        }
 
-        private String getMd5(VmsBtFeedInfoTempModel model) {
-            StringBuffer temp = new StringBuffer();
-            temp.append(model.getSku());
-            temp.append(model.getParentId());
-            temp.append(model.getRelationshipType());
-            temp.append(model.getVariationTheme());
-            temp.append(model.getTitle());
-            temp.append(model.getProductId());
-            temp.append(model.getPrice());
-            temp.append(model.getMsrp());
-            temp.append(model.getQuantity());
-            temp.append(model.getImages());
-            temp.append(model.getDescription());
-            temp.append(model.getShortDescription());
-            temp.append(model.getProductOrigin());
-            temp.append(model.getCategory());
-            temp.append(model.getWeight());
-            temp.append(model.getBrand());
-            temp.append(model.getMaterials());
-            temp.append(model.getVendorProductUrl());
-            temp.append(model.getAttributeKey1());
-            temp.append(model.getAttributeValue1());
-            temp.append(model.getAttributeKey2());
-            temp.append(model.getAttributeValue2());
-            temp.append(model.getAttributeKey3());
-            temp.append(model.getAttributeValue3());
-            temp.append(model.getAttributeKey4());
-            temp.append(model.getAttributeValue4());
-            temp.append(model.getAttributeKey5());
-            temp.append(model.getAttributeValue5());
-            temp.append(model.getAttributeKey6());
-            temp.append(model.getAttributeValue6());
-            temp.append(model.getAttributeKey7());
-            temp.append(model.getAttributeValue7());
-            temp.append(model.getAttributeKey8());
-            temp.append(model.getAttributeValue8());
-            temp.append(model.getAttributeKey9());
-            temp.append(model.getAttributeValue9());
-            temp.append(model.getAttributeKey10());
-            temp.append(model.getAttributeValue10());
-            temp.append(model.getAttributeKey11());
-            temp.append(model.getAttributeValue11());
-            temp.append(model.getAttributeKey12());
-            temp.append(model.getAttributeValue12());
-            temp.append(model.getAttributeKey13());
-            temp.append(model.getAttributeValue13());
-            temp.append(model.getAttributeKey14());
-            temp.append(model.getAttributeValue14());
-            temp.append(model.getAttributeKey15());
-            temp.append(model.getAttributeValue15());
-            temp.append(model.getAttributeKey16());
-            temp.append(model.getAttributeValue16());
-            temp.append(model.getAttributeKey17());
-            temp.append(model.getAttributeValue17());
-            temp.append(model.getAttributeKey18());
-            temp.append(model.getAttributeValue18());
-            temp.append(model.getAttributeKey19());
-            temp.append(model.getAttributeValue19());
-            temp.append(model.getAttributeKey20());
-            temp.append(model.getAttributeValue20());
-            return  MD5.getMD5(temp.toString());
-        }
+//        private String getMd5(VmsBtFeedInfoTempModel model) {
+//            StringBuffer temp = new StringBuffer();
+//            temp.append(model.getSku());
+//            temp.append(model.getParentId());
+//            temp.append(model.getRelationshipType());
+//            temp.append(model.getVariationTheme());
+//            temp.append(model.getTitle());
+//            temp.append(model.getProductId());
+//            temp.append(model.getPrice());
+//            temp.append(model.getMsrp());
+//            temp.append(model.getQuantity());
+//            temp.append(model.getImages());
+//            temp.append(model.getDescription());
+//            temp.append(model.getShortDescription());
+//            temp.append(model.getProductOrigin());
+//            temp.append(model.getCategory());
+//            temp.append(model.getWeight());
+//            temp.append(model.getBrand());
+//            temp.append(model.getMaterials());
+//            temp.append(model.getVendorProductUrl());
+//            temp.append(model.getAttributeKey1());
+//            temp.append(model.getAttributeValue1());
+//            temp.append(model.getAttributeKey2());
+//            temp.append(model.getAttributeValue2());
+//            temp.append(model.getAttributeKey3());
+//            temp.append(model.getAttributeValue3());
+//            temp.append(model.getAttributeKey4());
+//            temp.append(model.getAttributeValue4());
+//            temp.append(model.getAttributeKey5());
+//            temp.append(model.getAttributeValue5());
+//            temp.append(model.getAttributeKey6());
+//            temp.append(model.getAttributeValue6());
+//            temp.append(model.getAttributeKey7());
+//            temp.append(model.getAttributeValue7());
+//            temp.append(model.getAttributeKey8());
+//            temp.append(model.getAttributeValue8());
+//            temp.append(model.getAttributeKey9());
+//            temp.append(model.getAttributeValue9());
+//            temp.append(model.getAttributeKey10());
+//            temp.append(model.getAttributeValue10());
+//            temp.append(model.getAttributeKey11());
+//            temp.append(model.getAttributeValue11());
+//            temp.append(model.getAttributeKey12());
+//            temp.append(model.getAttributeValue12());
+//            temp.append(model.getAttributeKey13());
+//            temp.append(model.getAttributeValue13());
+//            temp.append(model.getAttributeKey14());
+//            temp.append(model.getAttributeValue14());
+//            temp.append(model.getAttributeKey15());
+//            temp.append(model.getAttributeValue15());
+//            temp.append(model.getAttributeKey16());
+//            temp.append(model.getAttributeValue16());
+//            temp.append(model.getAttributeKey17());
+//            temp.append(model.getAttributeValue17());
+//            temp.append(model.getAttributeKey18());
+//            temp.append(model.getAttributeValue18());
+//            temp.append(model.getAttributeKey19());
+//            temp.append(model.getAttributeValue19());
+//            temp.append(model.getAttributeKey20());
+//            temp.append(model.getAttributeValue20());
+//            return  MD5.getMD5(temp.toString());
+//        }
 
 //        /**
 //         * 读入Feed文件，并做check，生成FeedInfoModel数据

@@ -17,6 +17,9 @@ public class CmsBtFeedInfoModel_Sku {
     private String clientSku;
     private List<String> image;
     private Integer qty;
+    private String relationshipType;
+    private String variationTheme;
+
 
     public Double getPriceCurrent() {
         return priceCurrent;
@@ -102,6 +105,23 @@ public class CmsBtFeedInfoModel_Sku {
     public List<String> getImage() { return image; }
 
     public void setImage(List<String> image) { this.image = image; }
+
+
+    public String getRelationshipType() {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(String relationshipType) {
+        this.relationshipType = relationshipType;
+    }
+
+    public String getVariationTheme() {
+        return variationTheme;
+    }
+
+    public void setVariationTheme(String variationTheme) {
+        this.variationTheme = variationTheme;
+    }
 
     @Override
     public boolean equals(Object obj) {
