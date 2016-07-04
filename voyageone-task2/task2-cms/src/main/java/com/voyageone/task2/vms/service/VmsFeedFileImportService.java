@@ -2,10 +2,13 @@ package com.voyageone.task2.vms.service;
 
 import com.csvreader.CsvReader;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
@@ -171,7 +174,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
             // 查找当前渠道,取得建立时间最早的Feed导入文件
             Map<String, Object> param = new HashMap<>();
-            param.put("channel_id", channel.getOrder_channel_id());
+            param.put("channelId", channel.getOrder_channel_id());
             // 状态：1（等待导入）
             param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
             List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDaoExt.selectListOrderByCreateTime(param);
@@ -186,24 +189,22 @@ public class VmsFeedFileImportService extends BaseTaskService {
                 StringBuilder stringBuilder = new StringBuilder();
                 // 文件存在的话那么处理
                 if (feedFile.exists()) {
-                    $info("Feed文件check的处理开始 文件路径：" + model.getFileName());
+                    $info("Feed文件check的处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
                     // Map<String, CmsBtFeedInfoModel> feedInfoMap = readExcel(feedFile, stringBuilder);
                     // 把Feed数据插入vms_bt_feed_info_temp表
-//                    readCsvToDB(feedFile);
+                    readCsvToDB(feedFile);
                     // check数据并且插入MongoDb表
                     doHandle();
-
-
-
-                    $info("Feed文件check的处理结束");
-                    // check有错的情况下，先生成ErrorFile
-                    if (stringBuilder.toString().length() >  0) {
-                        try {
-                            createErrorFile(stringBuilder, model);
-                        } catch (Exception e) {
-                            $error(e.getMessage());
-                        }
-                    } else {
+                    $info("Feed文件check的处理结束,channel：" + channel.getFull_name());
+                }
+//                    // check有错的情况下，先生成ErrorFile
+//                    if (stringBuilder.toString().length() >  0) {
+//                        try {
+//                            createErrorFile(stringBuilder);
+//                        } catch (Exception e) {
+//                            $error(e.getMessage());
+//                        }
+//                    } else {
 //                        // 没有错误的情况下，导入Feed文件到数据库
 //                        if (feedInfoMap.size() > 0) {
 //                            $info("导入数据库开始");
@@ -212,11 +213,11 @@ public class VmsFeedFileImportService extends BaseTaskService {
 //                        } else {
 //                            $info("没有更新对象");
 //                        }
-                    }
-                } else {
-                    // 一般情况下不可能发生，除非手动删除文件
-                    $error("Feed文件不存在 文件路径：" + model.getFileName());
-                }
+//                    }
+//                } else {
+//                    // 一般情况下不可能发生，除非手动删除文件
+//                    $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+//                }
             }
             $info(channel.getFull_name() + "产品 Feed文件导入结束");
         }
@@ -229,7 +230,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
             // Error错误
             List<Map<String, Object>> errorList = new ArrayList<>();
-
+            int i=1;
             // 取得需要处理的Code级别的数据,每次取得固定件数
             while (true) {
                 Map<String, Object> param = new HashMap<>();
@@ -237,16 +238,22 @@ public class VmsFeedFileImportService extends BaseTaskService {
                 param.put("parentId", "");
                 param.put("updateFlg", "0");
                 List<VmsBtFeedInfoTempModel> codeList = vmsBtFeedInfoTempDaoExt.selectList(param);
+                // 直到全部拿完那么终止
+                if (codeList.size() == 0) {
+                    break;
+                }
+                $info("++***************" + String.valueOf(i*100));
                 for (VmsBtFeedInfoTempModel codeModel : codeList) {
                     if (!StringUtils.isEmpty(codeModel.getSku())) {
                         Map<String, Object> param1 = new HashMap<>();
                         param1.put("channelId", channel.getOrder_channel_id());
                         param1.put("parentId", codeModel.getSku());
                         param1.put("updateFlg", "0");
-                        List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param);
+                        List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param1);
                         checkByCodeGroup(codeModel, skuModels, errorList);
                     }
                 }
+                i++;
             }
 
         }
@@ -271,17 +278,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
             }
 
             // 先Check Code应该有的那些内容
-            // Code
+            // Code（sku之前已经check过了）
             String sku = codeModel.getSku();
-            // Code必须输入
-            if (StringUtils.isEmpty(sku)) {
-                // Sku is required.
-                addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(SKU_INDEX)}, codeModel.getRow(), columnMap.get(SKU_INDEX));
-                errorFlg = true;
-            } else {
-                // TODO ClientSku不能重复
-
-            }
 
             // title
             String title = codeModel.getTitle();
@@ -423,7 +421,9 @@ public class VmsFeedFileImportService extends BaseTaskService {
             String attributeValue20 = codeModel.getAttributeValue20();
 
             // 如果这行Code是Sku的话还需要CheckSku
+            if (isSkuLevel) {
 //            checkSkuCommon(codeModel);
+            }
 
 
             // check没有错误的情况下，生成CmsBtFeedInfoModel
@@ -458,17 +458,61 @@ public class VmsFeedFileImportService extends BaseTaskService {
                         skuModel.setImage(Arrays.asList(images.split(",")));
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
                         if (!StringUtils.isEmpty(skuTemp.getMsrp())) {
-                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+//                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         } else {
-                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+//                            skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
 
-                        skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                        skuModel.setPriceCurrent(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+//                        skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+//                        skuModel.setPriceCurrent(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                         skusModel.add(skuModel);
                     }
                 }
+            }
+        }
+
+        /**
+         * check数据，并保存FeedInfo对象列表
+         *
+         * @param codeModel Code级别数据
+         * @param errorList 所有Error内容
+         *
+         */
+        private void checkSkuCommon(VmsBtFeedInfoTempModel codeModel, List<Map<String, Object>> errorList) {
+
+            // product-id
+            String productId = codeModel.getProductId();
+            // product-id是必须的
+            if ( StringUtils.isEmpty(productId)) {
+                // product-id is Required.
+                addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(PRODUCT_ID)}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
+            }
+
+            // price
+            String price = codeModel.getPrice();
+            // price是必须的,并且是大于0的数字
+            if (StringUtils.isEmpty(price) || !StringUtils.isNumeric(price) || Float.valueOf(price) <= 0) {
+                // price must be a Number more than 0.
+                addErrorMessage(errorList, "8000005", new Object[]{columnMap.get(PRICE)}, codeModel.getRow(), columnMap.get(PRICE));
+            }
+
+            // msrp
+            String msrp = codeModel.getMsrp();
+            if (!StringUtils.isEmpty(msrp)) {
+                // msrp如果输入，必须是大于0的数字
+                if (!StringUtils.isNumeric(msrp) || Float.valueOf(msrp) <= 0) {
+                    // msrp must be a Number more than 0.
+                    addErrorMessage(errorList, "8000005", new Object[]{columnMap.get(MSRP)}, codeModel.getRow(), columnMap.get(MSRP));
+                }
+            }
+
+            // quantity
+            String quantity = codeModel.getQuantity();
+            // quantity是必须的,并且是大于0的数字
+            if (StringUtils.isEmpty(quantity) || !StringUtils.isDigit(quantity)) {
+                // quantity must be a positive Integer.
+                addErrorMessage(errorList, "8000006", new Object[]{columnMap.get(QUANTITY)}, codeModel.getRow(), columnMap.get(QUANTITY));
             }
         }
 
@@ -477,17 +521,48 @@ public class VmsFeedFileImportService extends BaseTaskService {
          * 读入Feed文件，插入到临时表vms_bt_feed_info_temp里
          *
          * @param feedFile  导入Feed文件
+         * @return 是否有错误
          */
-        private void readCsvToDB(File feedFile) {
+        private boolean readCsvToDB(File feedFile) {
 
             try {
+                $info("删除临时表数据开始,channel：" + channel.getFull_name());
+
                 // 先删除这个channel下的临时数据
-                vmsBtFeedInfoTempDaoExt.deleteByChannel(channel.getOrder_channel_id());
+                int delCnt = vmsBtFeedInfoTempDaoExt.deleteByChannel(channel.getOrder_channel_id());
 
+                $info("删除临时表数据结束,一共删除数据：" + delCnt + "件;channel：" + channel.getFull_name());
 
+                // 转成vms_bt_feed_info_temp的Model列表
                 List<VmsBtFeedInfoTempModel> feedInfoTempModels = new ArrayList<>();
 
-                CsvReader reader = new CsvReader(new FileInputStream(feedFile), ',', Charset.forName("utf-8"));
+                // Csv默认分割符号(逗号)
+                char csvSplitSymbol = VmsConstants.COMMA;
+                // Csv默认编码(utf-8)
+                String csvEncode = VmsConstants.UTF_8;
+
+                // 取得CSV分隔符
+                VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
+                        , VmsConstants.ChannelConfig.CSV_SPLIT_SYMBOL
+                        ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+                if (vmsChannelConfigBean != null) {
+                    csvSplitSymbol = vmsChannelConfigBean.getConfigValue1().charAt(0);
+                }
+
+                // 取得CSV分隔符
+                vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
+                        , VmsConstants.ChannelConfig.CSV_ENCODE
+                        ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+                if (vmsChannelConfigBean != null) {
+                    csvEncode = vmsChannelConfigBean.getConfigValue1();
+                }
+
+                // Sku列表
+                Map<String, String> skuMap = new HashMap<>();
+                // Error信息
+                StringBuilder error = new StringBuilder();
+
+                CsvReader reader = new CsvReader(new FileInputStream(feedFile), csvSplitSymbol, Charset.forName(csvEncode));
                 // Head读入
                 reader.readHeaders();
                 reader.getHeaders();
@@ -500,86 +575,294 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     int i = 0;
                     model.setChannelId(channel.getOrder_channel_id());
                     model.setRow(rowNum);
-                    model.setSku(reader.get(i++));
-                    model.setParentId(reader.get(i++));
-                    model.setRelationshipType(reader.get(i++));
-                    model.setVariationTheme(reader.get(i++));
+                    // sku
+                    String item = reader.get(i++);
+                    // sku必须
+                    if (StringUtils.isEmpty(item)) {
+                        addErrorMessage(error, "8000002", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
+                    }
+                    // sku长度验证
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
+                    }
+                    // sku唯一验证
+                    if (!StringUtils.isEmpty(item)) {
+                        if (skuMap.get(item) != null) {
+                            addErrorMessage(error, "8000003", new Object[]{item}, rowNum, columnMap.get(SKU_INDEX));
+                        } else {
+                            skuMap.put(item, item);
+                        }
+                    }
+                    model.setSku(item);
+
+                    // parent-id
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PARENT_ID)}, rowNum, columnMap.get(PARENT_ID));
+                    }
+                    model.setParentId(item);
+
+                    // relationship-type
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(RELATIONSHIP_TYPE)}, rowNum, columnMap.get(RELATIONSHIP_TYPE));
+                    }
+                    model.setRelationshipType(item);
+
+                    // variation-theme
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(VARIATION_THEME)}, rowNum, columnMap.get(VARIATION_THEME));
+                    }
+                    model.setVariationTheme(item);
                     model.setTitle(reader.get(i++));
-                    model.setProductId(reader.get(i++));
-                    model.setPrice(reader.get(i++));
-                    model.setMsrp(reader.get(i++));
-                    model.setQuantity(reader.get(i++));
+
+                    // product-id
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ID)}, rowNum, columnMap.get(PRODUCT_ID));
+                    }
+                    model.setProductId(item);
+
+                    // price
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRICE)}, rowNum, columnMap.get(PRICE));
+                    }
+                    model.setPrice(item);
+
+                    // msrp
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(MSRP)}, rowNum, columnMap.get(MSRP));
+                    }
+                    model.setMsrp(item);
+
+                    // quantity
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(QUANTITY)}, rowNum, columnMap.get(QUANTITY));
+                    }
+                    model.setQuantity(item);
                     model.setImages(reader.get(i++));
                     model.setDescription(reader.get(i++));
                     model.setShortDescription(reader.get(i++));
-                    model.setProductOrigin(reader.get(i++));
-                    model.setCategory(reader.get(i++));
-                    model.setWeight(reader.get(i++));
-                    model.setBrand(reader.get(i++));
-                    model.setMaterials(reader.get(i++));
+
+                    // product-origin
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ORIGIN)}, rowNum, columnMap.get(PRODUCT_ORIGIN));
+                    }
+                    model.setProductOrigin(item);
+
+                    // category
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 500) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(CATEGORY)}, rowNum, columnMap.get(CATEGORY));
+                    }
+                    model.setCategory(item);
+
+                    // weight
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(WEIGHT)}, rowNum, columnMap.get(WEIGHT));
+                    }
+                    model.setWeight(item);
+
+                    // brand
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(BRAND)}, rowNum, columnMap.get(BRAND));
+                    }
+                    model.setBrand(item);
+
+                    // materials
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(MATERIALS)}, rowNum, columnMap.get(MATERIALS));
+                    }
+                    model.setMaterials(item);
                     model.setVendorProductUrl(reader.get(i++));
-                    model.setAttributeKey1(reader.get(i++));
+
+                    // attribute-key-1
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-1"}, rowNum, "attribute-key-1");
+                    }
+                    model.setAttributeKey1(item);
                     model.setAttributeValue1(reader.get(i++));
-                    model.setAttributeKey2(reader.get(i++));
+                    // attribute-key-2
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-2"}, rowNum, "attribute-key-2");
+                    }
+                    model.setAttributeKey2(item);
                     model.setAttributeValue2(reader.get(i++));
-                    model.setAttributeKey3(reader.get(i++));
+                    // attribute-key-3s
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-3"}, rowNum, "attribute-key-3");
+                    }
+                    model.setAttributeKey3(item);
                     model.setAttributeValue3(reader.get(i++));
-                    model.setAttributeKey4(reader.get(i++));
+                    // attribute-key-4
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-4"}, rowNum, "attribute-key-4");
+                    }
+                    model.setAttributeKey4(item);
                     model.setAttributeValue4(reader.get(i++));
-                    model.setAttributeKey5(reader.get(i++));
+                    // attribute-key-5
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-5"}, rowNum, "attribute-key-5");
+                    }
+                    model.setAttributeKey5(item);
                     model.setAttributeValue5(reader.get(i++));
-                    model.setAttributeKey6(reader.get(i++));
+                    // attribute-key-6
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-6"}, rowNum, "attribute-key-6");
+                    }
+                    model.setAttributeKey6(item);
                     model.setAttributeValue6(reader.get(i++));
-                    model.setAttributeKey7(reader.get(i++));
+                    // attribute-key-7
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-7"}, rowNum, "attribute-key-7");
+                    }
+                    model.setAttributeKey7(item);
                     model.setAttributeValue7(reader.get(i++));
-                    model.setAttributeKey8(reader.get(i++));
+                    // attribute-key-8
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-8"}, rowNum, "attribute-key-8");
+                    }
+                    model.setAttributeKey8(item);
                     model.setAttributeValue8(reader.get(i++));
-                    model.setAttributeKey9(reader.get(i++));
+                    // attribute-key-9
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-9"}, rowNum, "attribute-key-9");
+                    }
+                    model.setAttributeKey9(item);
                     model.setAttributeValue9(reader.get(i++));
-                    model.setAttributeKey10(reader.get(i++));
+                    // attribute-key-10
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-10"}, rowNum, "attribute-key-10");
+                    }
+                    model.setAttributeKey10(item);
                     model.setAttributeValue10(reader.get(i++));
-                    model.setAttributeKey11(reader.get(i++));
+                    // attribute-key-11
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-11"}, rowNum, "attribute-key-11");
+                    }
+                    model.setAttributeKey11(item);
                     model.setAttributeValue11(reader.get(i++));
-                    model.setAttributeKey12(reader.get(i++));
+                    // attribute-key-12
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-12"}, rowNum, "attribute-key-12");
+                    }
+                    model.setAttributeKey12(item);
                     model.setAttributeValue12(reader.get(i++));
-                    model.setAttributeKey13(reader.get(i++));
+                    // attribute-key-13
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-13"}, rowNum, "attribute-key-13");
+                    }
+                    model.setAttributeKey13(item);
                     model.setAttributeValue13(reader.get(i++));
-                    model.setAttributeKey14(reader.get(i++));
+                    // attribute-key-14
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-14"}, rowNum, "attribute-key-14");
+                    }
+                    model.setAttributeKey14(item);
                     model.setAttributeValue14(reader.get(i++));
-                    model.setAttributeKey15(reader.get(i++));
+                    // attribute-key-15
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-15"}, rowNum, "attribute-key-15");
+                    }
+                    model.setAttributeKey15(item);
                     model.setAttributeValue15(reader.get(i++));
-                    model.setAttributeKey16(reader.get(i++));
+                    // attribute-key-16
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-16"}, rowNum, "attribute-key-16");
+                    }
+                    model.setAttributeKey16(item);
                     model.setAttributeValue16(reader.get(i++));
-                    model.setAttributeKey17(reader.get(i++));
+                    // attribute-key-17
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-17"}, rowNum, "attribute-key-17");
+                    }
+                    model.setAttributeKey17(item);
                     model.setAttributeValue17(reader.get(i++));
-                    model.setAttributeKey18(reader.get(i++));
+                    // attribute-key-18
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-18"}, rowNum, "attribute-key-18");
+                    }
+                    model.setAttributeKey18(item);
                     model.setAttributeValue18(reader.get(i++));
-                    model.setAttributeKey19(reader.get(i++));
+                    // attribute-key-19
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-19"}, rowNum, "attribute-key-19");
+                    }
+                    model.setAttributeKey19(item);
                     model.setAttributeValue19(reader.get(i++));
-                    model.setAttributeKey20(reader.get(i++));
+                    // attribute-key-20
+                    item = reader.get(i++);
+                    if (item.getBytes().length > 128) {
+                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-20"}, rowNum, "attribute-key-20");
+                    }
+                    model.setAttributeKey20(item);
                     model.setAttributeValue20(reader.get(i++));
-                    model.setMd5(getMd5(model));
+//                    model.setMd5(getMd5(model));
                     model.setCreater(getTaskName());
                     model.setModifier(getTaskName());
                     model.setUpdateFlg("0");
-                    feedInfoTempModels.add(model);
-
+                    if (error.toString().length() == 0) {
+                        feedInfoTempModels.add(model);
+                    }
                     rowNum++;
-                    if (feedInfoTempModels.size() > 1000) {
+                    if (error.toString().length() == 0 && feedInfoTempModels.size() > 1000) {
                         vmsBtFeedInfoTempDaoExt.insertList(feedInfoTempModels);
                         feedInfoTempModels.clear();
                     }
                 }
-                if (feedInfoTempModels.size() > 0) {
+                if (error.toString().length() == 0 && feedInfoTempModels.size() > 0) {
                     vmsBtFeedInfoTempDaoExt.insertList(feedInfoTempModels);
                     feedInfoTempModels.clear();
                 }
 
                 reader.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                // 如果check有错误，那么生成错误文件，并且把文件管理的状态变为3：导入错误
+                if (error.toString().length() > 0) {
+                    // 生成错误文件
+                    String feedErrorFilePath = createErrorFile(error);
+                    // 把文件管理的状态变为3：导入错误
+                    VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
+                    // 更新条件
+                    feedFileModel.setChannelId(channel.getOrder_channel_id());
+                    feedFileModel.setFileName(feedFile.getPath());
+                    // 更新内容
+                    feedFileModel.setErrorFilePath(feedErrorFilePath);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
+                    return true;
+                }
+
+                return false;
             } catch (IOException e) {
                 e.printStackTrace();
+                return true;
             }
         }
 
@@ -1144,7 +1427,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
         /**
          * 追加ErrorMessage
          *
-         * @param error  所有Error内容
+         * @param errorList  所有Error内容
          * @param messageCode  错误Code
          * @param args 参数
          * @param rowNum  行号
@@ -1174,25 +1457,50 @@ public class VmsFeedFileImportService extends BaseTaskService {
         }
 
         /**
-         * 生成Feed检索结果文件，并且更新vms_bt_feed_file表
+         * 追加ErrorMessage
+         *
+         * @param error  所有Error内容
+         * @param messageCode  错误Code
+         * @param args 参数
+         * @param rowNum  行号
+         * @param column  列号
+         *
+         * @return FeedInfoModel数据（列表）
+         */
+        private void addErrorMessage(StringBuilder error, String messageCode, Object[] args, Integer rowNum, String column) {
+            // 取得具体的ErrorMessage内容
+            MessageBean messageBean = messageService.getMessage("en", messageCode);
+            if (messageBean != null) {
+                String message = String.format(messageBean.getMessage(), args);
+                error.append(String.valueOf(rowNum) + VmsConstants.COMMA + column + VmsConstants.COMMA + message + "\r");
+            } else {
+                // 一般情况下不可能，除非ct_message_info表中没有加入这个message
+                error.append(String.valueOf(rowNum) + VmsConstants.COMMA + column + VmsConstants.COMMA + messageCode + "\r");
+            }
+        }
+
+        /**
+         * 生成Feed错误结果文件，并且更新vms_bt_feed_file表
          *
          * @param stringBuilder 错误内容
-         * @param model VmsBtFeedFileModel
          *
+         * return Feed错误结果文件的路径
          */
-        private void createErrorFile(StringBuilder stringBuilder,  VmsBtFeedFileModel model) throws IOException {
+        private String createErrorFile(StringBuilder stringBuilder) throws IOException {
+            $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
             // 取得Feed文件检查结果路径
-            String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
-            feedFilePath += "/" + channel.getOrder_channel_id() + "/";
+            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+            feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
             // 创建文件目录
-            FileUtils.mkdirPath(feedFilePath);
-            feedFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
-            try (OutputStream outputStream = new FileOutputStream(feedFilePath)) {
+            FileUtils.mkdirPath(feedErrorFilePath);
+            feedErrorFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
+            try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
                 byte[] contentInBytes = stringBuilder.toString().getBytes();
                 outputStream.write(contentInBytes);
                 outputStream.flush();
                 outputStream.close();
             }
+            return feedErrorFilePath;
         }
     }
 
@@ -1229,8 +1537,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
                             if (".csv".equals(fileName.substring(fileName.length() - 4))) {
                                 // 看看文件信息是否在vms_bt_feed_file表中存在
                                 Map<String, Object> param = new HashMap<>();
-                                param.put("channel_id", orderChannelID);
-                                param.put("file_name", fileName);
+                                param.put("channelId", orderChannelID);
+                                param.put("fileName", file.getPath());
                                 List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDao.selectList(param);
                                 // 不存在说明是客户通过FTP直接传的，需要新建文件信息
                                 if (feedFileList == null || feedFileList.size() == 0) {

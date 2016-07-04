@@ -39,4 +39,32 @@
         order by
             created desc
     </select>
+
+    <update id="updateErrorFileInfo" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
+        update vms_bt_feed_file
+        <set >
+            <if test="status != null" >
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="errorFilePath != null" >
+                `error_file_path` = #{errorFilePath,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `channel_id` = #{channelId,jdbcType=VARCHAR} and `file_name` = #{fileName,jdbcType=VARCHAR}
+    </update>
 </mapper>

@@ -26,7 +26,7 @@ public class VmsFeedFileImportServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("010");
+        taskControlBean.setCfg_val1("088");
         taskControlList.add(taskControlBean);
         vmsFeedFileImportService.onStartup(taskControlList);
     }
