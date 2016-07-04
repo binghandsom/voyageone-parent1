@@ -63,7 +63,7 @@
     * hsCodeCross ->20160627,税号跨境申报（10位）
     * usageEn ->20160627,使用说明英语
     * usageCn ->20160627,使用说明中文
-    * tmallWirelessActive ->20160628,单选框【启用天猫无线端模板】值为1， 【禁用天猫无线端模板】值为0
+    * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
   * skus[]
     * skuCode
     * barcode
