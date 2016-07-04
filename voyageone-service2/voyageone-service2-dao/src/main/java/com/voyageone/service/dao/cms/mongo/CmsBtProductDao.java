@@ -11,22 +11,27 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- *
  * @author Ethan Shi
  * @version 2.1.0
- *
  */
 @Repository
 public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
+
+    private static final String PriceNotEqualQuery =
+            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
+
+    //执行大小写不敏感的匹配
+    private static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
 
     /**
      * 更新SKU
@@ -71,6 +76,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{'fields.code':{'$in':[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
+
     /**
      * 根据codes返回多条产品数据
      */
@@ -78,6 +84,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{\"fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
+
     public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
@@ -119,9 +126,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return result.size() <= 0;
     }
 
-    //执行大小写不敏感的匹配
-    public static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
-
     public long countByFieldStatusEqualApproved(String channelId) {
         return countByQuery(FieldStatusEqArrpoved, channelId);
     }
@@ -131,16 +135,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return select(FieldStatusEqArrpoved, channelId);
     }
 
-    private static final String PriceNotEqualQuery =
-            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
-
     /**
      * 查询priceSale和priceRetail不相等的products
      */
     public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
         return select(PriceNotEqualQuery, channelId);
     }
-
 
     /**
      * 删除Product对应的店铺内自定义分类
@@ -220,7 +220,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         update(product.getChannelId(), queryMap, updateMap);
     }
-
 
     /**
      * 更新所有产品的店铺内分类数据
