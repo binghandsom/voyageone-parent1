@@ -1365,7 +1365,7 @@ public class SxGetProductInfoTest {
             SxData sxData = sxProductService.getSxProductDataByGroupId("018", 662419L);
             ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
 
-            sxProductService.setWirelessDescriptionFieldValue(listField.get(0), exp, getShop("018", 23), "morse");
+//            sxProductService.setWirelessDescriptionFieldValue(listField.get(0), exp, getShop("018", 23), "morse");
 
 //            String descriptionValue = sxProductService.resolveDict("无线描述", exp, getShop("018", 23), "morse", null);
 //            Map map = JacksonUtil.jsonToMap("{\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},\"k2\":2}");

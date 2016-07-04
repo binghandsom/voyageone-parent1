@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.translation;
+package com.voyageone.service.bean.cms;
 
 /**
  * Created by Ethan Shi on 2016/6/28.
@@ -7,7 +7,7 @@ package com.voyageone.service.bean.cms.translation;
  * @version 2.2.0
  * @since 2.2.0
  */
-public class TranslationTaskBean_CustomProps {
+public class CustomPropBean {
     private String feedAttrCn;
     private String feedAttrEn;
     private String feedAttrValueCn;
