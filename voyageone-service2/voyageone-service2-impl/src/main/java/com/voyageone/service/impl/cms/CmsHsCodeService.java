@@ -157,6 +157,8 @@ public class CmsHsCodeService extends BaseService {
         }
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
+        //税号个人
+        data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
         //等待设置税一览
         data.put("hsCodeList", getTotalHsCodeList(channelId, userName, "0", "", curr, size, RET_FIELDS));
         //返回数据类型
