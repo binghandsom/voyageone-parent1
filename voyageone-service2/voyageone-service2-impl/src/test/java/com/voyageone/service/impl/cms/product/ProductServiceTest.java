@@ -108,4 +108,11 @@ public class ProductServiceTest {
 
 
     }
+
+    @Test
+    public void testGetProductById() throws Exception {
+        productService.getOmsProductsInfo("018","14216721",null,null,null,"23",null);
+        productService.getWmsProductsInfo("018","14216721",null);
+    }
+
 }

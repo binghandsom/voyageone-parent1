@@ -10,6 +10,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
@@ -275,6 +276,11 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
+
+            CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.getProductGroupByGroupId(sxWorkLoadBean.getChannelId(),sxWorkLoadBean.getGroupId());
+            cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
+            cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
+            productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (Exception e) {
             sxWorkLoadBean.setPublishStatus(2);
