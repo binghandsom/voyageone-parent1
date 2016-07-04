@@ -531,7 +531,7 @@ public interface CmsUrlConstants {
 
             String UPDATE_LOCK = "updateLock";
 
-            String UPDATE_FEED_INFO = "updateLock";
+            String UPDATE_FEED_ATTS = "updateProductAtts";
 
         }
 
