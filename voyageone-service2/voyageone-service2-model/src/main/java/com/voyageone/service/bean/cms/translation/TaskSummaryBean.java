@@ -12,52 +12,52 @@ public class TaskSummaryBean {
     /**
      * 未分配总数
      */
-    private int unassginedCount;
+    private long unassginedCount;
 
     /**
      * 已分配但未完成总数
      */
-    private int imcompeleteCount;
+    private long incompleteCount;
 
     /**
      * 完成翻译总商品数.
      */
-    private int compeleteCount;
+    private long completeCount;
 
     /**
      * 个人完成翻译商品数.
      */
-    private int userCompeleteCount;
+    private long userCompleteCount;
 
-    public int getUnassginedCount() {
+    public long getUnassginedCount() {
         return unassginedCount;
     }
 
-    public void setUnassginedCount(int unassginedCount) {
+    public void setUnassginedCount(long unassginedCount) {
         this.unassginedCount = unassginedCount;
     }
 
-    public int getImcompeleteCount() {
-        return imcompeleteCount;
+    public long getIncompleteCount() {
+        return incompleteCount;
     }
 
-    public void setImcompeleteCount(int imcompeleteCount) {
-        this.imcompeleteCount = imcompeleteCount;
+    public void setIncompleteCount(long incompleteCount) {
+        this.incompleteCount = incompleteCount;
     }
 
-    public int getCompeleteCount() {
-        return compeleteCount;
+    public long getCompleteCount() {
+        return completeCount;
     }
 
-    public void setCompeleteCount(int compeleteCount) {
-        this.compeleteCount = compeleteCount;
+    public void setCompleteCount(long completeCount) {
+        this.completeCount = completeCount;
     }
 
-    public int getUserCompeleteCount() {
-        return userCompeleteCount;
+    public long getUserCompleteCount() {
+        return userCompleteCount;
     }
 
-    public void setUserCompeleteCount(int userCompeleteCount) {
-        this.userCompeleteCount = userCompeleteCount;
+    public void setUserCompleteCount(long userCompleteCount) {
+        this.userCompleteCount = userCompleteCount;
     }
 }

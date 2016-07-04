@@ -38,7 +38,7 @@ define([
                 _.extend(data, {"searchCondition": this.searchInfo.searchCondition});
 
                 self.hsCodeInfoService.init(data).then(function (res) {
-                    self.hsSettedData = res.data;
+                    self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = self.hsSettedData.hsCodeList;
                     self.hsCodeValue = self.hsSettedData.hsCodeValue;
                     console.log(self.hsSettedData);
@@ -60,7 +60,9 @@ define([
             save: function (list) {
                 var self = this;
                 if (list.selectedValue) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                self.notify.warning('请继续完善税号设置');
+                else {
+                    self.notify.warning('请继续完善税号设置');
+                }
             },
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) {

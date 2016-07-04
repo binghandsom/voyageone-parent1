@@ -73,8 +73,7 @@ define([
                 var self = this;
                 var req = angular.copy(self.vm.taskDetail);
                 req.customProps = req.customProps.filter(function (customProp) {
-                    //TODO feedAttr可能需要改变 注意相应页面也要跟着改
-                    return (customProp.feedAttr && customProp.feedAttrCn);
+                    return (customProp.feedAttrCn);
                 });
                 self.translationService.save(req).then(function (res) {
                     self.vm.taskSummary = res.data.taskSummary;
@@ -88,7 +87,7 @@ define([
                 var self = this;
                 var req = angular.copy(self.vm.taskDetail);
                 req.customProps = req.customProps.filter(function (customProp) {
-                    return (customProp.feedAttr && customProp.feedAttrCn);
+                    return (customProp.feedAttrCn);
                 });
                 self.translationService.submit(req).then(function (res) {
                     self.vm.taskInfo = res.data.taskInfo;
@@ -114,7 +113,7 @@ define([
             },
 
             // 查询页数跳转
-            searchPage: function(page) {
+            searchPage: function (page) {
                 var self = this;
                 self.searchPageSettings.curr = !page ? self.searchPageSettings.curr : page;
                 var searchInfo = {
@@ -153,16 +152,35 @@ define([
                     return;
                 }
                 var picList = [];
-                for (var attr in item.commonFields) {
-                    if (attr.indexOf("images1") >= 0) {
-                        var image = _.map(item.commonFields[attr], function (entity) {
-                            var imageKeyName = "image" + attr.substring(6, 7);
-                            return entity[imageKeyName] != null ? entity[imageKeyName] : "";
-                        });
-                        picList.push(image);
+                if (item.commonFields) {
+                    for (var attr in item.commonFields) {
+                        if (attr.indexOf("images1") >= 0) {
+                            var image = _.map(item.commonFields[attr], function (entity) {
+                                var imageKeyName = "image" + attr.substring(6, 7);
+                                return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+                            });
+                            picList.push(image);
+                        }
                     }
+                } else if (item.image1) {
+                    picList.push(item.image1);
                 }
                 this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
+            },
+
+            // 翻译状态转换
+            getStatusNameFromStatusValue: function (status) {
+                if (status == 0)
+                    return "未翻译";
+                else if (status == 1)
+                    return "已翻译";
+                else return "未知";
+            },
+
+            // 时间戳转换
+            getDateTimeFromTimeStamp: function (timeStamp) {
+                var date = new Date(timeStamp);
+                return date;
             },
 
             // 跳转链接

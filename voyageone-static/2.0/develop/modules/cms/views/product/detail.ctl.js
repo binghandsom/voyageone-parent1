@@ -12,7 +12,8 @@ define([
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
     './feed.component.ctl',
-    './master.component.ctl'
+    './master.component.ctl',
+    './jgj.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -58,7 +59,10 @@ define([
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
-                return item.value > 20 && item.value < 2000;
+                return item.value > 20 && item.value < 900;
+            },
+            cartIdFilter2:function(item){
+                return item.value >= 900;
             },
             lockProduct:function(domId){
                 var self = this;
