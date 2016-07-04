@@ -321,7 +321,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                      // 获取类目属性匹配关系(指定的主类目)
 //                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());  // delete desmond 2016/07/04
-                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getCatPath() != null) {
+                     if (cmsProductParam.getCommon() != null && cmsProductParam.getCommon().getCatPath() != null) {
                          newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      }
 
@@ -1226,7 +1226,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 String catPath = newMapping.getMainCategoryPath();
                 common.setCatId(MD5.getMD5(catPath)); // 主类目id
                 common.setCatPath(catPath); // 主类目path
+            } else {   // add desmond 2016/07/04 start
+                // 设置初期值
+                common.setCatId(""); // 主类目id
+                common.setCatPath(""); // 主类目path
             }
+
+            // 分平台属性
+            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+            // 追加P0(主数据)平台属性
+            CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
+            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), "0");
+            if (groupP0 == null) {
+                platformP0.setMainProductCode(common.getFields().getCode());
+            } else {
+                platformP0.setMainProductCode(groupP0.getMainProductCode());
+            }
+            platforms.put("P0", platformP0);
+            // add desmond 2016/07/04 end
 
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
@@ -1290,7 +1307,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // update desmond 2016/07/01 end
 
             // --------- platform ------------------------------------------------------
-            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+//            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();  // delete desmond 2016/07/04
             List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             // 取得新的主类目对应的平台类目
             if (newMapping != null) {
@@ -1311,8 +1328,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 if (group == null) {
                     platform.setpIsMain(1);
+                    platform.setMainProductCode(common.getFields().getCode());  // add desmond 2016/07/04
                 } else {
                     platform.setpIsMain(0);
+                    platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
                 }
 
                 // 如果新的主类目对应的平台类目存在，那么设定
@@ -1703,6 +1722,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             } else {
                 platforms = product.getPlatforms();
             }
+
+            // add desmond 2016/07/04 start
+            // 追加P0(主数据)平台属性
+            if (platforms.get("P0") == null) {
+                CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
+
+                CmsBtProductGroupModel groupP0 = productGroupService.selectMainProductGroupByCode(feed.getChannelId(), product.getCommon().getFields().getCode(), 0);
+                if (groupP0 == null) {
+                    platformP0.setMainProductCode(product.getCommon().getFields().getCode());
+                } else {
+                    platformP0.setMainProductCode(groupP0.getMainProductCode());
+                }
+                platforms.put("P0", platformP0);
+            }
+            // add desmond 2016/07/04 end
+
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {

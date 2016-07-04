@@ -271,7 +271,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images1");
     }
     public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
-        setStringAttribute("images1", images1);
+        setAttribute("images1", images1);
     }
 
     //包装图片
