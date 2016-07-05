@@ -26,9 +26,9 @@ public class VmsConstants {
 		String COMMON_CONFIG_CODE = "0";
 
 		// CSV分隔符
-		String CSV_SPLIT_SYMBOL = "CSV_SPLIT_SYMBOL";
+		String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
 		// CSV文件编码
-		String CSV_ENCODE = "CSV_ENCODE";
+		String FEED_CSV_ENCODE = "FEED_CSV_ENCODE";
 
 
 	}

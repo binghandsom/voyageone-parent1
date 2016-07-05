@@ -1,15 +1,11 @@
 package com.voyageone.task2.vms.service;
 
 import com.csvreader.CsvReader;
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.*;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MD5;
@@ -24,30 +20,25 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import com.voyageone.service.model.vms.VmsBtFeedInfoTempModel;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
+import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.vms.VmsConstants;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 /**
  * 将Feed信息导入FeedInfo表
- *
+ * Created on 16/06/29.
  * @author jeff.duan
+ * @version 1.0
  */
 @Service
-public class VmsFeedFileImportService extends BaseTaskService {
+@RabbitListener(queues = "voyageone_mq_vms_feed_file_import")
+public class VmsFeedFileImportService extends BaseMQCmsService {
 
     public static final int SKU_INDEX = 0;
     public static final int PARENT_ID = 1;
@@ -67,10 +58,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
     public static final int BRAND = 15;
     public static final int MATERIALS = 16;
     public static final int VENDOR_PRODUCT_URL = 17;
-    /* attributeColumnStartIndex */
-    public static final int ATTRIBUTE_COLUMN_START_INDEX = 18;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private final NumberFormat numberFormatter = new DecimalFormat("#");
+
 
     public final static Map<Object, String> columnMap = new HashMap() {{
         put(SKU_INDEX, "sku");
@@ -111,10 +99,6 @@ public class VmsFeedFileImportService extends BaseTaskService {
         put("Watches", "Watches");
     }};
 
-
-    @Autowired
-    private VmsBtFeedFileDao vmsBtFeedFileDao;
-
     @Autowired
     private VmsBtFeedFileDaoExt vmsBtFeedFileDaoExt;
 
@@ -133,8 +117,6 @@ public class VmsFeedFileImportService extends BaseTaskService {
     @Autowired
     protected TransactionRunner transactionRunner;
 
-
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.VMS;
@@ -142,43 +124,20 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "VmsFeedFileImportJob";
+        return "VmsFeedFileImportService";
     }
 
     /**
-     * f将Feed信息导入FeedInfo表
+     * 将Feed信息导入FeedInfo表
      *
      * @param taskControlList job 配置
      * @throws Exception
      */
-    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-
-        // 允许运行的渠道取得
-        List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        if (orderChannelIdList != null && orderChannelIdList.size() > 0) {
-
-            // 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
-            checkFeedFileDBInfo(orderChannelIdList);
-
-            // 线程
-            List<Runnable> threads = new ArrayList<>();
-
-            // 根据渠道运行
-            for (final String orderChannelID : orderChannelIdList) {
-                threads.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 主逻辑
-                        new ImportFeedFile(orderChannelID).doRun();
-                    }
-                });
-            }
-
-            runWithThreadPool(threads, taskControlList, orderChannelIdList.size());
-        }
+    @Override
+    public void onStartup(Map<String, Object> messageMap) throws Exception {
+        String channelId = (String) messageMap.get("channelId");
+        new ImportFeedFile(channelId).doRun();
     }
-
 
     /**
      * 按渠道进行导入
@@ -207,12 +166,9 @@ public class VmsFeedFileImportService extends BaseTaskService {
             // 存在需要导入的Feed文件
             if (model != null) {
                 File feedFile = new File(model.getFileName());
-                // error内容
-                StringBuilder stringBuilder = new StringBuilder();
                 // 文件存在的话那么处理
                 if (feedFile.exists()) {
                     $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
-                    // Map<String, CmsBtFeedInfoModel> feedInfoMap = readExcel(feedFile, stringBuilder);
                     // 把Feed数据插入vms_bt_feed_info_temp表
                     boolean result = readCsvToDB(feedFile);
                     if (!result) {
@@ -221,6 +177,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     }
                     $info("Feed文件处理结束,channel：" + channel.getFull_name());
                 } else {
+                    // TODO 文件导入错误
                     // 一般情况下不可能发生，除非手动删除文件
                     $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
                 }
@@ -307,6 +264,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     }
                     $info("***************处理剩余件数:" + String.valueOf(i*100) + ",channel：" + channel.getFull_name());
                     for (VmsBtFeedInfoTempModel otherModel : otherList) {
+                        // parent-id(%s) is invalidate.
+                        addErrorMessage(errorList, "8000004", new Object[]{otherModel.getParentId()}, otherModel.getRow(), columnMap.get(PARENT_ID));
                         // sku的共通属性check
                         checkSkuCommon(otherModel, errorList);
                     }
@@ -316,7 +275,6 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFilePath = createErrorFile(errorList);
-
                     // 把文件管理的状态变为3：导入错误
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
@@ -325,6 +283,16 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     // 更新内容
                     feedFileModel.setErrorFilePath(feedErrorFilePath);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
+                } else {
+                    // 把文件管理的状态变为2：导入成功
+                    VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
+                    // 更新条件
+                    feedFileModel.setChannelId(channel.getOrder_channel_id());
+                    feedFileModel.setFileName(feedFilePath);
+                    // 更新内容
+                    feedFileModel.setErrorFilePath("");
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 }
             } catch (IOException e) {
@@ -919,7 +887,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
                 // 取得CSV分隔符
                 VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
-                        , VmsConstants.ChannelConfig.CSV_SPLIT_SYMBOL
+                        , VmsConstants.ChannelConfig.FEED_CSV_SPLIT_SYMBOL
                         ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
                 if (vmsChannelConfigBean != null) {
                     csvSplitSymbol = vmsChannelConfigBean.getConfigValue1().charAt(0);
@@ -927,7 +895,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
                 // 取得CSV分隔符
                 vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
-                        , VmsConstants.ChannelConfig.CSV_ENCODE
+                        , VmsConstants.ChannelConfig.FEED_CSV_ENCODE
                         ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
                 if (vmsChannelConfigBean != null) {
                     csvEncode = vmsChannelConfigBean.getConfigValue1();
@@ -1244,564 +1212,6 @@ public class VmsFeedFileImportService extends BaseTaskService {
             }
         }
 
-//        public boolean insertFeedInfo(List<VmsBtFeedInfoTempModel> feedInfoTempModels) {
-//            boolean isSuccess = true;
-//
-//            for (VmsBtFeedInfoTempModel feedInfoTemp : feedInfoTempModels) {
-//
-//                if (superfeeddao.insertSuperfeedJEInfo(superfeed) <= 0) {
-//                    $info("产品信息插入失败 InventoryNumber = " + superfeed.getInventoryNumber());
-//                }
-//            }
-//            return isSuccess;
-//        }
-
-//        private String getMd5(VmsBtFeedInfoTempModel model) {
-//            StringBuffer temp = new StringBuffer();
-//            temp.append(model.getSku());
-//            temp.append(model.getParentId());
-//            temp.append(model.getRelationshipType());
-//            temp.append(model.getVariationTheme());
-//            temp.append(model.getTitle());
-//            temp.append(model.getProductId());
-//            temp.append(model.getPrice());
-//            temp.append(model.getMsrp());
-//            temp.append(model.getQuantity());
-//            temp.append(model.getImages());
-//            temp.append(model.getDescription());
-//            temp.append(model.getShortDescription());
-//            temp.append(model.getProductOrigin());
-//            temp.append(model.getCategory());
-//            temp.append(model.getWeight());
-//            temp.append(model.getBrand());
-//            temp.append(model.getMaterials());
-//            temp.append(model.getVendorProductUrl());
-//            temp.append(model.getAttributeKey1());
-//            temp.append(model.getAttributeValue1());
-//            temp.append(model.getAttributeKey2());
-//            temp.append(model.getAttributeValue2());
-//            temp.append(model.getAttributeKey3());
-//            temp.append(model.getAttributeValue3());
-//            temp.append(model.getAttributeKey4());
-//            temp.append(model.getAttributeValue4());
-//            temp.append(model.getAttributeKey5());
-//            temp.append(model.getAttributeValue5());
-//            temp.append(model.getAttributeKey6());
-//            temp.append(model.getAttributeValue6());
-//            temp.append(model.getAttributeKey7());
-//            temp.append(model.getAttributeValue7());
-//            temp.append(model.getAttributeKey8());
-//            temp.append(model.getAttributeValue8());
-//            temp.append(model.getAttributeKey9());
-//            temp.append(model.getAttributeValue9());
-//            temp.append(model.getAttributeKey10());
-//            temp.append(model.getAttributeValue10());
-//            temp.append(model.getAttributeKey11());
-//            temp.append(model.getAttributeValue11());
-//            temp.append(model.getAttributeKey12());
-//            temp.append(model.getAttributeValue12());
-//            temp.append(model.getAttributeKey13());
-//            temp.append(model.getAttributeValue13());
-//            temp.append(model.getAttributeKey14());
-//            temp.append(model.getAttributeValue14());
-//            temp.append(model.getAttributeKey15());
-//            temp.append(model.getAttributeValue15());
-//            temp.append(model.getAttributeKey16());
-//            temp.append(model.getAttributeValue16());
-//            temp.append(model.getAttributeKey17());
-//            temp.append(model.getAttributeValue17());
-//            temp.append(model.getAttributeKey18());
-//            temp.append(model.getAttributeValue18());
-//            temp.append(model.getAttributeKey19());
-//            temp.append(model.getAttributeValue19());
-//            temp.append(model.getAttributeKey20());
-//            temp.append(model.getAttributeValue20());
-//            return  MD5.getMD5(temp.toString());
-//        }
-
-//        /**
-//         * 读入Feed文件，并做check，生成FeedInfoModel数据
-//         *
-//         * @param feedFile  导入Feed文件
-//         *
-//         * @return FeedInfoModel数据（列表）
-//         */
-//        private Map<String, CmsBtFeedInfoModel> readExcel(File feedFile, StringBuilder stringBuilder) {
-//            // Code列表
-//            Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
-//
-//            XSSFWorkbook wb = null;
-//            int attributeItemsNum = 0;
-//            try {
-//                wb = new XSSFWorkbook(new FileInputStream(feedFile));
-//            } catch (Exception e) {
-//                // Fail to read Feed File.
-//                addErrorMessage(stringBuilder, "8000001", null, "", "");
-//                return codeMap;
-//            }
-//
-//            Sheet sheet = wb.getSheet("Vo-Feed");
-//            if (sheet == null) {
-//                // Sheet Name[Vo-Feed] is not exist.
-//                addErrorMessage(stringBuilder, "8000007", null, "", "");
-//                return codeMap;
-//            }
-//
-//            // Parent-Id列表<Parent-Id, 个数>
-//            Map<String, Integer> parentIdMap = new HashMap<>();
-//            // 先所有数据循环一次，集计出所有Parent-ID列表<Parent-Id, 个数>和Code列表
-//            int index = 0;
-//            for (Row row : sheet) {
-//                String sku = getCellValue(row, SKU_INDEX);
-//                String parentId = getCellValue(row, PARENT_ID);
-//                // Sku不等于空白，Parent-ID等于空白，那么这行就是Code
-//                if (index != 0 && !StringUtils.isEmpty(sku) && StringUtils.isEmpty(parentId)) {
-//                    CmsBtFeedInfoModel model = codeMap.get(sku);
-//                    if (model == null) {
-//                        codeMap.put(sku, new CmsBtFeedInfoModel());
-//                    }
-//                }
-//                // 集计出所有Parent-ID列表
-//                if (index != 0 && !StringUtils.isEmpty(parentId)) {
-//                    Integer num = parentIdMap.get(parentId);
-//                    if (num == null) {
-//                        parentIdMap.put(parentId, new Integer(1));
-//                    } else {
-//                        parentIdMap.put(parentId, num + 1);
-//                    }
-//                }
-//                index++;
-//            }
-//
-//            // Sku列表
-//            Set<String> skuSet = new HashSet<>();
-//            index = 0;
-//            for (Row row : sheet) {
-//                if (index == 0) {
-//                    // attribute项目的个数取得
-//                    attributeItemsNum = readHeader(row);
-//                } else {
-//                    // 数据行
-//                    checkRecord(row, String.valueOf(index + 1), attributeItemsNum, stringBuilder, codeMap,  parentIdMap, skuSet);
-//                }
-//                index++;
-//            }
-//            return codeMap;
-//        }
-
-//        /**
-//         * attribute项目的个数取得
-//         *
-//         * @param row                   行
-//         * @return attribute项目的个数
-//         */
-//        private int readHeader(Row row) {
-//            int attributeItemsNum = 0;
-//            int attributeEndIndex;
-//            attributeEndIndex = ATTRIBUTE_COLUMN_START_INDEX;
-//
-//            for (int index = ATTRIBUTE_COLUMN_START_INDEX; ; index++) {
-//                String attributeName = getCellValue(row, index);
-//                // 直到Tile栏attribute的内容是空白
-//                if (StringUtils.isEmpty(attributeName)) {
-//                    // 设定最后一个attribute项目的索引
-//                    attributeEndIndex = index - 1;
-//                    if (attributeEndIndex < ATTRIBUTE_COLUMN_START_INDEX) {
-//                        attributeEndIndex = ATTRIBUTE_COLUMN_START_INDEX;
-//                    }
-//                    break;
-//                }
-//            }
-//
-//            // attribute项目的个数
-//            attributeItemsNum = (attributeEndIndex - ATTRIBUTE_COLUMN_START_INDEX + 1)/2;
-//
-//            return attributeItemsNum;
-//        }
-
-//        /**
-//         * check数据，并保存FeedInfo对象列表
-//         *
-//         * @param row 数据行
-//         * @param rowNum 行号
-//         * @param attributeItemsNum 自定义属性个数
-//         * @param codeMap Code列表<Code, CmsBtFeedInfoModel>
-//         * @param parentIdMap Parent-ID列表<Parent-Id, 个数>
-//         * @param skuSet 判断Sku是否重复
-//         *
-//         */
-//        private void checkRecord(Row row, String rowNum, int attributeItemsNum, StringBuilder stringBuilder,
-//                                 Map<String, CmsBtFeedInfoModel> codeMap, Map<String, Integer> parentIdMap, Set<String> skuSet) {
-//
-//            // 是否CodeLevel的数据
-//            boolean isCodeLevel = false;
-//            // 是否SkuLevel的数据
-//            boolean isSkuLevel = false;
-//
-//            // sku
-//            String sku = getCellValue(row, SKU_INDEX);
-//            // ClientSku必须输入
-//            if (StringUtils.isEmpty(sku)) {
-//                // Sku is required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
-//                return;
-//            } else {
-//                // ClientSku不能重复
-//                if (skuSet.contains(sku)) {
-//                    // sku is duplicated.
-//                    addErrorMessage(stringBuilder, "8000003", new Object[]{sku}, rowNum, columnMap.get(SKU_INDEX));
-//                    return;
-//                } else {
-//                    skuSet.add(sku);
-//                }
-//            }
-//
-//            // parent-id
-//            String parentId = getCellValue(row, PARENT_ID);
-//            // 如果parent-id不为空白,那么parent-id的指向必须存在，而且必须是Code级别的
-//            if (!StringUtils.isEmpty(parentId) && !codeMap.containsKey(parentId)) {
-//                // parent-id is invalidate..
-//                addErrorMessage(stringBuilder, "8000004", new Object[]{parentId}, rowNum, columnMap.get(PARENT_ID));
-//            }
-//
-//            // 如果parent-id为空白，那么这行是Code级别的数据
-//            if (StringUtils.isEmpty(parentId)) {
-//                isCodeLevel = true;
-//            }
-//
-//            // 如果parent-id不为空白，并且没有其他parent-id指向这行明细的Sku，那么这行就是Sku级别的数据
-//            if (!StringUtils.isEmpty(parentId) ||
-//                    (StringUtils.isEmpty(parentId) && !parentIdMap.containsKey(sku))) {
-//                isSkuLevel = true;
-//            }
-//
-//            // variation-theme
-//            String variationTheme = getCellValue(row, VARIATION_THEME);
-//
-//            // 如果这行是Sku，并且parent-id输入的情况
-//            if (isSkuLevel && !StringUtils.isEmpty(parentId)) {
-//                // 还有其他行的ParentId指向这行,那么variation-theme必须指定
-//                if (parentIdMap.get(parentId) >= 2 && StringUtils.isEmpty(variationTheme)) {
-//                    // variation-theme is Required.
-//                    addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(VARIATION_THEME)}, rowNum, columnMap.get(VARIATION_THEME));
-//                }
-//            }
-//
-//            // title
-//            String title = getCellValue(row, TITLE);
-//            // 如果这行是Code,那么title是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(title)) {
-//                // title is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(TITLE)}, rowNum, columnMap.get(TITLE));
-//            }
-//
-//            // product-id
-//            String productId = getCellValue(row, PRODUCT_ID);
-//            // 如果这行是Sku,那么product-id是必须的
-//            if (isSkuLevel && StringUtils.isEmpty(productId)) {
-//                // product-id is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(PRODUCT_ID)}, rowNum, columnMap.get(PRODUCT_ID));
-//            }
-//
-//            // price
-//            String price = getCellValue(row, PRICE);
-//            // 如果这行是Sku
-//            if (isSkuLevel) {
-//                // price是必须的,并且是大于0的数字
-//                if (StringUtils.isEmpty(price) || !StringUtils.isNumeric(price) || Float.valueOf(price) <= 0) {
-//                    // price must be a Number more than 0.
-//                    addErrorMessage(stringBuilder, "8000005", new Object[]{columnMap.get(PRICE)}, rowNum, columnMap.get(PRICE));
-//                }
-//            }
-//
-//            // msrp
-//            String msrp = getCellValue(row, MSRP);
-//            // 如果这行是Sku,并且MSRP有值
-//            if (isSkuLevel && !StringUtils.isEmpty(msrp)) {
-//                // msrp如果输入，必须是大于0的数字
-//                if (!StringUtils.isNumeric(msrp) || Float.valueOf(msrp) <= 0) {
-//                    // msrp must be a Number more than 0.
-//                    addErrorMessage(stringBuilder, "8000005", new Object[]{columnMap.get(MSRP)}, rowNum, columnMap.get(MSRP));
-//                }
-//            }
-//
-//            // quantity
-//            String quantity = getCellValue(row, QUANTITY);
-//            // 如果这行是Sku
-//            if (isSkuLevel) {
-//                // quantity是必须的,并且是大于0的数字
-//                if (StringUtils.isEmpty(quantity) || !StringUtils.isDigit(quantity)) {
-//                    // quantity must be a positive Integer.
-//                    addErrorMessage(stringBuilder, "8000006", new Object[]{columnMap.get(QUANTITY)}, rowNum, columnMap.get(QUANTITY));
-//                }
-//            }
-//
-//            // images
-//            String images = getCellValue(row, IMAGES);
-//            // 如果这行是Code,那么images是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(images)) {
-//                // images is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(IMAGES)}, rowNum, columnMap.get(IMAGES));
-//            }
-//
-//            // description
-//            String description = getCellValue(row, DESCRIPTION);
-//            // 如果这行是Code,那么description是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(description)) {
-//                // description is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(DESCRIPTION)}, rowNum, columnMap.get(DESCRIPTION));
-//            }
-//
-//            // short-description
-//            String shortDescription = getCellValue(row, SHORT_DESCRIPTION);
-//            // 如果这行是Code,那么short-description是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(shortDescription)) {
-//                // short-description is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(SHORT_DESCRIPTION)}, rowNum, columnMap.get(SHORT_DESCRIPTION));
-//            }
-//
-//            // product-origin
-//            String productOrigin = getCellValue(row, PRODUCT_ORIGIN);
-//            // 如果这行是Code,那么product-origin是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(productOrigin)) {
-//                // product-origin is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(PRODUCT_ORIGIN)}, rowNum, columnMap.get(PRODUCT_ORIGIN));
-//            }
-//
-//            // category
-//            String category = getCellValue(row, CATEGORY);
-//            // TODO 处理Category的空格
-//            String[] categoryArray = category.split("-");
-//            category = "";
-//            for (String categoryItem : categoryArray) {
-//                // 不等于空的情况下，去掉首尾空格重新组装一下
-//                if (!StringUtils.isEmpty(categoryItem)) {
-//                    category += categoryItem.trim() + "-";
-//                }
-//            }
-//            // 去掉最后一个分隔符[-]
-//            if (!StringUtils.isEmpty(category)) {
-//                category.substring(category.length() - 1);
-//            }
-//            // 如果这行是Code,那么category是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(category)) {
-//                // category is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(CATEGORY)}, rowNum, columnMap.get(CATEGORY));
-//            }
-//
-//            // weight
-//            String weight = getCellValue(row, WEIGHT);
-//            // 如果这行是Code,那么weight是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(weight)) {
-//                // weight is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(WEIGHT)}, rowNum, columnMap.get(WEIGHT));
-//            }
-//
-//            // brand
-//            String brand = getCellValue(row, BRAND);
-//            // 如果这行是Code,那么brand是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(brand)) {
-//                // brand is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(BRAND)}, rowNum, columnMap.get(BRAND));
-//            }
-//
-//            // Materials
-//            String materials = getCellValue(row, MATERIALS);
-//            // 如果这行是Code,那么materials是必须的
-//            if (isCodeLevel && StringUtils.isEmpty(materials)) {
-//                // materials is Required.
-//                addErrorMessage(stringBuilder, "8000002", new Object[]{columnMap.get(MATERIALS)}, rowNum, columnMap.get(MATERIALS));
-//            }
-//
-//            // Vendor-Product-Url
-//            String vendorProductUrl = getCellValue(row, VENDOR_PRODUCT_URL);
-//
-//            // attribute中定义的Sku唯一识别标识
-//            String skuKey = "";
-//            int skuKeyColumnNum = 0;
-//            Map<String, List<String>> attributeMap = new HashMap<>();
-//            // attribute
-//            if (attributeItemsNum > 0) {
-//                for (int index = ATTRIBUTE_COLUMN_START_INDEX; index < ATTRIBUTE_COLUMN_START_INDEX + attributeItemsNum * 2; index = index + 2) {
-//                    String attributeKey =  getCellValue(row, index);
-//                    String attributeValue =  getCellValue(row, index + 1);
-//                    // 这条是Sku的话,找到这条的Key（variation-theme设定的字段）
-//                    if(isSkuLevel && !StringUtils.isEmpty(variationTheme) && variationTheme.equals(attributeKey)) {
-//                        if (StringUtils.isEmpty(skuKey)) {
-//                            skuKey = attributeValue;
-//                            skuKeyColumnNum = (index - ATTRIBUTE_COLUMN_START_INDEX)/2 + 1;
-//                        } else {
-//                            // skuKey列重复
-//                            // attribute-key is duplicated.
-//                            addErrorMessage(stringBuilder, "8000009", null, rowNum, "attribute-key-" + (index - ATTRIBUTE_COLUMN_START_INDEX)/2 + 1);
-//                        }
-//                    }
-//                    // 这条是Code的话,attribute信息设定的话加入attribute列表
-//                    if (isCodeLevel && !StringUtils.isEmpty(attributeKey) && !StringUtils.isEmpty(attributeValue)) {
-//                        List<String> attributeContent = new ArrayList<>();
-//                        attributeContent.add(attributeValue);
-//                        if (attributeMap.get(attributeKey) == null) {
-//                            attributeMap.put(attributeKey, attributeContent);
-//                        } else {
-//                            // attribute重复
-//                            // attribute-key is duplicated.
-//                            addErrorMessage(stringBuilder, "8000009", null, rowNum, "attribute-key-" + (index - ATTRIBUTE_COLUMN_START_INDEX)/2 + 1);
-//                        }
-//                    }
-//                }
-//            }
-//            // 这条是Sku的话,variation-theme设定了，但是attribute中没有设定skuKey的话，提示错误
-//            if (isSkuLevel && StringUtils.isEmpty(skuKey) && !StringUtils.isEmpty(variationTheme)) {
-//                // %s(variation-theme) must be set in attribute.
-//                addErrorMessage(stringBuilder, "8000008", new Object[]{variationTheme}, rowNum, "attribute");
-//            }
-//
-//            // 这行是Code级别的话，生成CmsBtFeedInfoModel
-//            if (isCodeLevel) {
-//                CmsBtFeedInfoModel feedInfo = codeMap.get(sku);
-//                feedInfo.setCode(sku);
-//                feedInfo.setModel(sku);
-//                feedInfo.setCategory(category);
-//                feedInfo.setCatId(MD5.getMD5(category));
-//                feedInfo.setName(title);
-//                feedInfo.setImage(Arrays.asList(images.split(",")));
-//                feedInfo.setLongDescription(description);
-//                feedInfo.setShortDescription(shortDescription);
-//                feedInfo.setOrigin(productOrigin);
-//                feedInfo.setWeight(weight);
-//                feedInfo.setBrand(brand);
-//                feedInfo.setMaterial(materials);
-//                feedInfo.setClientProductURL(vendorProductUrl);
-//                feedInfo.setAttribute(attributeMap);
-//            }
-//
-//            // 这行是Sku级别的话，取得Code级别的CmsBtFeedInfoModel加入Sku
-//            if (isSkuLevel) {
-//                CmsBtFeedInfoModel feedInfo = null;
-//                // 如果parent-id不为空，那么通过parent-id取到Code级别的CmsBtFeedInfoModel
-//                if (!StringUtils.isEmpty(parentId)) {
-//                    feedInfo = codeMap.get(parentId);
-//                } else {
-//                    // 否则通过sku取到Code级别的CmsBtFeedInfoModel
-//                    feedInfo = codeMap.get(sku);
-//                }
-//
-//                // 取得sku列表并且加入
-//                List<CmsBtFeedInfoModel_Sku> skusModel = feedInfo.getSkus();
-//                if (skusModel == null) {
-//                    skusModel = new ArrayList<>();
-//                    feedInfo.setSkus(skusModel);
-//                }
-//                // 先check一下
-//                for (CmsBtFeedInfoModel_Sku skuModel : skusModel) {
-//                    // 同一个parent-id下， product-id重复的话，报错
-//                    if (!StringUtils.isEmpty(productId)) {
-//                        if (productId.equals(skuModel.getBarcode())) {
-//                            // %s must be a unique value in same parent-id.
-//                            addErrorMessage(stringBuilder, "8000010", new Object[]{columnMap.get(PRODUCT_ID)}, rowNum, columnMap.get(PRODUCT_ID));
-//                        }
-//                    }
-//                    // 同一个parent-id下， skuKey重复的话，报错
-//                    if (!StringUtils.isEmpty(skuKey) && !StringUtils.isEmpty(variationTheme)) {
-//                        if ((feedInfo.getCode() + skuKey).equals(skuModel.getSku())) {
-//                            // %s must be a unique value in same parent-id.
-//                            addErrorMessage(stringBuilder, "8000010", new Object[]{variationTheme}, rowNum, "attribute-key-" + skuKeyColumnNum);
-//                        }
-//                    }
-//                }
-//                // 创建Sku
-//                CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
-//                skuModel.setBarcode(productId);
-//                skuModel.setClientSku(sku);
-//                // variation-theme是空的话，sku=client_sku
-//                if (StringUtils.isEmpty(variationTheme)) {
-//                    skuModel.setSku(sku);
-//                    skuModel.setSize("oneSize");
-//                } else {
-//                    // variation-theme不是空的话，sku= code + variation-theme指定字段的唯一值
-//                    skuModel.setSku(feedInfo.getCode() + skuKey);
-//                    skuModel.setSize(skuKey);
-//                }
-//                skuModel.setImage(Arrays.asList(images.split(",")));
-//                if (!StringUtils.isEmpty(quantity)) {
-//                    skuModel.setQty(new Integer(quantity));
-//                }
-//                if (!StringUtils.isEmpty(msrp)) {
-//                    skuModel.setPriceClientMsrp(new BigDecimal(msrp).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//                } else {
-//                    if (!StringUtils.isEmpty(price)) {
-//                        skuModel.setPriceClientMsrp(new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//                    }
-//                }
-//
-//                if (!StringUtils.isEmpty(price)) {
-//                    skuModel.setPriceClientRetail(new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//                    skuModel.setPriceCurrent(new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//                }
-//
-//                skusModel.add(skuModel);
-//            }
-//        }
-
-
-
-
-
-
-
-//        /**
-//         * 返回单元格值
-//         *
-//         * @param row 行
-//         * @param col 列
-//         * @return 单元格值
-//         */
-//        public String getCellValue(Row row, int col) {
-//            if (row == null) return "";
-//            Cell cell = row.getCell(col);
-//            if (cell == null) return "";
-//            String result = getCellValue(cell);
-//            if (result == null) {
-//                result = "";
-//            }
-//            return result.trim();
-//        }
-//
-//        public String getCellValue(Cell cell) {
-//            String ret;
-//            switch (cell.getCellType()) {
-//                case Cell.CELL_TYPE_BLANK:
-//                    ret = "";
-//                    break;
-//                case Cell.CELL_TYPE_BOOLEAN:
-//                    ret = String.valueOf(cell.getBooleanCellValue());
-//                    break;
-//                case Cell.CELL_TYPE_ERROR:
-//                    ret = null;
-//                    break;
-//                case Cell.CELL_TYPE_FORMULA:
-//                    Workbook wb = cell.getSheet().getWorkbook();
-//                    CreationHelper crateHelper = wb.getCreationHelper();
-//                    FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
-//                    ret = getCellValue(evaluator.evaluateInCell(cell));
-//                    break;
-//                case Cell.CELL_TYPE_NUMERIC:
-//                    if (DateUtil.isCellDateFormatted(cell)) {
-//                        ret = simpleDateFormat.format(cell.getDateCellValue());
-//                    } else {
-//                        ret = numberFormatter.format(cell.getNumericCellValue());
-//                    }
-//                    break;
-//                case Cell.CELL_TYPE_STRING:
-//                    ret = cell.getStringCellValue();
-//                    break;
-//                default:
-//                    ret = null;
-//            }
-//
-//            return ret;
-//        }
-
         /**
          * 追加ErrorMessage
          *
@@ -1865,13 +1275,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
          * return Feed错误结果文件的路径
          */
         private String createErrorFile(StringBuilder stringBuilder) throws IOException {
-            $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
             // 取得Feed文件检查结果路径
-            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
-            feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
-            // 创建文件目录
-            FileUtils.mkdirPath(feedErrorFilePath);
-            feedErrorFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
+            String feedErrorFilePath = createErrorFilePath();
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
                 byte[] contentInBytes = stringBuilder.toString().getBytes();
                 outputStream.write(contentInBytes);
@@ -1889,13 +1294,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
          * return Feed错误结果文件的路径
          */
         private String createErrorFile(List<Map<String, Object>> errorList) throws IOException {
-            $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
             // 取得Feed文件检查结果路径
-            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
-            feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
-            // 创建文件目录
-            FileUtils.mkdirPath(feedErrorFilePath);
-            feedErrorFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
+            String feedErrorFilePath = createErrorFilePath();
             StringBuilder stringBuilder = new StringBuilder();
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
                 for (Map<String, Object> error : errorList) {
@@ -1910,59 +1310,21 @@ public class VmsFeedFileImportService extends BaseTaskService {
             }
             return feedErrorFilePath;
         }
-    }
 
-
-
-
-
-
-
-    /**
-     * 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
-     *
-     * @param orderChannelIdList 渠道列表
-     */
-    public void checkFeedFileDBInfo( List<String> orderChannelIdList) {
-
-        // 取得Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
-
-        // 按渠道进行处理
-        for (final String orderChannelID : orderChannelIdList) {
-            // 这个渠道的Feed文件的根目录
-            File root = new File(feedFilePath + "/" + orderChannelID + "/");
-            // 扫描根目录下面的所有文件（不包含子目录）
-            File[] files = root.listFiles();
-            // 如果存在文件，那么逐个处理
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    // 只处理文件，跳过目录
-                    if (!file.isDirectory()) {
-                        // 只处理扩展名为.xlsx的文件
-                        String fileName = file.getName();
-                        if (fileName.lastIndexOf(".csv") > -1) {
-                            if (".csv".equals(fileName.substring(fileName.length() - 4))) {
-                                // 看看文件信息是否在vms_bt_feed_file表中存在
-                                Map<String, Object> param = new HashMap<>();
-                                param.put("channelId", orderChannelID);
-                                param.put("fileName", file.getPath());
-                                List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDao.selectList(param);
-                                // 不存在说明是客户通过FTP直接传的，需要新建文件信息
-                                if (feedFileList == null || feedFileList.size() == 0) {
-                                    VmsBtFeedFileModel model = new VmsBtFeedFileModel();
-                                    model.setChannelId(orderChannelID);
-                                    model.setFileName(file.getAbsolutePath());
-                                    model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
-                                    model.setCreater(getTaskName());
-                                    model.setModifier(getTaskName());
-                                    vmsBtFeedFileDao.insert(model);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        /**
+         * 生成Feed错误结果文件路径
+         *
+         * return Feed错误结果文件路径
+         */
+        private String createErrorFilePath() {
+            $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
+            // 取得Feed文件检查结果路径
+            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+            feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
+            // 创建文件目录
+            FileUtils.mkdirPath(feedErrorFilePath);
+            feedErrorFilePath += "Feed_Check_Result_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
+            return feedErrorFilePath;
         }
     }
 }
