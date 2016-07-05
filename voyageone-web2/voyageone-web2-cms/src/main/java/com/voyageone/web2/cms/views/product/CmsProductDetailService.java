@@ -608,7 +608,9 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
-        if ((oldProduct.getCommon().getCatId() == null && commonModel.getCatId() != null) || !oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
+        if(oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
+        if(commonModel.getCatId() == null) commonModel.setCatId("");
+        if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct, modifier);
 
             // 更新 feedinfo表中的updFlg 重新出发 feed->mast
