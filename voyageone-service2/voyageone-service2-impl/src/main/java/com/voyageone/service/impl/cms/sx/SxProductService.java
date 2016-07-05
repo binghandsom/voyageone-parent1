@@ -912,16 +912,19 @@ public class SxProductService extends BaseService {
                 continue;
             }
             mapSp.put(field.getId(), field);
-            if ("hscode".equals(field.getId())) {
-                // HS海关代码
-                if (!sxData.isHasSku()) {
-                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
-                    ((InputField) field).setValue(propValue.split(",")[0]);
-                    retMap.put(field.getId(), field);
-                }
-                continue;
-            }
+            // deleted by morse.lu 2016/07/04 start
+            // hscode不做Mapping了，写死从个人税号里去取
+//            if ("hscode".equals(field.getId())) {
+//                // HS海关代码
+//                if (!sxData.isHasSku()) {
+//                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+//                    ((InputField) field).setValue(propValue.split(",")[0]);
+//                    retMap.put(field.getId(), field);
+//                }
+//                continue;
+//            }
+            // deleted by morse.lu 2016/07/04 end
             Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
             if (resolveField != null) {
                 if (retMap == null) {
@@ -939,6 +942,18 @@ public class SxProductService extends BaseService {
                 continue;
             } else {
                 // 直接取product表的fields的值
+                // added by morse.lu 2016/07/04 start
+                // hscode不做Mapping了，写死从个人税号里去取
+                if ("hscode".equals(field.getId())) {
+                    // HS海关代码
+                    if (!sxData.isHasSku()) {
+                        String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        retMap.put(field.getId(), field);
+                    }
+                    continue;
+                }
+                // added by morse.lu 2016/07/04 end
                 // modified by morse.lu 2016/06/24 start
 //                MappingBean mappingBean = mapProp.get(field.getId());
 //                if (mappingBean == null) {
@@ -1908,7 +1923,8 @@ public class SxProductService extends BaseService {
             ComplexValue complexValue = new ComplexValue();
             complexField.setComplexValue(complexValue);
 
-            boolean isFirst = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
+            boolean isFirst = true;
+            boolean isFirstReq = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
             Field fieldDef = null;
             for (Field subField : complexField.getFields()) {
                 // 商品参数,商品展示,视频推介等
@@ -1927,8 +1943,9 @@ public class SxProductService extends BaseService {
                                 }
                             }
 
-                            if (isRequest || contentField.getId().equals("desc_module_5_cat_mod_content") ) {
-                                // 必须，或者是商品参数(用于默认项)
+                            if (isRequest || isFirst) {
+                                // 必须，或者第一次(用于默认项)
+                                isFirst = false;
                                 Field valueSubField = deepCloneField(subField);
                                 complexValue.put(valueSubField);
                                 ComplexField valueSubComplexField = (ComplexField) valueSubField;
@@ -1938,8 +1955,8 @@ public class SxProductService extends BaseService {
                                 subComplexValue.put(valueContentField);
                                 fieldDef = valueContentField;
 
-                                if (isFirst && isRequest) {
-                                    isFirst = false;
+                                if (isFirstReq && isRequest) {
+                                    isFirstReq = false;
                                     ((InputField) valueContentField).setValue(descriptionValue);
                                 } else {
                                     ((InputField) valueContentField).setValue(descriptionBlankValue);
@@ -1961,14 +1978,9 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            if (isFirst) {
-                // 没有必须的,姑且先放在一个叫"商品参数"的field里面,不确定是不是每个都有这个属性,以后发生特例再说
-                if (fieldDef != null) {
-                    ((InputField) fieldDef).setValue(descriptionValue);
-                } else {
-                    sxData.setErrorMessage(errorMsg);
-                    throw new BusinessException(String.format("类目[%s]的商品描述里没有必须属性,且没有一个叫\"商品参数\"的属性", sxData.getMainProduct().getCommon().getCatPath()));
-                }
+            if (isFirstReq) {
+                // 没有必须的,放在第一个属性里
+                ((InputField) fieldDef).setValue(descriptionValue);
             }
         } else {
             sxData.setErrorMessage(errorMsg);
