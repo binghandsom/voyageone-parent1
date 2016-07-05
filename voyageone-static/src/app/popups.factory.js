@@ -9,10 +9,10 @@ define([
 ], function (_, require) {
 
     var popups = {
-        test: {
-            templateUrl: "views/pop/bulkUpdate/addToPromotion.tpl.html",
-            controllerUrl: "modules/cms/views/pop/bulkUpdate/addToPromotion.ctl",
-            controller: 'popAddToPromotionCtl',
+        addShipment: {
+            templateUrl: "views/pop/addShipment/index.tpl.html",
+            controllerUrl: "views/pop/addShipment/index.ctl",
+            controller: 'AddShipmentController as ctrl',
             backdrop: 'static',
             size: 'md'
         }
@@ -39,8 +39,8 @@ define([
         }
 
         return {
-            test: function () {
-                open(popups.test);
+            openAddShipment: function () {
+                open(popups.addShipment);
             }
             // 在这里增加你的打开函数
         };
