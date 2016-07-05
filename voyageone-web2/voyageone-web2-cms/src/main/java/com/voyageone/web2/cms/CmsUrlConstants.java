@@ -471,11 +471,13 @@ public interface CmsUrlConstants {
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
-        interface PRICE {
+        interface PRICE_LOG {
 
-            String ROOT = "/cms/pop/history_price/";
+            String ROOT = "/cms/price/log";
 
-            String GET_PRICE_HISTORY = "getPriceHistory";
+            String PAGE = "page";
+
+            String EXPORT = "export";
         }
 
         interface PROMOTION {
@@ -500,15 +502,6 @@ public interface CmsUrlConstants {
 
     // 产品编辑
     interface PRODUCT{
-
-        interface PRICE_LOG {
-
-            String ROOT = "/cms/price/log";
-
-            String PAGE = "page";
-
-            String EXPORT = "export";
-        }
 
         interface DETAIL {
 

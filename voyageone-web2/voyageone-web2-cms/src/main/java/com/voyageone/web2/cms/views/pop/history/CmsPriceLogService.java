@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.product;
+package com.voyageone.web2.cms.views.pop.history;
 
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;

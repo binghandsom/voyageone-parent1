@@ -1,10 +1,10 @@
-package com.voyageone.web2.cms.views.product;
+package com.voyageone.web2.cms.views.pop.history;
 
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants.PRODUCT.PRICE_LOG;
+import com.voyageone.web2.cms.CmsUrlConstants.POP.PRICE_LOG;
 import com.voyageone.web2.cms.bean.PriceLogBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
