@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.cms.jumei2;
+
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -20,10 +21,12 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.JmBtDealImportDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,27 +46,19 @@ public class JmBtDealImportService extends BaseService {
     @Autowired
     CmsBtJmSkuDao daoCmsBtJmSku;
     @Autowired
-    private MongoSequenceService commSequenceMongoService; // DAO: Sequence
-    @Autowired
     CmsBtProductDao daoCmsBtProductDao;
-
     @Autowired
     CmsBtProductGroupDao daoCmsBtProductGroup;
     @Autowired
     TransactionRunner transactionRunner;
-    //    numIId
-//            platformPid
-//    publishTime
-//            onSaleTime
+
     @VOTransactional
-    public Object importJMOne(String channelId,String code)
-    {
+    public Object importJMOne(String channelId, String code) {
         StringBuilder sbResult = new StringBuilder();
         List<JMProductDealBean> listJMProductDealBean = daoExtJmBtDealImport.selectListProductDealByChannelId(channelId);
-        List<JMProductDealBean> page=new ArrayList<>();
-        for (JMProductDealBean deal:listJMProductDealBean) {
-            if(deal.getProductCode().equals(code))
-            {
+        List<JMProductDealBean> page = new ArrayList<>();
+        for (JMProductDealBean deal : listJMProductDealBean) {
+            if (deal.getProductCode().equals(code)) {
                 page.add(deal);
                 break;
             }
@@ -71,8 +66,9 @@ public class JmBtDealImportService extends BaseService {
         importPage(channelId, sbResult, page);
         return null;
     }
+
     @VOTransactional
-    public Object  importJM(String channelId) {
+    public Object importJM(String channelId) {
         StringBuilder sbResult = new StringBuilder();
         try {
             //取所有商品最后一次deal信息
@@ -81,56 +77,46 @@ public class JmBtDealImportService extends BaseService {
             for (List<JMProductDealBean> page : listPage) {
                 importPage(channelId, sbResult, page);
             }
-        }
-        catch (Exception ex )
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             $error("JmBtDealImportService.importJM error", ex);
             throw new BusinessException("JmBtDealImportService.importJM error", ex);
         }
         $info("JmBtDealImportService.importJM 导入成功");
-        $info("JmBtDealImportService.importJM"+sbResult.toString());
+        $info("JmBtDealImportService.importJM" + sbResult.toString());
         return true;
     }
 
-    private void importPage(String channelId, StringBuilder sbResult,List<JMProductDealBean> listJMProductDealBean) {
+    private void importPage(String channelId, StringBuilder sbResult, List<JMProductDealBean> listJMProductDealBean) {
         List<BulkUpdateModel> bulkProductList = new ArrayList<>();
         List<BulkUpdateModel> bulkGroupList = new ArrayList<>();
-        System.out.println("productCount:" + listJMProductDealBean.size());
         for (JMProductDealBean productDeal : listJMProductDealBean) {
             importProduct(sbResult, productDeal, bulkProductList, bulkGroupList);
         }
-        System.out.println("productCount end:" + new Date());
-        //CmsBtProduct        更新所有
-        if (bulkProductList.size() > 0) {
-            System.out.println("bulkProductList:" + bulkProductList.size() + "  " + new Date());
-            daoCmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, "system", "$set");
 
-            System.out.println("bulkProductList:" + bulkProductList.size() + "  " + new Date());
+        //CmsBtProduct        更新所有
+        if (!bulkProductList.isEmpty()) {
+            daoCmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, "system", "$set");
         }
         //CmsBtProductGroup   更新所有
-        if (bulkGroupList.size() > 0) {
-            System.out.println("bulkGroupList:" + bulkGroupList.size() + "  begin" + new Date());
+        if (!bulkGroupList.isEmpty()) {
             daoCmsBtProductGroup.bulkUpdateWithMap(channelId, bulkGroupList, "system", "$set", false);
-            System.out.println("bulkGroupList:" + bulkGroupList.size() + "  end" + new Date());
         }
     }
 
-    private void importProduct(StringBuilder sbResult,JMProductDealBean productDeal, List<BulkUpdateModel> bulkProductList, List<BulkUpdateModel> bulkGroupList) {
+    private void importProduct(StringBuilder sbResult, JMProductDealBean productDeal, List<BulkUpdateModel> bulkProductList, List<BulkUpdateModel> bulkGroupList) {
         JmBtDealImportModel modelJmBtDealImport = daoExtJmBtDealImport.selectJmBtDealImportModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         JmBtProductModel modelJmBtProduct = daoExtJmBtDealImport.selectJmBtProductModel(productDeal.getChannelId(), productDeal.getDealId(), productDeal.getProductCode());
         List<JmBtSkuModel> listModelJmBtSku = daoExtJmBtDealImport.selectListJmBtSkuModel(productDeal.getChannelId(), productDeal.getProductCode());
 
-        if (modelJmBtProduct == null)//不存在 sql可以查询出来  不用处理
-        {
-            sbResult.append("ChannelId:" + productDeal.getChannelId() + " DealId:" + productDeal.getDealId() + "  code:" + productDeal.getProductCode());
-            System.out.println("ChannelId:" + productDeal.getChannelId() + " DealId:" + productDeal.getDealId() + "  code:" + productDeal.getProductCode());
+        //不存在 sql可以查询出来  不用处理
+        if (modelJmBtProduct == null) {
+            sbResult.append("ChannelId:").append(productDeal.getChannelId()).append(" DealId:").append(productDeal.getDealId()).append("  code:").append(productDeal.getProductCode());
             return;
         }
         CmsBtProductModel modelCmsBtProduct = daoCmsBtProductDao.selectByCode(modelJmBtProduct.getProductCode(), modelJmBtProduct.getChannelId());
         if (modelCmsBtProduct == null) {
-            sbResult.append("mongodb不存在 " + "ChannelId:" + productDeal.getChannelId() + " DealId:" + productDeal.getDealId() + "  code:" + productDeal.getProductCode());
-            System.out.println("mongodb不存在 " + "ChannelId:" + productDeal.getChannelId() + " DealId:" + productDeal.getDealId() + "  code:" + productDeal.getProductCode());
+            sbResult.append("mongodb不存在 " + "ChannelId:").append(productDeal.getChannelId()).append(" DealId:").append(productDeal.getDealId()).append("  code:").append(productDeal.getProductCode());
             return;
         }
         insertCmsBtJmProduct(modelJmBtDealImport, modelJmBtProduct, modelCmsBtProduct);
@@ -138,7 +124,7 @@ public class JmBtDealImportService extends BaseService {
         insertCmsBtJmSkuModel(listModelJmBtSku, modelCmsBtProduct);
 
         //初始化CmsBtProduct更新数据
-        BulkUpdateModel modelProduct = getBulkUpdateProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku,modelCmsBtProduct);
+        BulkUpdateModel modelProduct = getBulkUpdateProductModel(modelJmBtDealImport, modelJmBtProduct, listModelJmBtSku, modelCmsBtProduct);
         bulkProductList.add(modelProduct);
 
         //初始化CmsBtProductGroup 更新数据
@@ -148,10 +134,8 @@ public class JmBtDealImportService extends BaseService {
 
     private void insertCmsBtJmProduct(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, CmsBtProductModel modelCmsBtProduct) {
         List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku = modelCmsBtProduct.getCommon().getSkus();
-        CmsBtProductModel_Field commonField=null;
-        if(modelCmsBtProduct.getCommon()!=null) {
-            commonField = modelCmsBtProduct.getCommon().getFields();
-        }
+        CmsBtProductModel_Field commonField = modelCmsBtProduct.getCommon().getFields();
+
         CmsBtJmProductModel modelCmsBtJmProduct = new CmsBtJmProductModel();
         modelCmsBtJmProduct.setAddressOfProduce(modelJmBtProduct.getAddressOfProduce());
         modelCmsBtJmProduct.setApplicableCrowd("");
@@ -167,22 +151,19 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setHsUnit(modelJmBtProduct.getHsUnit());
 //        modelCmsBtJmProduct.setImage1("");modelJmBtProduct.
         modelCmsBtJmProduct.setJumeiProductId(modelJmBtProduct.getJumeiProductId());
-        if(commonField!=null&&!StringUtils.isEmpty(commonField.getMaterialCn())) {
+        if (commonField != null && !StringUtils.isEmpty(commonField.getMaterialCn())) {
             modelCmsBtJmProduct.setMaterialCn(commonField.getMaterialCn());
-        }
-        else {
+        } else {
             modelCmsBtJmProduct.setMaterialCn("");
         }
-        if(commonField!=null&&!StringUtils.isEmpty(commonField.getMaterialEn())) {
+        if (commonField != null && !StringUtils.isEmpty(commonField.getMaterialEn())) {
             modelCmsBtJmProduct.setMaterialEn(commonField.getMaterialEn());
-        }
-        else {
+        } else {
             modelCmsBtJmProduct.setMaterialEn("");
         }
-        if(commonField!=null&&!StringUtils.isEmpty(commonField.getOrigin())) {
+        if (commonField != null && !StringUtils.isEmpty(commonField.getOrigin())) {
             modelCmsBtJmProduct.setOrigin(commonField.getOrigin());
-        }
-        else {
+        } else {
             modelCmsBtJmProduct.setOrigin("");
         }
         modelCmsBtJmProduct.setOriginJmHashId(modelJmBtDealImport.getJumeiHashId());
@@ -194,17 +175,16 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setProductMediumName(modelJmBtDealImport.getProductMediumName());
         modelCmsBtJmProduct.setProductNameCn(modelJmBtProduct.getProductName());
         modelCmsBtJmProduct.setProductShortName(modelJmBtDealImport.getProductShortName());
-        if(commonField!=null&&!StringUtils.isEmpty(commonField.getProductType())) {
+        if (commonField != null && !StringUtils.isEmpty(commonField.getProductType())) {
             modelCmsBtJmProduct.setProductType(commonField.getProductType());
-        }
-        else {
+        } else {
             modelCmsBtJmProduct.setProductType("");
         }
         modelCmsBtJmProduct.setRetailPrice(new BigDecimal(0));
         modelCmsBtJmProduct.setSalePrice(new BigDecimal(0));
         modelCmsBtJmProduct.setMsrpRmb(new BigDecimal(0));
         modelCmsBtJmProduct.setMsrpUsd(new BigDecimal(0));
-        if (listCmsBtProductModel_Sku != null && listCmsBtProductModel_Sku.size() > 0) {
+        if (listCmsBtProductModel_Sku != null && !listCmsBtProductModel_Sku.isEmpty()) {
             CmsBtProductModel_Sku sku = listCmsBtProductModel_Sku.get(0);
             modelCmsBtJmProduct.setMsrpRmb(BigDecimalUtil.getValue(sku.getPriceMsrp()));//priceMsrp
             modelCmsBtJmProduct.setMsrpUsd(BigDecimalUtil.getValue(sku.getClientMsrpPrice()));//clientMsrpPrice
@@ -221,9 +201,9 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setModified(new Date());
         try {
             daoCmsBtJmProduct.insert(modelCmsBtJmProduct);//CmsBtJmProduct
-        } catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
-        {
-            System.out.println("该数据已经存在,不再重复插入:" + modelJmBtProduct.getChannelId() + "-" + modelCmsBtJmProduct.getProductCode());
+        } catch (org.springframework.dao.DuplicateKeyException ex) {
+            //重复 不处理
+            $warn("该数据已经存在,不再重复插入:" + modelJmBtProduct.getChannelId() + "-" + modelCmsBtJmProduct.getProductCode());
         }
     }
 
@@ -234,9 +214,9 @@ public class JmBtDealImportService extends BaseService {
             CmsBtProductModel_Sku cmsBtProductModel_Sku = getCmsBtProductModel_Sku(modelJmBtSku.getSku(), listCmsBtProductModel_Sku);
             if (cmsBtProductModel_Sku == null) continue;
             CmsBtJmSkuModel modelCmsBtJmSku = new CmsBtJmSkuModel();
-            if (StringUtils.isEmpty(modelJmBtSku.getSku())) {
-                String aa = modelCmsBtJmSku.getSkuCode();
-            }
+//            if (StringUtils.isEmpty(modelJmBtSku.getSku())) {
+//                String aa = modelCmsBtJmSku.getSkuCode();
+//            }
             modelCmsBtJmSku.setSkuCode(modelJmBtSku.getSku());
             modelCmsBtJmSku.setChannelId(modelJmBtSku.getChannelId());
             modelCmsBtJmSku.setCmsSize(modelJmBtSku.getSize());//modelJmBtSku.getSize();
@@ -262,19 +242,17 @@ public class JmBtDealImportService extends BaseService {
             modelCmsBtJmSku.setCreater("system");
             try {
                 daoCmsBtJmSku.insert(modelCmsBtJmSku);//CmsBtJmSku
-
-            } catch (org.springframework.dao.DuplicateKeyException ex)//重复 不处理
-            {
-                System.out.println("该数据已经存在,不再重复插入:" + modelCmsBtJmSku.getChannelId() + "-" + modelCmsBtJmSku.getSkuCode());
+            } catch (org.springframework.dao.DuplicateKeyException ex) {
+                //重复 不处理
+                $warn("该数据已经存在,不再重复插入:" + modelCmsBtJmSku.getChannelId() + "-" + modelCmsBtJmSku.getSkuCode());
             }
         }
     }
 
     private CmsBtProductModel_Sku getCmsBtProductModel_Sku(String skuCode, List<CmsBtProductModel_Sku> listCmsBtProductModel_Sku) {
 
-        Stream<CmsBtProductModel_Sku> resultList= listCmsBtProductModel_Sku.stream().filter(o -> o.getSkuCode().equals(skuCode));
-        CmsBtProductModel_Sku result= resultList.findFirst().orElse(null);
-        return result;
+        Stream<CmsBtProductModel_Sku> resultList = listCmsBtProductModel_Sku.stream().filter(o -> o.getSkuCode().equals(skuCode));
+        return resultList.findFirst().orElse(null);
     }
 
     //    void importCmsBtProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku) {
@@ -288,9 +266,9 @@ public class JmBtDealImportService extends BaseService {
 //            platformPid
 //    publishTime
 //            onSaleTime
-        HashMap<String, Object>  queryMap = new HashMap<>();
-         queryMap.put("mainProductCode", modelJmBtProduct.getProductCode());
-         queryMap.put("cartId", 27);
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("mainProductCode", modelJmBtProduct.getProductCode());
+        queryMap.put("cartId", 27);
 
 
         HashMap<String, Object> updateMap = new HashMap<>();
@@ -307,7 +285,7 @@ public class JmBtDealImportService extends BaseService {
         return model;
     }
 
-    private BulkUpdateModel getBulkUpdateProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku,CmsBtProductModel modelCmsBtProduct) {
+    private BulkUpdateModel getBulkUpdateProductModel(JmBtDealImportModel modelJmBtDealImport, JmBtProductModel modelJmBtProduct, List<JmBtSkuModel> listModelJmBtSku, CmsBtProductModel modelCmsBtProduct) {
 
 //        1.pCatId未设置 处理
 //        2.pCatPath未设置     ? category_lv4_id fullPath  >  处理
@@ -321,7 +299,7 @@ public class JmBtDealImportService extends BaseService {
         CmsBtProductModel_Platform_Cart platform = modelCmsBtProduct.getPlatform(CartEnums.Cart.JM.getValue());// new CmsBtProductModel_Platform_Cart();
         platform.setCartId(CartEnums.Cart.JM.getValue());
         platform.setpCatId(String.valueOf(modelJmBtProduct.getCategoryLv4Id()));
-        if(modelJmBtProduct.getCategoryLv4Id()!=0) {
+        if (modelJmBtProduct.getCategoryLv4Id() != 0) {
             String catPath = daoExtJmBtDealImport.selectCategoryFullPath(modelJmBtProduct.getCategoryLv4Id());
             if (!StringUtils.isEmpty(catPath)) {
                 platform.setpCatPath(catPath);
@@ -340,23 +318,23 @@ public class JmBtDealImportService extends BaseService {
         platform.setpPublishTime(DateTimeUtil.getDateTime(modelJmBtProduct.getCreated(), null));
         platform.setpAttributeStatus("1");
         platform.setpAttributeSetter(modelJmBtDealImport.getCreater());
-        platform.setpStatus(CmsConstants.PlatformStatus.InStock.name());
+        platform.setpStatus(CmsConstants.PlatformStatus.InStock);
 
         //fields
-        BaseMongoMap<String, Object> fields = platform.getFields() == null ?  new BaseMongoMap<>() : platform.getFields();
-     // new BaseMongoMap<>();
-        fields.setAttribute("productNameCn",modelJmBtDealImport.getProductLongName());
+        BaseMongoMap<String, Object> fields = platform.getFields() == null ? new BaseMongoMap<>() : platform.getFields();
+        // new BaseMongoMap<>();
+        fields.setAttribute("productNameCn", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productNameEn", modelJmBtProduct.getForeignLanguageName());
         fields.setAttribute("productLongName", modelJmBtDealImport.getProductLongName());
         fields.setAttribute("productMediumName", modelJmBtDealImport.getProductMediumName());
-        fields.setAttribute("productShortName",modelJmBtDealImport.getProductShortName());
+        fields.setAttribute("productShortName", modelJmBtDealImport.getProductShortName());
         fields.setAttribute("originCn", modelJmBtProduct.getAddressOfProduce());
         fields.setAttribute("beforeDate", "无");
         fields.setAttribute("suitPeople", "时尚潮流人士");
         fields.setAttribute("userPurchaseLimit", "0");
         fields.setAttribute("specialExplain", modelJmBtProduct.getSpecialNote());//特殊说明
         fields.setAttribute("searchMetaTextCustom", modelJmBtDealImport.getSearchMetaTextCustom());
-        fields.setAttribute("attribute",modelJmBtProduct.getAttribute());
+        fields.setAttribute("attribute", modelJmBtProduct.getAttribute());
         if (platform.getFields() == null)
             platform.setFields(fields);
 
@@ -364,8 +342,8 @@ public class JmBtDealImportService extends BaseService {
         BaseMongoMap<String, Object> skuMap;
         for (JmBtSkuModel jmBtSkuModel : listModelJmBtSku) {
             skuMap = getMongoSku(skus, jmBtSkuModel.getSku()); //new BaseMongoMap<String, Object>();
-            if(skuMap == null) {
-                $error("code:"+modelJmBtDealImport.getProductCode()+" skuCode:" +jmBtSkuModel.getSku()+ "mongo不存在");
+            if (skuMap == null) {
+                $error("code:" + modelJmBtDealImport.getProductCode() + " skuCode:" + jmBtSkuModel.getSku() + "mongo不存在");
                 continue;
             }
             skuMap.setAttribute("jmSpuNo", jmBtSkuModel.getJumeiSpuNo());
@@ -379,7 +357,7 @@ public class JmBtDealImportService extends BaseService {
         updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
 
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("fields.code", modelJmBtProduct.getProductCode());
+        queryMap.put("common.fields.code", modelJmBtProduct.getProductCode());
         queryMap.put("channelId", modelJmBtProduct.getChannelId());
 
         BulkUpdateModel model = new BulkUpdateModel();
@@ -434,11 +412,11 @@ public class JmBtDealImportService extends BaseService {
 //            * cName
 //            * cNames
     }
-    BaseMongoMap<String, Object> getMongoSku(  List<BaseMongoMap<String, Object>> skus,String skuCode) {
+
+    BaseMongoMap<String, Object> getMongoSku(List<BaseMongoMap<String, Object>> skus, String skuCode) {
         if (skus == null)
             return null;
         Stream<BaseMongoMap<String, Object>> resultList = skus.stream().filter(o -> o.getStringAttribute("skuCode").equals(skuCode));
-        BaseMongoMap<String, Object> result = resultList.findFirst().orElse(null);
-        return result;
+        return resultList.findFirst().orElse(null);
     }
 }

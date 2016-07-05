@@ -65,8 +65,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
 
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
-        String errorMsg = "";
-        boolean isError = false;
+        //String errorMsg = "";
+        //boolean isError = false;
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = cmsBtJmPromotionImportTaskDao.select(JmBtPromotionImportTaskId);
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         try {
@@ -92,7 +92,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     private CallResult importExcel(CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask, String importPath) throws Exception {
         CallResult result = new CallResult();
-        boolean isError;
+        //boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         //"/usr/JMImport/"
@@ -145,7 +145,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveImport(modelCmsBtJmPromotion, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap, modelCmsBtJmPromotionImportTask.getCreater());
 
             //导出未通过check的记录
-            if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0) {
+            if (!listProducctErrorMap.isEmpty() || !listSkuErrorMap.isEmpty()) {
                 String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 String errorfilePath = importPath + "/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
@@ -153,7 +153,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 modelCmsBtJmPromotionImportTask.setErrorCode(2);
                 modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size() + listSkuErrorMap.size());
             }
-            if (listProductImport.size() == 0) {
+            if (listProductImport.isEmpty()) {
                 modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
             }
             modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
@@ -213,9 +213,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap, String userName) throws IllegalAccessException {
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
         //初始化
-        ProductSaveInfo saveInfo = null;
         for (ProductImportBean product : listProductImport) {
-            saveInfo = loadSaveInfo(model, listSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
+            ProductSaveInfo saveInfo = loadSaveInfo(model, listSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
             if (saveInfo != null) {
                 listSaveInfo.add(saveInfo);
             }
@@ -265,9 +264,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.productModel.setJmHashId("");
             saveInfo.productModel.setErrorMsg("");
             saveInfo.productModel.setPriceStatus(0);
-            saveInfo.productModel.setDealPrice(new BigDecimal(0));
-            saveInfo.productModel.setMarketPrice(new BigDecimal(0));
-            saveInfo.productModel.setDiscount(new BigDecimal(0));
+            saveInfo.productModel.setDealPrice(BigDecimal.valueOf(0));
+            saveInfo.productModel.setMarketPrice(BigDecimal.valueOf(0));
+            saveInfo.productModel.setDiscount(BigDecimal.valueOf(0));
             saveInfo.productModel.setSkuCount(0);
             saveInfo.productModel.setQuantity(0);
             saveInfo.productModel.setDealEndTimeStatus(0);
@@ -310,7 +309,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
         loadSaveSku(saveInfo, listProductSkuImport, userName);
 
-        if (saveInfo.skuList.size() > 0) {
+        if (!saveInfo.skuList.isEmpty()) {
             saveInfo.productModel.setMarketPrice(saveInfo.skuList.get(0).getMarketPrice());
             saveInfo.productModel.setDealPrice(saveInfo.skuList.get(0).getDealPrice());
             saveInfo.productModel.setDiscount(saveInfo.skuList.get(0).getDiscount());//折扣
@@ -376,8 +375,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                     saveInfo.productModel.setUpdateStatus(1);//已变更
                 }
             }
-            skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
-            skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
+            skuModel.setDealPrice(BigDecimal.valueOf(skuImportBean.getDealPrice()));
+            skuModel.setMarketPrice(BigDecimal.valueOf(skuImportBean.getMarketPrice()));
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier(userName);

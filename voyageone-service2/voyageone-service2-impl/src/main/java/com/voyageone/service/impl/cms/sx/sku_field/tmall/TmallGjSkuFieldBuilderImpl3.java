@@ -323,7 +323,8 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
 //                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
 //                        } else {
 //                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);

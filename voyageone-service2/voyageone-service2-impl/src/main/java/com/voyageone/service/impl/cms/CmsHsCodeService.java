@@ -18,16 +18,21 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * Created by gjl on 2016/6/7.
+ * InventoryCenterLogicService
+ *
+ * @author gjl 2016/6/7
+ * @version 2.0.0
  */
 @Service
 public class CmsHsCodeService extends BaseService {
+
+    private static final int EXPIRE_HOURS = -48;
+
     @Autowired
-    ProductGroupService productGroupService;
+    private ProductGroupService productGroupService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-    private static final int EXPIRE_HOURS = -48;
     /**
      * 设定返回值.
      */
@@ -49,11 +54,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * HsCode信息检索
-     *
-     * @param lang
-     * @param channelId
-     * @param param
-     * @return data
      */
     public Map<String, Object> searchHsCodeInfo(String lang, String channelId, String userName, Map param) {
         //返回数据类型
@@ -99,27 +99,14 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 取得总页数
-     *
-     * @param channelId
-     * @param userName
-     * @param hsCodeStatus
-     * @param condition
-     * @return total
      */
     private long countByQuery(String channelId, String userName, String hsCodeStatus, String condition) {
         String parameter = getSearchQuery(channelId, userName, hsCodeStatus, "1", condition);
-        long total = cmsBtProductDao.countByQuery(parameter, channelId);
-        return total;
+        return cmsBtProductDao.countByQuery(parameter, channelId);
     }
 
     /**
      * 获取任务
-     *
-     * @param lang
-     * @param channelId
-     * @param userName
-     * @param param
-     * @return data
      */
     public Map<String, Object> getHsCodeInfo(String lang, String channelId, String userName, Map param) {
         //返回数据类型
@@ -143,7 +130,7 @@ public class CmsHsCodeService extends BaseService {
         //取得codeList结果集
         List<String> codeList = new ArrayList<>();
         //取得获取任务的信息
-        if (hsCodeList.size() > 0) {
+        if (!hsCodeList.isEmpty()) {
             for (CmsBtProductModel model : hsCodeList) {
                 codeList.add(model.getCommon().getFields().getCode());
             }
@@ -153,8 +140,8 @@ public class CmsHsCodeService extends BaseService {
         //当前日期及时间
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
         //更新cms_bt_product表的hsCodeInfo
-        if (allCodeList.size() > 0) {
-            updateHsCodeInfo(channelId, allCodeList, userName, "0","",hsCodeSetTime);
+        if (!allCodeList.isEmpty()) {
+            updateHsCodeInfo(channelId, allCodeList, userName, "0", "", hsCodeSetTime);
         }
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
@@ -168,14 +155,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 获取任务
-     *
-     * @param channelId
-     * @param hsCodeStatus
-     * @param userName
-     * @param hsCodeTaskCnt
-     * @param retFields
-     * @param qtyOrder
-     * @param code          @return
      */
     private List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName
             , int hsCodeTaskCnt, String[] retFields, String qtyOrder, String code) {
@@ -194,12 +173,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 获取任务更新
-     *
-     * @param channelId
-     * @param allCodeList
-     * @param userName
-     * @param hsCodeStatus
-     * @param hsCodeSetTime
      */
     private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetter, String hsCodeSetTime) {
 
@@ -222,9 +195,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 获取任务最好是加上最大值check，默认为10，最大不能超过50
-     *
-     * @param hsCodeTaskCnt
-     * @param lang
      */
     private void checkHsCode(int hsCodeTaskCnt, String lang) {
         //选择个数判断
@@ -232,7 +202,6 @@ public class CmsHsCodeService extends BaseService {
             // 类目选择check
             throw new BusinessException("获取任务最好是加上最大值check，默认为10，最大不能超过50", 50);
         }
-
     }
 
     /**
@@ -244,7 +213,7 @@ public class CmsHsCodeService extends BaseService {
         for (String allCode : codeList) {
             //循环取得allCode
             CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, allCode, cartId);
-            if (groupModel.getProductCodes().size() > 0) {
+            if (!groupModel.getProductCodes().isEmpty()) {
                 //循环取单条code
                 for (String code : groupModel.getProductCodes()) {
                     allCodeList.add(code);
@@ -257,10 +226,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 保存任务
-     *
-     * @param channelId
-     * @param userName
-     * @param param
      */
     public Map<String, Object> saveHsCodeInfo(String channelId, String userName, Map param) {
         //返回数据类型
@@ -285,10 +250,6 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 商品税号设置状态
-     *
-     * @param channelId
-     * @param userName
-     * @return taskSummary
      */
     private Map<String, Object> getTaskSummary(String channelId, String userName) {
         /**
