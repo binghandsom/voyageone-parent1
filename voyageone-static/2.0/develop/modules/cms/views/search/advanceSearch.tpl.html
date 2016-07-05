@@ -93,7 +93,9 @@
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-5"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                                    <div class="col-sm-5">
+                                                        <input name="inventoryInput" type="number" class="form-control" ng-model="vm.searchInfo.inventory">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -246,10 +248,10 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="number" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart">
                                                 </div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="number" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd">
                                                 </div>
                                                 <label class="checkbox-inline c-radio ng-binding" style="margin-left: 0px">
                                                     <input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.salesSortType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
@@ -368,9 +370,9 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                                <div class="input-group col-sm-5"><input type="number" class="form-control" ng-model="vm.searchInfo.priceStart"></div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                                <div class="input-group col-sm-5"><input type="number" class="form-control" ng-model="vm.searchInfo.priceEnd"></div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
