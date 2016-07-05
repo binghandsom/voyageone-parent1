@@ -21,6 +21,9 @@
 * updFlg     -> (用于feed->master的导入)0:等待导入,1:导入成功,2:master导入失败,3:不导入,8:feed导入数据错误,9:新品
 * updMessage -> (用于feed->master的导入或者feed导入)如果导入失败,写明原因
 * image[]
+* material ->材质
+* qty ->库存,默认值0
+* isFeedReImport ->是否重新导入,duan,由李德敏判断,是否还需要这个字段
 * skus
  * sku
  * size
