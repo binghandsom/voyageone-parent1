@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -155,6 +157,9 @@ public class FeedToCmsService extends BaseService {
                 product.setQty(qty);
 
                 product.setCatId(MD5.getMD5(product.getCategory()));
+                // 产品数据合法性检查
+                checkProduct(product);
+
                 feedInfoService.updateFeedInfo(product);
 
                 brandList.add(product.getBrand());
@@ -200,6 +205,31 @@ public class FeedToCmsService extends BaseService {
         return response;
     }
 
+    private Boolean checkProduct(CmsBtFeedInfoModel product){
+        if(product.getImage() == null || product.getImage().size() == 0){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有图片");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+
+        for(CmsBtFeedInfoModel_Sku sku : product.getSkus()){
+            if(StringUtil.isEmpty(sku.getBarcode())){
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("没有UPC");
+                $info(product.getCode() + "----" + product.getUpdMessage());
+                return false;
+            }
+
+            if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("成本价为0");
+                $info(product.getCode()+"----" +product.getUpdMessage());
+                return false;
+            }
+        }
+        return true;
+    }
     private Map<String, List<String>> attributeMerge(Map<String, List<String>> attribute1, Map<String, List<String>> attribute2) {
 
         for (Map.Entry<String, List<String>> entry1 : attribute1.entrySet()) {
