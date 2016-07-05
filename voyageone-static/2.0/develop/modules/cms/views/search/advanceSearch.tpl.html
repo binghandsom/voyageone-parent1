@@ -697,7 +697,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}">
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.platformStatus}}">
                                                     <span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="" target="_blank">{{cartsObj._pname}}</a></span>
                                                     <span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
                                                 </span>

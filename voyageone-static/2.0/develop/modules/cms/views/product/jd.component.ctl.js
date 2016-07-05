@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q,$compile) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -14,7 +14,7 @@ define([
                 productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.vm = {
                     productDetails:null,
                     productCode:"",
@@ -59,7 +59,7 @@ define([
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
 
-                        if(scope.vm.platform != null){
+                        if(scope.vm.platform){
                             scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
@@ -71,6 +71,8 @@ define([
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
+                        constructSchema(scope,$compile);
+
                     });
 
                     switch(+scope.cartInfo.value){
@@ -80,6 +82,39 @@ define([
                         case 27:
                             scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
+                    }
+                }
+
+                var itemScope;
+                var productScope;
+
+                function constructSchema(parentScope, compile) {
+
+                    var _plateForm = parentScope.vm.platform;
+
+                    if(_plateForm.schemaFields){
+                        var _item = element.find('#itemContainer');
+                        var _product = element.find('#productContainer');
+
+                        if (itemScope)
+                            itemScope.$destroy();
+                        if (productScope)
+                            productScope.$destroy();
+
+                        _item.empty();
+                        _product.empty();
+
+                        _item.html('<schema data="data"></schema>');
+                        _product.html('<schema data="data"></schema>');
+
+                        itemScope = parentScope.$new();
+                        productScope = parentScope.$new();
+
+                        itemScope.data = _plateForm.schemaFields.item == null ? null : _plateForm.schemaFields.item;
+                        productScope.data = _plateForm.schemaFields.product == null ? null : _plateForm.schemaFields.product;
+
+                        compile(_item)(itemScope);
+                        compile(_product)(productScope);
                     }
                 }
 
@@ -116,6 +151,9 @@ define([
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.status =  "Pending";
+
+                                //刷新schema
+                                constructSchema(scope,$compile);
                             });
                         });
                 }
