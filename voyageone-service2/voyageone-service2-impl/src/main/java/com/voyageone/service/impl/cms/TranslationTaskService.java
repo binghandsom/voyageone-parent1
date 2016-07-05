@@ -54,6 +54,8 @@ public class TranslationTaskService extends BaseService {
     @Autowired
     private ProductService productService;
 
+    private static final String TASK_INCOMPLETE = "0";
+
     /**
      * 计算翻译任务的汇总信息
      */
@@ -256,7 +258,10 @@ public class TranslationTaskService extends BaseService {
 
                 rsMap.put("common.fields.translator", userName);
                 rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-                rsMap.put("common.fields.translateStatus", status);
+
+                if(!status.equals(TASK_INCOMPLETE)) {
+                    rsMap.put("common.fields.translateStatus", status);
+                }
 
                 rsMap.put("modifier", userName);
                 rsMap.put("modified", DateTimeUtil.getNow());
