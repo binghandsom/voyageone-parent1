@@ -53,6 +53,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public void setStatus(String status) {
         setStringAttribute("status", status);
     }
+    public void setStatus(CmsConstants.ProductStatus status) {
+        String value = null;
+        if (status != null) {
+            value = status.name();
+        }
+        setAttribute("status", value);
+    }
 
     //pCatId
     public String getpCatId() {
