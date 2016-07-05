@@ -95,11 +95,11 @@ public class JmBtDealImportService extends BaseService {
         }
 
         //CmsBtProduct        更新所有
-        if (bulkProductList.size() > 0) {
+        if (!bulkProductList.isEmpty()) {
             daoCmsBtProductDao.bulkUpdateWithMap(channelId, bulkProductList, "system", "$set");
         }
         //CmsBtProductGroup   更新所有
-        if (bulkGroupList.size() > 0) {
+        if (!bulkGroupList.isEmpty()) {
             daoCmsBtProductGroup.bulkUpdateWithMap(channelId, bulkGroupList, "system", "$set", false);
         }
     }
@@ -184,7 +184,7 @@ public class JmBtDealImportService extends BaseService {
         modelCmsBtJmProduct.setSalePrice(new BigDecimal(0));
         modelCmsBtJmProduct.setMsrpRmb(new BigDecimal(0));
         modelCmsBtJmProduct.setMsrpUsd(new BigDecimal(0));
-        if (listCmsBtProductModel_Sku != null && listCmsBtProductModel_Sku.size() > 0) {
+        if (listCmsBtProductModel_Sku != null && !listCmsBtProductModel_Sku.isEmpty()) {
             CmsBtProductModel_Sku sku = listCmsBtProductModel_Sku.get(0);
             modelCmsBtJmProduct.setMsrpRmb(BigDecimalUtil.getValue(sku.getPriceMsrp()));//priceMsrp
             modelCmsBtJmProduct.setMsrpUsd(BigDecimalUtil.getValue(sku.getClientMsrpPrice()));//clientMsrpPrice

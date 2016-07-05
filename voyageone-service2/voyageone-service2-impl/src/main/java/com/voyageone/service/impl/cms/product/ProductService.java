@@ -414,18 +414,18 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(feed.getCatPath())) {
                 updateMap.put("feed.catPath", feed.getCatPath());
             }
-            if (feed.getOrgAtts() != null && feed.getOrgAtts().size() > 0) {
+            if (feed.getOrgAtts() != null && !feed.getOrgAtts().isEmpty()) {
                 BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
                 updateMap.putAll(orgAttsObj);
             }
-            if (feed.getCnAtts() != null && feed.getCnAtts().size() > 0) {
+            if (feed.getCnAtts() != null && !feed.getCnAtts().isEmpty()) {
                 BasicDBObject cnAttsObj = feed.getCnAtts().toUpdateBasicDBObject("feed.cnAtts.");
                 updateMap.putAll(cnAttsObj);
             }
-            if (feed.getCustomIds() != null && feed.getCustomIds().size() > 0) {
+            if (feed.getCustomIds() != null && !feed.getCustomIds().isEmpty()) {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
-            if (feed.getCustomIdsCn() != null && feed.getCustomIdsCn().size() > 0) {
+            if (feed.getCustomIdsCn() != null && !feed.getCustomIdsCn().isEmpty()) {
                 updateMap.put("feed.customIdsCn", feed.getCustomIdsCn());
             }
         }
@@ -832,7 +832,7 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(skuInfo -> {
+            product.getPlatform(Integer.parseInt(cartId)).getSkus().forEach(skuInfo -> {
                 ProductForOmsBean bean = new ProductForOmsBean();
                 // 设置商品的原始channelId
                 bean.setChannelId(product.getOrgChannelId());
@@ -1039,12 +1039,12 @@ public class ProductService extends BaseService {
         }
         platformModel.getSkus().forEach(sku -> {
             String diffFlg = "1";
-            if(sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")){
+            if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
                 diffFlg = "2";
-            }else if(sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")){
+            } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
                 diffFlg = "3";
             }
-            sku.setAttribute("priceDiffFlg",diffFlg);
+            sku.setAttribute("priceDiffFlg", diffFlg);
         });
 
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1249,8 +1249,8 @@ public class ProductService extends BaseService {
 
         //去除掉feedCustomPropList中的垃圾数据
         if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
-            feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
-                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original()))).collect(Collectors.toList());
+            feedCustomPropList = feedCustomPropList.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
+                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original())).collect(Collectors.toList());
         } else {
             feedCustomPropList = new ArrayList<>();
         }
@@ -1261,8 +1261,9 @@ public class ProductService extends BaseService {
 
 
         //合并feedAttr和feedCustomPropList
-        for (String attrKey : feedAttr.keySet()) {
-            List<String> valueList = feedAttr.get(attrKey);
+        for (Map.Entry<String, List<String>> entry : feedAttr.entrySet()) {
+            String attrKey = entry.getKey();
+            List<String> valueList = entry.getValue();
             CustomPropBean prop = new CustomPropBean();
             prop.setFeedAttrEn(attrKey);
             String attrValue = Joiner.on(",").skipNulls().join(valueList);

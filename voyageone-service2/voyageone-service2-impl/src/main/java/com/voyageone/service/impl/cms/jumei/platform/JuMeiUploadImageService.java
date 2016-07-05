@@ -70,7 +70,7 @@ public class JuMeiUploadImageService {
         JmImageFileBean jmImageFileBean = new JmImageFileBean();
 //            File imageFile=new File(jmPicBean.getOriginUrl());
         int retryCount = GET_IMG_INPUTSTREAM_RETRY;
-        System.out.println("id:" + imageModel.getId() + "  value1" + imageModel.getValue1());
+//        System.out.println("id:" + imageModel.getId() + "  value1" + imageModel.getValue1());
         InputStream inputStream = getImgInputStream(imageModel.getValue1(), retryCount);
         Assert.notNull(inputStream, "inputStream为null，图片流获取失败！" + imageModel.getValue1());
         jmImageFileBean.setInputStream(inputStream);
@@ -132,12 +132,12 @@ public class JuMeiUploadImageService {
      * @return inputStream / throw Exception
      */
     private static InputStream getImgInputStream(String url, int retry) throws Exception {
-        Exception exception = null;
+        //Exception exception = null;
         if (--retry > 0) {
             try {
                 return HttpUtils.getInputStream(url, null);
             } catch (Exception e) {
-                exception = e;
+                //exception = e;
                 getImgInputStream(url, retry);
             }
         }
@@ -147,7 +147,7 @@ public class JuMeiUploadImageService {
     /***
      * 按照规则构造远程路径
      *
-     * @param imageModel
+     * @param imageModel CmsBtJmProductImagesModel
      * @return 远程dir
      */
     private static String buildDirName(CmsBtJmProductImagesModel imageModel) {
