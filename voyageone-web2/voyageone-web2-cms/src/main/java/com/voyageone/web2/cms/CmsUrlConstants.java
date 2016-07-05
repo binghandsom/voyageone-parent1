@@ -501,6 +501,15 @@ public interface CmsUrlConstants {
     // 产品编辑
     interface PRODUCT{
 
+        interface PRICE_LOG {
+
+            String ROOT = "/cms/price/log";
+
+            String PAGE = "page";
+
+            String EXPORT = "export";
+        }
+
         interface DETAIL {
 
             String ROOT = "/cms/product/detail";

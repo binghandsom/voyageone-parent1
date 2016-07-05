@@ -22,9 +22,39 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
     public int selectPriceLogByCodeCnt(Map<String, Object> param) {
         return selectOne("select_cms_bt_price_log_by_code_cnt", param);
     }
+
     public int insertCmsBtPriceLogList(List<CmsBtPriceLogModel> paramList) {
         Map<String, List<CmsBtPriceLogModel>> insertDataMap = new HashMap<>();
         insertDataMap.put("list", paramList);
         return insert("insert_cms_bt_price_log_list", insertDataMap);
+    }
+
+    public CmsBtPriceLogModel selectLastOneBySkuOnCart(String sku, String cartId, String channelId) {
+        return selectOne("selectLastOneBySkuOnCart", parameters(
+                "sku", sku,
+                "channel_id", channelId,
+                "cart_id", cartId));
+    }
+
+    public List<CmsBtPriceLogModel> selectListBySkuOnCart(String sku, String code, String cartId, String channelId) {
+        return selectPageBySkuOnCart(sku, code, channelId, cartId, null, null);
+    }
+
+    public List<CmsBtPriceLogModel> selectPageBySkuOnCart(String sku, String code, String cartId, String channelId, Integer offset, Integer limit) {
+        return selectList("selectPageBySkuOnCart", parameters(
+                "sku", sku,
+                "code", code,
+                "channel_id", channelId,
+                "cart_id", cartId,
+                "offset", offset,
+                "limit", limit));
+    }
+
+    public int selectCountBySkuOnCart(String sku, String code, String cartId, String channelId) {
+        return selectOne("selectCountBySkuOnCart", parameters(
+                "sku", sku,
+                "code", code,
+                "channel_id", channelId,
+                "cart_id", cartId));
     }
 }
