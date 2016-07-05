@@ -101,7 +101,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Test
     public void testUpdateProduct() throws Exception {
 
-        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(100, "010", 27);
+        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(1, "010", 27);
 
         for (CmsBtSxWorkloadModel work : workloadList) {
 //            work.setGroupId(27214L);
