@@ -1350,7 +1350,8 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
-        insertSxWorkLoad(channelId,getProductById(channelId,prodId),modifier);
+        insertSxWorkLoad(channelId, getProductById(channelId, prodId), modifier);
+        insertProductHistory(channelId, prodId);
         return modified;
     }
 }

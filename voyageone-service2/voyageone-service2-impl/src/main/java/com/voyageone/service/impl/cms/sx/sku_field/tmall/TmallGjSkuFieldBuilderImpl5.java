@@ -50,7 +50,6 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
 
     // added by morse.lu 2016/07/04 start
     private Field hscodeField;
-    private List<Field> listMatchSkuFields; // 直接从product表的platforms.P23.fields.sku里去取的属性
     // added by morse.lu 2016/07/04 end
 
     private BuildSkuResult buildSkuResult;
@@ -143,15 +142,6 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
             return false;
         }
 
-        // added by morse.lu 2016/07/04 start
-        // [不想显示的属性表]里属性,这些属性直接代码写死如何设值,为了加强效率,就不读取[不想显示的属性表],代码写死
-        // 上记以外的fields,直接从product表的platforms.P23.fields.sku里去取的属性
-        listMatchSkuFields = new ArrayList<>();
-        if (getUnkownFields() != null) {
-            listMatchSkuFields.addAll(getUnkownFields());
-        }
-        // added by morse.lu 2016/07/04 end
-
         return true;
     }
 
@@ -242,35 +232,44 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
 //                        }
 //                    }
 //                }
-                if (sku_barCodeField != null) {
-                    skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
-                }
-                if (sku_outerIdField != null) {
-                    skuFieldValue.setInputFieldValue(sku_outerIdField.getId(), cmsSkuProp.getSkuCode());
-                }
-                if (sku_priceField != null) {
-                    skuFieldValue.setInputFieldValue(sku_priceField.getId(), String.valueOf(getSkuPrice(expressionParser.getSxData().getChannelId(), sxProduct, cmsSkuProp.getSkuCode())));
-                }
-                if (sku_quantityField != null) {
-                    Integer skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
-                    if (skuQuantity == null) {
-                        skuQuantity = 0;
+                for (Field field : ((MultiComplexField)skuField).getFields()) {
+                    String fieldId = field.getId();
+                    if (fieldId.equals(sku_masterField.getId())) {
+                        continue;
                     }
-                    skuFieldValue.setInputFieldValue(sku_quantityField.getId(), String.valueOf(skuQuantity));
-                }
-                if (hscodeField != null) {
-                    // hscode不做Mapping了，写死从个人税号里去取
-                    String propValue = expressionParser.getSxData().getMainProduct().getCommon().getFields().getHsCodePrivate();
-                    skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
-                }
+                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
+                        continue;
+                    }
+                    if (sku_outerIdField != null && fieldId.equals(sku_outerIdField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_outerIdField.getId(), cmsSkuProp.getSkuCode());
+                        continue;
+                    }
+                    if (sku_priceField != null && fieldId.equals(sku_priceField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_priceField.getId(), String.valueOf(getSkuPrice(expressionParser.getSxData().getChannelId(), sxProduct, cmsSkuProp.getSkuCode())));
+                        continue;
+                    }
+                    if (sku_quantityField != null && fieldId.equals(sku_quantityField.getId())) {
+                        Integer skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
+                        if (skuQuantity == null) {
+                            skuQuantity = 0;
+                        }
+                        skuFieldValue.setInputFieldValue(sku_quantityField.getId(), String.valueOf(skuQuantity));
+                        continue;
+                    }
+                    if (hscodeField != null && fieldId.equals(hscodeField.getId())) {
+                        // hscode不做Mapping了，写死从个人税号里去取
+                        String propValue = expressionParser.getSxData().getMainProduct().getCommon().getFields().getHsCodePrivate();
+                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        continue;
+                    }
 
-                for(Field matchField : listMatchSkuFields) {
                     // 从各平台下面的fields.sku里取值
-                    String val = getSkuValue(sxProduct, matchField.getId(), cmsSkuProp.getSkuCode());
-                    if (matchField.getType() == FieldTypeEnum.INPUT) {
-                        skuFieldValue.setInputFieldValue(matchField.getId(), val);
-                    } else if (matchField.getType() == FieldTypeEnum.SINGLECHECK) {
-                        skuFieldValue.setSingleCheckFieldValue(matchField.getId(), new Value(val));
+                    String val = getSkuValue(sxProduct, fieldId, cmsSkuProp.getSkuCode());
+                    if (field.getType() == FieldTypeEnum.INPUT) {
+                        skuFieldValue.setInputFieldValue(fieldId, val);
+                    } else if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+                        skuFieldValue.setSingleCheckFieldValue(fieldId, new Value(val));
                     }
                 }
                 // modified by morse.lu 2016/07/04 end

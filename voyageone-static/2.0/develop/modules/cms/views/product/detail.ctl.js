@@ -53,10 +53,6 @@ define([
                     });
                 });
 
-/*                self.productDetailService.getProductInfo({productId: self.routeParams.productId}).then(function (res) {
-                    self.product.productDetails = res.data;
-                });*/
-
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
