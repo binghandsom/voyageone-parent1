@@ -16,15 +16,13 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>平台状态</strong></label>
                                 <div class="col-md-8">
-                                    <span class='label m-l-sm'>
-                                        <span ng-repeat='entity in vm.mastData.platformList'>
-                                               <platform-status data="{cartId:entity.cartId,
-                                               cartName:entity.cartName,
-                                               status:entity.status,
-                                               pStatus:entity.pStatus,
-                                               pPublishError:entity.pPublishError,
-                                               numberId:entity.pNumIId}"></platform-status>
-                                        </span>
+                                    <span ng-repeat='entity in vm.mastData.platformList'>
+                                           <platform-status data="{cartId:entity.cartId,
+                                           cartName:entity.cartName,
+                                           status:entity.status,
+                                           pStatus:entity.pStatus,
+                                           pPublishError:entity.pPublishError,
+                                           numberId:entity.pNumIId}"></platform-status>
                                     </span>
                                 </div>
                             </div>
