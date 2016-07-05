@@ -139,10 +139,10 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
-                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1) && insertLog) {
+                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) && insertLog) {
                         product.setUpdFlg(0);
                     } else {
-                        product.setUpdFlg(befproduct.getUpdFlg());
+                        product.setUpdFlg(9);
                     }
                 } else {
                     insertLog = true;
@@ -224,7 +224,7 @@ public class FeedToCmsService extends BaseService {
             if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("成本价为0");
-                $info(product.getCode()+"----" +product.getUpdMessage());
+                $info(product.getCode() + "----" +product.getUpdMessage());
                 return false;
             }
         }
