@@ -392,7 +392,7 @@
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
-                                                        <option value="0">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="2">销售价小于指导价</option>
                                                         <option value="3">销售价大于指导价</option>
                                                         <option value="1">建议销售价等于实际销售价</option>
@@ -402,8 +402,7 @@
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-3 text-right">
-                                                <label class="control-label"
-                                                       translate="TXT_PROPERTY_STATUS"></label>
+                                                <label class="control-label" translate="TXT_PROPERTY_STATUS"></label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <select class="form-control" ng-model="vm.searchInfo.propertyStatus">
@@ -461,6 +460,7 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortOneName"
                                                             ng-options="sortOne.propId as sortOne.propName for sortOne in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -481,20 +481,17 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortTwoName"
                                                             ng-options="sortTwo.propId as sortTwo.propName for sortTwo in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortTwo" type="radio" value="1"
-                                                               ng-model="vm.searchInfo.sortTwoType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |
-                                                        translate }}
+                                                        <input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortTwo" type="radio" value="-1"
-                                                               ng-model="vm.searchInfo.sortTwoType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' |
-                                                        translate }}
+                                                        <input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -505,20 +502,17 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortThreeName"
                                                             ng-options="sortThree.propId as sortThree.propName for sortThree in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortThree" type="radio" value="1"
-                                                               ng-model="vm.searchInfo.sortThreeType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |
-                                                        translate }}
+                                                        <input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortThree" type="radio" value="-1"
-                                                               ng-model="vm.searchInfo.sortThreeType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' |
-                                                        translate }}
+                                                        <input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
