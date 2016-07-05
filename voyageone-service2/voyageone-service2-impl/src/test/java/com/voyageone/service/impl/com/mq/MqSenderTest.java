@@ -51,7 +51,7 @@ public class MqSenderTest extends TestCase {
     @Test
     public void testStopMq() throws Exception {
         Map<String, Object> message = new HashMap<>();
-        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("mqService", "JingdongMqTestService");
         message.put("active", "stop");
         sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
     }
@@ -59,7 +59,7 @@ public class MqSenderTest extends TestCase {
     @Test
     public void testStartMq() throws Exception {
         Map<String, Object> message = new HashMap<>();
-        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("mqService", "CmsFeedExportService");
         message.put("active", "start");
         sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
     }

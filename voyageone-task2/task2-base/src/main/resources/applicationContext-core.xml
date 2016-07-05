@@ -17,6 +17,7 @@
     <!-- 定时任务 -->
     <import resource="classpath*:config/job/**/*-config.xml"/>
     <import resource="classpath*:obtainPlatformCategory-config.xml"/>
+    <bean class="com.voyageone.task2.mq.VOMQServiceControlListener" lazy-init="false"/>
 
     <!-- 自动扫描 -->
     <context:component-scan base-package="com.voyageone"/>
