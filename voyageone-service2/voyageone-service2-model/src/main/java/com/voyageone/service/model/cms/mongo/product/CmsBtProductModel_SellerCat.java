@@ -2,7 +2,6 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,18 +15,18 @@ public class CmsBtProductModel_SellerCat extends BaseMongoMap<String, Object> {
 
     //cId
     public String getcId() {
-        return getAttribute("cId");
+        return getStringAttribute("cId");
     }
     public void setcId(String cId) {
-        setAttribute("cId", cId);
+        setStringAttribute("cId", cId);
     }
 
     //cName
     public String getcName() {
-        return getAttribute("cName");
+        return getStringAttribute("cName");
     }
     public void setcName(String cName) {
-        setAttribute("cName", cName);
+        setStringAttribute("cName", cName);
     }
 
     //cIds

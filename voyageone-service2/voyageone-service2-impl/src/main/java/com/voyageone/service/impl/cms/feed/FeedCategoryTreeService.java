@@ -161,7 +161,7 @@ public class FeedCategoryTreeService extends BaseService {
             if (cmsMtFeedCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return cmsMtFeedCategoryTreeModel;
             }
-            if (cmsMtFeedCategoryTreeModel.getChildren().size() > 0) {
+            if (!cmsMtFeedCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtFeedCategoryTreeModel category = findCategory(cmsMtFeedCategoryTreeModel, catPath);
                 if (category != null) return category;
             }
@@ -193,7 +193,7 @@ public class FeedCategoryTreeService extends BaseService {
      */
     public CmsMtFeedCategoryTreeModel getCategoryNote(String channelId, String catPath) {
         List<String> categorys = Arrays.asList(catPath.split("-"));
-        if (categorys.size() == 0) return null;
+        if (categorys.isEmpty()) return null;
         CmsMtFeedCategoryTreeModel tree = getFeedCategoryByCategory(channelId, categorys.get(0));
         if (categorys.size() == 1) return tree;
         return findCategory(tree, catPath);

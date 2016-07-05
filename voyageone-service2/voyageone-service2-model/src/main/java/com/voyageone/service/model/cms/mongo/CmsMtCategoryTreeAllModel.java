@@ -1,7 +1,6 @@
 package com.voyageone.service.model.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +77,32 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
 
     public void setPlatformCategory(List<CmsMtCategoryTreeAllModel_Platform> platformCategory) {
         this.platformCategory = platformCategory;
+    }
+
+    /**
+     * 根据平台种类Id和平台类目名称找到对应的主类目Id
+     * @param platformId 平台种类Id
+     * @param platformCatPath 平台名称
+     * @return
+     */
+    public String getatIdByPlatformInfo (String platformId, String platformCatPath) {
+        for (CmsMtCategoryTreeAllModel_Platform platform : platformCategory) {
+
+            if (platform.getPlatformId().equals(platformId) && platform.getCatPath().equals(platformCatPath))
+                return this.catId;
+        }
+        return null;
+    }
+
+    /**
+     * 返回该主类目下的平台类目
+     * @param platformId 平台种类Id
+     * @return 平台类目
+     */
+    public CmsMtCategoryTreeAllModel_Platform getPlatformCategoryByPlatformId (String platformId) {
+        return platformCategory.stream()
+                .filter(platform -> platformId.equals(platform.getPlatformId()))
+                .findFirst().get();
     }
 
 }
