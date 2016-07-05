@@ -348,8 +348,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             modelCodes.setId(0);
             modelCodes.setCreater(userName);
             modelCodes.setCreated(new Date());
-            modelCodes.setCatPath(productInfo.getCatPath());
-            modelCodes.setProductModel(productInfo.getFields().getModel());
+            modelCodes.setCatPath(productInfo.getCommon().getCatPath());
+            modelCodes.setProductModel(productInfo.getCommon().getFields().getModel());
             modelCodes.setPromotionId(modelPromotion.getId());
             modelCodes.setOrgChannelId(productInfo.getOrgChannelId());
             if (groupModel != null) {
@@ -357,8 +357,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 modelCodes.setModelId(groupModel.getGroupId().intValue());
             }
             modelCodes.setProductId(Integer.getInteger(productInfo.getProdId().toString()));
-            modelCodes.setProductCode(productInfo.getFields().getCode());
-            modelCodes.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
+            modelCodes.setProductCode(productInfo.getCommon().getFields().getCode());
+            //modelCodes.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getCommon().getFields().get.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
             CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(CartEnums.Cart.JM.getValue());
             if (ptfObj != null && ptfObj.getSkus() != null && ptfObj.getSkus().isEmpty()) {
                 modelCodes.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
@@ -370,11 +370,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
 
         //2.CmsBtPromotionGroupsModel
-        CmsBtPromotionGroupsModel modelGroups = getCmsBtPromotionGroupsModel(modelPromotion.getId(), modelPromotion.getChannelId(), productInfo.getFields().getModel());
+        CmsBtPromotionGroupsModel modelGroups = getCmsBtPromotionGroupsModel(modelPromotion.getId(), modelPromotion.getChannelId(), productInfo.getCommon().getFields().getModel());
         if (modelGroups == null) {
             modelGroups = new CmsBtPromotionGroupsModel();
-            modelGroups.setCatPath(productInfo.getCatPath());
-            modelGroups.setProductModel(productInfo.getFields().getModel());
+            modelGroups.setCatPath(productInfo.getCommon().getCatPath());
+            modelGroups.setProductModel(productInfo.getCommon().getFields().getModel());
             modelGroups.setSynFlg("0");
             modelGroups.setPromotionId(modelPromotion.getId());
             modelGroups.setOrgChannelId(productInfo.getOrgChannelId());
@@ -401,8 +401,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 skusModel.setProductCode(skuImport.getProductCode());
                 skusModel.setProductSku(skuImport.getSkuCode());
                 skusModel.setQty(0);
-                skusModel.setCatPath(productInfo.getCatPath());
-                skusModel.setProductModel(productInfo.getFields().getModel());
+                skusModel.setCatPath(productInfo.getCommon().getCatPath());
+                skusModel.setProductModel(productInfo.getCommon().getFields().getModel());
                 skusModel.setSynFlg("0");
                 skusModel.setPromotionId(modelPromotion.getId());
                 skusModel.setOrgChannelId(productInfo.getOrgChannelId());
