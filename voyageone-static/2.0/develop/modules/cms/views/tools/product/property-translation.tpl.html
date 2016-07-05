@@ -160,14 +160,13 @@
                         <form role="form" name="commonAttributeForm" class="form-horizontal" novalidate>
                             <div class="col-sm-12 product-shema-detail">
                                 <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</span>
+                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
                             </div>
                             <div class="col-sm-12">
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <div class="col-sm-3"></div>
-                                        <button name="clientProductUrl"  style="margin: 4px;" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
-                                                class="btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
+                                        <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
+                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
                                         </button>
                                     </div>
                                     <div class="form-group">

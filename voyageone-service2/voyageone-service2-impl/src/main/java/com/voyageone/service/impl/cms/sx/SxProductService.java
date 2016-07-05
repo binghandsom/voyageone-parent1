@@ -909,19 +909,19 @@ public class SxProductService extends BaseService {
                 continue;
             }
             mapSp.put(field.getId(), field);
-            if ("hscode".equals(field.getId())) {
-                // HS海关代码
-                if (!sxData.isHasSku()) {
-                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
-                    ((InputField) field).setValue(propValue.split(",")[0]);
-                    if (retMap == null) {
-                        retMap = new HashMap<>();
-                    }
-                    retMap.put(field.getId(), field);
-                }
-                continue;
-            }
+            // deleted by morse.lu 2016/07/04 start
+            // hscode不做Mapping了，写死从个人税号里去取
+//            if ("hscode".equals(field.getId())) {
+//                // HS海关代码
+//                if (!sxData.isHasSku()) {
+//                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+//                    ((InputField) field).setValue(propValue.split(",")[0]);
+//                    retMap.put(field.getId(), field);
+//                }
+//                continue;
+//            }
+            // deleted by morse.lu 2016/07/04 end
             Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
             if (resolveField != null) {
                 if (retMap == null) {
@@ -939,6 +939,18 @@ public class SxProductService extends BaseService {
                 continue;
             } else {
                 // 直接取product表的fields的值
+                // added by morse.lu 2016/07/04 start
+                // hscode不做Mapping了，写死从个人税号里去取
+                if ("hscode".equals(field.getId())) {
+                    // HS海关代码
+                    if (!sxData.isHasSku()) {
+                        String propValue = sxData.getMainProduct().getCommon().getFields().getHsCodePrivate(); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        retMap.put(field.getId(), field);
+                    }
+                    continue;
+                }
+                // added by morse.lu 2016/07/04 end
                 // modified by morse.lu 2016/06/24 start
 //                MappingBean mappingBean = mapProp.get(field.getId());
 //                if (mappingBean == null) {
@@ -1908,7 +1920,8 @@ public class SxProductService extends BaseService {
             ComplexValue complexValue = new ComplexValue();
             complexField.setComplexValue(complexValue);
 
-            boolean isFirst = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
+            boolean isFirst = true;
+            boolean isFirstReq = true; // 第一个必填属性,填[详情页描述],不是的话填[详情页描述-空白]
             Field fieldDef = null;
             for (Field subField : complexField.getFields()) {
                 // 商品参数,商品展示,视频推介等
@@ -1927,8 +1940,9 @@ public class SxProductService extends BaseService {
                                 }
                             }
 
-                            if (isRequest || "desc_module_5_cat_mod_content".equals(contentField.getId()) ) {
-                                // 必须，或者是商品参数(用于默认项)
+                            if (isRequest || isFirst) {
+                                // 必须，或者第一次(用于默认项)
+                                isFirst = false;
                                 Field valueSubField = deepCloneField(subField);
                                 complexValue.put(valueSubField);
                                 ComplexField valueSubComplexField = (ComplexField) valueSubField;
@@ -1938,8 +1952,8 @@ public class SxProductService extends BaseService {
                                 subComplexValue.put(valueContentField);
                                 fieldDef = valueContentField;
 
-                                if (isFirst && isRequest) {
-                                    isFirst = false;
+                                if (isFirstReq && isRequest) {
+                                    isFirstReq = false;
                                     ((InputField) valueContentField).setValue(descriptionValue);
                                 } else {
                                     ((InputField) valueContentField).setValue(descriptionBlankValue);
@@ -1961,14 +1975,9 @@ public class SxProductService extends BaseService {
                 }
             }
 
-            if (isFirst) {
-                // 没有必须的,姑且先放在一个叫"商品参数"的field里面,不确定是不是每个都有这个属性,以后发生特例再说
-                if (fieldDef != null) {
-                    ((InputField) fieldDef).setValue(descriptionValue);
-                } else {
-                    sxData.setErrorMessage(errorMsg);
-                    throw new BusinessException(String.format("类目[%s]的商品描述里没有必须属性,且没有一个叫\"商品参数\"的属性", sxData.getMainProduct().getCommon().getCatPath()));
-                }
+            if (isFirstReq) {
+                // 没有必须的,放在第一个属性里
+                ((InputField) fieldDef).setValue(descriptionValue);
             }
         } else {
             sxData.setErrorMessage(errorMsg);
@@ -1990,17 +1999,17 @@ public class SxProductService extends BaseService {
         }
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
 
-        // common里的tmallWirelessActive,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        String tmallWirelessActive = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch());
+        // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
+        String appSwitch = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch());
 
         // 开始设值
-        setWirelessDescriptionFieldValueWithLoop(field, mapValue, tmallWirelessActive, expressionParser.getSxData());
+        setWirelessDescriptionFieldValueWithLoop(field, mapValue, appSwitch, expressionParser.getSxData());
     }
 
     /**
      * 循环无线描述field进行设值
      */
-    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, String tmallWirelessActive, SxData sxData) throws Exception {
+    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, String appSwitch, SxData sxData) throws Exception {
         String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
         if (!mapValue.containsKey(field.getId())) {
             $warn(errorMsg);
@@ -2018,7 +2027,7 @@ public class SxProductService extends BaseService {
             case INPUT:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
                     InputField inputField = (InputField) field;
-                    if ("1".equals(tmallWirelessActive)) {
+                    if ("1".equals(appSwitch)) {
                         // 启用,根据字典设定的值设置（mapValue）
                         inputField.setValue(String.valueOf(objVal));
                     }
@@ -2031,7 +2040,7 @@ public class SxProductService extends BaseService {
             case SINGLECHECK:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
                     SingleCheckField singleCheckField = (SingleCheckField) field;
-                    if (!"1".equals(tmallWirelessActive)) {
+                    if (!"1".equals(appSwitch)) {
                         // 不启用
                         if (field.getId().indexOf("enable") > 0) {
                             // 是否启用的field
@@ -2051,7 +2060,7 @@ public class SxProductService extends BaseService {
                 break;
             case MULTICHECK:
                 if (objVal instanceof List) {
-                    if ("1".equals(tmallWirelessActive)) {
+                    if ("1".equals(appSwitch)) {
                         // 启用,根据字典设定的值设置（mapValue）
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         for (Object val : (List) objVal) {
@@ -2072,7 +2081,7 @@ public class SxProductService extends BaseService {
 
                     for (Field subField : complexField.getFields()) {
                         Field valueField = deepCloneField(subField);
-                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, tmallWirelessActive, sxData);
+                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, appSwitch, sxData);
                         complexValue.put(valueField);
                     }
                 } else {
@@ -2095,7 +2104,7 @@ public class SxProductService extends BaseService {
                         if (val instanceof Map) {
                             for (Field subField : multiComplexField.getFields()) {
                                 Field valueField = deepCloneField(subField);
-                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, tmallWirelessActive, sxData);
+                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, appSwitch, sxData);
                                 complexValue.put(valueField);
                             }
                         } else {
