@@ -63,14 +63,14 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div ng-class="{'col-sm-8':validForm.taskCount.$valid,'col-sm-3':!validForm.taskCount.$valid}">
-                                                <input type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="0" max="10" maxlength="2">
+                                                <input type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2" required>
                                             </div>
                                             <div class="col-sm-5">
                                                 <vo-message target="validForm.taskCount"></vo-message>
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
-                                            <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                            <button class="btn btn-success" ng-click="ctrl.get()" ng-disabled="!validForm.taskCount.$valid"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                                         </div>
                                     </form>
                                 </div>

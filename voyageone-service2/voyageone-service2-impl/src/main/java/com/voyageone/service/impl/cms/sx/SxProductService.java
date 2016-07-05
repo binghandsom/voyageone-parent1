@@ -1992,7 +1992,7 @@ public class SxProductService extends BaseService {
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
 
         // common里的tmallWirelessActive,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        String tmallWirelessActive = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getTmallWirelessActive());
+        String tmallWirelessActive = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch());
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, tmallWirelessActive, expressionParser.getSxData());

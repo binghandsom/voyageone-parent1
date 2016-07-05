@@ -188,7 +188,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getIntAttribute("quantity");
     }
     public void setQuantity(Integer quantity) {
-        setStringAttribute("quantity", quantity == null ? 0 : quantity);
+        setAttribute("quantity", quantity == null ? 0 : quantity);
     }
 
     // clientProductUrl 官方网站链接
@@ -282,7 +282,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images2");
     }
     public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
-        setStringAttribute("images2", images2);
+        setAttribute("images2", images2);
     }
 
     //带角度图片
@@ -293,7 +293,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images3");
     }
     public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
-        setStringAttribute("images3", images3);
+        setAttribute("images3", images3);
     }
 
     //自定义图片
@@ -304,7 +304,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images4");
     }
     public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
-        setStringAttribute("images4", images4);
+        setAttribute("images4", images4);
     }
 
     //手机端自定义图片
@@ -315,7 +315,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images5");
     }
     public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
-        setStringAttribute("images5", images5);
+        setAttribute("images5", images5);
     }
 
     //商品自定义图片
@@ -326,7 +326,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images6");
     }
     public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
-        setStringAttribute("images6", images6);
+        setAttribute("images6", images6);
     }
 
     //商品自定义M_CUSTOM_PRODUCT_IMAGE
@@ -337,7 +337,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images7");
     }
     public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
-        setStringAttribute("images7", images7);
+        setAttribute("images7", images7);
     }
 
     //商品自定义HANG_TAG_IMAGE
@@ -348,7 +348,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getAttribute("images8");
     }
     public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
-        setStringAttribute("images8", images8);
+        setAttribute("images8", images8);
     }
 
     //msrp价格区间
@@ -356,13 +356,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceMsrpSt");
     }
     public void setPriceMsrpSt(Double priceMsrpSt) {
-        setStringAttribute("priceMsrpSt", priceMsrpSt);
+        setAttribute("priceMsrpSt", priceMsrpSt);
     }
     public Double getPriceMsrpEd() {
         return getDoubleAttribute("priceMsrpEd");
     }
     public void setPriceMsrpEd(Double priceMsrpEd) {
-        setStringAttribute("priceMsrpEd", priceMsrpEd);
+        setAttribute("priceMsrpEd", priceMsrpEd);
     }
 
     //建议市场价格区间
@@ -370,13 +370,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("priceRetailSt");
     }
     public void setPriceRetailSt(Double priceRetailSt) {
-        setStringAttribute("priceRetailSt", priceRetailSt);
+        setAttribute("priceRetailSt", priceRetailSt);
     }
     public Double getPriceRetailEd() {
         return getDoubleAttribute("priceRetailEd");
     }
     public void setPriceRetailEd(Double priceRetailEd) {
-        setStringAttribute("priceRetailEd", priceRetailEd);
+        setAttribute("priceRetailEd", priceRetailEd);
     }
 
     //categoryStatus "0":未完成；"1":完成
@@ -478,12 +478,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("usageCn", usageCn);
     }
 
-    // tmallWirelessActive
-    public Integer getTmallWirelessActive() {
-        return getIntAttribute("tmallWirelessActive");
+    // appSwitch
+    public Integer getAppSwitch() {
+        return getIntAttribute("appSwitch");
     }
-    public void setTmallWirelessActive(Integer tmallWirelessActive) {
-        setStringAttribute("tmallWirelessActive", tmallWirelessActive == null ? 0 : tmallWirelessActive);
+    public void setAppSwitch(Integer appSwitch) {
+        setAttribute("appSwitch", appSwitch == null ? 0 : appSwitch);
     }
 
     @Override

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  *  Product Group Service
  *
@@ -189,7 +188,7 @@ public class ProductGroupService extends BaseService {
         this.update(model);
 
         // 如果传入的groups包含code列表,则同时更新code的状态
-        if (model.getProductCodes().size() > 0) {
+        if (!model.getProductCodes().isEmpty()) {
 
             // 获取未上新过的产品code信息,用于判断是否需要更新publishTime
             List<String> unPublishedProducts = getUnPublishedProducts(model);
@@ -223,7 +222,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
 
                 // 设定批量更新条件和值
-                if (bulkUpdateMap.size() > 0) {
+                if (!bulkUpdateMap.isEmpty()) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -232,7 +231,7 @@ public class ProductGroupService extends BaseService {
             }
 
             // 批量更新product表
-            if (bulkList.size() > 0) {
+            if (!bulkList.isEmpty()) {
                 // 因为是回写产品状态，找不到产品时也不插入新错误的记录
                 cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
             }
@@ -249,7 +248,7 @@ public class ProductGroupService extends BaseService {
     public boolean updateUploadErrorStatus(CmsBtProductGroupModel model) {
 
         // 如果传入的groups包含code列表,则同时更新code的状态
-        if (model.getProductCodes().size() > 0) {
+        if (!model.getProductCodes().isEmpty()) {
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -265,7 +264,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
 
                 // 设定批量更新条件和值
-                if (bulkUpdateMap.size() > 0) {
+                if (!bulkUpdateMap.isEmpty()) {
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(bulkUpdateMap);
                     bulkUpdateModel.setQueryMap(bulkQueryMap);
@@ -274,7 +273,7 @@ public class ProductGroupService extends BaseService {
             }
 
             // 批量更新product表
-            if (bulkList.size() > 0) {
+            if (!bulkList.isEmpty()) {
                 // 因为是回写产品状态，找不到产品时也不插入新错误的记录
                 cmsBtProductDao.bulkUpdateWithMap(model.getChannelId(), bulkList, null, "$set", false);
             }
@@ -335,7 +334,7 @@ public class ProductGroupService extends BaseService {
         $info("处理的channelId:" + channelId + ",取得group的总件数:" + allGroupList.size());
         for(CmsBtProductGroupModel groupInfo : allGroupList) {
 
-            if (groupInfo.getProductCodes().size() > 0) {
+            if (!groupInfo.getProductCodes().isEmpty()) {
 
                 for(String code : groupInfo.getProductCodes()) {
                     CmsBtProductGroupModel newGroupInfo = new CmsBtProductGroupModel();
