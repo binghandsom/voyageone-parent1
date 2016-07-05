@@ -54,14 +54,15 @@
                                             <div class="form-group">
                                                 <div class="col-sm-12" style="margin-top: 9px">
                                                     <label class="checkbox-inline c-radio ng-binding">
-                                                        <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort" ng-disabled="!ctrl.assignInfo.priority"
+                                                        <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort"
+                                                               ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"
                                                                class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}
                                                     </label>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <label class="checkbox-inline c-radio ng-binding">
                                                         <input name="sortOne" type="radio" value="desc" ng-model="ctrl.assignInfo.sort"
-                                                               ng-disabled="!ctrl.assignInfo.priority" ng-init="ctrl.assignInfo.priority"
+                                                               ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"
                                                                class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_DESC' | translate}}
                                                     </label>
                                                 </div>

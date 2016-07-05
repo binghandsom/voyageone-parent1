@@ -29,7 +29,6 @@ define([
                 searchCondition: ""
             };
         }
-
         HsCodeController.prototype = {
             init: function () {
                 var self = this;
@@ -43,6 +42,7 @@ define([
             },
             get: function () {
                 var self = this;
+                if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
                 self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
@@ -52,7 +52,6 @@ define([
             search: function (page) {
                 var self = this;
                 self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
-                if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
@@ -66,7 +65,10 @@ define([
                 else {
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
-                self.hsCodeInfoService.save({"code":list.common.fields.code,"hsCodeSetter":list.common.fields.hsCodeSetter.value}).then(function () {
+                self.hsCodeInfoService.save({
+                    "code": list.common.fields.code,
+                    "hsCodeSetter": list.common.fields.hsCodeSetter.value
+                }).then(function () {
 
                 })
             },
@@ -96,7 +98,6 @@ define([
 
             }
         };
-
         return HsCodeController;
     })())
 });
