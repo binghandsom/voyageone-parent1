@@ -72,13 +72,15 @@ public class CmsFieldEditService extends BaseAppService {
      * 获取pop画面options.
      */
     public List<CmsMtCommonPropDefModel> getPopOptions(String language, String channel_id) {
-
         List<CmsMtCommonPropDefModel> modelList = categorySchemaService.getALLCommonPropDef();
         List<CmsMtCommonPropDefModel> resultList = new ArrayList<>();
 
         for (CmsMtCommonPropDefModel model : modelList) {
-            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             Field field = model.getField();
+            if (field.getIsDisplay() != 1) {
+                continue;
+            }
+            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
                     || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                 OptionsField optionsField = getOptions(field, language, channel_id);
