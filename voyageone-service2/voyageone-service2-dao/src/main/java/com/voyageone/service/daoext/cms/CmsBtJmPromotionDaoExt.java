@@ -1,8 +1,10 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +14,11 @@ public interface CmsBtJmPromotionDaoExt {
 
     /**
      * 获取相关渠道的可用promotions
+     *
      * @param channelId
      * @return
      */
     List<MapModel> selectActivesOfChannel(String channelId);
 
+    List<CmsBtJmPromotionModel> selectEndList(Date nowDate);
 }

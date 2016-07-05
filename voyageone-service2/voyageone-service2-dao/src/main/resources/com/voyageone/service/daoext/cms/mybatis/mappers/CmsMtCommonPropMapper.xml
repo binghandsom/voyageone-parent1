@@ -55,7 +55,8 @@
         where
         action_type = 0
         AND is_comm = 1
-        AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
+        AND (prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'originalTitleCn' AND prop_id != 'productNameEn')
+        order by creater
     </select>
 
     <!-- 查询排序用的自定义列(高级检索画面) -->
@@ -68,7 +69,7 @@
         where
         action_type = 0
         AND is_comm = 1
-        AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
+        order by creater
     </select>
 
     <!-- 查询用户可显示的自定义列(高级检索画面) -->
