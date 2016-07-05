@@ -140,7 +140,9 @@ public class CategoryTreeAllService extends BaseService {
                     platformCategoryTreeModels.stream().flatMap(this::flattenFinal);
 
             // --> 所有平台类目 --> 取所有叶子 --> 拍平 --> 转 Map, id 为键, path 为值
-            Map<String, CmsMtPlatformCategoryTreeModel> platformMap = platformCategoryTreeModelStream.collect(toMap(CmsMtPlatformCategoryTreeModel::getCatId,model -> model));
+//            Map<String, CmsMtPlatformCategoryTreeModel> platformMap = platformCategoryTreeModelStream.collect(toMap(CmsMtPlatformCategoryTreeModel::getCatId,model -> model));
+            Map<String, CmsMtPlatformCategoryTreeModel> platformMap = new HashMap<>();
+            platformCategoryTreeModelStream.forEach(item->platformMap.put(item.getCatId(),item));
             applyPlatformCategoryMap.put(typeChannelBean.getValue(), platformMap);
         }
 
