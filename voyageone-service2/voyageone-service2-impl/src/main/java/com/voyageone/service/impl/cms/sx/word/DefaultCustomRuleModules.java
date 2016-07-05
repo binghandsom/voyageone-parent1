@@ -26,20 +26,16 @@ public class DefaultCustomRuleModules {
     public Set<CustomWordModule> customWordModules;
 
 
-    public CustomWordModule getRuleModule(String value)
-    {
-        for (CustomWordModule customWordModule : customWordModules)
-        {
+    public CustomWordModule getRuleModule(String value) {
+        for (CustomWordModule customWordModule : customWordModules) {
             if (customWordModule.getModuleName().equals(value))
                 return customWordModule;
         }
         return null;
     }
 
-    public static DefaultCustomRuleModules getInstance()
-    {
-        if(defaultITRuleModules == null)
-        {
+    public static DefaultCustomRuleModules getInstance() {
+        if (defaultITRuleModules == null) {
             defaultITRuleModules = new DefaultCustomRuleModules();
         }
         return defaultITRuleModules;

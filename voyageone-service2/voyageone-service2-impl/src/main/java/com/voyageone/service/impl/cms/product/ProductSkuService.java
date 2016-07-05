@@ -13,7 +13,6 @@ import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +35,6 @@ public class ProductSkuService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
-
-    @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
-    private ProductService productService;
 
     /**
      * save Skus
@@ -53,7 +45,7 @@ public class ProductSkuService extends BaseService {
 
         saveSkusAddBlukUpdateModel(channelId, productId, null, skus, bulkInsertList, bulkUpdateList);
 
-        if (bulkInsertList.size() > 0) {
+        if (!bulkInsertList.isEmpty()) {
             BasicDBObject queryObj = (BasicDBObject)bulkInsertList.get(0).getQueryMap();
             BasicDBList skusList = new BasicDBList();
             for (BulkUpdateModel bulkInsert : bulkInsertList) {
@@ -64,7 +56,7 @@ public class ProductSkuService extends BaseService {
             cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
         }
 
-        if (bulkUpdateList.size() > 0) {
+        if (!bulkUpdateList.isEmpty()) {
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
         }
     }
@@ -82,7 +74,7 @@ public class ProductSkuService extends BaseService {
                                             Long productId, String productCode,
                                             List<CmsBtProductModel_Sku> models,
                                             List<BulkUpdateModel> bulkInsertList, List<BulkUpdateModel> bulkUpdateList) {
-        if (models == null || models.size() == 0) {
+        if (models == null || models.isEmpty()) {
             return;
         }
 
@@ -129,7 +121,7 @@ public class ProductSkuService extends BaseService {
 
                     BasicDBObject dbObject = model.toUpdateBasicDBObject("skus.$.");
 
-                    if (dbObject.size() > 0) {
+                    if (!dbObject.isEmpty()) {
                         BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                         skuUpdateModel.setUpdateMap(dbObject);
                         skuUpdateModel.setQueryMap(queryMap);
@@ -138,7 +130,7 @@ public class ProductSkuService extends BaseService {
                     }
                 } else {
                     BasicDBObject dbObject = model.toUpdateBasicDBObject("");
-                    if (dbObject.size() > 0) {
+                    if (!dbObject.isEmpty()) {
                         BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                         skuUpdateModel.setUpdateMap(dbObject);
                         skuUpdateModel.setQueryMap(queryMap);
@@ -154,7 +146,7 @@ public class ProductSkuService extends BaseService {
      */
     public int updatePrices(String channelId, List<ProductPriceBean> productPrices, String modifier) {
 
-        if (productPrices == null || productPrices.size() == 0) {
+        if (productPrices == null || productPrices.isEmpty()) {
             throw new RuntimeException("ProductPrices not found!");
         }
 
@@ -172,7 +164,7 @@ public class ProductSkuService extends BaseService {
 
         int result = 0;
         // 更新sku价格变更
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
             result = bulkWriteResult.getInsertedCount() + bulkWriteResult.getModifiedCount();
 
@@ -259,7 +251,7 @@ public class ProductSkuService extends BaseService {
         grpList.forEach(grpObj -> {
             // 其所在group下的所有产品code
             List<String> codeList = grpObj.getProductCodes();
-            if (codeList != null && codeList.size() > 0) {
+            if (codeList != null && !codeList.isEmpty()) {
                 // 再找到所有产品fields信息
                 String[] codeArr = new String[codeList.size()];
                 codeArr = codeList.toArray(codeArr);
@@ -267,7 +259,7 @@ public class ProductSkuService extends BaseService {
                 bulkList.add(calculateNewPriceRange(prodList, grpObj, modifier));
             }
         });
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
@@ -285,7 +277,7 @@ public class ProductSkuService extends BaseService {
             grpList.forEach(grpObj -> {
                 // 其所在group下的所有产品code
                 List<String> codeList = grpObj.getProductCodes();
-                if (codeList != null && codeList.size() > 0) {
+                if (codeList != null && !codeList.isEmpty()) {
                     // 再找到所有产品fields信息
                     String[] codeArr = new String[codeList.size()];
                     codeArr = codeList.toArray(codeArr);
@@ -294,7 +286,7 @@ public class ProductSkuService extends BaseService {
                 }
             });
         }
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
@@ -514,7 +506,7 @@ public class ProductSkuService extends BaseService {
         List<Double> retailPriceList = new ArrayList<>();
         List<Double> salePriceList = new ArrayList<>();
 
-        if (model.getSkuPrices() != null && model.getSkuPrices().size()>0) {
+        if (model.getSkuPrices() != null && !model.getSkuPrices().isEmpty()) {
 
             // 循环原始sku列表
             for (CmsBtProductModel_Sku skuModelBefore : findSkuList) {
@@ -567,7 +559,7 @@ public class ProductSkuService extends BaseService {
                                 updateMap.put("skus.$.priceChgFlg", skuModel.getPriceChgFlg());
                             }
 
-                            if (updateMap.size() > 0) {
+                            if (!updateMap.isEmpty()) {
                                 BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                                 skuUpdateModel.setUpdateMap(updateMap);
                                 skuUpdateModel.setQueryMap(skuQueryMap);
@@ -628,7 +620,7 @@ public class ProductSkuService extends BaseService {
             }
         }
 
-        if (productUpdateMap.size() > 0) {
+        if (!productUpdateMap.isEmpty()) {
             BulkUpdateModel productUpdateModel = new BulkUpdateModel();
             productUpdateModel.setUpdateMap(productUpdateMap);
             productUpdateModel.setQueryMap(productQueryMap);
@@ -691,10 +683,10 @@ public class ProductSkuService extends BaseService {
         if (skuAfter.getPriceRetail() != null) {
             priceRetailAfter = new BigDecimal(skuAfter.getPriceRetail());
         }
-        BigDecimal priceSaleAfter = null;
-        if (skuAfter.getPriceSale() != null) {
-            priceSaleAfter = new BigDecimal(skuAfter.getPriceSale());
-        }
+//        BigDecimal priceSaleAfter = null;
+//        if (skuAfter.getPriceSale() != null) {
+//            priceSaleAfter = new BigDecimal(skuAfter.getPriceSale());
+//        }
 
         // true:变更前=变更后（没有变更）；false：变更前<>变更后（变更了）
         boolean clientPriceMsrpFlg = true;
@@ -702,7 +694,7 @@ public class ProductSkuService extends BaseService {
         boolean clientPriceNetFlg = true;
         boolean priceMsrpFlg = true;
         boolean priceRetailFlg = true;
-        boolean priceSaleFlg = true;
+//        boolean priceSaleFlg = true;
 
         // 变更后和变更前都存在的情况下进行比较，
         // 变更后值存在,变更前值不存在的情况下，认为变更
@@ -797,7 +789,7 @@ public class ProductSkuService extends BaseService {
         Double start = priceStart;
         Double end = priceEnd;
         Boolean isChanged = false;
-        if (priceList.size() > 0) {
+        if (!priceList.isEmpty()) {
             priceList.sort((o1, o2) -> o2.compareTo(o1));
             start = priceList.get(priceList.size() - 1);
             end = priceList.get(0);

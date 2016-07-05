@@ -51,14 +51,14 @@ public class CmsBtJmPromotionExportTask3Service {
         //"/usr/JMExport/"
         String filePath = exportPath + "/" + fileName;
         model.setBeginTime(new Date());
-        int TemplateType = model.getTemplateType();
+        //int TemplateType = model.getTemplateType();
         try {
             dao.update(model);
             List<Map<String, Object>> listProduct = daoExtCmsBtJmPromotionProduct.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
             List<Map<String, Object>> listSku = daoExtCmsBtJmPromotionSku.selectExportListByPromotionId(model.getCmsBtJmPromotionId());
             export(filePath, listProduct, listSku, false);
             model.setSuccessRows(listProduct.size());
-            if (listProduct.size() == 0) {
+            if (listProduct.isEmpty()) {
                 model.setErrorMsg("未查到商品");
             }
             model.setFileName(fileName);
@@ -138,9 +138,9 @@ public class CmsBtJmPromotionExportTask3Service {
             }
             if ("FORMAL".equals(value)) {
                 return "正装";
-            } else if (value.equals("MS")) {
+            } else if ("MS".equals(value)) {
                 return "中小样";
-            } else if (value.equals("OTHER")) {
+            } else if ("OTHER".equals(value)) {
                 return "其他";
             }
             return "其他";

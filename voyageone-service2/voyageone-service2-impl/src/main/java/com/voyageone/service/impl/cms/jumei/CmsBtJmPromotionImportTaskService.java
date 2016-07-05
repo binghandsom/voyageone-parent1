@@ -464,7 +464,7 @@ public class CmsBtJmPromotionImportTaskService {
         templateTypeList.add(2);//详情图
         templateTypeList.add(7);//移动端宝贝图（竖图）
         List<CmsMtTemplateImagesModel> listCmsMtTemplateImages = cmsMtTemplateImagesDaoExt.selectListByPlatformChannelTemplateType(PlatformId, modelCmsBtJmPromotion.getChannelId(), templateTypeList);
-        if (listCmsMtTemplateImages.size() == 0) {
+        if (listCmsMtTemplateImages.isEmpty()) {
             throw new BusinessException("CmsMtTemplateImages请设置该channel的图片模板");
         }
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey1(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 1);
