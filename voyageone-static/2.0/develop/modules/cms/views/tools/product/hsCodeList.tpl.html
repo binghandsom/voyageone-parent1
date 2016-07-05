@@ -47,7 +47,7 @@
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="checkbox-inline c-radio ng-binding">
-                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.order" class="ng-pristine ng-untouched ng-valid ng-empty" ng-disabled="!ctrl.getTaskInfo.qty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
+                                                    <input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.order" class="ng-pristine ng-untouched ng-valid ng-empty" ng-checked="ctrl.getTaskInfo.qty" ng-disabled="!ctrl.getTaskInfo.qty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
                                                 </label>
                                                 <label class="checkbox-inline c-radio ng-binding">
                                                     <input name="sortOne" type="radio" value="-1" ng-model="ctrl.getTaskInfo.order" class="ng-pristine ng-untouched ng-valid ng-empty" ng-checked="ctrl.getTaskInfo.qty" ng-disabled="!ctrl.getTaskInfo.qty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC'|translate}}
@@ -63,14 +63,14 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                                             <div ng-class="{'col-sm-8':validForm.taskCount.$valid,'col-sm-3':!validForm.taskCount.$valid}">
-                                                <input type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2" required>
+                                                <input type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2">
                                             </div>
                                             <div class="col-sm-5">
                                                 <vo-message target="validForm.taskCount"></vo-message>
                                             </div>
                                         </div>
                                         <div class="col-sm-2 col-sm-offset-4" style="margin-bottom: -7px;">
-                                            <button class="btn btn-success" ng-click="ctrl.get()" ng-disabled="!validForm.taskCount.$valid"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                            <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                                         </div>
                                     </form>
                                 </div>
@@ -121,7 +121,7 @@
                         <th class="text-center mfb-xxt" translate="TXT_IMAGE"></th>
                         <th class="text-center mfb-xxx" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
                         <th class="text-center mfb-xxt" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
-                        <th class="text-center mfb-xxxxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
+                        <th class="text-left mfb-xxxxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
                         <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                     </tr>
                 </thead>
@@ -140,13 +140,14 @@
                         </td>
                         <td class="text-center mfb-xxt v-middle">
                             <ul>
-                                <li class="text-left"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
-                                <li class="text-left">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
+                                <li class="text-center"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
+                                <li class="text-center">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
                             </ul>
                         </td>
                         <td class="text-left mfb-xxs v-middle">
                             <select class="form-control" ng-options="value.value as value.value for value in ctrl.hsCodeValue" ng-model="list.common.fields.hsCodeSetter">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+
                             </select>
                         </td>
                         <td class="text-left mfb-xxs v-middle">

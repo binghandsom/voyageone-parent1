@@ -322,7 +322,7 @@ public class SxProductService extends BaseService {
      */
     public void updateImsBtProduct(SxData sxData, String modifier) {
         // s:sku级别, p:product级别
-        String updateType = (sxData.isHasSku()) ? "s" : "p";
+        String updateType = sxData.isHasSku() ? "s" : "p";
 
         // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
         List<CmsBtProductModel> sxProductList = sxData.getProductList();
@@ -479,7 +479,7 @@ public class SxProductService extends BaseService {
             }
         }
 
-        if (imageUrlSaveModels.size() > 0) {
+        if (!imageUrlSaveModels.isEmpty()) {
             // insert image url
             cmsBtPlatformImagesDaoExt.insertPlatformImagesByList(imageUrlSaveModels);
         }
@@ -589,10 +589,7 @@ public class SxProductService extends BaseService {
         fileBean.setNeedReplace(false);
         fileBean.setDirName(shopBean.getOrder_channel_id());
         fileBean.setExtName("jpg");
-        String jmPicUrl = jumeiImageFileService.imageFileUpload(shopBean, fileBean);
-
-        return jmPicUrl;
-
+        return jumeiImageFileService.imageFileUpload(shopBean, fileBean);
     }
 
 
@@ -689,7 +686,7 @@ public class SxProductService extends BaseService {
                 List<String> customIdsOld = mainProductModel.getFeed().getCustomIds();
                 List<String> customIdsCnOld = mainProductModel.getFeed().getCustomIdsCn();
 
-                if (customIdsOld != null && customIdsOld.size() > 0 && customIdsCnOld != null && customIdsCnOld.size() > 0) {
+                if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
                     customPropService.doInit(channelId);
                     String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
@@ -808,7 +805,7 @@ public class SxProductService extends BaseService {
                         });
                     }
 
-                    if (skus.size() > 0) {
+                    if (!skus.isEmpty()) {
                         productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
                         skuList.addAll(skus);
                     } else {
@@ -835,7 +832,7 @@ public class SxProductService extends BaseService {
 
         removeProductList.forEach(productModelList::remove);
         // added by morse.lu 2016/06/12 start
-        if (productModelList.size() == 0) {
+        if (productModelList.isEmpty()) {
             // 没有对象
             return null;
         }
@@ -854,12 +851,12 @@ public class SxProductService extends BaseService {
      * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
-     * @param cmsMtPlatformMappingModel
-     * @param shopBean
-     * @param expressionParser
+     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingModel
+     * @param shopBean ShopBean
+     * @param expressionParser ExpressionParser
      * @param user 上传图片用
      * @param isItem true：商品 false：产品
-     * @return Map<field_id, mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
+     * @return Map<field_id mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
     public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
@@ -872,7 +869,7 @@ public class SxProductService extends BaseService {
         }
 
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
-        Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
+        //Map<Integer, Map<String, Object>> mapSpAll = new HashMap<>();
 
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
@@ -918,6 +915,9 @@ public class SxProductService extends BaseService {
                     RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
                     String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
                     ((InputField) field).setValue(propValue.split(",")[0]);
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
                     retMap.put(field.getId(), field);
                 }
                 continue;
@@ -1146,7 +1146,7 @@ public class SxProductService extends BaseService {
         Map<String, Field> retMap = null;
 
         if (MappingBean.MAPPING_SIMPLE.equals(mappingBean.getMappingType())) {
-            retMap = new HashMap();
+            retMap = new HashMap<>();
             SimpleMappingBean simpleMappingBean = (SimpleMappingBean) mappingBean;
             String expressionValue = expressionParser.parse(simpleMappingBean.getExpression(), shopBean, user, null);
             if (null == expressionValue) {
@@ -1198,7 +1198,7 @@ public class SxProductService extends BaseService {
         } else if (MappingBean.MAPPING_COMPLEX.equals(mappingBean.getMappingType())) {
             // Complex 会包含【一组】由多个简单类型或复杂类型组成的一组类型
             // 他的子属性可以包含任意类型， 包括Complex类型也可以
-            retMap = new HashMap();
+            retMap = new HashMap<>();
             CmsBtProductModel mainProduct = expressionParser.getSxData().getMainProduct();
             ComplexMappingBean complexMappingBean = (ComplexMappingBean) mappingBean;
             if (field.getType() == FieldTypeEnum.COMPLEX) {
@@ -1303,7 +1303,7 @@ public class SxProductService extends BaseService {
         } else if (MappingBean.MAPPING_MULTICOMPLEX_CUSTOM.equals(mappingBean.getMappingType())) {
             // MultiComplex 会包含【多组】由多个简单类型或复杂类型组成的一组组类型
             // 他的子属性可以包含任意类型， 包括Complex类型也可以
-            retMap = new HashMap();
+            retMap = new HashMap<>();
             MultiComplexCustomMappingBean multiComplexCustomMappingBean = (MultiComplexCustomMappingBean) mappingBean;
             MultiComplexField multiComplexField = (MultiComplexField) field;
             List<ComplexValue> complexValues = new ArrayList<>();
@@ -1339,7 +1339,7 @@ public class SxProductService extends BaseService {
 
         switch (field.getType()) {
             case INPUT: {
-                retMap = new HashMap();
+                retMap = new HashMap<>();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1351,7 +1351,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case SINGLECHECK: {
-                retMap = new HashMap();
+                retMap = new HashMap<>();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1365,7 +1365,7 @@ public class SxProductService extends BaseService {
             case MULTIINPUT:
                 break;
             case MULTICHECK: {
-                retMap = new HashMap();
+                retMap = new HashMap<>();
                 String expressionValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
                 if (null == expressionValue) {
                     return null;
@@ -1382,7 +1382,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case COMPLEX: {
-                retMap = new HashMap();
+                retMap = new HashMap<>();
                 String fieldId = field.getId();
                 Map<String, Object> masterWordEvaluationContext;
                 try {
@@ -1429,7 +1429,7 @@ public class SxProductService extends BaseService {
                 break;
             }
             case MULTICOMPLEX: {
-                retMap = new HashMap();
+                retMap = new HashMap<>();
                 String fieldId = field.getId();
                 List<Map<String, Object>> masterWordEvaluationContexts = null;
                 try {
@@ -1515,11 +1515,11 @@ public class SxProductService extends BaseService {
     /**
      * 特殊属性取得
      *
-     * @param fieldsMap
+     * @param fieldsMap Map
      * @param expressionParser ExpressionParser
      * @param mapSp 特殊属性Map
      * @param isItem true：商品 false：产品
-     * @return
+     * @return Map
      * @throws Exception
      */
     private Map<CustomMappingType, List<Field>> getCustomPlatformProps(Map<String, Field> fieldsMap, ExpressionParser expressionParser, Map<String, Object> mapSp, boolean isItem) throws Exception {
@@ -1927,7 +1927,7 @@ public class SxProductService extends BaseService {
                                 }
                             }
 
-                            if (isRequest || contentField.getId().equals("desc_module_5_cat_mod_content") ) {
+                            if (isRequest || "desc_module_5_cat_mod_content".equals(contentField.getId()) ) {
                                 // 必须，或者是商品参数(用于默认项)
                                 Field valueSubField = deepCloneField(subField);
                                 complexValue.put(valueSubField);
@@ -1980,7 +1980,6 @@ public class SxProductService extends BaseService {
      * 无线描述设值
      *
      * @param field 无线描述的field
-     * @param
      */
     private void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
@@ -2016,7 +2015,7 @@ public class SxProductService extends BaseService {
         }
 
         switch (field.getType()) {
-            case INPUT: {
+            case INPUT:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
                     InputField inputField = (InputField) field;
                     if ("1".equals(tmallWirelessActive)) {
@@ -2029,8 +2028,7 @@ public class SxProductService extends BaseService {
                 }
 
                 break;
-            }
-            case SINGLECHECK: {
+            case SINGLECHECK:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
                     SingleCheckField singleCheckField = (SingleCheckField) field;
                     if (!"1".equals(tmallWirelessActive)) {
@@ -2049,10 +2047,9 @@ public class SxProductService extends BaseService {
                 }
 
                 break;
-            }
             case MULTIINPUT:
                 break;
-            case MULTICHECK: {
+            case MULTICHECK:
                 if (objVal instanceof List) {
                     if ("1".equals(tmallWirelessActive)) {
                         // 启用,根据字典设定的值设置（mapValue）
@@ -2067,7 +2064,6 @@ public class SxProductService extends BaseService {
                 }
 
                 break;
-            }
             case COMPLEX: {
                 if (objVal instanceof Map) {
                     ComplexField complexField = (ComplexField) field;
@@ -2086,7 +2082,7 @@ public class SxProductService extends BaseService {
 
                 break;
             }
-            case MULTICOMPLEX: {
+            case MULTICOMPLEX:
                 if (objVal instanceof List) {
                     MultiComplexField multiComplexField = (MultiComplexField) field;
                     List<ComplexValue> complexValues = new ArrayList<>();
@@ -2113,7 +2109,6 @@ public class SxProductService extends BaseService {
                 }
 
                 break;
-            }
             case LABEL:
                 break;
             default:
@@ -2341,19 +2336,19 @@ public class SxProductService extends BaseService {
             // 这里第一位是，第二位是productType，第三位是sizeType，按顺序判断
             String matchVal = "";
             if (model.getBrandName().contains(paramBrandName)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             if (model.getProductType().contains(paramProductType)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             if (model.getSizeType().contains(paramSizeType)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
         }
@@ -2449,19 +2444,19 @@ public class SxProductService extends BaseService {
         for (CmsBtSizeChartModel model : modelsAll) {
             String matchVal = "";
             if (model.getBrandName().contains(paramBrandName)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             if (model.getProductType().contains(paramProductType)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             if (model.getSizeType().contains(paramSizeType)) {
-                matchVal += 1;
+                matchVal += "1";
             } else {
-                matchVal += 0;
+                matchVal += "0";
             }
             matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
         }
@@ -2626,10 +2621,10 @@ public class SxProductService extends BaseService {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
-        Map<String, Field> fieldsMap = new HashMap<>();
-        for (Field field : fields) {
-            fieldsMap.put(field.getId(), field);
-        }
+//        Map<String, Field> fieldsMap = new HashMap<>();
+//        for (Field field : fields) {
+//            fieldsMap.put(field.getId(), field);
+//        }
 
         // TODO:特殊字段处理
         // 特殊字段Map<CartId, Map<propId, 对应mapping项目或者处理(未定)>>
@@ -2704,8 +2699,8 @@ public class SxProductService extends BaseService {
 
         if (objfieldItemValue instanceof String) {
             strfieldItemValue = String.valueOf(objfieldItemValue);
-        } else if (objfieldItemValue instanceof ArrayList) {
-            if (((ArrayList) objfieldItemValue).size() == 0) {
+        } else if (objfieldItemValue instanceof List) {
+            if (((List) objfieldItemValue).isEmpty()) {
                 // 检查一下, 如果没有值的话, 后面的也不用做了
                 return null;
             }
@@ -2717,21 +2712,19 @@ public class SxProductService extends BaseService {
         }
 
         switch (field.getType()) {
-            case INPUT: {
+            case INPUT:
                 InputField inputField = (InputField) field;
                 inputField.setValue(strfieldItemValue);
                 retMap.put(field.getId(), inputField);
                 break;
-            }
-            case SINGLECHECK: {
+            case SINGLECHECK:
                 SingleCheckField singleCheckField = (SingleCheckField) field;
                 singleCheckField.setValue(strfieldItemValue);
                 retMap.put(field.getId(), singleCheckField);
                 break;
-            }
             case MULTIINPUT:
                 break;
-            case MULTICHECK: {
+            case MULTICHECK:
                 String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue); // 解析"~~"分隔的字符串
 
                 MultiCheckField multiCheckField = (MultiCheckField)field;
@@ -2740,7 +2733,6 @@ public class SxProductService extends BaseService {
                 }
                 retMap.put(field.getId(), multiCheckField);
                 break;
-            }
             case COMPLEX:
                 break;
             case MULTICOMPLEX:
@@ -2837,7 +2829,6 @@ public class SxProductService extends BaseService {
      * @param workload CmsBtSxWorkloadModel WorkLoad信息
      * @param numIId String 商品id
      * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
-     * @param numIId String 商品id
      */
     public void doUploadFinalProc(ShopBean shopProp, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel workload,
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
@@ -2925,7 +2916,7 @@ public class SxProductService extends BaseService {
         if (sxData.getGroupId() != null) {
             insModel.setGroupId(workload.getGroupId().intValue());
         }
-        if (sxData.getPlatform().getProductCodes().size() > 0) {
+        if (!sxData.getPlatform().getProductCodes().isEmpty()) {
             insModel.setProductCodes(sxData.getPlatform().getProductCodes().stream().collect(Collectors.joining(",")));
         }
         insModel.setNumiid(sxData.getPlatform().getNumIId() == null ? "" : sxData.getPlatform().getNumIId());

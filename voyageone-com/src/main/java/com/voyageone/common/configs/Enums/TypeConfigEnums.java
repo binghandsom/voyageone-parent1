@@ -219,7 +219,22 @@ public class TypeConfigEnums {
 		/**
 		 * 获取任务的优先顺序:cms2
 		 */
-		translateTask(66);
+		translateTask(66),
+
+		/**
+		 * 是否为默认主商品
+		 */
+		isMasterMain(80),
+
+		/**
+		 * 主类目设置状态
+		 */
+		categoryStatus(76),
+
+		/**
+		 * 税号设置状态
+		 */
+		hsCodeStatus(77);
 
     	private int id;
 

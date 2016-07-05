@@ -46,6 +46,7 @@
                                                 <label class="col-sm-12 control-label text-left">{{'TXT_DISTRIBUTION_RULE' | translate}}</label>
                                                 <select class="form-control" ng-model="ctrl.assignInfo.priority"
                                                         ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
+                                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -53,14 +54,15 @@
                                             <div class="form-group">
                                                 <div class="col-sm-12" style="margin-top: 9px">
                                                     <label class="checkbox-inline c-radio ng-binding">
-                                                        <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort" ng-disabled="!ctrl.assignInfo.priority"
+                                                        <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort"
+                                                               ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"
                                                                class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}
                                                     </label>
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <label class="checkbox-inline c-radio ng-binding">
                                                         <input name="sortOne" type="radio" value="desc" ng-model="ctrl.assignInfo.sort"
-                                                               ng-disabled="!ctrl.assignInfo.priority" ng-init="ctrl.assignInfo.priority"
+                                                               ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"
                                                                class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>{{'TXT_SORT_DESC' | translate}}
                                                     </label>
                                                 </div>
@@ -70,8 +72,6 @@
                                             <div class="col-sm-7">
                                                 <input class="form-control" placeholder="{{'TXT_FUZZY_SEARCH_PLACE_HOLDER' | translate}}" ng-model="ctrl.assignInfo.codeOrName">
                                             </div>
-                                            <!--</div>-->
-                                            <!--<div class="form-group">-->
                                             <div class="col-sm-2" style="margin-bottom: -7px;">
                                                 <button class="btn btn-success" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}
                                                 </button>
@@ -160,13 +160,14 @@
                         <form role="form" name="commonAttributeForm" class="form-horizontal" novalidate>
                             <div class="col-sm-12 product-shema-detail">
                                 <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</span>
                             </div>
                             <div class="col-sm-12">
                                 <div class="col-sm-8">
                                     <div class="form-group">
-                                        <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
-                                                class="col-sm-offset-3 btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
+                                        <div class="col-sm-3"></div>
+                                        <button name="clientProductUrl"  style="margin: 4px;" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
+                                                class="btn btn-vo ng-binding"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
                                         </button>
                                     </div>
                                     <div class="form-group">
@@ -282,10 +283,10 @@
                     </uib-tab>
                     <uib-tab>
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_FEED_ATTRIBUTE'|translate}}</tab-heading>
-                        <!--<div class="col-sm-12 product-shema-detail">-->
-                            <!--<hr>-->
-                            <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_MATCHED_PROPERTY' | translate}}</span>-->
-                        <!--</div>-->
+                        <div class="col-sm-12 product-shema-detail">
+                            <hr>
+                            <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CUST_ATTRIBUTE' | translate}}</span>
+                        </div>
                         <form name="feedAttributeForm" class="form-horizontal">
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'false'}">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrCn}}</label>
@@ -295,7 +296,7 @@
                             </div>
                             <div class="col-sm-12 product-shema-detail">
                                 <hr>
-                                <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_MATCHED_PROPERTY' | translate}}</span>-->
+                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_COMPLETE' | translate}}</span>
                             </div>
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'true'}" ng-if="customProp.feedAttrCn">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrEn}}</label>
@@ -307,10 +308,10 @@
                                     <input class="form-control" ng-model="customProp.feedAttrValueCn">
                                 </div>
                             </div>
-                            <!--<div class="col-sm-12 product-shema-detail">-->
-                                <!--<hr>-->
-                                <!--<span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_NOT_TRANSLATED_PROPERTY' | translate}}</span>-->
-                            <!--</div>-->
+                            <div class="col-sm-12 product-shema-detail">
+                                <hr>
+                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_INCOMPLETE' | translate}}</span>
+                            </div>
                             <div class="form-group" ng-repeat="customProp in ctrl.vm.taskDetail.customProps | filter: {feedAttr:'true'}" ng-if="!customProp.feedAttrCn">
                                 <label class="col-sm-2 control-label">{{customProp.feedAttrEn}}</label>
                                 <div class="col-sm-3">

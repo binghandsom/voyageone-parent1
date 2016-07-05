@@ -10,14 +10,15 @@ import java.util.List;
  */
 public class PriceSectionBuilder {
 
+    private static final List<String> listReplaceWord = new ArrayList<String>() {{
+        add("元");
+        add(" ");
+    }};
+
     private List<PriceOption> priceOptions;
 
-    private final List<String> listReplaceWord = new ArrayList<String>(){{
-                                                                                add("元");
-                                                                                add(" ");
-                                                                            }};
-
-    private PriceSectionBuilder() {}
+    private PriceSectionBuilder() {
+    }
 
     private class PriceOption {
         private String optionName;
@@ -86,8 +87,8 @@ public class PriceSectionBuilder {
     }
 
     public static PriceSectionBuilder createPriceSectionBuilder(List<Option> fieldPriceOptions) {
-        PriceSectionBuilder priceSectionBuilder =  new PriceSectionBuilder();
-       return priceSectionBuilder.build(fieldPriceOptions);
+        PriceSectionBuilder priceSectionBuilder = new PriceSectionBuilder();
+        return priceSectionBuilder.build(fieldPriceOptions);
     }
 
     public PriceSectionBuilder build(List<Option> fieldPriceOptions) {
@@ -121,17 +122,17 @@ public class PriceSectionBuilder {
         String minIdentifier = "以上";
 
         PriceSection priceSection = new PriceSection();
-        if (platformPropOptionValue.indexOf(sectionSeparator) != -1)  {
+        if (platformPropOptionValue.contains(sectionSeparator)) {
             //有最小值和最大值的区间
             String[] sectionStrs = platformPropOptionValue.split(sectionSeparator);
             priceSection.setMinPrice(Double.valueOf(sectionStrs[0]));
             priceSection.setMaxPrice(Double.valueOf(sectionStrs[1]));
-        } else if (platformPropOptionValue.indexOf(maxIdentifier) != -1) {
+        } else if (platformPropOptionValue.contains(maxIdentifier)) {
             //有最大值
             String priceMax = platformPropOptionValue.replace(maxIdentifier, "");
             priceSection.setMinPrice(0);
             priceSection.setMaxPrice(Integer.valueOf(priceMax));
-        } else if (platformPropOptionValue.indexOf(minIdentifier) != -1) {
+        } else if (platformPropOptionValue.contains(minIdentifier)) {
             //有最小值
             String priceMin = platformPropOptionValue.replace(minIdentifier, "");
             priceSection.setMaxPrice(Integer.MAX_VALUE);
@@ -140,7 +141,7 @@ public class PriceSectionBuilder {
         return priceSection;
     }
 
-    private boolean inSection(double price, PriceSection priceSection)  {
+    private boolean inSection(double price, PriceSection priceSection) {
         return (price <= priceSection.getMaxPrice()) && (price >= priceSection.getMinPrice());
     }
 }

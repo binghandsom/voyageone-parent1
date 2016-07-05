@@ -770,11 +770,11 @@
                                         <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:165px;">
-                                            <button ng-controller="showPopoverCtrl"
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
                                                     popover-html="showInfo({{productInfo.skuDetail}})"
                                                     popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
                                                     type="button" popover-placement="left" class="btn btn-default btn-xs">
-                                                {{productInfo.skus.length}}
+                                                {{productInfo.common.skus.length}}
                                             </button>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:165px;">
