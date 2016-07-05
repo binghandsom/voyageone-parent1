@@ -371,7 +371,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                             }
                             break;
                         } else {
-                            List result = new ArrayList<>();
+                            List<String> result = new ArrayList<>();
                             CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
                             if (categoryTreeFind != null) {
                                 if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {

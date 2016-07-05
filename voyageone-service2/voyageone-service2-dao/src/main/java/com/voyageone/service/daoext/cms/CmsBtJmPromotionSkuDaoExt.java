@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.cms;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,7 @@ public interface CmsBtJmPromotionSkuDaoExt {
 
     int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
 
-    List selectListCmsBtJmImportSkuByPromotionId(int promotionId);
+    List<Map<String, Object>> selectListCmsBtJmImportSkuByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -28,7 +29,7 @@ public interface CmsBtJmPromotionSkuDaoExt {
     //jm2 begin                                                                                                                       cms_bt_jm_promotion_product_id
     CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId);
 
-    List selectExportListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
    //更新的dealPrice大于market_price的记录
     CmsBtJmPromotionSkuModel  selectNotUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
@@ -39,6 +40,6 @@ public interface CmsBtJmPromotionSkuDaoExt {
     int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
-    List selectViewListByPromotionProductId(int promotionProductId);
+    List<MapModel> selectViewListByPromotionProductId(int promotionProductId);
     //jm2 end
 }

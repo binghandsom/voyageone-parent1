@@ -67,21 +67,21 @@ public class ImageGroupService extends BaseService {
         model.setImageType(Integer.parseInt(imageType));
         model.setViewType(Integer.parseInt(viewType));
         // 什么都不选的情况下，要设置成"All"
-        if (brandNameList.size() == 0) {
+        if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setBrandName(lst);
         } else {
             model.setBrandName(brandNameList);
         }
-        if (productTypeList.size() == 0) {
+        if (productTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setProductType(lst);
         } else {
             model.setProductType(productTypeList);
         }
-        if (sizeTypeList.size() == 0) {
+        if (sizeTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add("All");
             model.setSizeType(lst);
@@ -139,21 +139,21 @@ public class ImageGroupService extends BaseService {
             model.setImageGroupName(imageGroupName);
             model.setImageType(Integer.parseInt(imageType));
             model.setViewType(Integer.parseInt(viewType));
-            if (brandNameList.size() == 0) {
+            if (brandNameList.isEmpty()) {
                 List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setBrandName(lst);
             } else {
                 model.setBrandName(brandNameList);
             }
-            if (productTypeList.size() == 0) {
+            if (productTypeList.isEmpty()) {
                 List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setProductType(lst);
             } else {
                 model.setProductType(productTypeList);
             }
-            if (sizeTypeList.size() == 0) {
+            if (sizeTypeList.isEmpty()) {
                 List<String> lst = new ArrayList<>();
                 lst.add("All");
                 model.setSizeType(lst);
@@ -256,7 +256,7 @@ public class ImageGroupService extends BaseService {
         StringBuilder result = new StringBuilder();
 
         // 获取Platform
-        if (platFormChangeList.size() > 0) {
+        if (!platFormChangeList.isEmpty()) {
             Integer[] platFormArray = platFormChangeList.toArray(new Integer[platFormChangeList.size()]);
             result.append(MongoUtils.splicingValue("cartId", platFormArray));
             result.append(",");
@@ -286,7 +286,7 @@ public class ImageGroupService extends BaseService {
         }
 
         // brandName
-        if (brandNameList.size() > 0) {
+        if (!brandNameList.isEmpty()) {
             // 带上"All"
             brandNameList.add("All");
             result.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
@@ -294,7 +294,7 @@ public class ImageGroupService extends BaseService {
         }
 
         // productType
-        if (productTypeList.size() > 0) {
+        if (!productTypeList.isEmpty()) {
             // 带上"All"
             productTypeList.add("All");
             result.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
@@ -302,7 +302,7 @@ public class ImageGroupService extends BaseService {
         }
 
         // sizeType
-        if (sizeTypeList.size() > 0) {
+        if (!sizeTypeList.isEmpty()) {
             // 带上"All"
             sizeTypeList.add("All");
             result.append(MongoUtils.splicingValue("sizeType", sizeTypeList.toArray(new String[sizeTypeList.size()])));
@@ -358,7 +358,7 @@ public class ImageGroupService extends BaseService {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             List<CmsBtImageGroupModel_Image> images = model.getImage();
-            if (images != null && images.size() > 0) {
+            if (images != null && !images.isEmpty()) {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(key)) {
                         image.setOriginUrl(uploadUrl);
@@ -388,7 +388,7 @@ public class ImageGroupService extends BaseService {
         if (model != null) {
             int index = -1;
             List<CmsBtImageGroupModel_Image> images = model.getImage();
-            if (images != null && images.size() > 0) {
+            if (images != null && !images.isEmpty()) {
                 for (int i = 0; i < images.size(); i++) {
                     if (images.get(i).getOriginUrl().equals(originUrl)) {
                         index = i;
@@ -425,7 +425,7 @@ public class ImageGroupService extends BaseService {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             List<CmsBtImageGroupModel_Image> images = model.getImage();
-            if (images != null && images.size() > 0) {
+            if (images != null && !images.isEmpty()) {
                 for (CmsBtImageGroupModel_Image image : images) {
                     if (image.getOriginUrl().equals(originUrl)) {
                         image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
