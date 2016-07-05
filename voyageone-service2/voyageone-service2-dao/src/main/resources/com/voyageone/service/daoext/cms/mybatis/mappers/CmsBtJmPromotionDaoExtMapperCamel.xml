@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt">
-
     <resultMap id="ResultMap" type="CmsBtJmPromotionModel">
-    </resultMap>
 
-    <select id="selectListByWhere" resultType="com.voyageone.service.model.util.MapModel">
+    </resultMap>
+    <select id="selectListByWhere"  resultType="com.voyageone.service.model.util.MapModel">
         select *  from cms_bt_jm_promotion
           <where>
               active=1
@@ -47,14 +46,18 @@
               )
               </if>
           </where>
+
         order by id desc
     </select>
 
     <select id="selectActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
         select a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
         where a.channel_id=#{channelId}
-          and b.promotion_status = 0
+          and   a.activity_end >= now()
           and b.active = 1
     </select>
 
+    <select id="selectEndList">
+        SELECT * FROM `cms_bt_jm_promotion` WHERE `recovery_status`=0 AND `activity_end` &lt;#{nowDate}  limit 10
+    </select>
 </mapper>
