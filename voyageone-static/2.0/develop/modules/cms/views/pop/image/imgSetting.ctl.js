@@ -23,7 +23,7 @@ define([
 		$scope.upload = function(){
 			if(uploader.queue.length != 0) {
 				uploader.queue[uploader.queue.length - 1].formData = [{
-					"productId": context.product.productId,
+					"productId": context.productId,
 					"imageType": context.imageType
 				}];
 				uploader.queue[uploader.queue.length - 1].upload();
@@ -38,7 +38,7 @@ define([
 		uploader.onSuccessItem = function(fileItem, response, status, headers) {
 			//console.info('onSuccessItem', fileItem, response, status, headers);
 			if(response.data){
-				response.data.imageType = context.imageType;
+				response.data.imageType = context.imageType.replace("image","images");
 				$scope.$close(response.data);
 				//$translate({"imageType":"image"+imageType, "base64":response.data.base64, "imageName":response.data.imageName})
 				//$scope.img = "data:image/jpg;base64,"+response.data.base64;
