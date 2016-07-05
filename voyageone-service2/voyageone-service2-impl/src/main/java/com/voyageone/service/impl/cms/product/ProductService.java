@@ -108,7 +108,7 @@ public class ProductService extends BaseService {
      * 获取商品 根据Code
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
-        String query = "{\"fields.code\":\"" + code + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -116,7 +116,7 @@ public class ProductService extends BaseService {
      * 获取商品 根据Code
      */
     public CmsBtProductModel getProductSingleSku(String channelId, String code, String originalCode) {
-        String query = "{\"fields.code\":\"" + code + "\", \"fields.originalCode\":\"" + originalCode + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -124,7 +124,7 @@ public class ProductService extends BaseService {
      * 获取商品 根据OriginalCode
      */
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
-        String query = "{\"fields.originalCode\":\"" + code + "\"}";
+        String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
     }
 
@@ -132,7 +132,7 @@ public class ProductService extends BaseService {
      * 获取商品 Sku
      */
     public CmsBtProductModel getProductBySku(String channelId, String sku) {
-        String query = "{\"skus.skuCode\":\"" + sku + "\"}";
+        String query = "{\"common.skus.skuCode\":\"" + sku + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -173,7 +173,7 @@ public class ProductService extends BaseService {
 
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        queryObject.setQuery("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}");
 
         List<CmsBtProductBean> rst = cmsBtProductDao.selectBean(queryObject, channelId);
         rst.forEach(prodObj -> prodObj.setGroupBean(grpObj));
@@ -212,7 +212,7 @@ public class ProductService extends BaseService {
     }
 
     // 查询产品信息(合并该产品的组信息)
-    // queryObject中必须包含输出项:"fields.code"，否则将查询不到组信息
+    // queryObject中必须包含输出项:"common.fields.code"，否则将查询不到组信息
     public List<CmsBtProductBean> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
         List<CmsBtProductBean> prodList = cmsBtProductDao.selectBean(queryObject, channelId);
         if (prodList == null || prodList.isEmpty()) {
@@ -308,10 +308,10 @@ public class ProductService extends BaseService {
             throw new RuntimeException("prodId has existed, not add!");
         }
 
-        String prodCodeQuery = String.format("{ \"fields.code\" : \"%s\" }", product.getCommon().getFields().getCode());
+        String prodCodeQuery = String.format("{ \"common.fields.code\" : \"%s\" }", product.getCommon().getFields().getCode());
         count = cmsBtProductDao.countByQuery(prodCodeQuery, channelId);
         if (count > 0) {
-            throw new RuntimeException("fields.code has existed, not add!");
+            throw new RuntimeException("common.fields.code has existed, not add!");
         }
 
         //update channel and modifier
@@ -508,7 +508,9 @@ public class ProductService extends BaseService {
         if (carts != null && !carts.isEmpty()) {
             // 根据商品code获取其所有group信息(所有平台)
             List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getCommon().getFields().getCode() + "\"}", channelId);
-            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+            Map<Integer, Long> platformsMap = new BaseMongoMap<>();
+            groups.forEach(g->platformsMap.put(g.getCartId(),g.getGroupId()));
+//            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
             // 获取所有的可上新的平台group信息
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();

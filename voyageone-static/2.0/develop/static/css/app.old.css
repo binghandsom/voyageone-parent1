@@ -6414,18 +6414,11 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 .channel-main {
     width: 220px;
     margin: 2% 1% 0;
-    /*padding:16px 10px 10px 10px;*/
     position: relative;
     display: inline-block;
     text-align: center;
-    /*
-  background:#fff;
-  */
-    /*
-  -webkit-box-shadow:0 0 10px rgba(0, 0, 0, .1);
-  -moz-box-shadow:0 0 10px rgba(0, 0, 0, .1);
-  box-shadow:0 0 10px rgba(0, 0, 0, .1);
-  */
+    float: left;
+    min-height:329px;
 }
 .channel-main img {
     margin: 0 auto;
