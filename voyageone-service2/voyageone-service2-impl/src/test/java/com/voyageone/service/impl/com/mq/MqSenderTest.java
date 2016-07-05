@@ -53,7 +53,7 @@ public class MqSenderTest extends TestCase {
         Map<String, Object> message = new HashMap<>();
         message.put("mqService", "JingdongMqTestService");
         message.put("active", "stop");
-        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false, false);
     }
 
     @Test
@@ -61,6 +61,6 @@ public class MqSenderTest extends TestCase {
         Map<String, Object> message = new HashMap<>();
         message.put("mqService", "CmsFeedExportService");
         message.put("active", "start");
-        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false, false);
     }
 }

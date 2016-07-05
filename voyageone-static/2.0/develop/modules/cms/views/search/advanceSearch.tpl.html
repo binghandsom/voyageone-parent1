@@ -94,7 +94,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-5">
-                                                        <input name="inventoryInput" type="number" class="form-control" ng-model="vm.searchInfo.inventory">
+                                                        <input type="text" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
                                                     </div>
                                                 </div>
                                             </div>
@@ -108,7 +108,7 @@
                                                 <div class="col-sm-9 form-inline">
                                                     <div class="col-sm-5 input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup
-                                                               ng-model="vm.searchInfo.createTimeStart"
+                                                               ng-model="vm.searchInfo.createTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                                date-model-format="yyyy-MM-dd"
                                                                max-date="vm.searchInfo.createTimeTo"
                                                                is-open="datePicker1" close-text="Close"/>
@@ -121,7 +121,7 @@
                                                     &nbsp;~&nbsp;
                                                     <div class="col-sm-5 input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup
-                                                               ng-model="vm.searchInfo.createTimeTo"
+                                                               ng-model="vm.searchInfo.createTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                                date-model-format="yyyy-MM-dd"
                                                                min-date="vm.searchInfo.createTimeStart"
                                                                is-open="datePicker2" close-text="Close"/>
@@ -248,10 +248,10 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-3"><input type="number" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15">
                                                 </div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-3"><input type="number" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15">
                                                 </div>
                                                 <label class="checkbox-inline c-radio ng-binding" style="margin-left: 0px">
                                                     <input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.salesSortType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
@@ -331,7 +331,7 @@
                                             <div class="col-sm-9 form-inline">
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.publishTimeStart"
+                                                           ng-model="vm.searchInfo.publishTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                            date-model-format="yyyy-MM-dd"
                                                            max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3"
                                                            close-text="Close"/>
@@ -344,7 +344,7 @@
                                                 &nbsp;~&nbsp;
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.publishTimeTo"
+                                                           ng-model="vm.searchInfo.publishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                            date-model-format="yyyy-MM-dd"
                                                            min-date="vm.searchInfo.publishTimeStart"
                                                            is-open="datePicker4" close-text="Close"/>
@@ -370,9 +370,9 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-5"><input type="number" class="form-control" ng-model="vm.searchInfo.priceStart"></div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" onkeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15"></div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-5"><input type="number" class="form-control" ng-model="vm.searchInfo.priceEnd"></div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" onkeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15"></div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">

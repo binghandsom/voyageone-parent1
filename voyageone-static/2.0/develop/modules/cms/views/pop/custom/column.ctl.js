@@ -83,6 +83,33 @@ define([
                 });
             }
         };
+
+        // 勾选明细时对全选框的操作
+        $scope.chkItemStatus = function (stsType) {
+            var chkSts = false;
+            if (stsType == 1) {
+                for (keyIdx in $scope.cus.commonProps) {
+                    if (!$scope.cus.commonProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_commonData = !chkSts;
+            } else if (stsType == 2) {
+                for (keyIdx in $scope.cus.customProps) {
+                    if (!$scope.cus.customProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_customData = !chkSts;
+            } else if (stsType == 3) {
+                for (keyIdx in $scope.cus.salesTypeList) {
+                    if (!$scope.cus.salesTypeList[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_salesType = !chkSts;
+            }
+        };
     });
 
 });
