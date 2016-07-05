@@ -28,6 +28,10 @@ public class VmsFeedFileImportServiceTest {
         taskControlBean.setCfg_name("order_channel_id");
         taskControlBean.setCfg_val1("088");
         taskControlList.add(taskControlBean);
+        TaskControlBean taskControlBean1 = new TaskControlBean();
+        taskControlBean1.setCfg_name("order_channel_id");
+        taskControlBean1.setCfg_val1("089");
+        taskControlList.add(taskControlBean1);
         vmsFeedFileImportService.onStartup(taskControlList);
     }
 }

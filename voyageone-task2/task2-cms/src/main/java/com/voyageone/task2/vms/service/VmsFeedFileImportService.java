@@ -93,6 +93,23 @@ public class VmsFeedFileImportService extends BaseTaskService {
         put(VENDOR_PRODUCT_URL, "vendor-product-url");
     }};
 
+    public final static Map<Object, String> productTypeByCategoryMap = new HashMap() {{
+        put("Clothing", "Apparel and Accessory");
+        put("Sports & Outdoors", "Sports and Outdoors");
+        put("Baby Products", "Baby");
+        put("Beauty", "Beauty");
+        put("Electronics", "Electronics");
+        put("Health & Personal Care", "Health and Personal Care");
+        put("Home, Garden & Pets", "Home and Garden");
+        put("Tools & Home Improvement", "Home Improvement");
+        put("Jewelry", "Jewelry");
+        put("Office Products", "Office Products");
+        put("Shoes", "Shoes");
+        put("Sports & Outdoors", "Sports and Outdoors");
+        put("Toys & Games", "product-origin");
+        put("Toys and Games", "Toys and Games");
+        put("Watches", "Watches");
+    }};
 
 
     @Autowired
@@ -183,6 +200,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
             param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
             List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDaoExt.selectListOrderByCreateTime(param);
             VmsBtFeedFileModel model = null;
+            // 取得Create时间最早的那个Feed文件
             if (feedFileList.size() > 0) {
                 model = feedFileList.get(feedFileList.size() - 1);
             }
@@ -193,102 +211,125 @@ public class VmsFeedFileImportService extends BaseTaskService {
                 StringBuilder stringBuilder = new StringBuilder();
                 // 文件存在的话那么处理
                 if (feedFile.exists()) {
-                    $info("Feed文件check的处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+                    $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
                     // Map<String, CmsBtFeedInfoModel> feedInfoMap = readExcel(feedFile, stringBuilder);
                     // 把Feed数据插入vms_bt_feed_info_temp表
-                    readCsvToDB(feedFile);
-                    // check数据并且插入MongoDb表
-                    doHandle();
-                    $info("Feed文件check的处理结束,channel：" + channel.getFull_name());
+                    boolean result = readCsvToDB(feedFile);
+                    if (!result) {
+                        // check数据并且插入MongoDb表
+                        doHandle(feedFile.getPath());
+                    }
+                    $info("Feed文件处理结束,channel：" + channel.getFull_name());
+                } else {
+                    // 一般情况下不可能发生，除非手动删除文件
+                    $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
                 }
-//                    // check有错的情况下，先生成ErrorFile
-//                    if (stringBuilder.toString().length() >  0) {
-//                        try {
-//                            createErrorFile(stringBuilder);
-//                        } catch (Exception e) {
-//                            $error(e.getMessage());
-//                        }
-//                    } else {
-//                        // 没有错误的情况下，导入Feed文件到数据库
-//                        if (feedInfoMap.size() > 0) {
-//                            $info("导入数据库开始");
-//                            //                saveFeedData(feedInfoMap);
-//                            $info(String.format("导入数据库结束,更新了%d件", feedInfoMap.size()));
-//                        } else {
-//                            $info("没有更新对象");
-//                        }
-//                    }
-//                } else {
-//                    // 一般情况下不可能发生，除非手动删除文件
-//                    $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
-//                }
             }
             $info(channel.getFull_name() + "产品 Feed文件导入结束");
         }
 
         /**
          * check数据并且插入MongoDb表
+         * @param feedFilePath FeedFile路径
          *
          */
-        private void doHandle() {
+        private void doHandle(String feedFilePath) {
 
-            // Error错误
-            List<Map<String, Object>> errorList = new ArrayList<>();
-            int i=1;
-            int codeCnt = 0;
-            // 取得需要处理的Code级别的数据,每次取得固定件数
-            while (true) {
-                Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channel.getOrder_channel_id());
-                param.put("parentId", "");
-                param.put("updateFlg", "0");
-                List<VmsBtFeedInfoTempModel> codeList = vmsBtFeedInfoTempDaoExt.selectList(param);
-                // 直到全部拿完那么终止
-                if (codeList.size() == 0) {
-                    break;
-                }
-                $info("++***************" + String.valueOf(i*100));
-                List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
-                for (VmsBtFeedInfoTempModel codeModel : codeList) {
-                    Map<String, Object> param1 = new HashMap<>();
-                    param1.put("channelId", channel.getOrder_channel_id());
-                    param1.put("parentId", codeModel.getSku());
-                    param1.put("updateFlg", "0");
-                    List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param1);
-                    CmsBtFeedInfoModel model = checkByCodeGroup(codeModel, skuModels, errorList);
-                    if (model != null) {
-                        feedInfoModelList.add(model);
+            try {
+                // Error错误
+                List<Map<String, Object>> errorList = new ArrayList<>();
+                int i=1;
+                int codeCnt = 0;
+                // 取得需要处理的Code级别的数据,每次取得固定件数
+                while (true) {
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("channelId", channel.getOrder_channel_id());
+                    param.put("parentId", "");
+                    param.put("updateFlg", "0");
+                    List<VmsBtFeedInfoTempModel> codeList = vmsBtFeedInfoTempDaoExt.selectList(param);
+                    // 直到全部拿完那么终止
+                    if (codeList.size() == 0) {
+                        break;
                     }
-                    if (errorList.size() == 0) {
-                        // 更新VmsBtFeedInfoTemp表状态为1：update完了
-                        // 更新Code级别数据
-                        VmsBtFeedInfoTempModel updateCodeModel = new VmsBtFeedInfoTempModel();
-                        // 更新条件
-                        updateCodeModel.setId(codeModel.getId());
-                        // 更新对象
-                        updateCodeModel.setUpdateFlg("1");
-                        vmsBtFeedInfoTempDao.update(updateCodeModel);
-                        // 更新Sku级别数据
-                        VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
-                        // 更新条件
-                        updateSkuModel.setChannelId(channel.getOrder_channel_id());
-                        updateSkuModel.setParentId(codeModel.getSku());
-                        // 更新对象
-                        updateSkuModel.setUpdateFlg("1");
-                        vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
+                    $info("***************处理件数:" + String.valueOf(i*100) + ",channel：" + channel.getFull_name());
+                    List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
+                    for (VmsBtFeedInfoTempModel codeModel : codeList) {
+                        Map<String, Object> param1 = new HashMap<>();
+                        param1.put("channelId", channel.getOrder_channel_id());
+                        param1.put("parentId", codeModel.getSku());
+                        param1.put("updateFlg", "0");
+                        List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDaoExt.selectList(param1);
+                        CmsBtFeedInfoModel model = checkByCodeGroup(codeModel, skuModels, errorList);
+                        if (model != null) {
+                            feedInfoModelList.add(model);
+                        }
+                        if (errorList.size() == 0) {
+                            // 更新VmsBtFeedInfoTemp表状态为1：update完了
+                            // 更新Code级别数据
+                            VmsBtFeedInfoTempModel updateCodeModel = new VmsBtFeedInfoTempModel();
+                            // 更新条件
+                            updateCodeModel.setId(codeModel.getId());
+                            // 更新对象
+                            updateCodeModel.setUpdateFlg("1");
+                            vmsBtFeedInfoTempDao.update(updateCodeModel);
+                            // 更新Sku级别数据
+                            VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
+                            // 更新条件
+                            updateSkuModel.setChannelId(channel.getOrder_channel_id());
+                            updateSkuModel.setParentId(codeModel.getSku());
+                            // 更新对象
+                            updateSkuModel.setUpdateFlg("1");
+                            vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
 
+                        }
+                    }
+
+                    if (errorList.size() == 0 && feedInfoModelList.size() > 0) {
+                        Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
+                        List<CmsBtFeedInfoModel> succeed = response.get("succeed");
+                        codeCnt += succeed.size();
+                    }
+                    i++;
+                }
+                $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
+
+
+                // 处理剩余的Sku件数（没有匹配上parent-id）
+                i=1;
+                while (true) {
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("channelId", channel.getOrder_channel_id());
+                    param.put("updateFlg", "0");
+                    List<VmsBtFeedInfoTempModel> otherList = vmsBtFeedInfoTempDaoExt.selectList(param);
+                    // 直到全部拿完那么终止
+                    if (otherList.size() == 0) {
+                        break;
+                    }
+                    $info("***************处理剩余件数:" + String.valueOf(i*100) + ",channel：" + channel.getFull_name());
+                    for (VmsBtFeedInfoTempModel otherModel : otherList) {
+                        // sku的共通属性check
+                        checkSkuCommon(otherModel, errorList);
                     }
                 }
+                // 如果有错误的情况下
+                if (errorList.size() > 0) {
+                    $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
+                    // 生成错误文件
+                    String feedErrorFilePath = createErrorFile(errorList);
 
-                if (errorList.size() == 0 && feedInfoModelList.size() > 0) {
-                    Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
-                    List<CmsBtFeedInfoModel> succeed = response.get("succeed");
-                    codeCnt += succeed.size();
+                    // 把文件管理的状态变为3：导入错误
+                    VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
+                    // 更新条件
+                    feedFileModel.setChannelId(channel.getOrder_channel_id());
+                    feedFileModel.setFileName(feedFilePath);
+                    // 更新内容
+                    feedFileModel.setErrorFilePath(feedErrorFilePath);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 }
-                i++;
+            } catch (IOException e) {
+                $error(e.getMessage());
             }
-            $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
-
         }
 
         /**
@@ -363,13 +404,12 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
             // category
             String category = codeModel.getCategory();
-            // TODO 处理Category的空格
-            String[] categoryArray = category.split("-");
+            String[] categoryArray = category.split("/");
             category = "";
             for (String categoryItem : categoryArray) {
-                // 不等于空的情况下，去掉首尾空格重新组装一下
+                // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
                 if (!StringUtils.isEmpty(categoryItem)) {
-                    category += categoryItem.trim() + "-";
+                    category += categoryItem.trim().replaceAll("-", "－") + "-";
                 }
             }
             // 去掉最后一个分隔符[-]
@@ -485,8 +525,11 @@ public class VmsFeedFileImportService extends BaseTaskService {
                 feedInfo.setBrand(brand);
                 feedInfo.setMaterial(materials);
                 feedInfo.setClientProductURL(vendorProductUrl);
-                // TODO 要建一张Category和ProductType的Mapping表
-                feedInfo.setProductType("");
+                String productType = categoryArray[0];
+                if (productTypeByCategoryMap.get(categoryArray[0]) != null) {
+                    productType = productTypeByCategoryMap.get(categoryArray[0]);
+                }
+                feedInfo.setProductType(productType);
                 if (attributeMap.get("color") != null) {
                     feedInfo.setColor(attributeMap.get("color").get(0));
                 } else {
@@ -520,6 +563,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     }
                     skuModel.setPriceClientRetail(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
+                    skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
 
                 } else {
                     for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
@@ -542,6 +587,8 @@ public class VmsFeedFileImportService extends BaseTaskService {
 
                         skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
+                        skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
 
                         skusModel.add(skuModel);
                     }
@@ -1174,6 +1221,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
                 reader.close();
                 // 如果check有错误，那么生成错误文件，并且把文件管理的状态变为3：导入错误
                 if (error.toString().length() > 0) {
+                    $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFilePath = createErrorFile(error);
                     // 把文件管理的状态变为3：导入错误
@@ -1187,10 +1235,11 @@ public class VmsFeedFileImportService extends BaseTaskService {
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                     return true;
                 }
+                $info("导入Temp表成功,导入件数：" + rowNum +"件,channel：" + channel.getFull_name());
 
                 return false;
             } catch (IOException e) {
-                e.printStackTrace();
+                $error(e.getMessage());
                 return true;
             }
         }
@@ -1809,7 +1858,7 @@ public class VmsFeedFileImportService extends BaseTaskService {
         }
 
         /**
-         * 生成Feed错误结果文件，并且更新vms_bt_feed_file表
+         * 生成Feed错误结果文件
          *
          * @param stringBuilder 错误内容
          *
@@ -1824,6 +1873,36 @@ public class VmsFeedFileImportService extends BaseTaskService {
             FileUtils.mkdirPath(feedErrorFilePath);
             feedErrorFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
+                byte[] contentInBytes = stringBuilder.toString().getBytes();
+                outputStream.write(contentInBytes);
+                outputStream.flush();
+                outputStream.close();
+            }
+            return feedErrorFilePath;
+        }
+
+        /**
+         * 生成Feed错误结果文件
+         *
+         * @param errorList 错误内容列表
+         *
+         * return Feed错误结果文件的路径
+         */
+        private String createErrorFile(List<Map<String, Object>> errorList) throws IOException {
+            $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
+            // 取得Feed文件检查结果路径
+            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+            feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
+            // 创建文件目录
+            FileUtils.mkdirPath(feedErrorFilePath);
+            feedErrorFilePath += "Check_Result_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss") + ".csv";
+            StringBuilder stringBuilder = new StringBuilder();
+            try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
+                for (Map<String, Object> error : errorList) {
+                    stringBuilder.append(String.valueOf(error.get("row"))  + VmsConstants.COMMA
+                            + String.valueOf(error.get("column"))  + VmsConstants.COMMA
+                            + String.valueOf(error.get("message"))  + VmsConstants.COMMA);
+                }
                 byte[] contentInBytes = stringBuilder.toString().getBytes();
                 outputStream.write(contentInBytes);
                 outputStream.flush();
