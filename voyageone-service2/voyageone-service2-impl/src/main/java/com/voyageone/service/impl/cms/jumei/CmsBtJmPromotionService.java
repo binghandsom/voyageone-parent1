@@ -21,7 +21,6 @@ import com.voyageone.service.daoext.synship.SynshipComMtValueChannelDao;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.*;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.util.MapModel;
@@ -66,12 +65,12 @@ public class CmsBtJmPromotionService {
         return dao.select(id);
     }
     @VOTransactional
-    public void delete(int id) {
-        CmsBtJmPromotionModel model = dao.select(id);
-        model.setActive(0);
-        dao.update(model);
-        saveCmsBtPromotion(model);
-    }
+   public void delete(int id) {
+       CmsBtJmPromotionModel model = dao.select(id);
+       model.setActive(0);
+       dao.update(model);
+       saveCmsBtPromotion(model);
+   }
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
     }
@@ -276,11 +275,11 @@ public class CmsBtJmPromotionService {
      * @param creater   创建人
      */
     public List<String> addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
-                                                 Double discount,
-                                                 Integer priceType,
-                                                 String tagName,
-                                                 String tagId,
-                                                 String creater) throws IllegalAccessException {
+                                         Double discount,
+                                         Integer priceType,
+                                         String tagName,
+                                         String tagId,
+                                         String creater) throws IllegalAccessException {
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
@@ -333,7 +332,7 @@ public class CmsBtJmPromotionService {
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier());
+        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier(),false);
 
         // 批量更新product表
         if (bulkList.size() > 0) {
@@ -369,20 +368,17 @@ public class CmsBtJmPromotionService {
 
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
-        return model.getPlatform(CartType.JUMEI.getCartId()).getSkus().stream().map(oldSku -> {
+        return model.getCommon().getSkus().stream().map(oldSku -> {
             SkuImportBean bean = new SkuImportBean();
             bean.setProductCode(model.getCommon().getFields().getCode());
-            String skuCode = oldSku.getStringAttribute("skuCode");
-            bean.setSkuCode(skuCode);
-            Double priceMsrp = oldSku.getDoubleAttribute("priceMsrp");
-            Double priceSale = oldSku.getDoubleAttribute("priceSale");
-            bean.setMarketPrice(priceMsrp);
+            bean.setSkuCode(oldSku.getSkuCode());
+            bean.setMarketPrice(oldSku.getPriceMsrp());
             Double finalPrice;
             if (discount != null) {
                 final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
-                finalPrice = Math.ceil(priceTypeCopy == 1 ? (priceMsrp * discountCopy) : (priceSale * discountCopy));
+                finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getClientRetailPrice() * discountCopy));
             } else {
-                finalPrice = priceSale;
+                finalPrice = oldSku.getClientRetailPrice();//.getPriceSale();
             }
             bean.setDealPrice(finalPrice);
             bean.setDiscount(discount);

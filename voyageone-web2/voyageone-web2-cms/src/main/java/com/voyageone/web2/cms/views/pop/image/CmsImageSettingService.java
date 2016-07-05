@@ -4,6 +4,8 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
@@ -12,6 +14,7 @@ import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformImagesService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -19,6 +22,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Common;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -49,6 +53,8 @@ public class CmsImageSettingService extends BaseAppService {
     PlatformImagesService platformImagesService;
     @Autowired
     ImagesService imagesService;
+    @Autowired
+    private CommonSchemaService commonSchemaService;
 
     public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
 
@@ -90,15 +96,16 @@ public class CmsImageSettingService extends BaseAppService {
 
             // 上新
 //            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
-                productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, userName);
+                productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, user.getUserName());
 
             // 更新产品数据
-            ProductUpdateBean requestModel = new ProductUpdateBean();
-            requestModel.setProductModel(cmsBtProductModel);
-            requestModel.setModifier(user.getUserName());
-            requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-            productService.updateProduct(user.getSelChannelId(), requestModel);
+            productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);
+
+            List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+            cmsMtCommonFields = cmsMtCommonFields.stream().filter(field -> field.getId().equalsIgnoreCase(imageType.replace("image","images"))).collect(Collectors.toList());
+            FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProductModel.getCommon().getFields());
             response.put("imageName", imageName);
+            response.put("imageSchema",cmsMtCommonFields);
             response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
             return response;
         }

@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
@@ -99,7 +98,7 @@ public class PlatformCategoryService extends BaseService {
      */
     public void setMangoDBPlatformCatTrees(List<CmsMtPlatformCategoryTreeModel> savePlatformCatModels, String cartId, String channelId) {
 
-        if (savePlatformCatModels != null && savePlatformCatModels.size() > 0) {
+        if (savePlatformCatModels != null && !savePlatformCatModels.isEmpty()) {
             // 删除原有类目信息
             WriteResult delCatRes = platformCategoryDao.deletePlatformCategories(Integer.valueOf(cartId), channelId);
             $info("批量删除类目 CART_ID 为：" + cartId + "  channel id: " + channelId + " 的数据为: " + delCatRes.getN() + "条...");
@@ -215,7 +214,7 @@ public class PlatformCategoryService extends BaseService {
             if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
                 return catTreeModel;
             }
-            if (catTreeModel.getChildren().size() > 0) {
+            if (!catTreeModel.getChildren().isEmpty()) {
                 CmsMtPlatformCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
                 if (category != null) return category;
             }
@@ -256,7 +255,7 @@ public class PlatformCategoryService extends BaseService {
             if (cmsMtPlatformCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return cmsMtPlatformCategoryTreeModel;
             }
-            if (cmsMtPlatformCategoryTreeModel.getChildren().size() > 0) {
+            if (!cmsMtPlatformCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtPlatformCategoryTreeModel platformCategory = findCategory(cmsMtPlatformCategoryTreeModel, catPath);
                 if (platformCategory != null) return platformCategory;
             }

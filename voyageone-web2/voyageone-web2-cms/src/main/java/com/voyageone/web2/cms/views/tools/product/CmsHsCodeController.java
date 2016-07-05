@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.tools.product;
 
+import com.voyageone.service.impl.cms.CmsHsCodeService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -84,9 +85,9 @@ public class CmsHsCodeController extends CmsController {
         //当前用户名称
         String userName=this.getUser().getUserName();
         //取得尺码关系一览初始化
-        cmsHsCodeService.saveHsCodeInfo(channelId,userName,param);
+        Map<String, Object> resultBean=cmsHsCodeService.saveHsCodeInfo(channelId,userName,param);
         //返回数据的类型
-        return success(param);
+        return success(resultBean);
     }
 }
 

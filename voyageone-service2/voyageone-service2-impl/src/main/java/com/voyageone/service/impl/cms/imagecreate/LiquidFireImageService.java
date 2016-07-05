@@ -17,7 +17,7 @@ public class LiquidFireImageService extends BaseService {
     }
 
     public String getDownloadUrl(String templateContent, String vparam) throws Exception {
-        return "";
+        return null;
     }
 
     /**

@@ -128,7 +128,7 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
         List<CmsMtPlatformPropSkuModel> listTmallSkuInfos = cmsMtPlatformPropSkuDao.selectList(searchMap);
 
         // Map<prop_id, List<CmsMtPlatformPropSkuModel>>
-        Map<String, List<CmsMtPlatformPropSkuModel>> mapTmallSkuInfos = listTmallSkuInfos.stream().collect(Collectors.groupingBy(model -> model.getPropId()));
+        Map<String, List<CmsMtPlatformPropSkuModel>> mapTmallSkuInfos = listTmallSkuInfos.stream().collect(Collectors.groupingBy(CmsMtPlatformPropSkuModel::getPropId));
 
         for (Field platformProp : fields) {
             if ("hscode".equals(platformProp.getId())) {
@@ -530,7 +530,8 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
 //                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
 //                        } else {
 //                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);

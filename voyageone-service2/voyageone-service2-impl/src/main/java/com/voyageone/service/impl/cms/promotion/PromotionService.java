@@ -8,7 +8,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -91,28 +90,28 @@ public class PromotionService extends BaseService {
 
     /**
      * 根据channelId获取promotion列表
-     * @param channelId
-     * @return
      */
     public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId, Map<String, Object> params) {
-//        Map<String, Object> params = new HashMap<>();
-        params = params == null ? new HashMap<>() : params;
-        if(Channels.isUsJoi(channelId)){
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
+        Map<String, Object> paramsTmp =  params;
+        if (paramsTmp == null) {
+            paramsTmp = new HashMap<>();
         }
-        return this.getByCondition(params);
+        if(Channels.isUsJoi(channelId)){
+            paramsTmp.put("orgChannelId", channelId);
+            paramsTmp.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            paramsTmp.put("channelId", channelId);
+        }
+        return this.getByCondition(paramsTmp);
     }
 
     /**
      * 根据channelId获取promotion列表，只查询有效的活动信息(除了状态外，必须要有tag信息)
-     * @param channelId
-     * @return
      */
     public List<CmsBtPromotionBean> getPromotions4AdvSearch(String channelId, Map<String, Object> params) {
-        params = params == null ? new HashMap<>() : params;
+        if (params == null) {
+            params = new HashMap<>();
+        }
         if (Channels.isUsJoi(channelId)) {
             params.put("orgChannelId", channelId);
             params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
@@ -164,7 +163,7 @@ public class PromotionService extends BaseService {
             param.put("cartId",cmsBtPromotionBean.getCartId());
             param.put("promotionName",cmsBtPromotionBean.getPromotionName());
             List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
-            if(promotions == null || promotions.size() == 0){
+            if(promotions == null || promotions.isEmpty()){
                 result = cmsBtPromotionDaoExt.insert(insertTagsAndGetNewModel(cmsBtPromotionBean));
             }else{
                 throw new BusinessException("4000093");

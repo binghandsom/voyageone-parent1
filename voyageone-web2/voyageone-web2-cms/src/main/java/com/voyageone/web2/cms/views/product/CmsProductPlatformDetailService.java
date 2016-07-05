@@ -61,19 +61,25 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // platform 品牌名
         if (StringUtil.isEmpty(platformCart.getpBrandId())) {
-            Map<String, Object> parm = new HashMap<>();
-            parm.put("channelId", channelId);
-            parm.put("cartId", cartId);
-            parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
-            parm.put("active", 1);
-            CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
-            if (cmsMtBrandsMappingModel != null) {
-                platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+            if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+                Map<String, Object> parm = new HashMap<>();
+                parm.put("channelId", channelId);
+                parm.put("cartId", cartId);
+                parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
+                parm.put("active", 1);
+                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
+                if (cmsMtBrandsMappingModel != null) {
+                    platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
+                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+                }
+            }else{
+                platformCart.setpBrandName(cmsBtProduct.getCommon().getFields().getBrand());
             }
         }
 
-        platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), cartId));
+        if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), cartId));
+        }
         return platformCart;
     }
 
@@ -119,10 +125,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, cmsBtProduct.getCommon().getFields().getCode());
         cmsBtProduct.getCommon().getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null ? 0 : skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
 
-        if (cmsBtProduct.getCommon().getFields() != null) {
-            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
-        }
+//        if (cmsBtProduct.getCommon().getFields() != null) {
+//            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
+//            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
+//        }
         mastData.put("images", images);
         return mastData;
     }
@@ -178,10 +184,13 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
 
-        List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
-        platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
-        platform.remove("schemaFields");
+        if(platform.get("schemaFields") !=null) {
+            List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
+
+            platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+            platform.remove("schemaFields");
+        }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
         return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true);

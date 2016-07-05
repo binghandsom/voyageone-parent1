@@ -23,10 +23,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -288,22 +285,28 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取code list用于检索code,model,productName,longTitle
+
         if (searchValue.getCodeList() != null
                 && searchValue.getCodeList().length > 0) {
-            List<String> orSearch = new ArrayList<>();
-            orSearch.add(MongoUtils.splicingValue("common.fields.code", searchValue.getCodeList()));
-            orSearch.add(MongoUtils.splicingValue("common.fields.model", searchValue.getCodeList()));
-            orSearch.add(MongoUtils.splicingValue("common.skus.skuCode", searchValue.getCodeList()));
+            List<String> inputCodeList = Arrays.asList(searchValue.getCodeList());
+            inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
+            String[] inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
 
-            if (searchValue.getCodeList().length == 1) {
+            List<String> orSearch = new ArrayList<>();
+            orSearch.add(MongoUtils.splicingValue("common.fields.code", inputCodeArr));
+            orSearch.add(MongoUtils.splicingValue("common.fields.model", inputCodeArr));
+            orSearch.add(MongoUtils.splicingValue("common.skus.skuCode", inputCodeArr));
+
+            if (inputCodeArr.length == 1) {
                 // 原文查询内容
-                orSearch.add(MongoUtils.splicingValue("common.fields.productNameEn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("common.fields.longDesEn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("common.fields.shortDesEn", searchValue.getCodeList()[0], "$regex"));
+                String fstCode = inputCodeArr[0];
+                orSearch.add(MongoUtils.splicingValue("common.fields.productNameEn", fstCode, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("common.fields.longDesEn", fstCode, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("common.fields.shortDesEn", fstCode, "$regex"));
                 // 中文查询内容
-                orSearch.add(MongoUtils.splicingValue("common.fields.originalTitleCn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("common.fields.shortDesCn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("common.fields.longDesCn", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("common.fields.originalTitleCn", fstCode, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("common.fields.shortDesCn", fstCode, "$regex"));
+                orSearch.add(MongoUtils.splicingValue("common.fields.longDesCn", fstCode, "$regex"));
             }
             result.append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append(",");
@@ -420,7 +423,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     /**
      * 获取排序规则
      */
-    public String setSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
+    public String getSortValue(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
         StringBuilder result = new StringBuilder();
 
         // 获取排序字段1

@@ -644,6 +644,7 @@ define(function(){
         "TXT_RULE_OF_PRE":"优先规则",
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON":"商品名称/Feed类目/主类目",
         "TXT_HS_CODE_SETTED_SEARCH":"个人设置税号成果搜索",
+        "TXT_CARRY_ON_THE_CURRENT_SETTING":"请继续完善税号设置",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW":"高级搜索",
@@ -736,9 +737,9 @@ define(function(){
         "TXT_PRODUCT_EN_INSTRUCTIONS": "使用方法(英文)",
         "TXT_PRODUCT_CN_INSTRUCTIONS": "使用方法(中文)",
         "TXT_PRODUCT_ORIGINAL_URL": "查看品牌方商品页面",
-        "TXT_NOT_MATCHED_PROPERTY": "未匹配属性",
-        "TXT_MATCHED_PROPERTY": "已匹配属性",
-        "TXT_NOT_TRANSLATED_PROPERTY": "未翻译属性",
+        "TXT_SUBMIT_SUCCESS": "提交成功",
+        "TXT_SAVE_SUCCESS": "保存成功",
+        "TXT_UNKNOWN": "未知",
 
         /**聚美专场*/
         "TXT_JM_PROMOTION_NAME":"聚美专场名称",

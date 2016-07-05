@@ -195,15 +195,15 @@ public class StockSeparateService extends BaseService {
         mapSaveData.put("endFlg", "1");
         mapSaveData.put("modifier", creater);
         mapSaveData.put("channelId", channelId);
-        for (String cartId : mapSku.keySet()) {
-            mapSaveData.put("cartId", cartId);
-            List<String> listSku = mapSku.get(cartId);
+        for (Map.Entry<String, List<String>> entry : mapSku.entrySet()) {
+            mapSaveData.put("cartId", entry.getKey());
+            List<String> listSku = entry.getValue();
             int index = 0;
             for (; index + 500 < listSku.size(); index = index + 500) {
-                mapSaveData.put("skuList", mapSku.get(cartId).subList(index, index + 500));
+                mapSaveData.put("skuList", listSku.subList(index, index + 500));
                 cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(mapSaveData);
             }
-            mapSaveData.put("skuList", mapSku.get(cartId).subList(index, listSku.size()));
+            mapSaveData.put("skuList", listSku.subList(index, listSku.size()));
             cmsBtStockSalesQuantityDaoExt.updateStockSalesQuantity(mapSaveData);
         }
     }
@@ -240,7 +240,7 @@ public class StockSeparateService extends BaseService {
             }
         }
 
-        if (listSaveData.size() > 0) {
+        if (!listSaveData.isEmpty()) {
             cmsBtStockSeparateItemDaoExt.insertStockSeparateItemByList(listSaveData);
             listSaveData.clear();
         }
@@ -314,7 +314,7 @@ public class StockSeparateService extends BaseService {
             }
         }
 
-        if (listSaveData.size() > 0) {
+        if (!listSaveData.isEmpty()) {
             cmsBtStockSeparateIncrementItemDaoExt.insertStockSeparateIncrementItemByList(listSaveData);
             listSaveData.clear();
         }
@@ -447,7 +447,7 @@ public class StockSeparateService extends BaseService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 0) {
+        if (!allSku.isEmpty()) {
             //将数据插入cms_bt_stock_separate_item表中
             cmsBtStockSeparateItemDaoExt.insertStockSeparateItemByList(allSku);
             allSku.clear();
@@ -519,7 +519,7 @@ public class StockSeparateService extends BaseService {
                 allSku.clear();
             }
         }
-        if (allSku.size() > 0) {
+        if (!allSku.isEmpty()) {
             cmsBtStockSeparateIncrementItemDaoExt.insertStockSeparateIncrementItemByList(allSku);
             allSku.clear();
         }

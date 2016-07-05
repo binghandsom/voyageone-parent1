@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.Condition;
@@ -39,7 +40,6 @@ import com.voyageone.service.model.cms.enums.SrcType;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
-import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
@@ -241,7 +241,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // jeff 2016/05 add start
             // 取得所有主类目
-            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
+            // update desmond 2016/07/04 start
+//            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
+            List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
+            // update desmond 2016/07/04 end
             // jeff 2016/05 add end
 
             // 遍历所有数据
@@ -250,7 +253,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
                 //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
                 feed.setFullAttribute();
-                doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeList);
+                doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
             }
 
             // jeff 2016/04 add start
@@ -268,19 +271,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param originalFeed     Feed信息
          * @param channelId       channel id
          * @param mapBrandMapping 品牌mapping一览
-         * @param categoryTreeList 所有主类目
+         * @param categoryTreeAllList 所有主类目
          */
         private void doSaveProductMainProp(
                 CmsBtFeedInfoModel originalFeed
                 , String channelId
                 , Map<String, String> mapBrandMapping
-                ,  List<CmsMtCategoryTreeModel> categoryTreeList
+//                ,  List<CmsMtCategoryTreeModel> categoryTreeList    // delete desmond 2016/07/04
+                ,  List<CmsMtCategoryTreeAllModel> categoryTreeAllList
         ) {
             // feed类目名称
             String feedCategory = originalFeed.getCategory();
 
             // [ feed -> main ] 类目属性的匹配关系
-            CmsBtFeedMappingModel mapping = null;
+//            CmsBtFeedMappingModel mapping = null;    // delete desmond 2016/07/04
             CmsBtFeedMapping2Model newMapping = null;
 
             // 通过Code查找到的产品
@@ -294,20 +298,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (cmsProductList.size() == 0) {
                 oldCmsProduct = productService.getProductByCode(channelId, originalFeed.getCode());
             }
+            CmsBtProductModel cmsProductParam = null;   // add desmond 2016/07/04
             // 找不到Code
             if (oldCmsProduct == null && cmsProductList.size() == 0) {
                 // 不存在
                 // 获取类目属性匹配关系(默认的)
-                mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true);
+//                mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true);  // delete desmond 2016/07/04
                 newMapping = cmsBtFeedMapping2Dao.findDefault(channelId, feedCategory);
                 // mapping check
-                if (!checkMapping(mapping, null,channelId, originalFeed)) return;
+//                if (!checkMapping(mapping, null,channelId, originalFeed)) return;          // delete desmond 2016/07/04
 
             } else {
                 // 存在
                  // 根据OriginalCode找到一条（非拆分的情况）
                  if (cmsProductList.size() == 1 || oldCmsProduct != null) {
-                     CmsBtProductModel cmsProductParam = null;
+//                     CmsBtProductModel cmsProductParam = null;    // delete desmond 2016/07/04
                      if (cmsProductList.size() == 1) {
                          cmsProductParam = cmsProductList.get(0);
                      } else {
@@ -315,30 +320,61 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                      }
 
                      // 获取类目属性匹配关系(指定的主类目)
-                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
-                     if (cmsProductParam.getCommon().getFields() != null && cmsProductParam.getCommon().getCatPath() != null) {
+//                     mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());  // delete desmond 2016/07/04
+                     if (cmsProductParam.getCommon() != null && cmsProductParam.getCommon().getCatPath() != null) {
                          newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProductParam.getCommon().getCatPath());
                      }
 
                      // mapping check
-                     if (!checkMapping(mapping, cmsProductParam,channelId, originalFeed)) return;
+//                     if (!checkMapping(mapping, cmsProductParam,channelId, originalFeed)) return;  // delete desmond 2016/07/04
                  }
             }
 
             if (!this.skip_mapping_check) {
-                if (mapping != null) {
-                    String mainCategoryPath = mapping.getMainCategoryPath();
-                    for (CmsMtCategoryTreeModel categoryTree : categoryTreeList) {
-                        if (mainCategoryPath.equals(categoryTree.getCatPath())) {
-                            if ("1".equals(categoryTree.getSingleSku())) {
+                // update desmon 2016/07/04 start   CmsMtCategoryTreeModel -> CmsMtCategoryTreeAllModel
+//                if (mapping != null) {
+//                    String mainCategoryPath = mapping.getMainCategoryPath();
+//                    for (CmsMtCategoryTreeModel categoryTree : categoryTreeList) {
+//                        if (mainCategoryPath.equals(categoryTree.getCatPath())) {
+//                            if ("1".equals(categoryTree.getSingleSku())) {
+//                                isSingleSku = true;
+//                            }
+//                            break;
+//                        } else {
+//                            List result = new ArrayList<>();
+//                            CmsMtCategoryTreeModel categoryTreeFind = categoryTreeService.findCategorySingleSku(categoryTree, mainCategoryPath, result);
+//                            if (categoryTreeFind != null) {
+//                                if (result.size() > 0 || "1".equals(categoryTree.getSingleSku())) {
+//                                    isSingleSku = true;
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+
+                // 主类目Path(更新的时候，优先用product的主类目路径，没有的话再使用newMapping匹配的主类目路径)
+                String mainCategoryPath = null;
+                if (cmsProductParam != null
+                        && cmsProductParam.getCommon() != null
+                        && !StringUtil.isEmpty(cmsProductParam.getCommon().getCatPath())) {
+                    mainCategoryPath = cmsProductParam.getCommon().getCatPath();
+                } else if (newMapping != null) {
+                    mainCategoryPath = newMapping.getMainCategoryPath();
+                }
+                // 判断主类目路径是否只能为SingleSku
+                if (!StringUtils.isEmpty(mainCategoryPath)) {
+                    for (CmsMtCategoryTreeAllModel categoryTreeAll : categoryTreeAllList) {
+                        if (mainCategoryPath.equals(categoryTreeAll.getCatPath())) {
+                            if ("1".equals(categoryTreeAll.getSingleSku())) {
                                 isSingleSku = true;
                             }
                             break;
                         } else {
-                            List result = new ArrayList<>();
-                            CmsMtCategoryTreeModel categoryTreeFind = categoryTreeService.findCategorySingleSku(categoryTree, mainCategoryPath, result);
+                            List<String> result = new ArrayList<>();
+                            CmsMtCategoryTreeAllModel categoryTreeFind = categoryTreeAllService.findCategorySingleSku(categoryTreeAll, mainCategoryPath, result);
                             if (categoryTreeFind != null) {
-                                if (result.size() > 0 || "1".equals(categoryTree.getSingleSku())) {
+                                if (result.size() > 0 || "1".equals(categoryTreeAll.getSingleSku())) {
                                     isSingleSku = true;
                                 }
                                 break;
@@ -346,6 +382,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                 }
+                // update desmond 2016/07/04 end
             }
 
             boolean delOriginalFlg = false;
@@ -468,20 +505,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 不存在
                         blnProductExist = false;
                         // 获取类目属性匹配关系(默认的)
-                        mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true);
+//                        mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true); // delete desmon 2016/07/04
                         newMapping = cmsBtFeedMapping2Dao.findDefault(channelId, feedCategory);
                     } else {
                         // 存在
                         blnProductExist = true;
                         // 获取类目属性匹配关系(指定的主类目)
-                        mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
+//                        mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());  // delete desmon 2016/07/04
                         if (cmsProduct.getCommon().getFields() != null && cmsProduct.getCommon().getCatPath() != null) {
                             newMapping = cmsBtFeedMapping2Dao.selectByKey(channelId, feedCategory, cmsProduct.getCommon().getCatPath());
                         }
                     }
 
                     // mapping check
-                    if (!checkMapping(mapping, cmsProduct,channelId, originalFeed)) return;
+//                    if (!checkMapping(mapping, cmsProduct,channelId, originalFeed)) return;   // delete desmon 2016/07/04
                 } else {
                     // 不需要拆分的情况
                     if (cmsProductList.size() == 1) {
@@ -550,7 +587,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (blnProductExist) {
                     // 修改商品数据
                     // 一般只改改价格神马的
-                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+//                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         $error(getTaskName() + ":更新:编辑商品的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode());
@@ -622,7 +660,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 } else {
                     // 不存在的场合, 新建一个product
-                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+//                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    cmsProduct = doCreateCmsBtProductModel(feed, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         $error(getTaskName() + ":新增:编辑商品的时候出错:" + originalFeed.getChannelId() + ":" + originalFeed.getCode());
@@ -720,51 +759,53 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed           原始Feed
          * @return check结果
          */
-        private boolean checkMapping(CmsBtFeedMappingModel mapping, CmsBtProductModel cmsProduct, String channelId, CmsBtFeedInfoModel feed) {
-            // 默认不忽略mapping check的场合, 需要做mapping check
-            if (!this.skip_mapping_check) {
-                // 查看类目是否匹配完成
-                if (mapping == null) {
-                    // 记下log, 跳过当前记录
-                    if (cmsProduct == null) {
-                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                    } else {
-                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCommon().getCatPath()));
-                    }
-                    // 设置更新时间,更新者
-                    feed.setModifier(getTaskName());
-                    cmsBtFeedInfoDao.update(feed);
-                    return false;
-                }
-                // 查看属性是否匹配完成
-                if (mapping.getMatchOver() == 0) {
-                    // 如果没有匹配完成的话, 那就看看是否有共通
-                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
-                    if (mapping == null || mapping.getMatchOver() == 0) {
-                        // 没有共通mapping, 或者没有匹配完成
-                        // 记下log, 跳过当前记录
-                        //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping == null ? "" : mapping.getMainCategoryPath()));
-                        // 设置更新时间,更新者
-                        feed.setModifier(getTaskName());
-                        cmsBtFeedInfoDao.update(feed);
-                        return false;
-                    }
-
-                }
-            }
-            return true;
-        }
+            // delete desmond 2016/07/04 start
+//        private boolean checkMapping(CmsBtFeedMappingModel mapping, CmsBtProductModel cmsProduct, String channelId, CmsBtFeedInfoModel feed) {
+//            // 默认不忽略mapping check的场合, 需要做mapping check
+//            if (!this.skip_mapping_check) {
+//                // 查看类目是否匹配完成
+//                if (mapping == null) {
+//                    // 记下log, 跳过当前记录
+//                    if (cmsProduct == null) {
+//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+//                    } else {
+//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCommon().getCatPath()));
+//                    }
+//                    // 设置更新时间,更新者
+//                    feed.setModifier(getTaskName());
+//                    cmsBtFeedInfoDao.update(feed);
+//                    return false;
+//                }
+//                // 查看属性是否匹配完成
+//                if (mapping.getMatchOver() == 0) {
+//                    // 如果没有匹配完成的话, 那就看看是否有共通
+//                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
+//                    if (mapping == null || mapping.getMatchOver() == 0) {
+//                        // 没有共通mapping, 或者没有匹配完成
+//                        // 记下log, 跳过当前记录
+//                        //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+//                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping == null ? "" : mapping.getMainCategoryPath()));
+//                        // 设置更新时间,更新者
+//                        feed.setModifier(getTaskName());
+//                        cmsBtFeedInfoDao.update(feed);
+//                        return false;
+//                    }
+//
+//                }
+//            }
+//            return true;
+//        }
+            // delete desmond 2016/07/04 end
 
         /**
          * 生成Fields的内容
          *
          * @param feed            feed的商品信息
-         * @param mapping         feed与main的匹配关系
+//         * @param mapping         feed与main的匹配关系
          * @param mapBrandMapping 品牌mapping一览
-         * @param schemaModel     主类目的属性的schema
+//         * @param schemaModel     主类目的属性的schema
          * @param newFlg          新建flg (true:新建商品 false:更新的商品)
 //         * @param productField    商品属性
          * @param productCommonField    共通商品属性
@@ -778,7 +819,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
 //        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel,
 //                                                                       boolean newFlg, CmsBtProductModel_Field productField, CmsBtProductModel_Field productCommonField,boolean isSplit, String originalCode) {
-        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel,
+        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, Map<String, String> mapBrandMapping,
                                                                        boolean newFlg, CmsBtProductModel_Field productCommonField, boolean isSplit, String originalCode) {
             // --------- 商品属性信息设定 ------------------------------------------------------
             // CmsBtProductModel_Field field = new CmsBtProductModel_Field();
@@ -1111,7 +1152,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * 生成一个新的product
          *
          * @param feed            feed的商品信息
-         * @param mapping         feed与main的匹配关系
+//         * @param mapping         feed与main的匹配关系
          * @param newMapping      新的feed与main的匹配关系
          * @param mapBrandMapping 品牌mapping一览
          * @param isSplit         是否拆分对象
@@ -1120,14 +1161,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private CmsBtProductModel doCreateCmsBtProductModel(
                 CmsBtFeedInfoModel feed
-                , CmsBtFeedMappingModel mapping
+//                , CmsBtFeedMappingModel mapping
                 , CmsBtFeedMapping2Model newMapping
                 , Map<String, String> mapBrandMapping
                 , boolean isSplit
                 , String originalCode
         ) {
             if (skip_mapping_check) {
-                // 如果允许条股检查的场合, 说明是正在执行旧系统迁移到新系统
+                // 如果允许条件检查的场合, 说明是正在执行旧系统迁移到新系统
                 // 那么就需要到旧数据库里看一下这个数据在旧系统里是否存在, 如果不存在, 那么这条数据有问题, 不能直接迁移
                 int cnt = tmpOldCmsDataDao.checkExist(feed.getChannelId(), feed.getCode());
                 if (cnt == 0) {
@@ -1143,11 +1184,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // --------- 基本信息设定 ------------------------------------------------------
             product.setChannelId(feed.getChannelId());
 
-            if (!skip_mapping_check) {
-                String catPath = mapping.getMainCategoryPath();
-                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.getCommon().setCatPath(catPath); // 主类目path
-            }
+            // delete desmond 2016/07/04 start
+//            if (!skip_mapping_check) {
+//                String catPath = mapping.getMainCategoryPath();
+//                product.setCatId(MD5.getMD5(catPath)); // 主类目id
+//                product.setCatPath(catPath); // 主类目path
+//            }
+            // delete desmond 2016/07/04 end
             product.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID)); // 商品的id
 
             // jeff 2016/06 add start
@@ -1155,8 +1198,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setLock("0");
             // jeff 2016/06 add end
 
+            // delete desmond 2016/07/04 start
             // --------- 获取主类目的schema信息 ------------------------------------------------------
-            CmsMtCategorySchemaModel schemaModel =  cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
+//            CmsMtCategorySchemaModel schemaModel =  cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
+            // delete desmond 2016/07/04 end
 
             CmsBtProductModel_Common common = new CmsBtProductModel_Common();
             common.setFields(new CmsBtProductModel_Field());
@@ -1165,7 +1210,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 change start
             // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true);
             // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true, new CmsBtProductModel_Field(), common.getFields(), isSplit, originalCode);
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true, common.getFields(), isSplit, originalCode);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapBrandMapping, true, common.getFields(), isSplit, originalCode);
             // jeff 2016/04 change end
             if (field == null) {
                 return null;
@@ -1181,7 +1226,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 String catPath = newMapping.getMainCategoryPath();
                 common.setCatId(MD5.getMD5(catPath)); // 主类目id
                 common.setCatPath(catPath); // 主类目path
+            } else {   // add desmond 2016/07/04 start
+                // 设置初期值
+                common.setCatId(""); // 主类目id
+                common.setCatPath(""); // 主类目path
             }
+
+            // 分平台属性
+            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+            // 追加P0(主数据)平台属性
+            CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
+            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), "0");
+            if (groupP0 == null) {
+                platformP0.setMainProductCode(common.getFields().getCode());
+            } else {
+                platformP0.setMainProductCode(groupP0.getMainProductCode());
+            }
+            platforms.put("P0", platformP0);
+            // add desmond 2016/07/04 end
 
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
@@ -1193,20 +1255,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
 //                skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
 //            }
-            // delete desmond 2016/07/01 end
 
             // SKU级属性列表
-            List<String> skuFieldSchemaList = new ArrayList<>();
-            if (!skip_mapping_check && schemaModel != null) {
-                MultiComplexField skuFieldSchema = (MultiComplexField) schemaModel.getSku();
-                List<Field> schemaFieldList = skuFieldSchema.getFields();
-                for (Field f : schemaFieldList) {
-                    skuFieldSchemaList.add(f.getId());
-                }
-            }
+//            List<String> skuFieldSchemaList = new ArrayList<>();
+//            if (!skip_mapping_check && schemaModel != null) {
+//                MultiComplexField skuFieldSchema = (MultiComplexField) schemaModel.getSku();
+//                List<Field> schemaFieldList = skuFieldSchema.getFields();
+//                for (Field f : schemaFieldList) {
+//                    skuFieldSchemaList.add(f.getId());
+//                }
+//            }
+            // delete desmond 2016/07/01 end
 
             // --------- 商品Sku信息设定 ------------------------------------------------------
-            // update desmond 2016/07/01 start
             // 对应product.skus -> product.common.skus变更
 //            List<CmsBtProductModel_Sku> mainSkuList = new ArrayList<>();
             List<CmsBtProductModel_Sku> commonSkuList = new ArrayList<>();
@@ -1246,7 +1307,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // update desmond 2016/07/01 end
 
             // --------- platform ------------------------------------------------------
-            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
+//            Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();  // delete desmond 2016/07/04
             List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             // 取得新的主类目对应的平台类目
             if (newMapping != null) {
@@ -1267,8 +1328,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 if (group == null) {
                     platform.setpIsMain(1);
+                    platform.setMainProductCode(common.getFields().getCode());  // add desmond 2016/07/04
                 } else {
                     platform.setpIsMain(0);
+                    platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
                 }
 
                 // 如果新的主类目对应的平台类目存在，那么设定
@@ -1494,28 +1557,31 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          *
          * @param feed            feed的商品信息
          * @param product         主数据的product
-         * @param mapping         feed与main的匹配关系
+//         * @param mapping         feed与main的匹配关系
          * @param newMapping      新的feed与main的匹配关系
          * @param mapBrandMapping 品牌mapping一览
          * @param isSplit          是否拆分对象
          * @param originalCode 原始Code
          * @return 修改过的product的内容
          */
-        private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping, CmsBtFeedMapping2Model newMapping, Map<String, String> mapBrandMapping, boolean isSplit, String originalCode) {
+//        private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping, CmsBtFeedMapping2Model newMapping, Map<String, String> mapBrandMapping, boolean isSplit, String originalCode) {
+        private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMapping2Model newMapping, Map<String, String> mapBrandMapping, boolean isSplit, String originalCode) {
 
             // jeff 2016/05 add start
             boolean numIdNoSet = doSetGroup(feed);
-            if (numIdNoSet && !skip_mapping_check) {
-                String catPath = mapping.getMainCategoryPath();
-                product.getCommon().setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.getCommon().setCatPath(catPath); // 主类目path
-            }
+//            if (numIdNoSet && !skip_mapping_check) {
+//                String catPath = mapping.getMainCategoryPath();
+//                product.setCatId(MD5.getMD5(catPath)); // 主类目id
+//                product.setCatPath(catPath); // 主类目path
+//            }
             // jeff 2016/05 add end
 
             // 注意: 价格是在外面共通方法更新的, 这里不需要更新
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
-            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
+            // delete desmond 2016/07/04 start 现在不用通过shema匹配sku信息了
+//            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCommon().getCatId());
+            // delete desmond 2016/07/04 end
             // 更新Fields字段
             // jeff 2016/04 change start
             // CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
@@ -1532,7 +1598,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                product.setFields(new CmsBtProductModel_Field());
 //            }
 //            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getFields(), product.getCommon().getFields(), isSplit, originalCode);
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false, product.getCommon().getFields(), isSplit, originalCode);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapBrandMapping, false, product.getCommon().getFields(), isSplit, originalCode);
             // delete desmond 2016/07/01 end
             // jeff 2016/04 change end
             if (field == null) {
@@ -1642,6 +1708,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     sku.setBarcode(feedSku.getBarcode());
                     sku.setClientSkuCode(feedSku.getClientSku());
                     sku.setClientSize(feedSku.getSize());
+                    sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
 
                     skuList.add(sku);
                 }
@@ -1655,6 +1722,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             } else {
                 platforms = product.getPlatforms();
             }
+
+            // add desmond 2016/07/04 start
+            // 追加P0(主数据)平台属性
+            if (platforms.get("P0") == null) {
+                CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
+
+                CmsBtProductGroupModel groupP0 = productGroupService.selectMainProductGroupByCode(feed.getChannelId(), product.getCommon().getFields().getCode(), 0);
+                if (groupP0 == null) {
+                    platformP0.setMainProductCode(product.getCommon().getFields().getCode());
+                } else {
+                    platformP0.setMainProductCode(groupP0.getMainProductCode());
+                }
+                platforms.put("P0", platformP0);
+            }
+            // add desmond 2016/07/04 end
+
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {

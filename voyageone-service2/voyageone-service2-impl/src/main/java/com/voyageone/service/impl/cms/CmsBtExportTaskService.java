@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.service.dao.cms.CmsBtExportTaskDao;
 import com.voyageone.service.daoext.cms.CmsBtExportTaskDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -23,9 +22,9 @@ public class CmsBtExportTaskService extends BaseService {
 
     public static final int FEED = 0;
 
-    public static final String templatePath = "/usr/feed.xlsx";
+    public static final String templatePath = "/usr/web/contents/cms/file_template/feed-template.xlsx";
 
-    public static final String savePath = "/usr/";
+    public static final String savePath = "/usr/web/contents/cms/feed_export/";
 
     public Integer add(CmsBtExportTaskModel cmsBtExportTaskModel){
         return cmsBtExportTaskDao.insert(cmsBtExportTaskModel);

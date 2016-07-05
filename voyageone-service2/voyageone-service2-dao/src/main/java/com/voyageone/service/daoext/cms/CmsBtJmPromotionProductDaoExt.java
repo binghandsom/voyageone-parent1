@@ -14,13 +14,13 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionProductDaoExt {
 
-    List selectListByWhere(Map<String, Object> map);
+    List<MapModel> selectListByWhere(Map<String, Object> map);
 
     CmsBtJmPromotionProductModel selectByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List selectExportInfoListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
 
-    List selectListCmsBtJmImportProductByPromotionId(int promotionId);
+    List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -35,7 +35,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
-    List selectPageByWhere(Map<String, Object> map);//add
+    List<MapModel> selectPageByWhere(Map<String, Object> map);//add
 
     int selectCountByWhere(Map<String, Object> ma);//add
 
@@ -46,7 +46,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List selectExportListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 

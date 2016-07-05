@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.translation;
+package com.voyageone.service.bean.cms;
 
 /**
  * Created by Ethan Shi on 2016/6/28.
@@ -7,12 +7,13 @@ package com.voyageone.service.bean.cms.translation;
  * @version 2.2.0
  * @since 2.2.0
  */
-public class TranslationTaskBean_CustomProps {
+public class CustomPropBean {
     private String feedAttrCn;
     private String feedAttrEn;
     private String feedAttrValueCn;
     private String feedAttrValueEn;
     private boolean feedAttr;
+    private boolean customPropActive;
 
     public String getFeedAttrCn() {
         return feedAttrCn;
@@ -52,5 +53,13 @@ public class TranslationTaskBean_CustomProps {
 
     public void setFeedAttr(boolean feedAttr) {
         this.feedAttr = feedAttr;
+    }
+
+    public boolean isCustomPropActive() {
+        return customPropActive;
+    }
+
+    public void setCustomPropActive(boolean customPropActive) {
+        this.customPropActive = customPropActive;
     }
 }

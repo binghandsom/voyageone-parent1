@@ -41,7 +41,6 @@ public class PlatformSchemaService extends BaseService {
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
-
     @Autowired
     private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     @Autowired
@@ -109,7 +108,7 @@ public class PlatformSchemaService extends BaseService {
      * @param listField          平台产品或商品的fields
      * @param listInvisibleField 不想显示的fields
      * @param listExtendField    增加的fields
-     * @return
+     * @return List
      */
     private List<Field> getListFieldForProductImage(List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();

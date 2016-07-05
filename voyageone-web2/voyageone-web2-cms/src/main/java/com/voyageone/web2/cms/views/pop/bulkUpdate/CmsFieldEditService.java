@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
@@ -17,7 +18,9 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -60,6 +63,8 @@ public class CmsFieldEditService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private SizeChartService sizeChartService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -67,13 +72,15 @@ public class CmsFieldEditService extends BaseAppService {
      * 获取pop画面options.
      */
     public List<CmsMtCommonPropDefModel> getPopOptions(String language, String channel_id) {
-
         List<CmsMtCommonPropDefModel> modelList = categorySchemaService.getALLCommonPropDef();
         List<CmsMtCommonPropDefModel> resultList = new ArrayList<>();
 
         for (CmsMtCommonPropDefModel model : modelList) {
-            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             Field field = model.getField();
+            if (field.getIsDisplay() != 1) {
+                continue;
+            }
+            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
                     || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                 OptionsField optionsField = getOptions(field, language, channel_id);
@@ -557,12 +564,14 @@ public class CmsFieldEditService extends BaseAppService {
         qryObj.setParameters(productCodes);
         qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
+        List<JomgoUpdate> bulkList = new ArrayList<>();
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         for (CmsBtProductModel prodObj : prodObjList) {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             for (BaseMongoMap skuObj : skuList) {
+                Double rs = null;
                 if (StringUtils.isEmpty(priceType)) {
-                    Double rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
+                    rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
                     if (rs != null) {
                         skuObj.setAttribute("priceSale", rs);
                     }
@@ -570,12 +579,39 @@ public class CmsFieldEditService extends BaseAppService {
                     Object basePrice = skuObj.getAttribute(priceType);
                     if (basePrice != null) {
                         BigDecimal baseVal = new BigDecimal(basePrice.toString());
-                        Double rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
+                        rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
                         if (rs != null) {
                             skuObj.setAttribute("priceSale", rs);
                         }
                     }
                 }
+                if (rs == null) {
+                    $warn("setProductSalePrice: 数据错误 sku=" + skuObj.getStringAttribute("skuCode"));
+                    break;
+                }
+                Object priceRetail = skuObj.get("priceRetail");
+                if (priceRetail == null) {
+                    $warn("setProductSalePrice: 数据错误 priceRetail为空 sku=" + skuObj.getStringAttribute("skuCode"));
+                    break;
+                }
+                Double result = 0D;
+                if (priceRetail instanceof Double) {
+                    result = (Double) priceRetail;
+                } else {
+                    if (!StringUtil.isEmpty(priceRetail.toString())){
+                        result = new Double(priceRetail.toString());
+                    } else {
+                        $warn("setProductSalePrice: 数据错误 priceRetail格式错误 sku=" + skuObj.getStringAttribute("skuCode"));
+                        break;
+                    }
+                }
+                String diffFlg = "1";
+                if (rs < result) {
+                    diffFlg = "2";
+                } else if (rs > result) {
+                    diffFlg = "3";
+                }
+                skuObj.setAttribute("priceDiffFlg", diffFlg);
             }
 
             // 更新产品的信息
@@ -584,9 +620,10 @@ public class CmsFieldEditService extends BaseAppService {
             updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
             updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
             updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("批量修改商品价格 结果1=：" + rs.toString());
+            bulkList.add(updObj);
         }
+        BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList);
+        $debug("批量修改商品价格 结果=：" + rs.toString());
 
         // TODO--需要记录价格变更履历
 

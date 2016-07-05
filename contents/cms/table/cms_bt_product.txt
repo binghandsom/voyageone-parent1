@@ -10,7 +10,7 @@
 //* catPath   ->暂时保留（用于天猫国际类目，以后删除）
 //* fields    ->暂时保留（用于TG上新）
 //* skus      ->暂时保留（用于TG上新）
-* lock    ->锁住该产品，不能进行任何操作(暂时功能不开放)
+* lock    ->锁住该产品，不能进行任何操作(暂时功能不开放),1:lock, 0:unLock
 * comment   ->添加产品注释(暂时功能不开放)
 * common    ->共通属性
   * catId    ->新的主类目Id
@@ -63,7 +63,7 @@
     * hsCodeCross ->20160627,税号跨境申报（10位）
     * usageEn ->20160627,使用说明英语
     * usageCn ->20160627,使用说明中文
-    * tmallWirelessActive ->20160628,单选框【启用天猫无线端模板】值为1， 【禁用天猫无线端模板】值为0
+    * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
   * skus[]
     * skuCode
     * barcode
@@ -103,6 +103,7 @@
     * pPriceSaleSt
     * pPriceSaleEd
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
+    * modified -> 最终更新时间
     * fields
       * 平台特有fields属性
     * skus[]
@@ -143,6 +144,7 @@
     * pPriceSaleSt
     * pPriceSaleEd
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
+    * modified ->最终更新时间
 	* fields
 	  * productNameCn
 	  * productNameEn

@@ -18,7 +18,6 @@ import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
@@ -57,8 +56,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private FeedCustomPropService feedCustomPropService;
     @Autowired
     private CmsChannelTagService cmsChannelTagService;
@@ -71,8 +68,8 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
-            "common.fields.productNameEn;common.fields.brand;common.fields.status;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceSaleSt;common.fields.priceSaleEd;common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
+            "common.skus.skuCode;common.fields.productNameEn;common.fields.brand;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
      * 获取检索页面初始化的master data数据
@@ -155,26 +152,27 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
-     * skip表示开始检索的位置，0代表从第一位开始检索<br>
-     * limitSize表示只检索指定的件数，0代表不限制件数<br>
-     * 另外，注意：这里虽然返回的是CmsBtProductModel，但是实际上只有两个属性有值，common.fields.code和platforms.Pxx.mainProductCode （没办法，只能如此，框架所限没法返回简单的Map对象）
      */
-    public List<CmsBtProductModel> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, int skip, int limitSize) {
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
-        queryObject.setProjection("{'common.fields.code':1,'platforms.P" + searchValue.getCartId() + ".mainProductCode':1,'_id':0}");
-        queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
-        queryObject.setSkip(skip);
-        queryObject.setLimit(limitSize);
+        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
+        if (searchValue.getProductPageNum() > 0) {
+            queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
+            queryObject.setLimit(searchValue.getProductPageSize());
+        }
 
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", userInfo.getSelChannelId(), queryObject.toString()));
         }
-        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
-        if (prodList == null || prodList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodList为空 查询条件=：" + queryObject.toString());
+        List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), queryObject);
+        if (prodObjList == null || prodObjList.isEmpty()) {
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
+            return new ArrayList<>(0);
         }
-        return prodList;
+        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
+        return codeList;
     }
 
     /**
@@ -193,23 +191,14 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
         }
 
-        List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
-        if (prodList == null || prodList.isEmpty()) {
-            $warn("高级检索 getProductCodeList prodList为空 查询条件(session)=：" + queryObject.toString());
+        List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
+        if (prodObjList == null || prodObjList.isEmpty()) {
+            $warn("高级检索 getProductCodeList prodObjList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
         // 取得符合条件的产品code列表
-        List<String> codeList = new ArrayList<>(prodList.size());
-        for (CmsBtProductModel prodObj : prodList) {
-            if (prodObj.getCommon() == null) {
-                continue;
-            }
-            CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-            if (field != null && field.getCode() != null) {
-                codeList.add(field.getCode());
-            }
-        }
+        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
 
@@ -219,15 +208,19 @@ public class CmsAdvanceSearchService extends BaseAppService {
     public List<Long> getProductIdList(String channelId, CmsSessionBean cmsSessionBean) {
         CmsSearchInfoBean2 searchValue = (CmsSearchInfoBean2) cmsSessionBean.getAttribute("_adv_search_params");
         if (searchValue == null) {
+            $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         queryObject.setProjection("{'prodId':1,'_id':0}");
+        if ($isDebugEnabled()) {
+            $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
+        }
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
         if (prodList == null || prodList.isEmpty()) {
-            $warn("CmsSearchAdvanceService.getProductIdList prodList为空");
+            $warn("高级检索 getProductIdList prodList为空 查询条件(session)=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
 
@@ -258,18 +251,18 @@ public class CmsAdvanceSearchService extends BaseAppService {
         }
         String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
         queryObject.setProjection(projStr);
-        queryObject.setSort(advSearchQueryService.setSortValue(searchValue, cmsSessionBean));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
         if (prodInfoList == null || prodInfoList.isEmpty()) {
-            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果");
+            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果 param list=" + prodCodeList.toString());
             return new ArrayList<>(0);
         }
         return prodInfoList;
     }
 
     /**
-     * 检查翻译状态/设置状态，由数值转换为文字描述
+     * 检查翻译状态/设置状态，由数值转换为文字描述,以及金额格式转换(这里只针对自定义显示列中的项目)
      */
     public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
@@ -277,42 +270,40 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return;
         }
         List<TypeBean> transStatusList = TypeConfigEnums.MastType.translationStatus.getList(lang);
-        Map<String, String> transStatusMap = new HashMap<>(transStatusList.size());
-        for (TypeBean beanObj : transStatusList) {
-            transStatusMap.put(beanObj.getValue(), beanObj.getName());
-        }
-//        List<TypeBean> lockStatusList = TypeConfigEnums.MastType.procLockStatus.getList(lang);
-//        Map<String, String> lockStatusMap = new HashMap<>(lockStatusList.size());
-//        for (TypeBean beanObj : lockStatusList) {
-//            lockStatusMap.put(beanObj.getValue(), beanObj.getName());
-//        }
+        Map<String, String> transStatusMap = transStatusList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> catStsList = TypeConfigEnums.MastType.categoryStatus.getList(lang);
+        Map<String, String> catStsMap = catStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> hsStsList = TypeConfigEnums.MastType.hsCodeStatus.getList(lang);
+        Map<String, String> hsStsMap = hsStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
 
         for (CmsBtProductModel prodObj : productList) {
             CmsBtProductModel_Field fieldsObj = prodObj.getCommon().getFields();
             if (fieldsObj != null) {
-                String stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(fieldsObj.getTranslateStatus());
+                String stsFlg = StringUtils.trimToNull(fieldsObj.getTranslateStatus());
                 if (stsFlg != null) {
-                    String stsValueStr = transStatusMap.get(stsFlg);
-                    if (stsValueStr == null) {
-                        fieldsObj.setTranslateStatus("");
-                    } else {
-                        fieldsObj.setTranslateStatus(stsValueStr);
-                    }
+                    String stsValueStr = StringUtils.trimToEmpty(transStatusMap.get(stsFlg));
+                    fieldsObj.setTranslateStatus(stsValueStr);
                 } else {
                     fieldsObj.setTranslateStatus("");
                 }
 
-//                stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(prodObj.getLock());
-//                if (stsFlg != null) {
-//                    String stsValueStr = lockStatusMap.get(stsFlg);
-//                    if (stsValueStr == null) {
-//                        prodObj.setLock("");
-//                    } else {
-//                        prodObj.setLock(stsValueStr);
-//                    }
-//                } else {
-//                    prodObj.setLock("");
-//                }
+                stsFlg = StringUtils.trimToNull(fieldsObj.getCategoryStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(catStsMap.get(stsFlg));
+                    fieldsObj.setCategoryStatus(stsValueStr);
+                } else {
+                    fieldsObj.setCategoryStatus("");
+                }
+
+                stsFlg = StringUtils.trimToNull(fieldsObj.getHsCodeStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(hsStsMap.get(stsFlg));
+                    fieldsObj.setHsCodeStatus(stsValueStr);
+                } else {
+                    fieldsObj.setHsCodeStatus("");
+                }
             }
         }
     }
@@ -333,27 +324,15 @@ public class CmsAdvanceSearchService extends BaseAppService {
         aggrList.add(new JomgoAggregate(gp2));
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList Aggregate统计无结果");
             return 0;
         }
         Map rsMap = rs.get(0);
         if (rsMap == null || rsMap.isEmpty()) {
-            $warn("高级检索 countGroupCodeList 统计无结果");
+            $warn("高级检索 countGroupCodeList 统计查询无结果");
             return 0;
         }
         return (Integer) rsMap.get("count");
-    }
-
-    /**
-     * 对象列表转换，从CmsBtProductModel对象转为产品Code
-     */
-    public List<String> convertToCodeList(List<CmsBtProductModel> prodObjList) {
-        if (prodObjList == null || prodObjList.isEmpty()) {
-            $warn("CmsAdvanceSearchService.convertToCodeList prodObjList");
-            return new ArrayList<>(0);
-        }
-        List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
-        return codeList;
     }
 
     /**
@@ -361,20 +340,30 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 这里不是直接去检索group表，而是根据CmsBtProductModel中的mainProductCode过滤而来
      * 注意要过滤重复code
      */
-    public List<String> getGroupCodeList(List<CmsBtProductModel> prodObjList, int cartId, int staIdx, int endIdx) {
-        if (prodObjList == null || prodObjList.isEmpty()) {
-            $warn("CmsAdvanceSearchService.getGroupCodeList prodObjList");
-            return new ArrayList<>(0);
+    public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        List<JomgoAggregate> aggrList = new ArrayList<>();
+        String qry1 = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        if (qry1 != null && qry1.length() > 0) {
+            aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
         }
-        List<String> prodCodeList = prodObjList.stream().map(prodObj -> prodObj.getPlatformNotNull(cartId).getStringAttribute("mainProductCode")).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).distinct().collect(Collectors.toList());
+        String sortStr = advSearchQueryService.getSortValue(searchValue, cmsSessionBean);
+        if (sortStr != null && sortStr.length() > 0) {
+            aggrList.add(new JomgoAggregate("{ $sort : " + sortStr + " }"));
+        }
+        String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode' } }";
+        aggrList.add(new JomgoAggregate(gp1));
+        aggrList.add(new JomgoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
+        if (searchValue.getGroupPageSize() > 0) {
+            aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+        }
 
-        if (endIdx > 0) {
-            if (endIdx > prodCodeList.size()) {
-                endIdx = prodCodeList.size();
-            }
-            return prodCodeList.subList(staIdx, endIdx);
+        List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
+        if (rs == null || rs.isEmpty()) {
+            $warn("高级检索 getGroupCodeList 统计无结果 param=" + searchValue.toString());
+            return null;
         }
-        return prodCodeList;
+
+        return rs.stream().map(rsObj -> (String) rsObj.get("_id")).collect(Collectors.toList());
     }
 
     /**
