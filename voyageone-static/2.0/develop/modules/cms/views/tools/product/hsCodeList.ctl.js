@@ -29,6 +29,7 @@ define([
                 searchCondition: ""
             };
         }
+
         HsCodeController.prototype = {
             init: function () {
                 var self = this;
@@ -43,6 +44,7 @@ define([
             get: function () {
                 var self = this;
                 if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
+                if (self.getTaskInfo.hsCodeTaskCnt == undefined) self.getTaskInfo.hsCodeTaskCnt = null;
                 self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
@@ -72,7 +74,7 @@ define([
 
                 })
             },
-            
+
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) {
                     return;
