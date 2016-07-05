@@ -16,15 +16,13 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>平台状态</strong></label>
                                 <div class="col-md-8">
-                                    <span class='label m-l-sm'>
-                                        <span ng-repeat='entity in vm.mastData.platformList'>
-                                               <platform-status data="{cartId:entity.cartId,
-                                               cartName:entity.cartName,
-                                               status:entity.status,
-                                               pStatus:entity.pStatus,
-                                               pPublishError:entity.pPublishError,
-                                               numberId:entity.pNumIId}"></platform-status>
-                                        </span>
+                                    <span ng-repeat='entity in vm.mastData.platformList'>
+                                           <platform-status data="{cartId:entity.cartId,
+                                           cartName:entity.cartName,
+                                           status:entity.status,
+                                           pStatus:entity.pStatus,
+                                           pPublishError:entity.pPublishError,
+                                           numberId:entity.pNumIId}"></platform-status>
                                     </span>
                                 </div>
                             </div>
@@ -149,12 +147,12 @@
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images7 | limitTo: 10"
-                                                              class="thumbnail" ng-class="{'active':vm.currentImage == image.image6}"
-                                                              ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image6)"
-                                                              ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6)+ ')'}">
+                                                              class="thumbnail" ng-class="{'active':vm.currentImage == image.image7}"
+                                                              ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image7)"
+                                                              ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image7)+ ')'}">
 
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images6 track by image| limitTo: 10"
+                                                        <div  ng-repeat="image in vm.tempImage.images7 track by image| limitTo: 10"
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
@@ -265,11 +263,11 @@
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images8 | limitTo: 10"
-                                                              class="thumbnail" ng-class="{'active':vm.currentImage == image.image5}"
-                                                              ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)"
-                                                              ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image5)+ ')'}">
+                                                              class="thumbnail" ng-class="{'active':vm.currentImage == image.image8}"
+                                                              ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)"
+                                                              ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image8)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images5 | limitTo: 10"
+                                                        <div  ng-repeat="image in vm.tempImage.images8 | limitTo: 10"
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>

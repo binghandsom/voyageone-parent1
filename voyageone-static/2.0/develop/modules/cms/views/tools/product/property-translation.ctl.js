@@ -134,6 +134,7 @@ define([
              */
             search: function () {
                 var self = this;
+                this.searchPageSettings.curr = 1;
                 var searchInfo = {
                     keyWord: self.searchPageSettings.keyWord,
                     translateStatus: self.searchPageSettings.translateStatus,
