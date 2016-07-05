@@ -56,6 +56,12 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     public void TestDate() throws Exception {
 
 
+        DecimalFormat  decimalFormat =   new DecimalFormat(".00");
+        System.out.println(decimalFormat.format(0.1));
+        System.out.println(decimalFormat.format(1));
+        System.out.println(decimalFormat.format(11));
+        System.out.println(decimalFormat.format(111));
+
 
         Map<String, String> map = new HashMap<>();
         String value = map.get("1");
