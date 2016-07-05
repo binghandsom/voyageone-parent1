@@ -353,7 +353,9 @@ public class CmsAdvanceSearchService extends BaseAppService {
         String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode' } }";
         aggrList.add(new JomgoAggregate(gp1));
         aggrList.add(new JomgoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
-        aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+        if (searchValue.getGroupPageSize() > 0) {
+            aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+        }
 
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {

@@ -89,7 +89,9 @@ define([
             assign: function () {
                 var self = this;
                 self.searchBtnClicked = false;
-                self.translationService.assign(self.assignInfo).then(function (res) {
+                var req = angular.copy(self.assignInfo);
+                if (!req.codeOrName) req.sort = "";
+                self.translationService.assign(req).then(function (res) {
                     self.vm.taskDetail = res.data.taskDetail;
                     self.vm.taskSummary = res.data.taskSummary;
                 })
@@ -132,6 +134,7 @@ define([
              */
             search: function () {
                 var self = this;
+                this.searchPageSettings.curr = 1;
                 var searchInfo = {
                     keyWord: self.searchPageSettings.keyWord,
                     translateStatus: self.searchPageSettings.translateStatus,

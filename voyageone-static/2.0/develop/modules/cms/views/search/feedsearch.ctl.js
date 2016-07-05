@@ -15,6 +15,7 @@ define([
             feedSelList: {selList: []},
             exportPageOption: {curr: 1, size:10, total: 0, fetch: exportSearch},
             exportList: [],
+            currTab:{group:true,export:false}
         };
         $scope.exportStatus = ["正在生成","完成","失败"];
         $scope.beforSearchInfo={};
@@ -41,7 +42,6 @@ define([
 
             $scope.vm.searchInfo.isAll = false;
 
-            $scope.vm.currTab = 'group';
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
@@ -101,6 +101,9 @@ define([
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
 
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
+
+                $scope.vm.currTab.group = true;
+                $scope.vm.currTab.export = false;
                 $scope.vm.feedList = res.data.feedList;
                 $scope.vm.feedPageOption.total = res.data.feedListTotal;
 
@@ -177,11 +180,16 @@ define([
                 });
         };
 
+        $scope.exportFresh = function exportFresh(){
+            exportSearch($scope.vm.exportPageOption.curr);
+        };
+
         function doExport(){
             var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
             $feedSearchService.doExport(data).then(function(data){
                 $scope.vm.exportList.unshift(data.data);
-                $scope.vm.currTab = 'export';
+                $scope.vm.currTab.export = true;
+                $scope.vm.currTab.group = false;
 
             })
         }
