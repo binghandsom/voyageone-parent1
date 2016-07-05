@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q,$compile) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -177,12 +177,21 @@ define([
 
                 /**
                  * 更新操作
+                 * @param mark  记录是否为ready状态
                  */
-                function saveProduct(){
+                function saveProduct(mark){
                      var statusCount = 0,preStatus;
                      for(var attr in scope.vm.checkFlag){
                          statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                      }
+
+                    /**用于保存报错*/
+                    if(mark == "ready"){
+                        if(!validSchema()){
+                            alert("请输入必填属性，或者输入的属性格式不正确");
+                            return;
+                        }
+                    }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
                         notify.danger("请先确认是否在后台申请过相应品牌");
