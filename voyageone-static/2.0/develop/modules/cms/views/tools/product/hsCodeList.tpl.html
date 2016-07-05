@@ -121,7 +121,7 @@
                         <th class="text-center mfb-xxt" translate="TXT_IMAGE"></th>
                         <th class="text-center mfb-xxx" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
                         <th class="text-center mfb-xxt" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
-                        <th class="text-center mfb-xxxxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
+                        <th class="text-left mfb-xxxxs" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
                         <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                     </tr>
                 </thead>
@@ -140,13 +140,14 @@
                         </td>
                         <td class="text-center mfb-xxt v-middle">
                             <ul>
-                                <li class="text-left"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
-                                <li class="text-left">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
+                                <li class="text-center"><a ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
+                                <li class="text-center">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
                             </ul>
                         </td>
                         <td class="text-left mfb-xxs v-middle">
                             <select class="form-control" ng-options="value.value as value.value for value in ctrl.hsCodeValue" ng-model="list.common.fields.hsCodeSetter">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+
                             </select>
                         </td>
                         <td class="text-left mfb-xxs v-middle">

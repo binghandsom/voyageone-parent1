@@ -61,17 +61,18 @@ define([
             },
             save: function (list) {
                 var self = this;
-                if (list.common.fields.hsCodeSetter.value) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                if (list.common.fields.hsCodeSetter) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 else {
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
                 self.hsCodeInfoService.save({
                     "code": list.common.fields.code,
-                    "hsCodeSetter": list.common.fields.hsCodeSetter.value
+                    "hsCodeSetter": list.common.fields.hsCodeSetter
                 }).then(function () {
 
                 })
             },
+            
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) {
                     return;
