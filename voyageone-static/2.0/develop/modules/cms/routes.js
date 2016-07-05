@@ -2,8 +2,8 @@ define(function () {
     return {
         "home": {
             "hash": "/home",
-            "templateUrl": "views/home/welcome/index.tpl.html",
-            "controllerUrl": "modules/cms/views/home/welcome/index.ctl"
+            "templateUrl": "views/home/welcome/datachart.tpl.html",
+            "controllerUrl": "modules/cms/views/home/welcome/datachart.ctl"
         },
         "feed_product_list": {
             "url": "/feed/product_list",
