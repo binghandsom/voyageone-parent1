@@ -2,14 +2,31 @@
 @color: #3498db;
 .modal-blue {
   border-color: @color;
-  .modal-header{
+  .modal-header {
     border-color: @color;
     background-color: @color;
-    .modal-title{
+    .modal-title {
       color: #fff;
-      i{
+      i {
         margin-right: 10px;
       }
     }
+  }
+}
+.pop-table{
+  border-width: 1px;
+  border-color: @color;
+  border-top-style: dashed;
+  max-height: 350px;
+  overflow: auto;
+  .headline {
+    margin: 10px 0 8px 0;
+    h2{
+      font-size: 18px;
+    }
+  }
+  .table{
+    min-width: 0;
+    font-size: 10px;
   }
 }

@@ -43,7 +43,7 @@
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6">
-            <button class="btn btn-success btn-sm" ng-click="ctrl.popAddShipment(openAddShipment)">NEW/END SHIPMENT</button>
+            <button class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)">NEW/END SHIPMENT</button>
             <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
         </div>
         <div class="col-sm-6 text-right form-inline">
@@ -80,7 +80,7 @@
                         <td><strong>${{item.totalPrice}}</strong></td>
                         <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
-                            <button class="btn btn-xs btn-success">ADD TO SHIPMENT</button>
+                            <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
                     <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.details" ng-repeat-end>
