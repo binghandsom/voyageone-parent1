@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, confirm, notify, alert, context) {
+    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context) {
 
         $scope.vm = {
             property: context.property,
@@ -55,8 +55,13 @@ define([
                         return;
                     }
                     if (res.data.ecd == 2) {
-                        // 价格设置不正确
-                        alert("");
+                        // 低于指导价
+                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]低于指导价[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
+                        return;
+                    }
+                    if (res.data.ecd == 3) {
+                        // 大于阀值
+                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
                         return;
                     }
                     $modalInstance.close();

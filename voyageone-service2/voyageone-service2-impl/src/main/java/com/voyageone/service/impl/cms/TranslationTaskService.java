@@ -255,7 +255,7 @@ public class TranslationTaskService extends BaseService {
                 rsMap.put("common.fields.originalTitleCn", cnFields.getOriginalTitleCn());
                 rsMap.put("common.fields.materialCn", cnFields.getMaterialCn());
                 rsMap.put("common.fields.usageCn", cnFields.getUsageCn());
-
+                rsMap.put("common.fields.origin", cnFields.getOrigin());
                 rsMap.put("common.fields.translator", userName);
                 rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
 

@@ -93,7 +93,9 @@
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-5"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+                                                    <div class="col-sm-5">
+                                                        <input type="text" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -106,7 +108,7 @@
                                                 <div class="col-sm-9 form-inline">
                                                     <div class="col-sm-5 input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup
-                                                               ng-model="vm.searchInfo.createTimeStart"
+                                                               ng-model="vm.searchInfo.createTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                                date-model-format="yyyy-MM-dd"
                                                                max-date="vm.searchInfo.createTimeTo"
                                                                is-open="datePicker1" close-text="Close"/>
@@ -119,7 +121,7 @@
                                                     &nbsp;~&nbsp;
                                                     <div class="col-sm-5 input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup
-                                                               ng-model="vm.searchInfo.createTimeTo"
+                                                               ng-model="vm.searchInfo.createTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                                date-model-format="yyyy-MM-dd"
                                                                min-date="vm.searchInfo.createTimeStart"
                                                                is-open="datePicker2" close-text="Close"/>
@@ -246,10 +248,10 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-valid ng-empty ng-valid-pattern ng-touched" ng-model="vm.searchInfo.salesStart" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15">
                                                 </div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                                <div class="input-group col-sm-3"><input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-pattern" ng-model="vm.searchInfo.salesEnd" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15">
                                                 </div>
                                                 <label class="checkbox-inline c-radio ng-binding" style="margin-left: 0px">
                                                     <input name="sortSales" type="radio" value="1" ng-model="vm.searchInfo.salesSortType" class="ng-pristine ng-untouched ng-valid ng-empty"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC'|translate}}
@@ -329,7 +331,7 @@
                                             <div class="col-sm-9 form-inline">
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.publishTimeStart"
+                                                           ng-model="vm.searchInfo.publishTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                            date-model-format="yyyy-MM-dd"
                                                            max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3"
                                                            close-text="Close"/>
@@ -342,7 +344,7 @@
                                                 &nbsp;~&nbsp;
                                                 <div class="col-sm-5 input-group">
                                                     <input type="text" class="form-control" uib-datepicker-popup
-                                                           ng-model="vm.searchInfo.publishTimeTo"
+                                                           ng-model="vm.searchInfo.publishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
                                                            date-model-format="yyyy-MM-dd"
                                                            min-date="vm.searchInfo.publishTimeStart"
                                                            is-open="datePicker4" close-text="Close"/>
@@ -368,9 +370,9 @@
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-9 form-inline">
-                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" onkeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15"></div>
                                                 &nbsp;~&nbsp;
-                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+                                                <div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" onkeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15"></div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
@@ -392,7 +394,7 @@
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
-                                                        <option value="0">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="2">销售价小于指导价</option>
                                                         <option value="3">销售价大于指导价</option>
                                                         <option value="1">建议销售价等于实际销售价</option>
@@ -402,8 +404,7 @@
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
                                             <div class="col-sm-3 text-right">
-                                                <label class="control-label"
-                                                       translate="TXT_PROPERTY_STATUS"></label>
+                                                <label class="control-label" translate="TXT_PROPERTY_STATUS"></label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <select class="form-control" ng-model="vm.searchInfo.propertyStatus">
@@ -461,6 +462,7 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortOneName"
                                                             ng-options="sortOne.propId as sortOne.propName for sortOne in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
@@ -481,20 +483,17 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortTwoName"
                                                             ng-options="sortTwo.propId as sortTwo.propName for sortTwo in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortTwo" type="radio" value="1"
-                                                               ng-model="vm.searchInfo.sortTwoType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |
-                                                        translate }}
+                                                        <input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortTwo" type="radio" value="-1"
-                                                               ng-model="vm.searchInfo.sortTwoType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' |
-                                                        translate }}
+                                                        <input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -505,20 +504,17 @@
                                                 <div class="col-sm-5">
                                                     <select class="form-control" ng-model="vm.searchInfo.sortThreeName"
                                                             ng-options="sortThree.propId as sortThree.propName for sortThree in vm.masterData.sortList">
+                                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortThree" type="radio" value="1"
-                                                               ng-model="vm.searchInfo.sortThreeType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |
-                                                        translate }}
+                                                        <input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortThree" type="radio" value="-1"
-                                                               ng-model="vm.searchInfo.sortThreeType"><span
-                                                            class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' |
-                                                        translate }}
+                                                        <input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType">
+                                                        <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
@@ -697,7 +693,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}">
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.platformStatus}}">
                                                     <span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="" target="_blank">{{cartsObj._pname}}</a></span>
                                                     <span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
                                                 </span>

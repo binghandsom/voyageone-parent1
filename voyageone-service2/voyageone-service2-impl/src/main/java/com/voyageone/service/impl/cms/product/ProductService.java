@@ -496,7 +496,7 @@ public class ProductService extends BaseService {
         if (productId != null) {
             CmsBtProductModel productModel = getProductById(channelId, productId);
             CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-            JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
+            logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
             logModel.set_id(null);
             cmsBtProductLogDao.insert(logModel);
         }
@@ -1350,7 +1350,8 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
-        insertSxWorkLoad(channelId,getProductById(channelId,prodId),modifier);
+        insertSxWorkLoad(channelId, getProductById(channelId, prodId), modifier);
+        insertProductHistory(channelId, prodId);
         return modified;
     }
 }

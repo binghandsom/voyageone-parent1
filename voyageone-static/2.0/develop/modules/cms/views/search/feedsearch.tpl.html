@@ -259,7 +259,7 @@
     <!----------------------------------------------------- 显 示 表 格 ------------------------------------------------------->
     <div>
         <tabset class="tab-container vo_nav-tabs">
-            <tab ng-click="vm.currTab = 'group'" active ="vm.currTab == 'group'" >
+            <tab ng-click="vm.currTab.group = true;vm.currTab.export = false" active ="vm.currTab.group" >
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -329,6 +329,7 @@
                                     <th class="text-right mfb-x">MSRP(RMB)</th>
                                     <th class="text-right mfb-x">Retail Price(RMB)</th>
                                     <th class="text-center mfb-x">SKU 数</th>
+                                    <th class="text-center mfb-xxt">错误信息</th>
                                     <th class="text-center mfb-xxt">创建时间</th>
                                     <th class="text-center mfb-xxt">更新时间</th>
                                 </tr>
@@ -383,6 +384,7 @@
                                             </div>
                                         </small>
                                     </td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.updMessage}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
                                 </tr>
@@ -397,7 +399,7 @@
                     </div>
                 </div>
             </tab>
-            <tab ng-click="vm.currTab = 'export'" active ="vm.currTab == 'export'">
+            <tab ng-click = "vm.currTab.export = true;vm.currTab.group = false" active ="vm.currTab.export">
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
                 <div class="panel panel-default">
                     <div class="panel-heading">
