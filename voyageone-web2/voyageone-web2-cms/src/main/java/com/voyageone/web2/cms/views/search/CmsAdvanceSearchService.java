@@ -68,8 +68,8 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
-            "common.fields.productNameEn;common.fields.brand;common.fields.status;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceSaleSt;common.fields.priceSaleEd;common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
+            "common.skus.skuCode;common.fields.productNameEn;common.fields.brand;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
      * 获取检索页面初始化的master data数据
@@ -262,7 +262,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 检查翻译状态/设置状态，由数值转换为文字描述
+     * 检查翻译状态/设置状态，由数值转换为文字描述,以及金额格式转换(这里只针对自定义显示列中的项目)
      */
     public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
@@ -270,42 +270,40 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return;
         }
         List<TypeBean> transStatusList = TypeConfigEnums.MastType.translationStatus.getList(lang);
-        Map<String, String> transStatusMap = new HashMap<>(transStatusList.size());
-        for (TypeBean beanObj : transStatusList) {
-            transStatusMap.put(beanObj.getValue(), beanObj.getName());
-        }
-//        List<TypeBean> lockStatusList = TypeConfigEnums.MastType.procLockStatus.getList(lang);
-//        Map<String, String> lockStatusMap = new HashMap<>(lockStatusList.size());
-//        for (TypeBean beanObj : lockStatusList) {
-//            lockStatusMap.put(beanObj.getValue(), beanObj.getName());
-//        }
+        Map<String, String> transStatusMap = transStatusList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> catStsList = TypeConfigEnums.MastType.categoryStatus.getList(lang);
+        Map<String, String> catStsMap = catStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> hsStsList = TypeConfigEnums.MastType.hsCodeStatus.getList(lang);
+        Map<String, String> hsStsMap = hsStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
 
         for (CmsBtProductModel prodObj : productList) {
             CmsBtProductModel_Field fieldsObj = prodObj.getCommon().getFields();
             if (fieldsObj != null) {
-                String stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(fieldsObj.getTranslateStatus());
+                String stsFlg = StringUtils.trimToNull(fieldsObj.getTranslateStatus());
                 if (stsFlg != null) {
-                    String stsValueStr = transStatusMap.get(stsFlg);
-                    if (stsValueStr == null) {
-                        fieldsObj.setTranslateStatus("");
-                    } else {
-                        fieldsObj.setTranslateStatus(stsValueStr);
-                    }
+                    String stsValueStr = StringUtils.trimToEmpty(transStatusMap.get(stsFlg));
+                    fieldsObj.setTranslateStatus(stsValueStr);
                 } else {
                     fieldsObj.setTranslateStatus("");
                 }
 
-//                stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(prodObj.getLock());
-//                if (stsFlg != null) {
-//                    String stsValueStr = lockStatusMap.get(stsFlg);
-//                    if (stsValueStr == null) {
-//                        prodObj.setLock("");
-//                    } else {
-//                        prodObj.setLock(stsValueStr);
-//                    }
-//                } else {
-//                    prodObj.setLock("");
-//                }
+                stsFlg = StringUtils.trimToNull(fieldsObj.getCategoryStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(catStsMap.get(stsFlg));
+                    fieldsObj.setCategoryStatus(stsValueStr);
+                } else {
+                    fieldsObj.setCategoryStatus("");
+                }
+
+                stsFlg = StringUtils.trimToNull(fieldsObj.getHsCodeStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(hsStsMap.get(stsFlg));
+                    fieldsObj.setHsCodeStatus(stsValueStr);
+                } else {
+                    fieldsObj.setHsCodeStatus("");
+                }
             }
         }
     }

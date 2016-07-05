@@ -221,6 +221,14 @@ define([
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = groupInfo.common.fields[data.propId];
+                    // 原始主商品的转换
+                    if (data.propId == 'isMasterMain') {
+                        if (itemVal == 1) {
+                            itemVal = '是';
+                        } else if (itemVal == 0) {
+                            itemVal = '否';
+                        }
+                    }
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
@@ -294,6 +302,14 @@ define([
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = productInfo.common.fields[data.propId];
+                    // 原始主商品的转换
+                    if (data.propId == 'isMasterMain') {
+                        if (itemVal == 1) {
+                            itemVal = '是';
+                        } else if (itemVal == 0) {
+                            itemVal = '否';
+                        }
+                    }
                     if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
@@ -400,7 +416,7 @@ define([
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
 
                 // 设置sku销售渠道信息
-                productInfo.skuDetail = _setSkuDetail(productInfo.skus);
+                productInfo.skuDetail = _setSkuDetail(productInfo.platforms);
 
                 // 设置price detail (数组形式)
                 productInfo.priceDetail = _setPriceDetail(productInfo.common.fields);
@@ -434,20 +450,21 @@ define([
 
         /**
          * 设置sku的销售渠道信息
-         * @param skus
+         * @param platforms
          * @returns {Array}
          * @private
          */
-        function _setSkuDetail(skus) {
+        function _setSkuDetail(platforms) {
             var result = [];
-            _.forEach(skus, function (sku) {
-                var cartInfo = "";
-                _.forEach(sku.skuCarts, function (skuCart) {
-                    var CartInfo = Carts.valueOf(parseInt(skuCart));
-                    if (!_.isUndefined(CartInfo))
-                        cartInfo += CartInfo.name + ",";
-                });
-                result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
+            _.forEach(platforms, function (platformObj) {
+                if (platformObj.cartId && platformObj.cartId != 0 && platformObj.skus && platformObj.skus.length > 0) {
+                    var cartInfoObj = Carts.valueOf(parseInt(platformObj.cartId));
+                    var cartInfo = "";
+                    _.forEach(platformObj.skus, function (skuObj) {
+                         cartInfo += skuObj.skuCode + ",";
+                    });
+                    result.push(cartInfoObj.name + ": " + cartInfo.substr(0, cartInfo.length -1));
+                }
             });
             return result;
         }
