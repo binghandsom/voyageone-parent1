@@ -101,6 +101,8 @@ define([
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
 
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
+
+                $scope.vm.currTab = 'group';
                 $scope.vm.feedList = res.data.feedList;
                 $scope.vm.feedPageOption.total = res.data.feedListTotal;
 
@@ -178,7 +180,7 @@ define([
         };
 
         $scope.exportFresh = function exportFresh(){
-            alert("fresh");
+            exportSearch($scope.vm.exportPageOption.curr);
         }
 
         function doExport(){
