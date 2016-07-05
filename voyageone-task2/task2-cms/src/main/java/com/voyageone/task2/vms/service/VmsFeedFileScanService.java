@@ -77,58 +77,75 @@ public class VmsFeedFileScanService extends BaseTaskService {
         if (orderChannelIdList != null && orderChannelIdList.size() > 0) {
 
             // 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
-            checkFeedFileDBInfo(orderChannelIdList);
+            // 按渠道进行处理
+            for (final String orderChannelID : orderChannelIdList) {
+                checkFeedFileDBInfo(orderChannelID);
+            }
         }
     }
 
     /**
      * 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
      *
-     * @param orderChannelIdList 渠道列表
+     * @param channelId 渠道
      */
-    public void checkFeedFileDBInfo( List<String> orderChannelIdList) {
+    public void checkFeedFileDBInfo(String channelId) {
+
+        // 如果在vms_bt_feed_file表有存在状态为1：等待导入的数据，那么不进行Scan
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
+        List<VmsBtFeedFileModel> waitingImportFeedFileList = vmsBtFeedFileDao.selectList(param);
+        if (waitingImportFeedFileList != null && waitingImportFeedFileList.size() > 0) {
+            return;
+        }
 
         // 取得Feed文件上传路径
         String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
 
-        // 按渠道进行处理
-        for (final String orderChannelID : orderChannelIdList) {
-            // 这个渠道的Feed文件的根目录
-            File root = new File(feedFilePath + "/" + orderChannelID + "/");
-            // 扫描根目录下面的所有文件（不包含子目录）
-            File[] files = root.listFiles();
-            // 如果存在文件，那么逐个处理
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    // 只处理文件，跳过目录
-                    if (!file.isDirectory()) {
-                        // 只处理扩展名为.xlsx的文件
-                        String fileName = file.getName();
-                        // 先转成小写再比较
-                        fileName = fileName.toLowerCase();
-                        if (fileName.lastIndexOf(".csv") > -1) {
-                            if (".csv".equals(fileName.substring(fileName.length() - 4))) {
-                                // 看看文件信息是否在vms_bt_feed_file表中存在
-                                Map<String, Object> param = new HashMap<>();
-                                param.put("channelId", orderChannelID);
-                                param.put("fileName", file.getPath());
-                                List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDao.selectList(param);
-                                // 不存在说明是客户通过FTP直接传的，需要新建文件信息
-                                if (feedFileList == null || feedFileList.size() == 0) {
-                                    // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
-                                    OrderChannelBean channel = Channels.getChannel(orderChannelID);
-                                    File newFile = new File(feedFilePath + "/" + orderChannelID + "/"
-                                            + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
-                                    boolean result = file.renameTo(newFile);
-                                    if (result) {
-                                        VmsBtFeedFileModel model = new VmsBtFeedFileModel();
-                                        model.setChannelId(orderChannelID);
-                                        model.setFileName(newFile.getAbsolutePath());
-                                        model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
-                                        model.setCreater(getTaskName());
-                                        model.setModifier(getTaskName());
-                                        vmsBtFeedFileDao.insert(model);
-                                    }
+        // 这个渠道的Feed文件的根目录
+        File root = new File(feedFilePath + "/" + channelId + "/");
+        // 扫描根目录下面的所有文件（不包含子目录）
+        File[] files = root.listFiles();
+        // 如果存在文件，那么逐个处理
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                // 只处理文件，跳过目录
+                if (!file.isDirectory()) {
+                    // 只处理扩展名为.csv的文件
+                    String fileName = file.getName();
+                    // 先转成小写再比较
+                    fileName = fileName.toLowerCase();
+                    if (fileName.lastIndexOf(".csv") > -1) {
+                        if (".csv".equals(fileName.substring(fileName.length() - 4))) {
+                            // 看看文件信息是否在vms_bt_feed_file表中存在
+                            Map<String, Object> param1 = new HashMap<>();
+                            param1.put("channelId", channelId);
+                            param1.put("fileName", file.getPath());
+                            List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDao.selectList(param1);
+                            // 不存在说明是客户通过FTP直接传的，需要新建文件信息
+                            if (feedFileList == null || feedFileList.size() == 0) {
+                                // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
+                                OrderChannelBean channel = Channels.getChannel(channelId);
+                                File newFile = new File(feedFilePath + "/" + channelId + "/"
+                                        + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
+                                boolean result = file.renameTo(newFile);
+                                if (result) {
+                                    // 更新状态为1：等待导入
+                                    VmsBtFeedFileModel model = new VmsBtFeedFileModel();
+                                    model.setChannelId(channelId);
+                                    model.setFileName(newFile.getAbsolutePath());
+                                    model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
+                                    model.setCreater(getTaskName());
+                                    model.setModifier(getTaskName());
+                                    vmsBtFeedFileDao.insert(model);
+                                    // 发MQ
+                                    Map<String, Object> message = new HashMap<>();
+                                    message.put("channelId", channelId);
+                                    message.put("fileName", newFile.getAbsolutePath());
+                                    sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
+                                    // 只处理一个文件
+                                    break;
                                 }
                             }
                         }

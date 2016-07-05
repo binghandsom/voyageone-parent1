@@ -11,7 +11,6 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.com.MessageBean;
-import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.dao.vms.VmsBtFeedInfoTempDao;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
@@ -130,13 +129,20 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     /**
      * 将Feed信息导入FeedInfo表
      *
-     * @param taskControlList job 配置
+     * @param messageMap Message内容
      * @throws Exception
      */
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+        // 渠道
         String channelId = (String) messageMap.get("channelId");
-        new ImportFeedFile(channelId).doRun();
+        // csv文件路径
+        String fileName = (String) messageMap.get("fileName");
+        if (!StringUtils.isEmpty(channelId) && !StringUtils.isEmpty(fileName)) {
+            new ImportFeedFile(channelId, fileName).doRun();
+        } else {
+            $error("参数channelId或者fileName为空");
+        }
     }
 
     /**
@@ -144,9 +150,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
      */
     public class ImportFeedFile {
         private OrderChannelBean channel;
+        private String fileName;
 
-        public ImportFeedFile(String orderChannelId) {
+        public ImportFeedFile(String orderChannelId, String fileName) {
             this.channel = Channels.getChannel(orderChannelId);
+            this.fileName = fileName;
         }
 
         public void doRun() {
@@ -155,32 +163,32 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 查找当前渠道,取得建立时间最早的Feed导入文件
             Map<String, Object> param = new HashMap<>();
             param.put("channelId", channel.getOrder_channel_id());
+            param.put("fileName", fileName);
             // 状态：1（等待导入）
             param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
             List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDaoExt.selectListOrderByCreateTime(param);
             VmsBtFeedFileModel model = null;
-            // 取得Create时间最早的那个Feed文件
             if (feedFileList.size() > 0) {
-                model = feedFileList.get(feedFileList.size() - 1);
+                model = feedFileList.get(0);
+            } else {
+                $error("找不到要处理的数据,channel:" + channel.getFull_name()  + ",fileName:" + fileName);
+                return;
             }
             // 存在需要导入的Feed文件
-            if (model != null) {
-                File feedFile = new File(model.getFileName());
-                // 文件存在的话那么处理
-                if (feedFile.exists()) {
-                    $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
-                    // 把Feed数据插入vms_bt_feed_info_temp表
-                    boolean result = readCsvToDB(feedFile);
-                    if (!result) {
-                        // check数据并且插入MongoDb表
-                        doHandle(feedFile.getPath());
-                    }
-                    $info("Feed文件处理结束,channel：" + channel.getFull_name());
-                } else {
-                    // TODO 文件导入错误
-                    // 一般情况下不可能发生，除非手动删除文件
-                    $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+            File feedFile = new File(model.getFileName());
+            // 文件存在的话那么处理
+            if (feedFile.exists()) {
+                $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+                // 把Feed数据插入vms_bt_feed_info_temp表
+                boolean result = readCsvToDB(feedFile);
+                if (!result) {
+                    // check数据并且插入MongoDb表
+                    doHandle(feedFile.getPath(), feedFile.getName());
                 }
+                $info("Feed文件处理结束,channel：" + channel.getFull_name());
+            } else {
+                // 一般情况下不可能发生，除非手动删除文件
+                $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
             }
             $info(channel.getFull_name() + "产品 Feed文件导入结束");
         }
@@ -188,9 +196,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * check数据并且插入MongoDb表
          * @param feedFilePath FeedFile路径
+         * @param feedFileName FeedFile文件名
          *
          */
-        private void doHandle(String feedFilePath) {
+        private void doHandle(String feedFilePath, String feedFileName) {
 
             try {
                 // Error错误
@@ -222,6 +231,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         }
                         if (errorList.size() == 0) {
                             // 更新VmsBtFeedInfoTemp表状态为1：update完了
+
                             // 更新Code级别数据
                             VmsBtFeedInfoTempModel updateCodeModel = new VmsBtFeedInfoTempModel();
                             // 更新条件
@@ -229,6 +239,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                             // 更新对象
                             updateCodeModel.setUpdateFlg("1");
                             vmsBtFeedInfoTempDao.update(updateCodeModel);
+
                             // 更新Sku级别数据
                             VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
                             // 更新条件
@@ -237,7 +248,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                             // 更新对象
                             updateSkuModel.setUpdateFlg("1");
                             vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
-
                         }
                     }
 
@@ -268,6 +278,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         addErrorMessage(errorList, "8000004", new Object[]{otherModel.getParentId()}, otherModel.getRow(), columnMap.get(PARENT_ID));
                         // sku的共通属性check
                         checkSkuCommon(otherModel, errorList);
+
+                        // 更新VmsBtFeedInfoTemp表状态为1：update完了
+                        // 更新Code级别数据
+                        VmsBtFeedInfoTempModel updateCodeModel = new VmsBtFeedInfoTempModel();
+                        // 更新条件
+                        updateCodeModel.setId(otherModel.getId());
+                        // 更新对象
+                        updateCodeModel.setUpdateFlg("1");
+                        vmsBtFeedInfoTempDao.update(updateCodeModel);
                     }
                 }
                 // 如果有错误的情况下
@@ -294,6 +313,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setErrorFilePath("");
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
+
+                    // 移动文件到bak目录下
+                    moveFeedFileToBak(feedFilePath, feedFileName);
                 }
             } catch (IOException e) {
                 $error(e.getMessage());
@@ -533,7 +555,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
                     skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
-
+                    skusModel.add(skuModel);
                 } else {
                     for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
                         // 创建Sku
@@ -828,7 +850,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // product-id
             String productId = codeModel.getProductId();
             // product-id是必须的
-            if ( StringUtils.isEmpty(productId)) {
+            if (StringUtils.isEmpty(productId)) {
                 // product-id is Required.
                 addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(PRODUCT_ID)}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
             }
@@ -865,7 +887,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          * 读入Feed文件，插入到临时表vms_bt_feed_info_temp里
          *
          * @param feedFile  导入Feed文件
-         * @return 是否有错误
+         * @return 是否有错误 true:有错；false：没错
          */
         private boolean readCsvToDB(File feedFile) {
 
@@ -1298,6 +1320,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String feedErrorFilePath = createErrorFilePath();
             StringBuilder stringBuilder = new StringBuilder();
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath)) {
+                // 按rowNum排序
+                Collections.sort(errorList, new MapComparator());
                 for (Map<String, Object> error : errorList) {
                     stringBuilder.append(String.valueOf(error.get("row"))  + VmsConstants.COMMA
                             + String.valueOf(error.get("column"))  + VmsConstants.COMMA
@@ -1325,6 +1349,29 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             FileUtils.mkdirPath(feedErrorFilePath);
             feedErrorFilePath += "Feed_Check_Result_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
             return feedErrorFilePath;
+        }
+
+        /**
+         * 移动Feed文件到bak目录下
+         * @param feedFilePath FeedFile路径
+         * @param feedFileName FeedFile文件名
+         */
+        private void moveFeedFileToBak(String feedFilePath, String feedFileName) {
+            // 取得Feed文件上传路径
+            String feedFileDesPath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
+            feedFileDesPath += "/" + channel.getOrder_channel_id() + "/bak/";
+            // 创建文件目录
+            FileUtils.mkdirPath(feedFileDesPath);
+            FileUtils.moveFile(feedFilePath, feedFileDesPath + feedFileName);
+        }
+    }
+
+    public class MapComparator implements Comparator<Map<String, Object>> {
+        @Override
+        public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+            Integer rowNum1 = (Integer) map1.get("row");
+            Integer rowNum2 = (Integer) map2.get("row");
+            return rowNum1.compareTo(rowNum2);
         }
     }
 }

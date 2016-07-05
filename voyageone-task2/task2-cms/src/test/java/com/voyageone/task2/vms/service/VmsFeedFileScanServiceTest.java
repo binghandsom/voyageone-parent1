@@ -2,7 +2,6 @@ package com.voyageone.task2.vms.service;
 
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.service.CmsSetMainPropMongoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +18,21 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class VmsFeedFileImportServiceTest {
+public class VmsFeedFileScanServiceTest {
 
     @Autowired
-    private MqSender sender;
-
+    private VmsFeedFileScanService vmsFeedFileScanService;
     @Test
     public void testOnStartup() throws Exception {
-        Map<String, Object> message = new HashMap<>();
-        message.put("channelId", "088");
-        message.put("fileName", "C:/usr/web/contents/vms/feed/upload/088/Feed_djsjeff088_20160705_170309.csv");
-        sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
+        List<TaskControlBean> taskControlList = new ArrayList<>();
+        TaskControlBean taskControlBean = new TaskControlBean();
+        taskControlBean.setCfg_name("order_channel_id");
+        taskControlBean.setCfg_val1("088");
+        taskControlList.add(taskControlBean);
+//        TaskControlBean taskControlBean1 = new TaskControlBean();
+//        taskControlBean1.setCfg_name("order_channel_id");
+//        taskControlBean1.setCfg_val1("089");
+//        taskControlList.add(taskControlBean1);
+        vmsFeedFileScanService.onStartup(taskControlList);
     }
 }
