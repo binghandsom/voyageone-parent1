@@ -7,9 +7,9 @@ import java.util.List;
  * Created by dell on 2016/7/5.
  */
 public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
-    CMS_MASTER_NO_CATEGORY("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^D\"}}", "", "", "比指导价低"),
-    CMS_MASTER_NO_HSCODE("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^U\"}}", "", "", "比指导价高"),
-    CMS_MASTER_UNTRANSLATED("CMS_PLATFORM_PRICE_BREAKDOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^X\"}}", "", "", "击穿警告");
+    CMS_MASTER_NO_CATEGORY("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^D\"}}", "/search/advanceSearch", "", "比指导价低"),
+    CMS_MASTER_NO_HSCODE("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^U\"}}", "/search/advanceSearch", "", "比指导价高"),
+    CMS_MASTER_UNTRANSLATED("CMS_PLATFORM_PRICE_BREAKDOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^X\"}}", "/search/advanceSearch", "", "击穿警告");
     EnumPlatformPriceSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;
