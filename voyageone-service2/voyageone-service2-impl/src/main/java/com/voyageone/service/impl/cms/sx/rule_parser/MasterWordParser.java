@@ -27,14 +27,10 @@ public class MasterWordParser extends VOAbsLoggable {
     }
 
     //目前只支持解析model级别的属性
-    public String parse(RuleWord ruleWord)
-    {
-        if (!WordType.MASTER.equals(ruleWord.getWordType()))
-        {
+    public String parse(RuleWord ruleWord) {
+        if (!WordType.MASTER.equals(ruleWord.getWordType())) {
             return null;
-        }
-        else
-        {
+        } else {
             MasterWord masterWord = (MasterWord) ruleWord;
             String propName = masterWord.getValue();
             Map<String, String> extra = masterWord.getExtra();
@@ -46,8 +42,8 @@ public class MasterWordParser extends VOAbsLoggable {
                 plainPropValueObj = getPropValueFromProductModel(propName);
                 // modified by morse.lu 2016/06/24 end
             } else {
-                for (int i = evaluationContextStack.size(); i>0; i--) {
-                    Map<String, Object> evaluationContext = evaluationContextStack.get(i-1);
+                for (int i = evaluationContextStack.size(); i > 0; i--) {
+                    Map<String, Object> evaluationContext = evaluationContextStack.get(i - 1);
                     plainPropValueObj = getPropValue(evaluationContext, propName);
                     if (plainPropValueObj != null) {
                         break;
@@ -65,12 +61,12 @@ public class MasterWordParser extends VOAbsLoggable {
             if (plainPropValueObj == null) {
                 return null;
             }
-            if (extra == null || extra.size() == 0) {
+            if (extra == null || extra.isEmpty()) {
                 // modified by morse.lu 2016/06/24 start
                 // 追加判断ArrayList
 //                return String.valueOf(plainPropValueObj);
-                if (plainPropValueObj instanceof  ArrayList) {
-                    if (((ArrayList) plainPropValueObj).size() == 0) {
+                if (plainPropValueObj instanceof List) {
+                    if (((List) plainPropValueObj).isEmpty()) {
                         // 检查一下, 如果没有值的话, 后面的也不用做了
                         return null;
                     }
@@ -82,9 +78,9 @@ public class MasterWordParser extends VOAbsLoggable {
             } else {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);
-                } else if (plainPropValueObj instanceof  ArrayList) {
+                } else if (plainPropValueObj instanceof List) {
                     // 20160120 tom ims1->ims2升级导致的问题, 增加检查 START
-                    if (((ArrayList) plainPropValueObj).size() == 0) {
+                    if (((List) plainPropValueObj).isEmpty()) {
                         // 检查一下, 如果没有值的话, 后面的也不用做了
                         return null;
                     }
@@ -129,7 +125,7 @@ public class MasterWordParser extends VOAbsLoggable {
     }
 
     public Map<String, Object> popEvaluationContext() {
-        Map<String, Object> evaluationContext = evaluationContextStack.get(evaluationContextStack.size()-1);
+        Map<String, Object> evaluationContext = evaluationContextStack.get(evaluationContextStack.size() - 1);
         evaluationContextStack.remove(evaluationContext);
         return evaluationContext;
     }
@@ -139,7 +135,7 @@ public class MasterWordParser extends VOAbsLoggable {
     }
 
     public Map<String, Object> getLastEvaluationContext() {
-        if (evaluationContextStack.size() > 0) {
+        if (!evaluationContextStack.isEmpty()) {
             return evaluationContextStack.get(evaluationContextStack.size() - 1);
         } else {
             return null;

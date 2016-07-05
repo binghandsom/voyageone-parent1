@@ -96,7 +96,7 @@ public class CmsImageSettingService extends BaseAppService {
 
             // 上新
 //            if (CmsConstants.ProductStatus.Approved.name().equals(cmsBtProductModel.getFields().getStatus()))
-                productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, userName);
+                productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, user.getUserName());
 
             // 更新产品数据
             productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);

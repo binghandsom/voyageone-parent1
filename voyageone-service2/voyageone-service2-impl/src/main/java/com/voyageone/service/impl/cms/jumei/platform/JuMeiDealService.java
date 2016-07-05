@@ -51,7 +51,8 @@ public class JuMeiDealService {
             HtDealUpdateDealEndTimeRequest request = new HtDealUpdateDealEndTimeRequest();
             // request.setEnd_time(getTime(model.getDealEndTime()));
             request.setJumei_hash_id(model.getJmHashId());
-            HtDealUpdateDealEndTimeResponse response = serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
+            serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
+//            HtDealUpdateDealEndTimeResponse response = serviceJumeiHtDeal.updateDealEndTime(shopBean, request);
 //            if (response.is_Success()) {
 //                model.setDealEndTimeState(2);
 //                model.setActivityEnd(model.getDealEndTime());
