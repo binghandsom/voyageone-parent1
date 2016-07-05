@@ -11,9 +11,18 @@
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="Status">
                 </div>
-                <div class="form-group input-group">
-                    <input type="text" class="form-control" name="date" id="date" placeholder="Shipped Date">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                <div class="form-group">
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control"
+                               title="Shipped Date"
+                               ng-model="ctrl.shippedDate"
+                               uib-datepicker-popup
+                               is-open="datepicker1"
+                               date-model-format="yyyy-MM-dd"  placeholder="Shipped Date">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
                 </div>
                 <div class="form-group">
                     <select class="form-control">
