@@ -9,12 +9,19 @@ define([
 ], function (_, require) {
 
     var popups = {
-        addShipment: {
-            templateUrl: "views/pop/addShipment/index.tpl.html",
-            controllerUrl: "views/pop/addShipment/index.ctl",
-            controller: 'AddShipmentController as ctrl',
+        newShipment: {
+            templateUrl: "views/pop/orderInfo/newShipment/index.tpl.html",
+            controllerUrl: "views/pop/orderInfo/newShipment/index.ctl",
+            controller: 'NewShipmentController as ctrl',
             backdrop: 'static',
             size: 'md'
+        },
+        addShipment: {
+            templateUrl: "views/pop/orderInfo/addShipment/index.tpl.html",
+            controllerUrl: "views/pop/orderInfo/addShipment/index.ctl",
+            controller: 'AddShipmentController as ctrl',
+            backdrop: 'static',
+            size: 'lg'
         }
         // 在这里增加你的 popup 配置
     };
@@ -39,6 +46,9 @@ define([
         }
 
         return {
+            openNewShipment: function () {
+                open(popups.newShipment);
+            },
             openAddShipment: function () {
                 open(popups.addShipment);
             }

@@ -1,0 +1,39 @@
+<div class="modal-content modal-blue">
+    <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>Shipment New/End<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <form class="col-md-8 col-sm-offset-2" name="newShipmentForm" novalidate>
+                <div class="form-group">
+                    <input type="text" class="form-control required" placeholder="Shipment Name" ng-model="shipmentName" name="shipmentName" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Status">
+                </div>
+                <div class="form-group input-group">
+                    <input type="text" class="form-control" name="date" id="date" placeholder="Shipped Date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                </div>
+                <div class="form-group">
+                    <select class="form-control">
+                        <option value="">Select Express Company</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control required" placeholder="Tracking No" ng-model="trackingNo" name="trackingNo" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Comments"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-vo btn-vo-blue">Submit</button>
+        <button type="button" class="btn-vo btn-vo-default">Back</button>
+    </div>
+</div>

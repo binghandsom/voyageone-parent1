@@ -40,6 +40,9 @@ define([
                 self.notify.success('已经 展开/收缩所有');
             });
         };
+        OrderListController.prototype.popNewShipment = function () {
+            this.popups.openNewShipment();
+        };
         OrderListController.prototype.popAddShipment = function () {
             this.popups.openAddShipment();
         };
