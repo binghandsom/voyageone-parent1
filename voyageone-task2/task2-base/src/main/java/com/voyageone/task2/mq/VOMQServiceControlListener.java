@@ -3,6 +3,7 @@ package com.voyageone.task2.mq;
 import com.voyageone.common.mq.config.MQConfigInit;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
@@ -10,8 +11,9 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
@@ -19,29 +21,31 @@ import java.util.Map;
 
 /**
  * VOMQServiceControlListener
+ *
  * @author chuanyu.liang 2016/4/18.
  * @version 2.0.0
  * @since 2.0.0
  */
-@Service
-public class VOMQServiceControlListener implements MessageListener {
+//@Service
+public class VOMQServiceControlListener implements MessageListener, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String QUEUE_NAME = "VOMQServiceControlQueue" + System.currentTimeMillis();
 
-    @Autowired
     private ConnectionFactory rabbitConnectionFactory;
 
-    @Autowired
     private RabbitAdmin rabbitAdmin;
 
-    @Autowired
     private TopicExchange voTopicExchange;
-
 
     @PostConstruct
     public void init() {
+        if (!check()) {
+            logger.warn(String.format("%s, %s, %s is null", "rabbitConnectionFactory", "rabbitAdmin", "voTopicExchange"));
+            return;
+        }
+
         //@RabbitListener(
         //        bindings = @QueueBinding(
         //                value = @Queue(value = QUEUE_NAME, autoDelete = "false"),
@@ -72,9 +76,19 @@ public class VOMQServiceControlListener implements MessageListener {
         MessageListenerAdapter adapter = new MessageListenerAdapter(this);
         container.setMessageListener(adapter);
         container.start();
+
+        logger.info("VOMQServiceControlListener started");
+    }
+
+    private boolean check() {
+        return rabbitConnectionFactory != null && rabbitAdmin != null && voTopicExchange != null;
     }
 
     public void onMessage(Message message) {
+        if (!check()) {
+            logger.warn(String.format("%s, %s, %s is null", "rabbitConnectionFactory", "rabbitAdmin", "voTopicExchange"));
+            return;
+        }
 
         try {
             String messageBody = new String(message.getBody());
@@ -86,11 +100,16 @@ public class VOMQServiceControlListener implements MessageListener {
                 logger.error("mqService not found in message");
                 return;
             }
-            String mqService = (String) messageBodyMap.get("mqService");
-            Class mqServiceClass = ClassUtils.forName(mqService, Thread.currentThread().getContextClassLoader());
-            Object mqServiceObj = SpringContext.getBean(mqServiceClass);
+
+            String mqServiceName = (String) messageBodyMap.get("mqService");
+            if (StringUtils.isEmpty(mqServiceName)) {
+                return;
+            }
+
+            String mqServiceBeanName = mqServiceName.substring(0, 1).toLowerCase() + mqServiceName.substring(1);
+            Object mqServiceObj = getApplicationContextBean(mqServiceBeanName);
             if (mqServiceObj == null) {
-                logger.error("mqService not found");
+                logger.warn(String.format("VOMQServiceControlListener %s not found", mqServiceName));
                 return;
             }
 
@@ -100,14 +119,14 @@ public class VOMQServiceControlListener implements MessageListener {
                 return;
             }
             String active = (String) messageBodyMap.get("active");
-            switch (active){
+            switch (active) {
                 case "start":
                     MQConfigInit.checkStartMq(mqServiceObj);
-                    logger.info(String.format("MQAnnoService %s is start", mqService));
+                    logger.info(String.format("MQAnnoService %s is start", mqServiceName));
                     break;
                 case "stop":
                     MQConfigInit.stopMQ(mqServiceObj);
-                    logger.info(String.format("MQAnnoService %s is stop", mqService));
+                    logger.info(String.format("MQAnnoService %s is stop", mqServiceName));
                     break;
                 default:
                     logger.error("active not found");
@@ -116,5 +135,28 @@ public class VOMQServiceControlListener implements MessageListener {
         } catch (Exception ex) {
             logger.error("VOMQServiceControlListener error", ex);
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.rabbitConnectionFactory = getApplicationContextBean(applicationContext, ConnectionFactory.class);
+        this.rabbitAdmin = getApplicationContextBean(applicationContext, RabbitAdmin.class);
+        this.voTopicExchange = getApplicationContextBean(applicationContext, TopicExchange.class);
+    }
+
+    private <T> T getApplicationContextBean(ApplicationContext applicationContext, Class<T> requiredType) {
+        try {
+            return applicationContext.getBean(requiredType);
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private Object getApplicationContextBean(String mqServiceBeanName) {
+        try {
+            return SpringContext.getBean(mqServiceBeanName);
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

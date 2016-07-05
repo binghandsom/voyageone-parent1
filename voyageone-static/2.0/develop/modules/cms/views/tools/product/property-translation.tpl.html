@@ -150,7 +150,7 @@
                 <uib-tabset class="tab-container vo_nav-tabs" ng-show="!ctrl.searchBtnClicked && !(ctrl.vm.taskDetail == null)">
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px">
                         <div class="form-group" style="margin-top: 3px">
-                            <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE'|translate}}</button>
+                            <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled = "!(ctrl.vm.taskDetail.commonFields.translateStatus == 0)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE'|translate}}</button>
                             <button class="btn btn-success" ng-click="ctrl.submit()" ng-disabled="!commonAttributeForm.$valid"><i class="glyphicon glyphicon-ok"></i>&nbsp;{{'BTN_COMPLETE'|translate}}
                             </button>
                         </div>

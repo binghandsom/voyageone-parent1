@@ -1,12 +1,11 @@
 package com.voyageone.web2.cms.views.backdoor;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -21,7 +20,6 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
-import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -93,27 +91,54 @@ public class BackDoorController extends CmsController {
 
         List<CmsBtFeedInfoModel> allFeedInfoList = new ArrayList<CmsBtFeedInfoModel>();
 
-        allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("018"));
-//        allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("017"));
+        JomgoQuery selectQuery = new JomgoQuery();
+//        selectQuery.setSkip(1);
+//        selectQuery.setLimit(000);
+        allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("015"));
+        allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("017"));
 
+        $info("测试店铺996的feed数据做成开始,总件数" + allFeedInfoList.size());
 
+        // 插入feed数据
         allFeedInfoList.forEach(cmsBtFeedInfoModel -> {
             CmsBtFeedInfoModel newFeedInfo = new CmsBtFeedInfoModel();
             BeanUtils.copyProperties(cmsBtFeedInfoModel, newFeedInfo);
             newFeedInfo.set_id(null);
             newFeedInfo.setUpdFlg(9);
             newFeedInfo.setChannelId("996");
-
             cmsBtFeedInfoDao.insert(newFeedInfo);
+            $info("插入feed的产品Code:" + newFeedInfo.getCode() + "-成功");
+
         });
+
+        // 插入product数据
+
+        // 插入group表
+
+        // 插入feed类目树表
+
+        // 插入feed属性表
+
+        // 插入平台类目树表
+
+        // 插入平台schema表
+
+        // mysql的基础数据表
+
+        // mysql的配置表
+
+        // mysql的item detail表
+
+
+        // 插入
 
         return "本次处理的feed数据总数:" + allFeedInfoList.size();
     }
 
     @RequestMapping(value = "changeDataByNewModel", method = RequestMethod.GET)
-    public Object changeDataBy20160708 (@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId) {
+    public Object changeDataBy20160708 (@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
 
-        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId);
+        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, code);
 
         List<String> errorCode = new ArrayList<>();
 
@@ -137,7 +162,6 @@ public class BackDoorController extends CmsController {
                 // 设置common属性
                 CmsBtProductModel_Common common = cmsBtProductModel.getCommonNotNull();
 
-
                 CmsBtProductModel_Field newField = new CmsBtProductModel_Field();
                 CmsMtCategoryTreeAllModel masterCategoryTree = categoryTreeAllService.findCategoryByPlatformId(channelId, oldCmsBtProductModel.getCatPath(), platformId);
 
@@ -145,13 +169,15 @@ public class BackDoorController extends CmsController {
                 if (masterCategoryTree != null) {
                     common.setCatId(masterCategoryTree.getCatId());
                     common.setCatPath(masterCategoryTree.getCatPath());
-
                     newField.setCategoryStatus("1");
                     newField.setCategorySetter("数据移行设置");
                     newField.setCategorySetTime(DateTimeUtil.getNowTimeStamp());
                 } else {
                     newField.setCategoryStatus("0");
                 }
+
+                // 设置feed数据
+                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, newField.getCode());
 
                 // 设置Fields属性
                 newField.setAppSwitch(0);
@@ -163,6 +189,7 @@ public class BackDoorController extends CmsController {
                 newField.setOriginalTitleCn(oldCmsBtProductModel.getFields().getOriginalTitleCn());
                 newField.setBrand(oldCmsBtProductModel.getFields().getBrand());
                 newField.setModel(oldCmsBtProductModel.getFields().getModel());
+                newField.setCodeDiff(feedInfo.getColor());
                 newField.setColor(oldCmsBtProductModel.getFields().getColor());
                 newField.setProductType(oldCmsBtProductModel.getFields().getProductType());
                 newField.setSizeType(oldCmsBtProductModel.getFields().getSizeType());
@@ -177,7 +204,7 @@ public class BackDoorController extends CmsController {
                     newField.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
                 }
                 newField.setHsCodeCross("");
-                newField.setMaterialEn(oldCmsBtProductModel.getFields().getMaterialEn());
+                newField.setMaterialEn(feedInfo.getMaterial());
                 newField.setMaterialCn(oldCmsBtProductModel.getFields().getMaterialCn());
                 newField.setOrigin(oldCmsBtProductModel.getFields().getOrigin());
                 newField.setSizeChart("");
@@ -251,8 +278,8 @@ public class BackDoorController extends CmsController {
                     CmsBtProductModel_Platform_Cart platformInfo = oldCmsBtProductModel.getPlatform(Integer.valueOf(cartId));
 
                     CmsBtProductGroupModel platformGroupInfo = productGroupService.selectProductGroupByCode(channelId, oldCmsBtProductModel.getFields().getCode(), Integer.valueOf(cartId));
-                    if (platformGroupInfo == null)
-                        platformGroupInfo = productGroupService.selectProductGroupByCode(channelId, oldCmsBtProductModel.getFields().getCode(), 0);
+//                    if (platformGroupInfo == null)
+//                        platformGroupInfo = productGroupService.selectProductGroupByCode(channelId, oldCmsBtProductModel.getFields().getCode(), 0);
 
                     OldCmsBtProductModel_Carts cartInfo = oldCmsBtProductModel.getCartById(Integer.valueOf(cartId));
 
@@ -263,7 +290,7 @@ public class BackDoorController extends CmsController {
                     final Double[] priceSaleSt = {0.00};
                     final Double[] priceSaleEd = {0.00};
 
-                    if (platformInfo == null) {
+                    if (platformInfo == null || platformInfo.getFields() == null) {
 
                         platformInfo = new CmsBtProductModel_Platform_Cart();
                         platformInfo.setStatus(CmsConstants.ProductStatus.Pending.name());
@@ -308,42 +335,72 @@ public class BackDoorController extends CmsController {
                         platformInfo.setpPriceRetailEd(priceRetailEd[0]);
                         platformInfo.setpPriceSaleSt(priceSaleSt[0]);
                         platformInfo.setpPriceSaleEd(priceSaleEd[0]);
-                    }
 
-                    if (masterCategoryTree != null) {
+                        // 如果该渠道以前设置的主类目是京东类目,而该渠道的京东平台数据又没有设置的时候
+                        if (channelBean.getValue().equals(CartEnums.Cart.JG.getId())
+                                && platformId.equals("2")) {
 
-                        // 设置平台的类目
-                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : masterCategoryTree.getPlatformCategory()) {
-                            CartBean cartBean = Carts.getCart(channelBean.getValue());
-                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
-                                platformInfo.setpCatId(platformCategory.getCatId());
-                                platformInfo.setpCatPath(platformCategory.getCatPath());
-                                break;
+                            if (!StringUtils.isEmpty(oldCmsBtProductModel.getCatPath())) {
+                                platformInfo.setpCatPath(oldCmsBtProductModel.getCatPath());
+                                CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryService.getCategoryByCatPath(oldCmsBtProductModel.getCatPath(), Integer.valueOf(cartId));
+                                if (platformCategory == null) {
+                                    platformInfo.setpCatStatus("0");
+                                } else {
+                                    platformInfo.setpCatId(platformCategory.getCatId());
+                                    platformInfo.setpCatStatus("1");
+                                }
+                            } else {
+                                platformInfo.setpCatStatus("0");
                             }
+
+                            //// TODO: 16/7/4 和tom确认京东的数据如何回写
+                            // 插入Fields数据 
+//                          BaseMongoMap<String, Object> p23Fields = oldCmsBtProductModel.getFields();
+                            platformInfo.setFields(oldCmsBtProductModel.getFields());
                         }
                     }
+
+                    //// TODO: 16/7/5 暂时默认导入的时候不设置平台类目
+                    // 根据主类目找到对应的平台类目
+//                    if (masterCategoryTree != null) {
+//
+//                        // 设置平台的类目
+//                        for (CmsMtCategoryTreeAllModel_Platform platformCategory : masterCategoryTree.getPlatformCategory()) {
+//                            CartBean cartBean = Carts.getCart(channelBean.getValue());
+//                            if (cartBean != null && platformCategory.getPlatformId().equals(cartBean.getPlatform_id())) {
+//                                platformInfo.setpCatId(platformCategory.getCatId());
+//                                platformInfo.setpCatPath(platformCategory.getCatPath());
+//                                break;
+//                            }
+//                        }
+//                    }
 
                     OldCmsBtProductModel_Field oldField = oldCmsBtProductModel.getFields();
                     if (oldField.getStatus().equals(CmsConstants.ProductStatus.New.name())
                             || oldField.getStatus().equals(CmsConstants.ProductStatus.Pending.name())) {
-                        platformInfo.setStatus(CmsConstants.ProductStatus.Pending.name());
-                    }
-
-                    if (cartInfo != null) {
-                        platformInfo.setStatus(CmsConstants.ProductStatus.Approved.name());
-                        platformInfo.setpProductId(platformGroupInfo.getPlatformPid());
-                        platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? platformGroupInfo .getNumIId(): cartInfo.getNumIid());
-                        platformInfo.setpPublishTime(cartInfo.getPublishTime());
-                        platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? platformGroupInfo.getPlatformStatus(): cartInfo.getPlatformStatus());
-                    }
-
-                    if (platformInfo.getStatus().equals(CmsConstants.ProductStatus.Ready.name())
-                            || platformInfo.getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
+                        platformInfo.setStatus(CmsConstants.ProductStatus.Pending);
+                        platformInfo.setpAttributeStatus("0");
+                    } else {
+                        platformInfo.setStatus(oldField.getStatus());
                         platformInfo.setpAttributeStatus("1");
                         platformInfo.setpAttributeSetter("数据移行设置");
                         platformInfo.setpAttributeSetTime(DateTimeUtil.getNowTimeStamp());
-                    } else {
-                        platformInfo.setpAttributeStatus("0");
+                    }
+
+                    if (cartInfo != null) {
+                        // 如果group数据能渠道
+                        if (platformGroupInfo != null) {
+                            platformInfo.setpProductId(platformGroupInfo.getPlatformPid());
+                            platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? platformGroupInfo .getNumIId(): cartInfo.getNumIid());
+                            platformInfo.setpPublishTime(cartInfo.getPublishTime());
+                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? platformGroupInfo.getPlatformStatus(): cartInfo.getPlatformStatus());
+                        } 
+                        // 如果group数据取不到
+                        else {
+                            platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? "" : cartInfo.getNumIid());
+                            platformInfo.setpPublishTime(cartInfo.getPublishTime());
+                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? CmsConstants.PlatformStatus.InStock: cartInfo.getPlatformStatus());
+                        }
                     }
                     platformInfo.setModified(oldCmsBtProductModel.getModified());
 
@@ -354,8 +411,12 @@ public class BackDoorController extends CmsController {
                         if (!StringUtils.isEmpty(oldCmsBtProductModel.getCatPath())) {
                             platformInfo.setpCatPath(oldCmsBtProductModel.getCatPath());
                             CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryService.getCategoryByCatPath(oldCmsBtProductModel.getCatPath(), Integer.valueOf(cartId));
-                            platformInfo.setpCatId(platformCategory != null ? platformCategory.getCatId(): "未找到平台类目");
-                            platformInfo.setpCatStatus("1");
+                            if (platformCategory == null) {
+                                platformInfo.setpCatStatus("0");
+                            } else {
+                                platformInfo.setpCatId(platformCategory.getCatId());
+                                platformInfo.setpCatStatus("1");
+                            }
                         } else {
                             platformInfo.setpCatStatus("0");
                         }
@@ -393,10 +454,6 @@ public class BackDoorController extends CmsController {
                             newSku.remove("client_retail_price");
                             newSku.remove("client_net_price");
 
-//                            newSku.put("skuCdoe", sku.getSkuCode());
-//                            newSku.put("priceMsrp", sku.getPriceMsrp());
-//                            newSku.put("priceRetail", sku.getPriceRetail());
-//                            newSku.put("PriceSale", sku.getPriceRetail());
                             newSku.put("isSale", sku.getSkuCarts().contains(23) ? 1 : 0);
                             newSku.put("priceChgFlg", sku.getPriceChgFlg());
                             String diffFlg = "1";
@@ -412,22 +469,6 @@ public class BackDoorController extends CmsController {
                         });
                         platformInfo.setSkus(skuInfo);
 
-                    } else if (channelBean.getValue().equals(CartEnums.Cart.JG.getId())
-                            && platformId.equals("2")) {
-
-                        if (!StringUtils.isEmpty(oldCmsBtProductModel.getCatPath())) {
-                            platformInfo.setpCatPath(oldCmsBtProductModel.getCatPath());
-                            CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryService.getCategoryByCatPath(oldCmsBtProductModel.getCatPath(), Integer.valueOf(cartId));
-                            platformInfo.setpCatId(platformCategory != null ? platformCategory.getCatId(): "未找到平台类目");
-                            platformInfo.setpCatStatus("1");
-                        } else {
-                            platformInfo.setpCatStatus("0");
-                        }
-
-                        //// TODO: 16/7/4 和tom确认京东的数据如何回写
-                        // 插入Fields数据 
-//                        BaseMongoMap<String, Object> p23Fields = oldCmsBtProductModel.getFields();
-                        platformInfo.setFields(oldCmsBtProductModel.getFields());
                     }
 
                     // 如果平台未设置对应的平台品牌
@@ -435,6 +476,7 @@ public class BackDoorController extends CmsController {
                         CmsMtBrandsMappingModel brandInfo = cmsMtBrandService.getModelByName(oldCmsBtProductModel.getFields().getBrand(), cartId, channelId);
                         if (brandInfo != null) {
                             platformInfo.setpBrandId(brandInfo.getBrandId());
+                            //// TODO: 16/7/5 暂时设置成主数据的品牌类目
                             platformInfo.setpBrandName(brandInfo.getCmsBrand());
                         } else {
                             platformInfo.setpBrandId("0");
@@ -445,16 +487,19 @@ public class BackDoorController extends CmsController {
 
                     // 设置是否该平台的主商品
 
-                    Integer isMain = platformGroupInfo.getMainProductCode().equals(oldCmsBtProductModel.getFields().getCode()) ? 1 : 0;
-                    platformInfo.setpIsMain(isMain);
-                    platformInfo.setMainProductCode(platformGroupInfo.getMainProductCode());
+                    if(platformGroupInfo != null ) {
+                        Integer isMain = platformGroupInfo.getMainProductCode().equals(oldCmsBtProductModel.getFields().getCode()) ? 1 : 0;
+                        platformInfo.setpIsMain(isMain);
+                        platformInfo.setMainProductCode(platformGroupInfo.getMainProductCode());
+                    } else {
+                        Integer isMain = groupModel.getMainProductCode().equals(oldCmsBtProductModel.getFields().getCode()) ? 1 : 0;
+                        platformInfo.setpIsMain(isMain);
+                        platformInfo.setMainProductCode(groupModel.getMainProductCode());
+                    }
 
                     cmsBtProductModel.getPlatforms().put("P" + cartId, platformInfo);
                 });
 
-
-                // 设置feed数据
-                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, newField.getCode());
                 cmsBtProductModel.getFeed().setOrgAtts(oldCmsBtProductModel.getFeed().getOrgAtts());
                 cmsBtProductModel.getFeed().setCnAtts(oldCmsBtProductModel.getFeed().getCnAtts());
                 cmsBtProductModel.getFeed().setCustomIds(oldCmsBtProductModel.getFeed().getCustomIds());
@@ -471,21 +516,13 @@ public class BackDoorController extends CmsController {
                 // 设置定义标签
                 cmsBtProductModel.setFreeTags(oldCmsBtProductModel.getFreeTags());
 
-//                ProductUpdateBean updatebean = new ProductUpdateBean();
-//                updatebean.setProductModel(cmsBtProductModel);
-//                updatebean.setIsCheckModifed(false);
-//                updatebean.setModifier(cmsBtProductModel.getModifier());
-//                updatebean.setModified(cmsBtProductModel.getModified());
-//                productService.updateProduct(channelId, updatebean);
-
                 cmsBtProductDao.deleteById(oldCmsBtProductModel.get_id(), channelId);
                 cmsBtProductModel.set_id(null);
                 productService.insert(cmsBtProductModel);
-//                cmsBtProductDao.update(cmsBtProductModel);
                 System.out.println("处理结束:" + cmsBtProductModel.getProdId());
             } catch (Exception ex) {
 
-                System.out.println(ex);
+                $error(ex);
                 errorCode.add(oldCmsBtProductModel.getFields().getCode());
             }
         });

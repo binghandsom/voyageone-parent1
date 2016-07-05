@@ -50,7 +50,7 @@ define([
              * @type {{codeOrName: string, priority: string, sort: string}}
              */
             this.assignInfo = {
-                codeOrName: "",
+                keyWord: "",
                 priority: "",
                 sort: ""
             };
@@ -76,7 +76,7 @@ define([
                     self.vm.sortFieldOptions = res.data.sortFieldOptions;
                     self.vm.taskSummary = res.data.taskSummary;
                     self.assignInfo = {
-                        codeOrName: "",
+                        keyWord: "",
                         sort: "desc"
                     };
                     self.assignInfo.priority = self.vm.sortFieldOptions[0].value;
@@ -90,7 +90,9 @@ define([
                 var self = this;
                 self.searchBtnClicked = false;
                 var req = angular.copy(self.assignInfo);
-                if (!req.codeOrName) req.sort = "";
+                // fix Chrome bug: change the value of null back into empty string
+                if (!req.priority) req.priority = "";
+                if (!req.keyWord) req.sort = "";
                 self.translationService.assign(req).then(function (res) {
                     self.vm.taskDetail = res.data.taskDetail;
                     self.vm.taskSummary = res.data.taskSummary;
@@ -135,17 +137,8 @@ define([
             search: function () {
                 var self = this;
                 this.searchPageSettings.curr = 1;
-                var searchInfo = {
-                    keyWord: self.searchPageSettings.keyWord,
-                    translateStatus: self.searchPageSettings.translateStatus,
-                    pageSize: self.searchPageSettings.size,
-                    pageNum: self.searchPageSettings.curr
-                };
-                self.searchBtnClicked = true;
-                self.translationService.search(searchInfo).then(function (res) {
-                    self.vm.taskList = res.data.taskList;
-                    self.searchPageSettings.total = res.data.total;
-                })
+                this.searchBtnClicked = 1;
+                self.searchPage(1);
             },
 
             /**
