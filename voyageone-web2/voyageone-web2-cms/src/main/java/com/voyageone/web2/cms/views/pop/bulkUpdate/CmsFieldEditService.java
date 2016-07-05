@@ -558,6 +558,13 @@ public class CmsFieldEditService extends BaseAppService {
         BigDecimal priceValue = new BigDecimal((String) params.get("priceValue"));
         boolean isRoundUp = "1".equals((String) params.get("isRoundUp")) ? true : false;
 
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+        Double breakThreshold = null;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
+        }
+
         // 获取产品的信息
         JomgoQuery qryObj = new JomgoQuery();
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
@@ -569,6 +576,7 @@ public class CmsFieldEditService extends BaseAppService {
         for (CmsBtProductModel prodObj : prodObjList) {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             for (BaseMongoMap skuObj : skuList) {
+                // 修改后的最终售价
                 Double rs = null;
                 if (StringUtils.isEmpty(priceType)) {
                     rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
@@ -594,6 +602,7 @@ public class CmsFieldEditService extends BaseAppService {
                     $warn("setProductSalePrice: 数据错误 priceRetail为空 sku=" + skuObj.getStringAttribute("skuCode"));
                     break;
                 }
+                // 指导价
                 Double result = 0D;
                 if (priceRetail instanceof Double) {
                     result = (Double) priceRetail;
@@ -608,8 +617,27 @@ public class CmsFieldEditService extends BaseAppService {
                 String diffFlg = "1";
                 if (rs < result) {
                     diffFlg = "2";
+                    $warn("setProductSalePrice: 输入数据错误 低于指导价 sku=" + skuObj.getStringAttribute("skuCode"));
+                    rsMap.put("ecd", 2);
+                    rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+                    rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
+                    rsMap.put("priceSale", rs);
+                    rsMap.put("priceLimit", result);
+                    return rsMap;
                 } else if (rs > result) {
                     diffFlg = "3";
+                }
+                if (breakThreshold != null) {
+                    double priceLimit = result * breakThreshold;
+                    if (rs > priceLimit) {
+                        $warn("setProductSalePrice: 输入数据错误 大于阀值 sku=" + skuObj.getStringAttribute("skuCode"));
+                        rsMap.put("ecd", 3);
+                        rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+                        rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
+                        rsMap.put("priceSale", rs);
+                        rsMap.put("priceLimit", priceLimit);
+                        return rsMap;
+                    }
                 }
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
             }
