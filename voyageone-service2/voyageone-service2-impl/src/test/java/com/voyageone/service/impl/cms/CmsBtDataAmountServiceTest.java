@@ -24,4 +24,9 @@ public class CmsBtDataAmountServiceTest {
     {
         service.sumPrice();;
     }
+    @Test
+    public  void  testSumPlatInfo()
+    {
+         service.sumPlatInfo();
+    }
 }
