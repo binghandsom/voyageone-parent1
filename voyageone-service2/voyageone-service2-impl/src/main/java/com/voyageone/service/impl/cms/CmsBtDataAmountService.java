@@ -1,8 +1,5 @@
 package com.voyageone.service.impl.cms;
-import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumFeedSum;
-import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumMasterSum;
-import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumPlatformPriceSum;
-import com.voyageone.service.bean.cms.CmsBtDataAmount.IEnumDataAmountSum;
+import com.voyageone.service.bean.cms.CmsBtDataAmount.*;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -122,9 +119,16 @@ public class CmsBtDataAmountService {
     // 4.各平台信息
     public void sumPlatInfo() {
         String channelId = "015";
-        String cardId = "27";
+        int cardId = 27;
+        List<EnumPlatformInfoSum> list = EnumPlatformInfoSum.getList();
+        CmsBtDataAmountModel model = null;
+        for (EnumPlatformInfoSum enumFeed : list) {
+            long count = daoCmsBtProduct.countByQuery(String.format(enumFeed.getStrQuery(), cardId), channelId);
+            saveCmsBtDataAmount(channelId,cardId, enumFeed, count);
+        }
         //        4.各平台信息   http://localhost:9092/modules/cms/app.html#/search/advanceSearch
         //        4.1商品数
+        //CMS_PLATFORM_ALL
         long productCount = daoCmsBtProduct.countByQuery(String.format("{platform.P%s:{$exists:true}}", cardId), channelId);
         //        4.2等待设置平台类目              对应 平台类目未设置             {'platform.P27.pCatStatus':{$in:[null,0]}}
         //        CMS_PLATFORM_NO_CATEGORY

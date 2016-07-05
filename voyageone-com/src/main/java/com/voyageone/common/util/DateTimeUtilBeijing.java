@@ -19,11 +19,11 @@ public class DateTimeUtilBeijing {
 
     //北京时间To本地时区时间
     public static Date toLocalDate(Date beiJingDate) {
-        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, TimeZone.getDefault());
+        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone,TimeZone.getDefault());
     }
 
     //北京时间To本地时区时间戳
     public static long toLocalTime(Date beiJingDate) {
-        return DateTimeUtil.changeTimeZone(beiJingDate, beijingZone, TimeZone.getDefault()).getTime();
+        return toLocalDate(beiJingDate).getTime();
     }
 }

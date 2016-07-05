@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("feedSchema", function (productDetailService,notify) {
+    cms.directive("feedSchema", function (productDetailService,notify,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/feed.component.tpl.html",
@@ -21,6 +21,8 @@ define([
                 function updateFeedInfo(){
                     productDetailService.updateProductAtts({prodId:scope.productInfo.productId,feedInfo:scope.productInfo.feedInfo}).then(function(){
                         notify.success("更新成功!");
+                    },function(){
+                        alert("更新失败！");
                     });
                 }
                 /**
