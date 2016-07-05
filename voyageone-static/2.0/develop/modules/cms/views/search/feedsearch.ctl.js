@@ -177,6 +177,10 @@ define([
                 });
         };
 
+        $scope.exportFresh = function exportFresh(){
+            alert("fresh");
+        }
+
         function doExport(){
             var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
             $feedSearchService.doExport(data).then(function(data){
