@@ -122,6 +122,15 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 shopCatStatus: null,
+                inventory: '',
+                salesStart: null,
+                salesEnd: null,
+                priceStart: null,
+                priceEnd: null,
+                publishTimeStart: null,
+                publishTimeTo: null,
+                createTimeStart: null,
+                createTimeTo: null
             };
             $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
