@@ -46,8 +46,8 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
         if (StringUtils.isEmpty(sku))
             sku = null;
 
-        if (StringUtils.isEmpty(code))
-            code = null;
+        if (StringUtils.isEmpty(cartId))
+            cartId = null;
 
         return selectList("selectPageBySkuOnCart", parameters(
                 "sku", sku,
@@ -59,6 +59,13 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
     }
 
     public int selectCountBySkuOnCart(String sku, String code, String cartId, String channelId) {
+
+        if (StringUtils.isEmpty(sku))
+            sku = null;
+
+        if (StringUtils.isEmpty(cartId))
+            cartId = null;
+
         return selectOne("selectCountBySkuOnCart", parameters(
                 "sku", sku,
                 "code", code,
