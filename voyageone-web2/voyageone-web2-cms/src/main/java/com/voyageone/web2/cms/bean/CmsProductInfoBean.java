@@ -15,6 +15,8 @@ public class CmsProductInfoBean {
 
     private String channelId;
 
+    private String orgChannelId;
+
     private Long productId;
 
     private String categoryId;
@@ -53,6 +55,14 @@ public class CmsProductInfoBean {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public String getOrgChannelId() {
+        return orgChannelId;
+    }
+
+    public void setOrgChannelId(String orgChannelId) {
+        this.orgChannelId = orgChannelId;
     }
 
     public Long getProductId() {
