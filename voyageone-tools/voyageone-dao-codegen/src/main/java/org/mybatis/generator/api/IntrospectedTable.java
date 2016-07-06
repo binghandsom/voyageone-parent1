@@ -532,6 +532,8 @@ public abstract class IntrospectedTable {
         //add by shiqin
         setSelectOneStatementId("selectOne"); //$NON-NLS-1$
         setSelectListStatementId("selectList"); //$NON-NLS-1$
+        //add by liang
+        setSelectCountStatementId("selectCount"); //$NON-NLS-1$
     }
 
     public String getBlobColumnListId() {
@@ -770,6 +772,17 @@ public abstract class IntrospectedTable {
     public void setSelectListStatementId(String s) {
         internalAttributes.put(
                 InternalAttribute.ATTR_SELECT_LIST_STATEMENT_ID, s);
+    }
+
+    // add by liang
+    public String getSelectCountStatementId() {
+        return internalAttributes
+                .get(InternalAttribute.ATTR_SELECT_COUNT_STATEMENT_ID);
+    }
+
+    public void setSelectCountStatementId(String s) {
+        internalAttributes.put(
+                InternalAttribute.ATTR_SELECT_COUNT_STATEMENT_ID, s);
     }
 
     protected String calculateJavaClientImplementationPackage() {
@@ -1161,6 +1174,8 @@ public abstract class IntrospectedTable {
         ATTR_MYBATIS3_SQL_PROVIDER_TYPE,
         //add by shiqin
         ATTR_SELECT_ONE_STATEMENT_ID,
-        ATTR_SELECT_LIST_STATEMENT_ID
+        ATTR_SELECT_LIST_STATEMENT_ID,
+        //add by liang
+        ATTR_SELECT_COUNT_STATEMENT_ID,
     }
 }
