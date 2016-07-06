@@ -315,3 +315,28 @@ vo-message {
     /* Disable state */
     /* override for radio */
 }
+
+/* v-pagination start */
+vpagination {
+    display: block;
+    margin: 5px auto;
+}
+
+vpagination input[type="text"] {
+    width: 20px;
+    line-height: 20px;
+}
+
+vpagination .pagination {
+    margin: 0;
+}
+
+vpagination .row > div {
+    line-height: 32px;
+}
+
+vpagination button.btn-default {
+    height: 25px;
+    margin-bottom: 5px;
+}
+/* v-pagination end */
