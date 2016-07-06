@@ -93,7 +93,7 @@
         </foreach>
     </insert>
 
-    <select id="selectLastOneBySkuOnCart" resultType="com.voyageone.service.model.cms.CmsBtPriceLogModel">
+    <select id="selectLastOneBySkuOnCart" resultMap="PriceLogMap">
         SELECT
             id,
             channel_id,
@@ -120,7 +120,7 @@
         LIMIT 1
     </select>
 
-    <select id="selectPageBySkuOnCart" resultType="com.voyageone.service.model.cms.CmsBtPriceLogModel">
+    <select id="selectPageBySkuOnCart" resultMap="PriceLogMap">
         SELECT
             id,
             channel_id,
