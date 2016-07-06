@@ -264,7 +264,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 } catch (Exception e) {
                     errCnt++;
                     // 回写详细错误信息表(cms_bt_business_log)
-                    insertBusinessLog(feed.getChannelId(), "", feed.getCode(), "", e.getMessage(), getTaskName());
+                    insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
 
                     // 回写feedInfo表
                     feed.setUpdMessage(e.getMessage());
@@ -963,9 +963,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            }
             // update desmond 2016/07/05 start
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
-//            if (newFlg || StringUtils.isEmpty(productCommonField.getColor()) || "1".equals(feed.getIsFeedReImport())) {
-//                productCommonField.setColor(feed.getColor());
-//            }
+            if (newFlg) {
+                productCommonField.setColor("");   // 初期值
+            }
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setCodeDiff(feed.getColor());
@@ -3056,17 +3056,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
      *
      * @param channelId String 渠道id
      * @param cartId String 平台id
+     * @param feedModel String feed model
      * @param feedProductCode String feed产品code
      * @param errCode String 错误code
      * @param errMsg String 错误消息
      * @param modifier String 更新者
      */
-    private void insertBusinessLog(String channelId, String cartId, String feedProductCode, String errCode, String errMsg, String modifier) {
+    private void insertBusinessLog(String channelId, String cartId, String feedModel, String feedProductCode, String errCode, String errMsg, String modifier) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
         // 渠道id
         businessLogModel.setChannelId(channelId);
         // 平台id
         if (!StringUtils.isEmpty(cartId)) businessLogModel.setCartId(Integer.parseInt(cartId));
+        // feedModel
+        businessLogModel.setModel(feedModel);
         // feedProduCode
         businessLogModel.setCode(feedProductCode);
         // 错误类型(2:非上新错误)
