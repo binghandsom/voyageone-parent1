@@ -402,17 +402,17 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
                         String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
 //                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
-                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
+//                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
                         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
-                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-//                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
-//                        } else {
-//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
+//                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+                        } else {
+                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }

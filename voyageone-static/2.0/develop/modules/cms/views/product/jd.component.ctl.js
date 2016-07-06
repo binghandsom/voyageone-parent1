@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
+    cms.directive("jdSchema", function (productDetailService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -180,6 +180,7 @@ define([
                  * @param mark  记录是否为ready状态
                  */
                 function saveProduct(mark){
+
                     /**用于保存报错*/
                     if(mark == "ready"){
                         if(!validSchema()){
@@ -188,17 +189,22 @@ define([
                         }
                     }
 
-                    var statusCount = 0,preStatus;
+                    var statusCount = 0;
                     for(var attr in scope.vm.checkFlag){
                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                     }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
-                        notify.danger("请先确认是否在后台申请过相应品牌");
+                        alert("请先确认是否在后台申请过相应品牌");
                         return;
                     }
 
-                    preStatus = angular.copy(scope.vm.status);
+                    if(scope.vm.status == "Ready" && !checkSkuSale()){
+                        alert("请选择要保存的SKU");
+                        return;
+                    }
+
+                    var preStatus = angular.copy(scope.vm.status);
                     switch (scope.vm.status){
                         case "Pending":
                                 scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
@@ -212,7 +218,9 @@ define([
                      scope.vm.platform.sellerCats = scope.vm.sellerCats;
                      scope.vm.platform.cartId = +scope.cartInfo.value;
 
-                     _.map(scope.vm.platform.skus, function(item){ return item.property = item.property == null?"OTHER":item.property;});
+                     _.map(scope.vm.platform.skus, function(item){
+                         item.property = item.property == null?"OTHER":item.property;
+                     });
                     /**判断价格*/
                     productDetailService.updateProductPlatformChk({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
@@ -251,6 +259,15 @@ define([
                     if(index != 1)
                         offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
+                }
+
+                /**
+                 * 判断是否一个都没选 true：有打钩    false：没有选择
+                 */
+                function checkSkuSale(){
+                    return scope.vm.platform.skus.some(function(element){
+                        return element.isSale == "1";
+                    });
                 }
             }
         };

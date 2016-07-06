@@ -34,6 +34,14 @@ define([
                 alert("未填写价格，请填写后再操作。");
                 return;
             }
+            // 检查输入数据
+            var intVal = $scope.vm.priceValue;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格必须是数字");
+                    return;
+                }
+            }
             $scope.vm.property.priceType = $scope.vm.priceType;
             $scope.vm.property.optionType = $scope.vm.optType;
             $scope.vm.property.priceValue = $scope.vm.priceValue;
