@@ -105,12 +105,12 @@
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : 0}">
-					<td class="text-left mfb-x">
+<!--					<td class="text-left mfb-x">
 						<label class="checkbox-inline c-checkbox">
 							<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
 							<span class="fa fa-check"></span>
 						</label>
-					</td>
+					</td>-->
 					<td class="text-center">{{promotion.id}}</td>
 					<td class="text-left yellowLink">
 						<a ng-if="promotion.cartId != '27'" href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>

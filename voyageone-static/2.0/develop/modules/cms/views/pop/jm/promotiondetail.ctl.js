@@ -12,10 +12,7 @@ define([
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
         $scope.initialize  = function () {
-            console.log("aaP");
-            console.log(context);
-            if(context.id)
-            {
+            if(context.id){
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     console.log(res);
                     $scope.editModel.model = res.data.model;
@@ -25,14 +22,15 @@ define([
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
                 });
-            }
-            else
-            {
+            }else{
                 $scope.editModel.model.status=0;
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
             }
+
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
+
         };
         $scope.addTag = function () {
             if ($scope.editModel.tagList) {
