@@ -645,8 +645,8 @@
                                     <a href>加入促销活动</a>
                                     <ul class="dropdown-menu">
                                         <li ng-repeat="promotion in vm.masterData.promotionMap[cartBean.value]">
-                                            <a href ng-click="$parent.openAddPromotion(promotion, openAddToPromotion)" ng-if="cartBean.value!=27">{{promotion.promotionName}}</a>
-                                            <a href ng-click="$parent.openJMActivity(promotion, openAddJMActivity)" ng-if="cartBean.value==27">{{promotion.name}}</a>
+                                            <a href ng-click="$parent.openAddPromotion(promotion,cartBean,openAddToPromotion)" ng-if="cartBean.value!=27">{{promotion.promotionName}}</a>
+                                            <a href ng-click="$parent.openJMActivity(promotion,cartBean,openAddJMActivity)" ng-if="cartBean.value==27">{{promotion.name}}</a>
                                         </li>
                                     </ul>
                                 </li>
