@@ -10,7 +10,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- * workload履历表
+ * cms_bt_workload_history||workload履历表
  */
 public class CmsBtWorkloadHistoryModel extends BaseModel {
     /**

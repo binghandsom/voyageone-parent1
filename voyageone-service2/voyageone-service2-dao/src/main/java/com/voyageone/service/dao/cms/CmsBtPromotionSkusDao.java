@@ -18,6 +18,8 @@ public interface CmsBtPromotionSkusDao {
 
     CmsBtPromotionSkusModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtPromotionSkusModel select(Integer id);
 
     int insert(CmsBtPromotionSkusModel record);

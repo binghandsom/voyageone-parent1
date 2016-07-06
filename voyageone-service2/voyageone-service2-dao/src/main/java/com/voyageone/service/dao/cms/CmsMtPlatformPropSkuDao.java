@@ -18,6 +18,8 @@ public interface CmsMtPlatformPropSkuDao {
 
     CmsMtPlatformPropSkuModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformPropSkuModel select(Integer seq);
 
     int insert(CmsMtPlatformPropSkuModel record);

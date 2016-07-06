@@ -18,6 +18,8 @@ public interface CmsBtStoreOperationHistoryDao {
 
     CmsBtStoreOperationHistoryModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtStoreOperationHistoryModel select(Integer id);
 
     int insert(CmsBtStoreOperationHistoryModel record);
