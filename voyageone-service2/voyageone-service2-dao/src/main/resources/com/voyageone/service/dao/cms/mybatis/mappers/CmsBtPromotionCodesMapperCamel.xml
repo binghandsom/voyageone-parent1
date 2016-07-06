@@ -366,12 +366,97 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_promotion_codes
+        <where >
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="orgChannelId != null" >
+                and `org_channel_id` = #{orgChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="modelId != null" >
+                and `model_id` = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="productModel != null" >
+                and `product_model` = #{productModel,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="catPath != null" >
+                and `cat_path` = #{catPath,jdbcType=VARCHAR}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
+            </if>
+            <if test="msrp != null" >
+                and `msrp` = #{msrp,jdbcType=DOUBLE}
+            </if>
+            <if test="msrpus != null" >
+                and `msrpUS` = #{msrpus,jdbcType=DOUBLE}
+            </if>
+            <if test="tagId != null" >
+                and `tag_id` = #{tagId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionPrice != null" >
+                and `promotion_price` = #{promotionPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=VARCHAR}
+            </if>
+            <if test="imageUrl1 != null" >
+                and `image_url_1` = #{imageUrl1,jdbcType=VARCHAR}
+            </if>
+            <if test="imageUrl2 != null" >
+                and `image_url_2` = #{imageUrl2,jdbcType=VARCHAR}
+            </if>
+            <if test="imageUrl3 != null" >
+                and `image_url_3` = #{imageUrl3,jdbcType=VARCHAR}
+            </if>
+            <if test="property1 != null" >
+                and `property_1` = #{property1,jdbcType=VARCHAR}
+            </if>
+            <if test="property2 != null" >
+                and `property_2` = #{property2,jdbcType=VARCHAR}
+            </if>
+            <if test="property3 != null" >
+                and `property_3` = #{property3,jdbcType=VARCHAR}
+            </if>
+            <if test="property4 != null" >
+                and `property_4` = #{property4,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_promotion_codes
         <where >
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}

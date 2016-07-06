@@ -30,7 +30,7 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
         return insert("insert_cms_bt_price_log_list", insertDataMap);
     }
 
-    public CmsBtPriceLogModel selectLastOneBySkuOnCart(String sku, String cartId, String channelId) {
+    public CmsBtPriceLogModel selectLastOneBySkuOnCart(String sku, Integer cartId, String channelId) {
         return selectOne("selectLastOneBySkuOnCart", parameters(
                 "sku", sku,
                 "channel_id", channelId,

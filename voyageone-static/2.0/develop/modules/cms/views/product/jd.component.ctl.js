@@ -35,6 +35,7 @@ define([
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
+                scope.allSkuSale = allSkuSale;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -199,7 +200,7 @@ define([
                         return;
                     }
 
-                    if(scope.vm.status == "Ready" && !checkSkuSale()){
+                    if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
                         alert("请选择要保存的SKU");
                         return;
                     }
@@ -266,6 +267,18 @@ define([
                  */
                 function checkSkuSale(){
                     return scope.vm.platform.skus.some(function(element){
+                        return element.isSale == "1";
+                    });
+                }
+
+                /**
+                 * 判断是否全部选中
+                 */
+                function allSkuSale(){
+                    if(!scope.vm.platform)
+                        return false;
+
+                    return scope.vm.platform.skus.every(function(element){
                         return element.isSale == "1";
                     });
                 }

@@ -18,6 +18,8 @@ public interface CmsMtPlatformProductIdListDao {
 
     CmsMtPlatformProductIdListModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformProductIdListModel select(Integer id);
 
     int insert(CmsMtPlatformProductIdListModel record);

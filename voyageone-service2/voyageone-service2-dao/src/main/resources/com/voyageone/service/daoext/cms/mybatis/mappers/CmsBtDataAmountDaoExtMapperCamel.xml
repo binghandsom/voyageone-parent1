@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtDataAmountDaoExt">
     <resultMap id="ResultMap" type="CmsBtDataAmountModel">
     </resultMap>
-    <select id="selectByListDataAmountTypeId" resultType="Map">
+    <select id="selectByListDataAmountTypeId" resultType="CmsBtDataAmountModel">
         select *       from cms_bt_data_amount
         where channel_id=#{channelId} and  data_amount_type_id  in   <foreach item="item" index="index" collection="list" open="("
                                                           separator="," close=")">

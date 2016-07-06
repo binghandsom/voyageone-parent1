@@ -60,15 +60,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             queryObject.addParameters(cartId, cartId);
 
             // 获取platform/cart status
-            if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().length > 0) {
+            if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
                 // 获取platform status
-                queryObject.addQuery("{'platforms.P#.pStatus':#}");
+                queryObject.addQuery("{'platforms.P#.pStatus':{$in:#}}");
                 queryObject.addParameters(cartId, searchValue.getPlatformStatus());
             }
 
             // 获取product status
-            if (searchValue.getProductStatus() != null && searchValue.getProductStatus().length > 0) {
-                queryObject.addQuery("{'platforms.P#.status':#}");
+            if (searchValue.getProductStatus() != null && searchValue.getProductStatus().size() > 0) {
+                queryObject.addQuery("{'platforms.P#.status':{$in:#}}");
                 queryObject.addParameters(cartId, searchValue.getProductStatus());
             }
 

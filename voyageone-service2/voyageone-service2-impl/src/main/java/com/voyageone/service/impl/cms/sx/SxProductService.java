@@ -1742,13 +1742,19 @@ public class SxProductService extends BaseService {
 
                     for (Field processField : processFields) {
                         if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            // modified by morse.lu 2016/07/06 start
+//                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            SingleCheckField field = (SingleCheckField) processField;
+                            // modified by morse.lu 2016/07/06 end
                             //prop_1626510（型号）值设为-1(表示其他）
                             field.setValue("-1");
                             retMap.put(processField.getId(), field);
                         } else {
                             //其他的型号值填货号
-                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            // modified by morse.lu 2016/07/06 start
+//                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            InputField field = (InputField) processField;
+                            // modified by morse.lu 2016/07/06 end
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
                                 styleCode = generateStyleCode(sxData);
@@ -1859,7 +1865,10 @@ public class SxProductService extends BaseService {
 //                            }
                             List<CmsBtProductModel_SellerCat> defaultValues = mainSxProduct.getPlatform(sxData.getCartId()).getSellerCats();
                             if (defaultValues != null && !defaultValues.isEmpty()) {
-                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                // modified by morse.lu 2016/07/06 start
+//                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                MultiCheckField multiCheckField = (MultiCheckField) field;
+                                // modified by morse.lu 2016/07/06 end
                                 multiCheckField.setId(sellerCategoryPropId);
                                 for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
                                     multiCheckField.addValue(defaultValue.getcId());

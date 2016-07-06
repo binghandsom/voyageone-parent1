@@ -341,12 +341,91 @@
                 and `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_jm_promotion_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsBtJmPromotionId != null" >
+                and `cms_bt_jm_promotion_id` = #{cmsBtJmPromotionId,jdbcType=INTEGER}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="jmHashId != null" >
+                and `jm_hash_id` = #{jmHashId,jdbcType=VARCHAR}
+            </if>
+            <if test="limit != null" >
+                and `limit` = #{limit,jdbcType=INTEGER}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="appId != null" >
+                and `app_id` = #{appId,jdbcType=BIGINT}
+            </if>
+            <if test="pcId != null" >
+                and `pc_id` = #{pcId,jdbcType=BIGINT}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="discount != null" >
+                and `discount` = #{discount,jdbcType=DECIMAL}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="skuCount != null" >
+                and `sku_count` = #{skuCount,jdbcType=INTEGER}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
+            <if test="activityStart != null" >
+                and `activity_start` = #{activityStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="activityEnd != null" >
+                and `activity_end` = #{activityEnd,jdbcType=TIMESTAMP}
+            </if>
+            <if test="synchStatus != null" >
+                and `synch_status` = #{synchStatus,jdbcType=INTEGER}
+            </if>
+            <if test="updateStatus != null" >
+                and `update_status` = #{updateStatus,jdbcType=INTEGER}
+            </if>
+            <if test="priceStatus != null" >
+                and `price_status` = #{priceStatus,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionTag != null" >
+                and `promotion_tag` = #{promotionTag,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="dealEndTimeStatus != null" >
+                and `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_jm_promotion_product
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

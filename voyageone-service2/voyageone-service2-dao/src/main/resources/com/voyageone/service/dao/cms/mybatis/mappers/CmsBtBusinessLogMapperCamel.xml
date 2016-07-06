@@ -292,12 +292,79 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_business_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="catId != null" >
+                and `cat_id` = #{catId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="groupName != null" >
+                and `group_name` = #{groupName,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="model != null" >
+                and `model` = #{model,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="errorTypeId != null" >
+                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_business_log
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
