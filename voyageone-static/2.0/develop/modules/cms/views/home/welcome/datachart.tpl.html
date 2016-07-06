@@ -182,13 +182,13 @@
                                         <tbody>
                                         <tr ng-repeat="m in vm.sumData.listPlatformInfoSum">
                                             <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_ALL.amountVal}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_READY.amountVal}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</td>
-                                            <td class="mfb-xxt text-center">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</td>
-                                            <td class="mfb-xxt text-center"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
                                         </tr>
                                         </tbody>
                                     </table>
