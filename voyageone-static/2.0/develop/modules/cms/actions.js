@@ -182,6 +182,7 @@ define(function () {
                 },
                 "jmPromotionDetailService": {
                     "root": "/cms/jmpromotion/detail",
+                    "init": "init",
                     "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
                     "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
                     "delete": "delete",

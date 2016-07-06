@@ -71,12 +71,10 @@ public class TranslationTaskServiceTest {
 
         Map<String, Object> result = translationTaskService.searchTask(1,10,"","010","will","");
         System.out.println(JsonUtil.bean2Json(result));
-//        result = translationTaskService.searchTask(1,10,"手镯","010","will","0");
-//        System.out.println(JsonUtil.bean2Json(result));
-//        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","0");
-//        System.out.println(JsonUtil.bean2Json(result));
-//        result = translationTaskService.searchTask(1,10,"SJ9020SZW","010","will","1");
-//        System.out.println(JsonUtil.bean2Json(result));
+
+        result = translationTaskService.searchTask(1,10,"XRF010776WCY165","010","will","");
+        System.out.println(JsonUtil.bean2Json(result));
+
 
     }
 
@@ -86,4 +84,9 @@ public class TranslationTaskServiceTest {
         System.out.println(JsonUtil.bean2Json(result));
     }
 
+    @Test
+    public void testAssignTask() throws Exception {
+        translationTaskService.assignTask("010","will","quantity", "", "ATV718AZ");
+//        translationTaskService.assignTask("010","will","quantity", "desc", "15054");
+    }
 }

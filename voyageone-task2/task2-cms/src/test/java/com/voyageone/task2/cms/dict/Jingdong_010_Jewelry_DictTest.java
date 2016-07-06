@@ -13,7 +13,7 @@ import java.util.List;
  * @version 2.1.0
  * @since 2.1.0
  */
-public class JewelryDictJgTest {
+public class Jingdong_010_Jewelry_DictTest {
 
     String C_TEXT_BR = "<br />";
     String C_TEMPLATE_IMG = "<img src=%s>";

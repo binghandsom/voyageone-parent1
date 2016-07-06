@@ -101,7 +101,7 @@ public class JomgoQuery extends BaseCondition {
             return query;
         }
         if (queryStrList != null && queryStrList.size() > 0) {
-            return "{" + StringUtils.join(queryStrList, ',') + "}";
+            return "{$and:[" + StringUtils.join(queryStrList, ',') + "]}";
         }
         return "";
     }
@@ -158,6 +158,10 @@ public class JomgoQuery extends BaseCondition {
 
     /**
      * 添加查询参数，应与addQuery()配对使用
+     * 使用此方法添加参数时必须注意，如果某参数刚好是一个数组，例如 String[] codeArr = .....，
+     * 则不能简单的使用 addParameters(codeArr) 添加参数，必须使用如下形式：
+     * Object param = codeArr;
+     * addParameters(param);
      * @param parameters
      */
     public void addParameters(Object... parameters) {
@@ -224,5 +228,13 @@ public class JomgoQuery extends BaseCondition {
         }
         rs.append("; }");
         return rs.toString();
+    }
+
+    public List<String> getQueryStrList() {
+        return queryStrList;
+    }
+
+    public void setQueryStrList(List<String> queryStrList) {
+        this.queryStrList = queryStrList;
     }
 }
