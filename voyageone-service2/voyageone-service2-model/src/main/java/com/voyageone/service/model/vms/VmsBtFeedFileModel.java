@@ -19,6 +19,11 @@ public class VmsBtFeedFileModel extends BaseModel {
     protected String channelId;
 
     /**
+     *  客户上传的文件名
+     */
+    protected String clientFileName;
+
+    /**
      * 导入文件名
      */
     protected String fileName;
@@ -31,7 +36,7 @@ public class VmsBtFeedFileModel extends BaseModel {
     /**
      * 错误文件路径
      */
-    protected String errorFilePath;
+    protected String errorFileName;
 
     public String getChannelId() {
         return channelId;
@@ -39,6 +44,14 @@ public class VmsBtFeedFileModel extends BaseModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId == null ? null : channelId.trim();
+    }
+
+    public String getClientFileName() {
+        return clientFileName;
+    }
+
+    public void setClientFileName(String clientFileName) {
+        this.clientFileName = clientFileName == null ? null : clientFileName.trim();
     }
 
     public String getFileName() {
@@ -57,11 +70,11 @@ public class VmsBtFeedFileModel extends BaseModel {
         this.status = status == null ? null : status.trim();
     }
 
-    public String getErrorFilePath() {
-        return errorFilePath;
+    public String getErrorFileName() {
+        return errorFileName;
     }
 
-    public void setErrorFilePath(String errorFilePath) {
-        this.errorFilePath = errorFilePath == null ? null : errorFilePath.trim();
+    public void setErrorFileName(String errorFileName) {
+        this.errorFileName = errorFileName == null ? null : errorFileName.trim();
     }
 }

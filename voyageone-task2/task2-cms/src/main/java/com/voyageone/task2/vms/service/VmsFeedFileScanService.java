@@ -118,35 +118,29 @@ public class VmsFeedFileScanService extends BaseTaskService {
                     fileName = fileName.toLowerCase();
                     if (fileName.lastIndexOf(".csv") > -1) {
                         if (".csv".equals(fileName.substring(fileName.length() - 4))) {
-                            // 看看文件信息是否在vms_bt_feed_file表中存在
-                            Map<String, Object> param1 = new HashMap<>();
-                            param1.put("channelId", channelId);
-                            param1.put("fileName", file.getPath());
-                            List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDao.selectList(param1);
-                            // 不存在说明是客户通过FTP直接传的，需要新建文件信息
-                            if (feedFileList == null || feedFileList.size() == 0) {
-                                // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
-                                OrderChannelBean channel = Channels.getChannel(channelId);
-                                File newFile = new File(feedFilePath + "/" + channelId + "/"
-                                        + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
-                                boolean result = file.renameTo(newFile);
-                                if (result) {
-                                    // 更新状态为1：等待导入
-                                    VmsBtFeedFileModel model = new VmsBtFeedFileModel();
-                                    model.setChannelId(channelId);
-                                    model.setFileName(newFile.getAbsolutePath());
-                                    model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
-                                    model.setCreater(getTaskName());
-                                    model.setModifier(getTaskName());
-                                    vmsBtFeedFileDao.insert(model);
-                                    // 发MQ
-                                    Map<String, Object> message = new HashMap<>();
-                                    message.put("channelId", channelId);
-                                    message.put("fileName", newFile.getAbsolutePath());
-                                    sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
-                                    // 只处理一个文件
-                                    break;
-                                }
+                            // 存在csv文件，肯定是用户ftp上传的，加入文件管理表
+                            // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
+                            OrderChannelBean channel = Channels.getChannel(channelId);
+                            File newFile = new File(feedFilePath + "/" + channelId + "/"
+                                    + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
+                            boolean result = file.renameTo(newFile);
+                            if (result) {
+                                // 更新状态为1：等待导入
+                                VmsBtFeedFileModel model = new VmsBtFeedFileModel();
+                                model.setChannelId(channelId);
+                                model.setClientFileName(file.getName());
+                                model.setFileName(newFile.getName());
+                                model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
+                                model.setCreater(getTaskName());
+                                model.setModifier(getTaskName());
+                                vmsBtFeedFileDao.insert(model);
+                                // 发MQ
+                                Map<String, Object> message = new HashMap<>();
+                                message.put("channelId", channelId);
+                                message.put("fileName", newFile.getName());
+                                sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
+                                // 只处理一个文件
+                                break;
                             }
                         }
                     }

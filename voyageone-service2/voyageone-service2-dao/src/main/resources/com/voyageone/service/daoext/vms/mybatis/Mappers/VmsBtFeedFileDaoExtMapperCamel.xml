@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt">
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtFeedFileModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `file_name`, `status`, `error_file_path`, `created`, `creater`,
-        `modified`, `modifier`
+        `id`, `channel_id`, `client_file_name`, `file_name`, `status`, `error_file_name`,
+        `created`, `creater`, `modified`, `modifier`
     </sql>
     <select id="selectListOrderByCreateTime" resultMap="BaseResultMap" >
         select
@@ -17,11 +17,14 @@
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
             </if>
+            <if test="clientFileName != null" >
+                `client_file_name`,
+            </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
             </if>
-            <if test="errorFilePath != null" >
-                and `error_file_path` = #{errorFilePath,jdbcType=VARCHAR}
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -46,8 +49,8 @@
             <if test="status != null" >
                 `status` = #{status,jdbcType=VARCHAR},
             </if>
-            <if test="errorFilePath != null" >
-                `error_file_path` = #{errorFilePath,jdbcType=VARCHAR},
+            <if test="errorFileName != null" >
+                `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
