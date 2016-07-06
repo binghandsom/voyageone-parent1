@@ -75,8 +75,6 @@ import java.util.regex.Pattern;
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
-    @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
@@ -267,9 +265,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
 
                     // 回写feedInfo表
+                    feed.setUpdFlg(2);  // 2:feed->master导入失败
                     feed.setUpdMessage(e.getMessage());
                     feed.setModifier(getTaskName());
-                    cmsBtFeedInfoDao.update(feed);
+                    feedInfoService.updateFeedInfo(feed);
                 }
 
             }
@@ -776,11 +775,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
              // jeff 2016/05 add end
             // 设置商品更新完成
-            originalFeed.setUpdFlg(1);
+            originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
             originalFeed.setIsFeedReImport("0");
             originalFeed.setUpdMessage(""); // add desmond 2016/07/05
             originalFeed.setModifier(getTaskName());
-            cmsBtFeedInfoDao.update(originalFeed);
+            feedInfoService.updateFeedInfo(originalFeed);
 
             // ------------- 函数结束
 
