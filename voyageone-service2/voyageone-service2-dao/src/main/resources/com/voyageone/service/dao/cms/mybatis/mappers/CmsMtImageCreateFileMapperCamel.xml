@@ -268,12 +268,73 @@
                 and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_image_create_file
+        <where >
+            <if test="hashCode != null" >
+                and `hash_code` = #{hashCode,jdbcType=BIGINT}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=BIGINT}
+            </if>
+            <if test="file != null" >
+                and `file` = #{file,jdbcType=VARCHAR}
+            </if>
+            <if test="filePath != null" >
+                and `file_path` = #{filePath,jdbcType=VARCHAR}
+            </if>
+            <if test="vparam != null" >
+                and `vparam` = #{vparam,jdbcType=VARCHAR}
+            </if>
+            <if test="ossFilePath != null" >
+                and `oss_file_path` = #{ossFilePath,jdbcType=VARCHAR}
+            </if>
+            <if test="usCdnFilePath != null" >
+                and `us_cdn_file_path` = #{usCdnFilePath,jdbcType=VARCHAR}
+            </if>
+            <if test="state != null" >
+                and `state` = #{state,jdbcType=INTEGER}
+            </if>
+            <if test="ossState != null" >
+                and `oss_state` = #{ossState,jdbcType=INTEGER}
+            </if>
+            <if test="uscdnState != null" >
+                and `uscdn_state` = #{uscdnState,jdbcType=INTEGER}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="isUploadUsCdn != null" >
+                and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_image_create_file
         <where >
             <if test="hashCode != null" >
                 and `hash_code` = #{hashCode,jdbcType=BIGINT}

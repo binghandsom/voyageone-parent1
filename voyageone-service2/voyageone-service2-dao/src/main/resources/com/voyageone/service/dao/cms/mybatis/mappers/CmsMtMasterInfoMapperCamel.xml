@@ -244,12 +244,67 @@
                 and `active` = #{active,jdbcType=BIT}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_master_info
+        <where >
+            <if test="platformId != null" >
+                and `platform_id` = #{platformId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null" >
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null" >
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="dataType != null" >
+                and `data_type` = #{dataType,jdbcType=INTEGER}
+            </if>
+            <if test="imageIndex != null" >
+                and `image_index` = #{imageIndex,jdbcType=INTEGER}
+            </if>
+            <if test="value1 != null" >
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
+            <if test="value2 != null" >
+                and `value2` = #{value2,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="errorMessage != null" >
+                and `error_message` = #{errorMessage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_master_info
         <where >
             <if test="platformId != null" >
                 and `platform_id` = #{platformId,jdbcType=INTEGER}

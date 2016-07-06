@@ -2,6 +2,8 @@ package com.voyageone.service.bean.cms.CmsBtDataAmount;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created by dell on 2016/7/5.
@@ -11,8 +13,12 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
     CMS_PLATFORM_NO_CATEGORY("CMS_PLATFORM_NO_CATEGORY", "{'platforms.P%s.pCatStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置平台类目商品数"),
     CMS_PLATFORM_NO_ATTRIBUTE("CMS_PLATFORM_NO_ATTRIBUTE", "{'platforms.P%s.pAttributeStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置属性数"),
     CMS_PLATFORM_READY("CMS_PLATFORM_READY", "{'platforms.P%s.status':'Ready'}", "", "", "等待Approved数"),
-    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platforms.P%s.pStatus':'WaitingPublish','platform.P%s.status':'Approved'}", "/search/advanceSearch", "", "等待上新数"),
-    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,0]},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数"),//
+    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platforms.P%s.pStatus':'WaitingPublish','platform.P%s.status':'Approved'}", "/search/advanceSearch", "", "等待上新数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    }),
+    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,0]},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    }),//
     CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,0]}}", "/search/advanceSearch", "", "上新失败数");
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
@@ -21,12 +27,30 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
         this.linkParameter = linkParameter;
         this.comment = comment;
     }
-
+    EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment, Function<QueryStrFormatParam, String> getQuery) {
+        this.amountName = amountName;
+        this.strQuery = strQuery;
+        this.linkUrl = linkUrl;
+        this.linkParameter = linkParameter;
+        this.comment = comment;
+        this.funFormat=getQuery;
+    }
     private String amountName;//
     private String strQuery;//查询条件
     private String linkUrl;//链接地址
     private String linkParameter;// 链接参数
     private String comment;//备注
+
+    public Function<QueryStrFormatParam, String> getFunFormat() {
+        return funFormat;
+    }
+
+    public void setFunFormat(Function<QueryStrFormatParam, String> funFormat) {
+        this.funFormat = funFormat;
+    }
+
+    private Function<QueryStrFormatParam,String> funFormat;
+
 
     public int getDataAmountTypeId() {
         return dataAmountTypeId;

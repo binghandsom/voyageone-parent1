@@ -159,12 +159,46 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_template_images
+        <where >
+            <if test="platformId != null" >
+                and `platform_id` = #{platformId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="imageTemplateUrl != null" >
+                and `image_template_url` = #{imageTemplateUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlg != null" >
+                and `syn_flg` = #{synFlg,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_template_images
         <where >
             <if test="platformId != null" >
                 and `platform_id` = #{platformId,jdbcType=INTEGER}

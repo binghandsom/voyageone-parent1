@@ -18,6 +18,8 @@ public interface CmsMtCommonPropDao {
 
     CmsMtCommonPropModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtCommonPropModel select(Integer id);
 
     int insert(CmsMtCommonPropModel record);

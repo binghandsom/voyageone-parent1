@@ -18,6 +18,8 @@ public interface CmsMtImageCreateFileDao {
 
     CmsMtImageCreateFileModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtImageCreateFileModel select(Integer id);
 
     int insert(CmsMtImageCreateFileModel record);
