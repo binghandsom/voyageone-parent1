@@ -2,15 +2,15 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +76,7 @@ public class CmsBtPriceLogService extends BaseService {
 
     private void log(String sku, String channelId, String cartId, String username, String comment) {
 
-        CmsBtProductModel productModel = getProductOnlyWithPrice(sku, cartId, channelId);
+        CmsBtProductModel productModel = getProduct(sku, channelId);
 
         if (productModel == null)
             return;
@@ -84,36 +84,52 @@ public class CmsBtPriceLogService extends BaseService {
         CmsBtProductModel_Sku commonSku = productModel.getCommon().getSku(sku);
 
         if (commonSku == null)
-            throw new BusinessException("通用属性下没有指定的 SKU");
+            return;
 
-        List<BaseMongoMap<String, Object>> platformSkus = productModel.getPlatform(Integer.valueOf(cartId)).getSkus();
+        if (!StringUtils.isEmpty(cartId)) {
 
-        if (platformSkus == null || platformSkus.isEmpty())
-            throw new BusinessException("平台属性下没有 SKU 数据");
+            CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(Integer.valueOf(cartId));
 
-        BaseMongoMap<String, Object> platformSku = platformSkus.stream().filter(i -> i.getStringAttribute("skuCode").equals(sku)).findFirst().orElseGet(null);
+            if (cartProduct == null)
+                return;
 
-        if (platformSku == null)
-            throw new BusinessException("指定的平台属性下没有指定的 SKU");
+            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+
+            return;
+        }
+
+        for (CmsBtProductModel_Platform_Cart cartProduct : productModel.getPlatforms().values())
+
+            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+    }
+
+    private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
+
+        BaseMongoMap<String, Object> cartSku = cartProduct.getSkus().stream().filter(i -> i.getStringAttribute("skuCode").equals(sku)).findFirst().orElseGet(null);
+
+        if (cartSku == null)
+            return;
+
+        Integer cartId = cartProduct.getCartId();
 
         CmsBtPriceLogModel logModel = priceLogDaoExt.selectLastOneBySkuOnCart(sku, cartId, channelId);
 
-        if (logModel != null && compareAllPrice(commonSku, platformSku, logModel))
+        if (logModel != null && compareAllPrice(commonSku, cartSku, logModel))
             return;
 
-        CmsBtPriceLogModel newLog = makeLog(sku, cartId, channelId, productModel, commonSku, platformSku, username);
+        CmsBtPriceLogModel newLog = makeLog(sku, cartId, channelId, productModel, commonSku, cartSku, username, comment);
 
         priceLogDao.insert(newLog);
     }
 
-    private CmsBtPriceLogModel makeLog(String sku, String cartId, String channelId, CmsBtProductModel productModel, CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, String username) {
+    private CmsBtPriceLogModel makeLog(String sku, Integer cartId, String channelId, CmsBtProductModel productModel, CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, String username, String comment) {
 
         CmsBtPriceLogModel logModel = new CmsBtPriceLogModel();
 
         logModel.setCode(productModel.getCommon().getFields().getCode());
         logModel.setProductId(productModel.getProdId().intValue());
         logModel.setSku(sku);
-        logModel.setCartId(Integer.valueOf(cartId));
+        logModel.setCartId(cartId);
         logModel.setChannelId(channelId);
         logModel.setClientMsrpPrice(String.valueOf(commonSku.getClientMsrpPrice()));
         logModel.setClientNetPrice(String.valueOf(commonSku.getClientNetPrice()));
@@ -121,6 +137,7 @@ public class CmsBtPriceLogService extends BaseService {
         logModel.setMsrpPrice(platformSku.getStringAttribute("priceMsrp"));
         logModel.setRetailPrice(platformSku.getStringAttribute("priceRetail"));
         logModel.setSalePrice(platformSku.getStringAttribute("priceSale"));
+        logModel.setComment(comment);
         Date now = new Date();
         logModel.setCreated(now);
         logModel.setModified(now);
@@ -139,15 +156,12 @@ public class CmsBtPriceLogService extends BaseService {
                 && new Double(platformSku.getDoubleAttribute("priceSale")).equals(Double.valueOf(logModel.getSalePrice()));
     }
 
-    private CmsBtProductModel getProductOnlyWithPrice(String sku, String cartId, String channelId) {
+    private CmsBtProductModel getProduct(String sku, String channelId) {
 
-        boolean hasCart = !StringUtils.isEmpty(cartId);
         JomgoQuery query = new JomgoQuery();
-
-        query.addQuery("'skus.skuCode': #");
-        if (hasCart)
-            query.addQuery("'platforms.P" + cartId + "': {$exists:true}");
+        query.setQuery("{\"common.skus.skuCode\": #}");
         query.addParameters(sku);
+        query.setProjectionExt("common", "platforms", "prodId");
 
         List<CmsBtProductModel> productModelList = productDao.select(query, channelId);
 
