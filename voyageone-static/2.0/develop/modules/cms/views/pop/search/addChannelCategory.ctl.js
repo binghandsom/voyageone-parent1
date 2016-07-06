@@ -74,7 +74,7 @@ define([
              */
             save: function () {
                 var self = this;
-                if (!self.needSave) {
+                if (!self._context.isQuery && !self.needSave) {
                     alert("店铺内分类没有改变，不需要保存");
                     return;
                 }
