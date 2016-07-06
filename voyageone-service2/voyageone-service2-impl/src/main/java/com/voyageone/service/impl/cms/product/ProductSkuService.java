@@ -191,6 +191,12 @@ public class ProductSkuService extends BaseService {
         // 更新platforms.Pxx的RetailPrice和SalePrice的价格区间
         if (cmsProduct.getPlatforms() != null) {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+                // add desmond 2016/07/06 start
+                // P0（主数据）平台不用设置sku（不加这个条件会加一个P0.skus=null）
+                if ("P0".equals(entry.getKey())) {
+                    continue;
+                }
+                // add desmond 2016/07/06 end
                 updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
                 if (entry.getValue().getSkus() != null) {
                     Map<String, Double> result = getPlatformPriceScope(entry.getValue().getSkus());
