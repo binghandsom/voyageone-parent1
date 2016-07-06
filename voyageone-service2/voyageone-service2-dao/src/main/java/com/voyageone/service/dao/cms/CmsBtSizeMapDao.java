@@ -18,6 +18,8 @@ public interface CmsBtSizeMapDao {
 
     CmsBtSizeMapModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtSizeMapModel select(Integer id);
 
     int insert(CmsBtSizeMapModel record);

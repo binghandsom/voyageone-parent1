@@ -256,12 +256,70 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_jm_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="jmSpuNo != null" >
+                and `jm_spu_no` = #{jmSpuNo,jdbcType=VARCHAR}
+            </if>
+            <if test="jmSkuNo != null" >
+                and `jm_sku_no` = #{jmSkuNo,jdbcType=VARCHAR}
+            </if>
+            <if test="format != null" >
+                and `format` = #{format,jdbcType=VARCHAR}
+            </if>
+            <if test="upc != null" >
+                and `upc` = #{upc,jdbcType=VARCHAR}
+            </if>
+            <if test="cmsSize != null" >
+                and `cms_size` = #{cmsSize,jdbcType=VARCHAR}
+            </if>
+            <if test="jmSize != null" >
+                and `jm_size` = #{jmSize,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_jm_sku
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

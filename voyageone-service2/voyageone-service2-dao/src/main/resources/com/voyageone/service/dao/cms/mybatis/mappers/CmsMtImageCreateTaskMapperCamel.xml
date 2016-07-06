@@ -147,12 +147,43 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_image_create_task
+        <where >
+            <if test="name != null" >
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="beginTime != null" >
+                and `begin_time` = #{beginTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_image_create_task
         <where >
             <if test="name != null" >
                 and `name` = #{name,jdbcType=VARCHAR}
