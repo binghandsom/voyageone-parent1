@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
@@ -23,7 +26,9 @@ public class OrderInfoController extends BaseController {
     // 页面初始化部分
     @RequestMapping(VendorUrlConstants.ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
-
-        return null;
+        Map<String, Object> initialInfo = new HashMap<>();
+        initialInfo.put("search_sku_status", orderInfoService.getAllSkuStatusesList());
+        initialInfo.put("current_shipment", orderInfoService.getCurrentShipment(this.getUser()));
+        return success(initialInfo);
     }
 }
