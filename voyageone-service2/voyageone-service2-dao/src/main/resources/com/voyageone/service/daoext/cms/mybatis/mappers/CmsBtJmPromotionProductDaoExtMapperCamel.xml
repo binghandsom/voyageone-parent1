@@ -428,7 +428,7 @@
     </select>
 
     <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
-  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   NOW() &lt;=`activity_end`  AND   NOW()>=`activity_start` AND `synch_status`=2 limit 1
+  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   #{nowDate} &lt;=`activity_end`  AND  #{nowDate}>=`activity_start` AND `synch_status`=2 limit 1
     </select>
     <select id="selectOnSaleByNoPromotionId" resultType="CmsBtJmPromotionProductModel">
         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a
