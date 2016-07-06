@@ -401,28 +401,28 @@
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
-                                            <label class="col-sm-3 control-label">查询价格变动</label>
+                                            <label class="col-sm-3 control-label">指导售价变化状态</label>
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="U">涨价</option>
                                                         <option value="D">降价</option>
-                                                        <option value="XU">向上击穿</option>
-                                                        <option value="XD">向下击穿</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display">
-                                            <label class="col-sm-3 control-label">价格比较</label>
+                                            <label class="col-sm-3 control-label">最终售价变化状态</label>
                                             <div class="col-sm-8">
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceDiffFlg">
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                        <option value="2">销售价小于指导价</option>
-                                                        <option value="3">销售价大于指导价</option>
-                                                        <option value="1">销售价等于指导价</option>
+                                                        <option value="2">比指导售价低</option>
+                                                        <option value="3">比指导售价高</option>
+                                                        <option value="4">向上击穿警告</option>
+                                                        <option value="5">向下击穿警告</option>
+                                                        <option value="1">等于指导售价</option>
                                                     </select>
                                                 </div>
                                             </div>
