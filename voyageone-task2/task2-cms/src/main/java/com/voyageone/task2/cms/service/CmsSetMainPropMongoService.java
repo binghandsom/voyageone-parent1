@@ -747,7 +747,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                   .map(CmsBtProductModel_Sku::getSkuCode)
                                   .collect(Collectors.toList());
                     // 记录商品价格变动履历
-//                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), "feed->master导入", "");
+                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), getTaskName(), "feed->master导入");
                 }
                 // add by desmond 2016/07/05 end
 
@@ -793,7 +793,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 设置商品更新完成
             originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
             originalFeed.setIsFeedReImport("0");
-            originalFeed.setUpdMessage(""); // add desmond 2016/07/05
+            originalFeed.setUpdMessage("");      // add desmond 2016/07/05
             originalFeed.setModifier(getTaskName());
             feedInfoService.updateFeedInfo(originalFeed);
 
@@ -978,7 +978,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            }
             // update desmond 2016/07/05 start
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
-            if (newFlg) {
+            if (newFlg || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setColor("");   // 初期值
             }
             // 商品特质英文(颜色/口味/香型等)
@@ -1427,8 +1427,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
                 // add desmond 2016/07/05 start
-                // P0（主数据）平台不用设置分平台共通属性
-                if ("P0".equals(typeChannelBean.getValue())) {
+                // P0（主数据）平台不用设置分平台共通属性(typeChannel表里面保存的是0)
+                if ("0".equals(typeChannelBean.getValue())) {
                     continue;
                 }
                 // add desmond 2016/07/05 end
@@ -1880,8 +1880,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
                 // add desmond 2016/07/05 start
-                // P0（主数据）平台不用设置分平台共通属性
-                if ("P0".equals(typeChannelBean.getValue())) {
+                // P0（主数据）平台不用设置分平台共通属性(typeChannel表里面保存的是0)
+                if ("0".equals(typeChannelBean.getValue())) {
                     continue;
                 }
                 // add desmond 2016/07/05 end
@@ -3010,15 +3010,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                        skuList.add(feedSku.getSku());
                     }
                 } catch (Exception e) {
-                    logIssue(getTaskName(),
-                            String.format("[CMS2.0]无法插入或更新item detail表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
-                                    channelId,
-                                    itemDetailsBean.getSku(),
-                                    itemDetailsBean.getItemcode(),
-                                    itemDetailsBean.getBarcode(),
-                                    itemDetailsBean.getSize()
-                            ));
-                    return false;
+                    // update desmond 2016/07/06 start
+                    String errMsg = String.format("feed->master导入:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+                            channelId,
+                            itemDetailsBean.getSku(),
+                            itemDetailsBean.getItemcode(),
+                            itemDetailsBean.getBarcode(),
+                            itemDetailsBean.getSize()
+                    );
+                    $error(errMsg);
+                    throw new BusinessException(errMsg);
+//                    logIssue(getTaskName(),
+//                            String.format("[CMS2.0]无法插入或更新item detail表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+//                                    channelId,
+//                                    itemDetailsBean.getSku(),
+//                                    itemDetailsBean.getItemcode(),
+//                                    itemDetailsBean.getBarcode(),
+//                                    itemDetailsBean.getSize()
+//                            ));
+//                    return false;
+                    // update desmond 2016/07/06 end
                 }
 
             }
