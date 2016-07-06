@@ -89,6 +89,10 @@ define([
                     $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
                     $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
                     $scope.vm.cartList = res.data.cartList;
+                    if ($scope.vm.cartList.length == 1) {
+                        $scope.vm._cartType_ = $scope.vm.cartList[0];
+                        getCat($scope.vm._cartType_);
+                    }
                 })
                 .then(function () {
                     // 如果来至category 或者header search 则默认检索

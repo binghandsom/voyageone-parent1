@@ -95,6 +95,9 @@ public class ProductService extends BaseService {
     @Autowired
     private FeedCustomPropService customPropService;
 
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
+
 
     /**
      * 获取商品 根据ID获
@@ -509,7 +512,7 @@ public class ProductService extends BaseService {
             // 根据商品code获取其所有group信息(所有平台)
             List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getCommon().getFields().getCode() + "\"}", channelId);
             Map<Integer, Long> platformsMap = new BaseMongoMap<>();
-            groups.forEach(g->platformsMap.put(g.getCartId(),g.getGroupId()));
+            groups.forEach(g -> platformsMap.put(g.getCartId(), g.getGroupId()));
 //            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
             // 获取所有的可上新的平台group信息
@@ -1065,6 +1068,10 @@ public class ProductService extends BaseService {
         }
         insertProductHistory(channelId, prodId);
 
+        List<String> skus = new ArrayList<>();
+        platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
+        cmsBtPriceLogService.logAll(skus, channelId, platformModel.getCartId() + "", modifier, "");
+
         return platformModel.getModified();
     }
 
@@ -1222,6 +1229,7 @@ public class ProductService extends BaseService {
     public long countByQuery(final String strQuery, String channelId) {
         return cmsBtProductDao.countByQuery(strQuery, channelId);
     }
+
     public long countByQuery(final String strQuery, final Object[] parameters, String channelId) {
         return cmsBtProductDao.countByQuery(strQuery, parameters, channelId);
     }
@@ -1258,7 +1266,7 @@ public class ProductService extends BaseService {
             feedCustomPropList = new ArrayList<>();
         }
 
-        List<String>  customIds = product.getFeed().getCustomIds();
+        List<String> customIds = product.getFeed().getCustomIds();
 
         customIds = customIds == null ? new ArrayList<>() : customIds;
 
@@ -1296,8 +1304,7 @@ public class ProductService extends BaseService {
 
                 }
 
-                if(customIds.stream().filter(w->w.equals(attrKey)).count() >0)
-                {
+                if (customIds.stream().filter(w -> w.equals(attrKey)).count() > 0) {
                     prop.setCustomPropActive(true);
                 }
             }
@@ -1323,8 +1330,7 @@ public class ProductService extends BaseService {
                     prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
                 }
 
-                if(customIds.stream().filter(w->w.equals(feedKey)).count() >0)
-                {
+                if (customIds.stream().filter(w -> w.equals(feedKey)).count() > 0) {
                     prop.setCustomPropActive(true);
                 }
                 props.add(prop);
@@ -1334,17 +1340,17 @@ public class ProductService extends BaseService {
         return props;
     }
 
-    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier){
+    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier) {
 
-        Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("prodId",prodId);
-        Map<String,Object> rsMap = new HashMap<>();
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        Map<String, Object> rsMap = new HashMap<>();
         String modified = DateTimeUtil.getNowTimeStamp();
-        rsMap.put("modified",modified);
-        rsMap.put("modifier",modifier);
+        rsMap.put("modified", modified);
+        rsMap.put("modifier", modifier);
         if (cnProps != null) {
-                    rsMap.put("feed.customIds", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrEn).collect(Collectors.toList()));
-                    rsMap.put("feed.customIdsCn", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
+            rsMap.put("feed.customIds", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrEn).collect(Collectors.toList()));
+            rsMap.put("feed.customIdsCn", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
             rsMap.put("feed.orgAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
             rsMap.put("feed.cnAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
         }
