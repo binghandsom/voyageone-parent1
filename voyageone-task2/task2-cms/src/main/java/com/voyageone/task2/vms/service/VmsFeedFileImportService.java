@@ -1363,8 +1363,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 for (Map<String, Object> error : errorList) {
                     stringBuilder.append(String.valueOf(error.get("row"))  + VmsConstants.COMMA
                             + String.valueOf(error.get("column"))  + VmsConstants.COMMA
-                            + String.valueOf(error.get("message"))  + VmsConstants.COMMA
-                            + "\n");
+                            + String.valueOf(error.get("message"))  + "\n");
                 }
                 // 先加一个头
                 String header = "";
