@@ -56,6 +56,6 @@ public class CmsPriceLogController extends CmsController {
 
         byte[] excelContents = priceLogViewService.exportExcel(sku, params.getCode(), params.getCart(), channelId);
 
-        return genResponseEntityFromBytes("price log.xlsx", excelContents);
+        return genResponseEntityFromBytes("[price log]" + params.getCode() + ".xlsx", excelContents);
     }
 }
