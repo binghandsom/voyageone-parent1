@@ -56,7 +56,7 @@ angular.module('voyageone.angular.directives').directive('platformStatus', funct
                         +"</span>"
                      +"</span>"
                      +"<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
-                        +"<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.status}}'>"
+                        +"<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
                             +"<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}</a></span>"
                             +"<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}</span>"
                         +"</span>"
