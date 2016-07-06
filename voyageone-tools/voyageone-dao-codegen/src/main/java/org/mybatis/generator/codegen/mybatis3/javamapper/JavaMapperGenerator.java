@@ -80,6 +80,8 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         interfaze.addAnnotation("@Repository");
         addSelectListMethod(interfaze);
         addSelectOneMethod(interfaze);
+        //add liang
+        addSelectCountMethod(interfaze);
 
         addSelectByPrimaryKeyMethod(interfaze);
         addInsertSelectiveMethod(interfaze);
@@ -227,6 +229,13 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         }
     }
 
+    //add by liang
+    protected void addSelectCountMethod(Interface interfaze) {
+        if (introspectedTable.getRules().generateSelectByPrimaryKey()) {
+            AbstractJavaMapperMethodGenerator methodGenerator = new SelectCountMethodGenerator(false);
+            initializeAndExecuteGenerator(methodGenerator, interfaze);
+        }
+    }
 
     protected void initializeAndExecuteGenerator(
             AbstractJavaMapperMethodGenerator methodGenerator,
