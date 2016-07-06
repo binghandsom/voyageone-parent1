@@ -18,6 +18,8 @@ public interface CmsMtFeedCustomPropDao {
 
     CmsMtFeedCustomPropModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtFeedCustomPropModel select(Integer id);
 
     int insert(CmsMtFeedCustomPropModel record);

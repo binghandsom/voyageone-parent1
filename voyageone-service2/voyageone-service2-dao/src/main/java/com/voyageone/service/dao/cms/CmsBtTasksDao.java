@@ -18,6 +18,8 @@ public interface CmsBtTasksDao {
 
     CmsBtTasksModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtTasksModel select(Integer id);
 
     int insert(CmsBtTasksModel record);

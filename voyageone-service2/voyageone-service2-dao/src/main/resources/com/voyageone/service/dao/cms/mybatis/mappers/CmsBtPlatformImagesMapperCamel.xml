@@ -220,12 +220,61 @@
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_platform_images
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="searchId != null" >
+                and `search_id` = #{searchId,jdbcType=VARCHAR}
+            </if>
+            <if test="imgName != null" >
+                and `img_name` = #{imgName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateId != null" >
+                and `template_id` = #{templateId,jdbcType=INTEGER}
+            </if>
+            <if test="originalImgUrl != null" >
+                and `original_img_url` = #{originalImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgUrl != null" >
+                and `platform_img_url` = #{platformImgUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="platformImgId != null" >
+                and `platform_img_id` = #{platformImgId,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_platform_images
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

@@ -105,12 +105,34 @@
                 and `remarks` = #{remarks,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_platform_prop_sku
+        <where >
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="propId != null" >
+                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            </if>
+            <if test="skuType != null" >
+                and `sku_type` = #{skuType,jdbcType=INTEGER}
+            </if>
+            <if test="template != null" >
+                and `template` = #{template,jdbcType=INTEGER}
+            </if>
+            <if test="remarks != null" >
+                and `remarks` = #{remarks,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_platform_prop_sku
         <where >
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
