@@ -686,7 +686,13 @@ define([
                             }
                             if (res.data.ecd == 2) {
                                 // 存在未ready状态
-                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
+                                var errMsg = '';
+                                if (res.data.codeList.length > 10) {
+                                    errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
+                                } else {
+                                    errMsg = res.data.codeList.join('， ');
+                                }
+                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
                                 return;
                             }
                             if (res.data.ecd == 3) {

@@ -101,7 +101,7 @@ define(function(){
         "TXT_CHANNEL_LIST": "渠道一览（维护）",
         "TXT_CART_LIST": "Cart一览（维护）",
         "TXT_CATEGORY": "类目",
-        "TXT_PRODUCT_STATUS": "产品状态",
+        "TXT_PRODUCT_STATUS": "商品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_MSRP_PRICE": "官方售价",
         "TXT_CREATE_TIME": "创建时间",

@@ -594,12 +594,12 @@ public class CmsFieldEditService extends BaseAppService {
                     }
                 }
                 if (rs == null) {
-                    $warn("setProductSalePrice: 数据错误 sku=" + skuObj.getStringAttribute("skuCode"));
+                    $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
                     break;
                 }
                 Object priceRetail = skuObj.get("priceRetail");
                 if (priceRetail == null) {
-                    $warn("setProductSalePrice: 数据错误 priceRetail为空 sku=" + skuObj.getStringAttribute("skuCode"));
+                    $warn(String.format("setProductSalePrice: 数据错误 priceRetail为空 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode")));
                     break;
                 }
                 // 指导价
@@ -610,14 +610,14 @@ public class CmsFieldEditService extends BaseAppService {
                     if (!StringUtil.isEmpty(priceRetail.toString())){
                         result = new Double(priceRetail.toString());
                     } else {
-                        $warn("setProductSalePrice: 数据错误 priceRetail格式错误 sku=" + skuObj.getStringAttribute("skuCode"));
+                        $warn(String.format("setProductSalePrice: 数据错误 priceRetail格式错误 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode")));
                         break;
                     }
                 }
                 String diffFlg = "1";
                 if (rs < result) {
                     diffFlg = "2";
-                    $warn("setProductSalePrice: 输入数据错误 低于指导价 sku=" + skuObj.getStringAttribute("skuCode"));
+                    $warn(String.format("setProductSalePrice: 输入数据错误 低于指导价 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
                     rsMap.put("ecd", 2);
                     rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
                     rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
@@ -630,7 +630,7 @@ public class CmsFieldEditService extends BaseAppService {
                 if (breakThreshold != null) {
                     double priceLimit = result * breakThreshold;
                     if (rs > priceLimit) {
-                        $warn("setProductSalePrice: 输入数据错误 大于阀值 sku=" + skuObj.getStringAttribute("skuCode"));
+                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阀值 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
                         rsMap.put("ecd", 3);
                         rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
                         rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));

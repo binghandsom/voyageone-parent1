@@ -132,10 +132,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;价格信息</h3>
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;最终售价变化状态</h3>
                         </div>
                         <div class="panel-body white-bg">
                             <div class="span12 center" style="text-align: center;">
@@ -147,7 +147,8 @@
                                                 <th class="mfb-xxt text-center">平台</th>
                                                 <th class="mfb-xxt text-center">比指导价低数</th>
                                                 <th class="mfb-xxt text-center">比指导价高</th>
-                                                <th class="mfb-xxt text-center">击穿警告</th>
+                                                <th class="mfb-xxt text-center">向上击穿警告</th>
+                                                <th class="mfb-xxt text-center">向下击穿警告</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -156,6 +157,7 @@
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
                                                 <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
                                             </tr>
                                             </tbody>
