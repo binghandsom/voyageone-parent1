@@ -123,7 +123,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getName());
                 FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getShortDescription());
                 String longDescription = item.getLongDescription() == null ? "":item.getLongDescription();
-                if(longDescription.length() > 1000) longDescription = longDescription.substring(0,2000);
+                if(longDescription.length() > 2000) longDescription = longDescription.substring(0,2000);
                 FileUtils.cell(row, cellIndex++, unlock).setCellValue(longDescription);
                 FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getModel());
                 FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getQty());
