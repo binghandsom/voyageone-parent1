@@ -4,9 +4,9 @@
 define([
     'vms'
 ], function (vms) {
-    vms.controller('NewShipmentController', (function () {
-        function NewShipmentController() {
-
+    vms.controller('PopupShipmentController', (function () {
+        function NewShipmentController(orderInfoController) {
+            this.orderInfoController = orderInfoController;
         }
 
         NewShipmentController.prototype = function () {

@@ -12,7 +12,7 @@ define([
         newShipment: {
             templateUrl: "views/pop/orderInfo/newShipment/index.tpl.html",
             controllerUrl: "views/pop/orderInfo/newShipment/index.ctl",
-            controller: 'NewShipmentController as ctrl',
+            controller: 'PopupShipmentController',
             backdrop: 'static',
             size: 'md'
         },
