@@ -28,9 +28,20 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
                                                     <div class="col-sm-8">
-                                                        <textarea class="form-control inherited" style="resize: none;" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
+                                                        <textarea class="form-control inherited" style="resize: none;" rows="2" ng-model="vm.searchInfo.fuzzyStr"></textarea>
                                                         <div class="text-warnings" style="padding-left:0px">
-                                                            <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+                                                            <i class="icon fa fa-bell-o"></i>&nbsp;模糊查询,包括:产品名称，详情描述中文、详情描述英文
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label">款号/Code/SKU</label>
+                                                    <div class="col-sm-8">
+                                                        <textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
+                                                        <div class="text-warnings" style="padding-left:0px">
+                                                            <i class="icon fa fa-bell-o"></i>&nbsp;多项查询,精确查询，包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割)
                                                         </div>
                                                     </div>
                                                 </div>
@@ -84,9 +95,21 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group"><!-- 锁定商品 -->
+                                                <label class="col-sm-3 control-label" >锁定商品</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-10">
+                                                        <select class="form-control" ng-model="vm.searchInfo.lockFlg">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                            <option value="0">No</option>
+                                                            <option value="1">Yes</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-                                                <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                                <div class="col-sm-8" style="padding-left:0px">
                                                     <div class="col-sm-5">
                                                         <select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType"
                                                                 ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
@@ -397,7 +420,7 @@
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="2">销售价小于指导价</option>
                                                         <option value="3">销售价大于指导价</option>
-                                                        <option value="1">建议销售价等于实际销售价</option>
+                                                        <option value="1">销售价等于指导价</option>
                                                     </select>
                                                 </div>
                                             </div>

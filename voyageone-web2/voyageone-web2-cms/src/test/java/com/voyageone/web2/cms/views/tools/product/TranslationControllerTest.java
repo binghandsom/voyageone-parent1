@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.translation;
+package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;

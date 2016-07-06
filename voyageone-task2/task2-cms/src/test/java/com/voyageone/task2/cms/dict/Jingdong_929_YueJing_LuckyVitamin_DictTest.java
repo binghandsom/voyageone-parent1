@@ -10,7 +10,7 @@ import org.junit.Test;
  * @version 2.1.0
  * @since 2.1.0
  */
-public class YueJingDictJgLuckyVitaminTest {
+public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
 
     String C_TEXT_BR = "<br />";
     String C_TEMPLATE_IMG = "<img src=%s>";
@@ -103,98 +103,47 @@ public class YueJingDictJgLuckyVitaminTest {
 
         // 悦境店详情页全是由图片构成，没有背景什么的
         // -------------------------------------------
-        // 1.固定图片（关联版式-头部）
-        // 2.参数图(或商品属性图)(动态,使用模板)
-        // 3.自定义图(使用原图, getAllImages（参数使用原图设为1）)
-        // 4.商品实拍图的提示文字固定图片
-        // 5.商品实拍图(动态,使用模板，getAllImages)
-        // 6.固定图片（关联版式-尾部） --购物须知,购物流程
+        // 1.固定图片（关联版式-头部）-> 改为固定图片, 不使用关联版式
+        //   <center>
+        //   1.1 寻遍全球发现好货
+        //   1.2 消费者告知书
+        //   </center>
+        // 2.自定义图(使用原图, getAllImages（参数使用原图设为1）)
+        // 3.商品实拍图(动态,使用模板，getAllImages)
+        // 4.固定图片（关联版式-尾部） --购物须知,购物流程-> 改为固定图片, 不使用关联版式
+        //   <center>
+        //   4.1 购物流程
+        //   4.2 温馨提示
+        //   4.3 售后须知
+        //   </center>
         // -------------------------------------------
 
         // 生成内容
         {
 
-//            {
-//                // 参数图（商品属性图）
-//                {
-//                    // 参数图(商品属性图)的前缀
-//                    String html = "<img src=\"";
-//                    ruleRoot.addRuleWord(new TextWord(html));
-//                }
-//
-//                {
-//                    // 参数图（商品属性图）
-//                    RuleExpression imageTemplate = new RuleExpression();
-//                    String htmlTemplate =
-//                            "http://s7d5.scene7.com/is/image/sneakerhead/VTM-JD-CST?$vtm_790x415$" +
-//                                    "&$img=%s"    +    // 主产品图片
-//                                    "&$t1=%s"     +    // 标题1
-//                                    "&$text01=%s" +    // 文本1
-//                                    "&$t2=%s"     +
-//                                    "&$text02=%s" +
-//                                    "&$t3=%s"     +
-//                                    "&$text03=%s" +
-//                                    "&$t4=%s"     +
-//                                    "&$text04=%s" +
-//                                    "&$t5=%s"     +
-//                                    "&$text05=%s" +
-//                                    "&$t6=%s"     +
-//                                    "&$text06=%s" +
-//                                    "&$t7=%s"     +
-//                                    "&$text07=%s" +
-//                                    "&$t8=%s"     +
-//                                    "&$text08=%s";
-//                    imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-//
-//                    // 参数imageParams
-//                    List<RuleExpression> imageParams = new ArrayList<>();
-//                    // 参数
-//                    {
-//                        {
-//                            // 第一张商品图片
-//                            // 第一个参数是product_id(GetMainProductImages)
-//                            CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-//                            RuleExpression img_imageIndex = new RuleExpression();
-//                            img_imageIndex.addRuleWord(new TextWord("0"));
-//                            userParam.setImageIndex(img_imageIndex);
-//                            RuleExpression img_imageType = new RuleExpression();
-//                            img_imageType.addRuleWord(new TextWord(C_商品图片));
-//                            userParam.setImageType(img_imageType);
-//
-//                            CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-//                            wordValueGetMainProductImages.setUserParam(userParam);
-//
-//                            RuleExpression imgWord = new RuleExpression();
-//                            imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-//                            imageParams.add(imgWord);
-//                        }
-//
-//                        {
-//                            // 第二个参数开始，共八个属性的标题和文本（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
-//                            for (int index = 0; index < 8; index++) {
-//                                // 第index个自定义字段
-//                                // 的 标题
-//                                RuleExpression ruleExpression_key = new RuleExpression();
-//                                ruleExpression_key.addRuleWord(new FeedCnWord(true, index));
-//                                imageParams.add(ruleExpression_key);
-//                                // 的 值
-//                                RuleExpression ruleExpression_val = new RuleExpression();
-//                                ruleExpression_val.addRuleWord(new FeedCnWord(false, index));
-//                                imageParams.add(ruleExpression_val);
-//                            }
-//                        }
-//                    }
-//
-//                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
-//                    ruleRoot.addRuleWord(new CustomWord(word));
-//                }
-//
-//                {
-//                    // 参数图(商品属性图)的后缀
-//                    String html = "\" />";
-//                    ruleRoot.addRuleWord(new TextWord(html));
-//                }
-//            }
+            {
+                {
+                    TextWord textWord = new TextWord("<center><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    //   1.1 寻遍全球发现好货
+                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2614/193/2518100957/183329/4d2ed181/57691885Naec223d0.jpg\"><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    //   1.2 消费者告知书
+                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2938/149/794673756/131726/6d62c641/57691885N60b9803f.jpg\"><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    TextWord textWord = new TextWord("</center><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+            }
 
             {
                 // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
@@ -235,6 +184,36 @@ public class YueJingDictJgLuckyVitaminTest {
 
                 CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
+            }
+
+            {
+                {
+                    TextWord textWord = new TextWord("<center><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    //   4.1 购物流程
+                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2932/112/792034825/74390/cc1ee443/576918daN74acf582.jpg\"><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    //   4.2 温馨提示
+                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2599/362/2585900445/111062/fd1de4de/576918e9N079e484c.jpg\"><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    //   4.3 售后须知
+                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2896/79/2495768949/140387/224f1a88/576918f8N9f40000d.jpg\"><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
+
+                {
+                    TextWord textWord = new TextWord("</center><br />");
+                    ruleRoot.addRuleWord(textWord);
+                }
             }
 
         }

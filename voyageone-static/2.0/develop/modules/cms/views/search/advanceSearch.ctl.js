@@ -151,6 +151,43 @@ define([
          * 检索
          */
         function search() {
+            // 检查输入数据 库存/金额
+            var intVal = $scope.vm.searchInfo.inventory;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("库存必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.priceStart;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.priceEnd;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.salesStart;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("销量范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.salesEnd;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("销量范围必须是数字");
+                    return;
+                }
+            }
+
             // 默认设置成第一页
             $scope.vm.groupPageOption.curr = 1;
             $scope.vm.productPageOption.curr = 1;
@@ -716,7 +753,7 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        from: "",
+                        from: $scope.vm.searchInfo.pCatPath,
                         categories: res.data
                     });
                 }).then(function (context) {
@@ -734,7 +771,7 @@ define([
                 .then(function (res) {
                     popupCategoryFnc({
                         categories: res.data,
-                        from: null
+                        from: $scope.vm.searchInfo.mCatPath
                     }).then(function (res) {
                         $scope.vm.searchInfo.mCatPath = res.selected.catPath;
                         $scope.vm.searchInfo.mCatId = res.selected.catId;
@@ -755,7 +792,7 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: ""
+                        from: $scope.vm.searchInfo.fCatPath
                     }).then(function (context) {
                             $scope.vm.searchInfo.fCatPath = context.selected.catPath;
                             $scope.vm.searchInfo.fCatId = context.selected.catId;
@@ -769,13 +806,7 @@ define([
          * @param openCategoryEdit
          */
         function openChannelInnerCategory(openAddChannelCategoryEdit) {
-            var selList = getSelProductList();
-            if ($scope.vm.currTab === 'group') {
-                selList = $scope.vm.groupSelList.selList;
-            } else {
-                selList = $scope.vm.productSelList.selList;
-            }
-            openAddChannelCategoryEdit(selList, $scope.vm.searchInfo.cartId).then(function (context) {
+            openAddChannelCategoryEdit([], $scope.vm.searchInfo.cartId, {'isQuery':true}).then(function (context) {
                 if (_.isArray(context.sellerCats)) {
                     // 设置画面显示用的值
                     var shopCatValues = [];

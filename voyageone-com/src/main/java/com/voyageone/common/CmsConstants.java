@@ -101,6 +101,9 @@ public class CmsConstants {
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
+
+        // App端启用开关(用于控制所有平台的)
+        String APP_SWITCH = "APP_SWITCH";
     }
 
     public interface DataAmount {
