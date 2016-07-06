@@ -371,7 +371,7 @@ public class TranslationTaskService extends BaseService {
                 map.put("catPath", product.getCommon().getCatPath() == null ? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
                 try {
-                    SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
+                    SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
                     Date translateTime = sdf.parse(fields.getTranslateTime());
                     map.put("translateTime", translateTime.getTime());
                 } catch (Exception e) {
