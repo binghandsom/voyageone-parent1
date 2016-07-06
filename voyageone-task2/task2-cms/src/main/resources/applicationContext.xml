@@ -9,6 +9,6 @@
 
     <!--<import resource="applicationContext-cms.xml"/>-->
 
-    <!--<import resource="applicationContext-vendor.xml"/>-->
+    <import resource="applicationContext-vendor.xml"/>
 
 </beans>

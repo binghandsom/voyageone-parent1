@@ -207,9 +207,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 List<Map<String, Object>> errorList = new ArrayList<>();
                 int i=1;
                 int codeCnt = 0;
-                List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
                 // 取得需要处理的Code级别的数据,每次取得固定件数
                 while (true) {
+                    List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
                     Map<String, Object> param = new HashMap<>();
                     param.put("channelId", channel.getOrder_channel_id());
                     param.put("parentId", "");
@@ -248,7 +248,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         updateSkuModel.setUpdateFlg("1");
                         vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
                     }
-
                     // 插入MongoDb表
                     if (feedInfoModelList.size() > 0) {
                         Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
@@ -257,7 +256,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     }
                     i++;
                 }
-
                 $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
 
                 // 处理剩余的Sku件数（没有匹配上parent-id）
@@ -395,10 +393,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String category = codeModel.getCategory();
             String[] categoryArray = category.split("/");
             category = "";
+            // productType取Category的第一级
+            String productType = "";
             for (String categoryItem : categoryArray) {
                 // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
                 if (!StringUtils.isEmpty(categoryItem)) {
                     category += categoryItem.trim().replaceAll("-", "－") + "-";
+                    if (StringUtils.isEmpty(productType)) {
+                        productType = categoryItem.trim().replaceAll("-", "－");
+                    }
                 }
             }
             // 去掉最后一个分隔符[-]
@@ -521,9 +524,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 feedInfo.setBrand(brand);
                 feedInfo.setMaterial(materials);
                 feedInfo.setClientProductURL(vendorProductUrl);
-                String productType = categoryArray[0];
-                if (productTypeByCategoryMap.get(categoryArray[0]) != null) {
-                    productType = productTypeByCategoryMap.get(categoryArray[0]);
+                if (productTypeByCategoryMap.get(productType) != null) {
+                    productType = productTypeByCategoryMap.get(productType);
                 }
                 feedInfo.setProductType(productType);
                 if (attributeMap.get("color") != null) {
