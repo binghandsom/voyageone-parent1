@@ -57,6 +57,34 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     String outPath = CmsBtExportTaskService.savePath;
 
+    Integer maxCellCnt = 50000;
+
+    class SheetCellIndex{
+        private int sheetIndex;
+        private int rowIndexSku;
+
+        public int getSheetIndex() {
+            return sheetIndex;
+        }
+
+        public void setSheetIndex(int sheetIndex) {
+            this.sheetIndex = sheetIndex;
+        }
+
+        public int getRowIndexSku() {
+            return rowIndexSku;
+        }
+
+        public void setRowIndexSku(int rowIndexSku) {
+            this.rowIndexSku = rowIndexSku;
+        }
+
+        public void next(){
+            this.sheetIndex++;
+            this.rowIndexSku = 2;
+        }
+    }
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
@@ -79,7 +107,9 @@ public class CmsFeedExportService extends BaseMQCmsService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         int rowIndexCode = 2;
-        int rowIndexSku = 2;
+        SheetCellIndex sheetCellIndex  = new SheetCellIndex();
+        sheetCellIndex.setSheetIndex(1);
+        sheetCellIndex.setRowIndexSku(2);
         try (
                 OutputStream outputStream = new FileOutputStream(outPath + fileName);
                 InputStream inputStream = new FileInputStream(templatePath);
@@ -90,9 +120,18 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 queryObject.setLimit(pageSize);
                 List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(cmsBtExportTaskModel.getChannelId(), queryObject);
                 rowIndexCode = writeCode(cmsBtFeedInfoModels, book, rowIndexCode);
-                $info("code写到第"+rowIndexCode+"行");
-                rowIndexSku = writeSku(cmsBtFeedInfoModels, book, rowIndexSku);
-                $info("sku写到第"+rowIndexSku+"行");
+                $info("code写到第" + rowIndexCode + "行");
+
+                writeSku(cmsBtFeedInfoModels, book, sheetCellIndex);
+                $info(String.format("sku写到第%d个Sheet的第%d行",sheetCellIndex.getSheetIndex(),sheetCellIndex.getRowIndexSku()));
+                $info("sku写到第" + sheetCellIndex.getRowIndexSku() + "行");
+                if(sheetCellIndex.getRowIndexSku() > maxCellCnt){
+                    sheetCellIndex.next();
+                }
+
+            }
+            for(int i=sheetCellIndex.getSheetIndex()+1 ; i<=4 ;i++){
+                book.removeSheetAt(sheetCellIndex.getSheetIndex()+1);
             }
             book.write(outputStream);
             cmsBtExportTaskModel.setStatus(1);
@@ -165,10 +204,12 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
         return rowIndex;
     }
-    private int writeSku(List<CmsBtFeedInfoModel> cmsBtFeedInfoModels, Workbook book, int rowIndex) throws Exception{
-        Sheet sheet = book.getSheetAt(1);
+    private int writeSku(List<CmsBtFeedInfoModel> cmsBtFeedInfoModels, Workbook book,SheetCellIndex sheetCellIndex) throws Exception{
+        Sheet sheet = book.getSheet("sku"+sheetCellIndex.getSheetIndex());
+        int rowIndex = sheetCellIndex.getRowIndexSku();
 
         Row styleRow = FileUtils.row(sheet, 2);
+
 
         CellStyle unlock = styleRow.getCell(0).getCellStyle();
         for (CmsBtFeedInfoModel cmsBtFeedInfoModel : cmsBtFeedInfoModels) {
@@ -200,6 +241,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             }
         }
 
+        sheetCellIndex.setRowIndexSku(rowIndex);
         return rowIndex;
     }
 
