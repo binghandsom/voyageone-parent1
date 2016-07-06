@@ -300,15 +300,11 @@ s-field textarea.s-html {
     font-size: 12px;
     padding: 6px 0;
     text-align: center;
-    width: 170px;
+    width: 102px;
     color: #666666;
     text-shadow: 0 1px 0 #ffffff;
     float: left;
     margin-bottom: 2px;
-}
-
-.stat-boxes .right > div:first-child {
-    border-right: 1px solid #DEDEDE;
 }
 
 .stat-boxes .right strong {
@@ -661,7 +657,7 @@ s-field textarea.s-html {
     box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
     display: inline-block;
     line-height: 18px;
-    margin: 0 4px 4px;
+    margin: 0 6px 4px;
 }
 
 .data-display-boxes .data {
