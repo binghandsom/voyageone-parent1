@@ -1147,7 +1147,7 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId};
+                data = {"productIds": [], "cartId": cartId, 'isSelAll':context.isSelAll};
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,
@@ -1159,12 +1159,10 @@ define([
                 data = {"productIds": productIds, "cartId": cartId};
             }
 
-            if(context){
-                if (context.isQuery) {
-                    data.isQuery = "1";
-                } else {
-                    data.isQuery = "0";
-                }
+            if (context && context.isQuery) {
+                data.isQuery = "1";
+            } else {
+                data.isQuery = "0";
             }
 
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
