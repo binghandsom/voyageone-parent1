@@ -22,9 +22,12 @@
             <array>
                 <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
                     <property name="properties">
-                        <value>
-                            database_schema=voyageone_cms2
-                        </value>
+                        <value>database_schema=voyageone_cms2</value>
+                    </property>
+                </bean>
+                <bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
+                    <property name="properties">
+                        <value>id_filter=selectList</value>
                     </property>
                 </bean>
             </array>
