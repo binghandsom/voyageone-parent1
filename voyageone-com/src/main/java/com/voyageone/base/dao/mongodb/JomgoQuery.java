@@ -225,4 +225,12 @@ public class JomgoQuery extends BaseCondition {
         rs.append("; }");
         return rs.toString();
     }
+
+    public List<String> getQueryStrList() {
+        return queryStrList;
+    }
+
+    public void setQueryStrList(List<String> queryStrList) {
+        this.queryStrList = queryStrList;
+    }
 }

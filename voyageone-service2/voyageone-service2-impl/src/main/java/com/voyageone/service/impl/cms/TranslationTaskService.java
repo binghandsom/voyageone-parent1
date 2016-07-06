@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
@@ -25,8 +26,10 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -54,8 +57,6 @@ public class TranslationTaskService extends BaseService {
     @Autowired
     private ProductService productService;
 
-    private static final String TASK_INCOMPLETE = "0";
-
     /**
      * 计算翻译任务的汇总信息
      */
@@ -66,12 +67,12 @@ public class TranslationTaskService extends BaseService {
         TaskSummaryBean taskSummary = new TaskSummaryBean();
 
         //未分配的任务
-        String queryStr = String.format("{'common.fields.translateStatus':'0'," +
-                "'common.fields.isMasterMain':1," +
-                " '$or': [{'common.fields.translator':''} ,  " +
+        String queryStr = String.format("{'$and':[ {'common.fields.isMasterMain':1}," +
+                "{'$or': [{'common.fields.translateStatus':'0'}, {'common.fields.translateStatus':{'$exists': false}} ]}," +
+                "{'$or': [{'common.fields.translator':''} ,  " +
                 "{'common.fields.translateTime':{'$lte':'%s'}} , " +
                 "{'common.fields.translator':{'$exists' : false}}, " +
-                "{'common.fields.translateTime':{'$exists' : false}}]}", translateTimeStr);
+                "{'common.fields.translateTime':{'$exists' : false}}]}]}", translateTimeStr);
 
         taskSummary.setUnassginedCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
@@ -100,7 +101,7 @@ public class TranslationTaskService extends BaseService {
     /**
      * 按proId获取翻译任务详情
      */
-    public TranslationTaskBean getTaskById(String channelId, String userName, int prodId) throws BusinessException {
+    public TranslationTaskBean getTaskById(String channelId, String userName, long prodId) throws BusinessException {
 
         String queryStr = String.format("{'common.fields.isMasterMain':1, " +
                 "'prodId':%s, " +
@@ -144,11 +145,15 @@ public class TranslationTaskService extends BaseService {
             //没有过期任务，按优先级参数分配
             JomgoQuery queryObj = new JomgoQuery();
 
-            queryObj.addQuery("'common.fields.isMasterMain':1,'common.fields.translateStatus':'0'");
+            //不能有2个or
+            queryObj.addQuery("'common.fields.isMasterMain':1");
+            queryObj.addQuery("'$or': [{'common.fields.translateStatus':'0'}, {'common.fields.translateStatus':{'$exists': false}} ]");
+            queryObj.addQuery("'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator':{'$exists' : false}}, {'common.fields.translateTime':{'$exists' : false}}]");
+            queryObj.addParameters(translateTimeStr);
+
 
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-                queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}}," +
-                        "{'common.fields.originalTitleCn':{'$regex': #}}]");
+                queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]");
                 queryObj.addParameters(keyWord, keyWord, keyWord);
             }
 
@@ -161,6 +166,12 @@ public class TranslationTaskService extends BaseService {
                     }
                 }
             }
+
+            List<String> queryStrList = queryObj.getQueryStrList().stream().map(w-> "{" + w + "}").collect(Collectors.toList());
+
+            String queryStr1 = "{'$and':[" + Joiner.on(",").join(queryStrList) + "]}";
+
+            queryObj.setQuery(queryStr1);
 
             product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
         }
@@ -176,6 +187,7 @@ public class TranslationTaskService extends BaseService {
             queryMap.put("prodId", product.getProdId());
             rsMap.put("common.fields.translator", userName);
             rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
+            rsMap.put("common.fields.translateStatus", '0');
             rsMap.put("modifier", userName);
             rsMap.put("modified", DateTimeUtil.getNow());
             Map<String, Object> updateMap = new HashMap<>();
@@ -259,8 +271,12 @@ public class TranslationTaskService extends BaseService {
                 rsMap.put("common.fields.translator", userName);
                 rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
 
-                if(!status.equals(TASK_INCOMPLETE)) {
-                    rsMap.put("common.fields.translateStatus", status);
+                if(status.equals("1")) {
+                    rsMap.put("common.fields.translateStatus", '1');
+                }
+                else if(product.getCommon().getFields().getTranslateStatus() == null )
+                {
+                    rsMap.put("common.fields.translateStatus", '0');
                 }
 
                 rsMap.put("modifier", userName);
@@ -283,7 +299,7 @@ public class TranslationTaskService extends BaseService {
             }
 
         }
-        return getCurrentTask(channelId, userName);
+        return getTaskById(channelId, userName, bean.getProdId());
     }
 
 
@@ -300,7 +316,8 @@ public class TranslationTaskService extends BaseService {
 
         JomgoQuery queryObj = new JomgoQuery();
 
-        queryObj.addQuery("'common.fields.isMasterMain':1,'common.fields.translator':#");
+        queryObj.addQuery("'common.fields.isMasterMain':1");
+        queryObj.addQuery("'common.fields.translator':#");
         queryObj.addParameters(userName);
         if (!StringUtils.isNullOrBlank2(keyWord)) {
             queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}}," +
@@ -308,9 +325,9 @@ public class TranslationTaskService extends BaseService {
             queryObj.addParameters(keyWord, keyWord, keyWord);
         }
 
+        //不能有2个or
         if (StringUtils.isNullOrBlank2(status)) {
-            queryObj.addQuery("'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}}, " +
-                    "{'common.fields.translateStatus':'1'}]");
+            queryObj.addQuery("'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}},{'common.fields.translateStatus':'1'}]");
             queryObj.addParameters(translateTimeStr);
         } else if ("1".equals(status)) {
             queryObj.addQuery("'common.fields.translateStatus':'1'");
@@ -319,6 +336,15 @@ public class TranslationTaskService extends BaseService {
             queryObj.addQuery("'common.fields.translateTime':{'$gt':#}");
             queryObj.addParameters(translateTimeStr);
         }
+
+        List<String> queryStrList = queryObj.getQueryStrList().stream().map(w-> "{" + w + "}").collect(Collectors.toList());
+
+        String queryStr = "{'$and':[" + Joiner.on(",").join(queryStrList) + "]}";
+
+        queryObj.setQuery(queryStr);
+
+
+        queryObj.setSort("{'common.fields.translateTime' : -1}");
 
         queryObj.setSkip(pageSize * (pageNum - 1)).setLimit(pageSize);
 
@@ -344,12 +370,12 @@ public class TranslationTaskService extends BaseService {
                 map.put("productName", StringUtils.isNullOrBlank2(fields.getOriginalTitleCn()) ? fields.getProductNameEn() : fields.getOriginalTitleCn());
                 map.put("catPath", product.getCommon().getCatPath() == null ? "" : product.getCommon().getCatPath());
                 map.put("translator", fields.getTranslator());
-                SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
                 try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATE_FORMAT);
                     Date translateTime = sdf.parse(fields.getTranslateTime());
-                    map.put("translateTime", translateTime.getTime() / 1000);
+                    map.put("translateTime", translateTime.getTime());
                 } catch (Exception e) {
-                    map.put("translateTime", fields.getTranslateTime());
+                    map.put("translateTime", getString(fields.getTranslateTime()));
                 }
                 list.add(map);
             }
