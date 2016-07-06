@@ -8,27 +8,14 @@
         <div class="form-inline m-b-xs">
             <div class="form-group m-r-lg">
                 <label>
-                    <span>Show&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.size">
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                    </select>
-                    <span>&nbsp;entries</span>
-                </label>
-            </div>
-            <div class="form-group m-r-lg">
-                <label>
                     <span>SKU&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.sku" ng-options="i.skuCode as i.skuCode for i in ctrl.skuList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.sku" ng-options="i as i.value for i in ctrl.skuList"></select>
                 </label>
             </div>
             <div class="form-group m-r-lg">
                 <label>
                     <span>Platform&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.platform">
-                        <option value=""></option>
-                    </select>
+                    <select class="form-control" ng-model="ctrl.selected.cart" ng-options="i.value as i.name for i in ctrl.cartList"></select>
                 </label>
             </div>
             <div class="form-group">
@@ -57,23 +44,23 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="list in vm.priceList">
-                        <td class="text-left">{{list.sku}}</td>
-                        <td class="text-center">{{list.msrpPrice}}</td>
-                        <td class="text-center">{{list.retailPrice}}</td>
-                        <td class="text-center">{{list.salePrice}}</td>
-                        <td class="text-center">{{list.clientMsrpPrice}}</td>
-                        <td class="text-center">{{list.clientNetPrice}}</td>
-                        <td class="text-center">{{list.clientRetailPrice}}</td>
-                        <td class="text-left">{{list.comment}}</td>
-                        <td class="text-left">{{list.modified.substring(0, 19)}}</td>
-                        <td class="text-left">{{list.modifier}}</td>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left">{{item.sku}}</td>
+                        <td class="text-center">{{item.msrpPrice}}</td>
+                        <td class="text-center">{{item.retailPrice}}</td>
+                        <td class="text-center">{{item.salePrice}}</td>
+                        <td class="text-center">{{item.clientMsrpPrice}}</td>
+                        <td class="text-center">{{item.clientNetPrice}}</td>
+                        <td class="text-center">{{item.clientRetailPrice}}</td>
+                        <td class="text-left">{{item.comment}}</td>
+                        <td class="text-left">{{item.modified.substring(0, 19)}}</td>
+                        <td class="text-left">{{item.modifier}}</td>
                     </tr>
                     </tbody>
                 </table>
             </div><!-- /.box-body -->
             <div class="container-fluid">
-                <vpagination config="vm.pageOption"></vpagination>
+                <vpagination config="ctrl.paging"></vpagination>
             </div>
         </div>
     </div>

@@ -932,11 +932,10 @@ define([
         /**
          * 打开price历史页面
          */
-        $scope.openHistoryPrice = function openHistoryPrice(code, skuList, cartList, selectedSku, selectedCart) {
+        $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
             return openModel(popActions.history.price, {
                 skuList: skuList,
                 code: code,
-                cartList: cartList,
                 selected: {
                     sku: selectedSku,
                     cart: selectedCart
