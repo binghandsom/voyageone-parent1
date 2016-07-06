@@ -7,7 +7,7 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService,cActions) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService,cActions,$sessionStorage) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -52,8 +52,10 @@ define([
                 })
                 .then(function () {
                     exportSearch();
-                    if ($routeParams.type == "1") {
+                    if ($routeParams.type == "1" || $sessionStorage.feedSearch) {
+                        $scope.vm.searchInfo = $sessionStorage.feedSearch;
                         search();
+                        if($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }
                 })
         }
@@ -226,6 +228,6 @@ define([
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService','cActions'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService','cActions','$sessionStorage'];
     return searchIndex;
 });

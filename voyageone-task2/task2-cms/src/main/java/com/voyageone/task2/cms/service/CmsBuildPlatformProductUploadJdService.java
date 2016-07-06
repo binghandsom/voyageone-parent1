@@ -1116,7 +1116,16 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 设置该商品的自定义属性值别名(颜色1:颜色1的别名^颜色2:颜色2的别名)
             sbPropertyAlias.append(productColorMap.get(objProduct.getCommon().getFields().getCode())); // 产品CODE对应的颜色值ID
             sbPropertyAlias.append(Separtor_Colon);         // ":"
-            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
+            // 20160630 tom 防止code超长 START
+//            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
+
+            // 如果超过25个字(不管中文还是英文),  那就用color, 如果color也超长了, 京东上新会出错写入到business_log表里的, 运营直接修改common的颜色将其缩短即可.
+            String color = objProduct.getCommon().getFields().getCode();
+            if (color.length() > 25) {
+                color = objProduct.getCommon().getFields().getColor();
+            }
+            sbPropertyAlias.append(color);
+            // 20160630 tom 防止code超长 END
             sbPropertyAlias.append(Separtor_Xor);           // "^"
 
             List<BaseMongoMap<String, Object>> objProductSkuList = new ArrayList<>();

@@ -89,6 +89,13 @@ angular.module("voyageone.angular.directives").directive("vpagination", function
                 scope.totalItems = p.getTotal();
                 // 获取当前页的信息
                 scope.curr = p.getCurr();
+                // 获取每页数量
+                scope.config.size = p.getSize();
+
+                scope.perpages = {
+                    availableOptions: [10, 20, 50, 100],
+                    selectedOption: scope.config.size
+                };
                 // 根据总数量显示不同的分页样式
                 var tempHtml;
                 if (p.getTotal() == 0) {
@@ -98,11 +105,6 @@ angular.module("voyageone.angular.directives").directive("vpagination", function
                 }
                 element.html(tempHtml);
             }
-
-            scope.perpages = {
-                availableOptions: [10, 20, 50, 100],
-                selectedOption: scope.config.size
-            };
 
             scope.changePerPage = function (perpage) {
                 scope.config.size = parseInt(perpage);
