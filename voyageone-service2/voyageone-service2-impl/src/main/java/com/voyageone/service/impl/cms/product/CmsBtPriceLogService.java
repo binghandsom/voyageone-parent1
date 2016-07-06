@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 不干别的就记录商品价格变动
@@ -98,9 +99,15 @@ public class CmsBtPriceLogService extends BaseService {
             return;
         }
 
-        for (CmsBtProductModel_Platform_Cart cartProduct : productModel.getPlatforms().values())
+        if ("0".equals(cartId)) return;    // P0平台没有sku
 
-            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : productModel.getPlatforms().entrySet()) {
+            // P0平台没有sku，跳过
+            if ("P0".equals(entry.getKey())) continue;
+
+            log(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
+        }
+
     }
 
     private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
