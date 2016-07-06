@@ -146,6 +146,7 @@ public class FeedToCmsService extends BaseService {
                     }
                 } else {
                     insertLog = true;
+                    product.setCreater(modifier);
                     product.setUpdFlg(9);
                 }
 
