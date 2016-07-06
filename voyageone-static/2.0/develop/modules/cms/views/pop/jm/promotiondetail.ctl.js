@@ -55,6 +55,21 @@ define([
         $scope.ok = function() {
             if (!$scope.promotionForm.$valid)
                 return;
+            if($scope.editModel.model.activityStart > $scope.editModel.model.activityEnd){
+                alert("活动时间检查：请输入结束时间>开始时间，最小间隔为30分钟。")
+                return;
+            }
+            var start = new Date($scope.editModel.model.activityStart);
+            var end = new Date($scope.editModel.model.activityEnd);
+            if(end.getTime()-start.getTime() < 30*60*1000 ){
+                alert("活动时间检查：最小间隔为30分钟。")
+                return;
+            }
+
+            if($scope.editModel.model.prePeriodStart > $scope.editModel.model.prePeriodEnd){
+                alert("预热时间检查：请输入结束时间>开始时间。")
+                return;
+            }
             $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
             $scope.editModel.model.activityStart = formatToStr($scope.editModel.model.activityStart);
             $scope.editModel.model.activityEnd = formatToStr($scope.editModel.model.activityEnd);
