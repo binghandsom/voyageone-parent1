@@ -242,11 +242,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.attributeList = null;
     }
 
-    public int getUpdFlg() {
+    public Integer getUpdFlg() {
         return updFlg;
     }
 
-    public void setUpdFlg(int updFlg) {
+    public void setUpdFlg(Integer updFlg) {
         this.updFlg = updFlg;
     }
 
