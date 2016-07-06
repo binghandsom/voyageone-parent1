@@ -18,6 +18,8 @@ public interface CmsBtJmMasterBrandDao {
 
     CmsBtJmMasterBrandModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtJmMasterBrandModel select(Integer id);
 
     int insert(CmsBtJmMasterBrandModel record);

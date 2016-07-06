@@ -18,6 +18,8 @@ public interface CmsMtPlatformDictDao {
 
     CmsMtPlatformDictModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformDictModel select(Integer id);
 
     int insert(CmsMtPlatformDictModel record);

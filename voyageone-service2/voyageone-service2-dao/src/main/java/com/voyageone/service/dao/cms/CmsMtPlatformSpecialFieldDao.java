@@ -18,6 +18,8 @@ public interface CmsMtPlatformSpecialFieldDao {
 
     CmsMtPlatformSpecialFieldModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformSpecialFieldModel select(Integer id);
 
     int insert(CmsMtPlatformSpecialFieldModel record);

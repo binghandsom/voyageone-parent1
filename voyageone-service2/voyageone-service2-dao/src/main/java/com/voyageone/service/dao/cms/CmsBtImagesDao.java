@@ -18,6 +18,8 @@ public interface CmsBtImagesDao {
 
     CmsBtImagesModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtImagesModel select(Integer id);
 
     int insert(CmsBtImagesModel record);

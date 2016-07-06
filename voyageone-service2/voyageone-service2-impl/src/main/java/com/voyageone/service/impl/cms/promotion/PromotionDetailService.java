@@ -119,7 +119,7 @@ public class PromotionDetailService extends BaseService {
 
         List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
         if (skusList == null || skusList.isEmpty()) {
-            $warn("addPromotionDetail product sku不存在 " + bean.toString());
+            $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
             throw new BusinessException("商品Sku数据不存在");
         }
         skusList.forEach(sku -> {

@@ -18,6 +18,8 @@ public interface CmsBtPromotionGroupsDao {
 
     CmsBtPromotionGroupsModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtPromotionGroupsModel select(Integer id);
 
     int insert(CmsBtPromotionGroupsModel record);
