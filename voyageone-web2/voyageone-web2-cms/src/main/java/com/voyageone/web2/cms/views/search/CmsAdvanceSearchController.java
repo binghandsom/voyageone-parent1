@@ -44,7 +44,7 @@ public class CmsAdvanceSearchController extends CmsController {
     @Autowired
     private CmsAdvSearchExportFileService advSearchExportFileService;
     @Autowired
-    PlatformService platformService;
+    private PlatformService platformService;
 
     /**
      * 初始化,获取master数据
