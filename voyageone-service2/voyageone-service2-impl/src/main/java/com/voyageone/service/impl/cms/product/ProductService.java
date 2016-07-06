@@ -1222,6 +1222,9 @@ public class ProductService extends BaseService {
     public long countByQuery(final String strQuery, String channelId) {
         return cmsBtProductDao.countByQuery(strQuery, channelId);
     }
+    public long countByQuery(final String strQuery, final Object[] parameters, String channelId) {
+        return cmsBtProductDao.countByQuery(strQuery, parameters, channelId);
+    }
 
     public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
         return cmsBtProductDao.aggregateToMap(channelId, aggregateList);
