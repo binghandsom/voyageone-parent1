@@ -6,7 +6,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.POP.PRICE_LOG;
 import com.voyageone.web2.cms.bean.PriceLogBean;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,9 +38,6 @@ public class CmsPriceLogController extends CmsController {
 
         String sku = params.getSku();
 
-        if (StringUtils.isEmpty(sku))
-            sku = null;
-
         String channelId = getUser().getSelChannelId();
 
         List<CmsBtPriceLogModel> data = priceLogService.getPage(sku, params.getCode(), params.getCart(), channelId, params.getOffset(), params.getLimit());
@@ -55,9 +51,6 @@ public class CmsPriceLogController extends CmsController {
     public ResponseEntity export(PriceLogBean params) {
 
         String sku = params.getSku();
-
-        if (StringUtils.isEmpty(sku))
-            sku = null;
 
         String channelId = getUser().getSelChannelId();
 

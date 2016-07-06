@@ -371,10 +371,10 @@ define(function () {
                     "root": "/cms/pop/history_promotion",
                     "getPromotionHistory": "getPromotionHistory"
                 },
-                "$priceHistoryService": {
-                    "root": "/cms/pop/history_price",
-                    "init": "getChannelCategory2",
-                    "getPriceHistory": "getPriceHistory"
+                priceLogService: {
+                    root: '/cms/price/log',
+                    page: 'page',
+                    export: 'export'
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",

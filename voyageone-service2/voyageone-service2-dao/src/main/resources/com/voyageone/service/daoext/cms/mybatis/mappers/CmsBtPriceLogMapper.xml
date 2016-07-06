@@ -143,7 +143,9 @@
         FROM voyageone_cms2.cms_bt_price_log
         WHERE channel_id = #{channel_id}
               and cart_id = #{cart_id}
-              and code = #{code}
+              <if test="code != null">
+                  and code = #{code}
+              </if>
               <if test="sku != null">
                   and sku = #{sku}
               </if>

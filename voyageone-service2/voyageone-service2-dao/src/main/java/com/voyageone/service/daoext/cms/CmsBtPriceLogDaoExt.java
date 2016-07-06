@@ -2,6 +2,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -41,6 +42,13 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
     }
 
     public List<CmsBtPriceLogModel> selectPageBySkuOnCart(String sku, String code, String cartId, String channelId, Integer offset, Integer limit) {
+
+        if (StringUtils.isEmpty(sku))
+            sku = null;
+
+        if (StringUtils.isEmpty(code))
+            code = null;
+
         return selectList("selectPageBySkuOnCart", parameters(
                 "sku", sku,
                 "code", code,

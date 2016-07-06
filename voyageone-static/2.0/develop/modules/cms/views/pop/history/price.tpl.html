@@ -9,13 +9,13 @@
             <div class="form-group m-r-lg">
                 <label>
                     <span>SKU&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.value for i in ctrl.skuList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList"></select>
                 </label>
             </div>
             <div class="form-group m-r-lg">
                 <label>
                     <span>Platform&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i.value as i.name for i in ctrl.cartList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i.value as i.label for i in ctrl.cartList"></select>
                 </label>
             </div>
             <div class="form-group">

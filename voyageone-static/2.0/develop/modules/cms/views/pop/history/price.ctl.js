@@ -7,10 +7,10 @@ define([
 
             var self = this;
             var skuList = _.map(context.skuList, function (skuObj) {
-                return {value: skuObj.skuCode};
+                return {value: skuObj.skuCode, label: skuObj.skuCode};
             });
             var selected = context.selected;
-            var defaultSku = {value: ''};
+            var defaultSku = {value: '', label: 'Select...'};
             var serviceActions = cActions.cms.pop.priceLogService;
 
             skuList.unshift(defaultSku);
@@ -37,9 +37,17 @@ define([
             };
 
             $menuService.getPlatformType().then(function (res) {
-                self.cartList = _.filter(res.data, function (item) {
+                var cartList = _.filter(res.data, function (item) {
                     return item.value >= 20 && item.value < 900;
                 });
+
+                cartList = _.map(cartList, function (item) {
+                    return {value:item.value, label:item.name};
+                });
+
+                cartList.unshift({value: '', label: 'Select...'});
+
+                self.cartList = cartList;
             }).then(function () {
                 self.getData(0);
             });
