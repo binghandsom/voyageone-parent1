@@ -222,6 +222,20 @@ define([
                      _.map(scope.vm.platform.skus, function(item){
                          item.property = item.property == null?"OTHER":item.property;
                      });
+
+                    if(scope.vm.status == "Approved"){
+                        confirm("您确定Approve这个商品吗？").result.then(function(){
+                            callSave();
+                        });
+                    }else{
+                        callSave();
+                    }
+
+                }
+
+                /**调用服务器接口*/
+                function callSave(){
+
                     /**判断价格*/
                     productDetailService.updateProductPlatformChk({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
@@ -232,10 +246,10 @@ define([
                             return;
                         }
                         confirm(resp.message + ",是否强制保存").result.then(function () {
-                             productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
-                                 scope.vm.platform.modified = resp.data.modified;
-                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                             });
+                            productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
+                                scope.vm.platform.modified = resp.data.modified;
+                                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            });
                         });
                     });
                 }
