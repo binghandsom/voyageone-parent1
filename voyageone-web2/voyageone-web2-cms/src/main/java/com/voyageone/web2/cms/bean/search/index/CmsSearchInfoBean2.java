@@ -41,8 +41,8 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
-    private String[] productStatus;
-    private String[] platformStatus;
+    private List<String> productStatus;
+    private List<String> platformStatus;
 
     private String publishTimeStart;
     private String publishTimeTo;
@@ -143,11 +143,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.custAttrMap = custAttrMap;
     }
 
-    public String[] getProductStatus() {
+    public List<String> getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String[] productStatus) {
+    public void setProductStatus(List<String> productStatus) {
         this.productStatus = productStatus;
     }
 
@@ -159,11 +159,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.cartId = cartId;
     }
 
-    public String[] getPlatformStatus() {
+    public List<String> getPlatformStatus() {
         return platformStatus;
     }
 
-    public void setPlatformStatus(String[] platformStatus) {
+    public void setPlatformStatus(List<String> platformStatus) {
         this.platformStatus = platformStatus;
     }
 
