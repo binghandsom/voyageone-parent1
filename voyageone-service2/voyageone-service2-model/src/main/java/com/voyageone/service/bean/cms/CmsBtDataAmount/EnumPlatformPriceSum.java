@@ -17,22 +17,18 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
         this.linkParameter = linkParameter;
         this.comment = comment;
     }
-
     private String amountName;//
     private String strQuery;//查询条件
     private String linkUrl;//链接地址
     private String linkParameter;// 链接参数
     private String comment;//备注
-
     public int getDataAmountTypeId() {
         return dataAmountTypeId;
     }
-
     public void setDataAmountTypeId(int dataAmountTypeId) {
         this.dataAmountTypeId = dataAmountTypeId;
     }
-
-    private  int dataAmountTypeId=3;
+    private  int dataAmountTypeId=EnumDataAmountType.PlatformPriceSum.getId();
     public String getAmountName() {
         return amountName;
     }
@@ -63,7 +59,6 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
     public void setComment(String comment) {
         this.comment = comment;
     }
-
     public static List<EnumPlatformPriceSum> getList() {
         List<EnumPlatformPriceSum> list = Arrays.asList(EnumPlatformPriceSum.values());
         return list;

@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
+<div class="wrapper-md" ng-init="init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -20,7 +20,7 @@
                         <div class="col-sm-12">
                             <ul class="stat-boxes">
                                 <li>
-                                    <div class="right data-priority-0">
+                                    <div class="right data-priority-0" ng-click="jump('/search/advanceSearch',p)">
                                         <div class="col-sm-4">
                                             <span class="right-side">Feed信息</span>
                                         </div>

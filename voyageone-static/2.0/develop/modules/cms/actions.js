@@ -41,7 +41,8 @@ define(function () {
                     "root": "/cms/home/menu/",
                     "getCategoryInfo": session('getCategoryInfo'),
                     "getPlatformType": "getPlatformType",
-                    "setPlatformType": "setPlatformType"
+                    "setPlatformType": "setPlatformType",
+                    "getHomeSumData":"getHomeSumData"
                 }
             },
             "search": {

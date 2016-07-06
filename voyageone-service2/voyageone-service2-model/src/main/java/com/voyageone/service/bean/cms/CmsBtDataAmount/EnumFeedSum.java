@@ -36,7 +36,7 @@ public enum EnumFeedSum implements IEnumDataAmountSum {
         this.dataAmountTypeId = dataAmountTypeId;
     }
 
-    private  int dataAmountTypeId=1;
+    private  int dataAmountTypeId=EnumDataAmountType.FeedSum.getId();
     public String getAmountName() {
         return amountName;
     }

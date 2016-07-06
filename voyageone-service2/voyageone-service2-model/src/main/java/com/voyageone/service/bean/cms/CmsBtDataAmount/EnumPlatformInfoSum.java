@@ -36,7 +36,7 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
         this.dataAmountTypeId = dataAmountTypeId;
     }
 
-    private  int dataAmountTypeId=4;
+    private  int dataAmountTypeId=EnumDataAmountType.PlatformInfoSum.getId();
     public String getAmountName() {
         return amountName;
     }
