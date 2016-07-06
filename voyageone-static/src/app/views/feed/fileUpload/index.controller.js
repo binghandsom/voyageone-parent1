@@ -9,14 +9,6 @@ define([
             this.orderListService = orderListService;
             this.popups = popups;
         }
-
-
-        FeedFileUploadController.prototype.popNewShipment = function () {
-            this.popups.openNewShipment();
-        };
-        FeedFileUploadController.prototype.popAddShipment = function () {
-            this.popups.openAddShipment();
-        };
         return FeedFileUploadController;
 
     }()));

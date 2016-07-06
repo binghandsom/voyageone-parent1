@@ -3,6 +3,12 @@ define(function () {
         otherwise: '/order/order_info',
         routes: [
             {
+                "hash": "/home",
+                "templateUrl": "views/home/index.html",
+                "controllerUrl": "./views/home/index.controller",
+                "controller": "HomeController"
+            },
+            {
                 "hash": "/order/order_info",
                 "templateUrl": "views/order/order_info.html",
                 "controllerUrl": "./views/order/order_info.controller",
@@ -13,6 +19,12 @@ define(function () {
                 "templateUrl": "./views/feed/fileUpload/index.html",
                 "controllerUrl": "./views/feed/fileUpload/index.controller",
                 "controller": "FeedFileUploadController as ctrl"
+            },
+            {
+                "hash": "/feed/feed_import_result",
+                "templateUrl": "./views/feed/feedImport/index.html",
+                "controllerUrl": "./views/feed/feedImport/index.controller",
+                "controller": "FeedImportResultController as ctrl"
             }
         ]
     };
