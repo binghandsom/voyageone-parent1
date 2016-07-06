@@ -31,10 +31,7 @@ import java.io.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,33 +54,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     String outPath = CmsBtExportTaskService.savePath;
 
-    Integer maxCellCnt = 50000;
-
-    class SheetCellIndex{
-        private int sheetIndex;
-        private int rowIndexSku;
-
-        public int getSheetIndex() {
-            return sheetIndex;
-        }
-
-        public void setSheetIndex(int sheetIndex) {
-            this.sheetIndex = sheetIndex;
-        }
-
-        public int getRowIndexSku() {
-            return rowIndexSku;
-        }
-
-        public void setRowIndexSku(int rowIndexSku) {
-            this.rowIndexSku = rowIndexSku;
-        }
-
-        public void next(){
-            this.sheetIndex++;
-            this.rowIndexSku = 2;
-        }
-    }
+    Integer maxRowCnt = 50000;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -99,21 +70,20 @@ public class CmsFeedExportService extends BaseMQCmsService {
         Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
         Long cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);
         $info("导出的产品数"+cnt);
+        List<String> files = new ArrayList<>();
 
         String fileName = String.format("%s-%s.xlsx", cmsBtExportTaskModel.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
-
+        files.add(fileName);
 
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         int rowIndexCode = 2;
-        SheetCellIndex sheetCellIndex  = new SheetCellIndex();
-        sheetCellIndex.setSheetIndex(1);
-        sheetCellIndex.setRowIndexSku(2);
-        try (
-                OutputStream outputStream = new FileOutputStream(outPath + fileName);
-                InputStream inputStream = new FileInputStream(templatePath);
-                Workbook book = WorkbookFactory.create(inputStream)) {
+        int rowIndexSku = 2;
+        try {
+            OutputStream outputStream = new FileOutputStream(outPath + fileName);
+            InputStream inputStream = new FileInputStream(templatePath);
+            Workbook book = WorkbookFactory.create(inputStream);
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
                 $info("导出第" + pageNum + "页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
@@ -121,21 +91,24 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(cmsBtExportTaskModel.getChannelId(), queryObject);
                 rowIndexCode = writeCode(cmsBtFeedInfoModels, book, rowIndexCode);
                 $info("code写到第" + rowIndexCode + "行");
-
-                writeSku(cmsBtFeedInfoModels, book, sheetCellIndex);
-                $info(String.format("sku写到第%d个Sheet的第%d行",sheetCellIndex.getSheetIndex(),sheetCellIndex.getRowIndexSku()));
-                $info("sku写到第" + sheetCellIndex.getRowIndexSku() + "行");
-                if(sheetCellIndex.getRowIndexSku() > maxCellCnt){
-                    sheetCellIndex.next();
+                rowIndexSku = writeSku(cmsBtFeedInfoModels, book, rowIndexSku);
+                $info("sku写到第" + rowIndexSku + "行");
+                if(rowIndexSku > maxRowCnt){
+                    book.write(outputStream);
+                    outputStream.close();
+                    inputStream.close();
+                    fileName = String.format("%s-%s.xlsx", cmsBtExportTaskModel.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
+                    files.add(fileName);
+                    outputStream = new FileOutputStream(outPath + fileName);
+                    inputStream = new FileInputStream(templatePath);
+                    book = WorkbookFactory.create(inputStream);
+                    rowIndexCode = 2;
+                    rowIndexSku = 2;
                 }
-
-            }
-            for(int i=sheetCellIndex.getSheetIndex()+1 ; i<=4 ;i++){
-                book.removeSheetAt(sheetCellIndex.getSheetIndex()+1);
             }
             book.write(outputStream);
             cmsBtExportTaskModel.setStatus(1);
-            cmsBtExportTaskModel.setFileName(fileName);
+            cmsBtExportTaskModel.setFileName(files.stream().collect(Collectors.joining(",")));
             cmsBtExportTaskModel.setComment("");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -151,65 +124,63 @@ public class CmsFeedExportService extends BaseMQCmsService {
     }
 
     private int writeCode(List<CmsBtFeedInfoModel> cmsBtFeedInfoModels, Workbook book, int rowIndex) throws Exception{
-            Sheet sheet = book.getSheetAt(0);
-
-            Row styleRow = FileUtils.row(sheet, 2);
-
-            CellStyle unlock = styleRow.getCell(0).getCellStyle();
-
-            for (CmsBtFeedInfoModel item : cmsBtFeedInfoModels) {
-
-                Row row = FileUtils.row(sheet, rowIndex);
-
-                int cellIndex = 0;
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getCode());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getBrand());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getCategory());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getName());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getShortDescription());
-                String longDescription = item.getLongDescription() == null ? "":item.getLongDescription();
-                if(longDescription.length() > 2000) longDescription = longDescription.substring(0,2000);
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(longDescription);
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getModel());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getQty());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getMaterial());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getColor());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getOrigin());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getProductType());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getSizeType());
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getClientProductURL());
-
-                Map<String, Object> price = priceRange(item);
-                if(price.get("ClientMSRP") instanceof Double){
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientMSRP"));
-                }else{
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientMSRP"));
-                }
-                if(price.get("ClientRetail") instanceof Double){
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientRetail"));
-                }else{
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientRetail"));
-                }
-                if(price.get("ClientNet") instanceof Double){
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientNet"));
-                }else{
-                    FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientNet"));
-                }
-
-                String images = item.getImage().stream().collect(Collectors.joining("\n"));
-                FileUtils.cell(row, cellIndex++, unlock).setCellValue(images);
-
-                rowIndex++;
-            }
-
-        return rowIndex;
-    }
-    private int writeSku(List<CmsBtFeedInfoModel> cmsBtFeedInfoModels, Workbook book,SheetCellIndex sheetCellIndex) throws Exception{
-        Sheet sheet = book.getSheet("sku"+sheetCellIndex.getSheetIndex());
-        int rowIndex = sheetCellIndex.getRowIndexSku();
+        Sheet sheet = book.getSheetAt(0);
 
         Row styleRow = FileUtils.row(sheet, 2);
 
+        CellStyle unlock = styleRow.getCell(0).getCellStyle();
+
+        for (CmsBtFeedInfoModel item : cmsBtFeedInfoModels) {
+
+            Row row = FileUtils.row(sheet, rowIndex);
+
+            int cellIndex = 0;
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getCode());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getBrand());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getCategory());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getName());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getShortDescription());
+            String longDescription = item.getLongDescription() == null ? "":item.getLongDescription();
+            if(longDescription.length() > 2000) longDescription = longDescription.substring(0,2000);
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(longDescription);
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getModel());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getQty());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getMaterial());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getColor());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getOrigin());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getProductType());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getSizeType());
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(item.getClientProductURL());
+
+            Map<String, Object> price = priceRange(item);
+            if(price.get("ClientMSRP") instanceof Double){
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientMSRP"));
+            }else{
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientMSRP"));
+            }
+            if(price.get("ClientRetail") instanceof Double){
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientRetail"));
+            }else{
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientRetail"));
+            }
+            if(price.get("ClientNet") instanceof Double){
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((Double)price.get("ClientNet"));
+            }else{
+                FileUtils.cell(row, cellIndex++, unlock).setCellValue((String)price.get("ClientNet"));
+            }
+
+            String images = item.getImage().stream().collect(Collectors.joining("\n"));
+            FileUtils.cell(row, cellIndex++, unlock).setCellValue(images);
+
+            rowIndex++;
+        }
+
+        return rowIndex;
+    }
+    private int writeSku(List<CmsBtFeedInfoModel> cmsBtFeedInfoModels, Workbook book, int rowIndex) throws Exception{
+        Sheet sheet = book.getSheetAt(1);
+
+        Row styleRow = FileUtils.row(sheet, 2);
 
         CellStyle unlock = styleRow.getCell(0).getCellStyle();
         for (CmsBtFeedInfoModel cmsBtFeedInfoModel : cmsBtFeedInfoModels) {
@@ -241,7 +212,6 @@ public class CmsFeedExportService extends BaseMQCmsService {
             }
         }
 
-        sheetCellIndex.setRowIndexSku(rowIndex);
         return rowIndex;
     }
 
