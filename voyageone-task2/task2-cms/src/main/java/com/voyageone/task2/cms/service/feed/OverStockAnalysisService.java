@@ -293,14 +293,26 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         for(VariationAttributeType variationAttributeType:variationAttributeTypeList ){
                                             List<String> valueList= variationAttributeType.getValues().getValue();
                                             StringBuilder sbValue = new StringBuilder();
+                                            String name= variationAttributeType.getName();
+                                            //attributeSize
+                                            if(name.equals("尺寸")||name.equals("Size")){
+                                                continue;
+                                            }
                                             if(valueList.size()>0){
                                                 for(String value :valueList){
                                                     sbValue.append(value.replace(" ","")+"-");
                                                 }
+                                                if(sbValue.toString().equals("N/A-")){
+                                                    continue;
+                                                }
                                                 sb.append(sbValue);
                                             }
                                         }
-                                        superFeedverStockBean.setSalepoint(sb.deleteCharAt(sb.length() - 1).toString());
+                                        if("".equals(String.valueOf(sb))){
+                                            superFeedverStockBean.setSalepoint("");
+                                        }else{
+                                            superFeedverStockBean.setSalepoint(sb.deleteCharAt(sb.length() - 1).toString());
+                                        }
                                     }
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
