@@ -2,9 +2,7 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ExceptionUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
@@ -80,7 +78,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             if (model.getSynchStatus() !=2) {
                 //获取在售商品的model
-                CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.selectOnSaleByCode(model.getChannelId(), model.getProductCode());
+                CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.selectOnSaleByCode(model.getChannelId(), model.getProductCode(), DateTimeUtilBeijing.getCurrentBeiJingDate());
                 if (onSaleModel != null) {
                     model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "已在其它聚美专场，且未过期。该商品上传失败不能上传");
                     daoCmsBtJmPromotionProduct.update(model);

@@ -303,8 +303,8 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="table-responsive box">
-                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
+                        <div class="table-responsive box" style="overflow: auto">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
                                 <tr><!--24-->
                                     <th class="text-right mfb-x" style="width:38px">No.</th>
@@ -436,7 +436,9 @@
                                     <tbody>
                                         <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
                                             <td class="text-center mfb-xxt">{{$index + 1}}</td>
-                                            <td class="text-left mfb-xxt"><a href="javascript:void(0)" ng-click="openOtherDownload(exportInfo.fileName)">{{exportInfo.fileName}}</a></td>
+                                            <td class="text-left mfb-xxt">
+                                                <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openOtherDownload(fileItem)">{{fileItem}}<br></a>
+                                            </td>
                                             <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
                                             <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
                                             <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>

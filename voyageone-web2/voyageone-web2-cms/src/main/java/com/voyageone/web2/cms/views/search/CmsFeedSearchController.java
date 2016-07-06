@@ -180,6 +180,17 @@ public class CmsFeedSearchController extends CmsController {
         return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
     }
 
+    @RequestMapping(CmsUrlConstants.SEARCH.FEED.REEXPORT)
+    public  AjaxResponse reExport(@RequestBody CmsBtExportTaskModel params) {
+        params.setChannelId(getUser().getSelChannelId());
+        params.setModifier(getUser().getUserName());
+        params.setCreater(getUser().getUserName());
+        params.setCreated(new Date());
+        params.setTaskType(CmsBtExportTaskService.FEED);
+        params.setStatus(0);
+        return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
+    }
+
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORTSEARCH)
     public AjaxResponse exportSearch(@RequestBody Map<String,Object> params){
         Map<String, Object> resultBean = new HashMap<String, Object>();

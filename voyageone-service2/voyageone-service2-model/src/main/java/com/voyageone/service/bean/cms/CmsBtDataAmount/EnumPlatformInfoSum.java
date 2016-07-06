@@ -7,13 +7,13 @@ import java.util.List;
  * Created by dell on 2016/7/5.
  */
 public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
-    CMS_PLATFORM_ALL("CMS_PLATFORM_ALL", "{platform.P%s:{$exists:true}}", "", "", "商品数"),
-    CMS_PLATFORM_NO_CATEGORY("CMS_PLATFORM_NO_CATEGORY", "{'platform.P%s.pCatStatus':{$in:[null,0]}}", "", "", "等待设置平台类目商品数"),
-    CMS_PLATFORM_NO_ATTRIBUTE("CMS_PLATFORM_NO_ATTRIBUTE", "{'platform.P%s.pAttributeStatus':{$in:[null,0]}}", "", "", "等待设置属性数"),
+    CMS_PLATFORM_ALL("CMS_PLATFORM_ALL", "{platform.P%s:{$exists:true}}", "/search/advanceSearch", "", "商品数"),
+    CMS_PLATFORM_NO_CATEGORY("CMS_PLATFORM_NO_CATEGORY", "{'platform.P%s.pCatStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置平台类目商品数"),
+    CMS_PLATFORM_NO_ATTRIBUTE("CMS_PLATFORM_NO_ATTRIBUTE", "{'platform.P%s.pAttributeStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置属性数"),
     CMS_PLATFORM_READY("CMS_PLATFORM_READY", "{'platform.P%s.status':'Ready'}", "", "", "等待Approved数"),
-    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platform.P%s.pStatus':'WaitingPublish'}", "", "", "等待上新数"),
-    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platform.P%s.pPublishError':{$in:[null,0]}}", "", "", "上新成功数"),
-    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platform.P%s.pPublishError':{$nin:[null,0]}}", "", "", "上新失败数");
+    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platform.P%s.pStatus':'WaitingPublish'}", "/search/advanceSearch", "", "等待上新数"),
+    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platform.P%s.pPublishError':{$in:[null,0]}}", "/search/advanceSearch", "", "上新成功数"),
+    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platform.P%s.pPublishError':{$nin:[null,0]}}", "/search/advanceSearch", "", "上新失败数");
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;
@@ -36,7 +36,7 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
         this.dataAmountTypeId = dataAmountTypeId;
     }
 
-    private  int dataAmountTypeId=4;
+    private  int dataAmountTypeId=EnumDataAmountType.PlatformInfoSum.getId();
     public String getAmountName() {
         return amountName;
     }

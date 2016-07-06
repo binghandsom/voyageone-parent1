@@ -7,19 +7,18 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
 
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService,cActions,$sessionStorage) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: [],
             feedSelList: {selList: []},
-            exportPageOption: {curr: 1, size:10, total: 0, fetch: exportSearch},
+            exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             exportList: [],
-            currTab:{group:true,export:false}
+            currTab: {group: true, export: false}
         };
-        $scope.exportStatus = ["正在生成","完成","失败"];
-        $scope.beforSearchInfo={};
-
+        $scope.exportStatus = ["正在生成", "完成", "失败"];
+        $scope.beforSearchInfo = {};
 
 
         $scope.initialize = initialize;
@@ -55,7 +54,7 @@ define([
                     if ($routeParams.type == "1" || $sessionStorage.feedSearch) {
                         $scope.vm.searchInfo = $sessionStorage.feedSearch;
                         search();
-                        if($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
+                        if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }
                 })
         }
@@ -172,23 +171,28 @@ define([
             }
             var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品" : "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
             confirm(notice).result.then(function () {
-                   $feedSearchService.updateFeedStatus({'selList': selList,'isAll':$scope.vm.searchInfo.isAll,'status':mark,"searchInfo":$scope.beforSearchInfo}).then(function () {
-                 if (tempFeedSelect != null) {
-                    tempFeedSelect.clearSelectedList();
-                 }
-                       $scope.vm.searchInfo.isAll = false;
-                 search(1);
-                 })
-                });
+                $feedSearchService.updateFeedStatus({
+                    'selList': selList,
+                    'isAll': $scope.vm.searchInfo.isAll,
+                    'status': mark,
+                    "searchInfo": $scope.beforSearchInfo
+                }).then(function () {
+                    if (tempFeedSelect != null) {
+                        tempFeedSelect.clearSelectedList();
+                    }
+                    $scope.vm.searchInfo.isAll = false;
+                    search(1);
+                })
+            });
         };
 
-        $scope.exportFresh = function exportFresh(){
+        $scope.exportFresh = function exportFresh() {
             exportSearch($scope.vm.exportPageOption.curr);
         };
 
-        function doExport(){
-            var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
-            $feedSearchService.doExport(data).then(function(data){
+        function doExport() {
+            var data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            $feedSearchService.doExport(data).then(function (data) {
                 $scope.vm.exportList.unshift(data.data);
                 $scope.vm.currTab.export = true;
                 $scope.vm.currTab.group = false;
@@ -196,21 +200,27 @@ define([
             })
         }
 
-        function exportSearch(page){
+        function exportSearch(page) {
             $scope.vm.exportPageOption.curr = !page ? $scope.vm.exportPageOption.curr : page;
 
-            $feedSearchService.exportSearch({"pageNum":$scope.vm.exportPageOption.curr,"pageSize":$scope.vm.exportPageOption.size}).then(function (res) {
+            $feedSearchService.exportSearch({
+                "pageNum": $scope.vm.exportPageOption.curr,
+                "pageSize": $scope.vm.exportPageOption.size
+            }).then(function (res) {
                 $scope.vm.exportList = res.data.exportList;
+                _.each($scope.vm.exportList, function (item) {
+                    item.fileName = item.fileName.split(",");
+                })
                 $scope.vm.exportPageOption.total = res.data.exportListTotal;
             })
         }
 
         $scope.openOtherDownload = function (fileName) {
 
-            $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName":fileName});
+            $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName": fileName});
         };
 
-        $scope.openFeedCategoryMapping = function(popupNewCategory) {
+        $scope.openFeedCategoryMapping = function (popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -220,7 +230,7 @@ define([
                     return popupNewCategory({
                         categories: res.data.categoryTree
                     }).then(function (context) {
-                        $scope.vm.searchInfo.category = context.selected.catPath;
+                            $scope.vm.searchInfo.category = context.selected.catPath;
                         }
                     );
                 });
@@ -228,6 +238,6 @@ define([
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService','cActions','$sessionStorage'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage'];
     return searchIndex;
 });

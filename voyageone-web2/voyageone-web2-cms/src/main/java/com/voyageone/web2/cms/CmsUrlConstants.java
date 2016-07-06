@@ -20,8 +20,8 @@ public interface CmsUrlConstants {
             String GET_CATE_TYPE = "getPlatformType";
 
             String SET_CATE_TYPE = "setPlatformType";
+            String GetHomeSumData="getHomeSumData";
         }
-
     }
 
     interface JMPROMOTION {
@@ -316,6 +316,7 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
             String EXPORT = "export";
+            String REEXPORT = "reExport";
             String EXPORTSEARCH = "exportSearch";
             String DOWNLOAD = "download";
         }

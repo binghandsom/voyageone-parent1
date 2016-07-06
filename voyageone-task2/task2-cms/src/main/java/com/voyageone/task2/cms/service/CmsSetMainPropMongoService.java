@@ -75,8 +75,6 @@ import java.util.regex.Pattern;
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
-    @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
@@ -264,12 +262,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 } catch (Exception e) {
                     errCnt++;
                     // 回写详细错误信息表(cms_bt_business_log)
-                    insertBusinessLog(feed.getChannelId(), "", feed.getCode(), "", e.getMessage(), getTaskName());
+                    insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
 
                     // 回写feedInfo表
+                    feed.setUpdFlg(2);  // 2:feed->master导入失败
                     feed.setUpdMessage(e.getMessage());
                     feed.setModifier(getTaskName());
-                    cmsBtFeedInfoDao.update(feed);
+                    feedInfoService.updateFeedInfo(feed);
                 }
 
             }
@@ -776,11 +775,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
              // jeff 2016/05 add end
             // 设置商品更新完成
-            originalFeed.setUpdFlg(1);
+            originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
             originalFeed.setIsFeedReImport("0");
             originalFeed.setUpdMessage(""); // add desmond 2016/07/05
             originalFeed.setModifier(getTaskName());
-            cmsBtFeedInfoDao.update(originalFeed);
+            feedInfoService.updateFeedInfo(originalFeed);
 
             // ------------- 函数结束
 
@@ -963,9 +962,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            }
             // update desmond 2016/07/05 start
             // 小林说common.fields.color是中文颜色，不用在这里设置了，英文颜色值设到新加的字段codeDiff（商品特质英文）里面
-//            if (newFlg || StringUtils.isEmpty(productCommonField.getColor()) || "1".equals(feed.getIsFeedReImport())) {
-//                productCommonField.setColor(feed.getColor());
-//            }
+            if (newFlg) {
+                productCommonField.setColor("");   // 初期值
+            }
             // 商品特质英文(颜色/口味/香型等)
             if (newFlg || StringUtils.isEmpty(productCommonField.getCodeDiff()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setCodeDiff(feed.getColor());
@@ -3056,17 +3055,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
      *
      * @param channelId String 渠道id
      * @param cartId String 平台id
+     * @param feedModel String feed model
      * @param feedProductCode String feed产品code
      * @param errCode String 错误code
      * @param errMsg String 错误消息
      * @param modifier String 更新者
      */
-    private void insertBusinessLog(String channelId, String cartId, String feedProductCode, String errCode, String errMsg, String modifier) {
+    private void insertBusinessLog(String channelId, String cartId, String feedModel, String feedProductCode, String errCode, String errMsg, String modifier) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
         // 渠道id
         businessLogModel.setChannelId(channelId);
         // 平台id
         if (!StringUtils.isEmpty(cartId)) businessLogModel.setCartId(Integer.parseInt(cartId));
+        // feedModel
+        businessLogModel.setModel(feedModel);
         // feedProduCode
         businessLogModel.setCode(feedProductCode);
         // 错误类型(2:非上新错误)
