@@ -6,7 +6,6 @@ define([
 ], function (vms) {
     vms.controller('NewShipmentController', (function () {
         function NewShipmentController() {
-
         }
 
         NewShipmentController.prototype = function () {

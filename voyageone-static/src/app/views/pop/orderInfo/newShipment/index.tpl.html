@@ -1,6 +1,7 @@
 <div class="modal-content modal-blue">
     <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>Shipment New/End<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="newShipmentTitle" ng-show=""><i class="fa fa-tasks"></i>New Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="editShipmentTitle" ng-show=""><i class="fa fa-tasks"></i>Edit Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -11,9 +12,18 @@
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="Status">
                 </div>
-                <div class="form-group input-group">
-                    <input type="text" class="form-control" name="date" id="date" placeholder="Shipped Date">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                <div class="form-group">
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control"
+                               title="Shipped Date"
+                               ng-model="ctrl.shippedDate"
+                               uib-datepicker-popup
+                               is-open="datepicker1"
+                               date-model-format="yyyy-MM-dd"  placeholder="Shipped Date">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
                 </div>
                 <div class="form-group">
                     <select class="form-control">

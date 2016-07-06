@@ -1,10 +1,10 @@
 define([
     'vms',
-    './list.mock.service'
+    './order_info.mock.service'
 ], function (vms) {
-    vms.controller('OrderListController', (function () {
+    vms.controller('OrderInfoController', (function () {
 
-        function OrderListController(alert, notify, orderListService, popups) {
+        function OrderInfoController(alert, notify, orderListService, popups) {
             this.alert = alert;
             this.notify = notify;
             this.orderListService = orderListService;
@@ -30,7 +30,7 @@ define([
             }));
         }
 
-        OrderListController.prototype.toggleAll = function () {
+        OrderInfoController.prototype.toggleAll = function () {
             var collapse = (this.collapse = !this.collapse);
             this.data.forEach(function (item) {
                 item.collapse = collapse;
@@ -40,13 +40,13 @@ define([
                 self.notify.success('已经 展开/收缩所有');
             });
         };
-        OrderListController.prototype.popNewShipment = function () {
+        OrderInfoController.prototype.popNewShipment = function () {
             this.popups.openNewShipment();
         };
-        OrderListController.prototype.popAddShipment = function () {
+        OrderInfoController.prototype.popAddShipment = function () {
             this.popups.openAddShipment();
         };
-        return OrderListController;
+        return OrderInfoController;
 
     }()));
 });

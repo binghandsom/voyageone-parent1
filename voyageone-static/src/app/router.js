@@ -1,11 +1,31 @@
 define(function () {
     return {
-        otherwise: '/order/list',
-        routes: [{
-            "hash": "/order/list",
-            "templateUrl": "./views/order/list.html",
-            "controllerUrl": "./views/order/list.controller",
-            "controller": "OrderListController as ctrl"
-        }]
+        otherwise: '/order/order_info',
+        routes: [
+            {
+                "hash": "/home",
+                "templateUrl": "views/home/index.html",
+                "controllerUrl": "./views/home/index.controller",
+                "controller": "HomeController"
+            },
+            {
+                "hash": "/order/order_info",
+                "templateUrl": "views/order/order_info.html",
+                "controllerUrl": "./views/order/order_info.controller",
+                "controller": "OrderInfoController as ctrl"
+            },
+            {
+                "hash": "/feed/feed_file_upload",
+                "templateUrl": "./views/feed/fileUpload/index.html",
+                "controllerUrl": "./views/feed/fileUpload/index.controller",
+                "controller": "FeedFileUploadController as ctrl"
+            },
+            {
+                "hash": "/feed/feed_import_result",
+                "templateUrl": "./views/feed/feedImport/index.html",
+                "controllerUrl": "./views/feed/feedImport/index.controller",
+                "controller": "FeedImportResultController as ctrl"
+            }
+        ]
     };
 });

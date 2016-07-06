@@ -154,6 +154,10 @@ define(function (require) {
                 cache: CacheFlag.ONCE
             },
             setChannel: 'setChannel'
+        }),
+
+        orderInfoService: new CommonDataService('/order/order_info/', {
+            
         })
     }
 });
