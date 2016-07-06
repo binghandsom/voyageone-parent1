@@ -32,8 +32,12 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String createTimeTo;
 
     private String brand;
-    private String[] freeTags;
+    private List<String> freeTags;
     private int freeTagType = 0;
+    private String lockFlg;
+
+    private String[] codeList;
+    private String fuzzyStr;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
@@ -80,7 +84,6 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
-    private String[] codeList;
 
     // 文件下载类型
     private int fileType = 0;
@@ -252,6 +255,14 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.codeList = codeList;
     }
 
+    public String getFuzzyStr() {
+        return fuzzyStr;
+    }
+
+    public void setFuzzyStr(String fuzzyStr) {
+        this.fuzzyStr = fuzzyStr;
+    }
+
     public String getSortOneName() {
         return sortOneName;
     }
@@ -348,11 +359,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.taxNoStatus = taxNoStatus;
     }
 
-    public String[] getFreeTags() {
+    public List<String> getFreeTags() {
         return freeTags;
     }
 
-    public void setFreeTags(String[] freeTags) {
+    public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
     }
 
@@ -482,6 +493,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
+    }
+
+    public String getLockFlg() {
+        return lockFlg;
+    }
+
+    public void setLockFlg(String lockFlg) {
+        this.lockFlg = lockFlg;
     }
 
     @Override

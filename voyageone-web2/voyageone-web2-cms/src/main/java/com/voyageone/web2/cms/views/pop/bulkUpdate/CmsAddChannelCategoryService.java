@@ -45,9 +45,42 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
 
     /**
-     * 数据页面初始化
+     * 数据页面初始化(无产品信息)
      */
     public Map getChannelCategory(Map<String, Object> params, CmsSessionBean cmsSession) {
+        String quyFlg = (String) params.get("isQuery");
+        if (!"1".equals(quyFlg)) {
+            // 添加店铺内分类
+            return getChannelCategory4Product(params, cmsSession);
+        }
+        //channelId
+        String channelId = (String) params.get("channelId");
+        Map<String, Object> data = new HashMap<>();
+
+        //cartId
+        int cartId = StringUtils.toIntValue(params.get("cartId"));
+        if (cartId == 0) {
+            $warn("getChannelCategory cartI==0 " + params.toString());
+            throw new BusinessException("未选择平台");
+        }
+
+        Map<String, Boolean> emptyMap = new HashMap<>(0);
+        data.put("orgChkStsMap", emptyMap);
+        data.put("orgDispMap", emptyMap);
+
+        //取得店铺渠道
+        data.put("cartName", Carts.getCart(cartId).getName());
+
+        //根据channelId在cms_bt_seller_cat取得对应的店铺内分类数据(树型结构)
+        List<CmsBtSellerCatModel> channelCategoryList = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
+        data.put("channelCategoryList", channelCategoryList);
+        return data;
+    }
+
+    /**
+     * 数据页面初始化(有产品信息)
+     */
+    public Map getChannelCategory4Product(Map<String, Object> params, CmsSessionBean cmsSession) {
         //channelId
         String channelId = (String) params.get("channelId");
         Map<String, Object> data = new HashMap<>();

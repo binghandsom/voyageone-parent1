@@ -21,7 +21,6 @@ define([
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
         function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, notify, alert, $uibModalInstance) {
-            this.code = context.productIds;
             this.cartName = '';
             this.channelCategoryList = null;
             this.isSelectCid = [];
@@ -36,8 +35,7 @@ define([
             this.notify = notify;
             this.checkedCountValid = false;
             this.cartIdValid = false;
-            this.context = context;
-            this.selAllFlg = context.isSelAll;
+            this._context = context;
             this.needSave = false;
         }
 
@@ -50,7 +48,7 @@ define([
                 if (self.cartId == null) {
                     self.cartId = 0;
                 }
-                self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId, "isSelAll": self.selAllFlg}).then(function (res) {
+                self.addChannelCategoryService.init({"code": self._context.productIds, "cartId": self.cartId, "isSelAll": self._context.isSelAll, 'isQuery':self._context.isQuery}).then(function (res) {
                     //默认对打钩的数目和店铺渠道选择的验证处于隐藏状态
                     self.checkedCountValid = false;
                     self.cartIdValid = false;
@@ -66,7 +64,7 @@ define([
                     self.orgDispMap = res.data.orgDispMap;
                     self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
                     self._orgDispMap = angular.copy(res.data.orgDispMap);
-                    self.isSelectCid = self.context.plateSchema?self.context.selectedIds:res.data.isSelectCid;
+                    self.isSelectCid = self._context.plateSchema?self._context.selectedIds:res.data.isSelectCid;
                     self.channelCategoryList = res.data.channelCategoryList;
                 });
             },
