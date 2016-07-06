@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="vm.priceValue" placeholder="请输入数字">
+                        <input type="text" class="form-control" ng-model="vm.priceValue" placeholder="请输入数字" onkeypress="return (/[\d|.]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="15">
                     </div>
                 </div>
             </div>
