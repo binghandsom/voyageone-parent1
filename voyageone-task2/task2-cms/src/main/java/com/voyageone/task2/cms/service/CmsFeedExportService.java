@@ -85,12 +85,14 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 InputStream inputStream = new FileInputStream(templatePath);
                 Workbook book = WorkbookFactory.create(inputStream)) {
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
-                $info("导出第"+pageNum+"页");
+                $info("导出第" + pageNum + "页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
                 queryObject.setLimit(pageSize);
                 List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(cmsBtExportTaskModel.getChannelId(), queryObject);
                 rowIndexCode = writeCode(cmsBtFeedInfoModels, book, rowIndexCode);
+                $info("code写到第"+rowIndexCode+"行");
                 rowIndexSku = writeSku(cmsBtFeedInfoModels, book, rowIndexSku);
+                $info("sku写到第"+rowIndexSku+"行");
             }
             book.write(outputStream);
             cmsBtExportTaskModel.setStatus(1);
