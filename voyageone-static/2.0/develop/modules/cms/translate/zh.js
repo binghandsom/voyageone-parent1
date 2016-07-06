@@ -229,7 +229,7 @@ define(function () {
         "TXT_PROMOTION_PRICE": "活动售价",
         "TXT_SKU": "Sku",
         "TXT_COMMENT": "备注",
-        "TXT_UPDATE_BY": "修改折",
+        "TXT_UPDATE_BY": "修改人",
         "TXT_PRODUCT_DETAIL": "产品详情",
         "TXT_PRICE": "价格",
         "TXT_PRICE_TYPE": "价格种类",
