@@ -32,24 +32,6 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-/*                    var productMonitor = scope.$watch("productInfo.productDetails",function(data){
-
-                        // 没有就继续等待
-                        if (!data){
-                            return;
-                        }
-                       scope.vm.productDetails = data.productInfo;
-                       scope.vm.inventoryList = data.inventoryList;
-                       if ($rootScope.imageUrl == undefined) {
-                         $rootScope.imageUrl = '';
-                       }
-                       scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-                       //scope.vm.currentImage = data.defaultImage;
-
-                        productMonitor();
-                        productMonitor = null;
-                    });*/
-
                     productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
@@ -71,6 +53,10 @@ define([
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
+                        /**主商品提示*/
+                        if(!scope.vm.mastData.isMain){
+                            alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
+                        }
                     });
                 }
 

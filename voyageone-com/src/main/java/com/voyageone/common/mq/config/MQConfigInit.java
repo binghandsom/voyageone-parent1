@@ -27,13 +27,15 @@ public class MQConfigInit {
      */
     public static void init()  {
         Map<String, Object> beansWithAnnotationMap = SpringContext.getBeansWithAnnotationMap(RabbitListener.class);
-        for (Map.Entry<String, Object> entry : beansWithAnnotationMap.entrySet()) {
-            Object bean = entry.getValue();
-            if (checkMQRunnable(bean)) {
-                startMQ(bean);
-                logger.info(String.format("%s is start", entry.getKey()));
-            } else {
-                stopMQ(bean);
+        if (beansWithAnnotationMap != null) {
+            for (Map.Entry<String, Object> entry : beansWithAnnotationMap.entrySet()) {
+                Object bean = entry.getValue();
+                if (checkMQRunnable(bean)) {
+                    startMQ(bean);
+                    logger.info(String.format("%s is start", entry.getKey()));
+                } else {
+                    stopMQ(bean);
+                }
             }
         }
     }
