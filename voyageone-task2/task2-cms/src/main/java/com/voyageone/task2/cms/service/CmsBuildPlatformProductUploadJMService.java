@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -426,7 +427,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     String jmSpuNo = oldSku.getSpu_no();
                                     HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                                     htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
-                                    htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
+                                    htSpuUpdateRequest.setAbroad_price(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                     htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                                     htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                                     String sizeStr = skuMap.getStringAttribute("size");
@@ -444,7 +445,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                             CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
                                             mySku.setJmSize(sizeStr);
                                             mySku.setCmsSize(skuMap.getStringAttribute("size"));
-                                            mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                                            mySku.setMsrpUsd(new BigDecimal(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice"))));
                                             mySku.setModifier(getTaskName());
                                             mySku.setModified(new Date());
                                             cmsBtJmSkuDao.update(mySku);
@@ -536,7 +537,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode") +"-" +channelId);
                                     String sizeStr = skuMap.getStringAttribute("size");
                                     htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
-                                    htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
+                                    DecimalFormat  format  =   new DecimalFormat(".00");
+                                    String priceStr = format.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                                    htSpuAddRequest.setAbroad_price(priceStr);
                                     htSpuAddRequest.setArea_code("19");//TODO
                                     htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
                                     htSpuAddRequest.setProperty(skuMap.getStringAttribute("property"));
@@ -1174,7 +1177,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmSkuModel.setJmSize(sizeStr);
 
 
-        cmsBtJmSkuModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")));
+        cmsBtJmSkuModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")).setScale(2, BigDecimal.ROUND_CEILING));
         cmsBtJmSkuModel.setMsrpRmb(new BigDecimal(jmSku.getStringAttribute("priceMsrp")));
         cmsBtJmSkuModel.setSalePrice(new BigDecimal(jmSku.getStringAttribute("priceSale")));
         cmsBtJmSkuModel.setRetailPrice(new BigDecimal(jmSku.getStringAttribute("priceRetail")));

@@ -56,6 +56,12 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     public void TestDate() throws Exception {
 
 
+        DecimalFormat  decimalFormat =   new DecimalFormat(".00");
+        System.out.println(decimalFormat.format(0.1));
+        System.out.println(decimalFormat.format(1));
+        System.out.println(decimalFormat.format(11));
+        System.out.println(decimalFormat.format(111));
+
 
         Map<String, String> map = new HashMap<>();
         String value = map.get("1");
@@ -101,7 +107,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Test
     public void testUpdateProduct() throws Exception {
 
-        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(100, "010", 27);
+        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(1, "010", 27);
 
         for (CmsBtSxWorkloadModel work : workloadList) {
 //            work.setGroupId(27214L);
