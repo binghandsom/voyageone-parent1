@@ -227,7 +227,7 @@ define([
              * @returns {Date}
              */
             getDateTimeFromTimeStamp: function (timeStamp) {
-                var date = new Date(timeStamp * 1000);
+                var date = new Date(timeStamp);
                 return date;
             },
 

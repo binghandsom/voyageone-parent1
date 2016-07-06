@@ -180,17 +180,17 @@ define([
                  * @param mark  记录是否为ready状态
                  */
                 function saveProduct(mark){
-                     var statusCount = 0,preStatus;
-                     for(var attr in scope.vm.checkFlag){
-                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                     }
-
                     /**用于保存报错*/
                     if(mark == "ready"){
                         if(!validSchema()){
                             alert("请输入必填属性，或者输入的属性格式不正确");
                             return;
                         }
+                    }
+
+                    var statusCount = 0,preStatus;
+                    for(var attr in scope.vm.checkFlag){
+                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                     }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
@@ -222,7 +222,7 @@ define([
                             scope.vm.status = preStatus;
                             return;
                         }
-                        confirm(resp.message + ",是否强制上新").result.then(function () {
+                        confirm(resp.message + ",是否强制保存").result.then(function () {
                              productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                  scope.vm.platform.modified = resp.data.modified;
                                  notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

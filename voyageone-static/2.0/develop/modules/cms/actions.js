@@ -41,7 +41,8 @@ define(function () {
                     "root": "/cms/home/menu/",
                     "getCategoryInfo": session('getCategoryInfo'),
                     "getPlatformType": "getPlatformType",
-                    "setPlatformType": "setPlatformType"
+                    "setPlatformType": "setPlatformType",
+                    "getHomeSumData":"getHomeSumData"
                 }
             },
             "search": {
@@ -181,6 +182,7 @@ define(function () {
                 },
                 "jmPromotionDetailService": {
                     "root": "/cms/jmpromotion/detail",
+                    "init": "init",
                     "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
                     "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
                     "delete": "delete",

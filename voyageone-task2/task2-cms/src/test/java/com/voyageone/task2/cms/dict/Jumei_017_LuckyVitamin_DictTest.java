@@ -13,19 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Jewelry聚美平台详情页描述JSON生成工具
+ * 聚美平台详情页描述JSON生成工具
+ *  (017)LuckyVitamin聚美优品店
  *
- * @author tom on 2016/6/17.
+ * @author tom on 2016/6/28.
  * @version 2.1.0
  * @since 2.1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class JewelryDictJmTest {
+public class Jumei_017_LuckyVitamin_DictTest {
     @Autowired
     private SxProductService sxProductService;
 
@@ -147,13 +145,10 @@ public class JewelryDictJmTest {
 
     }
 
-	/**
+    /**
      * 聚美详情
-     * 1. PC端自定义图 (要上传)（原图）
-     * 2. 商品参数图
-     *   模板:http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$&$$&$product=%s&$title01=%s&$text01=%s&$title02=%s&$text02=%s&$title03=%s&$text03=%s&$title04=%s&$text04=%s&$title05=%s&$text05=%s&$title06=%s&$text06=%s&$title07=%s&$text07=%s&$title08=%s&$text08=%s
-     *   模板例子:http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$&$$&$product=101-074_sz7_main_1&$title01=> 产品品牌:&$text01=Kabana&$title02=> 产品材质:&$text02=925 银&$title03=> 产品宝石:&$text03=无宝石&$title04=> 产品尺寸:&$text04=宽 3/8 英寸（约 0.95 cm）&$title05=&$text05=&$title06=&$text06=&$title07=&$text07=&$title08=&$text08=
-     * 3. 品牌故事图
+     * 1. PC端自定义图
+     * 2. 品牌故事图
      */
     private RuleExpression doDict_聚美详情() {
 
@@ -162,126 +157,21 @@ public class JewelryDictJmTest {
 
         // 生成内容
         {
+            // PC端自定义图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
-            {
-                // 商品自定义图
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
 
-                RuleExpression imageTemplate = new RuleExpression();
-                imageTemplate.addRuleWord(new TextWord(""));
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
 
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord(C_自定义图片));
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1"));
 
-                RuleExpression useOriUrl = new RuleExpression();
-                useOriUrl.addRuleWord(new TextWord("1"));
-
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
-                ruleRoot.addRuleWord(new CustomWord(word));
-            }
-
-            // 商品参数图
-            {
-                // 前缀
-                String html = "<div><img src=\"";
-                ruleRoot.addRuleWord(new TextWord(html));
-            }
-
-            {
-                // imageTemplate
-                RuleExpression imageTemplate = new RuleExpression();
-//                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$&$$&$product=%s&$title01=%s&$text01=%s&$title02=%s&$text02=%s&$title03=%s&$text03=%s&$title04=%s&$text04=%s&$title05=%s&$text05=%s&$title06=%s&$text06=%s&$title07=%s&$text07=%s&$title08=%s&$text08=%s";
-//                String htmlTemplate =
-//                        "http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$" +
-//                                "&$product=%s" + // 图片
-//                                "&$text01=%s" +  // 标题1   文本1
-//                                "&$text02=%s" +
-//                                "&$text03=%s" +
-//                                "&$text04=%s" +
-//                                "&$text05=%s" +
-//                                "&$text06=%s" +
-//                                "&$text07=%s" +
-//                                "&$text08=%s";
-
-                String htmlTemplate =
-                        "http://s7d5.scene7.com/is/image/sneakerhead/JEWERLY_20151014_x760_438x?$760x438$&$JEWERLY-760-438$" +
-                                "&$product=%s" + // 图片
-                                "&$title01=%s" +
-                                "&$text01=%s" +
-                                "&$title02=%s" +
-                                "&$text02=%s" +
-                                "&$title03=%s" +
-                                "&$text03=%s" +
-                                "&$title04=%s" +
-                                "&$text04=%s" +
-                                "&$title05=%s" +
-                                "&$text05=%s" +
-                                "&$title06=%s" +
-                                "&$text06=%s" +
-                                "&$title07=%s" +
-                                "&$text07=%s" +
-                                "&$title08=%s" +
-                                "&$text08=%s";
-                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-                // 参数imageParams
-                List<RuleExpression> imageParams = new ArrayList<>();
-
-                {
-                    // 第一个参数是product_id(GetMainProductImages)
-                    CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-                    RuleExpression imageIndex = new RuleExpression();
-                    imageIndex.addRuleWord(new TextWord("0"));
-                    userParam.setImageIndex(imageIndex);
-                    RuleExpression img_imageType = new RuleExpression();
-                    img_imageType.addRuleWord(new TextWord(C_商品图片));
-                    userParam.setImageType(img_imageType);
-
-                    CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-                    wordValueGetMainProductImages.setUserParam(userParam);
-
-                    RuleExpression imgWord = new RuleExpression();
-                    imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-                    imageParams.add(imgWord);
-                }
-
-//                {
-//                    // 第二个开始，共八个属性
-//                    for (int index = 0; index < 8; index++) {
-//                        RuleExpression ruleExpression = new RuleExpression();
-//                        ruleExpression.addRuleWord(new FeedCnWord(true, index));
-//                        ruleExpression.addRuleWord(new TextWord("   "));
-//                        ruleExpression.addRuleWord(new FeedCnWord(false, index));
-//                        imageParams.add(ruleExpression);
-//                    }
-//                }
-
-                {
-                    // 第二个开始，共八个属性
-                    for (int index = 0; index < 8; index++) {
-                        {
-                            RuleExpression ruleExpression = new RuleExpression();
-                            ruleExpression.addRuleWord(new FeedCnWord(true, index));
-                            imageParams.add(ruleExpression);
-                        }
-                        {
-                            RuleExpression ruleExpression = new RuleExpression();
-                            ruleExpression.addRuleWord(new FeedCnWord(false, index));
-                            imageParams.add(ruleExpression);
-                        }
-                    }
-                }
-
-                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
-                ruleRoot.addRuleWord(new CustomWord(word));
-            }
-
-            {
-                // 后缀
-                String html = "\"></div>";
-                ruleRoot.addRuleWord(new TextWord(html));
-            }
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+            ruleRoot.addRuleWord(new CustomWord(word));
         }
 
         {
@@ -305,9 +195,10 @@ public class JewelryDictJmTest {
 
     }
 
-	/**
+    /**
      * 聚美使用方法
-     * 1. 尺码图
+     * 1. 短描述 - 中文
+     * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
 
@@ -315,6 +206,10 @@ public class JewelryDictJmTest {
         RuleExpression ruleRoot = new RuleExpression();
 
         // 生成内容
+        {
+            // 短描述 - 中文
+        }
+
         {
             // 尺码图
             RuleExpression htmlTemplate = new RuleExpression();
@@ -336,10 +231,10 @@ public class JewelryDictJmTest {
 
     }
 
-	/**
+    /**
      * 聚美实拍
      * 1. 商品图（要上传）
-     *   模板:http://s7d5.scene7.com/is/image/sneakerhead/JW%5F20160202%5Fx790%5F790x?$790x700$&$790%5F700$&$product=%s
+     *   模板:http://s7d5.scene7.com/is/image/sneakerhead/BHFO%2D20150730%2Dx790%2D600x?$790x600$&$790%5F600$&$product=%s
      * 2. 购物流程图
      */
     private RuleExpression doDict_聚美实拍() {
@@ -355,7 +250,7 @@ public class JewelryDictJmTest {
                 htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
                 RuleExpression imageTemplate = new RuleExpression();
-                imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/JW%%5F20160202%%5Fx790%%5F790x?$790x700$&$790%%5F700$&$product=%s"));
+                imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%2D20150730%%2Dx790%%2D600x?$790x600$&$790%%5F600$&$product=%s"));
 
                 RuleExpression imageType = new RuleExpression();
                 imageType.addRuleWord(new TextWord(C_商品图片));
@@ -388,7 +283,7 @@ public class JewelryDictJmTest {
 
     }
 
-	/**
+    /**
      * 聚美白底方图
      * 1. (要上传)(非html)(逗号分隔的商品主图)
      *   模板:http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=%s
