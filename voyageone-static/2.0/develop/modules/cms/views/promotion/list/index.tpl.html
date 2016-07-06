@@ -89,9 +89,10 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
-					<!--<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">-->
+					<th class="text-left mfb-x">
+						<!--<label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">-->
 						<!--{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>-->
-					<!--</th>-->
+					</th>
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
 					<th class="text-left" translate="TXT_STATUS"></th>
@@ -105,12 +106,12 @@
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : 0}">
-					<td class="text-left mfb-x">
+<!--					<td class="text-left mfb-x">
 						<label class="checkbox-inline c-checkbox">
 							<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
 							<span class="fa fa-check"></span>
 						</label>
-					</td>
+					</td>-->
 					<td class="text-center">{{promotion.id}}</td>
 					<td class="text-left yellowLink">
 						<a ng-if="promotion.cartId != '27'" href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>

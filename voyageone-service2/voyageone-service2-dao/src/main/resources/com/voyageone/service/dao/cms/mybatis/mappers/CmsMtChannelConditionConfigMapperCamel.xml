@@ -147,12 +147,43 @@
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_channel_condition_config
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="conditionExpression != null" >
+                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_channel_condition_config
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

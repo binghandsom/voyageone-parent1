@@ -1,61 +1,91 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_PRICE_HISTORY' | translate}}</h5>
     </div>
     <div class="modal-body">
-    <div class="form-group">
-        <label class="col-sm-2 control-label m-t-xs" translate="TXT_SKU_LIST"></label>
-        <div class="col-sm-4">
-            <select class="form-control" ng-model="vm.sku"  ng-change="getPriceList()"
-                    ng-options="sku.skuCode as sku.skuCode for sku in vm.skuList">
-            </select>
-        </div>
-    </div>
-    </div>
-    <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
-            <div class="box">
-                <div class="box-body">
-                    <table class="table table-hover-new vo_table text-center">
-                        <thead>
-                        <tr>
-                            <th class="text-left" translate="TXT_SKU"></th>
-                            <th class="text-center" translate="TXT_MSRP_PRICE"></th>
-                            <th class="text-center" translate="TXT_RETAIL_PRICE"></th>
-                            <th class="text-center" translate="TXT_SALE_PRICE"></th>
-                            <th class="text-center" translate="TXT_CLIENT_MSRP_PRICE"></th>
-                            <th class="text-center" translate="TXT_CLIENT_RETAIL_PRICE"></th>
-                            <th class="text-center" translate="TXT_CLIENT_NET_PRICE"></th>
-                            <th class="text-left" translate="TXT_COMMENT"></th>
-                            <th class="text-left" translate="TXT_UPDATE_TIME"></th>
-                            <th class="text-left" translate="TXT_UPDATE_BY"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="list in vm.priceList">
-                            <td class="text-left">{{list.sku}}</td>
-                            <td class="text-center">{{list.msrpPrice}}</td>
-                            <td class="text-center">{{list.retailPrice}}</td>
-                            <td class="text-center">{{list.salePrice}}</td>
-                            <td class="text-center">{{list.clientMsrpPrice}}</td>
-                            <td class="text-center">{{list.clientNetPrice}}</td>
-                            <td class="text-center">{{list.clientRetailPrice}}</td>
-                            <td class="text-left">{{list.comment}}</td>
-                            <td class="text-left">{{list.modified.substring(0, 19)}}</td>
-                            <td class="text-left">{{list.modifier}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div><!-- /.box-body -->
-                <div class="container-fluid">
-                    <vpagination config="vm.pageOption"></vpagination>
-                </div>
+        <div class="form-inline m-b-xs">
+            <div class="form-group m-r-lg">
+                <label>
+                    <span>SKU&nbsp;</span>
+                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList"></select>
+                </label>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+            <div class="form-group m-r-lg">
+                <label>
+                    <span>Platform&nbsp;</span>
+                    <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.cartList"></select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="c-checkbox"><input class="form-control" type="checkbox" ng-model="ctrl.isOnlyShowMsrp"><span class="fa fa-check"></span>&nbsp;只查看MSRP和最终售价的历史</label>
+            </div>
+            <div class="form-group pull-right">
+                <button class="btn btn-default" ng-click="ctrl.reset()">Reset</button>
+                <button class="btn btn-default" ng-click="ctrl.export()">Export</button>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-body" ng-switch="ctrl.isOnlyShowMsrp">
+                <table class="table table-hover-new vo_table text-center" ng-switch-when="true">
+                    <thead>
+                    <tr>
+                        <th class="text-left" translate="TXT_SKU"></th>
+                        <th class="text-center" translate="TXT_MSRP_PRICE"></th>
+                        <th class="text-center" translate="TXT_RETAIL_PRICE"></th>
+                        <th class="text-center" translate="TXT_SALE_PRICE"></th>
+                        <th class="text-left" translate="TXT_COMMENT"></th>
+                        <th class="text-left" translate="TXT_UPDATE_TIME"></th>
+                        <th class="text-left" translate="TXT_UPDATE_BY"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left">{{item.sku}}</td>
+                        <td class="text-center">{{item.msrpPrice}}</td>
+                        <td class="text-center">{{item.retailPrice}}</td>
+                        <td class="text-center">{{item.salePrice}}</td>
+                        <td class="text-left">{{item.comment}}</td>
+                        <td class="text-left">{{item.modified.substring(0, 19)}}</td>
+                        <td class="text-left">{{item.modifier}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover-new vo_table text-center" ng-switch-when="false">
+                    <thead>
+                    <tr>
+                        <th class="text-left" translate="TXT_SKU"></th>
+                        <th class="text-center" translate="TXT_MSRP_PRICE"></th>
+                        <th class="text-center" translate="TXT_RETAIL_PRICE"></th>
+                        <th class="text-center" translate="TXT_SALE_PRICE"></th>
+                        <th class="text-center" translate="TXT_CLIENT_MSRP_PRICE"></th>
+                        <th class="text-center" translate="TXT_CLIENT_RETAIL_PRICE"></th>
+                        <th class="text-center" translate="TXT_CLIENT_NET_PRICE"></th>
+                        <th class="text-left" translate="TXT_COMMENT"></th>
+                        <th class="text-left" translate="TXT_UPDATE_TIME"></th>
+                        <th class="text-left" translate="TXT_UPDATE_BY"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left">{{item.sku}}</td>
+                        <td class="text-center">{{item.msrpPrice}}</td>
+                        <td class="text-center">{{item.retailPrice}}</td>
+                        <td class="text-center">{{item.salePrice}}</td>
+                        <td class="text-center">{{item.clientMsrpPrice}}</td>
+                        <td class="text-center">{{item.clientNetPrice}}</td>
+                        <td class="text-center">{{item.clientRetailPrice}}</td>
+                        <td class="text-left">{{item.comment}}</td>
+                        <td class="text-left">{{item.modified.substring(0, 19)}}</td>
+                        <td class="text-left">{{item.modifier}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!-- /.box-body -->
+            <div class="container-fluid">
+                <vpagination config="ctrl.paging"></vpagination>
+            </div>
+        </div>
     </div>
 </div><!-- .vo_modal -->

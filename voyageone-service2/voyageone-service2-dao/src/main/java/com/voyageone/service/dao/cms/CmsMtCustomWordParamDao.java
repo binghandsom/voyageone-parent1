@@ -18,6 +18,8 @@ public interface CmsMtCustomWordParamDao {
 
     CmsMtCustomWordParamModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtCustomWordParamModel select(Integer id);
 
     int insert(CmsMtCustomWordParamModel record);

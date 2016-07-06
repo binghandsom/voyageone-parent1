@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
+<div class="wrapper-md" ng-init="init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -17,42 +17,47 @@
                         <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i><a href="#/feed/product_list" target="_blank">&nbsp;&nbsp;FEED信息</a></h3>
                     </div>
                     <div class="panel-body white-bg">
-                        <div class="col-sm-12 text-center">
+                        <div class="col-sm-12">
                             <ul class="stat-boxes">
                                 <li>
-                                    <div class="right data-priority-0">
-                                            <strong>180</strong>
-                                            Feed商品数
+                                    <div class="right data-priority-0" ng-click="jump('/feed/product_list',{})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_ALL.amountVal}}</strong>
+                                        Feed商品数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-3">
-                                            <strong>10</strong>
-                                            新品数
+                                    <div class="right data-priority-3"
+                                         ng-click="jump('/feed/product_list',{status:'9'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NEW.amountVal}}</strong>
+                                        新品数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-4">
-                                            <strong>20</strong>
-                                            导入完成数
+                                    <div class="right data-priority-4"
+                                         ng-click="jump('/feed/product_list',{status:'1'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FINISH.amountVal}}</strong>
+                                        导入完成数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-0">
-                                            <strong>0</strong>
-                                            不导入数
+                                    <div class="right data-priority-0"
+                                         ng-click="jump('/feed/product_list',{status:'3'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NOT_IMPORT.amountVal}}</strong>
+                                        不导入数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-1">
-                                            <strong>150</strong>
-                                            导入失败数
+                                    <div class="right data-priority-1"
+                                         ng-click="jump('/feed/product_list',{status:'2'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FAILD.amountVal}}</strong>
+                                        导入失败数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-1">
-                                            <strong>150</strong>
-                                            Feed数据错误
+                                    <div class="right data-priority-1"
+                                         ng-click="jump('/feed/product_list',{status:'8'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_DATA_ERROR.amountVal}}</strong>
+                                        Feed数据错误
                                     </div>
                                 </li>
                             </ul>
@@ -66,23 +71,26 @@
                         <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i><a href="#/feed/product_list" target="_blank">&nbsp;&nbsp;主数据编辑信息</a></h3>
                     </div>
                     <div class="panel-body white-bg">
-                        <div class="col-sm-12 text-center">
+                        <div class="col-sm-12">
                             <ul class="stat-boxes">
                                 <li>
-                                    <div class="right data-priority-2">
-                                        <strong>35</strong>
+                                    <div class="right data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{mCatStatus:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
                                         等待设置主类目数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right  data-priority-2">
-                                        <strong>30</strong>
+                                    <div class="right  data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{taxNoStatus:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
                                         等待设置税号数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-2">
-                                        <strong>25</strong>
+                                    <div class="right data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{transStsFlg:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
                                         等待翻译数
                                     </div>
                                 </li>
@@ -92,11 +100,42 @@
                 </div>
             </div>
             <div class="col-sm-12">
-
-                <div class="col-sm-5">
+                <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;价格信息</h3>
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp; 指导售价变化状态</h3>
+                        </div>
+                        <div class="panel-body white-bg">
+                            <div class="span12 center" style="text-align: center;">
+                                <div class="table-responsive table-hover table-striped">
+                                    <div class="col-sm-12 dropdown_table_main">
+                                        <table class="table table-hover-new table-hover vo_table">
+                                            <thead>
+                                            <tr>
+                                                <th class="mfb-xxt text-center">平台</th>
+                                                <th class="mfb-xxt text-center">指导售价涨价</th>
+                                                <th class="mfb-xxt text-center">指导售价降价</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <!--"cartId":23,"productStatus":[],"platformStatus":[],"pCatStatus":0,"promotionTagType":1,"cidValue":[],"shopCatStatus":0,"priceDiffFlg":"2"-->
+                                            <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
+                                                <td class="mfb-xxt text-center">{{m.platformName}}</td>
+                                                <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;最终售价变化状态</h3>
                         </div>
                         <div class="panel-body white-bg">
                             <div class="span12 center" style="text-align: center;">
@@ -108,27 +147,18 @@
                                                 <th class="mfb-xxt text-center">平台</th>
                                                 <th class="mfb-xxt text-center">比指导价低数</th>
                                                 <th class="mfb-xxt text-center">比指导价高</th>
-                                                <th class="mfb-xxt text-center">击穿警告</th>
+                                                <th class="mfb-xxt text-center">向上击穿警告</th>
+                                                <th class="mfb-xxt text-center">向下击穿警告</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">天猫国际</td>
-                                                <td class="mfb-xxt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">232</label></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">京东国际</td>
-                                                <td class="mfb-xxt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">33</label></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">聚美</td>
-                                                <td class="mfb-xxt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">0</label></td>
+                                            <!--"cartId":23,"productStatus":[],"platformStatus":[],"pCatStatus":0,"promotionTagType":1,"cidValue":[],"shopCatStatus":0,"priceDiffFlg":"2"-->
+                                            <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
+                                                <td class="mfb-xxt text-center">{{m.platformName}}</td>
+                                                <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -148,48 +178,28 @@
                                 <div class="col-sm-12 dropdown_table_main">
                                     <table class="table table-hover-new table-hover vo_table">
                                         <thead>
-                                            <tr>
-                                                <th class="mfb-xxt text-center">平台</th>
-                                                <th class="mfb-xt text-center">商品数</th>
-                                                <th class="mfb-xxt text-center">等待设置平台类目</th>
-                                                <th class="mfb-xxt text-center">等待设置属性数</th>
-                                                <th class="mfb-xxt text-center">等待Approved数</th>
-                                                <th class="mfb-xxt text-center">等待上新数</th>
-                                                <th class="mfb-xxs text-center">上新成功数</th>
-                                                <th class="mfb-xxt text-center">上新失败数</th>
-                                            </tr>
+                                        <tr>
+                                            <th class="mfb-xxt text-center">平台</th>
+                                            <th class="mfb-xt text-center">商品数</th>
+                                            <th class="mfb-xxt text-center">等待设置平台类目</th>
+                                            <th class="mfb-xxt text-center">等待设置属性数</th>
+                                            <th class="mfb-xxt text-center">等待Approved数</th>
+                                            <th class="mfb-xxt text-center">等待上新数</th>
+                                            <th class="mfb-xxs text-center">上新成功数</th>
+                                            <th class="mfb-xxt text-center">上新失败数</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">天猫国际</td>
-                                                <td class="mfb-xt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center">0</td>
-                                                <td class="mfb-xxt text-center">15</td>
-                                                <td class="mfb-xxt text-center">10</td>
-                                                <td class="mfb-xxs text-center">20</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">22</label></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">京东国际</td>
-                                                <td class="mfb-xt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center">0</td>
-                                                <td class="mfb-xxt text-center">15</td>
-                                                <td class="mfb-xxt text-center">10</td>
-                                                <td class="mfb-xxs text-center">20</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">0</label></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="mfb-xxt text-center">聚美</td>
-                                                <td class="mfb-xt text-center">50</td>
-                                                <td class="mfb-xxt text-center">5</td>
-                                                <td class="mfb-xxt text-center">0</td>
-                                                <td class="mfb-xxt text-center">15</td>
-                                                <td class="mfb-xxt text-center">10</td>
-                                                <td class="mfb-xxs text-center">20</td>
-                                                <td class="mfb-xxt text-center"><label class="label label-danger">10</label></td>
-                                            </tr>
+                                        <tr ng-repeat="m in vm.sumData.listPlatformInfoSum">
+                                            <td class="mfb-xxt text-center">{{m.platformName}}</td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>

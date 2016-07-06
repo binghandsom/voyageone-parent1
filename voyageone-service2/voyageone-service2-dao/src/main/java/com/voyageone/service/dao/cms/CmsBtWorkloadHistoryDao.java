@@ -18,6 +18,8 @@ public interface CmsBtWorkloadHistoryDao {
 
     CmsBtWorkloadHistoryModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtWorkloadHistoryModel select(Integer id);
 
     int insert(CmsBtWorkloadHistoryModel record);

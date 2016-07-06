@@ -790,6 +790,7 @@ public class SxProductService extends BaseService {
                     // added by morse.lu 2016/06/15 end
                     List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
                     List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                    List<String> listSkuCode = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
@@ -801,12 +802,27 @@ public class SxProductService extends BaseService {
                                 mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
                                 skus.add(mapSku);
                                 // modified by morse.lu 2016/06/15 end
+                                listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                             }
                         });
                     }
 
                     if (!skus.isEmpty()) {
-                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+//                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+                        Iterator<BaseMongoMap<String, Object>> iterator1 = productPlatformSku.iterator();
+                        while (iterator1.hasNext()) {
+                            BaseMongoMap<String, Object> platSku = iterator1.next();
+                            if (!listSkuCode.contains(platSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
+                                iterator1.remove();
+                            }
+                        }
+                        Iterator<CmsBtProductModel_Sku> iterator2 = productModelSku.iterator();
+                        while (iterator2.hasNext()) {
+                            CmsBtProductModel_Sku comSku = iterator2.next();
+                            if (!listSkuCode.contains(comSku.getSkuCode())) {
+                                iterator2.remove();
+                            }
+                        }
                         skuList.addAll(skus);
                     } else {
                         // 该product下没有允许在该平台上上架的sku
@@ -1726,13 +1742,19 @@ public class SxProductService extends BaseService {
 
                     for (Field processField : processFields) {
                         if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            // modified by morse.lu 2016/07/06 start
+//                            SingleCheckField field = (SingleCheckField) FieldTypeEnum.createField(FieldTypeEnum.SINGLECHECK);
+                            SingleCheckField field = (SingleCheckField) processField;
+                            // modified by morse.lu 2016/07/06 end
                             //prop_1626510（型号）值设为-1(表示其他）
                             field.setValue("-1");
                             retMap.put(processField.getId(), field);
                         } else {
                             //其他的型号值填货号
-                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            // modified by morse.lu 2016/07/06 start
+//                            InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                            InputField field = (InputField) processField;
+                            // modified by morse.lu 2016/07/06 end
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
                                 styleCode = generateStyleCode(sxData);
@@ -1843,7 +1865,10 @@ public class SxProductService extends BaseService {
 //                            }
                             List<CmsBtProductModel_SellerCat> defaultValues = mainSxProduct.getPlatform(sxData.getCartId()).getSellerCats();
                             if (defaultValues != null && !defaultValues.isEmpty()) {
-                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                // modified by morse.lu 2016/07/06 start
+//                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
+                                MultiCheckField multiCheckField = (MultiCheckField) field;
+                                // modified by morse.lu 2016/07/06 end
                                 multiCheckField.setId(sellerCategoryPropId);
                                 for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
                                     multiCheckField.addValue(defaultValue.getcId());

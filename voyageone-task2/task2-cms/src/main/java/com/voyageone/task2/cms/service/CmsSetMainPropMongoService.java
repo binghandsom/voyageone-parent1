@@ -22,6 +22,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.Condition;
@@ -31,10 +32,7 @@ import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductPriceLogService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
@@ -68,14 +66,13 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 //import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
-    @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
     @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
@@ -122,6 +119,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     private ImagesService imagesService;
+
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -267,16 +267,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
 
                     // 回写feedInfo表
+                    feed.setUpdFlg(2);  // 2:feed->master导入失败
                     feed.setUpdMessage(e.getMessage());
                     feed.setModifier(getTaskName());
-                    cmsBtFeedInfoDao.update(feed);
+                    feedInfoService.updateFeedInfo(feed);
                 }
 
             }
 
             // jeff 2016/04 add start
             // 将新建的件数，更新的件数插到cms_bt_data_amount表
-            insertDataAmount();
+//            insertDataAmount();         // delete desmond 2016/07/04 以后不用更新这个表了
             // jeff 2016/04 add end
             $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
@@ -737,6 +738,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 更新价格履历
                 // productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
 
+                // add by desmond 2016/07/05 start
+                // 记录商品价格表动履历
+                if (cmsProductBean != null && ListUtils.notNull(cmsProductBean.getCommon().getSkus())) {
+                    List<String> skuCodeList = new ArrayList<>();
+                    skuCodeList = cmsProductBean.getCommon().getSkus()
+                                  .stream()
+                                  .map(CmsBtProductModel_Sku::getSkuCode)
+                                  .collect(Collectors.toList());
+                    // 记录商品价格变动履历
+//                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), "feed->master导入", "");
+                }
+                // add by desmond 2016/07/05 end
+
+
                 // 自动上新
                 // 是否自动上新标志
                 String sxFlg = "0";
@@ -776,11 +791,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
              // jeff 2016/05 add end
             // 设置商品更新完成
-            originalFeed.setUpdFlg(1);
+            originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
             originalFeed.setIsFeedReImport("0");
             originalFeed.setUpdMessage(""); // add desmond 2016/07/05
             originalFeed.setModifier(getTaskName());
-            cmsBtFeedInfoDao.update(originalFeed);
+            feedInfoService.updateFeedInfo(originalFeed);
 
             // ------------- 函数结束
 
@@ -1411,6 +1426,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
             }
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                // add desmond 2016/07/05 start
+                // P0（主数据）平台不用设置分平台共通属性
+                if ("P0".equals(typeChannelBean.getValue())) {
+                    continue;
+                }
+                // add desmond 2016/07/05 end
                 CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
@@ -1858,6 +1879,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             List<CmsMtCategoryTreeAllModel_Platform> platformCategoryList = null;
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                // add desmond 2016/07/05 start
+                // P0（主数据）平台不用设置分平台共通属性
+                if ("P0".equals(typeChannelBean.getValue())) {
+                    continue;
+                }
+                // add desmond 2016/07/05 end
                 boolean blnFound = false;
                 // 查看platforms下是否包含某个cartId的内容
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : platforms.entrySet()) {
@@ -2414,21 +2441,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             return 0;
         }
 
-        /**
-         * 将新建的件数，更新的件数插到cms_bt_data_amount表
-         */
-        private void insertDataAmount() {
-
-            // 新建的件数
-            if (insertCnt > 0) {
-                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_INSERT, String.valueOf(insertCnt), "Feed导入Master新建", getTaskName());
-            }
-
-            // 新建的件数
-            if (updateCnt > 0) {
-                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE, String.valueOf(updateCnt), "Feed导入Master更新", getTaskName());
-            }
-        }
+        // delete by desmond 2016/07/06 start
+        // 跟小林确认过了，这个表以后不用更新了
+//        /**
+//         * 将新建的件数，更新的件数插到cms_bt_data_amount表
+//         */
+//        private void insertDataAmount() {
+//
+//            // 新建的件数
+//            if (insertCnt > 0) {
+//                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_INSERT, String.valueOf(insertCnt), "Feed导入Master新建", getTaskName());
+//            }
+//
+//            // 新建的件数
+//            if (updateCnt > 0) {
+//                dataAmountService.updateWithInsert(channel.getOrder_channel_id(), CmsConstants.DataAmount.FEED_TO_MASTER_UPDATE, String.valueOf(updateCnt), "Feed导入Master更新", getTaskName());
+//            }
+//        }
+        // delete by desmond 2016/07/06 end
 
         /**
          * getPropValueByMapping 属性匹配(递归)
@@ -2762,6 +2792,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     commonSku.setClientRetailPrice(sku.getPriceClientRetail());
                     commonSku.setClientNetPrice(sku.getPriceNet());
                     for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : platforms.entrySet()) {
+                        // add desmond 2016/07/05 start
+                        // P0（主数据）平台不用设置sku
+                        if ("P0".equals(entry.getKey())) {
+                            continue;
+                        }
+                        // add desmond 2016/07/05 end
                         CmsBtProductModel_Platform_Cart platform = entry.getValue();
                         List<BaseMongoMap<String, Object>> platformSkus = platform.getSkus();
                         if (platformSkus != null && platformSkus.size() > 0) {

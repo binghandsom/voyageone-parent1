@@ -18,6 +18,8 @@ public interface CmsBtExportTaskDao {
 
     CmsBtExportTaskModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtExportTaskModel select(Integer id);
 
     int insert(CmsBtExportTaskModel record);

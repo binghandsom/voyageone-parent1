@@ -6,8 +6,9 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('HsCodeController', (function () {
-        function HsCodeController(hsCodeInfoService, notify, popups) {
+        function HsCodeController(hsCodeInfoService, notify, popups, $feedSearchService) {
             this.hsCodeInfoService = hsCodeInfoService;
+            this.$feedSearchService = $feedSearchService;
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.hsCodeList = [];
             this.hsCodeValue = [];
@@ -76,9 +77,7 @@ define([
             },
 
             openHsCodeImagedetail: function (item) {
-                if (item.common == undefined || item.common.fields == undefined) {
-                    return;
-                }
+                if (item.common == undefined || item.common.fields == undefined) return;
                 var picList = [];
                 for (var attr in item.common.fields) {
                     if (attr.indexOf("images1") >= 0) {
@@ -91,14 +90,30 @@ define([
                 }
                 this.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList});
             },
-            openHsCodeCodeDetail: function (item) {
-                // var self = this;
-                // var feedObj = self.hsCodeList[item];
-                // if (feedObj.commonNotNull.fields.length == 0) {
-                //     return;
-                // }
-                // this.openCodeDetail({'attsList': feedObj.attsList});
-
+            openHsCodeCodeDetail: function (list) {
+                var self = this;
+                self.searchDetail = {};
+                self.searchDetail.isAll = false;
+                self.searchDetail.codeList = list.common.fields.code;
+                self.searchDetail.pageNum = self.searchInfo.curr;
+                self.searchDetail.pageSize = self.searchInfo.size;
+                self.$feedSearchService.search(self.searchDetail).then(function (res) {
+                    console.log(res.data.feedList);
+                    self.feedInfo = res.data.feedList;
+                    // 统计属性数
+                    var attsMap = self.feedInfo[0].attribute;
+                    var attsList = [];
+                    if (attsMap != undefined) {
+                        var d = attsMap['StoneColor'];
+                        _.forEach(attsMap, function (value, key) {
+                            var attsObj = {'aKey': key, 'aValue': value.join('; ')};
+                            attsList.push(attsObj);
+                        });
+                    }
+                    self.feedInfo[0].attsList = attsList;
+                    if (self.feedInfo[0].attsList.length == 0) return;
+                    self.popups.openCodeDetail({'attsList': self.feedInfo[0].attsList});
+                })
             }
         };
         return HsCodeController;

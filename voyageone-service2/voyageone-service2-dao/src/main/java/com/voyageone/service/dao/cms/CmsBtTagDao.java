@@ -18,6 +18,8 @@ public interface CmsBtTagDao {
 
     CmsBtTagModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtTagModel select(Integer id);
 
     int insert(CmsBtTagModel record);
