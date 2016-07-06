@@ -424,16 +424,16 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  NOW() &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
+        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  #{nowDate} &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
     </select>
 
     <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
-  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   NOW() &lt;=`activity_end`  AND   NOW()>=`activity_start` AND `synch_status`=2 limit 1
+  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   #{nowDate} &lt;=`activity_end`  AND  #{nowDate}>=`activity_start` AND `synch_status`=2 limit 1
     </select>
     <select id="selectOnSaleByNoPromotionId" resultType="CmsBtJmPromotionProductModel">
         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a
        JOIN cms_bt_jm_promotion_product AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code`  and b.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
-        WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND   NOW() &lt;=a.`activity_end`  AND   NOW()>=a.`activity_start` AND a.`synch_status`=2 limit 1
+        WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND  #{nowDate} &lt;=a.`activity_end`  AND   #{nowDate}>=a.`activity_start` AND a.`synch_status`=2 limit 1
     </select>
     <select id="selectChangeCountByPromotionId" resultType="int">
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`

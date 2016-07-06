@@ -32,7 +32,7 @@ public enum EnumMasterSum implements IEnumDataAmountSum{
         this.dataAmountTypeId = dataAmountTypeId;
     }
 
-    private  int dataAmountTypeId=2;
+    private  int dataAmountTypeId=EnumDataAmountType.MasterSum.getId();
     public String getAmountName() {
         return amountName;
     }
