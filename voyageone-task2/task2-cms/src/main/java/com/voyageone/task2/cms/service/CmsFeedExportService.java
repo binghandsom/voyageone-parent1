@@ -51,7 +51,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
-    Integer pageSize = 1;
+    Integer pageSize = 200;
 
     String templatePath = CmsBtExportTaskService.templatePath;
 
@@ -60,6 +60,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
+        $info("CmsFeedExportService start");
+        $info("参数" + JacksonUtil.bean2Json(messageMap));
         CmsBtExportTaskModel cmsBtExportTaskModel = new CmsBtExportTaskModel();
         cmsBtExportTaskModel.setModified(new Date());
         cmsBtExportTaskModel.setModifier(getTaskName());
@@ -68,6 +70,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
         BeanUtils.populate(cmsBtExportTaskModel, messageMap);
         Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
         Long cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);
+        $info("导出的产品数"+cnt);
 
         String fileName = String.format("%s-%s.xlsx", cmsBtExportTaskModel.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
 
@@ -82,6 +85,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 InputStream inputStream = new FileInputStream(templatePath);
                 Workbook book = WorkbookFactory.create(inputStream)) {
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
+                $info("导出第"+pageNum+"页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
                 queryObject.setLimit(pageSize);
                 List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(cmsBtExportTaskModel.getChannelId(), queryObject);
