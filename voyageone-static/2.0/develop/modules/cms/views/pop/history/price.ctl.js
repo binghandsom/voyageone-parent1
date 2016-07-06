@@ -40,12 +40,20 @@ define([
                 var cartList = _.filter(res.data, function (item) {
                     return item.value >= 20 && item.value < 900;
                 });
+                var defaultCart = {value: '', label: 'Select...'};
 
                 cartList = _.map(cartList, function (item) {
                     return {value:item.value, label:item.name};
                 });
 
-                cartList.unshift({value: '', label: 'Select...'});
+                cartList.unshift(defaultCart);
+
+                if (!selected.cart)
+                    selected.cart = defaultCart;
+                else
+                    selected.cart = _.find(cartList, function (cart) {
+                        return cart.value === selected.cart;
+                    });
 
                 self.cartList = cartList;
             }).then(function () {
@@ -60,7 +68,7 @@ define([
             $.download.post(self.exportAction, {
                 sku: self.selected.sku.value,
                 code: self.code,
-                cart: self.selected.cart
+                cart: self.selected.cart.value
             });
         };
 
@@ -69,7 +77,7 @@ define([
             var self = this;
 
             self.selected.sku = self.skuList[0];
-            self.selected.cart = self.cartList[0].value;
+            self.selected.cart = self.cartList[0];
 
             self.getData(0);
         };
@@ -82,7 +90,7 @@ define([
             self.priceLogService.page({
                 sku: self.selected.sku.value,
                 code: self.code,
-                cart: self.selected.cart,
+                cart: self.selected.cart.value,
                 offset: pageIndex * size,
                 limit: size
             }).then(function (response) {

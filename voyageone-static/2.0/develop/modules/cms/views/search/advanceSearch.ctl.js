@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService,$sessionStorage) {
 
         $scope.vm = {
             searchInfo: {
@@ -89,6 +89,10 @@ define([
                     $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
                     $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
                     $scope.vm.cartList = res.data.cartList;
+                    if ($scope.vm.cartList.length == 1) {
+                        $scope.vm._cartType_ = $scope.vm.cartList[0];
+                        getCat($scope.vm._cartType_);
+                    }
                 })
                 .then(function () {
                     // 如果来至category 或者header search 则默认检索
@@ -101,8 +105,10 @@ define([
                         $scope.vm.searchInfo.cartId = catObj.value;
                         getCat();
                     }
-                    if ($routeParams.type != undefined) {
+                    if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
+                        $scope.vm.searchInfo = $sessionStorage.feedSearch;
                         search();
+                        if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }
                 })
         }
@@ -860,6 +866,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService','$sessionStorage'];
     return searchIndex;
 });

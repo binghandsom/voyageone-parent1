@@ -116,7 +116,7 @@
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-5">
+                                                    <div class="col-sm-5" style="margin-left:1px">
                                                         <input type="text" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
                                                     </div>
                                                 </div>
@@ -193,7 +193,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8 col-sm-offset-3" ng-model="vm.searchInfo.freeTags" style=" min-height: 40px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;">
+                                                <div class="col-sm-8" ng-model="vm.searchInfo.freeTags" style="min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
                                                     <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}</label>
                                                 </div>
                                             </div>
@@ -302,7 +302,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
-                                                <input type="text" class="form-control" style="padding:0px" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
+                                                <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
                                             </div>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
