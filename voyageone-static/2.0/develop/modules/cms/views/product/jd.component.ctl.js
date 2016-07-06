@@ -222,7 +222,7 @@ define([
                             scope.vm.status = preStatus;
                             return;
                         }
-                        confirm(resp.message + ",是否强制上新").result.then(function () {
+                        confirm(resp.message + ",是否强制保存").result.then(function () {
                              productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                  scope.vm.platform.modified = resp.data.modified;
                                  notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
