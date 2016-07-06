@@ -18,6 +18,8 @@ public interface CmsMtChannelValuesDao {
 
     CmsMtChannelValuesModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtChannelValuesModel select(Integer id);
 
     int insert(CmsMtChannelValuesModel record);

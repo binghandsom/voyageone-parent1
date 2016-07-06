@@ -8,6 +8,7 @@
     <classPathEntry location="voyageone-tools/voyageone-dao-codegen/src/main/resources/com/voyageone/tools/dao/codegen/mysql-connector-java-5.1.30.jar"/>
 
     <context id="MySQLTables" targetRuntime="MyBatis3">
+        <property name="javaFileEncoding" value="UTF-8"/>
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
@@ -49,16 +50,16 @@
             <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
         <!--</table>-->
 
-        <!--<table tableName="cms_bt_business_log" delimitAllColumns="true" enableCountByExample="false"-->
-               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
-               <!--selectByExampleQueryId="false">-->
-            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
-        <!--</table>-->
-        <table tableName="cms_bt_data_amount" delimitAllColumns="true" enableCountByExample="false"
+        <table tableName="cms_bt_business_log" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
+        <!--<table tableName="cms_bt_data_amount" delimitAllColumns="true" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--</table>-->
         <!--<table tableName="cms_bt_images" delimitAllColumns="true" enableCountByExample="false"-->
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
                <!--selectByExampleQueryId="false">-->

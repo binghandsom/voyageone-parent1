@@ -293,12 +293,79 @@
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_promotion
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionStatus != null" >
+                and `promotion_status` = #{promotionStatus,jdbcType=INTEGER}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleEnd != null" >
+                and `pre_sale_end` = #{preSaleEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="preSaleStart != null" >
+                and `pre_sale_start` = #{preSaleStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodStart != null" >
+                and `pre_period_start` = #{prePeriodStart,jdbcType=VARCHAR}
+            </if>
+            <if test="prePeriodEnd != null" >
+                and `pre_period_end` = #{prePeriodEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="activityStart != null" >
+                and `activity_start` = #{activityStart,jdbcType=VARCHAR}
+            </if>
+            <if test="activityEnd != null" >
+                and `activity_end` = #{activityEnd,jdbcType=VARCHAR}
+            </if>
+            <if test="tejiabaoId != null" >
+                and `tejiabao_id` = #{tejiabaoId,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=VARCHAR}
+            </if>
+            <if test="refTagId != null" >
+                and `ref_tag_id` = #{refTagId,jdbcType=INTEGER}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="isAllPromotion != null" >
+                and `is_all_promotion` = #{isAllPromotion,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_promotion
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

@@ -364,7 +364,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return null;
         }
 
-        return rs.stream().map(rsObj -> (String) rsObj.get("_id")).collect(Collectors.toList());
+        return rs.stream().map(rsObj -> (String) rsObj.get("_id")).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
     }
 
     /**

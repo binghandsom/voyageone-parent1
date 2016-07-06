@@ -18,6 +18,8 @@ public interface CmsMtBrandsMappingDao {
 
     CmsMtBrandsMappingModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtBrandsMappingModel select(Integer id);
 
     int insert(CmsMtBrandsMappingModel record);

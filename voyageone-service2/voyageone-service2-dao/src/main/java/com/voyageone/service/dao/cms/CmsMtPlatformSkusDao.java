@@ -18,6 +18,8 @@ public interface CmsMtPlatformSkusDao {
 
     CmsMtPlatformSkusModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformSkusModel select(Integer id);
 
     int insert(CmsMtPlatformSkusModel record);

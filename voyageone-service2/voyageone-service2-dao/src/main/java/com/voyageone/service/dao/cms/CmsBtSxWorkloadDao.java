@@ -18,6 +18,8 @@ public interface CmsBtSxWorkloadDao {
 
     CmsBtSxWorkloadModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtSxWorkloadModel select(Integer id);
 
     int insert(CmsBtSxWorkloadModel record);

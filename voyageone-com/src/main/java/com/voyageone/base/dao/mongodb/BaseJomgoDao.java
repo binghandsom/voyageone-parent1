@@ -149,6 +149,10 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
         if (quyObj.getQuery() == null || quyObj.getQuery().isEmpty()) {
             return "";
         }
-        return mongoTemplate.jongo.createQuery(quyObj.getQuery(), quyObj.getParameters()).toDBObject().toString();
+        Object[] parametersTemp = quyObj.getParameters();
+        if (parametersTemp == null) {
+            parametersTemp = new Object[0];
+        }
+        return mongoTemplate.jongo.createQuery(quyObj.getQuery(), parametersTemp).toDBObject().toString();
     }
 }

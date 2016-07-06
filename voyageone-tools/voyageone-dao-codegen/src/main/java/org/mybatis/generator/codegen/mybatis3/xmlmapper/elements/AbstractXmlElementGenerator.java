@@ -95,4 +95,33 @@ public abstract class AbstractXmlElementGenerator extends AbstractGenerator {
 
         return ifElement;
     }
+
+    protected XmlElement getOrderByIncludeElement() {
+        //order by
+        XmlElement ifElement = new XmlElement("if");
+        ifElement.addAttribute(new Attribute("test", "orderByClause != null"));
+        ifElement.addElement(new TextElement("order by ${orderByClause}"));
+        return ifElement;
+    }
+
+    protected XmlElement getLimitIncludeElement() {
+        XmlElement ifElement = new XmlElement("if");
+        ifElement.addAttribute(new Attribute("test", "limitClause !=null or offsetClause != null"));
+        ifElement.addElement(new TextElement("limit "));
+
+        XmlElement offsetXmlElement = new XmlElement("if");
+        offsetXmlElement.addAttribute(new Attribute("test", "offsetClause != null"));
+        offsetXmlElement.addElement(new TextElement("${offsetClause}, "));
+        ifElement.addElement(offsetXmlElement);
+
+        XmlElement limitXmlElement = new XmlElement("if");
+        limitXmlElement.addAttribute(new Attribute("test", "limitClause != null"));
+        limitXmlElement.addElement(new TextElement("${limitClause} "));
+        ifElement.addElement(limitXmlElement);
+        return ifElement;
+    }
+
+    protected TextElement getLimitOneIncludeElement() {
+        return new TextElement("limit 1");
+    }
 }

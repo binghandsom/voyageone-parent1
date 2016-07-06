@@ -18,6 +18,8 @@ public interface CmsMtImageCreateImportDao {
 
     CmsMtImageCreateImportModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtImageCreateImportModel select(Integer id);
 
     int insert(CmsMtImageCreateImportModel record);

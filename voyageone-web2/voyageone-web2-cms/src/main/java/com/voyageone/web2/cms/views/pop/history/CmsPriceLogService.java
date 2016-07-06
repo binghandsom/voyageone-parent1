@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.pop.history;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -13,6 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,7 +33,7 @@ class CmsPriceLogService extends BaseAppService {
         List<CmsBtPriceLogModel> data = priceLogService.getList(sku, code, cart, channelId);
 
         try (Workbook workbook = new XSSFWorkbook();
-             ByteOutputStream outputStream = new ByteOutputStream()) {
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
             Sheet sheet = workbook.createSheet(StringUtils.isEmpty(sku) ? code : (code + " - " + sku));
 
@@ -88,7 +88,7 @@ class CmsPriceLogService extends BaseAppService {
 
             workbook.write(outputStream);
 
-            return outputStream.getBytes();
+            return outputStream.toByteArray();
 
         } catch (IOException e) {
             throw new BusinessException("写文档出现了错误");

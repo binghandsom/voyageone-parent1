@@ -18,6 +18,8 @@ public interface CmsBtJmSkuDao {
 
     CmsBtJmSkuModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtJmSkuModel select(Integer id);
 
     int insert(CmsBtJmSkuModel record);

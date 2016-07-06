@@ -18,6 +18,8 @@ public interface CmsBtJmPromotionImportTaskDao {
 
     CmsBtJmPromotionImportTaskModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtJmPromotionImportTaskModel select(Integer id);
 
     int insert(CmsBtJmPromotionImportTaskModel record);

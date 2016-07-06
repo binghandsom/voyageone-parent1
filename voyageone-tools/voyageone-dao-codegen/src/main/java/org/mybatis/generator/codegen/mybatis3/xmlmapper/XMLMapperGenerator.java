@@ -68,6 +68,8 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         //add by shiqin
         addSelectOneElement(answer);
         addSelectListElement(answer);
+        //add by liang
+        addSelectCountElement(answer);
 
         return answer;
     }
@@ -234,6 +236,13 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
     protected void addSelectListElement(XmlElement parentElement) {
         if (introspectedTable.getRules().generateSelectByPrimaryKey()) {
             AbstractXmlElementGenerator elementGenerator = new SelectListElementGenerator();
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
+
+    protected void addSelectCountElement(XmlElement parentElement) {
+        if (introspectedTable.getRules().generateSelectByPrimaryKey()) {
+            AbstractXmlElementGenerator elementGenerator = new SelectCountElementGenerator();
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
     }
