@@ -1,6 +1,6 @@
 define(function () {
     return {
-        otherwise: '/order/order_info',
+        otherwise: '/home',
         routes: [
             {
                 "hash": "/home",

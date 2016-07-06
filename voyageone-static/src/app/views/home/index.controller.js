@@ -5,6 +5,9 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('HomeController', (function () {
-
+        function HomeController() {
+            
+        }
+        return HomeController;
     }()));
 });
