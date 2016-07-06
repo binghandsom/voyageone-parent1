@@ -790,6 +790,7 @@ public class SxProductService extends BaseService {
                     // added by morse.lu 2016/06/15 end
                     List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
                     List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
+                    List<String> listSkuCode = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
@@ -801,12 +802,27 @@ public class SxProductService extends BaseService {
                                 mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
                                 skus.add(mapSku);
                                 // modified by morse.lu 2016/06/15 end
+                                listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                             }
                         });
                     }
 
                     if (!skus.isEmpty()) {
-                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+//                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
+                        Iterator<BaseMongoMap<String, Object>> iterator1 = productPlatformSku.iterator();
+                        while (iterator1.hasNext()) {
+                            BaseMongoMap<String, Object> platSku = iterator1.next();
+                            if (!listSkuCode.contains(platSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
+                                iterator1.remove();
+                            }
+                        }
+                        Iterator<CmsBtProductModel_Sku> iterator2 = productModelSku.iterator();
+                        while (iterator2.hasNext()) {
+                            CmsBtProductModel_Sku comSku = iterator2.next();
+                            if (!listSkuCode.contains(comSku.getSkuCode())) {
+                                iterator2.remove();
+                            }
+                        }
                         skuList.addAll(skus);
                     } else {
                         // 该product下没有允许在该平台上上架的sku
