@@ -48,10 +48,27 @@ public class CmsBtPriceLogService extends BaseService {
         return priceLogDaoExt.selectCountBySkuOnCart(sku, code, cartId, channelId);
     }
 
+    /**
+     * 对指定的 sku 进行价格变动检查
+     *
+     * @param skuList   将要检查的 sku 列表
+     * @param channelId 所属渠道
+     * @param username  变动人 / 检查人
+     * @param comment   变动备注 / 检查备注
+     */
     public void logAll(List<String> skuList, String channelId, String username, String comment) {
         logAll(skuList, channelId, null, username, comment);
     }
 
+    /**
+     * 对指定的 sku 进行价格变动检查
+     *
+     * @param skuList   将要检查的 sku 列表
+     * @param channelId 所属渠道
+     * @param cartId    所属平台
+     * @param username  变动人 / 检查人
+     * @param comment   变动备注 / 检查备注
+     */
     public void logAll(List<String> skuList, String channelId, String cartId, String username, String comment) {
         for (String sku : skuList)
             log(sku, channelId, cartId, username, comment);
