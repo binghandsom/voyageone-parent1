@@ -11,111 +11,87 @@
     </div>
     <div class="box">
         <div class="box-body-new">
-            <div class="col-sm-12">
+            <div class="col-sm-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i><a href="#/feed/product_list" target="_blank">&nbsp;&nbsp;信息一览</a></h3>
+                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i><a href="#/feed/product_list" target="_blank">&nbsp;&nbsp;FEED信息</a></h3>
                     </div>
                     <div class="panel-body white-bg">
                         <div class="col-sm-12">
                             <ul class="stat-boxes">
                                 <li>
                                     <div class="right data-priority-0" ng-click="jump('/feed/product_list',{})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_ALL.amountVal}}</strong>
-                                            Feed商品数
-                                        </div>
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_ALL.amountVal}}</strong>
+                                        Feed商品数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-3" ng-click="jump('/feed/product_list',{status:'9'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NEW.amountVal}}</strong>
-                                            新品数
-                                        </div>
+                                    <div class="right data-priority-3"
+                                         ng-click="jump('/feed/product_list',{status:'9'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NEW.amountVal}}</strong>
+                                        新品数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-4" ng-click="jump('/feed/product_list',{status:'1'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FINISH.amountVal}}</strong>
-                                            导入完成数
-                                        </div>
+                                    <div class="right data-priority-4"
+                                         ng-click="jump('/feed/product_list',{status:'1'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FINISH.amountVal}}</strong>
+                                        导入完成数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-0" ng-click="jump('/feed/product_list',{status:'3'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NOT_IMPORT.amountVal}}</strong>
-                                            不导入数
-                                        </div>
+                                    <div class="right data-priority-0"
+                                         ng-click="jump('/feed/product_list',{status:'3'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NOT_IMPORT.amountVal}}</strong>
+                                        不导入数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-1" ng-click="jump('/feed/product_list',{status:'2'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FAILD.amountVal}}</strong>
-                                            导入失败数
-                                        </div>
+                                    <div class="right data-priority-1"
+                                         ng-click="jump('/feed/product_list',{status:'2'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FAILD.amountVal}}</strong>
+                                        导入失败数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-1" ng-click="jump('/feed/product_list',{status:'8'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">Feed信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.feedSum.CMS_FEED_DATA_ERROR.amountVal}}</strong>
-                                            Feed数据错误
-                                        </div>
+                                    <div class="right data-priority-1"
+                                         ng-click="jump('/feed/product_list',{status:'8'})">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_DATA_ERROR.amountVal}}</strong>
+                                        Feed数据错误
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i><a href="#/feed/product_list" target="_blank">&nbsp;&nbsp;主数据编辑信息</a></h3>
+                    </div>
+                    <div class="panel-body white-bg">
+                        <div class="col-sm-12">
+                            <ul class="stat-boxes">
+                                <li>
+                                    <div class="right data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{mCatStatus:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
+                                        等待设置主类目数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right data-priority-2"  ng-click="jump('/search/advanceSearch',{mCatStatus:'0'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">主数据信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
-                                            等待设置主类目数
-                                        </div>
+                                    <div class="right  data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{taxNoStatus:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
+                                        等待设置税号数
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="right  data-priority-2"ng-click="jump('/search/advanceSearch',{taxNoStatus:'0'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">主数据信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
-                                            等待设置税号数
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="right data-priority-2" ng-click="jump('/search/advanceSearch',{transStsFlg:'0'})">
-                                        <div class="col-sm-4">
-                                            <span class="right-side">主数据信息</span>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
-                                            等待翻译数
-                                        </div>
+                                    <div class="right data-priority-2"
+                                         ng-click="jump('/search/advanceSearch',{transStsFlg:'0'})">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
+                                        等待翻译数
                                     </div>
                                 </li>
                             </ul>
@@ -124,7 +100,41 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="col-sm-5">
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;价格信息</h3>
+                        </div>
+                        <div class="panel-body white-bg">
+                            <div class="span12 center" style="text-align: center;">
+                                <div class="table-responsive table-hover table-striped">
+                                    <div class="col-sm-12 dropdown_table_main">
+                                        <table class="table table-hover-new table-hover vo_table">
+                                            <thead>
+                                            <tr>
+                                                <th class="mfb-xxt text-center">平台</th>
+                                                <th class="mfb-xxt text-center">比指导价低数</th>
+                                                <th class="mfb-xxt text-center">比指导价高</th>
+                                                <th class="mfb-xxt text-center">击穿警告</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <!--"cartId":23,"productStatus":[],"platformStatus":[],"pCatStatus":0,"promotionTagType":1,"cidValue":[],"shopCatStatus":0,"priceDiffFlg":"2"-->
+                                            <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
+                                                <td class="mfb-xxt text-center">{{m.platformName}}</td>
+                                                <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;价格信息</h3>
