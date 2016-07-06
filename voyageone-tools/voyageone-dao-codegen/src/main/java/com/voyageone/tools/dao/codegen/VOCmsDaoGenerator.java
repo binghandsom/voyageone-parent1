@@ -26,7 +26,8 @@ public class VOCmsDaoGenerator {
 
         myBatisGenerator.generate(null);
 
-        System.out.println(warnings);
-
+        for (String warning : warnings) {
+            System.out.println(warning);
+        }
     }
 }
