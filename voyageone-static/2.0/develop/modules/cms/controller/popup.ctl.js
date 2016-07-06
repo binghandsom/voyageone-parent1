@@ -1158,11 +1158,15 @@ define([
             } else {
                 data = {"productIds": productIds, "cartId": cartId};
             }
-            if (context.isQuery) {
-                data.isQuery = "1";
-            } else {
-                data.isQuery = "0";
+
+            if(context){
+                if (context.isQuery) {
+                    data.isQuery = "1";
+                } else {
+                    data.isQuery = "0";
+                }
             }
+
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 
