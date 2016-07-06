@@ -53,6 +53,10 @@ define([
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
+                        /**主商品提示*/
+                        if(!scope.vm.mastData.isMain){
+                            alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
+                        }
                     });
                 }
 
