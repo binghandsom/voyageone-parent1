@@ -31,15 +31,15 @@ angular.module('voyageone.angular.directives').directive('platformStatus', funct
                 switch (+this.statusData.cartId){
                     case 23:
                         /**天猫*/
-                        this.statusData.detailUrl = "https://detail.tmall.hk/hk/item.htm?id="+this.statusData.cartId;
+                        this.statusData.detailUrl = "https://detail.tmall.hk/hk/item.htm?id="+this.statusData.numberId;
                         break;
                     case 26:
                         /**京东*/
-                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.cartId;
+                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
                         break;
                     case 27:
                         /**聚美*/
-                        this.statusData.detailUrl = "http://item.jumeiglobal.com/"+this.statusData.cartId+".html";
+                        this.statusData.detailUrl = "http://item.jumeiglobal.com/"+this.statusData.numberId+".html";
                         break;
                 }
             }

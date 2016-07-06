@@ -28,7 +28,10 @@ define([
              */
             init: function () {
                 var self = this;
-                self.channelTagService.init({tagTypeSelectValue: self.tagTypeSelectValue, 'cartId':self.cartId}).then(function (res) {
+                self.channelTagService.init({
+                    tagTypeSelectValue: self.tagTypeSelectValue,
+                    'cartId': self.cartId
+                }).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
                     self.tagTypeList = res.data.tagTypeList[3];
                     self.search(0);
@@ -65,23 +68,11 @@ define([
                             continue;
                         }
                     }
-                    if (!selected[index]) {
-                        selected[index] = tree[index][0];
-                    } else if (_.isString(selected[index])) {
-                        selected[index] = tree[index].find(function (item) {
-                            return item.tagChildrenName === selected[index];
-                        });
-                    } else if (tree[index].indexOf(selected[index]) < 0) {
-                        var indexSelected = tree[index].find(function (item) {
-                            return item.id === selected[index].id;
-                        });
-                        if (indexSelected)
-                            selected[index] = indexSelected;
-                        else
-                            selected[index] = tree[index][0];
-                    }
+                    if(index==1)selected[1] = undefined;
+                    if(index==2&&selected[2]!==undefined)selected[2] = undefined;
                 }
-                if (selected[1] == undefined) selected[2] = undefined;
+                if (selected[0] == undefined || !selected[0].children.length) selected[1] = undefined;
+                if (selected[1] == undefined || !selected[1].children.length) selected[2] = undefined;
                 for (var i = 2; i >= 0; i--) {
                     var selectedVal = self.selected[i];
                     if (selectedVal !== undefined) {

@@ -628,6 +628,9 @@ public class CmsProductDetailService extends BaseAppService {
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if(platformCategory == null || platformCategory.size() == 0) return;
+        if (oldProduct.getPlatforms() == null) {
+            return;
+        }
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
             if (platform.getCartId() != 0 && (platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
                 List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase(Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
