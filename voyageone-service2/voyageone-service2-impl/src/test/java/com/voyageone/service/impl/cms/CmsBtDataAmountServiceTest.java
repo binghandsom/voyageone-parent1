@@ -11,22 +11,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CmsBtDataAmountServiceTest {
     @Autowired
     CmsBtDataAmountService service;
+
     @Test
-    public void testsumCmsBtFeedInfo() {
-        service.sumCmsBtFeedInfo();
-    }
-    @Test
-    public void testSumMaster() {
-        service.sumMaster();
-    }
-    @Test
-    public void testSumPrice()
+    public  void  test()
     {
-        service.sumPrice();;
-    }
-    @Test
-    public  void  testSumPlatInfo()
-    {
-         service.sumPlatInfo();
+        service.sumByChannelId("010");
+       // service.sumByChannelId("016");
+       // service.sumByChannelId("017");
+       // service.sumByChannelId("018");
+       // service.sumByChannelId("019");
+       // service.sumByChannelId("021");
+       // service.sumByChannelId("023");
+       // service.sumByChannelId("024");
     }
 }

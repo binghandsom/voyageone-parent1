@@ -265,7 +265,8 @@ define([
             "price": {
                 "templateUrl": "views/pop/history/price.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/history/price.ctl",
-                "controller": "popPriceHistoryCtl"
+                "controller": "PriceLogPopupController as ctrl",
+                "size": "lg"
             },
             "promotion": {
                 "templateUrl": "views/pop/history/promotion.tpl.html",
@@ -922,32 +923,25 @@ define([
         $scope.openNewOpp = function (header, upLoadFlag) {
             return openModel(popActions.custom.storeoperation, {header: header, upLoadFlag: upLoadFlag});
         };
+
         //全店操作页面中，确认操作按钮弹出
         $scope.openConfirmOpp = function (header, upLoadFlag) {
             return openModel(popActions.custom.confirmstoreopp, {header: header, upLoadFlag: upLoadFlag});
         };
+
         /**
          * 打开price历史页面
-         * @type {openHistoryPrice}
          */
-        $scope.openHistoryPrice = openHistoryPrice;
-        function openHistoryPrice(viewSize, data, type) {
-            require([popActions.history.price.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.history.price.templateUrl,
-                    controller: popActions.history.price.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return {
-                                code: data,
-                                type: type
-                            };
-                        }
-                    }
-                });
+        $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
+            return openModel(popActions.history.price, {
+                skuList: skuList,
+                code: code,
+                selected: {
+                    sku: selectedSku,
+                    cart: selectedCart
+                }
             });
-        }
+        };
 
         /**
          * 打开promotion页面
@@ -1147,7 +1141,7 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId};
+                data = {"productIds": [], "cartId": cartId, 'isSelAll':context.isSelAll};
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,
@@ -1158,11 +1152,13 @@ define([
             } else {
                 data = {"productIds": productIds, "cartId": cartId};
             }
-            if (context.isQuery) {
+
+            if (context && context.isQuery) {
                 data.isQuery = "1";
             } else {
                 data.isQuery = "0";
             }
+
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 

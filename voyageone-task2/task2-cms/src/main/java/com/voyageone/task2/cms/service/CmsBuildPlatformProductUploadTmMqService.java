@@ -157,9 +157,9 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
         // 渠道id
-        String channelId = shopProp.getOrder_channel_id();
+        String channelId = cmsBtSxWorkloadModel.getChannelId();
         // 平台id
-        int cartId = Integer.parseInt(shopProp.getCart_id());
+        int cartId = cmsBtSxWorkloadModel.getCartId();
         // 平台产品id
         String platformProductId = "";
         // 商品id

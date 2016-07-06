@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class CmsAdvanceSearchController extends CmsController {
     @Autowired
     private CmsAdvSearchExportFileService advSearchExportFileService;
     @Autowired
-    PlatformService platformService;
+    private PlatformService platformService;
 
     /**
      * 初始化,获取master数据
@@ -65,6 +66,11 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
     public AjaxResponse search(@RequestBody CmsSearchInfoBean2 params) {
+        try {
+            $info(JacksonUtil.bean2JsonNotNull(params));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();

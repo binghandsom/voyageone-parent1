@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService,$sessionStorage) {
 
         $scope.vm = {
             searchInfo: {
@@ -101,8 +101,10 @@ define([
                         $scope.vm.searchInfo.cartId = catObj.value;
                         getCat();
                     }
-                    if ($routeParams.type != undefined) {
+                    if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
+                        $scope.vm.searchInfo = $sessionStorage.feedSearch;
                         search();
+                        if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }
                 })
         }
@@ -860,6 +862,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService','$sessionStorage'];
     return searchIndex;
 });
