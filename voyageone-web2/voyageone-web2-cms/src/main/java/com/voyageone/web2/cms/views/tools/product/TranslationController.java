@@ -106,7 +106,7 @@ public class TranslationController extends CmsController {
 
         String channelId = this.getUser().getSelChannelId();
         String user = this.getUser().getUserName();
-        int prodId = Integer.valueOf(requestBean.get("prodId").toString());
+        long prodId = Long.valueOf(requestBean.get("prodId").toString());
 
         Map<String, Object> translateTaskGetResponse = new HashMap<>();
         translateTaskGetResponse.put("taskDetail", translationTaskService.getTaskById(channelId, user, prodId));
@@ -126,9 +126,7 @@ public class TranslationController extends CmsController {
 
         Map<String, Object> translateTaskAssignResponse = new HashMap<>();
 
-        // vantis 2016/7/3 应该先获取任务 并进行相应保存后再获取TaskSummary
-        translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask(channelId, user, priority,
-                sort, keyWord));
+        translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask(channelId, user, priority, sort, keyWord));
         translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
         return success(translateTaskAssignResponse);
     }
