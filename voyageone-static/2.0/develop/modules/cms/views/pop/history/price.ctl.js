@@ -3,7 +3,7 @@ define([
 ], function (cms, _) {
     cms.controller('PriceLogPopupController', (function () {
 
-        function PriceLogPopupController($menuService, priceLogService, context) {
+        function PriceLogPopupController($menuService, priceLogService, context, cActions) {
 
             var self = this;
             var skuList = _.map(context.skuList, function (skuObj) {
@@ -11,6 +11,7 @@ define([
             });
             var selected = context.selected;
             var defaultSku = {value: ''};
+            var serviceActions = cActions.cms.pop.priceLogService;
 
             skuList.unshift(defaultSku);
             if (!selected.sku)
@@ -20,16 +21,18 @@ define([
                     return sku.value === selected.sku;
                 });
 
+            self.exportAction = serviceActions.root + '/' + serviceActions.export;
             self.skuList = skuList;
             self.code = context.code;
             self.selected = selected;
             self.priceLogService = priceLogService;
+            self.isOnlyShowMsrp = false;
 
             self.paging = {
                 size: 10,
-                fetch: function () {
-                    console.log(arguments);
-                    self.getData();
+                fetch: function (pageNum, size) {
+                    self.paging.size = size;
+                    self.getData(pageNum - 1);
                 }
             };
 
@@ -41,6 +44,27 @@ define([
                 self.getData(0);
             });
         }
+
+        PriceLogPopupController.prototype.export = function () {
+
+            var self = this;
+
+            $.download.post(self.exportAction, {
+                sku: self.selected.sku.value,
+                code: self.code,
+                cart: self.selected.cart
+            });
+        };
+
+        PriceLogPopupController.prototype.reset = function () {
+
+            var self = this;
+
+            self.selected.sku = self.skuList[0];
+            self.selected.cart = self.cartList[0].value;
+
+            self.getData(0);
+        };
 
         PriceLogPopupController.prototype.getData = function (pageIndex) {
 

@@ -9,26 +9,50 @@
             <div class="form-group m-r-lg">
                 <label>
                     <span>SKU&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.sku" ng-options="i as i.value for i in ctrl.skuList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.value for i in ctrl.skuList"></select>
                 </label>
             </div>
             <div class="form-group m-r-lg">
                 <label>
                     <span>Platform&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.cart" ng-options="i.value as i.name for i in ctrl.cartList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i.value as i.name for i in ctrl.cartList"></select>
                 </label>
             </div>
             <div class="form-group">
-                <label class="c-checkbox"><input class="form-control" type="checkbox"><span class="fa fa-check"></span>&nbsp;只查看MSRP和最终售价的历史</label>
+                <label class="c-checkbox"><input class="form-control" type="checkbox" ng-model="ctrl.isOnlyShowMsrp"><span class="fa fa-check"></span>&nbsp;只查看MSRP和最终售价的历史</label>
             </div>
             <div class="form-group pull-right">
-                <button class="btn btn-default">Reset</button>
-                <button class="btn btn-default">Export</button>
+                <button class="btn btn-default" ng-click="ctrl.reset()">Reset</button>
+                <button class="btn btn-default" ng-click="ctrl.export()">Export</button>
             </div>
         </div>
         <div class="box">
-            <div class="box-body">
-                <table class="table table-hover-new vo_table text-center">
+            <div class="box-body" ng-switch="ctrl.isOnlyShowMsrp">
+                <table class="table table-hover-new vo_table text-center" ng-switch-when="true">
+                    <thead>
+                    <tr>
+                        <th class="text-left" translate="TXT_SKU"></th>
+                        <th class="text-center" translate="TXT_MSRP_PRICE"></th>
+                        <th class="text-center" translate="TXT_RETAIL_PRICE"></th>
+                        <th class="text-center" translate="TXT_SALE_PRICE"></th>
+                        <th class="text-left" translate="TXT_COMMENT"></th>
+                        <th class="text-left" translate="TXT_UPDATE_TIME"></th>
+                        <th class="text-left" translate="TXT_UPDATE_BY"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left">{{item.sku}}</td>
+                        <td class="text-center">{{item.msrpPrice}}</td>
+                        <td class="text-center">{{item.retailPrice}}</td>
+                        <td class="text-center">{{item.salePrice}}</td>
+                        <td class="text-left">{{item.comment}}</td>
+                        <td class="text-left">{{item.modified.substring(0, 19)}}</td>
+                        <td class="text-left">{{item.modifier}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover-new vo_table text-center" ng-switch-when="false">
                     <thead>
                     <tr>
                         <th class="text-left" translate="TXT_SKU"></th>

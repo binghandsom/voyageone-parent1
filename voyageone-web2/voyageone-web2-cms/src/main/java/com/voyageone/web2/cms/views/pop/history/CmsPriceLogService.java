@@ -1,14 +1,15 @@
 package com.voyageone.web2.cms.views.pop.history;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.web2.base.BaseAppService;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,61 +32,66 @@ class CmsPriceLogService extends BaseAppService {
 
         List<CmsBtPriceLogModel> data = priceLogService.getList(sku, code, cart, channelId);
 
-        try (ByteInputStream inputStream = new ByteInputStream();
-             Workbook workbook = WorkbookFactory.create(inputStream)) {
+        try (Workbook workbook = new XSSFWorkbook();
+             ByteOutputStream outputStream = new ByteOutputStream()) {
 
-            Sheet sheet = workbook.createSheet();
+            Sheet sheet = workbook.createSheet(StringUtils.isEmpty(sku) ? code : (code + " - " + sku));
 
             Row row = sheet.createRow(0);
 
-            row.createCell(0).setCellValue("ID");
-            row.createCell(1).setCellValue("CHANNEL ID");
-            row.createCell(1).setCellValue("PRODUCT ID");
-            row.createCell(2).setCellValue("CART ID");
-            row.createCell(3).setCellValue("CODE");
-            row.createCell(4).setCellValue("SKU");
-            row.createCell(5).setCellValue("MSRP PRICE");
-            row.createCell(6).setCellValue("RETAIL PRICE");
-            row.createCell(7).setCellValue("SALE PRICE");
-            row.createCell(8).setCellValue("CLIENT MSRP PRICE");
-            row.createCell(9).setCellValue("CLIENT RETAIL PRICE");
-            row.createCell(10).setCellValue("CLIENT NET PRICE");
-            row.createCell(11).setCellValue("COMMENT");
-            row.createCell(12).setCellValue("CREATED");
-            row.createCell(13).setCellValue("CREATER");
-            row.createCell(14).setCellValue("MODIFIED");
-            row.createCell(15).setCellValue("MODIFIER");
+            int cellIndex = 0;
+
+            row.createCell(cellIndex++).setCellValue("ID");
+            row.createCell(cellIndex++).setCellValue("CHANNEL ID");
+            row.createCell(cellIndex++).setCellValue("PRODUCT ID");
+            row.createCell(cellIndex++).setCellValue("CART ID");
+            row.createCell(cellIndex++).setCellValue("CODE");
+            row.createCell(cellIndex++).setCellValue("SKU");
+            row.createCell(cellIndex++).setCellValue("MSRP PRICE");
+            row.createCell(cellIndex++).setCellValue("RETAIL PRICE");
+            row.createCell(cellIndex++).setCellValue("SALE PRICE");
+            row.createCell(cellIndex++).setCellValue("CLIENT MSRP PRICE");
+            row.createCell(cellIndex++).setCellValue("CLIENT RETAIL PRICE");
+            row.createCell(cellIndex++).setCellValue("CLIENT NET PRICE");
+            row.createCell(cellIndex++).setCellValue("COMMENT");
+            row.createCell(cellIndex++).setCellValue("CREATED");
+            row.createCell(cellIndex++).setCellValue("CREATER");
+            row.createCell(cellIndex++).setCellValue("MODIFIED");
+            row.createCell(cellIndex).setCellValue("MODIFIER");
 
             int rowIndex = 0;
 
             for (CmsBtPriceLogModel model : data) {
 
-                row = sheet.createRow(rowIndex++);
+                row = sheet.createRow(++rowIndex);
 
-                row.createCell(0).setCellValue(model.getId());
-                row.createCell(1).setCellValue(model.getChannelId());
-                row.createCell(1).setCellValue(model.getProductId());
-                row.createCell(2).setCellValue(model.getCartId());
-                row.createCell(3).setCellValue(model.getCode());
-                row.createCell(4).setCellValue(model.getSku());
-                row.createCell(5).setCellValue(model.getMsrpPrice());
-                row.createCell(6).setCellValue(model.getRetailPrice());
-                row.createCell(7).setCellValue(model.getSalePrice());
-                row.createCell(8).setCellValue(model.getClientMsrpPrice());
-                row.createCell(9).setCellValue(model.getClientRetailPrice());
-                row.createCell(10).setCellValue(model.getClientNetPrice());
-                row.createCell(11).setCellValue(model.getComment());
-                row.createCell(12).setCellValue(model.getCreated());
-                row.createCell(13).setCellValue(model.getCreater());
-                row.createCell(14).setCellValue(model.getModified());
-                row.createCell(15).setCellValue(model.getModifier());
+                cellIndex = 0;
+
+                row.createCell(cellIndex++).setCellValue(model.getId());
+                row.createCell(cellIndex++).setCellValue(model.getChannelId());
+                row.createCell(cellIndex++).setCellValue(model.getProductId());
+                row.createCell(cellIndex++).setCellValue(model.getCartId());
+                row.createCell(cellIndex++).setCellValue(model.getCode());
+                row.createCell(cellIndex++).setCellValue(model.getSku());
+                row.createCell(cellIndex++).setCellValue(model.getMsrpPrice());
+                row.createCell(cellIndex++).setCellValue(model.getRetailPrice());
+                row.createCell(cellIndex++).setCellValue(model.getSalePrice());
+                row.createCell(cellIndex++).setCellValue(model.getClientMsrpPrice());
+                row.createCell(cellIndex++).setCellValue(model.getClientRetailPrice());
+                row.createCell(cellIndex++).setCellValue(model.getClientNetPrice());
+                row.createCell(cellIndex++).setCellValue(model.getComment());
+                row.createCell(cellIndex++).setCellValue(model.getCreated());
+                row.createCell(cellIndex++).setCellValue(model.getCreater());
+                row.createCell(cellIndex++).setCellValue(model.getModified());
+                row.createCell(cellIndex).setCellValue(model.getModifier());
             }
 
-            return inputStream.getBytes();
+            workbook.write(outputStream);
 
-        } catch (IOException | InvalidFormatException e) {
-            e.printStackTrace();
+            return outputStream.getBytes();
+
+        } catch (IOException e) {
+            throw new BusinessException("写文档出现了错误");
         }
-        return null;
     }
 }

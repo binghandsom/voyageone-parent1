@@ -9,10 +9,11 @@ import com.voyageone.web2.cms.bean.PriceLogBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-@RestController
+@Controller
 @RequestMapping(method = RequestMethod.POST, value = PRICE_LOG.ROOT)
 public class CmsPriceLogController extends CmsController {
 
@@ -33,6 +34,7 @@ public class CmsPriceLogController extends CmsController {
     private CmsPriceLogService priceLogViewService;
 
     @RequestMapping(PRICE_LOG.PAGE)
+    @ResponseBody
     public AjaxResponse page(@RequestBody PriceLogBean params) {
 
         String sku = params.getSku();
@@ -61,6 +63,6 @@ public class CmsPriceLogController extends CmsController {
 
         byte[] excelContents = priceLogViewService.exportExcel(sku, params.getCode(), params.getCart(), channelId);
 
-        return genResponseEntityFromBytes("price log.xls", excelContents);
+        return genResponseEntityFromBytes("price log.xlsx", excelContents);
     }
 }

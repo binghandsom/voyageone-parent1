@@ -37,7 +37,7 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
     }
 
     public List<CmsBtPriceLogModel> selectListBySkuOnCart(String sku, String code, String cartId, String channelId) {
-        return selectPageBySkuOnCart(sku, code, channelId, cartId, null, null);
+        return selectPageBySkuOnCart(sku, code, cartId, channelId, null, null);
     }
 
     public List<CmsBtPriceLogModel> selectPageBySkuOnCart(String sku, String code, String cartId, String channelId, Integer offset, Integer limit) {
