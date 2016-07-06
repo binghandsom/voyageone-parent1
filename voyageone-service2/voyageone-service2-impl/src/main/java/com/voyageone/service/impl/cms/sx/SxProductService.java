@@ -2000,16 +2000,19 @@ public class SxProductService extends BaseService {
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
 
         // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        String appSwitch = String.valueOf(expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch());
+        Integer appSwitch = expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch();
+        if (appSwitch == null || appSwitch.intValue() != 1) {
+            return;
+        }
 
         // 开始设值
-        setWirelessDescriptionFieldValueWithLoop(field, mapValue, appSwitch, expressionParser.getSxData());
+        setWirelessDescriptionFieldValueWithLoop(field, mapValue, expressionParser.getSxData());
     }
 
     /**
      * 循环无线描述field进行设值
      */
-    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, String appSwitch, SxData sxData) throws Exception {
+    private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, SxData sxData) throws Exception {
         String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
         if (!mapValue.containsKey(field.getId())) {
             $warn(errorMsg);
@@ -2026,11 +2029,7 @@ public class SxProductService extends BaseService {
         switch (field.getType()) {
             case INPUT:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
-                    InputField inputField = (InputField) field;
-                    if ("1".equals(appSwitch)) {
-                        // 启用,根据字典设定的值设置（mapValue）
-                        inputField.setValue(String.valueOf(objVal));
-                    }
+                    ((InputField) field).setValue(String.valueOf(objVal));;
                 } else {
                     sxData.setErrorMessage(errorMsg);
                     throw new BusinessException(errorMsg);
@@ -2039,17 +2038,7 @@ public class SxProductService extends BaseService {
                 break;
             case SINGLECHECK:
                 if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
-                    SingleCheckField singleCheckField = (SingleCheckField) field;
-                    if (!"1".equals(appSwitch)) {
-                        // 不启用
-                        if (field.getId().indexOf("enable") > 0) {
-                            // 是否启用的field
-                            singleCheckField.setValue("false");
-                        }
-                    } else {
-                        // 根据字典设定的值设置（mapValue）
-                        singleCheckField.setValue(String.valueOf(objVal));
-                    }
+                    ((SingleCheckField) field).setValue(String.valueOf(objVal));
                 } else {
                     sxData.setErrorMessage(errorMsg);
                     throw new BusinessException(errorMsg);
@@ -2060,12 +2049,9 @@ public class SxProductService extends BaseService {
                 break;
             case MULTICHECK:
                 if (objVal instanceof List) {
-                    if ("1".equals(appSwitch)) {
-                        // 启用,根据字典设定的值设置（mapValue）
-                        MultiCheckField multiCheckField = (MultiCheckField) field;
-                        for (Object val : (List) objVal) {
-                            multiCheckField.addValue(String.valueOf(val));
-                        }
+                    MultiCheckField multiCheckField = (MultiCheckField) field;
+                    for (Object val : (List) objVal) {
+                        multiCheckField.addValue(String.valueOf(val));
                     }
                 } else {
                     sxData.setErrorMessage(errorMsg);
@@ -2081,7 +2067,7 @@ public class SxProductService extends BaseService {
 
                     for (Field subField : complexField.getFields()) {
                         Field valueField = deepCloneField(subField);
-                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, appSwitch, sxData);
+                        setWirelessDescriptionFieldValueWithLoop(valueField, (Map) objVal, sxData);
                         complexValue.put(valueField);
                     }
                 } else {
@@ -2104,7 +2090,7 @@ public class SxProductService extends BaseService {
                         if (val instanceof Map) {
                             for (Field subField : multiComplexField.getFields()) {
                                 Field valueField = deepCloneField(subField);
-                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, appSwitch, sxData);
+                                setWirelessDescriptionFieldValueWithLoop(valueField, (Map) val, sxData);
                                 complexValue.put(valueField);
                             }
                         } else {

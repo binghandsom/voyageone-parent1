@@ -180,17 +180,17 @@ define([
                  * @param mark  记录是否为ready状态
                  */
                 function saveProduct(mark){
-                     var statusCount = 0,preStatus;
-                     for(var attr in scope.vm.checkFlag){
-                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                     }
-
                     /**用于保存报错*/
                     if(mark == "ready"){
                         if(!validSchema()){
                             alert("请输入必填属性，或者输入的属性格式不正确");
                             return;
                         }
+                    }
+
+                    var statusCount = 0,preStatus;
+                    for(var attr in scope.vm.checkFlag){
+                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                     }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){

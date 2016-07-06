@@ -1,20 +1,31 @@
 package com.voyageone.task2.cms.dict;
 
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.rule_expression.*;
+import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * 聚美平台详情页描述JSON生成工具
- * 大部分店铺都用的是这个, 比如:
- *  (016)ShoeCity聚美优品店
- *  (022)DFO聚美优品店
- *  (023)ShoeZoo聚美优品店
+ *  (021)BHFOX聚美优品店
  *
- * @author tom on 2016/6/17.
+ * @author tom on 2016/6/28.
  * @version 2.1.0
  * @since 2.1.0
  */
-public class JumeiDictTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:context-cms-test.xml")
+public class Jumei_021_Bhfox_DictTest {
+    @Autowired
+    private SxProductService sxProductService;
 
     String C_TEXT_BR = "<br />";
     String C_TEMPLATE_IMG = "<img src=%s>";
@@ -45,6 +56,72 @@ public class JumeiDictTest {
 
     }
 
+    @Test
+    public void dictTest() {
+        SxData sxData = sxProductService.getSxProductDataByGroupId("021", 324399L);
+        sxData.setCartId(27);
+        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+        ShopBean shopProp = Shops.getShop("021", 27);
+//        shopProp.setCart_id("27");
+        shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
+
+        // 最终测试结果是这样的 ======================================== START
+// =====================================
+// 字典: 聚美详情
+// <div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/3b17329e-1af1-4e1f-adc1-e4451cfa1477.jpeg"></div>
+// =====================================
+// 字典: 聚美使用方法
+// <div><img src="http://p12.jmstatic.com/open_api/gPop_131/010/2/20160617165939.jpeg" /></div>
+// =====================================
+// 字典: 聚美实拍
+// <div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/5eca6152-21fb-4352-a647-9d122b63c7a1.jpeg" /></div><div><img src="http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/f439cf4b-9791-45fe-9b3d-6d3960261612.jpeg" /></div>
+// =====================================
+// 字典: 聚美白底方图
+// http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/56dbb1c0-ef09-48f6-9530-80d734653155.jpeg,http://p12.jmstatic.com/dev_test/open_api/gPop_110/010/2ed210b5-10da-49b9-a7cf-49b1e89b9fe9.jpeg,
+        // 最终测试结果是这样的 ======================================== END
+
+        try {
+            // 聚美详情
+            System.out.println("=====================================");
+            System.out.println("字典: 聚美详情");
+            String result = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
+
+            // 聚美使用方法
+            System.out.println("=====================================");
+            System.out.println("字典: 聚美使用方法");
+            result = sxProductService.resolveDict("聚美使用方法", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
+
+            // 聚美实拍
+            System.out.println("=====================================");
+            System.out.println("字典: 聚美实拍");
+            result = sxProductService.resolveDict("聚美实拍", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
+
+            // 聚美白底方图
+            System.out.println("=====================================");
+            System.out.println("字典: 聚美白底方图");
+            result = sxProductService.resolveDict("聚美白底方图", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
+            for (String picUrl : result.split(",")) {
+//                String jmPicUrl = sxProductService.uploadImageByUrl_JM(picUrl, shopProp);
+//                System.out.println(jmPicUrl);
+                System.out.println(picUrl);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String getTaskName() {
+        return getClass().getName();
+    }
+
+
     /**
      * 生成json
      *
@@ -68,7 +145,7 @@ public class JumeiDictTest {
 
     }
 
-	/**
+    /**
      * 聚美详情
      * 1. 品牌故事图
      */
@@ -99,9 +176,10 @@ public class JumeiDictTest {
 
     }
 
-	/**
+    /**
      * 聚美使用方法
-     * 1. 尺码图
+     * 1. 详情描述 - 英文
+     * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
 
@@ -109,6 +187,18 @@ public class JumeiDictTest {
         RuleExpression ruleRoot = new RuleExpression();
 
         // 生成内容
+        {
+            // 详情描述 - 英文
+            MasterWord masterWordDescEn = new MasterWord("longDesEn");
+            ruleRoot.addRuleWord(masterWordDescEn);
+        }
+
+        {
+            // 回车
+            TextWord textWord = new TextWord("<br />");
+            ruleRoot.addRuleWord(textWord);
+        }
+
         {
             // 尺码图
             RuleExpression htmlTemplate = new RuleExpression();
@@ -130,11 +220,12 @@ public class JumeiDictTest {
 
     }
 
-	/**
+    /**
      * 聚美实拍
      * 1. 商品图（要上传）
      *   模板:http://s7d5.scene7.com/is/image/sneakerhead/BHFO%2D20150730%2Dx790%2D600x?$790x600$&$790%5F600$&$product=%s
-     * 2. 购物流程图
+     * 2. PC端自定义图
+     * 3. 购物流程图
      */
     private RuleExpression doDict_聚美实拍() {
 
@@ -162,6 +253,24 @@ public class JumeiDictTest {
         }
 
         {
+            // PC端自定义图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
+
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
             // 购物流程图
             RuleExpression htmlTemplate = new RuleExpression();
             htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
@@ -182,7 +291,7 @@ public class JumeiDictTest {
 
     }
 
-	/**
+    /**
      * 聚美白底方图
      * 1. (要上传)(非html)(逗号分隔的商品主图)
      *   模板:http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F2015%5Fx1000%5F1000x?$jc1000_1000$&$product=%s
