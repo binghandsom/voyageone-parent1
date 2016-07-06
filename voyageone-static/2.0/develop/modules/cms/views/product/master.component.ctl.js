@@ -32,24 +32,6 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-/*                    var productMonitor = scope.$watch("productInfo.productDetails",function(data){
-
-                        // 没有就继续等待
-                        if (!data){
-                            return;
-                        }
-                       scope.vm.productDetails = data.productInfo;
-                       scope.vm.inventoryList = data.inventoryList;
-                       if ($rootScope.imageUrl == undefined) {
-                         $rootScope.imageUrl = '';
-                       }
-                       scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-                       //scope.vm.currentImage = data.defaultImage;
-
-                        productMonitor();
-                        productMonitor = null;
-                    });*/
-
                     productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
