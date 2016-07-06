@@ -84,7 +84,7 @@ public class ImagesService extends BaseService {
                     ImgUtils.getImageName(image.getOriginalUrl()).equals(imageName))
                     .collect(Collectors.toList());
 
-            if (findImages.size() > 0) {
+            if (!findImages.isEmpty()) {
                 return findImages.get(0);
             }
         } else if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_URL.equals(imageCompareRule.getConfigValue1())) {

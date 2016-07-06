@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q) {
+    cms.directive("jdSchema", function (productDetailService,feedMappingService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -14,7 +14,7 @@ define([
                 productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.vm = {
                     productDetails:null,
                     productCode:"",
@@ -59,7 +59,7 @@ define([
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.platform = resp.data.platform;
 
-                        if(scope.vm.platform != null){
+                        if(scope.vm.platform){
                             scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
@@ -71,6 +71,8 @@ define([
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
+                        constructSchema(scope,$compile);
+
                     });
 
                     switch(+scope.cartInfo.value){
@@ -80,6 +82,39 @@ define([
                         case 27:
                             scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
+                    }
+                }
+
+                var itemScope;
+                var productScope;
+
+                function constructSchema(parentScope, compile) {
+
+                    var _plateForm = parentScope.vm.platform;
+
+                    if(_plateForm.schemaFields){
+                        var _item = element.find('#itemContainer');
+                        var _product = element.find('#productContainer');
+
+                        if (itemScope)
+                            itemScope.$destroy();
+                        if (productScope)
+                            productScope.$destroy();
+
+                        _item.empty();
+                        _product.empty();
+
+                        _item.html('<schema data="data"></schema>');
+                        _product.html('<schema data="data"></schema>');
+
+                        itemScope = parentScope.$new();
+                        productScope = parentScope.$new();
+
+                        itemScope.data = _plateForm.schemaFields.item == null ? null : _plateForm.schemaFields.item;
+                        productScope.data = _plateForm.schemaFields.product == null ? null : _plateForm.schemaFields.product;
+
+                        compile(_item)(itemScope);
+                        compile(_product)(productScope);
                     }
                 }
 
@@ -116,6 +151,9 @@ define([
                                 scope.vm.checkFlag.category = 1;
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.status =  "Pending";
+
+                                //刷新schema
+                                constructSchema(scope,$compile);
                             });
                         });
                 }
@@ -139,12 +177,21 @@ define([
 
                 /**
                  * 更新操作
+                 * @param mark  记录是否为ready状态
                  */
-                function saveProduct(){
-                     var statusCount = 0,preStatus;
-                     for(var attr in scope.vm.checkFlag){
-                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                     }
+                function saveProduct(mark){
+                    /**用于保存报错*/
+                    if(mark == "ready"){
+                        if(!validSchema()){
+                            alert("请输入必填属性，或者输入的属性格式不正确");
+                            return;
+                        }
+                    }
+
+                    var statusCount = 0,preStatus;
+                    for(var attr in scope.vm.checkFlag){
+                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
+                    }
 
                     if(scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null){
                         notify.danger("请先确认是否在后台申请过相应品牌");
@@ -175,7 +222,7 @@ define([
                             scope.vm.status = preStatus;
                             return;
                         }
-                        confirm(resp.message + ",是否强制上新").result.then(function () {
+                        confirm(resp.message + ",是否强制保存").result.then(function () {
                              productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                  scope.vm.platform.modified = resp.data.modified;
                                  notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

@@ -63,19 +63,16 @@ public class FeedInfoService extends BaseService {
      * 更新feed的产品信息
      */
     public WriteResult updateFeedInfo(String channelId, Map paraMap, Map rsMap) {
-        HashMap valueMap = new HashMap(1);
+        Map<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("$set", rsMap);
         return cmsBtFeedInfoDao.update(channelId, paraMap, valueMap);
     }
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
-     *
-     * @param searchValue
-     * @return
      */
     public String getSearchQuery(Map<String, Object> searchValue) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // 获取查询的价格类型
         String priceType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceType"));
@@ -88,7 +85,7 @@ public class FeedInfoService extends BaseService {
                 throw new BusinessException("设置的查询价格区间不正确");
             }
             if (priceSta > -1 || priceEnd > -1) {
-                result.append("{\"skus." + priceType + "\":{");
+                result.append("{\"skus.").append(priceType).append("\":{");
                 if (priceSta > -1) {
                     result.append(MongoUtils.splicingValue("$gte", priceSta));
                 }
@@ -141,22 +138,22 @@ public class FeedInfoService extends BaseService {
         // 获取category
         String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
         if (category != null) {
-            result.append("{" + MongoUtils.splicingValue("category", category));
+            result.append("{").append(MongoUtils.splicingValue("category", category));
             result.append("},");
         }
 
         // 获取product name
         String prodName = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("name"));
         if (prodName != null) {
-            result.append("{" + MongoUtils.splicingValue("name", prodName));
+            result.append("{").append(MongoUtils.splicingValue("name", prodName));
             result.append("},");
         }
 
         // 获取输入的模糊查询字符串,用于检索code,name,model,short_description,long_description
         String codesStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("codeList"));
         if (codesStr != null) {
-            List<String> strList = new ArrayList(Arrays.asList(codesStr.split("\n")));
-            if (strList != null && strList.size() > 0) {
+            List<String> strList = Arrays.asList(codesStr.split("\n"));
+            if (!strList.isEmpty()) {
                 List<String> orSearch = new ArrayList<>();
                 for (String fuzzyStr : strList) {
                     orSearch.add(MongoUtils.splicingValue("code", fuzzyStr));
@@ -164,7 +161,7 @@ public class FeedInfoService extends BaseService {
                     orSearch.add(MongoUtils.splicingValue("skus.sku", fuzzyStr));
                     orSearch.add(MongoUtils.splicingValue("skus.clientSku", fuzzyStr));
                 }
-                result.append("{" + MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+                result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
                 result.append("},");
             }
         }
@@ -175,19 +172,19 @@ public class FeedInfoService extends BaseService {
             orSearch.add(MongoUtils.splicingValue("name", fuzzySearch, "$regex"));
             orSearch.add(MongoUtils.splicingValue("shortDescription", fuzzySearch, "$regex"));
             orSearch.add(MongoUtils.splicingValue("longDescription", fuzzySearch, "$regex"));
-            result.append("{" + MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+            result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append("},");
         }
 
         // 获取brand
         if (searchValue.get("brand") != null) {
             List<String> brands = (List<String>) searchValue.get("brand");
-            if (brands.size() > 0) {
+            if (!brands.isEmpty()) {
                 List<String> orSearch = new ArrayList<>();
                 for (String brand : brands) {
                     orSearch.add(MongoUtils.splicingValue("brand", brand));
                 }
-                result.append("{" + MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+                result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
                 result.append("},");
             }
         }
@@ -195,21 +192,21 @@ public class FeedInfoService extends BaseService {
         // 获取color
         String color = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("color"));
         if (color != null) {
-            result.append("{'color':{'$regex': '" + color + "','$options':'i'}");
+            result.append("{'color':{'$regex': '").append(color).append("','$options':'i'}");
             result.append("},");
         }
 
         // 获取product type
         String productType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("productType"));
         if (productType != null) {
-            result.append("{" + MongoUtils.splicingValue("productType", productType));
+            result.append("{").append(MongoUtils.splicingValue("productType", productType));
             result.append("},");
         }
 
         // 获取size type
         String sizeType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("sizeType"));
         if (sizeType != null) {
-            result.append("{" + MongoUtils.splicingValue("sizeType", sizeType));
+            result.append("{").append(MongoUtils.splicingValue("sizeType", sizeType));
             result.append("},");
         }
 
@@ -218,14 +215,14 @@ public class FeedInfoService extends BaseService {
         String qtyStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("inventory"));
         if (compareType != null && qtyStr != null) {
             int inventory = NumberUtils.toInt(qtyStr);
-            result.append("{" + MongoUtils.splicingValue("qty", inventory, compareType));
+            result.append("{").append(MongoUtils.splicingValue("qty", inventory, compareType));
             result.append("},");
         }
 
         // 获取status
         String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
         if (status != null) {
-            result.append("{" + MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
+            result.append("{").append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
             result.append("},");
         }
 
@@ -233,7 +230,7 @@ public class FeedInfoService extends BaseService {
         if (searchValue.get("ninStatus") != null) {
             List<Integer> ninList = (List<Integer>) searchValue.get("ninStatus");
             result.append("{updFlg:{$nin:[");
-            result.append(ninList.stream().map(integer -> integer.toString()).collect(Collectors.joining(",")));
+            result.append(ninList.stream().map(Object::toString).collect(Collectors.joining(",")));
             result.append("]}},");
         }
 

@@ -77,19 +77,16 @@ public class ExpressionParser extends VOAbsLoggable {
                             }
                         }
                         break;
-                    case MASTER: {
+                    case MASTER:
                         plainValue = masterWordParser.parse(ruleWord);
                         break;
-                    }
-                    case FEED_ORG: {
+                    case FEED_ORG:
                         plainValue = feedOrgWordParser.parse(ruleWord);
                         break;
-                    }
-                    case FEED_CN: {
+                    case FEED_CN:
                         plainValue = feedCnWordParser.parse(ruleWord);
                         break;
-                    }
-                    case DICT: {
+                    case DICT:
                         DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
                         if (dictWordDefine == null)
                         {
@@ -113,20 +110,16 @@ public class ExpressionParser extends VOAbsLoggable {
                         // deleted by morse.lu 2016/06/29 end
 
                         break;
-                    }
-                    case CUSTOM: {
+                    case CUSTOM:
                         plainValue = customWordParser.parse(ruleWord, shopBean, user, extParameter);
                         break;
-                    }
-                    case SKU: {
+                    case SKU:
                         plainValue = skuWordParser.parse(ruleWord);
                         break;
-                    }
                     // added by morse.lu 2016/06/27 start
-                    case COMMON: {
+                    case COMMON:
                         // 从product表的common下去取
                         commonWordParser.parse(ruleWord);
-                    }
                     // added by morse.lu 2016/06/27 end
                 }
 

@@ -39,7 +39,10 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE'|translate}}</button>
+                                <button class="btn btn-vo ng-binding" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
+                            </div>
+                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
+                                <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
                             </div>
                             <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
                                 <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
@@ -74,7 +77,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">Group Info</label>
+                                <label class="col-md-2 control-label"><strong>Group Info</strong></label>
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
@@ -110,10 +113,10 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">model</label>
+                                <label class="col-md-2 control-label"><strong>model</strong></label>
                                 <div class="col-md-8">
                                     <span>
-                                        <a ng-href="#/group/detail/{vm.mastData.groupId}}" title="{{vm.mastData.model}}"
+                                        <a ng-href="#/group/detail/{{vm.mastData.groupId}}" title="{{vm.mastData.model}}"
                                            target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length > 30 ? '...' : ''}}
                                         </a>
                                     </span>
@@ -123,7 +126,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
+                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</strong></label>
                                 <div class="col-md-8">
                                     <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
                                     <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
@@ -132,13 +135,13 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">{{"TXT_PRODUCT_NAME"|translate}}</label>
+                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_NAME"|translate}}</strong></label>
                                 <div class="col-md-8">
                                     <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productName" disabled>
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label">{{"TXT_BRAND"|translate}}</label>
+                                <label class="col-md-2 control-label"><strong>{{"TXT_BRAND"|translate}}</strong></label>
                                 <div class="col-md-8">
                                     <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
@@ -176,8 +179,8 @@
                 <!------------------------------------------------以下为商品Schema------------------------------------------------------->
                     <div class="container-fluid" id="{{cartInfo.name}}2">
                         <div class="row">
-                            <div class="col-sm-9" ng-if="vm.platform.schemaFields.item">
-                                <schema data="vm.platform.schemaFields.item"></schema>
+                            <div class="col-sm-9" id="itemContainer">
+
                             </div>
                         </div>
                     </div>
@@ -187,8 +190,8 @@
                     <!------------------------------------------------以下为产品Schema------------------------------------------------------->
                     <div class="container-fluid" id="{{cartInfo.name}}3">
                         <div class="row">
-                            <div class="col-sm-9" ng-if="vm.platform.schemaFields.product">
-                                <schema data="vm.platform.schemaFields.product"></schema>
+                            <div class="col-sm-9" id="productContainer">
+
                             </div>
                         </div>
                     </div>

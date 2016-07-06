@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, confirm, notify, alert, context) {
+    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context) {
 
         $scope.vm = {
             property: context.property,
@@ -34,6 +34,14 @@ define([
                 alert("未填写价格，请填写后再操作。");
                 return;
             }
+            // 检查输入数据
+            var intVal = $scope.vm.priceValue;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格必须是数字");
+                    return;
+                }
+            }
             $scope.vm.property.priceType = $scope.vm.priceType;
             $scope.vm.property.optionType = $scope.vm.optType;
             $scope.vm.property.priceValue = $scope.vm.priceValue;
@@ -55,8 +63,13 @@ define([
                         return;
                     }
                     if (res.data.ecd == 2) {
-                        // 价格设置不正确
-                        alert("");
+                        // 低于指导价
+                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]低于指导价[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
+                        return;
+                    }
+                    if (res.data.ecd == 3) {
+                        // 大于阀值
+                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
                         return;
                     }
                     $modalInstance.close();

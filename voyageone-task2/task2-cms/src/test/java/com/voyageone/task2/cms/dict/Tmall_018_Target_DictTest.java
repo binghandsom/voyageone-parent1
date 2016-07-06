@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by zhujiaye on 16/5/20.
  */
-public class TargetDictTest {
+public class Tmall_018_Target_DictTest {
 	String C_TEXT_BR = "<br />";
 	String C_TEMPLATE_IMG = "<img src=%s>";
 

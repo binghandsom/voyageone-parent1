@@ -143,7 +143,7 @@ public class CmsBtJmPromotionImportTaskService {
             info.setListSkuModel(listSkuModel);
             info.setListSpecialImageModel(listSpecialImageModel);
             saveJmProductImportAllInfo(info, modelCmsBtJmPromotionImportTask.getCreater());
-            if (listProducctErrorMap.size() > 0 | listSkuErrorMap.size() > 0 | listSpecialErrorMap.size() > 0) {
+            if (!listProducctErrorMap.isEmpty() || !listSkuErrorMap.isEmpty() || !listSpecialErrorMap.isEmpty()) {
                 String failuresFileName = "error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 String errorfilePath = "/usr/JMExport/error" + modelCmsBtJmPromotionImportTask.getFileName().trim();
                 serviceCmsBtJmPromotionExportTask.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, listSpecialErrorMap, true);
@@ -259,9 +259,9 @@ public class CmsBtJmPromotionImportTaskService {
             //2.  cms_bt_jm_promotion_sku  cms_bt_jm_sku
             List<CmsBtJmImportSku> productCmsBtJmImportSkuList = getListCmsBtJmImportSkuByProductCode(listSkuModel, importProductModel.getProductCode());
             loadSaveSkuInfoByImportModel(creater, modelCmsBtJmPromotion, productCmsBtJmImportSkuList, saveInfo, importProductModel);
-            if (productCmsBtJmImportSkuList.size() > 0) {
-                saveInfo.getPromotionProductModel().setDealPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getDealPrice()));
-                saveInfo.getPromotionProductModel().setMarketPrice(new BigDecimal(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
+            if (!productCmsBtJmImportSkuList.isEmpty()) {
+                saveInfo.getPromotionProductModel().setDealPrice(BigDecimal.valueOf(productCmsBtJmImportSkuList.get(0).getDealPrice()));
+                saveInfo.getPromotionProductModel().setMarketPrice(BigDecimal.valueOf(productCmsBtJmImportSkuList.get(0).getMarketPrice()));
                 saveInfo.getPromotionProductModel().setDiscount(BigDecimalUtil.divide(saveInfo.getPromotionProductModel().getDealPrice(), saveInfo.getPromotionProductModel().getMarketPrice(), 2));
             }
             //3.cms_mt_master_info
@@ -464,7 +464,7 @@ public class CmsBtJmPromotionImportTaskService {
         templateTypeList.add(2);//详情图
         templateTypeList.add(7);//移动端宝贝图（竖图）
         List<CmsMtTemplateImagesModel> listCmsMtTemplateImages = cmsMtTemplateImagesDaoExt.selectListByPlatformChannelTemplateType(PlatformId, modelCmsBtJmPromotion.getChannelId(), templateTypeList);
-        if (listCmsMtTemplateImages.size() == 0) {
+        if (listCmsMtTemplateImages.isEmpty()) {
             throw new BusinessException("CmsMtTemplateImages请设置该channel的图片模板");
         }
         addImageByProductImageUrlKey(specialImageModel.getProductImageUrlKey1(), specialImageModel, modelCmsBtJmPromotion, saveInfo, listCmsMtTemplateImages, 1);
@@ -545,17 +545,17 @@ public class CmsBtJmPromotionImportTaskService {
         //  promotionSkuModel.setCmsBtJmSkuId(importSkuModel.getId());
         if (promotionSkuModel.getSynchStatus() == 2) {//已上传
             if (importSkuModel.getDealPrice() != 0) {
-                promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
+                promotionSkuModel.setDealPrice(BigDecimal.valueOf(importSkuModel.getDealPrice()));
             }
             if (importSkuModel.getMarketPrice() != 0) {
-                promotionSkuModel.setMarketPrice(new BigDecimal(importSkuModel.getMarketPrice()));
+                promotionSkuModel.setMarketPrice(BigDecimal.valueOf(importSkuModel.getMarketPrice()));
             }
         } else {
 //            if (oldSkuModel != null) {
 //                promotionSkuModel.setState(oldSkuModel.getState());
 //            }
-            promotionSkuModel.setDealPrice(new BigDecimal(importSkuModel.getDealPrice()));
-            promotionSkuModel.setMarketPrice(new BigDecimal(importSkuModel.getMarketPrice()));
+            promotionSkuModel.setDealPrice(BigDecimal.valueOf(importSkuModel.getDealPrice()));
+            promotionSkuModel.setMarketPrice(BigDecimal.valueOf(importSkuModel.getMarketPrice()));
             promotionSkuModel.setDiscount(BigDecimalUtil.divide(promotionSkuModel.getDealPrice(), promotionSkuModel.getMarketPrice(), 2));
             promotionSkuModel.setCmsBtJmPromotionId(modelCmsBtJmPromotion.getId());
             promotionSkuModel.setSkuCode(importSkuModel.getSkuCode());

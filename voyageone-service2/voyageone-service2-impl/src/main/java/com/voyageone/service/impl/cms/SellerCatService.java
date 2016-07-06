@@ -41,6 +41,9 @@ import java.util.*;
 @Service
 public class SellerCatService extends BaseService {
 
+    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
+
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
 
@@ -64,11 +67,6 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private ProductService productService;
-
-
-    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
-
-    private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
 
     /**
@@ -102,7 +100,6 @@ public class SellerCatService extends BaseService {
      * 取得Category 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
-
         return getSellerCatsByChannelCart(channelId, cartId, true);
     }
 
@@ -344,7 +341,7 @@ public class SellerCatService extends BaseService {
                     List<String> cIds = new ArrayList<>();
 
                     for (Field field : fields) {
-                        if (field.getId().equals("seller_cids")) {
+                        if ("seller_cids".equals(field.getId())) {
                             List<String> values = ((MultiCheckField) field).getDefaultValues();
 
                             for (String value : values) {
@@ -367,7 +364,7 @@ public class SellerCatService extends BaseService {
                             fullCatNames.add(leaf.getCatPath());
                             fullIds.add(leaf.getFullCatId());
 
-                            if (!leaf.getParentCatId().equals("0")) {
+                            if (!"0".equals(leaf.getParentCatId())) {
                                 CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
                                 catIds.add(parent.getCatId());
                                 catNames.add(parent.getCatName());
@@ -376,14 +373,14 @@ public class SellerCatService extends BaseService {
                             }
                         }
 
-                        HashMap<String, Object> updateMap = new HashMap<>();
+                        Map<String, Object> updateMap = new HashMap<>();
                         updateMap.put("sellerCats.cIds", catIds);
                         updateMap.put("sellerCats.cNames", catNames);
                         updateMap.put("sellerCats.fullCIds", fullIds);
                         updateMap.put("sellerCats.fullCNames", fullCatNames);
 
 
-                        HashMap<String, Object> queryMap = new HashMap<>();
+                        Map<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", product.getProdId());
 
                         BulkUpdateModel model = new BulkUpdateModel();
@@ -485,7 +482,7 @@ public class SellerCatService extends BaseService {
             }
         }
         root.setChildren(children);
-        if (children.size() > 0) {
+        if (!children.isEmpty()) {
             root.setIsParent(1);
         } else {
             root.setIsParent(0);
@@ -508,7 +505,7 @@ public class SellerCatService extends BaseService {
     private List<CmsBtSellerCatModel> findRoots(List<CmsBtSellerCatModel> allNodes) {
         List<CmsBtSellerCatModel> results = new ArrayList<>();
         for (CmsBtSellerCatModel node : allNodes) {
-            if (node.getParentCatId().equals("0")) {
+            if ("0".equals(node.getParentCatId())) {
                 results.add(node);
                 node.setCatPath(node.getCatName());
                 node.setFullCatId(node.getCatId());

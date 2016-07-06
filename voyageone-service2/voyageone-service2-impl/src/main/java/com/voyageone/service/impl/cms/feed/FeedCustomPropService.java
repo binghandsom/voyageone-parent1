@@ -432,7 +432,7 @@ public class FeedCustomPropService extends BaseService {
     // 保存属性
     @VOTransactional
     public void saveAttr(List<Map<String, Object>> addList, List<Map<String, Object>> updList, String catPath, String channelId, String userName) {
-        if (addList.size() > 0) {
+        if (!addList.isEmpty()) {
             Map<String, Object> params = new HashMap<>(4);
             params.put("channelId", channelId);
             params.put("cat_path", catPath);
@@ -445,7 +445,7 @@ public class FeedCustomPropService extends BaseService {
                 $debug("添加属性成功 实际更新件数=" + tslt);
             }
         }
-        if (updList.size() > 0) {
+        if (!updList.isEmpty()) {
             for (Map<String, Object> item : updList) {
                 item.put("userName", userName);
                 int tslt = cmsMtFeedCustomPropDaoExt.updateAttr(item);

@@ -75,7 +75,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         return getDoubleAttribute("clientMsrpPrice");
     }
     public void setClientMsrpPrice (Double clientMsrpPrice) {
-        setStringAttribute("clientMsrpPrice", clientMsrpPrice);
+        setAttribute("clientMsrpPrice", clientMsrpPrice == null ? 0.00 : clientMsrpPrice);
     }
 
     //clientRetailPrice
@@ -112,7 +112,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
     //qty
     public Integer getQty() {
-        return getAttribute("qty");
+        return getIntAttribute("qty");
     }
     public void setQty(Integer qty) {
         setAttribute("qty", qty == null ? 0 : qty);

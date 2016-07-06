@@ -48,7 +48,7 @@ public class ProductPriceLogService extends BaseService {
         // 插入价格履历对象
         List<CmsBtPriceLogModel> logList = new ArrayList<>();
 
-        if (productAfter.getSkuPrices() != null && productAfter.getSkuPrices().size()>0) {
+        if (productAfter.getSkuPrices() != null && !productAfter.getSkuPrices().isEmpty()) {
             // 循环原始sku列表
             for (ProductSkuPriceBean skuBefore : productBefore.getSkuPrices()) {
                 // 循环变更sku列表
@@ -69,7 +69,7 @@ public class ProductPriceLogService extends BaseService {
         }
 
         // 插入log履历
-        if (logList.size()>0) {
+        if (!logList.isEmpty()) {
             cmsBtPriceLogDaoExt.insertCmsBtPriceLogList(logList);
         }
     }

@@ -30,34 +30,34 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
 
     //主类目ID
     public String getCatId() {
-        return getAttribute("catId");
+        return getStringAttribute("catId");
     }
     public void setCatId(String catId) {
-        setAttribute("catId", catId);
+        setStringAttribute("catId", catId);
     }
 
     //主类目完整PATH
     public String getCatPath() {
-        return getAttribute("catPath");
+        return getStringAttribute("catPath");
     }
     public void setCatPath(String catPath) {
-        setAttribute("catPath", catPath);
+        setStringAttribute("catPath", catPath);
     }
 
     // 更新者
     public String getModifier() {
-        return getAttribute("modifier");
+        return getStringAttribute("modifier");
     }
     public void setModifier(String modifier) {
-        setAttribute("modifier", modifier);
+        setStringAttribute("modifier", modifier);
     }
 
     // 更新时间
     public String getModified() {
-        return getAttribute("modified");
+        return getStringAttribute("modified");
     }
     public void setModified(String modified) {
-        setAttribute("modified", modified);
+        setStringAttribute("modified", modified);
     }
 
     // fields

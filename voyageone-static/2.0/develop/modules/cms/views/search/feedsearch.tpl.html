@@ -259,7 +259,7 @@
     <!----------------------------------------------------- 显 示 表 格 ------------------------------------------------------->
     <div>
         <tabset class="tab-container vo_nav-tabs">
-            <tab ng-click="vm.currTab = 'group'" active ="vm.currTab == 'group'" >
+            <tab ng-click="vm.currTab.group = true;vm.currTab.export = false" active ="vm.currTab.group" >
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -298,33 +298,13 @@
                                     <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;运营将Feed产品状态变更为“不导入”情景举例：品牌方禁止售卖的产品；不适应中国市场的产品；不适合跨境售卖的产品等
                                     </div>
-<!--                                    <div class="btn-group">
-                                        <button class="btn btn-pop btn-default" ng-click="updateFeedStatus()">
-                                            <i class="fa fa-cog"></i>&nbsp;导入主数据
-                                        </button>
-                                    </div>-->
-
                                 </div>
                             </div>
                         </div>
-<!--                        <div class="form-inline m-b-xs text-left">
-                            <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-                                <input type="checkbox" ng-model="vm.searchInfo.isAll">
-                                <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
-
-                            <button ng-disabled="!vm.feedPageOption.total|| vm.feedPageOption.total == 0" class="btn btn-default" style="margin-top:4px" ng-click="doExport()">
-                                <i class="fa fa-cog"></i>&nbsp;Excel导出
-                            </button>&nbsp;
-                        </div>
-                        <div class="form-inline m-b-xs text-right">
-                            <button class="btn btn-default" style="margin-top:4px" ng-click="updateFeedStatus()">
-                                <i class="fa fa-cog"></i>&nbsp;导入主数据
-                            </button>&nbsp;
-                        </div>-->
                     </div>
                     <div class="panel-body">
-                        <div class="table-responsive box">
-                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
+                        <div class="table-responsive box" style="overflow: auto">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
                                 <tr><!--24-->
                                     <th class="text-right mfb-x" style="width:38px">No.</th>
@@ -349,13 +329,11 @@
                                     <th class="text-right mfb-x">MSRP(RMB)</th>
                                     <th class="text-right mfb-x">Retail Price(RMB)</th>
                                     <th class="text-center mfb-x">SKU 数</th>
+                                    <th class="text-center mfb-xxt">错误信息</th>
                                     <th class="text-center mfb-xxt">创建时间</th>
                                     <th class="text-center mfb-xxt">更新时间</th>
                                 </tr>
                                 </thead>
-
-                    <!--<div class="box-body" if-no-rows="vm.feedList.length">-->
-
                                 <tbody>
                                 <tr>
                                     <td if-no-rows="vm.feedList.length" colspan="24" style="padding: 0px"></td>
@@ -406,6 +384,7 @@
                                             </div>
                                         </small>
                                     </td>
+                                    <td class="text-center mfb-xxt">{{feedInfo.updMessage}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.created}}</td>
                                     <td class="text-center mfb-xxt">{{feedInfo.modified}}</td>
                                 </tr>
@@ -420,42 +399,61 @@
                     </div>
                 </div>
             </tab>
-            <tab ng-click="vm.currTab = 'export'" active ="vm.currTab == 'export'">
+            <tab ng-click = "vm.currTab.export = true;vm.currTab.group = false" active ="vm.currTab.export">
                 <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
-                <div class="table-responsive box">
-
-                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main"  ng-controller="popupCtrl">
-                        <thead>
-                        <tr>
-                            <th class="text-center mfb-xxt">No.</th>
-                            <th class="text-left mfb-xxt">导出文件名</th>
-                            <th class="text-left mfb-xxt">导出申请时间</th>
-                            <th class="text-left mfb-xxt">Excel生成时间</th>
-                            <th class="text-left mfb-xxt">导出申请者</th>
-                            <th class="text-center mfb-xxt">操作</th>
-                        </tr>
-                        </thead>
-                    </table>
-
-                    <div class="box-body" if-no-rows="vm.exportList.length">
-                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
-                            <tbody>
-                                <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
-                                    <td class="text-center mfb-xxt">{{$index + 1}}</td>
-                                    <td class="text-left mfb-xxt"><a href="javascript:void(0)" ng-click="openOtherDownload(exportInfo.fileName)">{{exportInfo.fileName}}</a></td>
-                                    <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
-                                    <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
-                                    <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
-                                    <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    &emsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-pop btn-default"  ng-click="exportFresh()">
+                                            <i class="fa fa-refresh"></i>&nbsp;刷新
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="panel-body">
+                        <div class="table-responsive box">
+                            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main"  ng-controller="popupCtrl">
+                                <thead>
+                                <tr>
+                                    <th class="text-center mfb-xxt">No.</th>
+                                    <th class="text-left mfb-xxt">导出文件名</th>
+                                    <th class="text-left mfb-xxt">导出申请时间</th>
+                                    <th class="text-left mfb-xxt">Excel生成时间</th>
+                                    <th class="text-left mfb-xxt">导出申请者</th>
+                                    <th class="text-center mfb-xxt">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
 
-                    <div class="col-sm-12 m-t-lg m-b-lg">
-                        <vpagination config="vm.exportPageOption"></vpagination>
+                            <div class="box-body" if-no-rows="vm.exportList.length">
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <tbody>
+                                        <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
+                                            <td class="text-center mfb-xxt">{{$index + 1}}</td>
+                                            <td class="text-left mfb-xxt">
+                                                <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openOtherDownload(fileItem)">{{fileItem}}<br></a>
+                                            </td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                            <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
+                                            <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <vpagination config="vm.exportPageOption"></vpagination>
+                        </div>
                     </div>
                 </div>
+
             </tab>
         </tabset>
     </div>

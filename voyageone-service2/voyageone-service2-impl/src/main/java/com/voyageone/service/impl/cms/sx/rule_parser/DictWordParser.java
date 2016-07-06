@@ -38,7 +38,7 @@ public class DictWordParser {
                 }
             }
             if (ruleExpression == null) {
-                System.out.println("Can't parse ruleWord: " + ruleWord + ", for not find this dict value");
+                //System.out.println("Can't parse ruleWord: " + ruleWord + ", for not find this dict value");
                 return null;
             }
 

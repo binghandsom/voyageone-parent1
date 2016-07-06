@@ -26,7 +26,10 @@ public final class MapUtil {
         Map<String, Object> map = new HashMap<>();
         for (Field field : listField) {
             field.setAccessible(true);
-            map.put(field.getName(), field.get(entity));
+           Object result= field.get(entity);
+            if(result!=null) {
+                map.put(field.getName(), result);
+            }
         }
         return map;
     }

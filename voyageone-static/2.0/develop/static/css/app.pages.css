@@ -6,6 +6,7 @@
 s-field textarea.form-control {
     height: 100px;
 }
+
 s-field textarea.s-html {
     height: 200px;
 }
@@ -270,19 +271,13 @@ s-field textarea.s-html {
     border-radius: 2.5px;
     box-shadow: 1px 1px 2px #888;
 }
+
 /*欢迎页面首页数据展示*/
 .stat-boxes {
     display: inline-block;
     list-style: none outside none;
-    margin: 4px 0 0 -48px;
+    margin: 4px 0 0 -44px;
     text-align: center;
-    min-height: 216px;
-}
-
-@media screen and (max-width: 1441px) {
-    .stat-boxes {
-        min-height: 216px;
-    }
 }
 
 .stat-boxes li {
@@ -298,22 +293,31 @@ s-field textarea.s-html {
     display: inline-block;
     line-height: 18px;
     margin: 0 4px 4px;
+    float: left;
 }
 
 .stat-boxes .right {
     font-size: 12px;
-    padding: 9px 0 8px 0;
+    padding: 6px 0;
     text-align: center;
-    width: 110px;
+    width: 102px;
     color: #666666;
     text-shadow: 0 1px 0 #ffffff;
     float: left;
+    margin-bottom: 2px;
 }
 
 .stat-boxes .right strong {
-    font-size: 26px;
-    margin-bottom: 3px;
-    margin-top: 6px;
+    font-size: 20px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+    display: block;
+}
+
+.stat-boxes .right-side {
+    font-size: 10px;
+    margin: 2px 0;
+    padding: 0 2px;
     display: block;
 }
 
@@ -380,19 +384,19 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
-.panel-default .panel-detail-head{
+.panel-default .panel-detail-head {
     background: #e67e22;
     color: white;
 }
 
 /**限制宽度，防止图片布局混乱*/
 @media screen and (max-width: 1280px) {
-    body{
+    body {
         min-width: 1280px;
     }
 }
 
-.product-shema-detail .btn-nav{
+.product-shema-detail .btn-nav {
     width: 100%;
     height: 27px;
     border-top: 1px solid #ADCAE2;
@@ -402,12 +406,12 @@ s-field textarea.s-html {
 
 }
 
-.product-shema-detail .btn-nav:hover{
+.product-shema-detail .btn-nav:hover {
     background: #325471;
     color: white;
 }
 
-.product-shema-detail .btn-nav-pop{
+.product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
 
@@ -421,7 +425,7 @@ s-field textarea.s-html {
     font-size: 12px;
 }
 
-.product-shema-detail .product-title{
+.product-shema-detail .product-title {
     position: absolute;
     margin-top: -43px;
     margin-left: 11px;
@@ -469,7 +473,7 @@ s-field textarea.s-html {
 }
 
 .product-shema-detail .master-sidebar,
-.product-shema-detail .feed-sidebar{
+.product-shema-detail .feed-sidebar {
     top: 130px;
     right: 40px;
     z-index: 9;
@@ -653,7 +657,7 @@ s-field textarea.s-html {
     box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
     display: inline-block;
     line-height: 18px;
-    margin: 0 4px 4px;
+    margin: 0 6px 4px;
 }
 
 .data-display-boxes .data {
@@ -665,6 +669,7 @@ s-field textarea.s-html {
     text-shadow: 0 1px 0 #ffffff;
     float: left;
 }
+
 @media screen and (min-width: 1441px) {
     .data-display-boxes .data {
         width: 163px;
@@ -677,9 +682,10 @@ s-field textarea.s-html {
     margin-top: 6px;
     display: block;
 }
+
 /*表格断行*/
 
-.tableWordBreak>li {
+.tableWordBreak > li {
     word-break: break-all;
     overflow: auto;
     max-height: 17px;

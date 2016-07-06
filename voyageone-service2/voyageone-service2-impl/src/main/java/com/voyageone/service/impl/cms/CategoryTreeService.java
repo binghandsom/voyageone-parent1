@@ -162,7 +162,7 @@ public class CategoryTreeService extends BaseService {
             categoryTree.setCatName(categorys.get(0));
             categoryTree.setCatId(MD5.getMD5(categorys.get(0)));
             categoryTree.setParentCatId("0");
-            categoryTree.setIsParent(categorys.size() > 0 ? 1 : 0);
+            categoryTree.setIsParent(!categorys.isEmpty() ? 1 : 0);
             categoryTree.setChildren(new ArrayList<>());
             if(categorys.size() == 1){
                 categoryTree.setModified(DateTimeUtil.getNow());
@@ -261,7 +261,7 @@ public class CategoryTreeService extends BaseService {
             if (CmsMtCategoryTreeModel.getCatPath().equalsIgnoreCase(catPath)) {
                 return CmsMtCategoryTreeModel;
             }
-            if (CmsMtCategoryTreeModel.getChildren().size() > 0) {
+            if (!CmsMtCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeModel category = findCategory(CmsMtCategoryTreeModel, catPath);
                 if (category != null) return category;
             }
@@ -280,7 +280,7 @@ public class CategoryTreeService extends BaseService {
                 }
                 return CmsMtCategoryTreeModel;
             }
-            if (CmsMtCategoryTreeModel.getChildren().size() > 0) {
+            if (!CmsMtCategoryTreeModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeModel category = findCategorySingleSku(CmsMtCategoryTreeModel, catPath, result);
                 if (category != null) {
                     if ("1".equals(CmsMtCategoryTreeModel.getSingleSku())) {
@@ -318,7 +318,7 @@ public class CategoryTreeService extends BaseService {
             if (catTreeModel.getCatId().equalsIgnoreCase(catId)) {
                 return catTreeModel;
             }
-            if (catTreeModel.getChildren().size() > 0) {
+            if (!catTreeModel.getChildren().isEmpty()) {
                 CmsMtCategoryTreeModel category = findCategoryByCatId(catTreeModel, catId);
                 if (category != null) return category;
             }

@@ -41,7 +41,8 @@ define(function () {
                     "root": "/cms/home/menu/",
                     "getCategoryInfo": session('getCategoryInfo'),
                     "getPlatformType": session('getPlatformType'),
-                    "setPlatformType": "setPlatformType"
+                    "setPlatformType": "setPlatformType",
+                    "getHomeSumData":"getHomeSumData"
                 }
             },
             "search": {
@@ -181,6 +182,7 @@ define(function () {
                 },
                 "jmPromotionDetailService": {
                     "root": "/cms/jmpromotion/detail",
+                    "init": "init",
                     "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
                     "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
                     "delete": "delete",
@@ -369,13 +371,11 @@ define(function () {
                     "root": "/cms/pop/history_promotion",
                     "getPromotionHistory": "getPromotionHistory"
                 },
-
-                priceLogService: {
-                    root: '/cms/price/log',
-                    page: 'page',
-                    export: 'export'
+                "$priceHistoryService": {
+                    "root": "/cms/pop/history_price",
+                    "init": "getChannelCategory2",
+                    "getPriceHistory": "getPriceHistory"
                 },
-
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",
                     "init": "getChannelCategory",

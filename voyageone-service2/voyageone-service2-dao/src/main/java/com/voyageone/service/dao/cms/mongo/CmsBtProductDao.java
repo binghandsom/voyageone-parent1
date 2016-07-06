@@ -8,11 +8,13 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.OldCmsBtProductModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -20,18 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
+ *
  * @author Ethan Shi
  * @version 2.1.0
+ *
  */
 @Repository
 public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
-
-    private static final String PriceNotEqualQuery =
-            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
-
-    //执行大小写不敏感的匹配
-    private static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
 
     /**
      * 更新SKU
@@ -67,24 +66,22 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < codes.size(); i++) {
             if (i == 0) {
-                sb.append("'").append(codes.get(i)).append("'");
+                sb.append("\"").append(codes.get(i)).append("\"");
             } else {
-                sb.append(", '").append(codes.get(i)).append("'");
+                sb.append(", \"").append(codes.get(i)).append("\"");
             }
         }
 
-        String query = "{'fields.code':{'$in':[" + sb.toString() + "]}}";
+        String query = "{\"common.fields.code\":{\"$in\":[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
-
     /**
      * 根据codes返回多条产品数据
      */
     public CmsBtProductModel selectByCode(String code, String channelId) {
-        String query = "{\"fields.code\":\"" + code + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-
     public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
@@ -100,6 +97,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
         return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
+    }
+
+    @Override
+    public WriteResult update(BaseMongoModel model) {
+        throw new BusinessException("not suppert");
+        // return update(model);
     }
 
     /**
@@ -120,37 +123,44 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return result.size() <= 0;
     }
 
+    //执行大小写不敏感的匹配
+    public static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
+
+    @Deprecated
     public long countByFieldStatusEqualApproved(String channelId) {
-        return countByQuery(FieldStatusEqArrpoved, channelId);
+        throw new BusinessException("not used");
+//        return countByQuery(FieldStatusEqArrpoved, channelId);
     }
+//
+//    private static final String PriceNotEqualQuery =
+//            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
+//
+//    /**
+//     * 查询priceSale和priceRetail不相等的products
+//     */
+//    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
+//        return select(PriceNotEqualQuery, channelId);
+//    }
 
-    public List<CmsBtProductModel> selectByFieldStatusEqualApproved(String channelId) {
-
-        return select(FieldStatusEqArrpoved, channelId);
-    }
-
-    /**
-     * 查询priceSale和priceRetail不相等的products
-     */
-    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
-        return select(PriceNotEqualQuery, channelId);
-    }
 
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId) {
-        String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId ) {
+        String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
+
 
 
         for (CmsBtProductModel product : allProduct) {
 
             List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
 
-            for (int i = sellerCatList.size() - 1; i >= 0; i--) {
-                if (sellerCatList.get(i).getcId().equals(catModel.getCatId())) {
+            for(int i = sellerCatList.size() - 1 ; i >= 0 ; i--)
+            {
+                if(sellerCatList.get(i).getcId().equals(catModel.getCatId()))
+                {
                     sellerCatList.remove(i);
                     break;
                 }
@@ -158,7 +168,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
 
             HashMap<String, Object> rsMap = new HashMap<>();
-            rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
+            rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
 
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -188,18 +198,20 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             String cId = catModel.getCatId();
             //如果包含修改过的cId,则需要修改cName和cNames
             if (cIds.stream().filter(w -> w.equals(cId)).count() > 0) {
-                for (int i = 0; i < cIds.size(); i++) {
-                    if (cIds.get(i).equals(cId)) {
-                        cNames.set(i, catModel.getCatName());
+                for(int i = 0 ; i < cIds.size(); i++)
+                {
+                    if(cIds.get(i).equals(cId))
+                    {
+                        cNames.set(i , catModel.getCatName());
                         break;
                     }
                 }
-                cat.setcName(Joiner.on(">").join(cNames));
+               cat.setcName(Joiner.on(">").join(cNames));
             }
         }
 
         HashMap<String, Object> rsMap = new HashMap<>();
-        rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
+        rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", product.getProdId());
@@ -209,6 +221,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         update(product.getChannelId(), queryMap, updateMap);
     }
+
 
     /**
      * 更新所有产品的店铺内分类数据
@@ -230,7 +243,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             }
 
-            String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
+            String queryStr = "{'channelId':'" + channelId + "','platforms.P"+cartId+".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
 
             List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
@@ -244,20 +257,17 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return null;
     }
 
-    @Override
-    public WriteResult update(BaseMongoModel model) {
-        throw new BusinessException("not suppert");
-        // return update(model);
-    }
-
     /**
-     * 执行数据更新。(注: 覆盖父类方法便于切面捕捉该方法)
-     * @param channelId 渠道 id
-     * @param paraMap 更新条件
-     * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
+     * 移行数据使用,取得老的product数据
+     * @return
      */
-    @Override
-    public WriteResult update(String channelId, Map paraMap, Map rsMap) {
-        return super.update(channelId, paraMap, rsMap);
+    public List<OldCmsBtProductModel> selectOldProduct(String channelId, String code){
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        if (!StringUtils.isEmpty(code)) {
+            jomgoQuery.setQuery("{\"fields.code\" : #}");
+            jomgoQuery.setParameters(code);
+        }
+        return mongoTemplate.find(jomgoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
     }
 }

@@ -52,7 +52,7 @@ public class CmsFeedSearchService extends BaseAppService {
     private CmsMtChannelValuesService cmsMtChannelValuesService;
 
     // 查询产品信息时的缺省输出列
-    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'created':1,'modified':1}";
+    private final String searchItems = "{'category':1,'code':1,'name':1,'model':1,'color':1,'origin':1,'brand':1,'image':1,'productType':1,'sizeType':1,'shortDescription':1,'longDescription':1,'skus':1,'attribute':1,'updFlg':1,'qty':1,'updMessage':1,'created':1,'modified':1}";
 
     // 查询产品信息时的缺省排序条件
     private final String sortItems = "{'category':1,'code':1}";

@@ -41,7 +41,7 @@ public class CustomWordModuleGetPaddingImageKey extends CustomWordModule {
         RuleExpression imageIndexExpression = customModuleUserParamGetPaddingImageKey.getImageIndex();
 
         String paddingPropName = expressionParser.parse(paddingPropNameExpression, shopBean, user, extParameter);
-        int imageIndex = Integer.valueOf(expressionParser.parse(imageIndexExpression, shopBean, user, extParameter));
+        int imageIndex = Integer.parseInt(expressionParser.parse(imageIndexExpression, shopBean, user, extParameter));
 
         return sxProductService.searchDictList(channelId, cartId, paddingPropName, imageIndex);
     }

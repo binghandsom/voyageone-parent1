@@ -137,7 +137,8 @@ public class JuMeiProductAddPlatformService {
             cmsBtJmSkuModel.setJmSkuNo(spu.getSkuInfo().getJumei_sku_no());
             cmsBtJmSkuModel.setJmSpuNo(spu.getJumei_spu_no());
          //   cmsBtJmSkuModel.setState(1);
-            CmsBtJmPromotionSkuModel promotionSkuModel = updateInfo.getMapSkuIdCmsBtJmPromotionSkuModel().get(cmsBtJmSkuModel.getId());
+            updateInfo.getMapSkuIdCmsBtJmPromotionSkuModel().get(cmsBtJmSkuModel.getId());
+           // CmsBtJmPromotionSkuModel promotionSkuModel = updateInfo.getMapSkuIdCmsBtJmPromotionSkuModel().get(cmsBtJmSkuModel.getId());
            // promotionSkuModel.setState(1);//已经上新
            // promotionSkuModel.setSynchState(2);//上新更新成功
         }
@@ -257,7 +258,7 @@ public class JuMeiProductAddPlatformService {
         // List<JmPicBean> pics = imagesMap.get(JumeiImageType.NORMAL.getId());
         List<CmsBtJmProductImagesModel> listNormal = getListCmsBtJmProductImages(info.getListCmsBtJmProductImages(), EnumJuMeiProductImageType.NORMAL.getId());
         //白底方图
-        if (listNormal.size() != 0) {
+        if (!listNormal.isEmpty()) {
             for (CmsBtJmProductImagesModel jmPicBean : listNormal) {
                 if (stringBuffer.length() != 0) {
                     stringBuffer.append(",");
@@ -274,7 +275,7 @@ public class JuMeiProductAddPlatformService {
         stringBuffer = new StringBuffer();
         //  pics = imagesMap.get(JumeiImageType.VERTICAL.getId());
         List<CmsBtJmProductImagesModel> listVERTICAL = getListCmsBtJmProductImages(info.getListCmsBtJmProductImages(), EnumJuMeiProductImageType.VERTICAL.getId());
-        if (listVERTICAL.size() != 0) {
+        if (!listVERTICAL.isEmpty()) {
             for (CmsBtJmProductImagesModel jmPicBean : listVERTICAL) {
                 if (stringBuffer.length() != 0) {
                     stringBuffer.append(",");
@@ -290,7 +291,7 @@ public class JuMeiProductAddPlatformService {
         stringBuffer = new StringBuffer();
         //pics = imagesMap.get(JumeiImageType.PRODUCT.getId());
         List<CmsBtJmProductImagesModel> listPRODUCT = getListCmsBtJmProductImages(info.getListCmsBtJmProductImages(), EnumJuMeiProductImageType.PRODUCT.getId());
-        if (listPRODUCT.size() > 0) {
+        if (!listPRODUCT.isEmpty()) {
             for (CmsBtJmProductImagesModel jmPicBean : listPRODUCT) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
@@ -302,7 +303,7 @@ public class JuMeiProductAddPlatformService {
         stringBuffer = new StringBuffer();
         // pics = imagesMap.get(JumeiImageType.PARAMETER.getId());
         List<CmsBtJmProductImagesModel> listPARAMETER = getListCmsBtJmProductImages(info.getListCmsBtJmProductImages(), EnumJuMeiProductImageType.PARAMETER.getId());
-        if (listPARAMETER.size() != 0) {
+        if (!listPARAMETER.isEmpty()) {
             for (CmsBtJmProductImagesModel jmPicBean : listPARAMETER) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
@@ -313,7 +314,7 @@ public class JuMeiProductAddPlatformService {
         stringBuffer = new StringBuffer();
         // pics = imagesMap.get(JumeiImageType.BRANDSTORY.getId());
         List<CmsMtMasterInfoModel> listBRANDSTORY = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.BRANDSTORY.getId());
-        if (listBRANDSTORY.size() != 0) {
+        if (!listBRANDSTORY.isEmpty()) {
             for (CmsMtMasterInfoModel jmPicBean : listBRANDSTORY) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
@@ -326,14 +327,14 @@ public class JuMeiProductAddPlatformService {
         //尺码表
         // pics = imagesMap.get(JumeiImageType.SIZE.getId());
         List<CmsMtMasterInfoModel> listSIZE = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.SIZE.getId());
-        if (listSIZE.size() != 0) {
+        if (!listSIZE.isEmpty()) {
             for (CmsMtMasterInfoModel jmPicBean : listSIZE) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
         } else {
             //if(!jmBtProductImport.getSizeType().equalsIgnoreCase("One Size") && !jmBtProductImport.getSizeType().equalsIgnoreCase("OneSize")){
             String SizeType = info.getModelCmsBtJmProduct().getSizeType();
-            if (!SizeType.equalsIgnoreCase("One Size") && !SizeType.equalsIgnoreCase("OneSize")) {
+            if (!"One Size".equalsIgnoreCase(SizeType) && !"OneSize".equalsIgnoreCase(SizeType)) {
                 throw new BusinessException("尺码图不存在");
             }
         }
@@ -341,7 +342,7 @@ public class JuMeiProductAddPlatformService {
         //物流图
         //pics = imagesMap.get(JumeiImageType.LOGISTICS.getId());
         List<CmsMtMasterInfoModel> lisLOGISTICS = getListCmsMtMasterInfoModel(info.getListCmsMtMasterInfo(), EnumJuMeiMtMasterInfo.LOGISTICS.getId());
-        if (lisLOGISTICS.size() != 0) {
+        if (!lisLOGISTICS.isEmpty()) {
             for (CmsMtMasterInfoModel jmPicBean : lisLOGISTICS) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getValue2()));
             }
@@ -371,9 +372,8 @@ public class JuMeiProductAddPlatformService {
         return result;
     }
 
-    public static Long getTime(Date d) throws Exception {
-        long l = d.getTime() / 1000 - 8 * 3600;
-        return l;
+    private static Long getTime(Date d) throws Exception {
+        return d.getTime() / 1000 - 8 * 3600;
     }
 
 }

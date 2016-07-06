@@ -462,8 +462,7 @@ public class CmsProductDetailService extends BaseAppService {
         // 获取参数
         String mCatId = StringUtils.trimToNull((String) requestMap.get("catId"));
         String mCatPath = StringUtils.trimToNull((String) requestMap.get("catPath"));
-        String pCatId = StringUtils.trimToNull((String) requestMap.get("pCatId"));
-        String pCatPath = StringUtils.trimToNull((String) requestMap.get("pCatPath"));
+        List<Map> pCatList = (List) requestMap.get("pCatList");
 
         Map<String, Object> resultMap = new HashMap<>();
         if (mCatId == null || mCatPath == null) {
@@ -506,6 +505,22 @@ public class CmsProductDetailService extends BaseAppService {
             updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
             updObj.setQueryParameters(prodCodes);
 
+            boolean isInCatFlg = false;
+            String pCatId = null;
+            String pCatPath = null;
+            for (Map pCatObj : pCatList) {
+                if (cartId.toString().equals(pCatObj.get("cartId"))) {
+                    isInCatFlg = true;
+                    pCatId = StringUtils.trimToNull((String) pCatObj.get("catId"));
+                    pCatPath = StringUtils.trimToNull((String) pCatObj.get("catPath"));
+                    break;
+                }
+            }
+            if (isInCatFlg && (pCatId == null || pCatPath == null)) {
+                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s, platformCategory=%s", cartId, mCatPath, mCatId, pCatList.toString()));
+            } else if (!isInCatFlg) {
+                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
+            }
             if (pCatId == null || pCatPath == null) {
                 updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#}}");
                 updObj.setUpdateParameters(mCatId, mCatPath);
@@ -558,6 +573,7 @@ public class CmsProductDetailService extends BaseAppService {
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
         mastData.put("lock",cmsBtProduct.getLock());
+        mastData.put("isMain",cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
         List<Map<String, Object>> platformList = new ArrayList<>();
@@ -593,7 +609,9 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
-        if ((oldProduct.getCommon().getCatId() == null && commonModel.getCatId() != null) || !oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
+        if(oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
+        if(commonModel.getCatId() == null) commonModel.setCatId("");
+        if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct, modifier);
 
             // 更新 feedinfo表中的updFlg 重新出发 feed->mast
@@ -610,8 +628,11 @@ public class CmsProductDetailService extends BaseAppService {
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if(platformCategory == null || platformCategory.size() == 0) return;
+        if (oldProduct.getPlatforms() == null) {
+            return;
+        }
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
-            if ((platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
+            if (platform.getCartId() != 0 && (platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
                 List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase(Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());

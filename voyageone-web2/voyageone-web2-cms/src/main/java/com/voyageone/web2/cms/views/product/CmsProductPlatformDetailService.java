@@ -125,10 +125,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, cmsBtProduct.getCommon().getFields().getCode());
         cmsBtProduct.getCommon().getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null ? 0 : skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
 
-        if (cmsBtProduct.getCommon().getFields() != null) {
-            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
-        }
+//        if (cmsBtProduct.getCommon().getFields() != null) {
+//            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
+//            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
+//        }
         mastData.put("images", images);
         return mastData;
     }

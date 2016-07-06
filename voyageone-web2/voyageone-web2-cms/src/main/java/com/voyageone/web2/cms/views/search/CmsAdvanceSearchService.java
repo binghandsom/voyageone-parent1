@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -65,11 +66,13 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
     private ProductTagService productTagService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
-            "common.fields.productNameEn;common.fields.brand;common.fields.status;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceSaleSt;common.fields.priceSaleEd;common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
+            "common.skus.skuCode;common.fields.productNameEn;common.fields.brand;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
      * 获取检索页面初始化的master data数据
@@ -147,15 +150,15 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        return productService.countByQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false), userInfo.getSelChannelId());
+        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
+        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
         if (searchValue.getProductPageNum() > 0) {
@@ -184,8 +187,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
+        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -211,8 +213,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
+        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'prodId':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -262,7 +263,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 检查翻译状态/设置状态，由数值转换为文字描述
+     * 检查翻译状态/设置状态，由数值转换为文字描述,以及金额格式转换(这里只针对自定义显示列中的项目)
      */
     public void checkProcStatus(List<CmsBtProductBean> productList, String lang) {
         if (productList == null || productList.isEmpty()) {
@@ -270,42 +271,40 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return;
         }
         List<TypeBean> transStatusList = TypeConfigEnums.MastType.translationStatus.getList(lang);
-        Map<String, String> transStatusMap = new HashMap<>(transStatusList.size());
-        for (TypeBean beanObj : transStatusList) {
-            transStatusMap.put(beanObj.getValue(), beanObj.getName());
-        }
-//        List<TypeBean> lockStatusList = TypeConfigEnums.MastType.procLockStatus.getList(lang);
-//        Map<String, String> lockStatusMap = new HashMap<>(lockStatusList.size());
-//        for (TypeBean beanObj : lockStatusList) {
-//            lockStatusMap.put(beanObj.getValue(), beanObj.getName());
-//        }
+        Map<String, String> transStatusMap = transStatusList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> catStsList = TypeConfigEnums.MastType.categoryStatus.getList(lang);
+        Map<String, String> catStsMap = catStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+
+        List<TypeBean> hsStsList = TypeConfigEnums.MastType.hsCodeStatus.getList(lang);
+        Map<String, String> hsStsMap = hsStsList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
 
         for (CmsBtProductModel prodObj : productList) {
             CmsBtProductModel_Field fieldsObj = prodObj.getCommon().getFields();
             if (fieldsObj != null) {
-                String stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(fieldsObj.getTranslateStatus());
+                String stsFlg = StringUtils.trimToNull(fieldsObj.getTranslateStatus());
                 if (stsFlg != null) {
-                    String stsValueStr = transStatusMap.get(stsFlg);
-                    if (stsValueStr == null) {
-                        fieldsObj.setTranslateStatus("");
-                    } else {
-                        fieldsObj.setTranslateStatus(stsValueStr);
-                    }
+                    String stsValueStr = StringUtils.trimToEmpty(transStatusMap.get(stsFlg));
+                    fieldsObj.setTranslateStatus(stsValueStr);
                 } else {
                     fieldsObj.setTranslateStatus("");
                 }
 
-//                stsFlg = org.apache.commons.lang3.StringUtils.trimToNull(prodObj.getLock());
-//                if (stsFlg != null) {
-//                    String stsValueStr = lockStatusMap.get(stsFlg);
-//                    if (stsValueStr == null) {
-//                        prodObj.setLock("");
-//                    } else {
-//                        prodObj.setLock(stsValueStr);
-//                    }
-//                } else {
-//                    prodObj.setLock("");
-//                }
+                stsFlg = StringUtils.trimToNull(fieldsObj.getCategoryStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(catStsMap.get(stsFlg));
+                    fieldsObj.setCategoryStatus(stsValueStr);
+                } else {
+                    fieldsObj.setCategoryStatus("");
+                }
+
+                stsFlg = StringUtils.trimToNull(fieldsObj.getHsCodeStatus());
+                if (stsFlg != null) {
+                    String stsValueStr = StringUtils.trimToEmpty(hsStsMap.get(stsFlg));
+                    fieldsObj.setHsCodeStatus(stsValueStr);
+                } else {
+                    fieldsObj.setHsCodeStatus("");
+                }
             }
         }
     }
@@ -316,7 +315,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      */
     public long countGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         List<JomgoAggregate> aggrList = new ArrayList<>();
-        String qry1 = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         if (qry1 != null && qry1.length() > 0) {
             aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
         }
@@ -344,7 +343,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      */
     public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         List<JomgoAggregate> aggrList = new ArrayList<>();
-        String qry1 = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         if (qry1 != null && qry1.length() > 0) {
             aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
         }
@@ -355,7 +354,9 @@ public class CmsAdvanceSearchService extends BaseAppService {
         String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode' } }";
         aggrList.add(new JomgoAggregate(gp1));
         aggrList.add(new JomgoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
-        aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+        if (searchValue.getGroupPageSize() > 0) {
+            aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+        }
 
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
