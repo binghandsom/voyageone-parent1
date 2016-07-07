@@ -390,9 +390,9 @@ s-field textarea.s-html {
 }
 
 /**限制宽度，防止图片布局混乱*/
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1366px) {
     body {
-        min-width: 1280px;
+        min-width: 1350px;
     }
 }
 
@@ -636,13 +636,6 @@ s-field textarea.s-html {
     list-style: none outside none;
     margin: 0 0 0 -48px;
     text-align: center;
-    min-height: 127px;
-}
-
-@media screen and (max-width: 1441px) {
-    .data-display-boxes {
-        min-height: 127px;
-    }
 }
 
 .data-display-boxes li {
