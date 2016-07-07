@@ -40,7 +40,8 @@ public class HtDealUpdateResponse extends BaseJMResponse {
     public boolean is_Success() {
         return is_Success;
     }
-    public void setBody(String body) throws IOException {
+    public void setBody(String body)  {
+        try {
         Map<String, Object> map = JacksonUtil.jsonToMap(body);
         if (map.containsKey("error_code") && "0".equals(map.get("error_code"))) {
             this.setIs_Success(true);
@@ -48,6 +49,11 @@ public class HtDealUpdateResponse extends BaseJMResponse {
             this.setErrorMsg(UnicodeUtil.decodeUnicode(body));
         }
         this.body = body;
+        } catch (Exception ex) {
+            logger.error("setBody ",ex);
+            this.setIs_Success(false);
+            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+        }
     }
     public boolean getIs_Success() {
         return is_Success;

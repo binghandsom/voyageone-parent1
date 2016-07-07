@@ -110,6 +110,7 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                 this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
+            logger.error("setBody ",ex);
             this.setIs_Success(false);
             this.setErrorMsg("返回参数解析错误" + this.body);
         }
