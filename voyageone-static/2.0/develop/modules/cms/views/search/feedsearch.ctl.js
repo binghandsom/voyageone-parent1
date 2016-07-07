@@ -169,7 +169,8 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品" : "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
+            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品 修改记录数:"+$scope.vm.feedPageOption.total :
+                                                      "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
             confirm(notice).result.then(function () {
                 $feedSearchService.updateFeedStatus({
                     'selList': selList,
@@ -228,7 +229,9 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree
+                        categories: res.data.categoryTree,
+                        from:$scope.vm.searchInfo.category,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.category = context.selected.catPath;
                         }
