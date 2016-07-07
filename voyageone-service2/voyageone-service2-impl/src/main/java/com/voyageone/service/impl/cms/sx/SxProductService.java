@@ -689,7 +689,7 @@ public class SxProductService extends BaseService {
 
                 if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
-                    customPropService.doInit(channelId);
+//                    customPropService.doInit(channelId);
                     String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
                     if (feedCatPath == null) feedCatPath = "";
                     List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
