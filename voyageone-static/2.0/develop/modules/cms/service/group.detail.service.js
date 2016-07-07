@@ -59,27 +59,34 @@ define([
 		 * @private
 		 */
 		function _resetProductList (data) {
+
+			var cartId = data.groupInfo.cartId;
+
 			_.forEach(data.productList, function (productInfo) {
 
 				// 设置Inventory Detail
-				productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
+				productInfo.inventoryDetail = _setInventoryDetail(productInfo.common.skus);
 
 				// 设置sku销售渠道信息
-				productInfo.skuDetail = _setSkuDetail(productInfo.skus);
+				productInfo.skuDetail = _setSkuDetail(productInfo.common.skus);
 
 				// 设置price detail
-				productInfo.priceDetail = _setPriceDetail(productInfo.fields);
+				if (cartId != 0) {
+					productInfo.priceDetail = _setPriceDetail(productInfo.platforms["P" + cartId], cartId);
+					productInfo.priceSale = _setPriceSale(productInfo.platforms["P" + cartId], cartId);
+					productInfo.platform = productInfo.platforms["P" + cartId];
+				}
+				else {
+					productInfo.priceDetail = _setPriceDetail(productInfo.common.fields, cartId);
+					productInfo.priceSale = _setPriceSale(productInfo.common.fields, cartId);
+					productInfo.platform = {};
+				}
 
-				productInfo.priceSale = _setPriceSale(productInfo.fields);
-
-				// 设置time detail
-				if(productInfo.groups)
-					productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 			});
 
 			var tempProductIds = [];
 			_.forEach(data.productList, function (productInfo) {
-				tempProductIds.push({id: productInfo.prodId, code: productInfo.fields.code});
+				tempProductIds.push({id: productInfo.prodId, code: productInfo.common.fields.code});
 			});
 			data.productIds = tempProductIds;
 		}
@@ -103,16 +110,32 @@ define([
 		 * @returns {Array}
 		 * @private
 		 */
-		function _setPriceDetail(object) {
+		function _setPriceDetail(object, cartId) {
 			var result = [];
-			var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON'), object.priceMsrpSt, object.priceMsrpEd);
-			if (!_.isNull(tempMsrpDetail))
-				result.push(tempMsrpDetail);
+			if (cartId != 0) {
+				var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON'), object.pPriceMsrpSt, object.pPriceMsrpEd);
+				if (!_.isNull(tempMsrpDetail))
+					result.push(tempMsrpDetail);
 
-			// 设置retail price
-			var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON'), object.priceRetailSt, object.priceRetailEd);
-			if (!_.isNull(tempRetailPriceDetail))
-				result.push(tempRetailPriceDetail);
+				// 设置retail price
+				var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON'), object.pPriceRetailSt, object.pPriceRetailEd);
+				if (!_.isNull(tempRetailPriceDetail))
+					result.push(tempRetailPriceDetail);
+
+				// 设置sale price
+				var tempSalePriceDetail = _setOnePriceDetail($translate.instant('TXT_SALE_PRICE'), object.pPriceSaleSt, object.pPriceSaleEd);
+				if (!_.isNull(tempSalePriceDetail))
+					result.push(tempSalePriceDetail);
+			} else {
+				var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP_WITH_COLON'), object.priceMsrpSt, object.priceMsrpEd);
+				if (!_.isNull(tempMsrpDetail))
+					result.push(tempMsrpDetail);
+
+				// 设置retail price
+				var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE_WITH_COLON'), object.priceRetailSt, object.priceRetailEd);
+				if (!_.isNull(tempRetailPriceDetail))
+					result.push(tempRetailPriceDetail);
+			}
 
 			return result;
 		}
@@ -123,11 +146,18 @@ define([
 		 * @returns {*}
 		 * @private
 		 */
-		function _setPriceSale(object) {
-			if (object.priceSaleSt == object.priceSaleEd)
-				return object.priceSaleSt != null ? $filter('number')(object.priceSaleSt, 2) : '0.00';
-			else
-				return $filter('number')(object.priceSaleSt, 2) + '~' + $filter('number')(object.priceSaleEd, 2);
+		function _setPriceSale(object, cartId) {
+			if (cartId != 0) {
+				if (object.pPriceSaleSt == object.pPriceSaleEd)
+					return object.pPriceSaleSt != null ? $filter('number')(object.pPriceSaleSt, 2) : '0.00';
+				else
+					return $filter('number')(object.pPriceSaleSt, 2) + '~' + $filter('number')(object.pPriceSaleEd, 2);
+			} else {
+				if (object.priceSaleSt == object.priceSaleEd)
+					return object.priceSaleSt != null ? $filter('number')(object.priceSaleSt, 2) : '0.00';
+				else
+					return $filter('number')(object.priceSaleSt, 2) + '~' + $filter('number')(object.priceSaleEd, 2);
+			}
 		}
 
 		/**
@@ -185,17 +215,7 @@ define([
 		function _setSkuDetail(skus) {
 			var result = [];
 			_.forEach(skus, function (sku) {
-				var cartInfo = "";
-				_.forEach(sku.skuCarts, function (skuCart) {
-					var strValue = Carts.valueOf(skuCart);
-					if (strValue == undefined) {
-						strValue = '';
-					} else {
-						strValue = strValue.name
-					}
-					cartInfo += strValue + ",";
-				});
-				result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
+				result.push(sku.skuCode + ": " + sku.isSale);
 			});
 			return result;
 		}

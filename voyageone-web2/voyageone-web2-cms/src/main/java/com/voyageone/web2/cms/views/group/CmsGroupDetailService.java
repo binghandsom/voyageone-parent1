@@ -2,13 +2,13 @@ package com.voyageone.web2.cms.views.group;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -35,6 +35,8 @@ public class CmsGroupDetailService extends BaseAppService {
     private PromotionService promotionService;
     @Autowired
     private CmsBtJmPromotionService cmsBtJmPromotionService;
+    @Autowired
+    private PlatformService platformService;
 
     private final static String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;skus";
@@ -65,7 +67,8 @@ public class CmsGroupDetailService extends BaseAppService {
 
         // 先取得group信息，
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(getSearchValue(params, cmsSessionBean));
+        queryObject.setQuery("{\"groupId\": #}");
+        queryObject.setParameters(Integer.valueOf(params.get("id").toString()));
         List<CmsBtProductGroupModel> rstList = productGroupService.getList(userInfo.getSelChannelId(), queryObject);
         if (rstList == null || rstList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有group数据 " + params.toString());
@@ -73,27 +76,26 @@ public class CmsGroupDetailService extends BaseAppService {
         }
 
         CmsBtProductGroupModel grpObj = rstList.get(0);
+
         List<String> codeList = grpObj.getProductCodes();
         if (codeList == null || codeList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList group下没有product数据 " + params.toString());
             throw new BusinessException("该group下没有product数据");
         }
-        String[] codeArr = new String[codeList.size()];
-        codeArr = codeList.toArray(codeArr);
 
         JomgoQuery grpQueryObject = new JomgoQuery();
-        grpQueryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
-        grpQueryObject.setProjectionExt(searchItems.split(";"));
-
-        List<CmsBtProductBean> prodList = productService.getBeanList(userInfo.getSelChannelId(), grpQueryObject);
+        grpQueryObject.setQuery("{\"common.fields.code\": {$in:#}}");
+        grpQueryObject.setParameters(codeList);
+        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);
         if (prodList == null || codeList.isEmpty()) {
             $warn("CmsGroupDetailService.getProductList 没有product数据 " + params.toString());
-            throw new BusinessException("该group下没有product数据");
+            throw new BusinessException("该group下对应的product数据找不到");
         }
-        prodList.forEach(prodObj -> prodObj.setGroupBean(grpObj));
 
         result.put("groupInfo", grpObj);
         result.put("productList", prodList);
+        // 设置平台商品url
+        result.put("productUrl", platformService.getPlatformProductUrl(String.valueOf(grpObj.getCartId())));
         return result;
     }
 
@@ -112,18 +114,6 @@ public class CmsGroupDetailService extends BaseAppService {
         }
 
         productGroupService.updateMainProduct(userSession.getSelChannelId(), String.valueOf(prodCodeObj), Long.parseLong(String.valueOf(groupIdObj)), userSession.getUserName());
-    }
-
-    /**
-     * 获取group的检索条件
-     */
-    private String getSearchValue (Map<String, Object> params, CmsSessionBean cmsSessionBean) {
-        StringBuilder result = new StringBuilder();
-
-        // 添加platform id
-        result.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
-
-        return "{" + result.toString() + "}";
     }
 
 }

@@ -140,6 +140,14 @@ public class ProductGroupService extends BaseService {
         updateMap.put("mainProductCode", productCode);
         updateMap.put("modifier", modifier);
 
+        //// TODO: 16/7/8 如果两个商品的平台类目不一致,并且该商品已经上新则不能切换主商品
+
+
+        // 更新group下面的mainProductCode
+        cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+
+        // 更新产品级别下的
+
         return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
     }
 
