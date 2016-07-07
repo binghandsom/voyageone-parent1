@@ -47,6 +47,7 @@ public class CmsJmPromotionIndexController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
         parameter.getModel().setChannelId(channelId);
+        parameter.getModel().getActivityEnd().setSeconds(59);//聚美专场结束时间都以59秒结尾。
         return success(service.saveModel(parameter, userName, channelId));
     }
 

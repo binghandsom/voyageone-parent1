@@ -78,9 +78,14 @@ public class FeedInfoService extends BaseService {
         String priceType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceType"));
         if (priceType != null) {
             // 获取查询的价格区间下限
-            float priceSta = NumberUtils.toFloat(org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceValueSta")), -1);
-            // 获取查询的价格区间上限
-            float priceEnd = NumberUtils.toFloat(org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("priceValueEnd")), -1);
+            float priceSta = -1;
+            float priceEnd = -1;
+            if(searchValue.get("priceValueSta") != null){
+                priceSta = Float.parseFloat(searchValue.get("priceValueSta").toString());
+            }
+            if(searchValue.get("priceValueEnd") != null){
+                priceEnd = Float.parseFloat(searchValue.get("priceValueEnd").toString());
+            }
             if (priceSta > -1 && priceEnd > -1 && priceEnd < priceSta) {
                 throw new BusinessException("设置的查询价格区间不正确");
             }
