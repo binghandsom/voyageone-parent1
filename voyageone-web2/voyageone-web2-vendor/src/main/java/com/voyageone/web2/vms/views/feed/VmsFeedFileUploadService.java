@@ -37,14 +37,9 @@ import java.util.Map;
 @Service
 public class VmsFeedFileUploadService extends BaseAppService {
 
-    private final static String URL_PREFIX = "http://image.voyageone.com.cn/cms";
-
     private final static int FILE_LIMIT_SIZE = 50145728;
 
     private final static String CSV_TYPE = "csv";
-
-    @Autowired
-    private MqSender sender;
 
     @Autowired
     private FeedFileUploadService feedFileUploadService;
@@ -73,12 +68,12 @@ public class VmsFeedFileUploadService extends BaseAppService {
 
         // 上传文件失败
         if (inputStream == null) {
-            // TODO 上传文件失败
-            throw new BusinessException("7000087");
+            // Failed to upload file.
+            throw new BusinessException("8000016");
         }
 
         // 上传文件
-        String newFileName= feedFileUploadService.saveFile(channelId, file.getOriginalFilename(), inputStream);
+        feedFileUploadService.saveFile(channelId, file.getOriginalFilename(), inputStream);
 
         //更新vms_bt_feed_file表
         // feedFileUploadService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
@@ -104,21 +99,21 @@ public class VmsFeedFileUploadService extends BaseAppService {
             for (File file : files) {
                 // 只处理文件，跳过目录
                 if (!file.isDirectory()) {
-                    // TODO 存在正在处理的文件，请稍后上传
-                    throw new BusinessException("7000087");
+                    // Have Feed file is processing, please upload later.
+                    throw new BusinessException("8000013");
                 }
             }
         }
 
-        // 文件名
-        String fileName = "";
 
         // 文件大小判断
         if (uploadFile.getSize() >= FILE_LIMIT_SIZE) {
-            // TODO FeedFile大小不能超过3M
-            throw new BusinessException("7000087");
+            // The size of feed file exceeds the limit.
+            throw new BusinessException("8000014");
         }
-        fileName = uploadFile.getOriginalFilename();
+
+        // 文件名
+        String fileName = uploadFile.getOriginalFilename();
 
         // 获取文件后缀
         String suffix = null;
@@ -127,8 +122,8 @@ public class VmsFeedFileUploadService extends BaseAppService {
         }
         // 判断后缀是否合法（csv）
         if (suffix == null || !CSV_TYPE.toLowerCase().contains(suffix.toLowerCase())) {
-            // TODO 文件扩展名非法
-            throw new BusinessException("7000084");
+            // Please upload a feed file with csv format.
+            throw new BusinessException("8000015");
         }
     }
 }

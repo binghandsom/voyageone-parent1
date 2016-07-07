@@ -24,10 +24,8 @@ import java.io.InputStream;
 @Service
 public class FeedFileUploadService extends BaseService {
 
-
     @Autowired
     private VmsBtFeedFileDao vmsBtFeedFileDao;
-
 
     /**
      * 新建一个Image插入到cms_bt_image_group表
@@ -67,8 +65,8 @@ public class FeedFileUploadService extends BaseService {
         try {
             FileUtils.copyInputStreamToFile(inputStream, new File(feedFilePath  + fileName));
         } catch (IOException e) {
-            // TODO
-            throw new BusinessException("7000089");
+            // Failed to upload file.
+            throw new BusinessException("8000016");
         }
 
         return fileName;
