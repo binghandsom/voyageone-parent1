@@ -26,10 +26,17 @@ public class SxProductServiceTest {
     private SxProductService sxProductService;
 
     @Test
-    public void testAddCategory() throws Exception {
+    public void insertSxWorkLoadTest() throws Exception {
         List<String> codeList = new ArrayList<>();
         codeList.add("16238170-HELLOKITTYCLASSICDOT");
-        sxProductService.insertSxWorkLoad("018", codeList, "tester");
+        sxProductService.insertSxWorkLoad("018", codeList, null, "tester");
+    }
+
+    @Test
+    public void insertSxWorkLoadTest_WithCart() throws Exception {
+        List<String> codeList = new ArrayList<>();
+        codeList.add("16238170-HELLOKITTYCLASSICDOT");
+        sxProductService.insertSxWorkLoad("018", codeList, 23, "tester");
     }
 
 
