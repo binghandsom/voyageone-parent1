@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.ComplexMappingBean;
 import com.voyageone.service.bean.cms.MappingBean;
@@ -58,14 +59,26 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
     private class BuildSkuResult {
         //Build sku prop result
         Map<String, CmsBtProductModel_Sku> sizeCmsSkuPropMap;
+        // added by morse.lu 2016/07/07 start
+        Map<CmsBtProductModel_Sku, CmsBtProductModel> skuProductMap;
+        // added by morse.lu 2016/07/07 end
 
         public BuildSkuResult() {
             sizeCmsSkuPropMap = new HashMap<>();
+            // added by morse.lu 2016/07/07 start
+            skuProductMap = new HashMap<>();
+            // added by morse.lu 2016/07/07 end
         }
 
         public Map<String, CmsBtProductModel_Sku> getSizeCmsSkuPropMap() {
             return sizeCmsSkuPropMap;
         }
+
+        // added by morse.lu 2016/07/07 start
+        public Map<CmsBtProductModel_Sku, CmsBtProductModel> getSkuProductMap() {
+            return skuProductMap;
+        }
+        // added by morse.lu 2016/07/07 end
     }
 
     @Override
@@ -188,6 +201,9 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
         for (CmsBtProductModel sxProduct : sxProducts) {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
+                // added by morse.lu 2016/07/07 start
+                buildSkuResult.getSkuProductMap().put(cmsSkuProp, sxProduct);
+                // added by morse.lu 2016/07/07 end
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 // deleted by morse.lu 2016/07/04 start
                 // 不Mapping了,不用了吧,虽然留着也不影响,但是set的对象不对,应该是common下的skus + 各平台下面的skus
@@ -343,7 +359,15 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
 //            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
             if (skuExtend_aliasnameField != null) {
                 // 别名,用size
-                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), cmsSkuProp.getSize());
+                // modified by morse.lu 2016/07/07 start
+                // 先看看sizeNick有没有值，有的话直接用，没的话用size去尺码表里转换一下
+//                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), cmsSkuProp.getSize());
+                String size = cmsSkuProp.getSizeNick();
+                if (StringUtils.isEmpty(size)) {
+                    size = getChangeSize(expressionParser, buildSkuResult.getSkuProductMap().get(cmsSkuProp), cmsSkuProp.getSize());
+                }
+                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), size);
+                // modified by morse.lu 2016/07/07 end
             }
             // modified by morse.lu 2016/07/04 end
 
