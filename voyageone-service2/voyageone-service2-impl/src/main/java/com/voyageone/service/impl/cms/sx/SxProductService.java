@@ -854,6 +854,66 @@ public class SxProductService extends BaseService {
         }
         // added by morse.lu 2016/06/12 end
 
+        // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
+        // 取得尺码转换信息
+        Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
+                sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
+
+        // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
+        Map<String, String> sizeSxMap = new HashMap<>();
+        // 优先mainProduct里的sizeNick
+        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
+            if (!StringUtils.isEmpty(sku.getSizeNick())) {
+                sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+            }
+        }
+        // 然后把productList里的也一样的做一遍
+        for (CmsBtProductModel productModel : productModelList) {
+            // 遍历每个product里的sku
+            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                // 已经设置过的size就不用再设置了
+                if (!sizeSxMap.containsKey(sku.getSize())) {
+                    if (!StringUtils.isEmpty(sku.getSizeNick())) {
+                        sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+                    }
+                }
+            }
+        }
+
+        // 处理一下skuList的所有sizeSx尺码
+        for (BaseMongoMap<String, Object> skuMap : skuList) {
+			CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku)skuMap;
+
+			if (sizeSxMap.containsKey(sku.getSize())) {
+                // 直接用Nick
+                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+			} else {
+                // 用size的尺码, 并转换
+                if (sizeMap.containsKey(sku.getSize())) {
+                    sku.setSizeSx(sizeMap.get(sku.getSize()));
+                } else {
+                    sku.setSizeSx(sku.getSize());
+                }
+                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
+			}
+		}
+
+        // 把整理好的skuList里的sizeSx, 回写到mainProduct里的sizeSx 和 productList里的sizeSx里
+        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
+            sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+        }
+        for (CmsBtProductModel productModel : productModelList) {
+            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+            }
+        }
+
+        // 排序 (根据SizeSx来进行排序)
+        // TODO:
+
+
+        // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 END
+
         sxData.setProductList(productModelList);
         sxData.setSkuList(skuList);
 
