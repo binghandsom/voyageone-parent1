@@ -50,6 +50,10 @@ public class CmsBtPriceLogService extends BaseService {
         return priceLogDaoExt.selectCountBySkuOnCart(sku, code, cartId, channelId);
     }
 
+    public void forceLog(CmsBtPriceLogModel logModel) {
+        priceLogDao.insert(logModel);
+    }
+
     /**
      * 对指定的 sku 进行价格变动检查
      *
