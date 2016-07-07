@@ -257,7 +257,7 @@ public class ProductSkuService extends BaseService {
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
                 , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
 
-        Double breakThreshold = null;
+        Double breakThreshold = 0.00;
         if (cmsChannelConfigBean != null) {
             breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
         }
