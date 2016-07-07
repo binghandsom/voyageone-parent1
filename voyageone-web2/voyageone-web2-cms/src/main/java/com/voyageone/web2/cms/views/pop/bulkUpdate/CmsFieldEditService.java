@@ -682,13 +682,14 @@ public class CmsFieldEditService extends BaseAppService {
             bulkList.add(updObj);
         }
         $debug("批量修改商品价格 批量处理");
+        long sta = System.currentTimeMillis();
         BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList);
-        $debug("批量修改商品价格 结果=：" + rs.toString());
+        $debug("批量修改商品价格 结果=：" + rs.toString() + "  耗时" + (System.currentTimeMillis() - sta));
 
         // 需要记录价格变更履历
         $debug("批量修改商品价格 开始记入价格变更履历");
-        long sta = System.currentTimeMillis();
-       // cmsBtPriceLogService.logAll(skuCodeList, userInfo.getSelChannelId(), cartId, userInfo.getUserName(), null);
+        sta = System.currentTimeMillis();
+        cmsBtPriceLogService.logAll(skuCodeList, userInfo.getSelChannelId(), cartId, userInfo.getUserName(), null);
         $debug("批量修改商品价格 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 再查询这批商品是否可上新
