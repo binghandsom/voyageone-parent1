@@ -249,8 +249,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
         };
         Map<String, Object> price= new HashMap<>();
         price.put("ClientMSRP",minClientMSRP.compareTo(maxClientMSRP)==0?minClientMSRP:minClientMSRP+"-"+maxClientMSRP);
-        price.put("ClientRetail",minClientMSRP.compareTo(maxClientMSRP)==0?minClientMSRP:minClientMSRP+"-"+maxClientMSRP);
-        price.put("ClientNet",minClientMSRP.compareTo(maxClientMSRP)==0?minClientMSRP:minClientMSRP+"-"+maxClientMSRP);
+        price.put("ClientRetail",minClientRetail.compareTo(maxClientRetail)==0?minClientRetail:minClientRetail+"-"+maxClientRetail);
+        price.put("ClientNet",minClientNet.compareTo(maxClientNet)==0?minClientNet:minClientNet+"-"+maxClientNet);
         return price;
     }
 
