@@ -71,7 +71,7 @@ define(['cms',
             openCategory: function (category , categoryItem) {
                 // 标记选中
                 this.selected = category;
-                categoryItem.selectedCat = category;
+                categoryItem.selectedCat = category.catName;
 
                 // 查询当前选中的是第几级
                 var level = 0;

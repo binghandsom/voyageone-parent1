@@ -6,14 +6,8 @@ import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
-import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
-import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateRequest;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -87,6 +81,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 // 再售
                 if(StringUtil.isEmpty(model.getJmHashId())) {
                     copyDeal(modelCmsBtJmPromotion, model, shopBean);
+                }
+                else
+                {
+                    model.setSynchStatus(2);//有jmHashId 已上传
                 }
                 //更新deal   商品属性 价格
                 updateDeal(model, shopBean);
@@ -182,6 +180,16 @@ public class JuMeiProductPlatform3Service extends BaseService {
             } else {
                 if (!StringUtils.isEmpty(response.getJumei_hash_id())) {
                     model.setJmHashId(response.getJumei_hash_id());
+                } else if (!StringUtils.isEmpty(response.getSell_hash_id())) {
+                    HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
+                    getDealByHashIDRequest.setJumei_hash_id(response.getSell_hash_id());
+                    HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(shopBean, getDealByHashIDRequest);
+                    if (getDealByHashIDResponse.getEnd_time().getTime() > modelCmsBtJmPromotion.getActivityStart().getTime()) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
+                        model.setJmHashId(response.getSell_hash_id());
+                        if (modelCmsBtJmPromotion.getActivityEnd().getTime() > getDealByHashIDResponse.getEnd_time().getTime()) {//if true then 本次活动时间大于deal的结束时间 延期
+                            model.setDealEndTimeStatus(1);
+                        }
+                    }
                 }
                 model.setSynchStatus(3);
                 throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
