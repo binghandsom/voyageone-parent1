@@ -26,7 +26,8 @@ define(function (require) {
         'angular-md5',
         'vms.menu',
         'vms.topbar',
-        'vms.popups'
+        'vms.popups',
+        'angularFileUpload'
     ]).config(function ($routeProvider, $translateProvider) {
 
         $translateProvider.translations('zh', zh);
@@ -37,6 +38,8 @@ define(function (require) {
         });
 
         $routeProvider.otherwise(router.otherwise);
+    }).run(function(translateService) {
+        translateService.setLanguage('en');
     });
 
     function eachDeclareService(_services) {

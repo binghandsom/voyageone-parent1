@@ -157,7 +157,7 @@ define(function (require) {
         }),
 
         orderInfoService: new CommonDataService('/order/order_info/', {
-            
+
         })
     }
 });

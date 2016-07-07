@@ -55,7 +55,8 @@ require.config({
             'ngStorage',
             'vo-libs-angular',
             'md5',
-            'notify'
+            'notify',
+            'angular-file-upload'
         ]
     },
     deps: ['vms']

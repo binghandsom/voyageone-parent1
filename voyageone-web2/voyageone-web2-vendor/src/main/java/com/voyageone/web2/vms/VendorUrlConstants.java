@@ -12,4 +12,11 @@ public interface VendorUrlConstants {
             String INIT = "/init";
         }
     }
+
+    interface FEED {
+        interface FEED_FILE_IMPORT {
+            String ROOT = "/vms/feed/file_upload";
+            String UPLOAD_FEED_FILE = "/uploadFeedFile";
+        }
+    }
 }

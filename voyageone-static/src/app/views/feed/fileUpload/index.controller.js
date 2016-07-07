@@ -3,11 +3,11 @@ define([
 ], function (vms) {
     vms.controller('FeedFileUploadController', (function () {
 
-        function FeedFileUploadController($scope, alert, notify, blockUI) {
+        function FeedFileUploadController($scope, alert, notify, blockUI, FileUploader) {
             this.alert = alert;
             this.notify = notify;
             this.blockUI = blockUI;
-            var uploader = $scope.uploader = new FileUploader({
+            this.uploader = new FileUploader({
                 url: "/vms/feed/file_upload/importFeedFile"
             });
         }
@@ -15,10 +15,10 @@ define([
         FeedFileUploadController.prototype = {
             upload: function () {
                 var main = this;
-                var uploadQueue = uploader.queue;
+                var uploadQueue = this.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 if (!uploadItem) {
-                    return alert('TXT_MSG_NO_UPLOAD');
+                    return this.alert('TXT_MSG_NO_UPLOAD');
                 }
                 var uploadIt = function () {
                     this.uploadItem = uploadItem;
