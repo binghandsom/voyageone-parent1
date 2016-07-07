@@ -926,9 +926,7 @@
                                                            target="_blank"></a></li>
                                                 </ul>
                                                 <div class="form-inline" ng-if="groupInfo.grpImgList.length > 0">
-                                                    <a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-b-xs"
-                                                                                                      image="{{prop2.value}}"
-                                                                                                      alt=""/>&nbsp;</a>
+                                                    <a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-b-xs" image="{{prop2.value}}" alt=""/>&nbsp;</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -945,11 +943,8 @@
                                         <td class="text-left" style="display:inline-block;width:150px;">
                                             {{groupInfo.common.fields.brand}}
                                         </td>
-                                        <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr"
-                                            style="display:inline-block;width:120px; overflow:hidden;">
-                                    <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value"
-                                                                                        direct="left"
-                                                                                        size="50"></popover-text></span>
+                                        <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">
+                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
                                         </td>
                                         <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr"
