@@ -100,7 +100,9 @@ public class CmsBtPriceLogService extends BaseService {
 
         for (CmsBtProductModel_Platform_Cart cartProduct : productModel.getPlatforms().values())
 
-            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+            if (cartProduct.getCartId() >= 20)
+
+                log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
     }
 
     private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {

@@ -61,6 +61,17 @@ define([
             });
         }
 
+        PriceLogPopupController.prototype.getCartName = function (cartId) {
+
+            var self = this;
+
+            var cart = _.find(self.cartList, function (cart) {
+                return cart.value == cartId;
+            });
+
+            return !cart.value ? "" : cart.label;
+        };
+
         PriceLogPopupController.prototype.export = function () {
 
             var self = this;
