@@ -688,7 +688,7 @@ public class SxProductService extends BaseService {
 
                 if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
-                    customPropService.doInit(channelId);
+//                    customPropService.doInit(channelId);
                     String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
                     if (feedCatPath == null) feedCatPath = "";
                     List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
@@ -3026,19 +3026,21 @@ public class SxProductService extends BaseService {
                     continue;
                 }
 
-                // 根据groupId获取group的上新信息
-                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
-
-                // 判断是否需要上新
-                if (sxData == null) {
-                    continue;
-                }
-                if (sxData.getProductList().size() == 0) {
-                    continue;
-                }
-                if (sxData.getSkuList().size() == 0) {
-                    continue;
-                }
+                // 20160707 tom 加速, 不再做检查 START
+//                // 根据groupId获取group的上新信息
+//                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
+//
+//                // 判断是否需要上新
+//                if (sxData == null) {
+//                    continue;
+//                }
+//                if (sxData.getProductList().size() == 0) {
+//                    continue;
+//                }
+//                if (sxData.getSkuList().size() == 0) {
+//                    continue;
+//                }
+                // 20160707 tom 加速, 不再做检查 END
 
                 // 加入等待上新列表
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
@@ -3056,8 +3058,25 @@ public class SxProductService extends BaseService {
 
         // 插入上新表
         if (!modelList.isEmpty()) {
-            int rslt = sxWorkloadDao.insertSxWorkloadModels(modelList);
-            $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
+            // 避免一下子插入数据太多, 分批插入
+            List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
+
+            for (int i = 0; i < modelList.size(); i++) {
+                modelListFaster.add(modelList.get(i));
+
+                if (i % 301 == 0 ) {
+                    // 插入一次数据库
+                    sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+
+                    // 初始化一下
+                    modelListFaster = new ArrayList<>();
+                }
+            }
+
+            if (modelListFaster.size() > 0) {
+                // 最后插入一次数据库
+                sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+            }
         }
 
     }

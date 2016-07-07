@@ -239,8 +239,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // --------------------------------------------------------------------------------------------
-                // 自定义属性 - 初始化
-                customPropService.doInit(channelId);
+//                // 自定义属性 - 初始化
+//                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
             }
             // jeff 2016/05 add start
