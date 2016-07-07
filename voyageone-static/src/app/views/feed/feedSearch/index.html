@@ -1,10 +1,10 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left">Feed File Manage</h4>
+        <h4 class="pull-left">Feed Info Search</h4>
         <ul class="pull-right breadcrumb">
             <li><a href="#/home">Home</a></li>
             <li><a href="javascript:void(0)">Feed</a></li>
-            <li class="active selecte">Feed Import Result</li>
+            <li class="active selecte">Feed Info Search</li>
         </ul>
     </div>
 </div>
@@ -16,32 +16,22 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">STATUS</label>
-                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm">
-                        <option value="">Select</option>
-                    </select>
+                    <label class="control-label">Category</label>
+                    <input id="Category" type="text" class="form-control input-sm" placeholder="Category">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">File Name</label>
-                    <input id="ORDER_ID" type="text" class="form-control input-sm">
+                    <label class="control-label">Brand</label>
+                    <input id="Brand" type="text" class="form-control input-sm" placeholder="Brand">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Upload Time</label>
-                     <span class="input-group">
-                        <input class="form-control" ng-model="ctrl.feedStartTime" uib-datepicker-popup
-                               is-open="datepicker1" date-model-format="yyyy-MM-dd"  placeholder="Start Date">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </span>
+                    <label class="control-label">Parent SKU</label>
+                    <input id="Parent SKU" type="text" class="form-control input-sm" placeholder="Parent SKU">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Price</label>
+                    <input id="startPrice" type="text" class="form-control input-sm" placeholder="startPrice">
                     <span>~</span>
-                     <span class="input-group">
-                        <input class="form-control" ng-model="ctrl.feedEndTime" uib-datepicker-popup
-                               is-open="datepicker2" date-model-format="yyyy-MM-dd"  placeholder="Expected finish date">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </span>
+                    <input id="endPrice" type="text" class="form-control input-sm" placeholder="endPrice">
                 </div>
                 <div class="form-group pull-right">
                     <button class="btn btn-default btn-sm">CLEAR</button>
