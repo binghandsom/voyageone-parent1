@@ -95,9 +95,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
-    // jeff 2016/04 add start
-    @Autowired
-    private ProductPriceLogService productPriceLogService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
