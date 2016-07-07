@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -689,7 +688,7 @@ public class SxProductService extends BaseService {
 
                 if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
-                    customPropService.doInit(channelId);
+//                    customPropService.doInit(channelId);
                     String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
                     if (feedCatPath == null) feedCatPath = "";
                     List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
@@ -3018,7 +3017,7 @@ public class SxProductService extends BaseService {
                 }
 
                 // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
-                if (group.getCartId() == 0 || group.getCartId() == 1) {
+                if (group.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
                     continue;
                 }
 
@@ -3027,19 +3026,21 @@ public class SxProductService extends BaseService {
                     continue;
                 }
 
-                // 根据groupId获取group的上新信息
-                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
-
-                // 判断是否需要上新
-                if (sxData == null) {
-                    continue;
-                }
-                if (sxData.getProductList().size() == 0) {
-                    continue;
-                }
-                if (sxData.getSkuList().size() == 0) {
-                    continue;
-                }
+                // 20160707 tom 加速, 不再做检查 START
+//                // 根据groupId获取group的上新信息
+//                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
+//
+//                // 判断是否需要上新
+//                if (sxData == null) {
+//                    continue;
+//                }
+//                if (sxData.getProductList().size() == 0) {
+//                    continue;
+//                }
+//                if (sxData.getSkuList().size() == 0) {
+//                    continue;
+//                }
+                // 20160707 tom 加速, 不再做检查 END
 
                 // 加入等待上新列表
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
@@ -3048,7 +3049,9 @@ public class SxProductService extends BaseService {
                 model.setGroupId(group.getGroupId());
                 model.setPublishStatus(0);
                 model.setModifier(modifier);
-
+                model.setModified(DateTimeUtil.getDate());
+                model.setCreater(modifier);
+                model.setCreated(DateTimeUtil.getDate());
                 modelList.add(model);
 
             }
@@ -3056,10 +3059,28 @@ public class SxProductService extends BaseService {
         }
 
         // 插入上新表
+        int iCnt = 0;
         if (!modelList.isEmpty()) {
-            int rslt = sxWorkloadDao.insertSxWorkloadModels(modelList);
-            $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
-        }
+            // 避免一下子插入数据太多, 分批插入
+            List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
 
+            for (int i = 0; i < modelList.size(); i++) {
+                modelListFaster.add(modelList.get(i));
+
+                if (i % 301 == 0 ) {
+                    // 插入一次数据库
+                    iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+
+                    // 初始化一下
+                    modelListFaster = new ArrayList<>();
+                }
+            }
+
+            if (modelListFaster.size() > 0) {
+                // 最后插入一次数据库
+                iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+            }
+        }
+        $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }
 }

@@ -18,14 +18,14 @@
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[0]">
                                 <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(0)"><i class="fa fa-search"></i></button>
                             </div>
-                            <div class="category_drag_list_dp" style="height:260px;">
-                                <ul>
-                                    <li ng-repeat="tag1 in ctrl.tree[0]">
-                                        <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
-                                            <span>{{tag1.tagChildrenName}}</span>
-                                        </a>
-                                    </li>
-                                </ul>
+                            <div class="category_drag_list_dp" style="max-height:260px;">
+                                <div ng-repeat="tag1 in ctrl.tree[0]" class="m-t-xs">
+                                    <label class="checkbox-inline c-checkbox" ng-click="ctrl.collect(tag1)">
+                                        <input type="checkbox"> <span class="fa fa-check"></span>&nbsp;{{tag1.tagChildrenName}}
+                                    </label>
+                                    <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);">
+                                        <i class="fa fa-fw fa-angle-right text"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -39,14 +39,14 @@
                                 <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
-                        <div class="category_drag_list_dp" style="height:260px;">
-                            <ul>
-                                <li ng-repeat="tag2 in ctrl.tree[1]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"  ng-class="{indexSelected:ctrl.selected[1] == tag2}">
-                                        <span>{{tag2.tagChildrenName}}</span>
-                                    </a>
-                                </li>
-                            </ul>
+                        <div class="category_drag_list_dp" style="max-height:260px;">
+                            <div ng-repeat="tag2 in ctrl.tree[1]" class="m-t-xs">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-click="ctrl.collect(tag2)"> <span class="fa fa-check"></span>&nbsp;{{tag2.tagChildrenName}}
+                                </label>
+                                <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.selected[1] = tag2;ctrl.search(2);">
+                                    <i class="fa fa-fw fa-angle-right text"></i></button>
+                            </div>
                         </div>
                     </div>
                     <!---------------------------------------Tag three-------------------------------------->
@@ -56,31 +56,19 @@
 
                             <div class="form-inline m-l-xs">
                                 <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="key[2]">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(3)"><i class="fa fa-search"></i></button>
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i class="fa fa-search"></i></button>
                             </div>
                         </div>
-                        <div class="category_drag_list_dp" style="height:260px;">
-                            <ul>
-                                <li ng-repeat="tag3 in ctrl.tree[2]">
-                                    <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"  ng-class="{indexSelected:ctrl.selected[2] == tag3}">
-                                        <span>{{ tag3.tagChildrenName }}</span>
-                                    </a>
-                                </li>
-                            </ul>
+                        <div class="category_drag_list_dp" style="max-height:260px;">
+                            <div ng-repeat="tag3 in ctrl.tree[2]" class="m-t-xs">
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-click="ctrl.collect(tag3)"> <span class="fa fa-check"></span>&nbsp;{{tag3.tagChildrenName}}
+                                </label>
+                                <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag3.isLeaf == false" ng-click="ctrl.selected[2] = tag3;ctrl.search(3);">
+                                    <i class="fa fa-fw fa-angle-right text"></i></button>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <div class="category_ts">
-                        <p>{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}<span> {{ ctrl.tagPathName }} </span>
-                            <button class="btn btn-default btn-pop pull-right m-l-xs" ng-click="ctrl.clear()" ng-model="ctrl.count" style="margin-top: -5px;"><i class="fa fa-remove"></i>&nbsp;Clear</button>
-                            <button class="btn btn-success btn-pop pull-right" ng-click="ctrl.confirm()" ng-model="ctrl.count" style="margin-top: -5px;">点击添加此类目作为搜索条件</button>
-                        </p>
-                    </div>
-                    <div class="scroll-y custom_ts" style="max-height: 80px;">
-                        <span class="m-l-sm" style="color: #0a0a09">您已经选择了:</span>
-                        <label class="label label-info m-r-xs m-t-xs" ng-repeat=" selected in ctrl.selectdTagList" style="display: inline-block;">{{selected.tagPathName}}</label>
                     </div>
                 </div>
             </div>
