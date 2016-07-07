@@ -113,7 +113,7 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                     this.setResponse(map.get("response").toString());
                 }
             }
-            if ("0".equals(this.error_code)) {
+            if ("0".equals(this.error_code)&&!"error".equals(this.getReason())) {
                 this.setIs_Success(true);
             } else {
                 this.setErrorMsg(this.body);
