@@ -160,14 +160,14 @@ define(function () {
             "controllerUrl": "modules/cms/views/system/error/list.ctl"
         },
         "marketing_setting_common_custom_attribute_list": {
-            "url": "/marketing_setting/common_custom_attribute_list",
+            "url": "/marketing_setting/common_custom_attribute_list/",
             "hash": "/marketing_setting/common_custom_attribute_list/:catPath",
             "templateUrl": "views/channel/custom/attribute.tpl.html",
             "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
         },
-        "channel_custom_value": {
-            "url": "/channel/custom/value/",
-            "hash": "/channel/custom/value/:catPath",
+        "marketing_setting_common_custom_value_list": {
+            "url": "/marketing_setting/common_custom_value_list/",
+            "hash": "/marketing_setting/common_custom_value_list/:catPath",
             "templateUrl": "views/channel/custom/value.tpl.html",
             "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
         },
