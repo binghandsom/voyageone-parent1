@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -28,7 +27,7 @@ public class CmsDataAmountService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsDataAmountService";
+        return "CmsDataAmountJob";
     }
 
     @Override
