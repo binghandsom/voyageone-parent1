@@ -20,11 +20,15 @@
                             </div>
                             <div class="category_drag_list_dp" style="max-height:260px;">
                                 <div ng-repeat="tag1 in ctrl.tree[0]" class="m-t-xs">
-                                    <label class="checkbox-inline c-checkbox" ng-click="ctrl.collect(tag1)">
-                                        <input type="checkbox"> <span class="fa fa-check"></span>&nbsp;{{tag1.tagChildrenName}}
+                                    <label class="checkbox-inline c-checkbox">
+                                        <input type="checkbox" ng-controller="selectRowsCtrl" ng-model="ctrl.taglist.selFlag[tag1.id]"
+                                               ng-click="selectOne(tag1.id, ctrl.taglist)">
+                                        <span class="fa fa-check"></span>&nbsp;{{tag1.tagChildrenName}}
                                     </label>
-                                    <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);">
+                                    <button title="点击展开子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);">
                                         <i class="fa fa-fw fa-angle-right text"></i></button>
+                                    <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.tree[1]=[]">
+                                        <i class="fa fa-fw fa-angle-left text"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -42,10 +46,14 @@
                         <div class="category_drag_list_dp" style="max-height:260px;">
                             <div ng-repeat="tag2 in ctrl.tree[1]" class="m-t-xs">
                                 <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-click="ctrl.collect(tag2)"> <span class="fa fa-check"></span>&nbsp;{{tag2.tagChildrenName}}
+                                    <input type="checkbox"  ng-controller="selectRowsCtrl" ng-model="ctrl.taglist.selFlag[tag2.id]"
+                                           ng-click="selectOne(tag2.id, ctrl.taglist)">
+                                    <span class="fa fa-check"></span>&nbsp;{{tag2.tagChildrenName}}
                                 </label>
-                                <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.selected[1] = tag2;ctrl.search(2);">
+                                <button title="点击展开子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.selected[1] = tag2;ctrl.search(2);">
                                     <i class="fa fa-fw fa-angle-right text"></i></button>
+                                <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.tree[2]=[]">
+                                    <i class="fa fa-fw fa-angle-left text"></i></button>
                             </div>
                         </div>
                     </div>
@@ -62,9 +70,10 @@
                         <div class="category_drag_list_dp" style="max-height:260px;">
                             <div ng-repeat="tag3 in ctrl.tree[2]" class="m-t-xs">
                                 <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-click="ctrl.collect(tag3)"> <span class="fa fa-check"></span>&nbsp;{{tag3.tagChildrenName}}
+                                    <input type="checkbox"  ng-controller="selectRowsCtrl" ng-model="ctrl.taglist.selFlag[tag3.id]"
+                                           ng-click="selectOne(tag3.id, ctrl.taglist)"> <span class="fa fa-check"></span>&nbsp;{{tag3.tagChildrenName}}
                                 </label>
-                                <button class="btn btn-vo btn-xs pull-right text-muted" ng-if="tag3.isLeaf == false" ng-click="ctrl.selected[2] = tag3;ctrl.search(3);">
+                                <button title="点击展开子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag3.isLeaf == false" ng-click="ctrl.selected[2] = tag3;ctrl.search(3);">
                                     <i class="fa fa-fw fa-angle-right text"></i></button>
                             </div>
                         </div>
