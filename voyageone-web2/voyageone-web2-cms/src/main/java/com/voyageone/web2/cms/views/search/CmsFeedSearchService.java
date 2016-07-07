@@ -68,8 +68,9 @@ public class CmsFeedSearchService extends BaseAppService {
         // 获取compare type
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
+
         // 获取brand list
-        masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(userInfo.getSelChannelId(), CmsMtChannelValuesService.BRAND));
         // 获取category list
         List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
         if (!feedCatList.isEmpty()) {
