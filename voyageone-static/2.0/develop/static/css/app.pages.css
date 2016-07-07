@@ -689,3 +689,17 @@ s-field textarea.s-html {
     overflow: auto;
     max-height: 17px;
 }
+
+/* 属性翻译页面的定制样式 Start */
+
+.panel-body-flex-center {
+    height: 145px;
+    display: flex;
+    align-items: center;
+}
+
+.panel-body-flex-center .form-horizontal {
+    width: 100%;
+}
+
+/* 属性翻译页面的定制样式 End */
