@@ -117,7 +117,8 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == "1" || $routeParams.type == "2" || $routeParams.type == "3") {
+                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                    search();
                     return;
                 }
                 if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
@@ -568,7 +569,7 @@ define([
                     $scope.vm.masterData.catList = resp.data.catTree;
                 }).then(function () {
                 if ($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
+                    $scope.vm.searchInfo.cidValue = $routeParams.value2.split("|");
             });
         }
 
