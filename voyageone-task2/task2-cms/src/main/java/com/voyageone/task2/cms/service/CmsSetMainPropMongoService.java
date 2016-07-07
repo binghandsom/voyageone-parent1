@@ -74,9 +74,6 @@ import java.util.stream.Collectors;
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
-    // 有效销售平台cartId的最小值
-    private static final int ACTIVE_CARTID_MIN = 20;
-
     @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
@@ -1438,7 +1435,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // add desmond 2016/07/05 start
                 // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
                 int iCartId = Integer.parseInt(typeChannelBean.getValue());
-                if (iCartId < ACTIVE_CARTID_MIN) {
+                if (iCartId < CmsConstants.ACTIVE_CARTID_MIN) {
                     continue;
                 }
                 // add desmond 2016/07/05 end
@@ -1902,7 +1899,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // add desmond 2016/07/05 start
                 // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
                 int iCartId = Integer.parseInt(typeChannelBean.getValue());
-                if (iCartId < ACTIVE_CARTID_MIN) {
+                if (iCartId < CmsConstants.ACTIVE_CARTID_MIN) {
                     continue;
                 }
                 // add desmond 2016/07/05 end
@@ -1990,7 +1987,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                     // add desmond 2016/07/05 start
                     // P0（主数据）平台不用设置sku
-                    if (entry.getValue().getCartId() < ACTIVE_CARTID_MIN) {
+                    if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
                         continue;
                     }
                     // add desmond 2016/07/05 end
@@ -2844,7 +2841,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         CmsBtProductModel_Platform_Cart platform = entry.getValue();
                         // add desmond 2016/07/05 start
                         // P0（主数据）平台不用设置sku
-                        if (platform == null || platform.getCartId() < ACTIVE_CARTID_MIN) {
+                        if (platform == null || platform.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
                             continue;
                         }
                         // add desmond 2016/07/05 end
