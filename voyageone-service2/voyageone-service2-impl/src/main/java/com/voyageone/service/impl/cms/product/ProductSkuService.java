@@ -250,6 +250,9 @@ public class ProductSkuService extends BaseService {
 
     }
 
+    /*
+        sku共同属性PriceDiffFlg计算方法
+     */
     public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
 
         // 阀值
