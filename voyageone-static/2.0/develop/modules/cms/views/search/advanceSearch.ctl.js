@@ -750,7 +750,7 @@ define([
                     }
                     return popupNewCategory({
                         from: $scope.vm.searchInfo.pCatPath,
-                        categories: res.data
+                        categories: res
                     });
                 }).then(function (context) {
                 $scope.vm.searchInfo.pCatPath = context.selected.catPath;
@@ -788,7 +788,8 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: $scope.vm.searchInfo.fCatPath
+                        from: $scope.vm.searchInfo.fCatPath,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.fCatPath = context.selected.catPath;
                             $scope.vm.searchInfo.fCatId = context.selected.catId;
