@@ -726,7 +726,7 @@ define(function () {
         "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
         "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
         "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
-        "TXT_FUZZY_SEARCH_PLACE_HOLDER": "模糊查询(ProductCode，商品名称)",
+        "TXT_TRANSLATION_FUZZY_SEARCH_TIP": "[ProductCode] 或者 [商品名称]",
         "TXT_PRODUCT_EN_NAME": "商品名称(英文)",
         "TXT_PRODUCT_CN_NAME": "商品名称(中文)",
         "TXT_PRODUCT_EN_MATERIAL": "材质(英文)",
