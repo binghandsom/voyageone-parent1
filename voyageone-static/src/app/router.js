@@ -25,6 +25,18 @@ define(function () {
                 "templateUrl": "./views/feed/feedImport/index.html",
                 "controllerUrl": "./views/feed/feedImport/index.controller",
                 "controller": "FeedImportResultController as ctrl"
+            },
+            {
+                "hash": "/feed/feed_info_search",
+                "templateUrl": "./views/feed/feedSearch/index.html",
+                "controllerUrl": "./views/feed/feedSearch/index.controller",
+                "controller": "FeedInFoSearchController as ctrl"
+            },
+            {
+                "hash": "/shipment/shipment_info",
+                "templateUrl": "./views/shipment/index.html",
+                "controllerUrl": "./views/shipment/index.controller",
+                "controller": "ShipmentInfoController as ctrl"
             }
         ]
     };
