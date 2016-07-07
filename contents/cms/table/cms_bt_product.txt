@@ -78,6 +78,7 @@
     * priceRetail         ->中国指导价
 * platforms    ->平台属性
   * P0  ->主数据
+    * cartId
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
   * P23  ->天猫国际
     * cartId

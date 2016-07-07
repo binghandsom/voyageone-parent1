@@ -228,7 +228,9 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree
+                        categories: res.data.categoryTree,
+                        from:$scope.vm.searchInfo.category,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.category = context.selected.catPath;
                         }

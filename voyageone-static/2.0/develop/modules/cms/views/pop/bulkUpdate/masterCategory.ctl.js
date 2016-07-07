@@ -2,6 +2,11 @@
  * Created by linanbin on 15/12/7.
  * @author sofia
  * @description 新增层级判断
+ *
+ * @Author piao
+ * @Date 2016-7-7
+ * @Description 添加了默认选中和选中背景
+                divtype："-"：为feed类目的分隔符， ">"：为主类目的分隔符
  */
 
 define(['cms',
@@ -31,7 +36,7 @@ define(['cms',
              * @type {object}
              */
             this.selected = null;
-            this.selectedCat = [];
+            this.selectedCat = {};
             /**
              * 选择目录的路径
              * @type {Array}
@@ -41,7 +46,7 @@ define(['cms',
              * 父节点与子节点之间的区分符,缺省是'>'
              * @type {String}
              */
-            this.divType = null;
+            this.divType = ">";
         }
 
         PopCategoryController.prototype = {
@@ -57,9 +62,7 @@ define(['cms',
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
 
-                /**产品详情页平台schema默认选中*/
-                if (this.context.plateSchema)
-                    this.defaultCategroy();
+                this.defaultCategroy();
             },
             /**
              * 打开一个类目(选定一个类目)
@@ -70,7 +73,7 @@ define(['cms',
                 if (categoryItem.selectedCat == undefined) {
                     categoryItem.selectedCat = [];
                 }
-                categoryItem.selectedCat[0] = category;
+                categoryItem.selectedCat = category.catName;
 
                 // 标记选中
                 this.selected = category;
@@ -89,13 +92,18 @@ define(['cms',
             },
             defaultCategroy: function () {
                 // 默认选中
-                var self = this;
-                var arrayCat = this.context.from.split(">");
+                if(!this.context.from)
+                    return;
+
+                var self = this,str = this.context.from+"";
+                var arrayCat = str.split(self.divType);
                 angular.forEach(arrayCat, function (item1, index) {
                     _.filter(self.categoryPath[index].categories, function (item2) {
                         if (item2.catName == item1) {
-                            if (item2.children.length != 0)
+                            self.categoryPath[index].selectedCat = item1;
+                            if (item2.children.length != 0){
                                 self.categoryPath.push({level: index + 2, categories: item2.children});
+                            }
                             else
                                 self.selected = item2;
                             return true;

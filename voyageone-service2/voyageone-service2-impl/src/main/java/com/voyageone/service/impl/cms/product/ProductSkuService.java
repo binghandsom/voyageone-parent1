@@ -6,6 +6,11 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -245,6 +250,38 @@ public class ProductSkuService extends BaseService {
 
     }
 
+    /*
+        sku共同属性PriceDiffFlg计算方法
+     */
+    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
+
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+
+        Double breakThreshold = null;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
+        }
+
+        String diffFlg = "1";
+        if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (1.0-breakThreshold);
+            if (priceRetail > sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (breakThreshold+1.0);
+            if (priceRetail >= sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
+    }
     /**
      *  更新group里的价格
      */
