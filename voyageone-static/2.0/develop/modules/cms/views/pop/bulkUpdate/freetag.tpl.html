@@ -27,7 +27,7 @@
                                     </label>
                                     <button title="点击展开子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);">
                                         <i class="fa fa-fw fa-angle-right text"></i></button>
-                                    <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.tree[1]=[]">
+                                    <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag1.isLeaf == false" ng-click="ctrl.collect(1)">
                                         <i class="fa fa-fw fa-angle-left text"></i></button>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                 </label>
                                 <button title="点击展开子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.selected[1] = tag2;ctrl.search(2);">
                                     <i class="fa fa-fw fa-angle-right text"></i></button>
-                                <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.tree[2]=[]">
+                                <button title="点击折叠子集标签" class="btn btn-default btn-xs pull-right text-muted" ng-if="tag2.isLeaf == false" ng-click="ctrl.collect(2)">
                                     <i class="fa fa-fw fa-angle-left text"></i></button>
                             </div>
                         </div>

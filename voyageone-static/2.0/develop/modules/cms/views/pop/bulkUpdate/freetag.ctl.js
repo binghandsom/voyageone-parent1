@@ -79,6 +79,12 @@ define([
                         }
                     }
                 }
+                self.tree[1] = tree[1];
+                self.tree[2] = tree[2];
+            },
+            collect: function (item) {
+                if (item == 1) this.tree[1] = [];
+                if (item == 2) this.tree[2] = [];
             },
 
             /**
