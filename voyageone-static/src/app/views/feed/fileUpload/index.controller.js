@@ -7,7 +7,8 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.blockUI = blockUI;
-            this.uploadItem = null;
+            // this.uploadItem = null;
+            this.FileUploader = FileUploader;
             this.uploader = new FileUploader({
                 url: "/vms/feed/file_upload/uploadFeedFile"
             });
@@ -18,11 +19,12 @@ define([
                 var main = this;
                 var uploadQueue = this.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
-                if (!uploadItem) {
+                if (!uploadItem || document.all.file.value == '') {
                     return this.alert('TXT_MSG_NO_UPLOAD');
                 }
                 var uploadIt = function () {
-                    uploadItem.onSuccess = function (res) {
+                        uploadItem.onSuccess = function (res) {
+                        document.all.file.outerHTML = "<input type=\"file\" id=\"file\" name=\"file\" uploader=\"ctrl.uploader\" accept=\".csv\" nv-file-select />";
                         main.blockUI.stop();
                         if (res.message) {
                             main.alert(res.message);
@@ -32,6 +34,8 @@ define([
                     };
                     uploadItem.onError = function (res) {
                         main.blockUI.stop();
+                        main.uploader = new FileUploader({url: "/vms/feed/file_upload/uploadFeedFile"});
+                        document.all.file.outerHTML = "<input type=\"file\" id=\"file\" name=\"file\" uploader=\"ctrl.uploader\" accept=\".csv\" nv-file-select />";
                         main.alert('TXT_MSG_UPLOAD_FAIL');
                     };
                     uploadItem.formData = [];
