@@ -156,7 +156,7 @@ define(function (require) {
             setChannel: 'setChannel'
         }),
 
-        orderInfoService: new CommonDataService('/vms/order/order_info/', {
+        orderInfoService: new CommonDataService('/vms/order/order_info', {
             init: "init"
         })
     }

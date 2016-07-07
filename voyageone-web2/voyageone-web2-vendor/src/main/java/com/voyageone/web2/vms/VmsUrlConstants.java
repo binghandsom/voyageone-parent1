@@ -4,7 +4,7 @@ package com.voyageone.web2.vms;
  * vendor urls
  * Created by vantis on 16-7-6.
  */
-public interface VendorUrlConstants {
+public interface VmsUrlConstants {
 
     interface ORDER {
         interface ORDER_INFO {

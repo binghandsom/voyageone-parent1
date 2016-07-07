@@ -1,21 +1,19 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.VendorUrlConstants;
+import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +21,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = VendorUrlConstants.FEED.FEED_FILE_IMPORT.ROOT,
+        value = VmsUrlConstants.FEED.FEED_FILE_IMPORT.ROOT,
         method = RequestMethod.POST
 )
 public class VmsFeedFileUploadController extends BaseController {
@@ -37,7 +35,7 @@ public class VmsFeedFileUploadController extends BaseController {
      *
      * @return Feed文件模板
      */
-    @RequestMapping(VendorUrlConstants.FEED.FEED_FILE_IMPORT.DOWNLOAD_SAMPLE_FEED_FILE)
+    @RequestMapping(VmsUrlConstants.FEED.FEED_FILE_IMPORT.DOWNLOAD_SAMPLE_FEED_FILE)
     public ResponseEntity downSampleFeedFile() {
         // Feed文件模板的路径
         String sampleFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.sample.file");
@@ -61,7 +59,7 @@ public class VmsFeedFileUploadController extends BaseController {
      * @param file 导入文件
      * @return 结果
      */
-    @RequestMapping(VendorUrlConstants.FEED.FEED_FILE_IMPORT.UPLOAD_FEED_FILE)
+    @RequestMapping(VmsUrlConstants.FEED.FEED_FILE_IMPORT.UPLOAD_FEED_FILE)
     public AjaxResponse saveUploadFeedFile(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         vmsFeedFileUploadService.saveFeedFile(getUser().getSelChannelId(), getUser().getUserName(), file);
         return success(null);

@@ -17,7 +17,10 @@
             <div class="form-inline">
                 <div class="form-group">
                     <label for="SKU_STATUS" class="control-label">STATUS</label>
-
+                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
+                        ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
+                        <option value="">Select</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="ORDER_ID" class="control-label">ORDER ID</label>
@@ -34,7 +37,7 @@
                     <input type="text" class="form-control input-sm">
                 </div>
                 <div class="form-group pull-right">
-                    <button class="btn btn-primary btn-sm">SEARCH</button>
+                    <button ng-click="ctrl.search" class="btn btn-primary btn-sm">SEARCH</button>
                 </div>
             </div>
         </div>
@@ -71,17 +74,17 @@
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td>{{item.orderId}}</td>
-                        <td>{{item.orderDate}}</td>
+                        <td>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td><strong><span>{{item.details.length}}</span> SKU</strong></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{item.desc}}</td>
+                        <td>{{item.status}}</td>
                         <td><strong>${{item.totalPrice}}</strong></td>
                         <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
-                    <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.details" ng-repeat-end>
+                    <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
                         <td></td>
                         <td>{{detail.orderId}}</td>
                         <td>{{detail.orderDate}}</td>
