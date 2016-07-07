@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -89,7 +90,7 @@ public class CmsBtPriceLogService extends BaseService {
 
         if (cartId != null) {
 
-            if (cartId < 20)
+            if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
                 return;
 
             CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(cartId);
@@ -113,7 +114,7 @@ public class CmsBtPriceLogService extends BaseService {
 
             int iCartId = Integer.valueOf(strCartId);
 
-            if (iCartId < 20)
+            if (iCartId < CmsConstants.ACTIVE_CARTID_MIN)
                 continue;
 
             log(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);

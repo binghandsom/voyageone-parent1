@@ -6,11 +6,9 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -198,7 +196,7 @@ public class ProductSkuService extends BaseService {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
                 // add desmond 2016/07/06 start
                 // P0（主数据）平台不用设置sku（不加这个条件会加一个P0.skus=null）
-                if ("P0".equals(entry.getKey())) {
+                if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
                     continue;
                 }
                 // add desmond 2016/07/06 end

@@ -117,10 +117,20 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == "1" || $routeParams.type == "2" || $routeParams.type == "3") {
+                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                    search();
                     return;
                 }
-                if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
+                if ($routeParams.type == undefined || $sessionStorage.feedSearch) {
+                    // 从主页而来的检索
+                    if ($routeParams.value1 >= 10) {
+                        $scope.vm._cart_tab_act = true;
+                        var catObj = _.find($scope.vm.masterData.cartList, function (item) {
+                            return item.value == $sessionStorage.feedSearch.cartId;
+                        });
+                        $scope.vm._cartType_ = catObj;
+                        getCat($scope.vm._cartType_);
+                    }
                     $scope.vm.searchInfo = $sessionStorage.feedSearch;
                     search();
                     if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
@@ -568,7 +578,7 @@ define([
                     $scope.vm.masterData.catList = resp.data.catTree;
                 }).then(function () {
                 if ($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
+                    $scope.vm.searchInfo.cidValue = $routeParams.value2.split("|");
             });
         }
 
