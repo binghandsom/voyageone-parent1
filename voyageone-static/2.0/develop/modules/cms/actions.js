@@ -317,7 +317,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": "getNewsCategoryList"
+                        "getNewsCategoryList": session("getNewsCategoryList")
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",
