@@ -4,7 +4,18 @@
 define([
     'cms'
 ], function (cms) {
-    return cms.controller('popFreeTagCtl', (function () {
+
+    function flatTrees(categories, parent) {
+        return categories.reduce(function (map, curr) {
+            curr.parent = parent;
+            map[curr.id] = curr;
+            if (curr.children && curr.children.length)
+                map = angular.extend(map, flatTrees(curr.children, curr));
+            return map;
+        }, {});
+    }
+
+    cms.controller('popFreeTagCtl', (function () {
         function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
@@ -18,8 +29,7 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.selectdTagList = [];
-            this.taglist = [];
+            this.taglist = {selList: []};
         }
 
         popFreeTagCtl.prototype = {
@@ -68,31 +78,13 @@ define([
                             continue;
                         }
                     }
-                    // if (index == 1 && selected[0].children.length == 0) selected[1] = undefined;
-                    // if (index == 2 && selected[1].children.length == 0) selected[2] = undefined;
                 }
+                self.tree[1] = tree[1];
+                self.tree[2] = tree[2];
             },
-
             collect: function (item) {
-                var self = this;
-                self.list = {
-                    "id": item.id,
-                    "tagPathName": item.tagPathName,
-                    "tagPath": item.tagPath
-                };
-                if (!self.selectdTagList || self.selectdTagList.length == 0) self.selectdTagList.push(self.list);
-
-                // 校验选择的是否有重复值
-                var hasData = false;
-                for (var j = 0; j < self.selectdTagList.length; j++) {
-                    if (self.selectdTagList[j].id == self.list.id) {
-                        hasData = true;
-                        break;
-                    }
-                }
-                if (!hasData) {
-                    self.selectdTagList.push(self.list);
-                }
+                if (item == 1) this.tree[1] = [];
+                if (item == 2) this.tree[2] = [];
             },
 
             /**
@@ -100,7 +92,23 @@ define([
              */
             save: function () {
                 var self = this;
-                self.context = {"selectdTagList": self.selectdTagList};
+                var map = flatTrees(self.source);
+                var selectdTagList = [];
+                _.map(self.taglist.selFlag, function (value, key) {
+                    return {selectedIds: key, selected: value};
+                }).filter(function (item) {
+                    return item.selected;
+                }).forEach(function (item) {
+                    var selTagList = map[item.selectedIds];
+                    var self = this;
+                    self.list = {
+                        "id": selTagList.id,
+                        "tagPathName": selTagList.tagPathName,
+                        "tagPath": selTagList.tagPath
+                    };
+                    selectdTagList.push(self.list);
+                });
+                self.context = {"selectdTagList": selectdTagList};
                 self.$uibModalInstance.close(self.context);
             }
         };
