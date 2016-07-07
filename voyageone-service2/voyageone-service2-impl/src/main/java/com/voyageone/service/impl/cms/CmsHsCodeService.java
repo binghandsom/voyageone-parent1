@@ -174,12 +174,12 @@ public class CmsHsCodeService extends BaseService {
     /**
      * 获取任务更新
      */
-    private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodeSetter, String hsCodeSetTime) {
+    private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodePrivate, String hsCodeSetTime) {
 
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("common.fields.hsCodePrivate", userName);
+        updateMap.put("common.fields.hsCodePrivate", hsCodePrivate);
         updateMap.put("common.fields.hsCodeStatus", hsCodeStatus);
-        updateMap.put("common.fields.hsCodeSetter", hsCodeSetter);
+        updateMap.put("common.fields.hsCodeSetter", userName);
         updateMap.put("common.fields.hsCodeSetTime", hsCodeSetTime);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (String code : allCodeList) {
@@ -231,7 +231,7 @@ public class CmsHsCodeService extends BaseService {
         //返回数据类型
         Map<String, Object> data = new HashMap<>();
         String code = (String) param.get("code");
-        String hsCodeSetter = (String) param.get("hsCodeSetter");
+        String hsCodePrivate = (String) param.get("hsCodePrivate");
         String hsCodeStatus = "1";
         //当前日期及时间
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
@@ -242,7 +242,7 @@ public class CmsHsCodeService extends BaseService {
         //根据获取任务的主code同步到master同一个Group下所有code
         List<String> allCodeList = getAllCodeList(codeList, channelId, cartId);
         //更新cms_bt_product表的hsCodeInfo
-        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodeSetter, hsCodeSetTime);
+        updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodePrivate, hsCodeSetTime);
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
         return data;
