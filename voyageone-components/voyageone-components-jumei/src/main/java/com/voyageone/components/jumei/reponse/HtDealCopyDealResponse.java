@@ -23,6 +23,16 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
     private boolean is_Success;
     private String errorMsg;
     private String body;
+    private String sell_hash_id;
+
+    public String getSell_hash_id() {
+        return sell_hash_id;
+    }
+
+    public void setSell_hash_id(String sell_hash_id) {
+        this.sell_hash_id = sell_hash_id;
+    }
+
     String response;
 
     public String getResponse() {
@@ -88,19 +98,18 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                 this.setReason(map.get("reason").toString());
             }
             if (map.containsKey("response")) {
-                if( map.get("response") instanceof Map) {
+                if (map.get("response") instanceof Map) {
                     Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
                     if (mapSesponse.containsKey("jumei_hash_id")) {
                         this.setJumei_hash_id(mapSesponse.get("jumei_hash_id").toString());
                     }
-                    if(mapSesponse.containsKey("new_hash_id"))
-                    {
+                    if (mapSesponse.containsKey("new_hash_id")) {
                         this.setJumei_hash_id(mapSesponse.get("new_hash_id").toString());
                     }
-                    //new_hash_id":"ht1467198383p2442298"
-                }
-                else
-                {
+                    if (mapSesponse.containsKey("sell_hash_id")) {
+                        this.setSell_hash_id(mapSesponse.get("sell_hash_id").toString());
+                    }
+                } else {
                     this.setResponse(map.get("response").toString());
                 }
             }
@@ -110,7 +119,7 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
                 this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
-            logger.error("setBody ",ex);
+            logger.error("setBody ", ex);
             this.setIs_Success(false);
             this.setErrorMsg("返回参数解析错误" + this.body);
         }
