@@ -10,13 +10,14 @@
 </div>
 <div class="container content blank-content">
     <div class="col-sm-6 col-sm-offset-3">
-        Please use the VoyageOneFeedTemplate to upload Feed file。
+        Please use the <a href="javascript:void(0)" ng-click="ctrl.download()">VoyageOneFeedTemplate</a> to upload Feed file。
     </div>
     <div class="col-md-6 col-md-offset-3">
         <div class="form-group">
             <h2>Choose File</h2>
             <label for="file" class="input input-file">
-                <div class="button_browse"><input type="file" id="file" uploader="ctrl.uploader" accept=".csv" >
+                <div class="button_browse">
+                    <input type="file" id="file" uploader="ctrl.uploader" accept=".csv" nv-file-select>
                     <button class="">Browse</button>
                 </div>
             </label>

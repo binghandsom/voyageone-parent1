@@ -568,6 +568,16 @@ public class ChannelConfigEnums {
         OverStock("024"),
 
         /**
+         * TestChannel088
+         */
+        TestChannel088("088"),
+
+        /**
+         * TestChannel089
+         */
+        TestChannel089("089"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
@@ -634,6 +644,8 @@ public class ChannelConfigEnums {
                 case "022": return DFO;
                 case "023": return ShoeZoo;
                 case "024": return OverStock;
+                case "088": return TestChannel088;
+                case "089": return TestChannel089;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;

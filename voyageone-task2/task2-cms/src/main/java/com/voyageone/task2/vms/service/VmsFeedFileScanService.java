@@ -18,6 +18,7 @@ import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.vms.feed.FeedFileUploadService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
@@ -104,7 +105,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
         String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
 
         // 这个渠道的Feed文件的根目录
-        File root = new File(feedFilePath + "/" + channelId + "/");
+        File root = new File(feedFilePath + "/" + channelId + "/feed/");
         // 扫描根目录下面的所有文件（不包含子目录）
         File[] files = root.listFiles();
         // 如果存在文件，那么逐个处理
@@ -121,8 +122,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                             // 存在csv文件，肯定是用户ftp上传的，加入文件管理表
                             // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
                             OrderChannelBean channel = Channels.getChannel(channelId);
-                            File newFile = new File(feedFilePath + "/" + channelId + "/"
-                                    + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
+                            File newFile = new File(feedFilePath + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
                             boolean result = file.renameTo(newFile);
                             if (result) {
                                 // 更新状态为1：等待导入

@@ -9,7 +9,7 @@ define([
             this.blockUI = blockUI;
             this.uploadItem = null;
             this.uploader = new FileUploader({
-                url: "/vms/feed/file_upload/importFeedFile"
+                url: "/vms/feed/file_upload/uploadFeedFile"
             });
         }
 
@@ -35,6 +35,10 @@ define([
                     main.blockUI.start();
                 };
                 uploadIt();
+            },
+
+            download: function () {
+                $.download.post('/vms/feed/file_upload/downSampleFeedFile', {});
             }
 
         };

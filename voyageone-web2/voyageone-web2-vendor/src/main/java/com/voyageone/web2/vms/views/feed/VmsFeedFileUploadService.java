@@ -6,9 +6,12 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.vms.feed.FeedFileUploadService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,21 +42,24 @@ public class VmsFeedFileUploadService extends BaseAppService {
 
     private final static String CSV_TYPE = "csv";
 
-//    @Autowired
-//    private FeedFileUploadService feedFileUploadService;
+    @Autowired
+    private MqSender sender;
+
+    @Autowired
+    private FeedFileUploadService feedFileUploadService;
 
     /**
-     * 保存ImageGroup中的图片信息
+     * 保存上传的FeedFile
      *
-     * @param param 客户端参数
-     * @param file  导入文件
+     * @param channelId 渠道
+     * @param userName 用户名
+     * @param file  上传的文件
      */
-    public void saveImage(Map<String, Object> param, MultipartFile file) {
+    public void saveFeedFile(String channelId, String userName, MultipartFile file) {
 
         // check
         doSaveFeedFileCheck(file);
 
-        boolean uploadFlg = true;
         // 上传文件流
         InputStream inputStream = null;
         try {
@@ -64,14 +70,17 @@ public class VmsFeedFileUploadService extends BaseAppService {
         } catch (IOException ignored) {
         }
 
+        // 上传文件失败
+        if (inputStream == null) {
+            // TODO 上传文件失败
+            throw new BusinessException("7000087");
+        }
+
         // 上传文件
-//            feedFileUploadService.uploadFile((String) param.get("channelId"), inputStream);
+        String newFileName= feedFileUploadService.saveFile(channelId, file.getOriginalFilename(), inputStream);
 
         //更新vms_bt_feed_file表
-//        feedFileUploadService.addFeedFile();
-
-        // 发MQ
-
+        // feedFileUploadService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
     }
 
     /**
@@ -83,18 +92,13 @@ public class VmsFeedFileUploadService extends BaseAppService {
 
         // 文件名
         String fileName = "";
-        InputStream inputStream = null;
 
-        // 本地上传的场合
+        // 文件大小判断
         if (file.getSize() >= FILE_LIMIT_SIZE) {
-            // 图片大小不能超过3M
+            // TODO FeedFile大小不能超过3M
             throw new BusinessException("7000087");
         }
         fileName = file.getOriginalFilename();
-        try {
-            inputStream = file.getInputStream();
-        } catch (IOException ignored) {
-        }
 
         // 获取文件后缀
         String suffix = null;
@@ -103,7 +107,7 @@ public class VmsFeedFileUploadService extends BaseAppService {
         }
         // 判断后缀是否合法（csv）
         if (suffix == null || !CSV_TYPE.toLowerCase().contains(suffix.toLowerCase())) {
-            // 文件扩展名非法
+            // TODO 文件扩展名非法
             throw new BusinessException("7000084");
         }
     }

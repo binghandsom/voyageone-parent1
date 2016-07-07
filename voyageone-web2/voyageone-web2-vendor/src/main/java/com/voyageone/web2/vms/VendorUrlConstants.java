@@ -15,7 +15,8 @@ public interface VendorUrlConstants {
 
     interface FEED {
         interface FEED_FILE_IMPORT {
-            String ROOT = "/vms/feed/file_upload";
+            String ROOT = "/vms/feed/file_upload/";
+            String DOWNLOAD_SAMPLE_FEED_FILE = "downSampleFeedFile";
             String UPLOAD_FEED_FILE = "uploadFeedFile";
         }
     }

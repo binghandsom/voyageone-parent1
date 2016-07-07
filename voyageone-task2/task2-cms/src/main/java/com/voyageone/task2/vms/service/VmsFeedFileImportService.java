@@ -177,7 +177,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 取得Feed文件上传路径
             String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
             // 存在需要导入的Feed文件
-            File feedFile = new File(feedFilePath + "/" + channel.getOrder_channel_id() + "/" + model.getFileName());
+            File feedFile = new File(feedFilePath + "/" + channel.getOrder_channel_id() + "/feed/" + model.getFileName());
             // 文件存在的话那么处理
             if (feedFile.exists()) {
                 $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
@@ -1406,7 +1406,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         private void moveFeedFileToBak(String feedFileName) {
             // 取得Feed文件上传路径
             String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
-            feedFilePath += "/" + channel.getOrder_channel_id() + "/";
+            feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
             // 创建文件目录
             FileUtils.mkdirPath(feedFilePath + "bak/");
             FileUtils.moveFile(feedFilePath + feedFileName, feedFilePath + "bak/" + feedFileName);
