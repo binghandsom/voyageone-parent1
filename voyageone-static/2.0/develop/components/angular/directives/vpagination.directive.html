@@ -40,11 +40,11 @@
             <li ng-class="{disabled: curr.isFirst}">
                 <a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a>
             </li>
-            <li ng-if="curr.isShowStart">...</li>
+            <li ng-if="curr.isShowStart"><a href>...</a></li>
             <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}">
                 <a href ng-click="goPage(page)">{{page}}</a>
             </li>
-            <li ng-if="curr.isShowEnd">...</li>
+            <li ng-if="curr.isShowEnd"><a href>...</a></li>
             <li ng-class="{disabled: curr.isLast}">
                 <a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a>
             </li>

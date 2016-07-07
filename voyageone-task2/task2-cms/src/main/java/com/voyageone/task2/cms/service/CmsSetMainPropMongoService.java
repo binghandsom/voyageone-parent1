@@ -267,9 +267,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     errCnt++;
+                    String errMsg = "feed->master导入:异常终止:";
+                    if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                        errMsg = errMsg + e.getStackTrace()[0].toString();
+                    } else {
+                        errMsg = e.getMessage();
+                    }
                     // 回写详细错误信息表(cms_bt_business_log)
-                    insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
+                    insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", errMsg, getTaskName());
 
                     // 回写feedInfo表
                     feed.setUpdFlg(2);  // 2:feed->master导入失败
@@ -728,7 +735,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     $info("feed->master导入:新增成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
                     // jeff 2016/04 add start
-                    insertCnt++;
+//                    insertCnt++;
                     // jeff 2016/04 add end
                 }
 
@@ -789,6 +796,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
                 // 更新product_log信息
                 // 更新product_log信息 -> 还要不要写呢? 状态变化的话,共通代码里已经有了,其他的变化,这里是否要更新进去? 应该不用了吧.
+
+                // add desmond 2016/07/07 start
+                if (blnProductExist) {
+                    updateCnt++;
+                } else {
+                    insertCnt++;
+                }
+                // add desmond 2016/07/07 end
             }
 
             // jeff 2016/05 add start
@@ -803,7 +818,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             originalFeed.setUpdMessage("");      // add desmond 2016/07/05
             originalFeed.setModifier(getTaskName());
             feedInfoService.updateFeedInfo(originalFeed);
-
             // ------------- 函数结束
 
         }

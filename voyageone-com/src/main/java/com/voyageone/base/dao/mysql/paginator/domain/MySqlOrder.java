@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * MySqlOrder
+ *
  * @author miemiedev
  */
 public class MySqlOrder extends Order {
@@ -14,16 +16,16 @@ public class MySqlOrder extends Order {
         super(property, direction, orderExpr);
     }
 
-    public static List<com.github.miemiedev.mybatis.paginator.domain.Order> formString(String orderSegment) {
+    public static List<Order> formString(String orderSegment) {
         return formString(orderSegment, null);
     }
 
-    public static List<com.github.miemiedev.mybatis.paginator.domain.Order> formString(String orderSegment, String orderExpr) {
+    public static List<Order> formString(String orderSegment, String orderExpr) {
         if (orderSegment == null || orderSegment.trim().equals("")) {
             return new ArrayList<>(0);
         }
 
-        List<com.github.miemiedev.mybatis.paginator.domain.Order> results = new ArrayList<>();
+        List<Order> results = new ArrayList<>();
         String[] orderSegments = orderSegment.trim().split(",");
         for (String sortSegment : orderSegments) {
             Order order = _formString(sortSegment, orderExpr);
@@ -46,7 +48,7 @@ public class MySqlOrder extends Order {
             orderSegment = orderSegment.replaceAll("  ", " ");
         }
         orderSegment = orderSegment.trim();
-        
+
         String[] array = orderSegment.trim().split(" ");
         if (array.length != 1 && array.length != 2) {
             throw new IllegalArgumentException("orderSegment pattern must be {property}.{direction}, input is: " + orderSegment);
@@ -57,7 +59,8 @@ public class MySqlOrder extends Order {
 
     /**
      * create
-     * @param property String
+     *
+     * @param property  String
      * @param direction String
      * @param orderExpr placeholder is "?", in oracle like: "nlssort( ? ,'NLS_SORT=SCHINESE_PINYIN_M')".
      *                  Warning: you must prevent orderExpr SQL injection.

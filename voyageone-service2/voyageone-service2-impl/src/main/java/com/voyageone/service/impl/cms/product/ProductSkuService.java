@@ -248,8 +248,11 @@ public class ProductSkuService extends BaseService {
 
     }
 
-    /*
-        sku共同属性PriceDiffFlg计算方法
+    /**
+     * sku共同属性PriceDiffFlg计算方法
+     * @param channelId 渠道Id
+     * @param sku sku数据
+     * @return 判断结果
      */
     public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
 
@@ -257,7 +260,7 @@ public class ProductSkuService extends BaseService {
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
                 , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
 
-        Double breakThreshold = null;
+        Double breakThreshold = 0.00;
         if (cmsChannelConfigBean != null) {
             breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
         }
@@ -281,8 +284,12 @@ public class ProductSkuService extends BaseService {
         return diffFlg;
     }
 
-    /*
-   　* sku共同属性PriceDiffFlg计算方法
+    /**
+     * sku共同属性PriceDiffFlg计算方法
+     * @param breakThreshold 价格计算阀值
+     * @param priceSale 中国最终售价
+     * @param priceRetail 中国指导售价
+     * @return 判断结果
      */
     public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
         String diffFlg = "1";
