@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 不干别的就记录商品价格变动
@@ -69,12 +70,12 @@ public class CmsBtPriceLogService extends BaseService {
      * @param username  变动人 / 检查人
      * @param comment   变动备注 / 检查备注
      */
-    public void logAll(List<String> skuList, String channelId, String cartId, String username, String comment) {
+    public void logAll(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
         for (String sku : skuList)
             log(sku, channelId, cartId, username, comment);
     }
 
-    private void log(String sku, String channelId, String cartId, String username, String comment) {
+    private void log(String sku, String channelId, Integer cartId, String username, String comment) {
 
         CmsBtProductModel productModel = getProduct(sku, channelId);
 
@@ -86,9 +87,12 @@ public class CmsBtPriceLogService extends BaseService {
         if (commonSku == null)
             return;
 
-        if (!StringUtils.isEmpty(cartId)) {
+        if (cartId != null) {
 
-            CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(Integer.valueOf(cartId));
+            if (cartId < 20)
+                return;
+
+            CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(cartId);
 
             if (cartProduct == null)
                 return;
@@ -98,11 +102,22 @@ public class CmsBtPriceLogService extends BaseService {
             return;
         }
 
-        for (CmsBtProductModel_Platform_Cart cartProduct : productModel.getPlatforms().values())
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : productModel.getPlatforms().entrySet()) {
 
-            if (cartProduct.getCartId() >= 20)
+            String strCartId = entry.getKey();
 
-                log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+            if (StringUtils.isEmpty(strCartId))
+                continue;
+
+            strCartId = strCartId.replace("P", "");
+
+            int iCartId = Integer.valueOf(strCartId);
+
+            if (iCartId < 20)
+                continue;
+
+            log(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
+        }
     }
 
     private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
