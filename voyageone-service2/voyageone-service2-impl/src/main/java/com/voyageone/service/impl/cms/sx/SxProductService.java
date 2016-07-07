@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -3018,7 +3017,7 @@ public class SxProductService extends BaseService {
                 }
 
                 // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
-                if (group.getCartId() == 0 || group.getCartId() == 1) {
+                if (group.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
                     continue;
                 }
 
