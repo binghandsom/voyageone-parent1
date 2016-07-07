@@ -8,7 +8,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
@@ -53,9 +52,6 @@ public class StoreOperationService extends BaseService {
 
     @Autowired
     private CmsBtStoreOperationHistoryDao historyDao;
-
-    @Autowired
-    private ProductPriceLogService priceLogService;
 
     @Autowired
     private ProductService productService;
