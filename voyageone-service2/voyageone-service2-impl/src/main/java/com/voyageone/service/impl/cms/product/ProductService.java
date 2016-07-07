@@ -1070,7 +1070,7 @@ public class ProductService extends BaseService {
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.logAll(skus, channelId, platformModel.getCartId() + "", modifier, "页面编辑");
+        cmsBtPriceLogService.logAll(skus, channelId, platformModel.getCartId(), modifier, "页面编辑");
 
         return platformModel.getModified();
     }

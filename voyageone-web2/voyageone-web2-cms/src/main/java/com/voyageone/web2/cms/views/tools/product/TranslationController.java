@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
-import com.voyageone.service.impl.cms.TranslationTaskService;
+import com.voyageone.service.impl.cms.tools.product.TranslationTaskService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

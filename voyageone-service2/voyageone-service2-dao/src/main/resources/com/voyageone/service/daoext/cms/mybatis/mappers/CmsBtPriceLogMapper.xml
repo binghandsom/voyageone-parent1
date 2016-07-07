@@ -142,9 +142,9 @@
             modifier
         FROM voyageone_cms2.cms_bt_price_log
         WHERE channel_id = #{channel_id}
-              and cart_id = #{cart_id}
-              <if test="code != null">
-                  and code = #{code}
+              and code = #{code}
+              <if test="cart_id != null">
+                  and cart_id = #{cart_id}
               </if>
               <if test="sku != null">
                   and sku = #{sku}
@@ -160,8 +160,10 @@
             COUNT(1)
         FROM voyageone_cms2.cms_bt_price_log
         WHERE channel_id = #{channel_id}
-            and cart_id = #{cart_id}
             and code = #{code}
+            <if test="cart_id != null">
+                and cart_id = #{cart_id}
+            </if>
             <if test="sku != null">
                 and sku = #{sku}
             </if>

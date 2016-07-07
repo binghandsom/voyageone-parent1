@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.views.tools.product.TranslationController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
