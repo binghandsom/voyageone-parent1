@@ -5839,7 +5839,8 @@ a.text-black:hover {
     display: inline-block;
 }
 .thumb-md {
-    width: 64px;
+    max-width: 64px;
+    max-height: 75px;
     display: inline-block;
 }
 .thumb {

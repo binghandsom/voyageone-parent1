@@ -3049,7 +3049,9 @@ public class SxProductService extends BaseService {
                 model.setGroupId(group.getGroupId());
                 model.setPublishStatus(0);
                 model.setModifier(modifier);
-
+                model.setModified(DateTimeUtil.getDate());
+                model.setCreater(modifier);
+                model.setCreated(DateTimeUtil.getDate());
                 modelList.add(model);
 
             }
@@ -3057,6 +3059,7 @@ public class SxProductService extends BaseService {
         }
 
         // 插入上新表
+        int iCnt = 0;
         if (!modelList.isEmpty()) {
             // 避免一下子插入数据太多, 分批插入
             List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
@@ -3066,7 +3069,7 @@ public class SxProductService extends BaseService {
 
                 if (i % 301 == 0 ) {
                     // 插入一次数据库
-                    sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+                    iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
 
                     // 初始化一下
                     modelListFaster = new ArrayList<>();
@@ -3075,9 +3078,9 @@ public class SxProductService extends BaseService {
 
             if (modelListFaster.size() > 0) {
                 // 最后插入一次数据库
-                sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+                iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
             }
         }
-
+        $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }
 }
