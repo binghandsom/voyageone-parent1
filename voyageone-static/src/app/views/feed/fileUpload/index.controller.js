@@ -7,6 +7,7 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.blockUI = blockUI;
+            this.uploadItem = null;
             this.uploader = new FileUploader({
                 url: "/vms/feed/file_upload/importFeedFile"
             });
@@ -21,7 +22,6 @@ define([
                     return this.alert('TXT_MSG_NO_UPLOAD');
                 }
                 var uploadIt = function () {
-                    this.uploadItem = uploadItem;
                     uploadItem.onSuccess = function (res) {
                         main.blockUI.stop();
                         if (res.message) {

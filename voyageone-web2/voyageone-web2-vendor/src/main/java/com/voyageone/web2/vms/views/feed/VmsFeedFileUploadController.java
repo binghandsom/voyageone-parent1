@@ -17,10 +17,10 @@ import java.util.Map;
         value = VendorUrlConstants.FEED.FEED_FILE_IMPORT.ROOT,
         method = RequestMethod.POST
 )
-public class VmsFeedFileImportController extends BaseController {
+public class VmsFeedFileUploadController extends BaseController {
 
-//    @Autowired
-//    private VmsFeedFileImportService vmsFeedFileImportService;
+    @Autowired
+    private VmsFeedFileUploadService vmsFeedFileUploadService;
 
 
     /**
