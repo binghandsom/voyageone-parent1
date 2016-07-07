@@ -341,7 +341,7 @@ define([
                 //searchInfoFactory.catId(null);
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
-                //vm.searchValue = "";
+                vm.searchValue = "";
                 $location.path(cRoutes.search_advance_param.url + "2/" + encodeURIComponent(value) + '/0/0');
             }
         }
