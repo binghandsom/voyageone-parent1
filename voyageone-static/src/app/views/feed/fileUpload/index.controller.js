@@ -24,7 +24,6 @@ define([
                 }
                 var uploadIt = function () {
                         uploadItem.onSuccess = function (res) {
-                        document.all.file.outerHTML = "<input type=\"file\" id=\"file\" name=\"file\" uploader=\"ctrl.uploader\" accept=\".csv\" nv-file-select />";
                         main.blockUI.stop();
                         if (res.message) {
                             main.alert(res.message);
@@ -35,7 +34,6 @@ define([
                     uploadItem.onError = function (res) {
                         main.blockUI.stop();
                         main.uploader = new FileUploader({url: "/vms/feed/file_upload/uploadFeedFile"});
-                        document.all.file.outerHTML = "<input type=\"file\" id=\"file\" name=\"file\" uploader=\"ctrl.uploader\" accept=\".csv\" nv-file-select />";
                         main.alert('TXT_MSG_UPLOAD_FAIL');
                     };
                     uploadItem.formData = [];
