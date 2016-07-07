@@ -20,12 +20,20 @@ public class MySqlPageHelper {
     private static final String key = "#MySqlPageHelper#";
 
     /**
+     * build
+     *
+     * @return PageBoundsMap
+     */
+    public static PageBoundsMap build() {
+        return new PageBoundsMap(null);
+    }
+    /**
      * 加入检索条件
      *
      * @param queryParam SQL检索条件MAP
      * @return PageBoundsMap
      */
-    public static PageBoundsMap queryParam(Map<String, Object> queryParam) {
+    public static PageBoundsMap build(Map<String, Object> queryParam) {
         return new PageBoundsMap(queryParam);
     }
 
@@ -39,7 +47,9 @@ public class MySqlPageHelper {
          * @param param SQL检索条件MAP
          */
         private PageBoundsMap(Map<String, Object> param) {
-            this.param.putAll(param);
+            if (param != null) {
+                this.param.putAll(param);
+            }
             this.param.put(key, new PageBounds());
         }
 
