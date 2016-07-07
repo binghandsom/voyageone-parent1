@@ -135,6 +135,7 @@ define([
                                     resolve(popupNewCategory({
                                         from:scope.vm.platform == null?"":scope.vm.platform.pCatPath,
                                         categories: res.data,
+                                        divType:">",
                                         plateSchema:true
                                     }));
                                 }

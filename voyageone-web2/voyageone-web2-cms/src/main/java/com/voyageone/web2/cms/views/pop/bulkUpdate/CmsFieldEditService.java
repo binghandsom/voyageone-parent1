@@ -23,8 +23,10 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -65,6 +67,10 @@ public class CmsFieldEditService extends BaseAppService {
     private SizeChartService sizeChartService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private ProductSkuService productSkuService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -560,9 +566,9 @@ public class CmsFieldEditService extends BaseAppService {
 
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-        Double breakThreshold = null;
+        double breakThreshold = 0;
         if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D + 1.0;
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
         }
 
         // 获取产品的信息
@@ -571,6 +577,8 @@ public class CmsFieldEditService extends BaseAppService {
         qryObj.setParameters(productCodes);
         qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
+        String skuCode = null;
+        List<String> skuCodeList = new ArrayList<>();
         List<JomgoUpdate> bulkList = new ArrayList<>();
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         for (CmsBtProductModel prodObj : prodObjList) {
@@ -593,13 +601,14 @@ public class CmsFieldEditService extends BaseAppService {
                         }
                     }
                 }
+                skuCode = skuObj.getStringAttribute("skuCode");
                 if (rs == null) {
-                    $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
+                    $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuCode, params.toString()));
                     break;
                 }
                 Object priceRetail = skuObj.get("priceRetail");
                 if (priceRetail == null) {
-                    $warn(String.format("setProductSalePrice: 数据错误 priceRetail为空 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode")));
+                    $warn(String.format("setProductSalePrice: 数据错误 priceRetail为空 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuCode));
                     break;
                 }
                 // 指导价
@@ -610,35 +619,29 @@ public class CmsFieldEditService extends BaseAppService {
                     if (!StringUtil.isEmpty(priceRetail.toString())){
                         result = new Double(priceRetail.toString());
                     } else {
-                        $warn(String.format("setProductSalePrice: 数据错误 priceRetail格式错误 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode")));
+                        $warn(String.format("setProductSalePrice: 数据错误 priceRetail格式错误 code=%s, sku=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuCode));
                         break;
                     }
                 }
-                String diffFlg = "1";
-                if (rs < result) {
-                    diffFlg = "2";
-                    $warn(String.format("setProductSalePrice: 输入数据错误 低于指导价 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
+                String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
+                if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
+                    $warn(String.format("setProductSalePrice: 输入数据错误 低于指导价 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuCode, params.toString()));
                     rsMap.put("ecd", 2);
                     rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
                     rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
                     rsMap.put("priceSale", rs);
                     rsMap.put("priceLimit", result);
                     return rsMap;
-                } else if (rs > result) {
-                    diffFlg = "3";
+                } else if ("4".equals(diffFlg)) {
+                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阀值 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuCode, params.toString()));
+                    rsMap.put("ecd", 3);
+                    rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+                    rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
+                    rsMap.put("priceSale", rs);
+                    rsMap.put("priceLimit", result * (breakThreshold + 1));
+                    return rsMap;
                 }
-                if (breakThreshold != null) {
-                    double priceLimit = result * breakThreshold;
-                    if (rs > priceLimit) {
-                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阀值 code=%s, sku=%s, para=%s", prodObj.getCommonNotNull().getFieldsNotNull().getCode(), skuObj.getStringAttribute("skuCode"), params.toString()));
-                        rsMap.put("ecd", 3);
-                        rsMap.put("prodCode", prodObj.getCommonNotNull().getFieldsNotNull().getCode());
-                        rsMap.put("skuCode", skuObj.getStringAttribute("skuCode"));
-                        rsMap.put("priceSale", rs);
-                        rsMap.put("priceLimit", priceLimit);
-                        return rsMap;
-                    }
-                }
+                skuCodeList.add(skuCode);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
             }
 
@@ -653,7 +656,8 @@ public class CmsFieldEditService extends BaseAppService {
         BulkWriteResult rs = cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList);
         $debug("批量修改商品价格 结果=：" + rs.toString());
 
-        // TODO--需要记录价格变更履历
+        // 需要记录价格变更履历
+        cmsBtPriceLogService.logAll(skuCodeList, userInfo.getSelChannelId(), cartId, userInfo.getUserName(), null);
 
         // 再查询这批商品是否可上新
         List<String> codeList = new ArrayList<>();

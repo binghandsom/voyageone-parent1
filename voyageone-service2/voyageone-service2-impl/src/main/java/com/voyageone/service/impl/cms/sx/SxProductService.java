@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -2974,4 +2975,72 @@ public class SxProductService extends BaseService {
         return cmsBtWorkloadHistoryDao.insert(insModel);
     }
 
+	/**
+     * 插入上新表的唯一一个正式的统一入口
+     * @param channelId channel id
+     * @param codeList code列表, 允许重复(重复会自动合并)
+     * @param modifier 修改者
+     */
+    public void insertSxWorkLoad(String channelId, List<String> codeList, String modifier) {
+        // 输入参数检查
+        if (StringUtils.isEmpty(channelId) || codeList == null || StringUtils.isEmpty(modifier)) {
+            return;
+        }
+
+        // 准备插入workload表的数据
+        List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
+        // 已处理过的group(防止同一个group多次被插入)
+        List<Long> groupWorkList = new ArrayList<>();
+
+        for (String prodCode : codeList) {
+            // 根据商品code获取其所有group信息(所有平台)
+            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
+            for (CmsBtProductGroupModel group : groups) {
+                if (groupWorkList.contains(group.getGroupId())) {
+                    // 如果已经处理过了, 那么就跳过
+                    continue;
+                } else {
+                    groupWorkList.add(group.getGroupId());
+                }
+
+                // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
+                if (group.getCartId() == 0 || group.getCartId() == 1) {
+                    continue;
+                }
+
+                // 根据groupId获取group的上新信息
+                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
+
+                // 判断是否需要上新
+                if (sxData == null) {
+                    continue;
+                }
+                if (sxData.getProductList().size() == 0) {
+                    continue;
+                }
+                if (sxData.getSkuList().size() == 0) {
+                    continue;
+                }
+
+                // 加入等待上新列表
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setCartId(group.getCartId());
+                model.setGroupId(group.getGroupId());
+                model.setPublishStatus(0);
+                model.setModifier(modifier);
+
+                modelList.add(model);
+
+            }
+
+        }
+
+        // 插入上新表
+        if (!modelList.isEmpty()) {
+            int rslt = sxWorkloadDao.insertSxWorkloadModels(modelList);
+            $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
+        }
+
+    }
 }

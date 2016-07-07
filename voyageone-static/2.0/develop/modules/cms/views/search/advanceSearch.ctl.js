@@ -44,7 +44,8 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null}
+            channelInner: {catPath: null},
+            _cart_tab_act: false
         };
 
         $scope.initialize = initialize;
@@ -79,39 +80,52 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
-
             if ($routeParams.type == "1") {
+                // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
             } else if ($routeParams.type == "2") {
-                $scope.vm.searchInfo.codeList = $routeParams.value;
+                // 从header部的全局搜索而来
+                $scope.vm.searchInfo.codeList = decodeURIComponent($routeParams.value1);
             }
             searchAdvanceService2.init().then(function (res) {
-                    $scope.vm.masterData = res.data;
-                    $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
-                    $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
-                    $scope.vm.cartList = res.data.cartList;
-                    if ($scope.vm.cartList.length == 1) {
-                        $scope.vm._cartType_ = $scope.vm.cartList[0];
-                        getCat($scope.vm._cartType_);
-                    }
-                })
-                .then(function () {
-                    // 如果来至category 或者header search 则默认检索
-                    $scope.vm.tblWidth = '100%'; // group tab的原始宽度
-                    $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
-                    if ($routeParams.type == "3") {
-                        var catObj = _.find($scope.vm.masterData.cartList, function (item) {
-                            return item.add_name2 == $routeParams.catType;
-                        });
-                        $scope.vm.searchInfo.cartId = catObj.value;
-                        getCat();
-                    }
-                    if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
-                        $scope.vm.searchInfo = $sessionStorage.feedSearch;
-                        search();
-                        if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
-                    }
-                })
+                $scope.vm.masterData = res.data;
+                $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
+                $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
+                $scope.vm.cartList = res.data.cartList;
+                if ($scope.vm.cartList.length == 1) {
+                    $scope.vm._cartType_ = $scope.vm.cartList[0];
+                    getCat($scope.vm._cartType_);
+                }
+
+                // 如果来至category 或者header search 则默认检索
+                $scope.vm.tblWidth = '100%'; // group tab的原始宽度
+                $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
+                if ($routeParams.type == "3") {
+                    // 从菜单栏而来，检索店铺内分类
+                    var catObj = _.find($scope.vm.masterData.cartList, function (item) {
+                        return item.value == $routeParams.value1;
+                    });
+                    $scope.vm.searchInfo.cartId = $routeParams.value1;
+                    // 打开平台搜索tab栏
+                    $scope.vm._cart_tab_act = true;
+                    // 设置渠道名称
+                    $scope.vm._cartType_ = catObj;
+                    getCat($scope.vm._cartType_);
+                    // 设置查询值后检索
+                    $scope.vm._shopCatValues = [decodeURIComponent($routeParams.value3)];
+                    $scope.vm.searchInfo.cidValue = [$routeParams.value2];
+                    search();
+                    return;
+                }
+                if ($routeParams.type == "1" || $routeParams.type == "2" || $routeParams.type == "3") {
+                    return;
+                }
+                if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
+                    $scope.vm.searchInfo = $sessionStorage.feedSearch;
+                    search();
+                    if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
+                }
+            })
         }
 
         /**
@@ -750,7 +764,7 @@ define([
                     }
                     return popupNewCategory({
                         from: $scope.vm.searchInfo.pCatPath,
-                        categories: res.data
+                        categories: res
                     });
                 }).then(function (context) {
                 $scope.vm.searchInfo.pCatPath = context.selected.catPath;
@@ -788,7 +802,8 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: $scope.vm.searchInfo.fCatPath
+                        from: $scope.vm.searchInfo.fCatPath,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.fCatPath = context.selected.catPath;
                             $scope.vm.searchInfo.fCatId = context.selected.catId;
@@ -807,9 +822,7 @@ define([
                     // 设置画面显示用的值
                     var shopCatValues = [];
                     _.forEach(context.sellerCats, function (catObj) {
-                        if (_.isArray(catObj.cNames)) {
-                            shopCatValues.push(catObj.cNames.join('>'));
-                        }
+                        shopCatValues.push(catObj.cName);
                     });
                     $scope.vm._shopCatValues = shopCatValues;
 

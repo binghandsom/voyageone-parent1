@@ -881,88 +881,6 @@ public class ProductService extends BaseService {
         return resultInfo;
     }
 
-
-    /**
-     * distributeTranslation 分配翻译商品
-     */
-    public List<CmsBtProductModel> translateDistribute(String channelId, ProductTransDistrBean param) {
-        /**
-         * lock data
-         */
-        String nowStr = DateTimeUtil.getNow();
-        int getCount = param.getLimit();
-        String translator = param.getTranslator();
-        int translateTimeHDiff = param.getTranslateTimeHDiff();
-        int distributeRule = param.getDistributeRule();
-
-        String queryStrTmp;
-        switch (distributeRule) {
-            case 0:
-                // add translateTime condition
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
-                break;
-            case 1:
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"fields.isMasterMain\":1}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"fields.isMasterMain\":1}]}";
-                break;
-            default:
-                // add translateTime condition
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
-                break;
-        }
-
-        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
-        String translateTimeStr = DateTimeUtil.format(date, null);
-
-        JomgoUpdate updateObject = new JomgoUpdate();
-        // create query string
-        String queryStr = String.format(queryStrTmp, translateTimeStr);
-        updateObject.setQuery(queryStr);
-
-        // create Projection
-        updateObject.setProjection(param.getProjectionArr());
-
-        // create sort String
-        updateObject.setSort(param.getSortStr());
-
-        // create Update string
-        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":\"0\", \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
-        String updateStr = String.format(strUpdateTmp, translator, nowStr);
-        updateObject.setUpdate(updateStr);
-
-        List<CmsBtProductModel> products = new ArrayList<>();
-        //update translator translateTime
-        for (int i = 0; i < getCount; i++) {
-            CmsBtProductModel productModel = cmsBtProductDao.findAndModify(updateObject, channelId);
-            if (productModel != null) {
-                products.add(productModel);
-            } else {
-                break;
-            }
-        }
-
-        return products;
-    }
-
-    public void updateTranslateStatus(String channelId, String prodCode, String translateStatus, String modifier) {
-        Map<String, String> paraMap = new HashMap<>(1);
-        paraMap.put("fields.code", prodCode);
-
-        Map<String, String> rsMap = new HashMap<>(3);
-        rsMap.put("fields.translateStatus", translateStatus);
-        rsMap.put("modifier", modifier);
-        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("$set", rsMap);
-
-        cmsBtProductDao.update(channelId, paraMap, updateMap);
-    }
-
     public void updateTags(String channelId, Long prodId, List<String> Tags, String modifier) {
         Map<String, Object> paraMap = new HashMap<>(1);
         paraMap.put("channelId", channelId);
@@ -1041,13 +959,7 @@ public class ProductService extends BaseService {
             }
         }
         platformModel.getSkus().forEach(sku -> {
-            String diffFlg = "1";
-            if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
-                diffFlg = "2";
-            } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
-                diffFlg = "3";
-            }
-            sku.setAttribute("priceDiffFlg", diffFlg);
+            sku.setAttribute("priceDiffFlg", productSkuService.getPriceDiffFlg(channelId,sku));
         });
 
         HashMap<String, Object> queryMap = new HashMap<>();
