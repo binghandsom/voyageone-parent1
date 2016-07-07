@@ -196,14 +196,14 @@
                                                     <label class="checkbox-inline c-radio">
                                                         <input type="radio" name="freeTagOperation" value="2" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> Exclude
                                                     </label>
-                                                    <button class="btn btn-default m-l-lg" type="button" translate="BTN_RESET" ng-click="dismiss('freeTags')"></button>
                                                 </div>
                                             </div>
                                             <div class="form-group"><!-- 查询自由标签输出区 -->
-                                                <div class="col-sm-8" ng-model="vm.searchInfo.freeTags" style="min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
+                                                <div class="col-sm-7" ng-model="vm.searchInfo.freeTags" style="min-height:40px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin-left:25.7%;">
                                                     <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}
                                                     </label>
                                                 </div>
+                                                <button class="btn btn-default btn-md" type="button" translate="BTN_RESET" ng-click="dismiss('freeTags')"></button>
                                             </div>
                                         </div>
                                     </div>
@@ -212,7 +212,7 @@
                         </div>
                     </div>
                 </uib-tab>
-                <uib-tab>
+                <uib-tab active="vm._cart_tab_act">
                     <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;{{'TXT_PLATFORM_SEARCH'|translate}}</tab-heading>
                     <div class="box">
                         <div class="table-responsive" style="overflow-x: visible;">
@@ -636,7 +636,7 @@
                 <uib-tabset class="tab-container vo_nav-tabs">
                     <!--right-btn-->
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px" ng-controller="popupCtrl">
-                        <label class="checkbox-inline c-checkbox">
+                        <label class="checkbox-inline c-checkbox" style="margin-top:12px">
                             <input type="checkbox" value="1" ng-model="vm._selall">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;</label>
                         <div class="btn-group" style="margin-left:10px" uib-dropdown ng-repeat="cartBean in vm.masterData.cartList">
@@ -679,7 +679,7 @@
                                 <thead>
                                 <tr>
                                     <td class="text-left"
-                                        style="display:inline-block; height:40px; line-height:40px;width:165px;padding-left:0px;margin-left:0px">
+                                        style="display:inline-block; height:40px; line-height:40px;width:165px;padding-left:10px;margin-left:0px">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)"
@@ -763,7 +763,7 @@
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
-                                        <td class="text-left" style="display:inline-block;width:165px;height: 110px">
+                                        <td class="text-left m-t-sm" style="display:inline-block;width:165px;height: 110px">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)"><img
                                                     image="{{productInfo.common.fields.images1[0].image1}}"
                                                     alt="{{productInfo.common.fields.code}}"
@@ -846,7 +846,7 @@
                                 <thead>
                                 <tr>
                                     <th colspan="3" class="text-left"
-                                        style="display:inline-block; height:40px; line-height:40px;width:400px;"><label
+                                        style="display:inline-block; height:40px; line-height:40px;width:400px;padding-left:10px"><label
                                             class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                         <input type="checkbox" ng-click="selectAll(vm.groupSelList)"
                                                ng-checked="isAllSelected(vm.groupSelList)" ng-disabled="!vm.groupList.length">

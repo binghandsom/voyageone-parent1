@@ -91,7 +91,8 @@ define([
                         }
 
                         popupNewCategory({
-                            categories: res.data
+                            categories: res.data,
+                            from:scope.vm.productComm == null?"":scope.vm.productComm.catPath
                         }).then(function(context){
                             //判断类目是否改变
                             scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
