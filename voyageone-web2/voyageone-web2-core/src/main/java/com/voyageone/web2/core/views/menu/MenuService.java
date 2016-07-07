@@ -180,7 +180,7 @@ public class MenuService extends BaseAppService {
         // Shipment->Shipment Info
         Map<String, String> shipmentInfo = new HashMap<>();
         shipmentInfo.put("name", "Shipment Info");
-        shipmentInfo.put("url", "#/reports/financial_report");
+        shipmentInfo.put("url", "#/shipment/shipment_info");
         shipmentMenuItems.add(shipmentInfo);
         shipmentMenu.put("items", shipmentMenuItems);
 
