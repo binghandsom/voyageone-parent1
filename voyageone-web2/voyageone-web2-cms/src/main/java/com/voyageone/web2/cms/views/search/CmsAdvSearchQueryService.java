@@ -135,7 +135,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
             // 查询产品上新错误
             if (searchValue.getHasErrorFlg() == 1) {
-                queryObject.addQuery("{'platforms.P#.pPublisError':'Error'}");
+                queryObject.addQuery("{'platforms.P#.pPublishError':'Error'}");
                 queryObject.addParameters(cartId);
             }
 
