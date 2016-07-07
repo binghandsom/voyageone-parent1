@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by dell on 2016/7/5.
  */
-@Component("CmsDataAmountService")
+@Component("CmsDataAmountJob")
 public class CmsDataAmountJob extends BaseTaskJob {
 
     @Autowired

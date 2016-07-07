@@ -282,6 +282,28 @@ public class ProductSkuService extends BaseService {
         }
         return diffFlg;
     }
+
+    /*
+   　* sku共同属性PriceDiffFlg计算方法
+     */
+    public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
+        String diffFlg = "1";
+        if (priceSale < priceRetail) {
+            if (priceSale < priceRetail * (1 - breakThreshold)) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (priceSale > priceRetail) {
+            if (priceSale <= priceRetail * (breakThreshold + 1)) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
+    }
+
     /**
      *  更新group里的价格
      */
