@@ -36,6 +36,7 @@ import java.util.*;
  * Created by Ethan Shi on 2016/5/23.
  *
  * @author Ethan Shi
+ * @version 2.2.0
  * @version 2.1.0
  */
 @Service
@@ -213,7 +214,7 @@ public class SellerCatService extends BaseService {
 
         //更新product表中所有的店铺内分类
         if (changedList != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId, modifier);
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
         }
@@ -231,14 +232,20 @@ public class SellerCatService extends BaseService {
         if (isJDPlatform(shopCartId)) {
             jdShopService.deleteShopCategory(shopBean, cId);
         } else if (isTMPlatform(shopCartId)) {
-            throw new BusinessException(shopBean.getShop_name() + ":阿里系没有删除店铺内分类的API");
+            //去TM平台取店铺分类
+            List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
+            if(sellerCatList != null) {
+                if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId)).count() > 0) {
+                    throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
+                }
+            }
         }
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中所有的店铺内分类
         if (deleted != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId, modifier);
 
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
@@ -528,7 +535,7 @@ public class SellerCatService extends BaseService {
 
 
     /**
-     * 是天猫品台
+     * 是天猫平台
      */
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||

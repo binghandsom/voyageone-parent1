@@ -42,8 +42,6 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     @Autowired
     private TagService tagService;
 
-    private final static String _KeyPrefix = "platforms.P";
-
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */

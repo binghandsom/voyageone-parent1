@@ -135,7 +135,7 @@ define(function () {
         },
         "search_advance_param": {
             "url": "/search/advanceSearch/",
-            "hash": "/search/advanceSearch/:type/:value/:catType",
+            "hash": "/search/advanceSearch/:type/:value1/:value2/:value3",
             "templateUrl": "views/search/advanceSearch.tpl.html",
             "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
         },
@@ -227,8 +227,6 @@ define(function () {
             "controllerUrl": "modules/cms/views/mapping/platform/prop.list.ctl",
             "controller": "platformPropMappingController as ctrl"
         },
-
-
         "dashboard": {
             "hash": "/home/welcome",
             "templateUrl": "views/home/welcome/datachart.tpl.html",
