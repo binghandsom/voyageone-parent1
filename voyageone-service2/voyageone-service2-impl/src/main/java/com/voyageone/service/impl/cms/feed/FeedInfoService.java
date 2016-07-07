@@ -212,7 +212,10 @@ public class FeedInfoService extends BaseService {
 
         // 获取inventory
         String compareType = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("compareType"));
-        String qtyStr = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("inventory"));
+        String qtyStr = null;
+        if(searchValue.get("inventory") != null){
+            qtyStr = searchValue.get("inventory").toString();
+        }
         if (compareType != null && qtyStr != null) {
             int inventory = NumberUtils.toInt(qtyStr);
             result.append("{").append(MongoUtils.splicingValue("qty", inventory, compareType));

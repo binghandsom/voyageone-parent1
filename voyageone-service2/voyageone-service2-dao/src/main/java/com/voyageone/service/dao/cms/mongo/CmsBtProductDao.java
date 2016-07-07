@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -146,7 +147,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId ) {
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId, String modifier ) {
         String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
@@ -169,6 +170,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             HashMap<String, Object> rsMap = new HashMap<>();
             rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+            rsMap.put("modifier", modifier);
+            rsMap.put("modified", DateTimeUtil.getNow());
 
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -188,7 +191,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param product
      * @param catModel
      */
-    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel, int cartId) {
+    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel, int cartId, String modifier) {
 
         List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
 
@@ -212,6 +215,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         HashMap<String, Object> rsMap = new HashMap<>();
         rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNow());
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", product.getProdId());
@@ -230,7 +235,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param catList
      * @return
      */
-    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList, int cartId) {
+    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList, int cartId, String userName) {
         if (catList != null) {
             StringBuilder sb = new StringBuilder();
 
@@ -249,7 +254,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             for (CmsBtProductModel model : allProduct) {
                 for (CmsBtSellerCatModel sellerCat : catList) {
-                    updateSellerCat(model, sellerCat, cartId);
+                    updateSellerCat(model, sellerCat, cartId, userName);
                 }
             }
             return allProduct;
