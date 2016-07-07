@@ -70,7 +70,7 @@ public class CmsBtProductDaoTest {
 
         CmsBtSellerCatModel football = new CmsBtSellerCatModel("018", 27, "201", "足球鞋1", "运动鞋1>足球鞋1", "101", "101-201", 0, new ArrayList<CmsBtSellerCatModel>());
 
-        cmsBtProductDao.deleteSellerCat("018", football, 27);
+        cmsBtProductDao.deleteSellerCat("018", football, 27, "will");
 
     }
 
@@ -82,7 +82,7 @@ public class CmsBtProductDaoTest {
         ArrayList<CmsBtSellerCatModel> list = new ArrayList<CmsBtSellerCatModel>();
         list.add(shoe);
         list.add(football);
-        cmsBtProductDao.updateSellerCat("018", list, 27);
+        cmsBtProductDao.updateSellerCat("018", list, 27, "will");
 
     }
 }

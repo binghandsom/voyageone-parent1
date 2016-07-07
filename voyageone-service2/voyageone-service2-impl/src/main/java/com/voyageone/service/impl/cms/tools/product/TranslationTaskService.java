@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms;
+package com.voyageone.service.impl.cms.tools.product;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;

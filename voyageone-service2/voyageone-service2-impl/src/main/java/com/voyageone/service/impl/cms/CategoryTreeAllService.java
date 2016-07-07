@@ -129,7 +129,7 @@ public class CategoryTreeAllService extends BaseService {
     /**
      * 根据渠道和平台取得已经申请的平台类目
      */
-    private Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> getApplyPlatformCategory( String channelId, List<TypeChannelBean> typeChannelBeanListApprove) {
+    public Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> getApplyPlatformCategory( String channelId, List<TypeChannelBean> typeChannelBeanListApprove) {
         Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = new HashMap<>();
         for(TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
             // --> 取平台所有类目

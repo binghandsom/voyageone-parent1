@@ -342,7 +342,7 @@ define([
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
-                $location.path(cRoutes.search_advance_param.url + "2/" + value + "/0");
+                $location.path(cRoutes.search_advance_param.url + "2/" + encodeURIComponent(value) + '/0/0');
             }
         }
 
@@ -419,20 +419,19 @@ define([
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
-         *
          */
         function goSearchPage(catPath, catId) {
             var catPath = encodeURIComponent(catPath);
             switch ($rootScope.platformType.cTypeId) {
-                case "MT":
+                case "MT": // 已不使用
                     $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
                     break;
                 case "TH":
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
                     break;
                 default:
-                    $location.path(cRoutes.search_advance_param.url + "3/" + catId + "/" + $rootScope.platformType.cTypeId);
-
+                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
+                    break;
             }
         }
     }
