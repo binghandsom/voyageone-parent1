@@ -3,7 +3,7 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STORE_CATEGORY' | translate}}</h4>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_CHANNEL_CART_CATEGORY_LIST' | translate}}</h4>
                 </div>
                 <div class="container-fluid">
                     <div class="col-sm-12" ng-controller="popupCtrl">
@@ -15,6 +15,7 @@
                                         <select class="form-control"ng-model="ctrl.cartInfo.cart"
                                                 ng-change="ctrl.loadCategories()"
                                                 ng-options="v.value as v.name for v in ctrl.carts | filter:ctrl.platform()">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
                                     <!--<label class="col-sm-2 control-label" style="width: 150px;">店铺:&nbsp;{{ctrl.carts[0].name}}</label>-->
