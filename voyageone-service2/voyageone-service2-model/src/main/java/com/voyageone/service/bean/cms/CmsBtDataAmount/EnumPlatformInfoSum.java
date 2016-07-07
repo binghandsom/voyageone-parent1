@@ -9,17 +9,24 @@ import java.util.function.Function;
  * Created by dell on 2016/7/5.
  */
 public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
-    CMS_PLATFORM_ALL("CMS_PLATFORM_ALL", "{platforms.P%s:{$exists:true}}", "/search/advanceSearch", "", "商品数"),
-    CMS_PLATFORM_NO_CATEGORY("CMS_PLATFORM_NO_CATEGORY", "{'platforms.P%s.pCatStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置平台类目商品数"),
-    CMS_PLATFORM_NO_ATTRIBUTE("CMS_PLATFORM_NO_ATTRIBUTE", "{'platforms.P%s.pAttributeStatus':{$in:[null,0]}}", "/search/advanceSearch", "", "等待设置属性数"),
-    CMS_PLATFORM_READY("CMS_PLATFORM_READY", "{'platforms.P%s.status':'Ready'}", "", "", "等待Approved数"),
-    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platforms.P%s.pStatus':'WaitingPublish','platform.P%s.status':'Approved'}", "/search/advanceSearch", "", "等待上新数",(m)->{
+    CMS_PLATFORM_ALL("CMS_PLATFORM_ALL", "{platforms.P%s:{$exists:true},platforms.P%s:{$exists:true}}", "/search/advanceSearch", "", "商品数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    }),//{'platforms.P#.cartId':#},{'platforms.P#.pCatStatus':{$in:[null,'','0']}
+    CMS_PLATFORM_NO_CATEGORY("CMS_PLATFORM_NO_CATEGORY", "{platforms.P%s:{$exists:true},'platforms.P%s.pCatStatus':{$in:[null,'','0']}}", "/search/advanceSearch", "", "等待设置平台类目商品数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    }),//[{'platforms.P#.cartId':#},{'platforms.P#.pAttributeStatus':{$in:[null,'','0']}
+    CMS_PLATFORM_NO_ATTRIBUTE("CMS_PLATFORM_NO_ATTRIBUTE", "{platforms.P%s:{$exists:true},'platforms.P%s.pAttributeStatus':{$in:[null,'','0']}}", "/search/advanceSearch", "", "等待设置属性数",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
     }),
-    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,0]},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数",(m)->{
+    CMS_PLATFORM_READY("CMS_PLATFORM_READY", "{'platforms.P%s.status':'Ready'}", "", "", "等待Approved数"),
+    // query:={$and:[{'platforms.P#.cartId':#},{'platforms.P#.pStatus':{$in:#}},{'platforms.P#.status':{$in:#}}]}
+    CMS_PLATFORM_WAITING_PUBLISH("CMS_PLATFORM_WAITING_PUBLISH", "{'platforms.P%s.pStatus':'WaitingPublish','platforms.P%s.status':'Approved'}", "/search/advanceSearch", "", "等待上新数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    }),
+    CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,'']},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
     }),//
-    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,0]}}", "/search/advanceSearch", "", "上新失败数");
+    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数");
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;

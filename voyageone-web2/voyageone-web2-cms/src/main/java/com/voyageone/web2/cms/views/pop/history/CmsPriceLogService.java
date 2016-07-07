@@ -5,9 +5,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.web2.base.BaseAppService;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,8 @@ class CmsPriceLogService extends BaseAppService {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
+            CreationHelper createHelper = workbook.getCreationHelper();
+
             Sheet sheet = workbook.createSheet(StringUtils.isEmpty(sku) ? code : (code + " - " + sku));
 
             Row row = sheet.createRow(0);
@@ -61,6 +61,9 @@ class CmsPriceLogService extends BaseAppService {
 
             int rowIndex = 0;
 
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
+
             for (CmsBtPriceLogModel model : data) {
 
                 row = sheet.createRow(++rowIndex);
@@ -80,9 +83,17 @@ class CmsPriceLogService extends BaseAppService {
                 row.createCell(cellIndex++).setCellValue(model.getClientRetailPrice());
                 row.createCell(cellIndex++).setCellValue(model.getClientNetPrice());
                 row.createCell(cellIndex++).setCellValue(model.getComment());
-                row.createCell(cellIndex++).setCellValue(model.getCreated());
+
+                Cell createdCell = row.createCell(cellIndex++);
+                createdCell.setCellValue(model.getCreated());
+                createdCell.setCellStyle(dateCellStyle);
+
                 row.createCell(cellIndex++).setCellValue(model.getCreater());
-                row.createCell(cellIndex++).setCellValue(model.getModified());
+
+                Cell modifiedCell = row.createCell(cellIndex++);
+                modifiedCell.setCellValue(model.getModified());
+                modifiedCell.setCellStyle(dateCellStyle);
+
                 row.createCell(cellIndex).setCellValue(model.getModifier());
             }
 

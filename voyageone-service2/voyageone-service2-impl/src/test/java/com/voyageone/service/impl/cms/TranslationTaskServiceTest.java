@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean_CommonFields;
+import com.voyageone.service.impl.cms.tools.product.TranslationTaskService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

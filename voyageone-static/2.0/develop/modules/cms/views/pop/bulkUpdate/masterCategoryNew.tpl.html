@@ -16,12 +16,12 @@
                 <div class="category_drag_main">
                     <p class="text-center text-vo font-bold">{{:: categoryItem.level }}&nbsp;{{'TXT_LEVEL_CATEGORY' | translate}}</p>
                     <div class="form-inline text-center">
-                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%">
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%" ng-model="catName">
+                        <button type="submit" class="btn btn-vo btn-xxs" ng-click="search.catName = catName"><i class="fa fa-search"></i></button>
                     </div>
                     <div class="category_drag_list">
                         <ul>
-                            <li ng-repeat="category in categoryItem.categories track by category.catId">
+                            <li ng-repeat="category in categoryItem.categories | filter:search track by category.catId">
                                 <a href="javascript:void(0)" ng-click=" ctrl.openCategory(category)">
                                     <span>{{:: category.catName }}</span>
                                     <span class="pull-right text-muted" ng-if="category.children && category.children.length">
