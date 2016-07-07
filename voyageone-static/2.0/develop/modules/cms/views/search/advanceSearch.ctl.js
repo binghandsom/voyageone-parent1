@@ -121,8 +121,17 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type != undefined || $sessionStorage.feedSearch) {
-                    $scope.vm.searchInfo = $sessionStorage.feedSearch;
+                if ($routeParams.type == '4') {
+                    // 从主页而来的检索
+                    if ($routeParams.value1 >= 10) {
+                        $scope.vm._cart_tab_act = true;
+                        var catObj = _.find($scope.vm.masterData.cartList, function (item) {
+                            return item.value == $sessionStorage.feedSearch.cartId;
+                        });
+                        $scope.vm._cartType_ = catObj;
+                        getCat($scope.vm._cartType_);
+                    }
+                    $scope.vm.searchInfo = angular.copy($sessionStorage.feedSearch);
                     search();
                     if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                 }

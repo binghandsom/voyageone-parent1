@@ -22,7 +22,7 @@ public class CmsBtFeedCustomPropServiceTest {
 
     @Test
     public void testCustomProp() throws Exception {
-        customPropService.doInit("010");
+//        customPropService.doInit("010");
 
         // 获取属性列表测试
         List<FeedCustomPropWithValueBean> propModelList;

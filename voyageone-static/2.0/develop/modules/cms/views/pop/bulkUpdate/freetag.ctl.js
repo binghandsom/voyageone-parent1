@@ -18,8 +18,8 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.count = 0;
             this.selectdTagList = [];
+            this.taglist = [];
         }
 
         popFreeTagCtl.prototype = {
@@ -68,36 +68,24 @@ define([
                             continue;
                         }
                     }
-                    if(index==1)selected[1] = undefined;
-                    if(index==2&&selected[2]!==undefined)selected[2] = undefined;
-                }
-                if (selected[0] == undefined || !selected[0].children.length) selected[1] = undefined;
-                if (selected[1] == undefined || !selected[1].children.length) selected[2] = undefined;
-                for (var i = 2; i >= 0; i--) {
-                    var selectedVal = self.selected[i];
-                    if (selectedVal !== undefined) {
-                        self.tagPathName = selectedVal.tagPathName;
-                        self.list = {
-                            "id": selectedVal.id,
-                            "tagPathName": selectedVal.tagPathName,
-                            "tagPath": selectedVal.tagPath
-                        };
-                        break;
-                    }
+                    // if (index == 1 && selected[0].children.length == 0) selected[1] = undefined;
+                    // if (index == 2 && selected[1].children.length == 0) selected[2] = undefined;
                 }
             },
 
-            /**
-             * 点击确认添加的搜索条件
-             */
-            confirm: function () {
+            collect: function (item) {
                 var self = this;
+                self.list = {
+                    "id": item.id,
+                    "tagPathName": item.tagPathName,
+                    "tagPath": item.tagPath
+                };
                 if (!self.selectdTagList || self.selectdTagList.length == 0) self.selectdTagList.push(self.list);
 
                 // 校验选择的是否有重复值
                 var hasData = false;
-                for (var i = 0; i < self.selectdTagList.length; i++) {
-                    if (self.selectdTagList[i].id == self.list.id) {
+                for (var j = 0; j < self.selectdTagList.length; j++) {
+                    if (self.selectdTagList[j].id == self.list.id) {
                         hasData = true;
                         break;
                     }
@@ -106,11 +94,7 @@ define([
                     self.selectdTagList.push(self.list);
                 }
             },
-            clear: function () {
-                var self = this;
-                self.count = self.count - 1;
-                self.selectdTagList.pop();
-            },
+
             /**
              * 点击保存
              */

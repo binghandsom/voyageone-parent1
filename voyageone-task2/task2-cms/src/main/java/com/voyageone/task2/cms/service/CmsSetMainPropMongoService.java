@@ -32,7 +32,11 @@ import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
-import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
@@ -120,6 +124,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -239,8 +246,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // --------------------------------------------------------------------------------------------
-                // 自定义属性 - 初始化
-                customPropService.doInit(channelId);
+//                // 自定义属性 - 初始化
+//                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
             }
             // jeff 2016/05 add start
@@ -260,6 +267,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     errCnt++;
                     // 回写详细错误信息表(cms_bt_business_log)
                     insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
@@ -765,7 +773,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 由于2016/07/08版本的最新Product中product.Fields.status移到分平台product.platforms.P23.status下面去了
                 // 所以是否Approved的判断只能移到insertSxWorkLoad()方法里面去做，当一个商品的所有product都没有Approved，则不插入sx_workload表
                 if ("1".equals(sxFlg)) {
-                    productService.insertSxWorkLoad(channelId, cmsProduct, getTaskName());
+//                    productService.insertSxWorkLoad(channelId, cmsProduct, getTaskName());
+                    // 改成调用tom新做的共通方法，为了效率不能判断Approved了，只能加到workload表里面，让上新程序去判断了
+                    sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), null, getTaskName());
                 }
                 // Add desmond 2016/07/01 end
                 // jeff 2016/04 change end

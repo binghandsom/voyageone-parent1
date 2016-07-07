@@ -29,14 +29,37 @@ public class FeedCustomPropService extends BaseService {
     @Autowired
     private CmsMtFeedCustomOptionDaoExt cmsMtFeedCustomOptionDaoExt;
 
-    // 自定义属性
-    private List<FeedCustomPropWithValueBean> customPropList;
-    private Map<String, Map<String, Map<String, List<String>>>> customPropMap; // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
-    // 翻译: 全店共通
-    private Map<String, String> propCommonPublic;
+    private class FeedCustomPropData {
+        // 自定义属性
+        private List<FeedCustomPropWithValueBean> customPropList;
+        private Map<String, Map<String, Map<String, List<String>>>> customPropMap; // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        private Map<String, String> propCommonPublic;
 
-    // 是否已初始化过了
-    private boolean blnInit = false;
+        public List<FeedCustomPropWithValueBean> getCustomPropList() {
+            return customPropList;
+        }
+
+        public void setCustomPropList(List<FeedCustomPropWithValueBean> customPropList) {
+            this.customPropList = customPropList;
+        }
+
+        public Map<String, Map<String, Map<String, List<String>>>> getCustomPropMap() {
+            return customPropMap;
+        }
+
+        public void setCustomPropMap(Map<String, Map<String, Map<String, List<String>>>> customPropMap) {
+            this.customPropMap = customPropMap;
+        }
+
+        public Map<String, String> getPropCommonPublic() {
+            return propCommonPublic;
+        }
+
+        public void setPropCommonPublic(Map<String, String> propCommonPublic) {
+            this.propCommonPublic = propCommonPublic;
+        }
+    }
 
     /**
      * 初始化一下 ( 获取最新的数据, 整理好的数据放在: customPropList )
@@ -44,7 +67,14 @@ public class FeedCustomPropService extends BaseService {
      *
      * @param channel_id channel id
      */
-    public void doInit(String channel_id) {
+    private FeedCustomPropData doInit(String channel_id) {
+        FeedCustomPropData result = new FeedCustomPropData();
+        // 自定义属性
+        List<FeedCustomPropWithValueBean> customPropList;
+        Map<String, Map<String, Map<String, List<String>>>> customPropMap; // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        Map<String, String> propCommonPublic;
+
         // 翻译: 全店共通
         propCommonPublic = new HashMap<>();
         // 翻译: 无视category级别的共通
@@ -162,8 +192,13 @@ public class FeedCustomPropService extends BaseService {
             }
         }
 
-        // 初始化好了
-        blnInit = true;
+        // 自定义属性
+        result.setCustomPropList(customPropList);
+        result.setCustomPropMap(customPropMap); // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        result.setPropCommonPublic(propCommonPublic);
+
+        return result;
     }
 
     /**
@@ -182,9 +217,13 @@ public class FeedCustomPropService extends BaseService {
             String channel_id,
             String feed_cat_path
     ) {
-        if (!blnInit) {
-            doInit(channel_id);
-        }
+        FeedCustomPropData feedCustomPropData = doInit(channel_id);
+
+        // 自定义属性
+        List<FeedCustomPropWithValueBean> customPropList = feedCustomPropData.getCustomPropList();
+        Map<String, Map<String, Map<String, List<String>>>> customPropMap = feedCustomPropData.getCustomPropMap(); // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        Map<String, String> propCommonPublic = feedCustomPropData.getPropCommonPublic();
 
         List<FeedCustomPropWithValueBean> result = new ArrayList<>();
 
@@ -252,9 +291,13 @@ public class FeedCustomPropService extends BaseService {
      * @return 翻译好的内容
      */
     public String getPropTrans(String channel_id, String feed_cat_path, String prop_name, String value) {
-        if (!blnInit) {
-            doInit(channel_id);
-        }
+        FeedCustomPropData feedCustomPropData = doInit(channel_id);
+
+        // 自定义属性
+        List<FeedCustomPropWithValueBean> customPropList = feedCustomPropData.getCustomPropList();
+        Map<String, Map<String, Map<String, List<String>>>> customPropMap = feedCustomPropData.getCustomPropMap(); // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        Map<String, String> propCommonPublic = feedCustomPropData.getPropCommonPublic();
 
         String result = "";
 
@@ -302,9 +345,13 @@ public class FeedCustomPropService extends BaseService {
      * @return Map map
      */
     public Map<String, String> getTransList(String channel_id, String feed_cat_path) {
-        if (!blnInit) {
-            doInit(channel_id);
-        }
+        FeedCustomPropData feedCustomPropData = doInit(channel_id);
+
+        // 自定义属性
+        List<FeedCustomPropWithValueBean> customPropList = feedCustomPropData.getCustomPropList();
+        Map<String, Map<String, Map<String, List<String>>>> customPropMap = feedCustomPropData.getCustomPropMap(); // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+        // 翻译: 全店共通
+        Map<String, String> propCommonPublic = feedCustomPropData.getPropCommonPublic();
 
         Map<String, String> result = new HashMap<>();
 
