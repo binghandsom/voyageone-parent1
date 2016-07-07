@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -135,6 +137,13 @@ public class BackDoorController extends CmsController {
         return "本次处理的feed数据总数:" + allFeedInfoList.size();
     }
 
+    /**
+     * 用于20160708的数据移植
+     * @param channelId 店铺Id
+     * @param platformId 平台种类Id
+     * @param code 产品code
+     * @return
+     */
     @RequestMapping(value = "changeDataByNewModel", method = RequestMethod.GET)
     public Object changeDataBy20160708 (@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
 
@@ -529,4 +538,41 @@ public class BackDoorController extends CmsController {
 
         return "成功处理数据件数:" + oldProductInfo.size() + ",错误列表:" + errorCode.toString();
     }
+
+    /**
+     * 测试getWmsProductsInfo方法
+     * @param channelId 店铺Id
+     * @param productSku sku
+     * @return ProductForWmsBean对象
+     */
+    @RequestMapping(value = "testGetWmsProductInfo", method = RequestMethod.GET)
+    public Object testGetWmsProductInfo (@RequestParam("channelId") String channelId, @RequestParam("productSku") String productSku) {
+        return JacksonUtil.bean2Json(productService.getWmsProductsInfo(channelId, productSku, null));
+    }
+
+    /**
+     * 测试getOmsProductsInfo方法
+     * @param channelId 店铺Id
+     * @param skuIncludes 检索sku
+     * @param skuFlg 1:单个sku,2:多个sku
+     * @param nameIncludes 名称
+     * @param descriptionIncludes 描述
+     * @param cartId 平台Id
+     * @return List<ProductForOmsBean>对象
+     */
+    @RequestMapping(value = "testGetOmsProductInfo", method = RequestMethod.GET)
+    public Object testGetWmsProductInfo (@RequestParam("channelId") String channelId, @RequestParam("skuIncludes") String skuIncludes
+            , @RequestParam("skuFlg") String skuFlg
+            , @RequestParam("nameIncludes") String nameIncludes
+            , @RequestParam("descriptionIncludes") String descriptionIncludes
+            , @RequestParam("cartId") String cartId) {
+        if ("1".equals(skuFlg)) {
+            return JacksonUtil.bean2Json(productService.getOmsProductsInfo(channelId, skuIncludes, null, nameIncludes, descriptionIncludes, cartId, null));
+        } else {
+            List<String> skus = new ArrayList<>();
+            Collections.addAll(skus, skuIncludes.split(","));
+            return JacksonUtil.bean2Json(productService.getOmsProductsInfo(channelId, null, skus, nameIncludes, descriptionIncludes, cartId, null));
+        }
+    }
+
 }
