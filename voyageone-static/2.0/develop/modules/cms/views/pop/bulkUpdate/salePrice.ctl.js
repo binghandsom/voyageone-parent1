@@ -72,6 +72,20 @@ define([
                         alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
                         return;
                     }
+                    if (res.data.ecd == 7) {
+                        alert("未填写价格，请填写后再操作。");
+                        return;
+                    }
+                    if (res.data.ecd == 8) {
+                        // 数据错误
+                        alert("计算后的商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]数据错误。");
+                        return;
+                    }
+                    if (res.data.ecd == 9) {
+                        // 数据错误
+                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的数据错误，没有[" +res.data.priceType + "]的数据。");
+                        return;
+                    }
                     $modalInstance.close();
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 });

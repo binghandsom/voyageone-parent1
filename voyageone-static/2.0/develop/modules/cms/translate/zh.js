@@ -101,7 +101,8 @@ define(function () {
         "TXT_CHANNEL_LIST": "渠道一览（维护）",
         "TXT_CART_LIST": "Cart一览（维护）",
         "TXT_CATEGORY": "类目",
-        "TXT_PRODUCT_STATUS": "产品状态",
+        "TXT_PRODUCT_STATUS": "商品状态",
+        "TXT_FEED_STATUS" : "Feed 状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_MSRP_PRICE": "官方售价",
         "TXT_CREATE_TIME": "创建时间",
@@ -111,6 +112,7 @@ define(function () {
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
+        "TXT_COLOR" : "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
@@ -726,7 +728,7 @@ define(function () {
         "TXT_TRANSLATION_SEARCH_SELECT_ALL": "全部",
         "TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED": "未翻译",
         "TXT_TRANSLATION_SEARCH_SELECT_TRANSLATED": "已翻译",
-        "TXT_FUZZY_SEARCH_PLACE_HOLDER": "模糊查询(ProductCode，商品名称)",
+        "TXT_TRANSLATION_FUZZY_SEARCH_TIP": "[ProductCode] 或者 [商品名称]",
         "TXT_PRODUCT_EN_NAME": "商品名称(英文)",
         "TXT_PRODUCT_CN_NAME": "商品名称(中文)",
         "TXT_PRODUCT_EN_MATERIAL": "材质(英文)",
@@ -747,6 +749,12 @@ define(function () {
         "TXT_JM_PROMOTION_CHANGED_COUNT": "有变更产品数",
         "TXT_JOIN_JM_PROMOTION_PRESALE_TIME": "预热时间",
         "TXT_PROMOTION_PRODUCT_STATUS": "产品活动状态",
-        "TXT_JOIN_JM_CODE_SKU_SEARCH": "Code/SKU"
+        "TXT_JOIN_JM_CODE_SKU_SEARCH": "Code/SKU",
+
+        /**feed导出*/
+        "TXT_EXPORT_FILE_NAME":"导出文件名",
+        "TXT_EXPORT_REQUEST_TIME":"导出申请时间",
+        "TXT_EXPORT_CREATE_TIME":"Excel生成时间",
+        "TXT_EXPORT_REQUESTER":"导出申请者"
     };
 });

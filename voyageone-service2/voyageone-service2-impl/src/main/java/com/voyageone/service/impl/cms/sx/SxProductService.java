@@ -688,7 +688,7 @@ public class SxProductService extends BaseService {
 
                 if (customIdsOld != null && !customIdsOld.isEmpty() && customIdsCnOld != null && !customIdsCnOld.isEmpty()) {
                     // 获取排序顺序
-                    customPropService.doInit(channelId);
+//                    customPropService.doInit(channelId);
                     String feedCatPath = sxData.getCmsBtFeedInfoModel().getCategory();
                     if (feedCatPath == null) feedCatPath = "";
                     List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedCatPath);
@@ -2974,4 +2974,113 @@ public class SxProductService extends BaseService {
         return cmsBtWorkloadHistoryDao.insert(insModel);
     }
 
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (单个code的场合)
+     * @param channelId channel id
+     * @param code code
+     * @param cartId cartId (如果指定cartId, 那么就只插入指定cart的数据, 如果传入null, 那么就是默认全渠道) (会自动去除没有勾选不能上新的渠道)
+     * @param modifier 修改者
+     */
+    public void insertSxWorkLoad(String channelId, String code, Integer cartId, String modifier) {
+        List<String> codeList = new ArrayList<>();
+        codeList.add(code);
+        insertSxWorkLoad(channelId, codeList, cartId, modifier);
+    }
+
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (批量code的场合)
+     * @param channelId channel id
+     * @param codeList code列表, 允许重复(重复会自动合并)
+     * @param cartId cartId (如果指定cartId, 那么就只插入指定cart的数据, 如果传入null, 那么就是默认全渠道) (会自动去除没有勾选不能上新的渠道)
+     * @param modifier 修改者
+     */
+    public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier) {
+        // 输入参数检查
+        if (StringUtils.isEmpty(channelId) || codeList == null || StringUtils.isEmpty(modifier)) {
+            return;
+        }
+
+        // 准备插入workload表的数据
+        List<CmsBtSxWorkloadModel> modelList = new ArrayList<>();
+        // 已处理过的group(防止同一个group多次被插入)
+        List<Long> groupWorkList = new ArrayList<>();
+
+        for (String prodCode : codeList) {
+            // 根据商品code获取其所有group信息(所有平台)
+            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
+            for (CmsBtProductGroupModel group : groups) {
+                if (groupWorkList.contains(group.getGroupId())) {
+                    // 如果已经处理过了, 那么就跳过
+                    continue;
+                } else {
+                    groupWorkList.add(group.getGroupId());
+                }
+
+                // 如果cart是0或者1的话, 直接就跳过, 肯定不用上新的.
+                if (group.getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                    continue;
+                }
+
+                if (cartId != null && cartId.intValue() != group.getCartId().intValue()) {
+                    // 指定了cartId, 并且指定的cartId并不是现在正在处理的group的场合, 跳过
+                    continue;
+                }
+
+                // 20160707 tom 加速, 不再做检查 START
+//                // 根据groupId获取group的上新信息
+//                SxData sxData = getSxProductDataByGroupId(channelId, group.getGroupId());
+//
+//                // 判断是否需要上新
+//                if (sxData == null) {
+//                    continue;
+//                }
+//                if (sxData.getProductList().size() == 0) {
+//                    continue;
+//                }
+//                if (sxData.getSkuList().size() == 0) {
+//                    continue;
+//                }
+                // 20160707 tom 加速, 不再做检查 END
+
+                // 加入等待上新列表
+                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
+                model.setChannelId(channelId);
+                model.setCartId(group.getCartId());
+                model.setGroupId(group.getGroupId());
+                model.setPublishStatus(0);
+                model.setModifier(modifier);
+                model.setModified(DateTimeUtil.getDate());
+                model.setCreater(modifier);
+                model.setCreated(DateTimeUtil.getDate());
+                modelList.add(model);
+
+            }
+
+        }
+
+        // 插入上新表
+        int iCnt = 0;
+        if (!modelList.isEmpty()) {
+            // 避免一下子插入数据太多, 分批插入
+            List<CmsBtSxWorkloadModel> modelListFaster = new ArrayList<>();
+
+            for (int i = 0; i < modelList.size(); i++) {
+                modelListFaster.add(modelList.get(i));
+
+                if (i % 301 == 0 ) {
+                    // 插入一次数据库
+                    iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+
+                    // 初始化一下
+                    modelListFaster = new ArrayList<>();
+                }
+            }
+
+            if (modelListFaster.size() > 0) {
+                // 最后插入一次数据库
+                iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
+            }
+        }
+        $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
+    }
 }

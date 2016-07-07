@@ -75,21 +75,21 @@
                             <ul class="stat-boxes">
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="jump('/search/advanceSearch',{mCatStatus:'0'})">
+                                         ng-click="goSearchPage(10,{mCatStatus:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
                                         等待设置主类目数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right  data-priority-2"
-                                         ng-click="jump('/search/advanceSearch',{taxNoStatus:'0'})">
+                                         ng-click="goSearchPage(10,{taxNoStatus:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
                                         等待设置税号数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="jump('/search/advanceSearch',{transStsFlg:'0'})">
+                                         ng-click="goSearchPage(10,{transStsFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
                                         等待翻译数
                                     </div>
@@ -103,7 +103,7 @@
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp; 指导售价变化状态</h3>
+                            <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;指导售价变化状态</h3>
                         </div>
                         <div class="panel-body white-bg">
                             <div class="span12 center" style="text-align: center;">
@@ -118,11 +118,10 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <!--"cartId":23,"productStatus":[],"platformStatus":[],"pCatStatus":0,"promotionTagType":1,"cidValue":[],"shopCatStatus":0,"priceDiffFlg":"2"-->
                                             <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                                <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceChgFlg:'U'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceChgFlg:'D'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -132,7 +131,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;最终售价变化状态</h3>
@@ -152,13 +151,12 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <!--"cartId":23,"productStatus":[],"platformStatus":[],"pCatStatus":0,"promotionTagType":1,"cidValue":[],"shopCatStatus":0,"priceDiffFlg":"2"-->
                                             <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                                <td class="mfb-xxt text-center"  ><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'1'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'4'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'5'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_BREAKDOWN.amountVal}}</label></a></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -192,13 +190,13 @@
                                         <tbody>
                                         <tr ng-repeat="m in vm.sumData.listPlatformInfoSum">
                                             <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="jump('/search/advanceSearch',{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(110,{cartId:m.CMS_PLATFORM_ALL.cartId})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(120,{cartId:m.CMS_PLATFORM_NO_CATEGORY.cartId,pCatStatus:true})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:true})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

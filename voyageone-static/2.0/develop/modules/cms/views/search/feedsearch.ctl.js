@@ -6,8 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage,$filter) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -169,7 +168,8 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品" : "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
+            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品 修改记录数:"+$scope.vm.feedPageOption.total :
+                                                      "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
             confirm(notice).result.then(function () {
                 $feedSearchService.updateFeedStatus({
                     'selList': selList,
@@ -228,7 +228,9 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree
+                        categories: res.data.categoryTree,
+                        from:$scope.vm.searchInfo.category,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.category = context.selected.catPath;
                         }
@@ -236,8 +238,12 @@ define([
                 });
         };
 
+        $scope.formatStrDate = function(item){
+            item.modified = $filter('date')(new Date(item.modified),'yyyy-MM-dd HH:mm:ss')
+        }
+
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage','$filter'];
     return searchIndex;
 });

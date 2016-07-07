@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms;
+package com.voyageone.service.impl.cms.tools.product;
 
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
@@ -68,18 +68,19 @@ public class TranslationTaskService extends BaseService {
 
         //未分配的任务
         String queryStr = String.format("{'$and':[ {'common.fields.isMasterMain':1}," +
-                "{'$or': [{'common.fields.translateStatus':'0'}, {'common.fields.translateStatus':{'$exists': false}} ]}," +
+                "{'common.fields.translateStatus': {'$ne' : '1' }}, " +
                 "{'$or': [{'common.fields.translator':''} ,  " +
+                "{'common.fields.translator':null}, " +
                 "{'common.fields.translateTime':{'$lte':'%s'}} , " +
-                "{'common.fields.translator':{'$exists' : false}}, " +
-                "{'common.fields.translateTime':{'$exists' : false}}]}]}", translateTimeStr);
+                "{'common.fields.translateTime':''}, " +
+                "{'common.fields.translateTime': null}]}]}", translateTimeStr);
 
         taskSummary.setUnassginedCount(cmsBtProductDao.countByQuery(queryStr, channelId));
 
         //已分配但未完成的任务
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'0'," +
-                "'common.fields.translator':{'$exists' : true}," +
+                "'common.fields.translator':{'$ne' : null}," +
                 "'common.fields.translator':{'$ne' : ''}," +
                 "'common.fields.translateTime':{'$gt':'%s'}}", translateTimeStr);
         taskSummary.setIncompleteCount(cmsBtProductDao.countByQuery(queryStr, channelId));
@@ -147,8 +148,8 @@ public class TranslationTaskService extends BaseService {
 
             //不能有2个or
             queryObj.addQuery("'common.fields.isMasterMain':1");
-            queryObj.addQuery("'$or': [{'common.fields.translateStatus':'0'}, {'common.fields.translateStatus':{'$exists': false}} ]");
-            queryObj.addQuery("'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator':{'$exists' : false}}, {'common.fields.translateTime':{'$exists' : false}}]");
+            queryObj.addQuery("'common.fields.translateStatus': {'$ne' : '1' }");
+            queryObj.addQuery("'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]");
             queryObj.addParameters(translateTimeStr);
 
 

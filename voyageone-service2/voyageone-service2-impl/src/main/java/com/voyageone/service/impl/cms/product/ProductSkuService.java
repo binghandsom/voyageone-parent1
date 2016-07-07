@@ -6,6 +6,9 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -191,6 +194,12 @@ public class ProductSkuService extends BaseService {
         // 更新platforms.Pxx的RetailPrice和SalePrice的价格区间
         if (cmsProduct.getPlatforms() != null) {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+                // add desmond 2016/07/06 start
+                // P0（主数据）平台不用设置sku（不加这个条件会加一个P0.skus=null）
+                if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                    continue;
+                }
+                // add desmond 2016/07/06 end
                 updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
                 if (entry.getValue().getSkus() != null) {
                     Map<String, Double> result = getPlatformPriceScope(entry.getValue().getSkus());
@@ -237,6 +246,60 @@ public class ProductSkuService extends BaseService {
 
         updateNewGroupPrice(channelId, cmsProduct.getProdId(), modifier);
 
+    }
+
+    /*
+        sku共同属性PriceDiffFlg计算方法
+     */
+    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
+
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+
+        Double breakThreshold = null;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
+        }
+
+        String diffFlg = "1";
+        if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (1.0-breakThreshold);
+            if (priceRetail > sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (breakThreshold+1.0);
+            if (priceRetail >= sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
+    }
+
+    /*
+   　* sku共同属性PriceDiffFlg计算方法
+     */
+    public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
+        String diffFlg = "1";
+        if (priceSale < priceRetail) {
+            if (priceSale < priceRetail * (1 - breakThreshold)) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (priceSale > priceRetail) {
+            if (priceSale <= priceRetail * (breakThreshold + 1)) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
     }
 
     /**
