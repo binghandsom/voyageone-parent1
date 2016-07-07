@@ -16,7 +16,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> {{'TXT_TRANSLATION_STATUS' | translate}}</h3>
                 </div>
-                <div class="panel-body text-center">
+                <div class="panel-body text-center panel-body-flex-center">
                     <ul class="data-display-boxes">
                         <li>
                             <div class="data"><strong>{{ctrl.vm.taskSummary.unassginedCount}}</strong> {{'TXT_UN_TRANSLATION' | translate}}</div>
@@ -42,7 +42,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;{{'TXT_TRANSLATION_TASK_GET' | translate}}</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body panel-body-flex-center">
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label for="assignInfo-priority" class="control-label col-sm-3 col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
@@ -80,7 +80,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;{{'TXT_TRANSLATION_SEARCH' | translate}}</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body panel-body-flex-center">
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label for="searchPageSettings-translateStatus" class="col-sm-3 col-md-2 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
@@ -145,46 +145,54 @@
                     <uib-tab>
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_COMMON_ATTRIBUTE'|translate}}</tab-heading>
                         <form role="form" name="commonAttributeForm" class="form-horizontal" novalidate>
-                            <div class="col-sm-12 product-shema-detail">
-                                <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                            <div class="row">
+                                <div class="col-sm-12 product-shema-detail">
+                                    <hr>
+                                    <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                                </div>
                             </div>
-                            <div class="col-sm-12">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-3 col-sm-7">
-                                            <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
-                                                    class="btn btn-vo"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
-                                            </button>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <div class="col-sm-offset-3 col-sm-7">
+                                                    <button name="clientProductUrl" ng-click="ctrl.openUrl(ctrl.vm.taskDetail.commonFields.clientProductUrl)"
+                                                            class="btn btn-vo"><i class="fa fa-search"></i> {{'TXT_PRODUCT_ORIGINAL_URL' | translate}}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label s-not-required">{{'TXT_PRODUCT_CODE' | translate}}</label>
+                                                <div class="col-sm-7">
+                                                    <input name="productCode" class="form-control" ng-model="ctrl.vm.taskDetail.productCode" disabled="disabled">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label text-right s-not-required">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
+                                                <div class="col-sm-7">
+                                                    <input name="brand" class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.brand" disabled="disabled">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label s-not-required">{{'TXT_MASTER_CATEGORY' | translate}}</label>
+                                                <div class="col-sm-7">
+                                                    <input class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.feedCategory" disabled="disabled">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label s-not-required">{{'TXT_PRODUCT_CODE' | translate}}</label>
-                                        <div class="col-sm-7">
-                                            <input name="productCode" class="form-control" ng-model="ctrl.vm.taskDetail.productCode" disabled="disabled">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label text-right s-not-required">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
-                                        <div class="col-sm-7">
-                                            <input name="brand" class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.brand" disabled="disabled">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label s-not-required">{{'TXT_MASTER_CATEGORY' | translate}}</label>
-                                        <div class="col-sm-7">
-                                            <input class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.feedCategory" disabled="disabled">
+                                        <div class="col-sm-2 imageContainer">
+                                            <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
+                                                <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 imageContainer">
-                                    <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
-                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
-                                </div>
                             </div>
-                            <div class="col-sm-12 product-shema-detail">
-                                <hr>
-                                <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;翻译内容</span>
+                            <div class="row">
+                                <div class="col-sm-12 product-shema-detail">
+                                    <hr>
+                                    <span class="product-title" style="background-color: #f8f8f8"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;翻译内容</span>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label s-not-required">{{'TXT_PRODUCT_EN_NAME' | translate}}</label>
@@ -318,13 +326,13 @@
                     <table class="table table-hover-new table-hover table_main">
                         <thead>
                         <tr>
-                            <th class="mfb-xt text-center">Status</th>
-                            <th class="mfb-xt text-center">Image</th>
-                            <th class="mfb-xt text-center">Feed Category</th>
-                            <th class="mfb-xt text-center">Code</th>
-                            <th class="mfb-xt text-center">Name</th>
-                            <th class="mfb-xt text-center">Main Category</th>
-                            <th class="mfb-xt text-center">TranslateTime</th>
+                            <th class="text-center">Status</th>
+                            <th class="col-sm-1 text-center">Image</th>
+                            <th class="col-sm-3 text-center">Feed Category</th>
+                            <th class="col-sm-1 text-center">Code</th>
+                            <th class="col-sm-3 text-center">Name</th>
+                            <th class="col-sm-2 text-center">Main Category</th>
+                            <th class="col-sm-2 text-center">TranslateTime</th>
                         </tr>
                         </thead>
                         <tbody ng-if="!(ctrl.vm.taskList) || ctrl.vm.taskList.length == 0">
@@ -336,15 +344,15 @@
                         </tbody>
                         <tbody ng-if="ctrl.vm.taskList.length > 0" ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
                         <tr ng-repeat="task in ctrl.vm.taskList">
-                            <td class="mfb-xt text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
-                            <td class="mfb-xt text-center v-middle">
+                            <td class="text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
+                            <td class="text-center v-middle">
                                 <img alt="ProductImage" class="thumb m-b-xs" image="{{task.image1}}">
                             </td>
-                            <td class="mfb-xt text-center v-middle">{{task.feedCategory}}</td>
-                            <td class="mfb-xt text-center v-middle"><a ng-click="ctrl.get(task)" class="a a-link"> {{task.code}}</a></td>
-                            <td class="mfb-xt text-center v-middle">{{task.productName}}</td>
-                            <td class="mfb-xt text-center v-middle">{{task.catPath}}</td>
-                            <td class="mfb-xt text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                            <td class="text-center v-middle">{{task.feedCategory}}</td>
+                            <td class="text-center v-middle"><a ng-click="ctrl.get(task)" class="a a-link"> {{task.code}}</a></td>
+                            <td class="text-center v-middle">{{task.productName}}</td>
+                            <td class="text-center v-middle">{{task.catPath}}</td>
+                            <td class="text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd HH:mm:ss"}}</td>
                         </tr>
                         </tbody>
                     </table>
