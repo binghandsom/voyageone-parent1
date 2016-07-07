@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -506,23 +507,30 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 orgChaNameList.add(channel.getFullName());
             }
 
-            boolean hasChg = false;
-            List<CmsBtProductModel_Sku> skus = groupObj.getCommon().getSkus();
-            if (skus != null) {
-                for (CmsBtProductModel_Sku skuObj : skus) {
-                    String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
-                    if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
-                        hasChg = true;
-                        break;
-                    } else {
-                        hasChg = false;
+            // 查看价格变化
+            if (cartId > 0) {
+                boolean hasChg = false;
+                CmsBtProductModel_Platform_Cart platformObj = groupObj.getPlatform(cartId);
+                if (platformObj != null) {
+                    List<BaseMongoMap<String, Object>> skus = platformObj.getSkus();
+                    if (skus != null && skus.size() > 0) {
+                        for (BaseMongoMap skuObj : skus) {
+                            String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
+                            if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
+                                hasChg = true;
+                                break;
+                            } else {
+                                hasChg = false;
+                            }
+                        }
                     }
                 }
-            }
-            if (hasChg) {
-                chgFlgList.add(1);
-            } else {
-                chgFlgList.add(0);
+
+                if (hasChg) {
+                    chgFlgList.add(1);
+                } else {
+                    chgFlgList.add(0);
+                }
             }
 
             if (!hasImgFlg) {
