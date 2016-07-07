@@ -34,7 +34,7 @@ public class CmsBtBusinessLogDaoTest {
 
         // Order 条件
         String sortString = "channel_id asc, modified DESC";
-        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).sort(sortString).toMap();
+        Map<String, Object> newMap = MySqlPageHelper.build(map).sort(sortString).toMap();
 
         // 执行结果
         List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
@@ -56,7 +56,7 @@ public class CmsBtBusinessLogDaoTest {
 
         // limit 条件
         int limit = 10;
-        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).limit(limit).toMap();
+        Map<String, Object> newMap = MySqlPageHelper.build(map).limit(limit).toMap();
 
         List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
@@ -79,7 +79,7 @@ public class CmsBtBusinessLogDaoTest {
         int page = 3;
         // limit 条件
         int limit = 10;
-        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).page(page).limit(limit).toMap();
+        Map<String, Object> newMap = MySqlPageHelper.build(map).page(page).limit(limit).toMap();
 
         List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
@@ -103,7 +103,7 @@ public class CmsBtBusinessLogDaoTest {
         // Order 条件
         //String sortString = "channel_id asc, modified DESC";
         Map<String, Object> newMap = MySqlPageHelper
-                .queryParam(map)
+                .build(map)
                 .limit(limit)
                 .addSort("channel_id", Order.Direction.ASC)
                 .addSort("modified", Order.Direction.ASC)
@@ -132,7 +132,7 @@ public class CmsBtBusinessLogDaoTest {
         int limit = 10;
         // Order 条件
         String sortString = "channel_id asc, modified DESC";
-        Map<String, Object> newMap = MySqlPageHelper.queryParam(map)
+        Map<String, Object> newMap = MySqlPageHelper.build(map)
                 .page(page)
                 .limit(limit)
                 .addSort("channel_id", Order.Direction.ASC)
