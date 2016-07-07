@@ -103,6 +103,7 @@ define(function(){
         "TXT_CATEGORY": "类目",
         "TXT_PRODUCT_STATUS": "商品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
+        "TXT_FEED_STATUS" : "Feed 状态",
         "TXT_MSRP_PRICE": "官方售价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
@@ -111,6 +112,7 @@ define(function(){
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
+        "TXT_COLOR" : "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
@@ -748,6 +750,12 @@ define(function(){
         "TXT_JM_PROMOTION_CHANGED_COUNT":"有变更产品数",
         "TXT_JOIN_JM_PROMOTION_PRESALE_TIME":"预热时间",
         "TXT_PROMOTION_PRODUCT_STATUS":"产品活动状态",
-        "TXT_JOIN_JM_CODE_SKU_SEARCH":"Code/SKU"
+        "TXT_JOIN_JM_CODE_SKU_SEARCH":"Code/SKU",
+
+        /**feed导出*/
+        "TXT_EXPORT_FILE_NAME":"导出文件名",
+        "TXT_EXPORT_REQUEST_TIME":"导出申请时间",
+        "TXT_EXPORT_CREATE_TIME":"Excel生成时间",
+        "TXT_EXPORT_REQUESTER":"导出申请者"
     };
 });
