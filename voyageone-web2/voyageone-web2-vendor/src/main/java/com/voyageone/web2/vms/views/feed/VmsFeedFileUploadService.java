@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -58,7 +59,7 @@ public class VmsFeedFileUploadService extends BaseAppService {
     public void saveFeedFile(String channelId, String userName, MultipartFile file) {
 
         // check
-        doSaveFeedFileCheck(file);
+        doSaveFeedFileCheck(channelId, file);
 
         // 上传文件流
         InputStream inputStream = null;
@@ -86,19 +87,38 @@ public class VmsFeedFileUploadService extends BaseAppService {
     /**
      * checkFeedFile
      *
-     * @param file 上传的FeedFile文件
+     * @param channelId 渠道
+     * @param uploadFile 上传的FeedFile文件
      */
-    private void doSaveFeedFileCheck(MultipartFile file) {
+    private void doSaveFeedFileCheck(String channelId, MultipartFile uploadFile) {
+
+        // 取得Feed文件上传路径
+        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
+        feedFilePath +=  "/" + channelId + "/feed/";
+
+        // 目录下有文件存在的话不允许上传
+        File root = new File(feedFilePath);
+        // 扫描根目录下面的所有文件（不包含子目录）
+        File[] files = root.listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                // 只处理文件，跳过目录
+                if (!file.isDirectory()) {
+                    // TODO 存在正在处理的文件，请稍后上传
+                    throw new BusinessException("7000087");
+                }
+            }
+        }
 
         // 文件名
         String fileName = "";
 
         // 文件大小判断
-        if (file.getSize() >= FILE_LIMIT_SIZE) {
+        if (uploadFile.getSize() >= FILE_LIMIT_SIZE) {
             // TODO FeedFile大小不能超过3M
             throw new BusinessException("7000087");
         }
-        fileName = file.getOriginalFilename();
+        fileName = uploadFile.getOriginalFilename();
 
         // 获取文件后缀
         String suffix = null;

@@ -25,10 +25,14 @@ define([
                     uploadItem.onSuccess = function (res) {
                         main.blockUI.stop();
                         if (res.message) {
-                            alert(res.message);
+                            main.alert(res.message);
                             return;
                         }
                         main.notify.success('TXT_MSG_UPLOAD_SUCCESS');
+                    };
+                    uploadItem.onError = function (res) {
+                        main.blockUI.stop();
+                        main.alert('TXT_MSG_UPLOAD_FAIL');
                     };
                     uploadItem.formData = [];
                     uploadItem.upload();

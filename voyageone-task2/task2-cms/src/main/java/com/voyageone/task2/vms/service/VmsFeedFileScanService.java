@@ -103,9 +103,10 @@ public class VmsFeedFileScanService extends BaseTaskService {
 
         // 取得Feed文件上传路径
         String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
+        feedFilePath += "/" + channelId + "/feed/";
 
         // 这个渠道的Feed文件的根目录
-        File root = new File(feedFilePath + "/" + channelId + "/feed/");
+        File root = new File(feedFilePath);
         // 扫描根目录下面的所有文件（不包含子目录）
         File[] files = root.listFiles();
         // 如果存在文件，那么逐个处理
