@@ -1,5 +1,10 @@
 package com.voyageone.components.jumei.reponse;
 
+import com.voyageone.common.components.issueLog.IssueLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.Serializable;
 
 /**
@@ -9,4 +14,8 @@ import java.io.Serializable;
  * @since 2.0.0
  */
 public abstract class BaseJMResponse implements Serializable {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    protected IssueLog issueLog;
 }
