@@ -267,6 +267,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     errCnt++;
                     // 回写详细错误信息表(cms_bt_business_log)
                     insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", e.getMessage(), getTaskName());
