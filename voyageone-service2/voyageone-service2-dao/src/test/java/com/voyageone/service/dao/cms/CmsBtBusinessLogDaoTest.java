@@ -1,6 +1,7 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.mysql.paginator.domain.MySqlPage;
+import com.github.miemiedev.mybatis.paginator.domain.Order;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import org.junit.Test;
@@ -33,10 +34,10 @@ public class CmsBtBusinessLogDaoTest {
 
         // Order 条件
         String sortString = "channel_id asc, modified DESC";
-        MySqlPage.addMySqlPage(map, sortString);
+        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).sort(sortString).toMap();
 
         // 执行结果
-        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(map);
+        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
             System.out.println(JacksonUtil.bean2Json(model));
         }
@@ -55,9 +56,9 @@ public class CmsBtBusinessLogDaoTest {
 
         // limit 条件
         int limit = 10;
-        MySqlPage.addMySqlPage(map, limit);
+        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).limit(limit).toMap();
 
-        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(map);
+        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
             System.out.println(JacksonUtil.bean2Json(model));
         }
@@ -75,12 +76,12 @@ public class CmsBtBusinessLogDaoTest {
         map.put("cartId", 24);
 
         // 第2页
-        int page = 2;
+        int page = 3;
         // limit 条件
         int limit = 10;
-        MySqlPage.addMySqlPage(map, page, limit);
+        Map<String, Object> newMap = MySqlPageHelper.queryParam(map).page(page).limit(limit).toMap();
 
-        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(map);
+        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
             System.out.println(JacksonUtil.bean2Json(model));
         }
@@ -100,10 +101,15 @@ public class CmsBtBusinessLogDaoTest {
         // limit 条件
         int limit = 10;
         // Order 条件
-        String sortString = "channel_id asc, modified DESC";
-        MySqlPage.addMySqlPage(map, limit, sortString);
+        //String sortString = "channel_id asc, modified DESC";
+        Map<String, Object> newMap = MySqlPageHelper
+                .queryParam(map)
+                .limit(limit)
+                .addSort("channel_id", Order.Direction.ASC)
+                .addSort("modified", Order.Direction.ASC)
+                .toMap();
 
-        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(map);
+        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
             System.out.println(JacksonUtil.bean2Json(model));
         }
@@ -121,14 +127,19 @@ public class CmsBtBusinessLogDaoTest {
         map.put("cartId", 24);
 
         // 第2页
-        int page = 2;
+        int page = 3;
         // limit 条件
         int limit = 10;
         // Order 条件
         String sortString = "channel_id asc, modified DESC";
-        MySqlPage.addMySqlPage(map, page, limit, sortString);
+        Map<String, Object> newMap = MySqlPageHelper.queryParam(map)
+                .page(page)
+                .limit(limit)
+                .addSort("channel_id", Order.Direction.ASC)
+                .addSort("modified", Order.Direction.ASC)
+                .toMap();
 
-        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(map);
+        List<CmsBtBusinessLogModel> list = cmsBtBusinessLogDao.selectList(newMap);
         for (CmsBtBusinessLogModel model : list) {
             System.out.println(JacksonUtil.bean2Json(model));
         }
