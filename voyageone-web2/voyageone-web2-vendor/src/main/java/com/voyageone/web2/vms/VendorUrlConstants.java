@@ -8,8 +8,8 @@ public interface VendorUrlConstants {
 
     interface ORDER {
         interface ORDER_INFO {
-            String ROOT = "/order/order_info";
-            String INIT = "/init";
+            String ROOT = "/vms/order/order_info/";
+            String INIT = "init";
         }
     }
 

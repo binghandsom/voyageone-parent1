@@ -36,7 +36,6 @@ require([
             if ($scope.loginForm.$invalid)
                 return;
 
-
         $ajax.post('/core/access/user/vendorLogin', {
             username: $scope.username,
             password: $scope.password,
@@ -46,13 +45,6 @@ require([
         }, function(res) {
             $scope.message = res.message || ('Login Fail(' + (res.code || '?') + ')');
         });
-
-
-        //if ($scope.username === 'a') {
-        //    $scope.message = 'aaaaaaa';
-        //    return;
-        //}
-        //location.href = '/app/app.html';
     };
 });
 

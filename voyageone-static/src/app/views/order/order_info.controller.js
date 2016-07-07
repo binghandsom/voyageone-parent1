@@ -4,30 +4,35 @@ define([
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
-        function OrderInfoController(alert, notify, orderListService, popups) {
+        function OrderInfoController(alert, notify, orderInfoService, popups) {
             this.alert = alert;
             this.notify = notify;
-            this.orderListService = orderListService;
+            this.orderInfoService = orderInfoService;
             this.popups = popups;
 
+            this.searchOrderStatus = [];
             var now = new Date();
             var onwDay = 24 * 60 * 60 * 1000;
             var twoDay = 2 * onwDay;
             var threeDay = 3 * onwDay;
             now = new Date(now.valueOf() + now.getTimezoneOffset() * 60000);
-            this.orderListService.getAll().then((data) => this.data = data.map((item) => {
-                item.className = '';
-                if (item.status === 'cancel')
-                    item.className = 'bg-gainsboro';
-                else {
-                    var date = new Date(item.orderDate);
-                    if ((now - date) >= threeDay)
-                        item.className = 'bg-danger';
-                    else if ((now - date) >= twoDay)
-                        item.className = 'bg-warning';
-                }
-                return item;
-            }));
+
+            this.orderInfoService.init().then((data) => {
+                this.searchOrderStatus = data.search_order_status;
+                this.data = data.order_info_list.map((item) => {
+                    item.className = '';
+                    if (item.status === 'cancel')
+                        item.className = 'bg-gainsboro';
+                    else {
+                        var date = new Date(item.orderDate);
+                        if ((now - date) >= threeDay)
+                            item.className = 'bg-danger';
+                        else if ((now - date) >= twoDay)
+                            item.className = 'bg-warning';
+                    }
+                    return item;
+                })
+            });
         }
 
         OrderInfoController.prototype.toggleAll = function () {

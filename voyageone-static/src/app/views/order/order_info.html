@@ -16,8 +16,9 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label for="SKU_STATUS" class="control-label">SKU STATUS</label>
-                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm">
+                    <label for="SKU_STATUS" class="control-label">STATUS</label>
+                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm"
+                        ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
                         <option value="">Select</option>
                     </select>
                 </div>
