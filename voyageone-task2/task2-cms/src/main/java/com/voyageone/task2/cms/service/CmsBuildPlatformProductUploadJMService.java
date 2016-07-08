@@ -68,6 +68,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
     private static final String DUPLICATE_SPU_BARCODE = "105106";
     private static final String DUPLICATE_SKU_BUSINESSMAN_NUM = "102063";
+    private static final String INVALID_PRODUCT_STATUS = "产品状态不是待审核";
     private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
 
 
@@ -279,7 +280,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         }
                         //如果JM中已经有该商品了，则读取商品信息，补全本地库的内容
                         else if(htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
-                                htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME))
+                                htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
+                                htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
                         {
                             needRetry = true;
 
