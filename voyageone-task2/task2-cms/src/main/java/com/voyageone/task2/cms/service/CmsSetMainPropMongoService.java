@@ -280,7 +280,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // 回写feedInfo表
                     feed.setUpdFlg(2);  // 2:feed->master导入失败
-                    feed.setUpdMessage(e.getMessage());
+                    feed.setUpdMessage(errMsg);
                     feed.setModifier(getTaskName());
                     feedInfoService.updateFeedInfo(feed);
                 }

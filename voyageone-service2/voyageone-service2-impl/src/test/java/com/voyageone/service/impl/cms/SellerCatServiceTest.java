@@ -28,7 +28,7 @@ public class SellerCatServiceTest {
     @Test
     public void testGetSellerCatsByChannelCart() throws Exception {
 
-        List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("010", 23, false);
+        List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("017", 23, false);
         System.out.println(JsonUtil.bean2Json(result));
 
     }
@@ -53,8 +53,9 @@ public class SellerCatServiceTest {
     @Test
     public void testRefreshSellerCat() throws Exception {
 
-//        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 23, "ethan");
-        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 26, "ethan");
+
+        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("017", 23, "ethan");
+
         System.out.println(JsonUtil.bean2Json(result));
 
         sellerCatService.save(result);

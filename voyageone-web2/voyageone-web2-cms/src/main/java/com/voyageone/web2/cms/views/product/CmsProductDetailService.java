@@ -217,23 +217,18 @@ public class CmsProductDetailService extends BaseAppService {
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
 //        if (channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId())) {
-            // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
-            channelId = StringUtils.isEmpty(prodObj.getOrgChannelId()) ? channelId : prodObj.getOrgChannelId();
+        // 如果是mini mall店铺，则需要用原始channelId去检索库存信息
+        channelId = StringUtils.isEmpty(prodObj.getOrgChannelId()) ? channelId : prodObj.getOrgChannelId();
 //        }
         Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getCommon().getFields().getCode());
 
         List<Map<String, Object>> inventoryList = new ArrayList<>(0);
-        if (skuList == null || skuList.isEmpty()) {
-            $info("当前商品没有Sku信息 prodId=" + prodId);
-            return inventoryList;
-        }
-
-        for (Map.Entry<String, Integer> skuInv : skuList.entrySet()) {
+        prodObj.getCommon().getSkus().forEach(sku -> {
             Map<String, Object> result = new HashMap<>();
-            result.put("skucode", skuInv.getKey());
-            result.put("skyqty", skuInv.getValue());
+            result.put("skucode", sku.getSkuCode());
+            result.put("skyqty", skuList.get(sku.getSkuCode()) != null?skuList.get(sku.getSkuCode()) : 0);
             inventoryList.add(result);
-        }
+        });
 
         return inventoryList;
     }
@@ -572,8 +567,8 @@ public class CmsProductDetailService extends BaseAppService {
 
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
-        mastData.put("lock",cmsBtProduct.getLock());
-        mastData.put("isMain",cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
+        mastData.put("lock", cmsBtProduct.getLock());
+        mastData.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
         List<Map<String, Object>> platformList = new ArrayList<>();
@@ -609,15 +604,15 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
-        if(oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
-        if(commonModel.getCatId() == null) commonModel.setCatId("");
+        if (oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
+        if (commonModel.getCatId() == null) commonModel.setCatId("");
         if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct, modifier);
 
             // 更新 feedinfo表中的updFlg 重新出发 feed->mast
-            HashMap<String,Object> paraMap = new HashMap<>(1);
-            paraMap.put("code",oldProduct.getCommon().getFields().getCode());
-            HashMap<String,Object> valueMap = new HashMap<>(1);
+            HashMap<String, Object> paraMap = new HashMap<>(1);
+            paraMap.put("code", oldProduct.getCommon().getFields().getCode());
+            HashMap<String, Object> valueMap = new HashMap<>(1);
             valueMap.put("updFlg", 0);
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
@@ -627,12 +622,12 @@ public class CmsProductDetailService extends BaseAppService {
 
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
-        if(platformCategory == null || platformCategory.size() == 0) return;
+        if (platformCategory == null || platformCategory.size() == 0) return;
         if (oldProduct.getPlatforms() == null) {
             return;
         }
         oldProduct.getPlatforms().forEach((cartId, platform) -> {
-            if (platform.getCartId() != 0 && (platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null){
+            if (platform.getCartId() != 0 && (platform.getFields() == null || platform.getFields().size() == 0) && platform.getCartId() != null) {
                 List<CmsMtCategoryTreeAllModel_Platform> temp = platformCategory.stream().filter(item -> item.getPlatformId().equalsIgnoreCase(Carts.getCart(platform.getCartId()).getPlatform_id())).collect(Collectors.toList());
                 if (temp != null && temp.size() > 0 && !StringUtil.isEmpty(temp.get(0).getCatId())) {
                     platform.setpCatId(temp.get(0).getCatId());
