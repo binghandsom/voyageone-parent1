@@ -36,7 +36,7 @@ require([
         'blockUI',
         'ngStorage',
         'voyageone.angular'
-    ]).controller('loginController', function ($scope, $ajax, $sessionStorage) {
+    ]).controller('loginController', function ($scope, $ajax, $localStorage) {
         $scope.username = '';
         $scope.password = '';
         $scope.isSavePwd = false;
@@ -60,7 +60,7 @@ require([
                 // 2016-07-08 11:28:17
                 // 为了便于封装的缓存逻辑, 这里在登录成功后, 记录用户名, 用户在缓存时, 作为关键字
                 // 如果后续其他功能需要追加额外信息, 可以在此追加
-                $sessionStorage.user = {
+                $localStorage.user = {
                     name: $scope.username
                 };
                 // 成功后跳转

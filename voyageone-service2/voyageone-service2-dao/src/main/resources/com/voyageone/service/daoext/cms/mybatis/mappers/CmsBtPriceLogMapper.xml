@@ -151,6 +151,7 @@
               <if test="sku != null">
                   and sku = #{sku}
               </if>
+        ORDER BY created DESC
         <if test="offset != null and limit != null">
             LIMIT #{offset}, #{limit}
         </if>

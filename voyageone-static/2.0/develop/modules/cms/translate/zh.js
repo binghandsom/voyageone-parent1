@@ -102,7 +102,7 @@ define(function () {
         "TXT_CART_LIST": "Cart一览（维护）",
         "TXT_CATEGORY": "类目",
         "TXT_PRODUCT_STATUS": "商品状态",
-        "TXT_FEED_STATUS" : "Feed 状态",
+        "TXT_FEED_STATUS": "Feed 状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_MSRP_PRICE": "官方售价",
         "TXT_CREATE_TIME": "创建时间",
@@ -112,7 +112,7 @@ define(function () {
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
-        "TXT_COLOR" : "颜色",
+        "TXT_COLOR": "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
@@ -511,7 +511,7 @@ define(function () {
         "TXT_IMAGE_COUNT": "图片数",
         "TXT_IMAGE_DETAIL": "图片详细",
         "TXT_IMAGE": "图片",
-        "TXT_PRODUCT_IMAGE":"产品图片",
+        "TXT_PRODUCT_IMAGE": "产品图片",
         "TXT_ORIGIN_URL": "原始Url",
         "TXT_PLATFORM_URL": "平台Url",
         "TXT_SEQUENCE": "顺序",
@@ -538,7 +538,7 @@ define(function () {
         "BTN_CLOSE": "关闭",
         "BTN_TODAY": "今日",
         "BTN_SAVE": "保存",
-        "BTN_SELECT":"选择",
+        "BTN_SELECT": "选择",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
         "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
@@ -648,8 +648,8 @@ define(function () {
         "TXT_HSCODE_PRODUCT_NAME_UNIT": "税号/品名/单位",
         "TXT_RULE_OF_PRE": "优先规则",
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON": "商品名称/Feed类目/主类目",
-        "TXT_HS_CODE_SETTED_SEARCH":"个人设置税号成果搜索",
-        "TXT_CARRY_ON_THE_CURRENT_SETTING":"请继续完善税号设置",
+        "TXT_HS_CODE_SETTED_SEARCH": "个人设置税号成果搜索",
+        "TXT_CARRY_ON_THE_CURRENT_SETTING": "请继续完善税号设置",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",
@@ -661,7 +661,7 @@ define(function () {
         "TXT_MAIN_CATEGORY": "主类目",
         "TXT_LIST_ERROR": "错误列表",
         "TXT_ERROR": "错误",
-        "TXT_PROPERTY_STATUS": "Property status",
+        "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
         "TXT_CUS_TAGS_SETTING": "设置自定义标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
@@ -753,9 +753,9 @@ define(function () {
         "TXT_JOIN_JM_CODE_SKU_SEARCH": "Code/SKU",
 
         /**feed导出*/
-        "TXT_EXPORT_FILE_NAME":"导出文件名",
-        "TXT_EXPORT_REQUEST_TIME":"导出申请时间",
-        "TXT_EXPORT_CREATE_TIME":"Excel生成时间",
-        "TXT_EXPORT_REQUESTER":"导出申请者"
+        "TXT_EXPORT_FILE_NAME": "导出文件名",
+        "TXT_EXPORT_REQUEST_TIME": "导出申请时间",
+        "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
+        "TXT_EXPORT_REQUESTER": "导出申请者"
     };
 });

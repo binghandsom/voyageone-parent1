@@ -36,7 +36,7 @@ require([
         'ngCookies',
         'ngStorage',
         'voyageone.angular'
-    ]).controller('channelController', function ($scope, $ajax, cookieService, $sessionStorage, $window) {
+    ]).controller('channelController', function ($scope, $ajax, cookieService, $localStorage, $window) {
         $ajax.post('/core/access/user/getChannel').then(function (res) {
             $scope.channels = res.data;
         }, function (res) {
@@ -49,7 +49,7 @@ require([
                 // 2016-07-08 13:52:21
                 // 成功后记录 channel, 用于缓存关键字
                 // user 对象在 login 生成
-                $sessionStorage.user.channel = channel.channelId;
+                $localStorage.user.channel = channel.channelId;
                 // 之后跳转相应的应用
                 location.href = 'modules/' + app.application + '/app.html#/home';
             }, function (res) {
