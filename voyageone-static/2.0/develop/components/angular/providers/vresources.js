@@ -159,7 +159,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 for (var childName in actions) {
                     // 额外的检查
                     if (actions.hasOwnProperty(childName)) {
-                        this.register(childName, actions[childName]);
+                        this.register(childName, actions[childName], cacheKey);
                     }
                 }
             }

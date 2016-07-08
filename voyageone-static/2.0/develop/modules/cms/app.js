@@ -68,7 +68,7 @@ define([
             // 传入 register 作为额外的缓存关键字
             $vresources.register(null, actions, {
                 username: userInfo.name,
-                channel: userInfo.channelId
+                channel: userInfo.channel
             });
         })
 
