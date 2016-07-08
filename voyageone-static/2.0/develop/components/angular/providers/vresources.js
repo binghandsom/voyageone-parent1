@@ -15,18 +15,20 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
         return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
     }
 
-    function actionHashcode(md5, root, action, args) {
+    function actionHashcode(md5, root, actionName, args, cacheWith) {
         var argsJson = angular.toJson(args);
-        var md5Arg = root + action + argsJson;
-        return '_' + md5.createHash(md5Arg);
+        var otherKeyJson = !cacheWith ? "" : angular.toJson(cacheWith);
+        var md5Arg = root + actionName + argsJson + otherKeyJson;
+        return md5.createHash(md5Arg);
     }
 
     /**
      * 闭包声明一个数据访问的 Service
      * @param {string} name Service 的名称
      * @param {object} actions 方法和地址定义
+     * @param {object} cacheKey 额外的可用缓存关键字
      */
-    function closureDataService(name, actions) {
+    function closureDataService(name, actions, cacheKey) {
 
         var _ServiceClass, root = actions.root;
 
@@ -51,21 +53,31 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
             this._c = {};
         };
 
-        _.each(actions, function (content, key) {
+        _.each(actions, function (option, actionName) {
 
-            var _url, _root, _resolve, _reject, _cacheFlag;
+            var _url, _root, _resolve, _reject, _cacheFlag, _cacheWith;
 
-            if (_.isString(content))
-                _url = content;
-            else if (_.isObject(content)) {
-                _url = content.url;
-                _resolve = content.then;
-                _root = content.root;
-                _cacheFlag = content.cache;
+            if (_.isString(option))
+                _url = option;
+            else if (_.isObject(option)) {
+                _url = option.url;
+                _resolve = option.then;
+                _root = option.root;
+                _cacheFlag = option.cache;
+                _cacheWith = option.cacheWith;
+
+                if (!_.isArray(_cacheWith))
+                    _cacheWith = null;
+                else
+                    _cacheWith = _cacheWith.map(function (cacheKeyName) {
+                        return cacheKey[cacheKeyName];
+                    }).filter(function (cacheKeyValue) {
+                        return !!cacheKeyValue;
+                    });
             }
 
             if (!_url) {
-                console.error('URL is undefined', content);
+                console.error('URL is undefined', option);
                 return;
             }
 
@@ -89,13 +101,13 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
             _url = getActionUrl(_root, _url);
 
-            _ServiceClass.prototype[key] = _cacheFlag === 0 ? function (args) {
+            _ServiceClass.prototype[actionName] = _cacheFlag === 0 ? function (args) {
                 return this._a.post(_url, args).then(_resolve, _reject);
             } : function (args) {
                 var deferred, result;
                 var session = this._sc,
                     local = this._lc,
-                    hash = actionHashcode(this._5, root, key, args),
+                    hash = actionHashcode(this._5, root, actionName, args, _cacheWith),
                     promise = this._c[hash];
                 if (promise)
                     return promise;
@@ -135,24 +147,22 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
     this.$get = function () {
         return {
-            register: function (name, actions) {
+            register: function (name, actions, cacheKey) {
                 if (!actions) return;
                 if (typeof actions !== "object") return;
                 // 如果有 root 这个属性,就创建 service
                 if (actions.root) {
-                    closureDataService(name, actions);
+                    closureDataService(name, actions, cacheKey);
                     return;
                 }
                 // 否则继续访问子属性
                 for (var childName in actions) {
                     // 额外的检查
                     if (actions.hasOwnProperty(childName)) {
-                        this.register(childName, actions[childName]);
+                        this.register(childName, actions[childName], cacheKey);
                     }
                 }
             }
         };
     };
-}).run(function ($vresources, $actions) {
-    $vresources.register(null, $actions);
 });
