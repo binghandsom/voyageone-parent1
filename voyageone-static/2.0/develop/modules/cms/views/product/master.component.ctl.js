@@ -139,7 +139,7 @@ define([
                         scope.productInfo.checkFlag = new Date().getTime();
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
-                        notify.success("更 新 成 功 !");
+                        notify.success("更 新 成 功 ");
                     },function(){
                         alert("更新失败","错误提示");
                     });
