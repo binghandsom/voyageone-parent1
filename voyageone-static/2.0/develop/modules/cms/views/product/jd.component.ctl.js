@@ -293,6 +293,9 @@ define([
                     if(!scope.vm.platform)
                         return false;
 
+                    if(!scope.vm.platform.skus)
+                        return false;
+
                     return scope.vm.platform.skus.every(function(element){
                         return element.isSale == "1";
                     });

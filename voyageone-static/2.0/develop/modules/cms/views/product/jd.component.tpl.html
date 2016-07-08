@@ -5,6 +5,12 @@
                 <div class="container-fluid"  id="{{cartInfo.name}}1">
                     <div class="row">
                         <div class="col-md-8 form-group">
+                                <div class="col-md-12 form-group" ng-controller="popupCtrl">
+                                    <button type="button" class="btn btn-info btn-pop" ng-click="openHistoryPrice(vm.mastData.productCode,vm.platform.skus,null,cartInfo.value)"><i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史</button>&emsp;
+                                    <button type="button" class="btn btn-success btn-pop" ng-click="openHistoryPromotion('lg', vm.mastData.productCode,cartInfo.value)"><i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史</button>&emsp;
+                                    <button type="button" class="btn btn-warning btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史</button>&emsp;
+                                    <button type="button" class="btn btn-danger btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;关键共通属性-Feed关联变更历史</button>
+                                </div>
                                 <!----------------------------------check 状态------------------------------------------>
                                 <ul class="nav nav-pills">
                                     <li>
@@ -82,7 +88,7 @@
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
                                             <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
-                                                <img src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                         </div>
                                     </div>
@@ -224,7 +230,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10"></td>
+                                        <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10" style="padding: 0px"></td>
                                     </tr>
                                     <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
                                         <td>
