@@ -59,6 +59,7 @@
         insert into voyageone_cms2.cms_bt_price_log (
         channel_id,
         product_id,
+        cart_id,
         code,
         sku,
         msrp_price,
@@ -77,6 +78,7 @@
             (
             #{item.channelId},
             #{item.productId},
+            #{item.cartId},
             #{item.code},
             #{item.sku},
             #{item.msrpPrice},
