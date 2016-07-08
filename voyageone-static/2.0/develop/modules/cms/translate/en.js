@@ -217,6 +217,7 @@ define(function(){
         "TXT_ERROR_CODE": "异常Code",
         "TXT_ERROR_MESSAGE": "异常消息",
         "TXT_ERROR_CREATE_TIME": "异常创建时间",
+        "TXT_ERROR_CREATER": "异常创建者",
         "TXT_ERROR_IS_FIX": "已解决?",
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",

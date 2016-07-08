@@ -6,7 +6,8 @@
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
         `market_price`, `deal_price`, `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, 
         `sku_count`, `quantity`, `activity_start`, `activity_end`, `synch_status`, `update_status`, 
-        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`
+        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`, 
+        `stock_status`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -89,6 +90,9 @@
             </if>
             <if test="dealEndTimeStatus != null" >
                 `deal_end_time_status`,
+            </if>
+            <if test="stockStatus != null" >
+                `stock_status`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -173,6 +177,9 @@
             <if test="dealEndTimeStatus != null" >
                 #{dealEndTimeStatus,jdbcType=INTEGER},
             </if>
+            <if test="stockStatus != null" >
+                #{stockStatus,jdbcType=INTEGER},
+            </if>
         </trim>
     </insert>
 
@@ -253,6 +260,9 @@
             </if>
             <if test="dealEndTimeStatus != null" >
                 `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER},
+            </if>
+            <if test="stockStatus != null" >
+                `stock_status` = #{stockStatus,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -340,6 +350,9 @@
             <if test="dealEndTimeStatus != null" >
                 and `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER}
             </if>
+            <if test="stockStatus != null" >
+                and `stock_status` = #{stockStatus,jdbcType=INTEGER}
+            </if>
         </where>
         limit 1
     </select>
@@ -421,6 +434,9 @@
             <if test="dealEndTimeStatus != null" >
                 and `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER}
             </if>
+            <if test="stockStatus != null" >
+                and `stock_status` = #{stockStatus,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -498,6 +514,9 @@
             </if>
             <if test="dealEndTimeStatus != null" >
                 and `deal_end_time_status` = #{dealEndTimeStatus,jdbcType=INTEGER}
+            </if>
+            <if test="stockStatus != null" >
+                and `stock_status` = #{stockStatus,jdbcType=INTEGER}
             </if>
         </where>
     </select>
