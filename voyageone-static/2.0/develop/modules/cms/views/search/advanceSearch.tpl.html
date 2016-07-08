@@ -203,7 +203,7 @@
                                                     <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}
                                                     </label>
                                                 </div>
-                                                <button class="btn btn-default btn-md" type="button" translate="BTN_RESET" ng-click="dismiss('freeTags')"></button>
+                                                <button class="btn btn-default btn-md" type="button" translate="BTN_RESET" ng-click="dismiss('freeTag')"></button>
                                             </div>
                                         </div>
                                     </div>
@@ -313,6 +313,7 @@
                                             <div class="col-sm-7 m-t-sm">
                                                 <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
                                             </div>
+                                            <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatStatus')"></button></span>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display&&vm._mmmcart_display"><!--内部分类-->
                                             <div class="col-sm-4 text-right">
@@ -331,32 +332,32 @@
                                             <div class="col-sm-7" style="min-height: 42px; max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="shopCat in vm._shopCatValues" style="display: inline-block;">{{shopCat}}</label>
                                             </div>
+                                            <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('shopCat')"></button></span>
                                         </div>
                                         <div class="form-group" ng-if="vm._cart_display"><!--promotion tag-->
-                                            <div class="col-sm-4 text-right">
-                                                <div class="btn-group">
-                                                    <div>
-                                                        <label class="checkbox-inline c-radio">
-                                                            <input type="radio" name="promotionCategory" value="1" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Include
-                                                        </label>
-                                                        <label class="checkbox-inline c-radio">
-                                                            <input type="radio" name="promotionCategory" value="2" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Exclude
-                                                        </label>
-                                                    </div>
-                                                    <div>
-                                                        <!--2 是活动标签-->
-                                                        <div class="input-group">
-                                                        <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag({'tagTypeSel':'2','cartId':vm.searchInfo.cartId}), true)">
-                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
-                                                        </button>
-                                                            <span class="input-group-btn btn-pop"><button class="btn btn-default m-l-lg" type="button" translate="BTN_RESET" ng-click="dismiss('promotionTagType')"></button></span>
-                                                        </div>
-
+                                            <div class="col-sm-4 btn-group text-right" style="width:30%">
+                                                <div>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="promotionCategory" value="1" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Include
+                                                    </label>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="promotionCategory" value="2" ng-model="vm.searchInfo.promotionTagType"><span class="fa fa-check"></span> Exclude
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <!--2 是活动标签-->
+                                                    <div class="input-group">
+                                                    <button type="button" class="btn btn-pop btn-default"  ng-click="openTagManagement(openFreeTag({'tagTypeSel':'2','cartId':vm.searchInfo.cartId}), true)">
+                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PROMOTION_TAG' | translate}}
+                                                    </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-7" style="min-height: 42px;  max-height: 160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin:8px 0px 0px 4px">
+                                            <div class="col-sm-7 btn-group text-right" style="width:50%;min-height:42px;max-height:160px;background: #EEEEEE; border: 1px solid #C8C2C2; overflow: auto;margin:8px 0px 0px 4px">
                                                 <label class="label label-default m-r-xs m-t-xs" ng-repeat="promotionTag in vm._promotionTags" style="display: inline-block;">{{promotionTag.tagPathName}}</label>
+                                            </div>
+                                            <div class="btn-group" >
+                                                <button class="btn btn-default m-l-lg" type="button" translate="BTN_RESET" ng-click="dismiss('promotionTag')"></button>
                                             </div>
                                         </div>
                                     </div>
