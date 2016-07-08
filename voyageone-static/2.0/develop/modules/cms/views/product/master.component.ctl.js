@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile,noticeSoft) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
