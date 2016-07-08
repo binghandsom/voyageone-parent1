@@ -497,8 +497,8 @@ public class CmsProductDetailService extends BaseAppService {
 
         for (Integer cartId : cartList) {
             JomgoUpdate updObj = new JomgoUpdate();
-            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true},'platforms.P" + cartId + ".pAttributeStatus':{$in:[null,'','0']}}");
-            updObj.setQueryParameters(prodCodes);
+            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
+            updObj.setQueryParameters(prodCodes, cartId, cartId);
 
             boolean isInCatFlg = false;
             String pCatId = null;
@@ -517,11 +517,11 @@ public class CmsProductDetailService extends BaseAppService {
                 $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
             }
             if (pCatId == null || pCatPath == null) {
-                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#}}");
-                updObj.setUpdateParameters(mCatId, mCatPath);
+                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
+                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow());
             } else {
-                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'platforms.P" + cartId + ".pCatId':#,'platforms.P" + cartId + ".pCatPath':#}}");
-                updObj.setUpdateParameters(mCatId, mCatPath, pCatId, pCatPath);
+                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'platforms.P#.pCatId':#,'platforms.P#.pCatPath':#,'platforms.P#.pCatStatus':'1'}}");
+                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow(), cartId, pCatId, cartId, pCatPath, cartId);
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("切换类目 product更新结果 " + rs.toString());

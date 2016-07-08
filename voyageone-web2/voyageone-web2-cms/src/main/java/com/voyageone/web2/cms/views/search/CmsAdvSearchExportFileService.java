@@ -111,9 +111,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             searchItemStr += "common.skus;common.fields.model;common.fields.color;common.catPath;lock;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            searchItemStr += "common.fields.model;common.catPath;";
+            searchItemStr += "common.fields.model;common.fields.originalTitleCn;common.catPath;";
         } else if (searchValue.getFileType() == 1) {
-            searchItemStr += "common.fields.model;common.fields.color;common.catPath;lock;";
+            searchItemStr += "common.fields.model;common.fields.originalTitleCn;common.fields.color;common.catPath;lock;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
