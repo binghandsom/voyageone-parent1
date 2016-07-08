@@ -4,7 +4,6 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
-import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -29,9 +28,6 @@ public class VmsFeedFileScanService extends BaseTaskService {
 
     @Autowired
     private VmsBtFeedFileDao vmsBtFeedFileDao;
-
-    @Autowired
-    private VmsBtFeedFileDaoExt vmsBtFeedFileDaoExt;
 
     @Autowired
     private MqSender sender;

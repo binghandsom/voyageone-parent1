@@ -1,0 +1,108 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left">Shipment List detail</h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home">Home</a></li>
+            <li><a href="javascript:void(0)">Feed</a></li>
+            <li class="active selecte">Shipment List detail</li>
+        </ul>
+    </div>
+</div>
+<div class="container content">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <a class="btn-vo-blue" href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>Back</a>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group input-group">
+                            <input type="text" class="form-control" placeholder="PleaseScan Barcode">
+                            <span class="input-group-btn"><button class="btn btn-info" type="button">Scan</button></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <table class="no-min-width table table-vo table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th class="td-2 text-center">ShipmentName</th>
+                            <th class="td-1 text-center">Status</th>
+                            <th class="td-2 text-center">ShipmentDate</th>
+                            <th class="td-2 text-center">ExpressCompany</th>
+                            <th class="td-2 text-center">TrackingNo</th>
+                            <th class="td-1 text-center">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="td-2 text-center">2016-06-17-SP-002</td>
+                            <td class="td-1 text-center">Open</td>
+                            <td class="td-2 text-center">
+                                <span class="input-group">
+                                    <input class="form-control input-sm" ng-model="ctrl.feedStartTime" uib-datepicker-popup
+                                           is-open="datepicker1" date-model-format="yyyy-MM-dd" placeholder="StartDate">
+                                    <span class="input-group-btn">
+                                    <button class="btn btn-default input-sm" ng-click="datepicker1=!datepicker1"><i
+                                            class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="td-2 text-left">
+                                <select name="SHIPMENT_STATUS" id="SHIPMENT_STATUS" class="form-control input-sm">
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
+                            <td class="td-2 text-center">
+                                <input id="TrackingNo" type="text" class="form-control input-sm">
+                            </td>
+                            <td class="td-1 text-center">
+                                <button class="btn btn-primary btn-sm">SHIPPED</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <div class="headline"><h2>Item list</h2></div>
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="td-1 text-left">No</th>
+                        <th class="td-2 text-center">Barcode</th>
+                        <th class="td-2 text-center">Sku</th>
+                        <th class="td-3 text-center">Description</th>
+                        <th class="td-2 text-center">Order ID</th>
+                        <th class="td-2 text-center">Containerizing Time</th>
+                        <th class="td-2 text-center">Containerizing User</th>
+                        <th class="td-1 text-center">Status</th>
+                        <th class="td-1 text-center">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="td-1 text-left">1</td>
+                        <td class="td-2 text-center">12312321432</td>
+                        <td class="td-2 text-center">XRG000730RCY75</td>
+                        <td class="td-3 text-center">Adidas Busenitz</td>
+                        <td class="td-2 text-center">9999007001</td>
+                        <td class="td-2 text-center">2016-06-20 14:50:12</td>
+                        <td class="td-2 text-center">user001</td>
+                        <td class="td-1 text-center">Package</td>
+                        <td class="td-1 text-center">
+                            <button class="btn btn-xs btn-info"><i class="fa fa-print"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div vpagination="{}"></div>
+            </div>
+        </div>
+    </div>
+</div>

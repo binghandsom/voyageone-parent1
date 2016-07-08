@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -36,19 +37,17 @@ public class VmsFeedFileUploadController extends BaseController {
      * @return Feed文件模板
      */
     @RequestMapping(VmsUrlConstants.FEED.FEED_FILE_IMPORT.DOWNLOAD_SAMPLE_FEED_FILE)
-    public ResponseEntity downSampleFeedFile() {
+    public ResponseEntity downSampleFeedFile() throws IOException {
         // Feed文件模板的路径
         String sampleFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.sample.file");
-        FileInputStream file = null;
-        try {
-            file = new FileInputStream(sampleFilePath);
-        } catch (FileNotFoundException e) {
+
+        try(FileInputStream file = new FileInputStream(sampleFilePath)) {
+
+            return genResponseEntityFromStream("feed_file_sample.csv", file);
+        } catch (FileNotFoundException ex) {
+            // Lost VoyageOneFeedTemplate.
+            throw new BusinessException("8000017");
         }
-        // 文件模板不存在的情况
-        if (file == null) {
-            throw new BusinessException("7000069");
-        }
-        return genResponseEntityFromStream("feed_file_sample.csv", file);
     }
 
 

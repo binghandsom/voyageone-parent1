@@ -6,8 +6,15 @@ define([
 ], function (vms) {
     vms.controller('ShipmentInfoController', (function () {
 
-        function ShipmentInfoController() {
+        function ShipmentInfoController(popups) {
+            this.popups = popups;
         }
+
+        ShipmentInfoController.prototype = {
+            popNewShipment: function () {
+                this.popups.openNewShipment();
+            }
+        };
         return ShipmentInfoController;
 
     }()));
