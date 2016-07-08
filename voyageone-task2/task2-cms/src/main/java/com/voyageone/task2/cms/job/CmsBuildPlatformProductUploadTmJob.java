@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @since 2.1.0
  */
 @Component("CmsBuildPlatformProductUploadTmJob")
-public class CmsBuildPlatformProductUploadTmJob2 extends BaseTaskJob {
+public class CmsBuildPlatformProductUploadTmJob extends BaseTaskJob {
 
     @Autowired
     private CmsBuildPlatformProductUploadTmService cmsBuildPlatformProductUploadTmService;
