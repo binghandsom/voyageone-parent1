@@ -303,6 +303,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     // 更新内容
                     feedFileModel.setErrorFileName(feedErrorFileName);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 } else {
                     // 移动文件到bak目录下
@@ -316,6 +317,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     // 更新内容
                     feedFileModel.setErrorFileName("");
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
+                    feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 }
             } catch (IOException e) {
@@ -1258,6 +1260,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     // 更新内容
                     feedFileModel.setErrorFileName(feedErrorFileName);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
 
                     return true;

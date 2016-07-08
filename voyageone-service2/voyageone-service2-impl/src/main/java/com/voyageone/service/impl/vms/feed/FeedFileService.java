@@ -1,20 +1,19 @@
 package com.voyageone.service.impl.vms.feed;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import org.apache.commons.io.FileUtils;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.impl.BaseService;
-import org.apache.poi.util.IntegerField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * FeedFileUploadService
@@ -23,7 +22,7 @@ import java.io.InputStream;
  * @version 1.0.0
  */
 @Service
-public class FeedFileUploadService extends BaseService {
+public class FeedFileService extends BaseService {
 
     @Autowired
     private VmsBtFeedFileDao vmsBtFeedFileDao;
@@ -31,11 +30,11 @@ public class FeedFileUploadService extends BaseService {
     /**
      * 新建一条文件信息到vms_bt_feed_file表
      *
-     * @param channelId     渠道
-     * @param fileName 文件名
+     * @param channelId   渠道
+     * @param fileName    文件名
      * @param newFileName 新文件名
-     * @param status  状态
-     * @param modifier 创建者
+     * @param status      状态
+     * @param modifier    创建者
      * @return id
      */
     public Integer insertFeedFileInfo(String channelId, String fileName, String newFileName, String status, String modifier) {
@@ -48,6 +47,21 @@ public class FeedFileUploadService extends BaseService {
         model.setModifier(modifier);
         vmsBtFeedFileDao.insert(model);
         return model.getId();
+
+    }
+
+    /**
+     * 根据状态从vms_bt_feed_file表取得FeedFile信息
+     *
+     * @param channelId   渠道
+     * @param status      状态
+     * @return FeedFile列表
+     */
+    public List<VmsBtFeedFileModel> getFeedFileInfoByStatus(String channelId, String status) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("status", status);
+        return vmsBtFeedFileDao.selectList(param);
     }
 
     /**

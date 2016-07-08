@@ -1,33 +1,19 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.impl.cms.ImageGroupService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.vms.feed.FeedFileUploadService;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
+import com.voyageone.service.impl.vms.feed.FeedFileService;
+import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * CmsImageGroupDetail Service
@@ -38,12 +24,12 @@ import java.util.Map;
 @Service
 public class VmsFeedFileUploadService extends BaseAppService {
 
-    private final static int FILE_LIMIT_SIZE = 900145728;
+    private final static int FILE_LIMIT_SIZE = 52428800;
 
     private final static String CSV_TYPE = "csv";
 
     @Autowired
-    private FeedFileUploadService feedFileUploadService;
+    private FeedFileService feedFileService;
 
     /**
      * 保存上传的FeedFile
@@ -75,20 +61,18 @@ public class VmsFeedFileUploadService extends BaseAppService {
 
         String newFileName = "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
-        //更新vms_bt_feed_file表
-        Integer id = feedFileUploadService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+        // 往vms_bt_feed_file表插入数据
+        Integer id = feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
 
         // 保存文件
         try {
-            feedFileUploadService.saveFile(channelId, newFileName, inputStream);
+            feedFileService.saveFile(channelId, newFileName, inputStream);
         } catch (Exception ex) {
-            feedFileUploadService.deleteFeedFileInfo(id);
+            // 删除之前插入的数据，之所以先更新DB再保存文件，是因为batch也有读取相同目录下FTP上传的文件。
+            // 不希望客户系统上传的文件被batch读到。
+            feedFileService.deleteFeedFileInfo(id);
             throw ex;
         }
-
-
-
-
     }
 
     /**
@@ -103,7 +87,14 @@ public class VmsFeedFileUploadService extends BaseAppService {
         String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
         feedFilePath +=  "/" + channelId + "/feed/";
 
-        // 目录下有文件存在的话不允许上传
+        // vms_bt_feed_file表存在状态为1：等待上传的数据也是不允许上传
+        List<VmsBtFeedFileModel> models = feedFileService.getFeedFileInfoByStatus(channelId, VmsConstants.FeedFileStatus.WAITING_IMPORT);
+        if (models.size() > 0) {
+            // Have Feed file is processing, please upload later.
+            throw new BusinessException("8000013");
+        }
+
+        // 目录下有文件存在的话不允许上传（FTP有上传的情况下）
         File root = new File(feedFilePath);
         // 扫描根目录下面的所有文件（不包含子目录）
         File[] files = root.listFiles();
@@ -116,7 +107,6 @@ public class VmsFeedFileUploadService extends BaseAppService {
                 }
             }
         }
-
 
         // 文件大小判断
         if (uploadFile.getSize() >= FILE_LIMIT_SIZE) {

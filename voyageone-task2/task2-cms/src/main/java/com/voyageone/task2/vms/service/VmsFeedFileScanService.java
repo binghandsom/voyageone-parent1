@@ -1,42 +1,21 @@
 package com.voyageone.task2.vms.service;
 
-import com.csvreader.CsvReader;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.VmsChannelConfigs;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.com.MessageBean;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
-import com.voyageone.service.dao.vms.VmsBtFeedInfoTempDao;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
-import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
-import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.vms.feed.FeedFileUploadService;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
-import com.voyageone.service.model.vms.VmsBtFeedInfoTempModel;
-import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.vms.VmsConstants;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -120,6 +99,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                     // 把文件管理的状态变为2：导入中
                     VmsBtFeedFileModel feedFileModel = waitingImportingFeedFileList.get(0);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORTING);
+                    feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDao.update(feedFileModel);
                 }
             }
