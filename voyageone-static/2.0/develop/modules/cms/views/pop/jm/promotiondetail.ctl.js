@@ -14,13 +14,14 @@ define([
         $scope.initialize  = function () {
             if(context.id){
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    console.log(res);
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
+                    /**添加备注*/
+                    $scope.editModel.model.comment = context.comment;
                 });
             }else{
                 $scope.editModel.model.status=0;
@@ -73,8 +74,9 @@ define([
             $scope.editModel.model.activityEnd = formatToStr($scope.editModel.model.activityEnd);
             $scope.editModel.model.prePeriodStart = formatToStr($scope.editModel.model.prePeriodStart);
             $scope.editModel.model.prePeriodEnd = formatToStr($scope.editModel.model.prePeriodEnd);
-            jmPromotionService.saveModel($scope.editModel).then(function (res) {
-                    $scope.$close();
+            jmPromotionService.saveModel($scope.editModel).then(function () {
+                context.comment =$scope.editModel.model.comment;
+                $scope.$close(context);
                 if(context.search) {
                     context.search();
                 }
