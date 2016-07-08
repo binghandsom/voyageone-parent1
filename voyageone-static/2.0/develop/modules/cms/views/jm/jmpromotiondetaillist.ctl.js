@@ -8,8 +8,6 @@ define([
 ], function (angularAMD) {
     function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService, $feedSearchService) {
 
-        //($scope);
-
         $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.parentId,
@@ -26,23 +24,7 @@ define([
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-            //jmPromotionService.get($routeParams.parentId).then(function (res) {
-            //    $scope.parentModel = res.data;
-            //    console.log($scope.parentModel);
-            //});
-            //jmPromotionService.getTagListByPromotionId($routeParams.parentId).then(function (res) {
-            //    $scope.vm.tagList = res.data;
-            //});
-            //jmPromotionDetailService.selectChangeCountByPromotionId($routeParams.parentId).then(function (res) {
-            //    $scope.vm.changeCount = res.data;
-            //});
             jmPromotionDetailService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
-                //CmsBtJmPromotionModel modelPromotion;
-                //List<CmsBtTagModel> listTag;//活动的tag
-                //int changeCount;//变更数量
-                //boolean isBegin;//活动是否开始
-                //boolean isEnd;//活动是否结束
-                //boolean isUpdateJM;//9：00 12：00 是否更新聚美
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.vm.tagList = res.data.listTag;
                 $scope.vm.changeCount = res.data.changeCount;
@@ -59,6 +41,7 @@ define([
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
             $scope.modelUpdateDealEndTime.isBatch = true;
+
         };
         $scope.clear = function () {
             $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
@@ -66,9 +49,6 @@ define([
             $scope.searchInfo.selectedChanged = null;
         };
         $scope.search = function () {
-            // console.log("searchInfo");
-            console.log($scope.searchInfo);
-            // loadSearchInfo();
             var data = getSearchInfo();
 
             goPage(1, 10)
@@ -115,8 +95,6 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            //console.log(parameter);
-            //console.log(angular.toJson(parameter));
             confirm($translate.instant('TXT_Do_You_Want_To_Selected')).result.then(function () {
                 jmPromotionDetailService.jmNewByProductIdListInfo(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
@@ -151,8 +129,6 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            //console.log(parameter);
-            // console.log(angular.toJson(parameter));
             confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
                 jmPromotionDetailService.deleteByProductIdList(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
@@ -194,14 +170,12 @@ define([
         };
         $scope.searchImport = function () {
             cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
-                // console.log(res);
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })
         }
         $scope.searchExport = function () {
             cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
-                // console.log(res);
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
             }, function (res) {
             })
@@ -458,8 +432,13 @@ define([
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
         $scope.openJmPromotionDetailWin = function () {
-            // console.log(parameter);
-            popups.openJmPromotionDetail({id: $routeParams.parentId});
+
+            popups.openJmPromotionDetail({
+                id : $routeParams.parentId,
+                comment : $scope.searchInfo.comment}).then(function(context){
+                $scope.searchInfo.comment = context.comment;
+            });
+
         }
         $scope.openDealExtensionWin = function () {
             popups.openDealExtension($scope.parentModel).then(function () {
