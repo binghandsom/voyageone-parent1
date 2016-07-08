@@ -170,11 +170,11 @@
                     #{item}
                 </foreach>
                     <if test="errorStatus!=null">
-                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3
+                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
                     </if> )
                 </when>
                 <when test="errorStatus!=null">
-                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
+                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3)
                 </when>
                 <otherwise>
                 </otherwise>

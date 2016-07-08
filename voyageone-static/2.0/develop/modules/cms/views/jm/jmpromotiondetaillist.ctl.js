@@ -434,9 +434,8 @@ define([
         $scope.openJmPromotionDetailWin = function () {
 
             popups.openJmPromotionDetail({
-                id : $routeParams.parentId,
-                comment : $scope.searchInfo.comment}).then(function(context){
-                $scope.searchInfo.comment = context.comment;
+                id : $routeParams.parentId}).then(function(context){
+                $scope.parentModel = context;
             });
 
         }

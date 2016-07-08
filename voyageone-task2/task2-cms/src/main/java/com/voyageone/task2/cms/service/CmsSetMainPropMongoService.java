@@ -27,7 +27,9 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
-import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -68,7 +70,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1254,7 +1255,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 使用说明英文
             if (newFlg || StringUtils.isEmpty(productCommonField.getUsageEn()) || "1".equals(feed.getIsFeedReImport())) {
-//                productCommonField.setUsageEn(feed.getUsageEn()); // CmsBtFeedInfoModel里还没加这个字段；
+                productCommonField.setUsageEn(feed.getUsageEn());
             }
 
             // APP端启用开关
@@ -3140,62 +3141,64 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         }
 
-        /**
-         * 进行一些字符串或数字的特殊编辑
-         *
-         * @param inputValue 输入的字符串
-         * @param edit       目前支持的是 "in2cm" 英寸转厘米
-         * @param prefix     前缀
-         * @param suffix     后缀
-         * @return
-         */
-        private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
-            String value = inputValue;
-
-            // 根据edit进行变换
-            if (!StringUtils.isEmpty(edit)) {
-                if ("in2cm".equals(edit)) {
-                    // 奇怪的数据转换
-                    // 有时候别人提供的数字中会有类似于这样的数据：
-                    // 33 3/4 意思是 33又四分之三 -> 33.75
-                    // 33 1/2 意思是 33又二分之一 -> 33.5
-                    // 33 1/4 意思是 33又四分之一 -> 33.25
-                    // 33 5/8 意思是 33又八分之五 -> 33.625
-                    // 直接这边代码处理掉避免人工干预
-                    if (value.contains(" ")) {
-                        value = value.replaceAll(" +", " ");
-                        String[] strSplit = value.split(" ");
-
-                        String[] strSplitSub = strSplit[1].split("/");
-                        value = String.valueOf(
-                                Float.valueOf(strSplit[0]) +
-                                        (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
-                        );
-
-                    }
-
-                    // 英寸转厘米
-                    value = String.valueOf(Float.valueOf(value) * 2.54);
-
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    value = df.format(Float.valueOf(value));
-
-                }
-            }
-
-            // 设置前缀
-            if (!StringUtils.isEmpty(prefix)) {
-                value = prefix + value;
-            }
-
-            // 设置后缀
-            if (!StringUtils.isEmpty(suffix)) {
-                value = value + suffix;
-            }
-
-            return value;
-
-        }
+        // delete by desmond 2016/07/08 start
+//        /**
+//         * 进行一些字符串或数字的特殊编辑
+//         *
+//         * @param inputValue 输入的字符串
+//         * @param edit       目前支持的是 "in2cm" 英寸转厘米
+//         * @param prefix     前缀
+//         * @param suffix     后缀
+//         * @return
+//         */
+//        private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
+//            String value = inputValue;
+//
+//            // 根据edit进行变换
+//            if (!StringUtils.isEmpty(edit)) {
+//                if ("in2cm".equals(edit)) {
+//                    // 奇怪的数据转换
+//                    // 有时候别人提供的数字中会有类似于这样的数据：
+//                    // 33 3/4 意思是 33又四分之三 -> 33.75
+//                    // 33 1/2 意思是 33又二分之一 -> 33.5
+//                    // 33 1/4 意思是 33又四分之一 -> 33.25
+//                    // 33 5/8 意思是 33又八分之五 -> 33.625
+//                    // 直接这边代码处理掉避免人工干预
+//                    if (value.contains(" ")) {
+//                        value = value.replaceAll(" +", " ");
+//                        String[] strSplit = value.split(" ");
+//
+//                        String[] strSplitSub = strSplit[1].split("/");
+//                        value = String.valueOf(
+//                                Float.valueOf(strSplit[0]) +
+//                                        (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
+//                        );
+//
+//                    }
+//
+//                    // 英寸转厘米
+//                    value = String.valueOf(Float.valueOf(value) * 2.54);
+//
+//                    DecimalFormat df = new DecimalFormat("0.00");
+//                    value = df.format(Float.valueOf(value));
+//
+//                }
+//            }
+//
+//            // 设置前缀
+//            if (!StringUtils.isEmpty(prefix)) {
+//                value = prefix + value;
+//            }
+//
+//            // 设置后缀
+//            if (!StringUtils.isEmpty(suffix)) {
+//                value = value + suffix;
+//            }
+//
+//            return value;
+//
+//        }
+        // delete by desmond 2016/07/08 end
 
 
     }
