@@ -108,12 +108,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         String searchItemStr = CmsAdvanceSearchService.searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;common.catPath;lock;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;lock;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            searchItemStr += "common.fields.model;common.fields.originalTitleCn;common.catPath;";
+            searchItemStr += "common.fields.model;";
         } else if (searchValue.getFileType() == 1) {
-            searchItemStr += "common.fields.model;common.fields.originalTitleCn;common.fields.color;common.catPath;lock;";
+            searchItemStr += "common.fields.model;common.fields.color;lock;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
