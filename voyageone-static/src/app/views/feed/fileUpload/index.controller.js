@@ -44,7 +44,15 @@ define([
             },
 
             download: function () {
-                $.download.post('/vms/feed/file_upload/downSampleFeedFile', {});
+                var main = this;
+                $.download.post('/vms/feed/file_upload/downSampleFeedFile', {}, this.afterDownload, main);
+            },
+
+            afterDownload:function (responseContent, param, context) {
+                var res = JSON.parse(responseContent);
+                if (res.message != '') {
+                    context.alert(res.message);
+                }
             }
 
         };
