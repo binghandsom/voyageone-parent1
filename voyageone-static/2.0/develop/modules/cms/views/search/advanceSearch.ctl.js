@@ -775,12 +775,13 @@ define([
                     }
                     return popupNewCategory({
                         from: $scope.vm.searchInfo.pCatPath,
-                        categories: res
+                        categories: res.data
                     });
-                }).then(function (context) {
-                $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                $scope.vm.searchInfo.pCatId = context.selected.catId;
-            });
+                })
+                .then(function (context) {
+                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
+                    $scope.vm.searchInfo.pCatId = context.selected.catId;
+                });
         }
 
         /**

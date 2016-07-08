@@ -2,8 +2,8 @@ package com.voyageone.base.dao.mysql.paginator;
 
 import com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor;
 import com.github.miemiedev.mybatis.paginator.dialect.Dialect;
-import com.github.miemiedev.mybatis.paginator.dialect.MySQLDialect;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
+import com.voyageone.base.dao.mysql.paginator.dialect.VoMySQLDialect;
 import com.voyageone.common.util.StringUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -54,7 +54,7 @@ public class MybatisPaginatorInterceptor implements Interceptor, Serializable {
                 if (value instanceof PageBounds) {
                     PageBounds pageBounds = (PageBounds) value;
 
-                    final Dialect dialect = new MySQLDialect(ms, parameter, pageBounds);
+                    final Dialect dialect = new VoMySQLDialect(ms, parameter, pageBounds);
                     final BoundSql boundSql = ms.getBoundSql(parameter);
 
                     queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql, dialect.getPageSQL(), dialect.getParameterMappings(), dialect.getParameterObject());

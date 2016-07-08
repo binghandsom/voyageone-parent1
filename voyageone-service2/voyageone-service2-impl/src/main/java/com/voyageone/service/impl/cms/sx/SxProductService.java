@@ -1003,8 +1003,11 @@ public class SxProductService extends BaseService {
 
         // Step2:Mapping
         // 改成循环Mapping
-//        Map<String, MappingBean> mapProp = new HashMap<>();
-        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
+        List<MappingBean> propMapings = new ArrayList<>();
+        if (cmsMtPlatformMappingModel != null) {
+            propMapings = cmsMtPlatformMappingModel.getProps();
+        }
+
         for (MappingBean mappingBean : propMapings) {
             // modified by morse.lu 2016/06/24 start
 //            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
