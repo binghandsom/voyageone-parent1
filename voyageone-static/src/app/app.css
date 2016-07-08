@@ -319,9 +319,6 @@ a {
   line-height: 31px;
   color: aliceblue;
 }
-a:focus {
-  outline: none;
-}
 .margin-bottom-10 {
   margin-bottom: 10px;
 }

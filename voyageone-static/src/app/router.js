@@ -43,6 +43,18 @@ define(function () {
                 "templateUrl": "./views/shipment/shipmentDetail.html",
                 "controllerUrl": "./views/shipment/shipmentDetail.controller",
                 "controller": "ShipmentDetailController as ctrl"
+            },
+            {
+                "hash": "/inventory/inventory_upload",
+                "templateUrl": "./views/inventory/index.html",
+                "controllerUrl": "./views/inventory/index.controller",
+                "controller": "InventoryUploadController as ctrl"
+            },
+            {
+                "hash": "/reports/financial_report",
+                "templateUrl": "./views/reports/index.html",
+                "controllerUrl": "./views/reports/index.controller",
+                "controller": "FinancialReportController as ctrl"
             }
         ]
     };
