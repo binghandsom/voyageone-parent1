@@ -37,7 +37,7 @@ import java.util.Map;
 @Service
 public class VmsFeedFileUploadService extends BaseAppService {
 
-    private final static int FILE_LIMIT_SIZE = 50145728;
+    private final static int FILE_LIMIT_SIZE = 900145728;
 
     private final static String CSV_TYPE = "csv";
 
