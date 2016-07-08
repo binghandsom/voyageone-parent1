@@ -79,9 +79,6 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             colorCmsPropductMap = new HashMap<>();
             sizeCmsSkuPropMap = new HashMap<>();
             cmsPropductColorMap = new HashMap<>();
-            // added by morse.lu 2016/07/07 start
-            skuProductMap = new HashMap<>();
-            // added by morse.lu 2016/07/07 end
         }
 
         public Map<CmsBtProductModel, String> getCmsPropductColorMap() {
@@ -96,11 +93,6 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             return sizeCmsSkuPropMap;
         }
 
-        // added by morse.lu 2016/07/07 start
-        public Map<CmsBtProductModel_Sku, CmsBtProductModel> getSkuProductMap() {
-            return skuProductMap;
-        }
-        // added by morse.lu 2016/07/07 end
     }
 
     @Override
@@ -280,9 +272,6 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
         for (CmsBtProductModel sxProduct : sxProducts) {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
-                // added by morse.lu 2016/07/07 start
-                buildSkuResult.getSkuProductMap().put(cmsSkuProp, sxProduct);
-                // added by morse.lu 2016/07/07 end
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 // deleted by morse.lu 2016/07/04 start
                 // 不Mapping了,不用了吧,虽然留着也不影响,但是set的对象不对,应该是common下的skus + 各平台下面的skus
@@ -508,15 +497,11 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //            }
             if (skuExtend_aliasnameField != null) {
                 // 别名,用size
-                // modified by morse.lu 2016/07/07 start
-                // 先看看sizeNick有没有值，有的话直接用，没的话用size去尺码表里转换一下
+                // modified by morse.lu 2016/07/08 start
+                // 用sizeSx(已经转换过了)
 //                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), cmsSkuProp.getSize());
-                String size = cmsSkuProp.getSizeNick();
-                if (StringUtils.isEmpty(size)) {
-                    size = getChangeSize(expressionParser, buildSkuResult.getSkuProductMap().get(cmsSkuProp), cmsSkuProp.getSize());
-                }
-                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), size);
-                // modified by morse.lu 2016/07/07 end
+                complexValue.setInputFieldValue(skuExtend_aliasnameField.getId(), cmsSkuProp.getSizeSx());
+                // modified by morse.lu 2016/07/08 end
             }
             // modified by morse.lu 2016/07/04 end
 

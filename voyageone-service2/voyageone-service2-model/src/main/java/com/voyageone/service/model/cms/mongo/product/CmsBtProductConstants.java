@@ -91,6 +91,8 @@ public interface CmsBtProductConstants {
 		isSale,
 		/* size */
 		size,
+		/* sizeSx */
+		sizeSx,
 	}
 
 	/**
