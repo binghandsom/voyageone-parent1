@@ -123,7 +123,7 @@ define([
                 }
                 if ($routeParams.type == '4') {
                     // 从主页而来的检索
-                    if ($routeParams.value1 >= 10) {
+                    if ($routeParams.value1 > 10) {
                         $scope.vm._cart_tab_act = true;
                         var catObj = _.find($scope.vm.masterData.cartList, function (item) {
                             return item.value == $sessionStorage.feedSearch.cartId;
