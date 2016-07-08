@@ -137,11 +137,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         // 渠道
         String channelId = (String) messageMap.get("channelId");
         // csv文件路径
-        String fileName = (String) messageMap.get("fileName");
-        if (!StringUtils.isEmpty(channelId) && !StringUtils.isEmpty(fileName)) {
-            new ImportFeedFile(channelId, fileName).doRun();
+        VmsBtFeedFileModel model = (VmsBtFeedFileModel) messageMap.get("model");
+        if (!StringUtils.isEmpty(channelId) && model != null) {
+            new ImportFeedFile(channelId, model).doRun();
         } else {
-            $error("参数channelId或者fileName为空");
+            $error("参数channelId或者model为空");
         }
     }
 
@@ -150,30 +150,30 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
      */
     public class ImportFeedFile {
         private OrderChannelBean channel;
-        private String fileName;
+        private VmsBtFeedFileModel model;
 
-        public ImportFeedFile(String orderChannelId, String fileName) {
+        public ImportFeedFile(String orderChannelId, VmsBtFeedFileModel model) {
             this.channel = Channels.getChannel(orderChannelId);
-            this.fileName = fileName;
+            this.model = model;
         }
 
         public void doRun() {
             $info(channel.getFull_name() + "产品 Feed文件导入开始");
 
-            // 查找当前渠道,取得建立时间最早的Feed导入文件
-            Map<String, Object> param = new HashMap<>();
-            param.put("channelId", channel.getOrder_channel_id());
-            param.put("fileName", fileName);
-            // 状态：1（等待导入）
-            param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
-            List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDaoExt.selectListOrderByCreateTime(param);
-            VmsBtFeedFileModel model = null;
-            if (feedFileList.size() > 0) {
-                model = feedFileList.get(0);
-            } else {
-                $error("找不到要处理的数据,channel:" + channel.getFull_name()  + ",fileName:" + fileName);
-                return;
-            }
+//            // 查找当前渠道,取得建立时间最早的Feed导入文件
+//            Map<String, Object> param = new HashMap<>();
+//            param.put("channelId", channel.getOrder_channel_id());
+//            param.put("fileName", fileName);
+//            // 状态：1（等待导入）
+//            param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
+//            List<VmsBtFeedFileModel> feedFileList = vmsBtFeedFileDaoExt.selectListOrderByCreateTime(param);
+//            VmsBtFeedFileModel model = null;
+//            if (feedFileList.size() > 0) {
+//                model = feedFileList.get(0);
+//            } else {
+//                $error("找不到要处理的数据,channel:" + channel.getFull_name()  + ",fileName:" + fileName);
+//                return;
+//            }
             // 取得Feed文件上传路径
             String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
             // 存在需要导入的Feed文件

@@ -84,8 +84,6 @@ public class VmsFeedFileScanService extends BaseTaskService {
             // 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
             // 按渠道进行处理
             for (String orderChannelID : orderChannelIdList) {
-                // 检测Feed文件,并且在vms_bt_feed_file表中新建一条文件管理信息
-                checkFeedFileDBInfo(orderChannelID);
 
                 // 在vms_bt_feed_file表有状态为2：正在导入的数据，那么略过
                 Map<String, Object> param = new HashMap<>();
@@ -93,8 +91,13 @@ public class VmsFeedFileScanService extends BaseTaskService {
                 param.put("status", VmsConstants.FeedFileStatus.IMPORTING);
                 List<VmsBtFeedFileModel> importingFeedFileList = vmsBtFeedFileDao.selectList(param);
                 if (importingFeedFileList.size() > 0) {
+                    $info("存在正在导入的Feed文件,略过channel：" + orderChannelID);
                     continue;
                 }
+
+                // 检测Feed文件,并且在vms_bt_feed_file表中新建一条文件管理信息
+                checkFeedFileDBInfo(orderChannelID);
+
 
                 // 取出在vms_bt_feed_file表有状态为1：等待导入的一条创建时间最早的Feed文件信息，发MQ进行导入
                 Map<String, Object> param1 = new HashMap<>();
@@ -102,9 +105,12 @@ public class VmsFeedFileScanService extends BaseTaskService {
                 param1.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
                 // Order 条件
                 String sortString = "created desc";
-//                Map<String, Object> newMap = MySqlPageHelper.queryParam(param1).sort(sortString).toMap();
-                List<VmsBtFeedFileModel> waitingImportingFeedFileList = vmsBtFeedFileDao.selectList(param1);
+                Map<String, Object> newMap = MySqlPageHelper.build(param1).sort(sortString).toMap();
+                List<VmsBtFeedFileModel> waitingImportingFeedFileList = vmsBtFeedFileDao.selectList(newMap);
                 if (waitingImportingFeedFileList.size() > 0) {
+                    $info("存在准备导入的Feed文件,发MQ,channel：" + orderChannelID + ",文件名"
+                            + waitingImportingFeedFileList.get(0).getClientFileName() + ",新文件名"
+                            + waitingImportingFeedFileList.get(0).getFileName());
                     // 发MQ
                     Map<String, Object> message = new HashMap<>();
                     message.put("channelId", orderChannelID);
@@ -130,13 +136,10 @@ public class VmsFeedFileScanService extends BaseTaskService {
         // 如果在vms_bt_feed_file表有存在状态为1：等待导入和2：导入中 的数据，那么不进行Scan
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
-        List<String> statusList = new ArrayList<>();
-        statusList.add(VmsConstants.FeedFileStatus.WAITING_IMPORT);
-        statusList.add(VmsConstants.FeedFileStatus.IMPORTING);
-        param.put("statusList", statusList);
-        List<VmsBtFeedFileModel> processFeedFileList = vmsBtFeedFileDaoExt.selectListByStatusList(param);
-        if (processFeedFileList != null && processFeedFileList.size() > 0) {
-            $info("存在准备/正在导入的Feed文件,channel：" + channelId);
+        param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
+        List<VmsBtFeedFileModel> waitingImportFeedFileList = vmsBtFeedFileDao.selectList(param);
+        if (waitingImportFeedFileList != null && waitingImportFeedFileList.size() > 0) {
+            $info("存在正在准备导入的Feed文件,ScanFeed文件略过channel：" + channelId);
             return;
         }
 
@@ -165,6 +168,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                             // 进行改名，改名失败的情况说明这个文件正被占用，所以略过处理
                             boolean result = file.renameTo(newFile);
                             if (result) {
+                                $info("Scan到Feed文件,channel：" + channelId + ",文件名" + file.getName() + ",新文件名" + newFile.getName());
                                 // 更新状态为1：等待导入
                                 VmsBtFeedFileModel model = new VmsBtFeedFileModel();
                                 model.setChannelId(channelId);
