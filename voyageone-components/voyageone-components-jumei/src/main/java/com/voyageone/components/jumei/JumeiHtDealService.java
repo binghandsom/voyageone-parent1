@@ -18,6 +18,7 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
     public HtDealCopyDealResponse copyDeal(ShopBean shopBean, HtDealCopyDealRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
@@ -26,6 +27,7 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
     public HtDealUpdateDealEndTimeResponse updateDealEndTime(ShopBean shopBean, HtDealUpdateDealEndTimeRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
@@ -34,6 +36,7 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
     public HtDealUpdateDealPriceBatchResponse updateDealPriceBatch(ShopBean shopBean, HtDealUpdateDealPriceBatchRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
@@ -42,6 +45,16 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
+    public HtDealUpdateDealStockBatchResponse updateDealStockBatch(ShopBean shopBean, HtDealUpdateDealStockBatchRequest request) throws Exception {
+        Map<String, Object> params = request.getParameter();
+        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        logger.info("批量同步deal库存返回：" + reqResult);//
+        HtDealUpdateDealStockBatchResponse response = new HtDealUpdateDealStockBatchResponse();
+        response.setBody(reqResult);
+        return response;
+    }
+
     public HtDealGetDealByHashIDResponse getDealByHashID(ShopBean shopBean, HtDealGetDealByHashIDRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
