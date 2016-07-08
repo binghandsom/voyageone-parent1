@@ -107,7 +107,7 @@ public class OrderInfoService extends BaseService {
                                 OrderInfoBean orderInfoBean = new OrderInfoBean();
                                 orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
                                 orderInfoBean.setDesc(vmsBtOrderDetailModel.getDecription());
-                                orderInfoBean.setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModel.getOrderTime()).getTime());
+//                                orderInfoBean.setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModel.getOrderTime()).getTime());
                                 orderInfoBean.setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
                                 orderInfoBean.setStatus(vmsBtOrderDetailModel.getStatus());
                                 return orderInfoBean;
@@ -124,12 +124,12 @@ public class OrderInfoService extends BaseService {
                                 }});
                                 PlatformOrderInfoBean platformOrderInfoBean = new PlatformOrderInfoBean();
                                 platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getOrderId());
-                                platformOrderInfoBean.setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModelList.get(0).getOrderTime()).getTime());
+//                                platformOrderInfoBean.setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModelList.get(0).getOrderTime()).getTime());
                                 platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
                                 vmsBtOrderDetailModelList.stream()
                                         .map(vmsBtOrderDetailModel -> new OrderInfoBean() {{
                                             setOrderId(vmsBtOrderDetailModel.getOrderId());
-                                            setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModel.getOrderTime()).getTime());
+//                                            setOrderDateTimestamp(DateTimeUtil.parse(vmsBtOrderDetailModel.getOrderTime()).getTime());
                                             setDesc(vmsBtOrderDetailModel.getDecription());
                                             setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
                                             setSku(vmsBtOrderDetailModel.getClientSku());

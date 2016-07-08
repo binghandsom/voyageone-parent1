@@ -62,7 +62,7 @@ public class UserController extends BaseController {
         // 保存用户
         getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
         // 保存用户的默认语言
-        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
+        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getVendorUserLanguage(userSessionBean));
 
         // 取得user对应的channelId
         List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
