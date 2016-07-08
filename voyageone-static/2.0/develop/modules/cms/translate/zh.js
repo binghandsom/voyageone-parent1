@@ -661,7 +661,7 @@ define(function () {
         "TXT_MAIN_CATEGORY": "主类目",
         "TXT_LIST_ERROR": "错误列表",
         "TXT_ERROR": "错误",
-        "TXT_PROPERTY_STATUS": "Property status",
+        "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
         "TXT_CUS_TAGS_SETTING": "设置自定义标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
