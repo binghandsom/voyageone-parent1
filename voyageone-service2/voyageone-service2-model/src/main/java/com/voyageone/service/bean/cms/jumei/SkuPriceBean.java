@@ -10,6 +10,14 @@ package com.voyageone.service.bean.cms.jumei;
 
     private String jmSkuNo;
 
+    public String getSkuCode() {
+        return skuCode;
+    }
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode;
+    }
+    private String skuCode;
+
     public double getDealPrice() {
         return dealPrice;
     }
