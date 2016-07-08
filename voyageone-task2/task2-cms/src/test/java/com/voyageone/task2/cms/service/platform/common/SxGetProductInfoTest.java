@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.platform.common;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -11,7 +10,6 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -26,21 +24,12 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
-import com.voyageone.service.model.cms.enums.CustomMappingType;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryInvisibleFieldModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryInvisibleFieldModel_Field;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.Context;
-import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
-import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmMqService;
+import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
@@ -83,7 +72,7 @@ public class SxGetProductInfoTest {
     private CmsBuildPlatformProductUploadTmItemService cmsBuildPlatformProductUploadTmItemService;
 
     @Autowired
-    private CmsBuildPlatformProductUploadTmMqService cmsBuildPlatformProductUploadTmMqService;
+    private CmsBuildPlatformProductUploadTmService cmsBuildPlatformProductUploadTmService;
     @Autowired
     private CmsBuildPlatformProductUploadTmProductService uploadTmProductService;
 
@@ -1681,6 +1670,10 @@ public class SxGetProductInfoTest {
 //        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("335"));
 
         {
+            // schema取得
+        }
+
+        {
             // TM 上新
 //            Context context = Context.getContext();
 //            ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
@@ -1690,15 +1683,15 @@ public class SxGetProductInfoTest {
 //            int cart_id = 23;
 //            ShopBean shopBean = getShop(channel_id, cart_id);
 //
-//            channel_id = "010";
+//            channel_id = "018";
 //            CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
 //            cmsBtSxWorkloadModel.setChannelId(channel_id);
 //            cmsBtSxWorkloadModel.setCartId(cart_id);
-//            cmsBtSxWorkloadModel.setGroupId(20913L);
+//            cmsBtSxWorkloadModel.setGroupId(493891L);
 //            cmsBtSxWorkloadModel.setPublishStatus(0);
 //
 //            System.out.println("TM 上新 start");
-//            cmsBuildPlatformProductUploadTmMqService.uploadProduct(cmsBtSxWorkloadModel, shopBean);
+//            cmsBuildPlatformProductUploadTmService.uploadProduct(cmsBtSxWorkloadModel, shopBean);
 //            System.out.println("TM 上新 end");
         }
 
