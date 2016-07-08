@@ -1,69 +1,28 @@
 package com.voyageone.web2.vms.bean.order;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
- * 单条的订单信息
- * Created by vantis on 16-7-6.
+ * 订单信息:列表和总数
+ * Created by vantis on 16-7-8.
  */
-public class OrderInfoBean extends AbstractOrderInfoBean {
-    private String orderId;
-    private long orderDateTimestamp;
-    private String sku;
-    private String desc;
-    private String status;
-    private BigDecimal price;
+public class OrderInfoBean {
+    private long total;
+    private List<AbstractSubOrderInfoBean> orderList;
 
-    public String getOrderId() {
-        return orderId;
+    public long getTotal() {
+        return total;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setTotal(long total) {
+        this.total = total;
     }
 
-    public long getOrderDateTimestamp() {
-        return orderDateTimestamp;
+    public List<AbstractSubOrderInfoBean> getOrderList() {
+        return orderList;
     }
 
-    public void setOrderDateTimestamp(long orderDateTimestamp) {
-        this.orderDateTimestamp = orderDateTimestamp;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    // TODO: 16-7-7 暂未想好后续处理 未做订单信息验证 vantis
-    public boolean isValid() {
-        return true;
+    public void setOrderList(List<AbstractSubOrderInfoBean> orderList) {
+        this.orderList = orderList;
     }
 }

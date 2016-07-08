@@ -8,12 +8,12 @@ import java.util.List;
  * 平台级别的订单详情
  * Created by vantis on 16-7-6.
  */
-public class PlatformOrderInfoBean extends AbstractOrderInfoBean {
+public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String orderId;
     private long orderDateTimestamp;
     private String status;
     private BigDecimal totalPrice = BigDecimal.ZERO;
-    private List<OrderInfoBean> orderInfoBeanList = new ArrayList<>();
+    private List<SubOrderInfoBean> orderInfoBeanList = new ArrayList<>();
 
     public String getOrderId() {
         return orderId;
@@ -39,11 +39,11 @@ public class PlatformOrderInfoBean extends AbstractOrderInfoBean {
         this.totalPrice = totalPrice;
     }
 
-    public List<OrderInfoBean> getOrderInfoBeanList() {
+    public List<SubOrderInfoBean> getOrderInfoBeanList() {
         return orderInfoBeanList;
     }
 
-    public void setOrderInfoBeanList(List<OrderInfoBean> orderInfoBeanList) {
+    public void setOrderInfoBeanList(List<SubOrderInfoBean> orderInfoBeanList) {
         this.orderInfoBeanList = orderInfoBeanList;
     }
 
@@ -55,12 +55,14 @@ public class PlatformOrderInfoBean extends AbstractOrderInfoBean {
         this.status = status;
     }
 
-    public boolean pushOrderInfoBean(OrderInfoBean orderInfoBean) {
+    public boolean pushOrderInfoBean(SubOrderInfoBean orderInfoBean) {
 
         // TODO: 16-7-6 暂未添加对订单的验证 vantis
 //        if (null == orderInfoBean || !orderInfoBean.isValid()) {
 //
 //        }
+
+        if (!orderInfoBean.getStatus().equals(this.status)) this.status = "-";
         this.totalPrice = totalPrice.add(orderInfoBean.getPrice());
         this.orderInfoBeanList.add(orderInfoBean);
         return true;

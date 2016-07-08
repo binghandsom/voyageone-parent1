@@ -10,6 +10,7 @@ public interface VmsUrlConstants {
         interface ORDER_INFO {
             String ROOT = "/vms/order/order_info/";
             String INIT = "init";
+            String SEARCH = "search";
         }
     }
 

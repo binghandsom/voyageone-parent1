@@ -18,26 +18,46 @@
                 <div class="form-group">
                     <label for="SKU_STATUS" class="control-label">STATUS</label>
                     <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
-                        ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
-                        <option value="">Select</option>
+                            ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
+                        <option value="">All</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="ORDER_ID" class="control-label">ORDER ID</label>
-                    <input id="ORDER_ID" type="text" class="form-control input-sm">
+                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.orderId">
                 </div>
                 <div class="form-group">
                     <label for="SKU" class="control-label">SKU</label>
-                    <input id="SKU" type="text" class="form-control input-sm">
+                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku">
                 </div>
                 <div class="form-group">
                     <label class="control-label">ORDER DATE</label>
-                    <input type="text" class="form-control input-sm">
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control"
+                               title="From"
+                               ng-model="ctrl.orderDateFrom"
+                               uib-datepicker-popup
+                               is-open="datepicker3"
+                               placeholder="From">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker3=!datepicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
                     <span>~</span>
-                    <input type="text" class="form-control input-sm">
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control"
+                               title="To"
+                               ng-model="ctrl.orderDateTo"
+                               uib-datepicker-popup
+                               is-open="datepicker4"
+                               placeholder="To">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
                 </div>
                 <div class="form-group pull-right">
-                    <button ng-click="ctrl.search" class="btn btn-primary btn-sm">SEARCH</button>
+                    <button ng-click="ctrl.search()" class="btn btn-primary btn-sm">SEARCH</button>
                 </div>
             </div>
         </div>
@@ -61,24 +81,24 @@
                     <thead>
                     <tr>
                         <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>
-                        <th class="td-1">ORDER ID</th>
+                        <th class="td-2">ORDER ID</th>
                         <th class="td-2">ORDER DATE</th>
                         <th class="td-1">SKU</th>
-                        <th class="td-3">DESCRIPTION</th>
+                        <th class="td-2">DESCRIPTION</th>
                         <th class="td-1">STATUS</th>
                         <th class="td-1">PRICE</th>
                         <th style="width: 200px">ACTION</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
+                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className" >
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
-                        <td>{{item.orderId}}</td>
-                        <td>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td><strong><span>{{item.details.length}}</span> SKU</strong></td>
-                        <td>{{item.desc}}</td>
-                        <td>{{item.status}}</td>
-                        <td><strong>${{item.totalPrice}}</strong></td>
+                        <td ng-click="item.collapse = !item.collapse">{{item.orderId}}</td>
+                        <td ng-click="item.collapse = !item.collapse">{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td ng-click="item.collapse = !item.collapse">-</strong></td>
+                        <td ng-click="item.collapse = !item.collapse">-</td>
+                        <td ng-click="item.collapse = !item.collapse">{{item.status}}</td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
                             <button class="btn btn-xs btn-warning">CANCEL</button>
                             <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
@@ -86,7 +106,7 @@
                     </tr>
                     <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
                         <td></td>
-                        <td>{{detail.orderId}}</td>
+                        <td></td>
                         <td>{{detail.orderDate}}</td>
                         <td>{{detail.sku}}</td>
                         <td>{{detail.desc}}</td>
@@ -97,7 +117,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <div vpagination="{}"></div>
+                <div vpagination="ctrl.pageInfo"></div>
             </div>
         </div>
     </div>
