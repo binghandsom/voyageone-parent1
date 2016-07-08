@@ -6,7 +6,7 @@ define([
     'modules/cms/actions',
     'modules/cms/translate/en',
     'modules/cms/translate/zh'
-], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
@@ -24,12 +24,8 @@ define([
         'localytics.directives',
         'angular-md5',
         'angular-drag'
-    ])
-
-    // define
-        .constant('$actions', cActions)
-        .constant('cActions', cActions)
-        .constant('cRoutes', cRoutes)
+    ]).constant('cActions', actions)
+        .constant('cRoutes', routes)
         .constant('cLanguageType', {
             en: {
                 name: "en",
@@ -54,16 +50,25 @@ define([
         })
 
         // router config.
-        .config(function ($routeProvider) {
-            return _.each(cRoutes, function (module) {
+        // translate config.
+        .config(function ($routeProvider, $translateProvider, cLanguageType) {
+
+            _.each(cLanguageType, function (type) {
+                $translateProvider.translations(type.name, type.value);
+            });
+
+            _.each(routes, function (module) {
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
         })
 
-        // translate config.
-        .config(function ($translateProvider, cLanguageType) {
-            _.forEach(cLanguageType, function (type) {
-                $translateProvider.translations(type.name, type.value);
+        .run(function ($vresources, $sessionStorage) {
+            // 从会话中取出登录和选择渠道存储的数据
+            var userInfo = $sessionStorage.user;
+            // 传入 register 作为额外的缓存关键字
+            $vresources.register(null, actions, {
+                username: userInfo.name,
+                channel: userInfo.channel
             });
         })
 
