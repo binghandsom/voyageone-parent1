@@ -512,4 +512,10 @@ public final class StringUtils {
         return -1;
     }
 
+    public static String toString(Object val) {
+        if (val == null) {
+            return "";
+        }
+        return val.toString();
+    }
 }

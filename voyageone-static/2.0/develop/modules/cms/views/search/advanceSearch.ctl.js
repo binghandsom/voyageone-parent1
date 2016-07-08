@@ -900,11 +900,31 @@ define([
             }
         };
 
+        // 清空所填项目
         function dismiss(item) {
-            $scope.vm.searchInfo[item] = null;
-            if (item == 'freeTags' || item == 'promotionTagType') {
+            if (item == 'mCatPath') {
+                $scope.vm.searchInfo.mCatPath = null;
+                $scope.vm.searchInfo.mCatId = null;
+
+            } else if (item == 'fCatPath') {
+                $scope.vm.searchInfo.fCatPath = null;
+                $scope.vm.searchInfo.fCatId = null;
+
+            } else if (item == 'freeTag') {
                 $scope.vm._freeTags = null;
+                $scope.vm.searchInfo.freeTags = null;
+
+            } else if (item == 'pCatStatus') {
+                $scope.vm.searchInfo.pCatPath = null;
+                $scope.vm.searchInfo.pCatId = null;
+
+            } else if (item == 'shopCat') {
+                $scope.vm._shopCatValues = null;
+                $scope.vm.searchInfo.cidValue = null;
+
+            } else if (item == 'promotionTag') {
                 $scope.vm._promotionTags = null;
+                $scope.vm.searchInfo.promotionTags = null;
             }
         }
 

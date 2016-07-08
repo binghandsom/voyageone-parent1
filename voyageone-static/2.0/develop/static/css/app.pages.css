@@ -390,6 +390,12 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
+.product-shema-detail a .thumb-group{
+    /*max-width: 100px;*/
+    max-height: 100px;
+    display: inline-block;
+}
+
 .panel-default .panel-detail-head {
     background: #e67e22;
     color: white;
@@ -454,6 +460,7 @@ s-field textarea.s-html {
 }
 
 .product-shema-detail .thumbnail.current {
+    max-width: 100px;
     background: #FB6E52;
 }
 
