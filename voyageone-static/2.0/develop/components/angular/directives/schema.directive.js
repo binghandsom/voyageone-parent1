@@ -988,7 +988,7 @@
 
                 deregister = $scope.$watch($attrs.field, function (field) {
 
-                    if (!field || field.isDisplay == 0)
+                    if (!field)
                         return;
 
                     deferred.resolve(controller.field = field);
