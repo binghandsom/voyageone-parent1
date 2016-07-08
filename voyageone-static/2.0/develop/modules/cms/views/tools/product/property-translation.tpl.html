@@ -45,13 +45,13 @@
                 <div class="panel-body panel-body-flex-center">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="assignInfo-priority" class="control-label col-sm-3 col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
-                            <div class="col-sm-5 col-md-6">
+                            <label for="assignInfo-priority" class="control-label col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
+                            <div class="col-md-6">
                                 <select id="assignInfo-priority" class="form-control" ng-model="ctrl.assignInfo.priority" ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
                             </div>
-                            <div class="col-sm-4 col-md-4">
+                            <div class="col-md-4">
                                 <label class="checkbox-inline c-radio">
                                     <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort"
                                            ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}
@@ -63,11 +63,11 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="fuzzy-search" class="control-label col-sm-3 col-md-2" translate="TXT_FUZZY_SEARCH"></label>
-                            <div class="col-sm-5 col-md-6">
+                            <label for="fuzzy-search" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
+                            <div class="col-md-6">
                                 <input id="fuzzy-search" class="form-control" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                             </div>
-                            <div class="col-sm-4 col-md-4">
+                            <div class="col-md-4">
                                 <button class="btn btn-success" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                             </div>
                         </div>
@@ -83,8 +83,8 @@
                 <div class="panel-body panel-body-flex-center">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label for="searchPageSettings-translateStatus" class="col-sm-3 col-md-2 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
-                            <div class="col-sm-9 col-md-10">
+                            <label for="searchPageSettings-translateStatus" class="col-md-2 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
+                            <div class="col-md-10">
                                 <select id="searchPageSettings-translateStatus" class="form-control" ng-model="ctrl.searchPageSettings.translateStatus">
                                     <option value="" translate="TXT_TRANSLATION_SEARCH_SELECT_ALL"></option>
                                     <option value="0" translate="TXT_TRANSLATION_SEARCH_SELECT_NOT_TRANSLATED"></option>
@@ -93,8 +93,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="searchPageSettings-size" class="col-sm-3 col-md-2 control-label" translate="TXT_PAGER_SIZE"></label>
-                            <div class="col-sm-9 col-md-10">
+                            <label for="searchPageSettings-size" class="col-md-2 control-label" translate="TXT_PAGER_SIZE"></label>
+                            <div class="col-md-10">
                                 <select id="searchPageSettings-size" class="form-control" ng-model="ctrl.searchPageSettings.size"
                                         ng-options="option.value as option.name for option in ctrl.searchPageSizeOption">
                                     <option value=number:10>10行</option>
@@ -105,11 +105,11 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="searchPageSettings-keyWord" class="control-label col-sm-3 col-md-2" translate="TXT_FUZZY_SEARCH"></label>
-                            <div class="col-sm-4 col-md-5">
+                            <label for="searchPageSettings-keyWord" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
+                            <div class="col-md-5">
                                 <input id="searchPageSettings-keyWord" class="form-control" ng-model="ctrl.searchPageSettings.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                             </div>
-                            <div class="col-sm-5 col-md-5">
+                            <div class="col-md-5">
                                 <button class="btn btn-default col-sm-offset-1" ng-click="ctrl.clearConditions()"><i
                                         class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}
                                 </button>

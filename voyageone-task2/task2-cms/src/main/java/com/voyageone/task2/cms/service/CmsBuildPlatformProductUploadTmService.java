@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -18,27 +19,22 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * 天猫平台产品上新服务
@@ -48,8 +44,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadTmJob)
-public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
+public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
@@ -73,8 +68,13 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
     private PromotionDetailService promotionDetailService;
 
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        doMain(taskControlList);
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "CmsBuildPlatformProductUploadJdJob";
     }
 
     /**
@@ -82,7 +82,8 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
      *
      * @param taskControlList taskcontrol信息
      */
-    public void doMain(List<TaskControlBean> taskControlList) throws Exception {
+    @Override
+    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -198,20 +199,23 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
                 // 有错误的时候，直接报错
                 throw new BusinessException(sxData.getErrorMessage());
             }
-            // 单个product内部的sku列表分别进行排序
-            for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-                // modified by morse.lu 2016/06/28 start
-                // product表结构变化
-//                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
-                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
-                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
-                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-                // modified by morse.lu 2016/06/28 end
-            }
-            // added by morse.lu 2016/06/28 start
-            // skuList也排序一下
-            sxProductService.sortSkuInfo(sxData.getSkuList());
-            // added by morse.lu 2016/06/28 end
+            // deleted by morse.lu 2016/07/08 start
+            // getSxProductDataByGroupId里去做排序了，外部不需要啦
+//            // 单个product内部的sku列表分别进行排序
+//            for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
+//                // modified by morse.lu 2016/06/28 start
+//                // product表结构变化
+////                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
+//                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
+//                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
+//                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+//                // modified by morse.lu 2016/06/28 end
+//            }
+//            // added by morse.lu 2016/06/28 start
+//            // skuList也排序一下
+//            sxProductService.sortSkuInfo(sxData.getSkuList());
+//            // added by morse.lu 2016/06/28 end
+            // deleted by morse.lu 2016/07/08 end
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> productList = sxData.getProductList();

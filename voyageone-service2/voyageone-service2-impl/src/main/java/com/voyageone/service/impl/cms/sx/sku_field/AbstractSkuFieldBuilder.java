@@ -34,10 +34,6 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
     private int cartId = -1;
     private String codeImageTemplate;
 
-    // added by morse.lu 2016/07/07 start
-    private Map<CmsBtProductModel, Map<String, String>> productSizeMap;
-    // added by morse.lu 2016/07/07 end
-
     public final boolean isYourFood(List<Field> platformProps, int cartId) {
         setCartId(cartId);
         return init(platformProps, cartId);
@@ -183,37 +179,4 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
         return skuPrice;
     }
 
-    // added by morse.lu 2016/07/07 start
-    /**
-     * 尺码转换
-     *
-     * @param productModel 产品信息
-     * @param oriSize 需要转换的尺码
-     * @return
-     */
-    protected final String getChangeSize(ExpressionParser expressionParser, CmsBtProductModel productModel, String oriSize) {
-        if (productSizeMap == null) {
-            productSizeMap = new HashMap<>();
-        }
-
-        Map<String, String> sizeMap = productSizeMap.get(productModel);
-        if (sizeMap == null) {
-            sizeMap = expressionParser.getSxProductService().getSizeMap(
-                                                                expressionParser.getSxData().getChannelId(),
-                                                                productModel.getCommon().getFields().getBrand(),
-                                                                productModel.getCommon().getFields().getProductType(),
-                                                                productModel.getCommon().getFields().getSizeType()
-                                                            );
-            productSizeMap.put(productModel, sizeMap);
-        }
-
-        // 表里未设值的话用原尺码
-        String adjSize = sizeMap.get(oriSize);
-        if (StringUtils.isEmpty(adjSize)) {
-            adjSize = oriSize;
-        }
-
-        return adjSize;
-    }
-    // added by morse.lu 2016/07/07 end
 }

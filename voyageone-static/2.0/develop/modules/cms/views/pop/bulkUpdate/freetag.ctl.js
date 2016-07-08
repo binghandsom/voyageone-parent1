@@ -4,7 +4,18 @@
 define([
     'cms'
 ], function (cms) {
-    return cms.controller('popFreeTagCtl', (function () {
+
+    function flatTrees(categories, parent) {
+        return categories.reduce(function (map, curr) {
+            curr.parent = parent;
+            map[curr.id] = curr;
+            if (curr.children && curr.children.length)
+                map = angular.extend(map, flatTrees(curr.children, curr));
+            return map;
+        }, {});
+    }
+
+    cms.controller('popFreeTagCtl', (function () {
         function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
@@ -18,8 +29,7 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.count = 0;
-            this.selectdTagList = [];
+            this.taglist = {selList: []};
         }
 
         popFreeTagCtl.prototype = {
@@ -65,58 +75,35 @@ define([
                             tree[index] = self.byTagChildrenName(prev.children, index);
                         else {
                             tree[index] = [];
-                            continue;
                         }
                     }
-                    if(index==1)selected[1] = undefined;
-                    if(index==2&&selected[2]!==undefined)selected[2] = undefined;
+                    break;
                 }
-                if (selected[0] == undefined || !selected[0].children.length) selected[1] = undefined;
-                if (selected[1] == undefined || !selected[1].children.length) selected[2] = undefined;
-                for (var i = 2; i >= 0; i--) {
-                    var selectedVal = self.selected[i];
-                    if (selectedVal !== undefined) {
-                        self.tagPathName = selectedVal.tagPathName;
-                        self.list = {
-                            "id": selectedVal.id,
-                            "tagPathName": selectedVal.tagPathName,
-                            "tagPath": selectedVal.tagPath
-                        };
-                        break;
-                    }
-                }
+                if (index == 1) tree[2] = [];
             },
 
-            /**
-             * 点击确认添加的搜索条件
-             */
-            confirm: function () {
-                var self = this;
-                if (!self.selectdTagList || self.selectdTagList.length == 0) self.selectdTagList.push(self.list);
-
-                // 校验选择的是否有重复值
-                var hasData = false;
-                for (var i = 0; i < self.selectdTagList.length; i++) {
-                    if (self.selectdTagList[i].id == self.list.id) {
-                        hasData = true;
-                        break;
-                    }
-                }
-                if (!hasData) {
-                    self.selectdTagList.push(self.list);
-                }
-            },
-            clear: function () {
-                var self = this;
-                self.count = self.count - 1;
-                self.selectdTagList.pop();
-            },
             /**
              * 点击保存
              */
             save: function () {
                 var self = this;
-                self.context = {"selectdTagList": self.selectdTagList};
+                var map = flatTrees(self.source);
+                var selectdTagList = [];
+                _.map(self.taglist.selFlag, function (value, key) {
+                    return {selectedIds: key, selected: value};
+                }).filter(function (item) {
+                    return item.selected;
+                }).forEach(function (item) {
+                    var selTagList = map[item.selectedIds];
+                    var self = this;
+                    self.list = {
+                        "id": selTagList.id,
+                        "tagPathName": selTagList.tagPathName,
+                        "tagPath": selTagList.tagPath
+                    };
+                    selectdTagList.push(self.list);
+                });
+                self.context = {"selectdTagList": selectdTagList};
                 self.$uibModalInstance.close(self.context);
             }
         };

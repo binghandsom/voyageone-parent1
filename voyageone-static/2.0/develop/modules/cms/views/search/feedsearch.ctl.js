@@ -6,8 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage,$filter) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -239,8 +238,12 @@ define([
                 });
         };
 
+        $scope.formatStrDate = function(item){
+            item.modified = $filter('date')(new Date(item.modified),'yyyy-MM-dd HH:mm:ss')
+        }
+
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage','$filter'];
     return searchIndex;
 });
