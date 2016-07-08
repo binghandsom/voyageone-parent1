@@ -38,7 +38,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动开始时间</label>
                 <div class="col-sm-7" >
-                    <input  type="datetime-local" class="form-control"  ng-readonly="editModel.model.status!=0"
+                    <input  type="datetime-local" class="form-control"
+                            ng-readonly="editModel.model.status!=0"
                             datepicker-popup
                             ng-model="editModel.model.activityStart" name="activityStart" required
                             max-date="editModel.model.activityEnd"

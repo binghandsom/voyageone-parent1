@@ -8,12 +8,14 @@ import java.util.List;
  */
 public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
     //Retail_Price
-    CMS_PLATFORM_Retail_Price_DOWN("CMS_PLATFORM_Retail_Price_DOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^D\"}}", "/search/advanceSearch", "", "指导价降价"),
     CMS_PLATFORM_Retail_Price_UP("CMS_PLATFORM_Retail_Price_UP", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^U\"}}", "/search/advanceSearch", "", "指导价涨价"),
+    CMS_PLATFORM_Retail_Price_DOWN("CMS_PLATFORM_Retail_Price_DOWN", "{'platforms.P%s.skus.priceChgFlg':{$regex:\"^D\"}}", "/search/advanceSearch", "", "指导价降价"),
     CMS_PLATFORM_PRICE_DOWN("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.skus.priceDiffFlg':'2'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价低(未击穿)"),
     CMS_PLATFORM_PRICE_UP("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceDiffFlg':'3'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价高(未击穿)"),
-    CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告"),
-    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告");
+    CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告"),
+    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告");
+
+
     EnumPlatformPriceSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;
