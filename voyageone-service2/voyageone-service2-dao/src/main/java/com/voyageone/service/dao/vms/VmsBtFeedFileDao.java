@@ -18,6 +18,8 @@ public interface VmsBtFeedFileDao {
 
     VmsBtFeedFileModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtFeedFileModel select(Integer id);
 
     int insert(VmsBtFeedFileModel record);

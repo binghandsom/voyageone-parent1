@@ -18,6 +18,8 @@ public interface VmsBtShipmentDao {
 
     VmsBtShipmentModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtShipmentModel select(Integer id);
 
     int insert(VmsBtShipmentModel record);

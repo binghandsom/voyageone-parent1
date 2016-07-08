@@ -18,6 +18,8 @@ public interface VmsBtFeedInfoTempDao {
 
     VmsBtFeedInfoTempModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtFeedInfoTempModel select(Integer id);
 
     int insert(VmsBtFeedInfoTempModel record);

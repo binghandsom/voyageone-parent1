@@ -18,6 +18,8 @@ public interface VmsBtFinancialReportDao {
 
     VmsBtFinancialReportModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtFinancialReportModel select(Integer id);
 
     int insert(VmsBtFinancialReportModel record);

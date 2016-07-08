@@ -18,6 +18,8 @@ public interface VmsBtOrderDetailDao {
 
     VmsBtOrderDetailModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtOrderDetailModel select(Integer id);
 
     int insert(VmsBtOrderDetailModel record);

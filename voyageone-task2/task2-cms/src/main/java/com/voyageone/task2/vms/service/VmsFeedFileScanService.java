@@ -114,7 +114,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                     // 发MQ
                     Map<String, Object> message = new HashMap<>();
                     message.put("channelId", orderChannelID);
-                    message.put("model", waitingImportingFeedFileList.get(0));
+                    message.put("fileName", waitingImportingFeedFileList.get(0).getFileName());
                     sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
 
                     // 把文件管理的状态变为2：导入中

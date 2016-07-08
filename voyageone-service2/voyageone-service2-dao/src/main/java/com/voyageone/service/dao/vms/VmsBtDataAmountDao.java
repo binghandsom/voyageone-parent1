@@ -18,6 +18,8 @@ public interface VmsBtDataAmountDao {
 
     VmsBtDataAmountModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     VmsBtDataAmountModel select(Integer id);
 
     int insert(VmsBtDataAmountModel record);

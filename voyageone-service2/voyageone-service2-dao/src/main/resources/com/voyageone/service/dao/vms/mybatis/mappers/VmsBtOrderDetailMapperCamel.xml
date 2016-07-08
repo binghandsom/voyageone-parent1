@@ -106,13 +106,13 @@
                 #{consolidationOrderId,jdbcType=VARCHAR},
             </if>
             <if test="consolidationOrderTime != null" >
-                #{consolidationOrderTime,jdbcType=VARCHAR},
+                #{consolidationOrderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="orderId != null" >
                 #{orderId,jdbcType=VARCHAR},
             </if>
             <if test="orderTime != null" >
-                #{orderTime,jdbcType=VARCHAR},
+                #{orderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="cartId != null" >
                 #{cartId,jdbcType=INTEGER},
@@ -133,16 +133,16 @@
                 #{shipmentId,jdbcType=INTEGER},
             </if>
             <if test="shipmentTime != null" >
-                #{shipmentTime,jdbcType=VARCHAR},
+                #{shipmentTime,jdbcType=TIMESTAMP},
             </if>
             <if test="containerizingTime != null" >
-                #{containerizingTime,jdbcType=VARCHAR},
+                #{containerizingTime,jdbcType=TIMESTAMP},
             </if>
             <if test="containerizer != null" >
                 #{containerizer,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
-                #{receivedTime,jdbcType=VARCHAR},
+                #{receivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="receiver != null" >
                 #{receiver,jdbcType=VARCHAR},
@@ -196,13 +196,13 @@
                 `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR},
             </if>
             <if test="consolidationOrderTime != null" >
-                `consolidation_order_time` = #{consolidationOrderTime,jdbcType=VARCHAR},
+                `consolidation_order_time` = #{consolidationOrderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="orderId != null" >
                 `order_id` = #{orderId,jdbcType=VARCHAR},
             </if>
             <if test="orderTime != null" >
-                `order_time` = #{orderTime,jdbcType=VARCHAR},
+                `order_time` = #{orderTime,jdbcType=TIMESTAMP},
             </if>
             <if test="cartId != null" >
                 `cart_id` = #{cartId,jdbcType=INTEGER},
@@ -223,16 +223,16 @@
                 `shipment_id` = #{shipmentId,jdbcType=INTEGER},
             </if>
             <if test="shipmentTime != null" >
-                `shipment_time` = #{shipmentTime,jdbcType=VARCHAR},
+                `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP},
             </if>
             <if test="containerizingTime != null" >
-                `containerizing_time` = #{containerizingTime,jdbcType=VARCHAR},
+                `containerizing_time` = #{containerizingTime,jdbcType=TIMESTAMP},
             </if>
             <if test="containerizer != null" >
                 `containerizer` = #{containerizer,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
-                `received_time` = #{receivedTime,jdbcType=VARCHAR},
+                `received_time` = #{receivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="receiver != null" >
                 `receiver` = #{receiver,jdbcType=VARCHAR},
@@ -288,13 +288,13 @@
                 and `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR}
             </if>
             <if test="consolidationOrderTime != null" >
-                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=VARCHAR}
+                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=TIMESTAMP}
             </if>
             <if test="orderId != null" >
                 and `order_id` = #{orderId,jdbcType=VARCHAR}
             </if>
             <if test="orderTime != null" >
-                and `order_time` = #{orderTime,jdbcType=VARCHAR}
+                and `order_time` = #{orderTime,jdbcType=TIMESTAMP}
             </if>
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
@@ -315,16 +315,100 @@
                 and `shipment_id` = #{shipmentId,jdbcType=INTEGER}
             </if>
             <if test="shipmentTime != null" >
-                and `shipment_time` = #{shipmentTime,jdbcType=VARCHAR}
+                and `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}
             </if>
             <if test="containerizingTime != null" >
-                and `containerizing_time` = #{containerizingTime,jdbcType=VARCHAR}
+                and `containerizing_time` = #{containerizingTime,jdbcType=TIMESTAMP}
             </if>
             <if test="containerizer != null" >
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="receiver != null" >
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="clientMsrp != null" >
+                and `client_msrp` = #{clientMsrp,jdbcType=DECIMAL}
+            </if>
+            <if test="clientNetPrice != null" >
+                and `client_net_price` = #{clientNetPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientRetailPrice != null" >
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientPromotionPrice != null" >
+                and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_order_detail
+        <where >
+            <if test="reservationId != null" >
+                and `reservation_id` = #{reservationId,jdbcType=VARCHAR}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderId != null" >
+                and `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderTime != null" >
+                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="orderId != null" >
+                and `order_id` = #{orderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderTime != null" >
+                and `order_time` = #{orderTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="clientSku != null" >
+                and `client_sku` = #{clientSku,jdbcType=VARCHAR}
+            </if>
+            <if test="barcode != null" >
+                and `barcode` = #{barcode,jdbcType=VARCHAR}
+            </if>
+            <if test="decription != null" >
+                and `decription` = #{decription,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentId != null" >
+                and `shipment_id` = #{shipmentId,jdbcType=INTEGER}
+            </if>
+            <if test="shipmentTime != null" >
+                and `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="containerizingTime != null" >
+                and `containerizing_time` = #{containerizingTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="containerizer != null" >
+                and `containerizer` = #{containerizer,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null" >
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="receiver != null" >
                 and `receiver` = #{receiver,jdbcType=VARCHAR}
@@ -356,10 +440,8 @@
         </where>
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from vms_bt_order_detail
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_order_detail
         <where >
             <if test="reservationId != null" >
                 and `reservation_id` = #{reservationId,jdbcType=VARCHAR}
@@ -371,13 +453,13 @@
                 and `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR}
             </if>
             <if test="consolidationOrderTime != null" >
-                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=VARCHAR}
+                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=TIMESTAMP}
             </if>
             <if test="orderId != null" >
                 and `order_id` = #{orderId,jdbcType=VARCHAR}
             </if>
             <if test="orderTime != null" >
-                and `order_time` = #{orderTime,jdbcType=VARCHAR}
+                and `order_time` = #{orderTime,jdbcType=TIMESTAMP}
             </if>
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
@@ -398,16 +480,16 @@
                 and `shipment_id` = #{shipmentId,jdbcType=INTEGER}
             </if>
             <if test="shipmentTime != null" >
-                and `shipment_time` = #{shipmentTime,jdbcType=VARCHAR}
+                and `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}
             </if>
             <if test="containerizingTime != null" >
-                and `containerizing_time` = #{containerizingTime,jdbcType=VARCHAR}
+                and `containerizing_time` = #{containerizingTime,jdbcType=TIMESTAMP}
             </if>
             <if test="containerizer != null" >
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="receiver != null" >
                 and `receiver` = #{receiver,jdbcType=VARCHAR}

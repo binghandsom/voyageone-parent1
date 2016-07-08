@@ -136,12 +136,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         // 渠道
         String channelId = (String) messageMap.get("channelId");
-        // csv文件路径
-        VmsBtFeedFileModel model = (VmsBtFeedFileModel) messageMap.get("model");
-        if (!StringUtils.isEmpty(channelId) && model != null) {
-            new ImportFeedFile(channelId, model).doRun();
+        // 处理的csv文件名
+        String fileName = (String) messageMap.get("fileName");
+        if (!StringUtils.isEmpty(channelId) && fileName != null) {
+            new ImportFeedFile(channelId, fileName).doRun();
         } else {
-            $error("参数channelId或者model为空");
+            $error("参数channelId或者fileName为空");
         }
     }
 
@@ -150,11 +150,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
      */
     public class ImportFeedFile {
         private OrderChannelBean channel;
-        private VmsBtFeedFileModel model;
+        private String fileName;
 
-        public ImportFeedFile(String orderChannelId, VmsBtFeedFileModel model) {
+        public ImportFeedFile(String orderChannelId, String fileName) {
             this.channel = Channels.getChannel(orderChannelId);
-            this.model = model;
+            this.fileName = fileName;
         }
 
         public void doRun() {
@@ -177,10 +177,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 取得Feed文件上传路径
             String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
             // 存在需要导入的Feed文件
-            File feedFile = new File(feedFilePath + "/" + channel.getOrder_channel_id() + "/feed/" + model.getFileName());
+            File feedFile = new File(feedFilePath + "/" + channel.getOrder_channel_id() + "/feed/" + fileName);
             // 文件存在的话那么处理
             if (feedFile.exists()) {
-                $info("Feed文件处理开始 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+                $info("Feed文件处理开始 文件路径：" + fileName + ",channel：" + channel.getFull_name());
                 // 把Feed数据插入vms_bt_feed_info_temp表
                 boolean result = readCsvToDB(feedFile);
                 if (!result) {
@@ -190,7 +190,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 $info("Feed文件处理结束,channel：" + channel.getFull_name());
             } else {
                 // 一般情况下不可能发生，除非手动删除文件
-                $error("Feed文件不存在 文件路径：" + model.getFileName() + ",channel：" + channel.getFull_name());
+                $error("Feed文件不存在 文件路径：" + fileName + ",channel：" + channel.getFull_name());
             }
             $info(channel.getFull_name() + "产品 Feed文件导入结束");
         }
@@ -291,6 +291,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFileName = createErrorFile(errorList, codeCnt);
+
+                    // 移动文件到bak目录下
+                    moveFeedFileToBak(feedFileName);
+
                     // 把文件管理的状态变为4：导入错误
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
@@ -301,6 +305,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 } else {
+                    // 移动文件到bak目录下
+                    moveFeedFileToBak(feedFileName);
+
                     // 把文件管理的状态变为3：导入成功
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
@@ -311,9 +318,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 }
-
-                // 移动文件到bak目录下
-                moveFeedFileToBak(feedFileName);
             } catch (IOException e) {
                 $error(e.getMessage());
             }
@@ -1242,6 +1246,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFileName = createErrorFile(error);
+
+                    // 移动文件到bak目录下
+                    moveFeedFileToBak(feedFile.getName());
+
                     // 把文件管理的状态变为4：导入错误
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
@@ -1252,8 +1260,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
 
-                    // 移动文件到bak目录下
-                    moveFeedFileToBak(feedFile.getName());
                     return true;
                 }
                 $info("导入Temp表成功,导入件数：" + rowNum +"件,channel：" + channel.getFull_name());

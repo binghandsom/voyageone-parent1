@@ -183,12 +183,52 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from vms_bt_financial_report
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="reportYearMonth != null" >
+                and `report_year_month` = #{reportYearMonth,jdbcType=VARCHAR}
+            </if>
+            <if test="reportStartDate != null" >
+                and `report_start_date` = #{reportStartDate,jdbcType=VARCHAR}
+            </if>
+            <if test="reportEndDate != null" >
+                and `report_end_date` = #{reportEndDate,jdbcType=VARCHAR}
+            </if>
+            <if test="totalPrice != null" >
+                and `total_price` = #{totalPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="reportFilePath != null" >
+                and `report_file_path` = #{reportFilePath,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_financial_report
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

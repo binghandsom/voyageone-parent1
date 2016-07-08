@@ -9,9 +9,6 @@ import java.util.Map;
 
 @Repository
 public interface VmsBtFeedFileDaoExt {
-    List<VmsBtFeedFileModel> selectListOrderByCreateTime(Map<String, Object> map);
-
-    List<VmsBtFeedFileModel> selectListByStatusList(Map<String, Object> map);
 
     int updateErrorFileInfo(VmsBtFeedFileModel record);
 

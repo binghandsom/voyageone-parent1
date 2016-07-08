@@ -9,6 +9,7 @@ package com.voyageone.service.model.vms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 
@@ -32,7 +33,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     /**
      * 大订单时间
      */
-    protected String consolidationOrderTime;
+    protected Date consolidationOrderTime;
 
     /**
      * 平台订单id
@@ -42,7 +43,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     /**
      * 平台订单时间
      */
-    protected String orderTime;
+    protected Date orderTime;
 
     /**
      * 平台id
@@ -77,12 +78,12 @@ public class VmsBtOrderDetailModel extends BaseModel {
     /**
      * 发货时间
      */
-    protected String shipmentTime;
+    protected Date shipmentTime;
 
     /**
      * 装箱时间
      */
-    protected String containerizingTime;
+    protected Date containerizingTime;
 
     /**
      * 装箱者
@@ -92,7 +93,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     /**
      * VoyageOne确认收货时间
      */
-    protected String receivedTime;
+    protected Date receivedTime;
 
     /**
      * 确认收货者
@@ -140,12 +141,12 @@ public class VmsBtOrderDetailModel extends BaseModel {
         this.consolidationOrderId = consolidationOrderId == null ? null : consolidationOrderId.trim();
     }
 
-    public String getConsolidationOrderTime() {
+    public Date getConsolidationOrderTime() {
         return consolidationOrderTime;
     }
 
-    public void setConsolidationOrderTime(String consolidationOrderTime) {
-        this.consolidationOrderTime = consolidationOrderTime == null ? null : consolidationOrderTime.trim();
+    public void setConsolidationOrderTime(Date consolidationOrderTime) {
+        this.consolidationOrderTime = consolidationOrderTime;
     }
 
     public String getOrderId() {
@@ -156,12 +157,12 @@ public class VmsBtOrderDetailModel extends BaseModel {
         this.orderId = orderId == null ? null : orderId.trim();
     }
 
-    public String getOrderTime() {
+    public Date getOrderTime() {
         return orderTime;
     }
 
-    public void setOrderTime(String orderTime) {
-        this.orderTime = orderTime == null ? null : orderTime.trim();
+    public void setOrderTime(Date orderTime) {
+        this.orderTime = orderTime;
     }
 
     public Integer getCartId() {
@@ -212,20 +213,20 @@ public class VmsBtOrderDetailModel extends BaseModel {
         this.shipmentId = shipmentId;
     }
 
-    public String getShipmentTime() {
+    public Date getShipmentTime() {
         return shipmentTime;
     }
 
-    public void setShipmentTime(String shipmentTime) {
-        this.shipmentTime = shipmentTime == null ? null : shipmentTime.trim();
+    public void setShipmentTime(Date shipmentTime) {
+        this.shipmentTime = shipmentTime;
     }
 
-    public String getContainerizingTime() {
+    public Date getContainerizingTime() {
         return containerizingTime;
     }
 
-    public void setContainerizingTime(String containerizingTime) {
-        this.containerizingTime = containerizingTime == null ? null : containerizingTime.trim();
+    public void setContainerizingTime(Date containerizingTime) {
+        this.containerizingTime = containerizingTime;
     }
 
     public String getContainerizer() {
@@ -236,12 +237,12 @@ public class VmsBtOrderDetailModel extends BaseModel {
         this.containerizer = containerizer == null ? null : containerizer.trim();
     }
 
-    public String getReceivedTime() {
+    public Date getReceivedTime() {
         return receivedTime;
     }
 
-    public void setReceivedTime(String receivedTime) {
-        this.receivedTime = receivedTime == null ? null : receivedTime.trim();
+    public void setReceivedTime(Date receivedTime) {
+        this.receivedTime = receivedTime;
     }
 
     public String getReceiver() {
