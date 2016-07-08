@@ -34,4 +34,11 @@ public class VmsOrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.selectPlatformOrderListLimitedByTime(orderSearchParams);
 
     }
+
+    public long getTotalOrderNum(Map<String, Object> orderSearchParamsWithLimitAndSort) {
+
+        // TODO: 16-7-8 总数统计尚未完成
+        return 10;
+//        return vmsBtOrderDetailDaoExt.selectPlatformOrderListNumLimitedByTime(orderSearchParams);
+    }
 }

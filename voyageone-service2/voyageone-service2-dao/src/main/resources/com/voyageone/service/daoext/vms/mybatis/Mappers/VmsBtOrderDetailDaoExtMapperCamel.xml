@@ -36,8 +36,8 @@
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="clientSku != null" >
-                and `client_sku` = #{clientSku,jdbcType=VARCHAR}
+            <if test="sku != null" >
+                and `client_sku` = #{sku,jdbcType=VARCHAR}
             </if>
             <if test="barcode != null" >
                 and `barcode` = #{barcode,jdbcType=VARCHAR}
@@ -94,14 +94,6 @@
                 and `order_time` > #{orderDateFrom} and #{orderDateTo} >= #{orderDateTo}
             </if>
         </where>
-        <choose>
-            <when test="status = 1">
-                order by `order_time` desc
-            </when>
-            <otherwise>
-                order by `order_time` asc
-            </otherwise>
-        </choose>
     </select>
 
     <select id="selectPlatformOrderListLimitedByTime" parameterType="HashMap" resultType="java.lang.String">
@@ -130,8 +122,8 @@
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="clientSku != null" >
-                and `client_sku` = #{clientSku,jdbcType=VARCHAR}
+            <if test="sku != null" >
+                and `client_sku` = #{sku,jdbcType=VARCHAR}
             </if>
             <if test="barcode != null" >
                 and `barcode` = #{barcode,jdbcType=VARCHAR}
@@ -184,17 +176,12 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="orderDateFrom !=null &amp;&amp; orderDateTo != null">
-                and `order_time` > #{orderDateFrom} and #{orderDateTo} >= #{orderDateTo}
+            <if test="orderDateFrom !=null">
+                and `order_time` > #{orderDateFrom}
+            </if>
+            <if test="orderDateTo != null">
+                and #{orderDateTo} >= `order_time`
             </if>
         </where>
-        <choose>
-            <when test="status = 1">
-                order by `order_time` desc
-            </when>
-            <otherwise>
-                order by `order_time` asc
-            </otherwise>
-        </choose>
     </select>
 </mapper>

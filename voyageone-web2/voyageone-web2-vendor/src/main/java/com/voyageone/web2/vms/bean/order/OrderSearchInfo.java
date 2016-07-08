@@ -1,6 +1,9 @@
 package com.voyageone.web2.vms.bean.order;
 
-import org.apache.commons.net.ntp.TimeStamp;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
 
@@ -14,8 +17,12 @@ public class OrderSearchInfo {
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;
     private int curr = 1;
-    private TimeStamp orderDateFrom;
-    private TimeStamp orderDateTo;
+
+    @DateTimeFormat
+    private Date orderDateFrom;
+
+    @DateTimeFormat
+    private Date orderDateTo;
 
     public int getStatus() {
         return status;
@@ -30,7 +37,8 @@ public class OrderSearchInfo {
     }
 
     public void setOrderId(String orderId) {
-        this.orderId = orderId;
+        if (StringUtil.isEmpty(orderId)) this.orderId = null;
+        else this.orderId = orderId;
     }
 
     public String getSku() {
@@ -38,23 +46,24 @@ public class OrderSearchInfo {
     }
 
     public void setSku(String sku) {
-        this.sku = sku;
+        if (StringUtil.isEmpty(sku)) this.sku = null;
+        else this.sku = sku;
     }
 
-    public TimeStamp getOrderDateFrom() {
+    public Date getOrderDateFrom() {
         return orderDateFrom;
     }
 
-    public void setOrderDateFrom(TimeStamp orderDateFrom) {
-        this.orderDateFrom = orderDateFrom;
+    public void setOrderDateFrom(long orderDateFrom) {
+        this.orderDateFrom = new Date(orderDateFrom);
     }
 
-    public TimeStamp getOrderDateTo() {
+    public Date getOrderDateTo() {
         return orderDateTo;
     }
 
-    public void setOrderDateTo(TimeStamp orderDateTo) {
-        this.orderDateTo = orderDateTo;
+    public void setOrderDateTo(long orderDateTo) {
+        this.orderDateTo = new Date(orderDateTo);
     }
 
     public int getSize() {

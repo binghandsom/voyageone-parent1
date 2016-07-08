@@ -1,12 +1,11 @@
-package com.voyageone.web2.vms.views.order.order_info;
+package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.VmsUrlConstants;
+import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,12 @@ import java.util.Map;
 @RequestMapping(value = VmsUrlConstants.ORDER.ORDER_INFO.ROOT, method = RequestMethod.POST)
 public class OrderInfoController extends BaseController {
 
+    private OrderInfoService orderInfoService;
+
     @Autowired
-    OrderInfoService orderInfoService;
+    public OrderInfoController(OrderInfoService orderInfoService) {
+        this.orderInfoService = orderInfoService;
+    }
 
     // 页面初始化部分
     @RequestMapping(VmsUrlConstants.ORDER.ORDER_INFO.INIT)
@@ -29,8 +32,16 @@ public class OrderInfoController extends BaseController {
         initialInfo.put("channelConfigs", orderInfoService.getChannelConfigs(this.getUser()));
         initialInfo.put("searchOrderStatus", orderInfoService.getAllOrderStatusesList());
         initialInfo.put("currentShipment", orderInfoService.getCurrentShipment(this.getUser()));
-        initialInfo.put("orderInfoList", orderInfoService.getOrders(this.getUser()));
+        initialInfo.put("orderInfo", orderInfoService.getOrderInfo(this.getUser()));
         return success(initialInfo);
+    }
+
+
+    @RequestMapping(VmsUrlConstants.ORDER.ORDER_INFO.SEARCH)
+    public AjaxResponse search(@RequestBody OrderSearchInfo orderSearchInfo) {
+        Map<String, Object> orderInfo = new HashMap<>();
+        orderInfo.put("orderInfo", orderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
+        return success(orderInfo);
     }
 
 }

@@ -157,7 +157,8 @@ define(function (require) {
         }),
 
         orderInfoService: new CommonDataService('/vms/order/order_info', {
-            init: "init"
+            init: "init",
+            search: "search"
         })
     }
 });
