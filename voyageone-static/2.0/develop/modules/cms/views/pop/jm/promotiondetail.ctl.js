@@ -20,8 +20,6 @@ define([
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
-                    /**添加备注*/
-                    $scope.editModel.model.comment = context.comment;
                 });
             }else{
                 $scope.editModel.model.status=0;
@@ -77,7 +75,7 @@ define([
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
             _upEntity.model.prePeriodEnd = formatToStr(_upEntity.model.prePeriodEnd);
             jmPromotionService.saveModel(_upEntity).then(function () {
-                context.comment =$scope.editModel.model.comment;
+                context =$scope.editModel.model;
                 $scope.$close(context);
                 if(context.search) {
                     context.search();
