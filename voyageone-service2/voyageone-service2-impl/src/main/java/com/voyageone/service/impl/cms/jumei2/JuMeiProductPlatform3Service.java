@@ -106,7 +106,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 if (model.getDealEndTimeStatus() == 1) {
                     updateDealEndTime(modelCmsBtJmPromotion, model, shopBean);//deal延期
                 }
-                if (model.getStockStatus() == 1) {
+                if (model.getStockStatus() != 2) {
                     updateDealStock(model, shopBean);//更新库存
                 }
             }
