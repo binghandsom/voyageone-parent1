@@ -62,9 +62,9 @@ define([
             });
         })
 
-        .run(function ($vresources, $sessionStorage) {
+        .run(function ($vresources, $localStorage) {
             // 从会话中取出登录和选择渠道存储的数据
-            var userInfo = $sessionStorage.user;
+            var userInfo = $localStorage.user;
             // 传入 register 作为额外的缓存关键字
             $vresources.register(null, actions, {
                 username: userInfo.name,
