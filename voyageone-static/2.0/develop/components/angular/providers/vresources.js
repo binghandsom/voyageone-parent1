@@ -19,7 +19,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
         var argsJson = angular.toJson(args);
         var otherKeyJson = !cacheWith ? "" : angular.toJson(cacheWith);
         var md5Arg = root + actionName + argsJson + otherKeyJson;
-        return '_' + md5.createHash(md5Arg);
+        return md5.createHash(md5Arg);
     }
 
     /**
