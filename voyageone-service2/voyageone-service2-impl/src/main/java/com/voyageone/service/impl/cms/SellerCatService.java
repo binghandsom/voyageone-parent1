@@ -22,6 +22,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -66,8 +67,9 @@ public class SellerCatService extends BaseService {
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
+
     @Autowired
-    private ProductService productService;
+    private SxProductService sxProductService;
 
 
     /**
@@ -235,7 +237,7 @@ public class SellerCatService extends BaseService {
             //去TM平台取店铺分类
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             if(sellerCatList != null) {
-                if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId)).count() > 0) {
+                if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId).longValue()).count() > 0) {
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
             }
@@ -259,8 +261,7 @@ public class SellerCatService extends BaseService {
     private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
         if (list != null) {
             for (CmsBtProductModel product : list) {
-
-                productService.insertSxWorkLoad(channelId, product, modifier);
+                sxProductService.insertSxWorkLoad(channelId, product.getCommon().getFields().getCode(), cartId, modifier);
             }
         }
     }
