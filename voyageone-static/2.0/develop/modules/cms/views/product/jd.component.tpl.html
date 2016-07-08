@@ -228,8 +228,8 @@
                                     </tr>
                                     <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
                                         <td>
-                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="'1'" ng-false-value="'0'" ng-if="cartInfo.value != 27">
-                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="'1'" ng-false-value="'0'" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == '1'">
+                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
+                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == '1'">
                                         </td>
                                         <td class="text-center">{{entity.skuCode}}</td>
                                         <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
