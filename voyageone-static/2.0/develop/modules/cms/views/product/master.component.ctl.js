@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile,noticeSoft) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -139,7 +139,7 @@ define([
                         scope.productInfo.checkFlag = new Date().getTime();
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
-                        notify.success("更新成功!");
+                        notify.success("更 新 成 功 !");
                     },function(){
                         alert("更新失败","错误提示");
                     });
