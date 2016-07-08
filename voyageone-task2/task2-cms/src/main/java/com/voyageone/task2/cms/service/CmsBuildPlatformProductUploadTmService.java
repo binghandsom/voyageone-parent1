@@ -74,7 +74,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsBuildPlatformProductUploadJdJob";
+        return "CmsBuildPlatformProductUploadTmJob";
     }
 
     /**

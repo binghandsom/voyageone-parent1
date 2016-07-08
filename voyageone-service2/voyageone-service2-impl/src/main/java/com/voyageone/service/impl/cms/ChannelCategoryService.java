@@ -90,7 +90,7 @@ public class ChannelCategoryService extends BaseService {
      * @param channelId channel Id
      * @return List<CmsMtCategoryTreeModel>
      */
-    public List<CmsMtCategoryTreeModel> getFinallyCategoriesByChannelId(String channelId) throws IOException{
+    public List<CmsMtCategoryTreeModel> getFinallyCategoriesByChannelId(String channelId) throws IOException {
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
 
         List<CmsMtChannelCategoryConfigModel> mappings = getByChannelId(channelId);
@@ -98,14 +98,17 @@ public class ChannelCategoryService extends BaseService {
             String catId = mapping.getCategoryId();
             CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
 
-            if (category.getIsParent() == 1) {
+            if (category != null) {
+                if (category.getIsParent() == 1) {
 
-                List<CmsMtCategoryTreeModel> childCategory
-                        = JsonPath.parse(JacksonUtil.bean2Json(category)).read("$..children[?(@.isParent == 0)]"
-                        , new TypeRef<List<CmsMtCategoryTreeModel>>() {});
-                result.addAll(childCategory);
-            } else {
-                result.add(category);
+                    List<CmsMtCategoryTreeModel> childCategory
+                            = JsonPath.parse(JacksonUtil.bean2Json(category)).read("$..children[?(@.isParent == 0)]"
+                            , new TypeRef<List<CmsMtCategoryTreeModel>>() {
+                    });
+                    result.addAll(childCategory);
+                } else {
+                    result.add(category);
+                }
             }
         }
 
