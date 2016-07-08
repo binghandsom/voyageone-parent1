@@ -154,7 +154,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp             ShopBean 店铺信息
      */
-    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    private void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
         // 渠道id
