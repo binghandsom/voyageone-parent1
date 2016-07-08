@@ -70,6 +70,14 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         setStringAttribute("sizeNick", sizeNick);
     }
 
+    //sizeSx
+    public String getSizeSx() {
+        return getStringAttribute("sizeSx");
+    }
+    public void setSizeSx(String sizeSx) {
+        setStringAttribute("sizeSx", sizeSx);
+    }
+
     //clientMsrpPrice
     public Double getClientMsrpPrice () {
         return getDoubleAttribute("clientMsrpPrice");
