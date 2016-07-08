@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jgjSchema", function (productDetailService,$translate,alert) {
+    cms.directive("jgjSchema", function (productDetailService,$translate,alert,notify) {
         return {
             restrict: "E",
             templateUrl : "views/product/jgj.component.tpl.html",
@@ -62,7 +62,9 @@ define([
 
                     productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                         scope.vm.platform.modified = resp.data.modified;
-                        alert($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    },function(){
+                        alert("更新失败","错误提示");
                     });
                 }
 

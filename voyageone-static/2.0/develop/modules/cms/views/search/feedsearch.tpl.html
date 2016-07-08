@@ -47,7 +47,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.sizeType"
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.sizeType" chosen  search-contains="true"
                                                 ng-options="sizeType.value as sizeType.key for sizeType in vm.masterData.sizeType">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>

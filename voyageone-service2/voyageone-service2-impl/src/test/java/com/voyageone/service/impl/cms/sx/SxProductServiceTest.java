@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CategoryTreeService;
 import org.junit.Test;
@@ -39,5 +40,10 @@ public class SxProductServiceTest {
         sxProductService.insertSxWorkLoad("018", codeList, 23, "tester");
     }
 
+    @Test
+    public void getSxProductDataByGroupIdTest() {
+        SxData sxData = sxProductService.getSxProductDataByGroupId("010", 3L);
+        System.out.println(sxData == null);
+    }
 
 }

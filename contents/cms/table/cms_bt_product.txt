@@ -71,6 +71,7 @@
     * clientSize
     * size
     * sizeNick  ->20160627,售卖用尺码别名
+    * sizeSx    ->20160707,只给上新用(getSxProductDataByGroupId生成这个字段的数据, 上新的地方直接用这个就行了)
     * clientMsrpPrice     ->客户建议零售价
     * clientRetailPrice   ->客户指导价
     * clientNetPrice      ->客户成本价

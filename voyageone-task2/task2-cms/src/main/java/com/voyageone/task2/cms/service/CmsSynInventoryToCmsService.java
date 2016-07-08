@@ -113,9 +113,9 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
             for (InventoryForCmsBean codeInventory : codeInventoryListItem) {
 
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("fields.quantity", codeInventory.getQty());
+                updateMap.put("common.fields.quantity", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
-                queryMap.put("fields.code", codeInventory.getCode());
+                queryMap.put("common.fields.code", codeInventory.getCode());
                 if (!StringUtil.isEmpty(orgChannelId)) {
                     queryMap.put("orgChannelId", orgChannelId);
                 }
