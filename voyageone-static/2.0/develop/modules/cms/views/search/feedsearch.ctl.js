@@ -6,18 +6,25 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q ,selectRowsFactory, confirm, alert,attributeService) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage,$filter) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
             feedList: [],
-            feedSelList: {selList: []}
+            feedSelList: {selList: []},
+            exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
+            exportList: [],
+            currTab: {group: true, export: false}
         };
+        $scope.exportStatus = ["正在生成", "完成", "失败"];
+        $scope.beforSearchInfo = {};
+
 
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+
+        $scope.exportSearch = exportSearch;
         $scope.doExport = doExport;
 
         var tempFeedSelect = null;
@@ -28,6 +35,11 @@ define([
         function initialize() {
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
+
+            $scope.vm.exportPageOption.curr = 1;
+
+            $scope.vm.searchInfo.isAll = false;
+
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
@@ -37,8 +49,11 @@ define([
                     $scope.vm.masterData = res.data;
                 })
                 .then(function () {
-                    if ($routeParams.type == "1") {
+                    exportSearch();
+                    if ($routeParams.type == "1" || $sessionStorage.feedSearch) {
+                        $scope.vm.searchInfo = $sessionStorage.feedSearch;
                         search();
+                        if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }
                 })
         }
@@ -86,8 +101,13 @@ define([
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
 
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
+
+                $scope.vm.currTab.group = true;
+                $scope.vm.currTab.export = false;
                 $scope.vm.feedList = res.data.feedList;
                 $scope.vm.feedPageOption.total = res.data.feedListTotal;
+
+                $scope.beforSearchInfo = angular.copy($scope.vm.searchInfo);
 
                 if (tempFeedSelect == null) {
                     tempFeedSelect = new selectRowsFactory();
@@ -130,7 +150,7 @@ define([
                     feedInfo.attsList = attsList;
 
                     // 设置勾选框
-                    if (feedInfo.updFlg != 0) {
+                    if (feedInfo.updFlg != 8) {
                         tempFeedSelect.currPageRows({"id": feedInfo._id, "code": feedInfo.code});
                     }
                 });
@@ -139,36 +159,68 @@ define([
         }
 
         /**
-         * 修改feed状态
+         * 修改feed导入状态
+         * @param mark(数字类型) 1: 等待导入,0:不导入
          */
-        $scope.updateFeedStatus = function () {
+        $scope.updateFeedStatus = function (mark) {
             var selList = $scope.vm.feedSelList.selList;
-            if (selList && selList.length == 0) {
+            if (selList && selList.length == 0 && $scope.vm.searchInfo.isAll != true) {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            confirm($translate.instant('将选定的Feed状态设为等待导入，请确认。')).result
-                .then(function () {
-                    $feedSearchService.updateFeedStatus({'selList': selList}).then(function () {
-                        if (tempFeedSelect != null) {
-                            tempFeedSelect.clearSelectedList();
-                        }
-                        search(1);
-                    })
-                });
+            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品 修改记录数:"+$scope.vm.feedPageOption.total :
+                                                      "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
+            confirm(notice).result.then(function () {
+                $feedSearchService.updateFeedStatus({
+                    'selList': selList,
+                    'isAll': $scope.vm.searchInfo.isAll,
+                    'status': mark,
+                    "searchInfo": $scope.beforSearchInfo
+                }).then(function () {
+                    if (tempFeedSelect != null) {
+                        tempFeedSelect.clearSelectedList();
+                    }
+                    $scope.vm.searchInfo.isAll = false;
+                    search(1);
+                })
+            });
         };
 
-        function doExport(){
-            var data = {"parameter":JSON.stringify($scope.vm.searchInfo)}
-            $feedSearchService.doExport(data).then(function(data){
+        $scope.exportFresh = function exportFresh() {
+            exportSearch($scope.vm.exportPageOption.curr);
+        };
 
+        function doExport() {
+            var data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            $feedSearchService.doExport(data).then(function (data) {
+                $scope.vm.exportList.unshift(data.data);
+                $scope.vm.currTab.export = true;
+                $scope.vm.currTab.group = false;
 
             })
         }
 
+        function exportSearch(page) {
+            $scope.vm.exportPageOption.curr = !page ? $scope.vm.exportPageOption.curr : page;
 
+            $feedSearchService.exportSearch({
+                "pageNum": $scope.vm.exportPageOption.curr,
+                "pageSize": $scope.vm.exportPageOption.size
+            }).then(function (res) {
+                $scope.vm.exportList = res.data.exportList;
+                _.each($scope.vm.exportList, function (item) {
+                    item.fileName = item.fileName.split(",");
+                })
+                $scope.vm.exportPageOption.total = res.data.exportListTotal;
+            })
+        }
 
-        $scope.openFeedCategoryMapping = function(popupNewCategory) {
+        $scope.openOtherDownload = function (fileName) {
+
+            $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName": fileName});
+        };
+
+        $scope.openFeedCategoryMapping = function (popupNewCategory) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -176,16 +228,22 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        categories: res.data.categoryTree
+                        categories: res.data.categoryTree,
+                        from:$scope.vm.searchInfo.category,
+                        divType:"-"
                     }).then(function (context) {
-                        $scope.vm.searchInfo.category = context.selected.catPath;
+                            $scope.vm.searchInfo.category = context.selected.catPath;
                         }
                     );
                 });
+        };
+
+        $scope.formatStrDate = function(item){
+            item.modified = $filter('date')(new Date(item.modified),'yyyy-MM-dd HH:mm:ss')
         }
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q','selectRowsFactory', 'confirm', 'alert','attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage','$filter'];
     return searchIndex;
 });

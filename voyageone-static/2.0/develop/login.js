@@ -11,11 +11,10 @@ require.config({
     'angular': 'libs/angular.js/1.5.6/angular',
     "voyageone-angular-com" : 'components/dist/voyageone.angular.com',
     'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
-    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-    'css': 'libs/require-css/0.1.8/css'
+    'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui'
   },
   shim: {
-    'angular-block-ui': ['angular', 'css!libs/angular-block-ui/0.2.1/angular-block-ui.min.css'],
+    'angular-block-ui': ['angular'],
     'angular-translate': ['angular'],
     'voyageone-angular-com': ['angular'],
     'angular': {exports: 'angular'}

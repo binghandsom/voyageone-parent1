@@ -18,6 +18,8 @@ public interface CmsBtPriceLogDao {
 
     CmsBtPriceLogModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtPriceLogModel select(Integer id);
 
     int insert(CmsBtPriceLogModel record);

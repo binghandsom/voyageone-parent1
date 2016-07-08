@@ -18,6 +18,8 @@ public interface CmsMtMasterInfoDao {
 
     CmsMtMasterInfoModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtMasterInfoModel select(Integer id);
 
     int insert(CmsMtMasterInfoModel record);

@@ -8,12 +8,9 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
     private String retailerId;
     private String sku;
-    private String client_sku;
+    private String clientSku;
     private String title;
-    private String brand;
     private String manufacturerName;
-    private String shortDescription;
-    private String longDescription;
     private String leadTime;
     private String adultContent;
     private String countryOfOrigin;
@@ -22,7 +19,6 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
     private String discountSiteSale;
     private String condition;
     private String returnPolicy;
-    private String category;
     private String description;
     private String inventoryAvailable;
     private String msrpExpirationDate;
@@ -33,7 +29,23 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
     private String shippingWeight;
     private String upc;
     private String shipsViaLtl;
-    private String attribute_name;
+    private String modelImage;
+    private String modelRetailerId;
+    private String modelTitle;
+    private String modelBrand;
+    private String modelManufacturerName;
+    private String modelShortDescription;
+    private String modelLongDescription;
+    private String modelLeadTime;
+    private String modelAdultContent;
+    private String modelCountryOfOrigin;
+    private String modelProductActiveStatus;
+    private String modelShippingSiteSale;
+    private String modelDiscountSiteSale;
+    private String modelCondition;
+    private String modelReturnPolicy;
+    private String salePoint;
+    private String attribute1;
 
     public String getRetailerId() {
         return retailerId;
@@ -51,12 +63,12 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
         this.sku = sku;
     }
 
-    public String getClient_sku() {
-        return client_sku;
+    public String getClientSku() {
+        return clientSku;
     }
 
-    public void setClient_sku(String client_sku) {
-        this.client_sku = client_sku;
+    public void setClientSku(String clientSku) {
+        this.clientSku = clientSku;
     }
 
     public String getTitle() {
@@ -67,42 +79,12 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
         this.title = title;
     }
 
-    @Override
-    public String getBrand() {
-        return brand;
-    }
-
-    @Override
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
     public String getManufacturerName() {
         return manufacturerName;
     }
 
     public void setManufacturerName(String manufacturerName) {
         this.manufacturerName = manufacturerName;
-    }
-
-    @Override
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    @Override
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    @Override
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    @Override
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
     }
 
     public String getLeadTime() {
@@ -167,16 +149,6 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
 
     public void setReturnPolicy(String returnPolicy) {
         this.returnPolicy = returnPolicy;
-    }
-
-    @Override
-    public String getCategory() {
-        return category;
-    }
-
-    @Override
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public String getDescription() {
@@ -259,12 +231,139 @@ public class CmsBtFeedInfoOverStockModel extends CmsBtFeedInfoModel {
         this.shipsViaLtl = shipsViaLtl;
     }
 
-    public String getAttribute_name() {
-        return attribute_name;
+    public String getModelImage() {
+        return modelImage;
     }
 
-    public void setAttribute_name(String attribute_name) {
-        this.attribute_name = attribute_name;
+    public void setModelImage(String modelImage) {
+        this.modelImage = modelImage;
     }
 
+    public String getModelRetailerId() {
+        return modelRetailerId;
+    }
+
+    public void setModelRetailerId(String modelRetailerId) {
+        this.modelRetailerId = modelRetailerId;
+    }
+
+    public String getModelTitle() {
+        return modelTitle;
+    }
+
+    public void setModelTitle(String modelTitle) {
+        this.modelTitle = modelTitle;
+    }
+
+    public String getModelBrand() {
+        return modelBrand;
+    }
+
+    public void setModelBrand(String modelBrand) {
+        this.modelBrand = modelBrand;
+    }
+
+    public String getModelManufacturerName() {
+        return modelManufacturerName;
+    }
+
+    public void setModelManufacturerName(String modelManufacturerName) {
+        this.modelManufacturerName = modelManufacturerName;
+    }
+
+    public String getModelShortDescription() {
+        return modelShortDescription;
+    }
+
+    public void setModelShortDescription(String modelShortDescription) {
+        this.modelShortDescription = modelShortDescription;
+    }
+
+    public String getModelLongDescription() {
+        return modelLongDescription;
+    }
+
+    public void setModelLongDescription(String modelLongDescription) {
+        this.modelLongDescription = modelLongDescription;
+    }
+
+    public String getModelLeadTime() {
+        return modelLeadTime;
+    }
+
+    public void setModelLeadTime(String modelLeadTime) {
+        this.modelLeadTime = modelLeadTime;
+    }
+
+    public String getModelAdultContent() {
+        return modelAdultContent;
+    }
+
+    public void setModelAdultContent(String modelAdultContent) {
+        this.modelAdultContent = modelAdultContent;
+    }
+
+    public String getModelCountryOfOrigin() {
+        return modelCountryOfOrigin;
+    }
+
+    public void setModelCountryOfOrigin(String modelCountryOfOrigin) {
+        this.modelCountryOfOrigin = modelCountryOfOrigin;
+    }
+
+    public String getModelProductActiveStatus() {
+        return modelProductActiveStatus;
+    }
+
+    public void setModelProductActiveStatus(String modelProductActiveStatus) {
+        this.modelProductActiveStatus = modelProductActiveStatus;
+    }
+
+    public String getModelShippingSiteSale() {
+        return modelShippingSiteSale;
+    }
+
+    public void setModelShippingSiteSale(String modelShippingSiteSale) {
+        this.modelShippingSiteSale = modelShippingSiteSale;
+    }
+
+    public String getModelDiscountSiteSale() {
+        return modelDiscountSiteSale;
+    }
+
+    public void setModelDiscountSiteSale(String modelDiscountSiteSale) {
+        this.modelDiscountSiteSale = modelDiscountSiteSale;
+    }
+
+    public String getModelCondition() {
+        return modelCondition;
+    }
+
+    public void setModelCondition(String modelCondition) {
+        this.modelCondition = modelCondition;
+    }
+
+    public String getModelReturnPolicy() {
+        return modelReturnPolicy;
+    }
+
+    public void setModelReturnPolicy(String modelReturnPolicy) {
+        this.modelReturnPolicy = modelReturnPolicy;
+    }
+
+    public String getSalePoint() {
+        return salePoint;
+    }
+
+    public void setSalePoint(String salePoint) {
+        this.salePoint = salePoint;
+    }
+
+    public String getAttribute1() {
+        return attribute1;
+    }
+
+    public void setAttribute1(String attribute1) {
+        this.attribute1 = attribute1;
+    }
 }

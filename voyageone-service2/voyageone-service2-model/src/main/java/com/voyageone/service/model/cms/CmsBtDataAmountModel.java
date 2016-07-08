@@ -15,11 +15,40 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtDataAmountModel extends BaseModel {
     protected String channelId;
 
+    /**
+     * 统计数名字
+     */
     protected String amountName;
 
+    /**
+     * 统计数值
+     */
     protected String amountVal;
 
+    /**
+     * 备注
+     */
     protected String comment;
+
+    /**
+     * 平台Id
+     */
+    protected Integer cartId;
+
+    /**
+     * 统计类型
+     */
+    protected Integer dataAmountTypeId;
+
+    /**
+     * 链接地址
+     */
+    protected String linkUrl;
+
+    /**
+     * 链接参数
+     */
+    protected String linkParameter;
 
     public String getChannelId() {
         return channelId;
@@ -51,5 +80,37 @@ public class CmsBtDataAmountModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
+
+    public Integer getDataAmountTypeId() {
+        return dataAmountTypeId;
+    }
+
+    public void setDataAmountTypeId(Integer dataAmountTypeId) {
+        this.dataAmountTypeId = dataAmountTypeId;
+    }
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl == null ? null : linkUrl.trim();
+    }
+
+    public String getLinkParameter() {
+        return linkParameter;
+    }
+
+    public void setLinkParameter(String linkParameter) {
+        this.linkParameter = linkParameter == null ? null : linkParameter.trim();
     }
 }

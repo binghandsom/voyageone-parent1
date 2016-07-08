@@ -63,9 +63,9 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
                     systemParam.getCartId(),
                     Integer.valueOf(imageType),
                     Integer.valueOf(viewType),
-                    systemParam.getMainSxProduct().getCmsBtProductModel().getFields().getBrand(),
-                    systemParam.getMainSxProduct().getCmsBtProductModel().getFields().getProductType(),
-                    systemParam.getMainSxProduct().getCmsBtProductModel().getFields().getSizeType(),
+                    systemParam.getMainSxProduct().getCmsBtProductModel().getCommon().getFields().getBrand(),
+                    systemParam.getMainSxProduct().getCmsBtProductModel().getCommon().getFields().getProductType(),
+                    systemParam.getMainSxProduct().getCmsBtProductModel().getCommon().getFields().getSizeType(),
                     useOriUrl);
         } catch (Exception e) {
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(

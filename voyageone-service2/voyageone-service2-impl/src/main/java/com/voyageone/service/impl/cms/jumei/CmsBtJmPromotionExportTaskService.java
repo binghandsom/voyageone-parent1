@@ -94,30 +94,26 @@ public class CmsBtJmPromotionExportTaskService {
     List<Map<String, Object>> getListSpecialImage(int promotionId, List<Map<String, Object>> listProduct) {
         List<Map<String, Object>> result = new ArrayList<>();
         List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel = daoExtCmsBtJmProductImages.selectListByPromotionId(promotionId);
-        Map<String, Object> mapSpecialImage = null;
-        boolean isImage = false;
+        boolean isImage;
         for (Map<String, Object> mapProduct : listProduct) {
             String productCode = mapProduct.get("productCode").toString();
             List<CmsBtJmProductImagesModel> codeProductImagesList = getListCmsBtJmProductImagesModelByProdcutCode(listCmsBtJmProductImagesModel, productCode);
-            mapSpecialImage = mapSpecialImage = new HashMap<>();
+            Map<String, Object> mapSpecialImage = new HashMap<>();
 
             isImage = false;
             for (CmsBtJmProductImagesModel model : codeProductImagesList) {
-
-                if (model.getImageType() == 3)//参数图
-                {
+                //参数图
+                if (model.getImageType() == 3) {
                     isImage = true;
                     mapSpecialImage.put("propertyImage" + model.getImageIndex(), model.getOriginUrl());
-                } else if (model.getImageType() == 8)//商品定制图
-                {
+                } else if (model.getImageType() == 8) {
+                    //商品定制图
                     isImage = true;
                     mapSpecialImage.put("specialImage" + model.getImageIndex(), model.getOriginUrl());
-                } else if (model.getImageType() == 1 || model.getImageType() == 2 || model.getImageType() == 7)//1:白底方图 ；2:商品详情图；7：竖图
-                {
+                } else if (model.getImageType() == 1 || model.getImageType() == 2 || model.getImageType() == 7) {
+                    //1:白底方图 ；2:商品详情图；7：竖图
                     isImage = true;
                     mapSpecialImage.put("productImageUrlKey" + model.getImageIndex(), model.getProductImageUrlKey());
-                } else {
-                    continue;
                 }
             }
             if (isImage) {
@@ -139,7 +135,7 @@ public class CmsBtJmPromotionExportTaskService {
     }
 
     public void loadPCAppList(List<Map<String, Object>> list, List<Map<String, Object>> mapPcList, List<Map<String, Object>> mapAppList) {
-        List<Map<String, Object>> mapList = new ArrayList<>();
+        //List<Map<String, Object>> mapList = new ArrayList<>();
         for (Map<String, Object> map : list) {
             if (!StringUtils.isEmpty(map.get("appId"))) {
                 mapAppList.add(map);
@@ -152,7 +148,7 @@ public class CmsBtJmPromotionExportTaskService {
 
     private ExportExcelInfo<Map<String, Object>> getJMPCPromotionProcuctExportInfo(List<Map<String, Object>> dataSource, String sheetName) {
         List<EnumJMPCPromotionProcuctExportColumn> listEnumColumn = EnumJMPCPromotionProcuctExportColumn.getList();
-        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo<>(null);
         info.setFileName("Product");
         info.setSheet(sheetName);
         info.setDisplayColumnName(true);
@@ -165,7 +161,7 @@ public class CmsBtJmPromotionExportTaskService {
 
     private ExportExcelInfo<Map<String, Object>> getSkuPriceInfo(List<Map<String, Object>> dataSource) {
         List<EnumJMSkuPriceExportColumn> listEnumColumn = EnumJMSkuPriceExportColumn.getList();
-        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo<>(null);
         info.setFileName("Product");
         info.setSheet("价格修正");
         info.setDisplayColumnName(true);
@@ -187,16 +183,14 @@ public class CmsBtJmPromotionExportTaskService {
         }
         try {
             ExportFileExcelUtil.exportExcel(fileName, productInfo, skuInfo, specialImageInfo);
-        } catch (ExcelException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ExcelException | IOException e) {
             e.printStackTrace();
         }
     }
 
     private ExportExcelInfo<Map<String, Object>> getExportProductInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMProductImportColumn> listEnumJMProductImportColumn = EnumJMProductImportColumn.getList();
-        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo<>(null);
         info.setFileName("Product");
         info.setSheet("Product");
         info.setDisplayColumnName(true);
@@ -209,7 +203,7 @@ public class CmsBtJmPromotionExportTaskService {
 
     private ExportExcelInfo<Map<String, Object>> getExportSkuInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMSkuImportColumn> listEnumColumn = EnumJMSkuImportColumn.getList();
-        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo<>(null);
         info.setFileName("Product");
         info.setSheet("Sku");
         info.setDisplayColumnName(true);
@@ -222,7 +216,7 @@ public class CmsBtJmPromotionExportTaskService {
 
     private ExportExcelInfo<Map<String, Object>> getExportSpecialImageInfo(String fileName, List<Map<String, Object>> dataSource) {
         List<EnumJMSpecialImageImportColumn> listEnumColumn = EnumJMSpecialImageImportColumn.getList();
-        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
+        ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo<>(null);
         info.setFileName("Product");
         info.setSheet("SpecialImage");
         info.setDisplayColumnName(true);

@@ -71,7 +71,7 @@ public class PromotionDetailService extends BaseService {
         Integer cartId = bean.getCartId();
         Integer promotionId = bean.getPromotionId();
         Integer tagId = bean.getTagId();
-        String tagPath = bean.getTagPath();
+        //String tagPath = bean.getTagPath();
         String productCode = bean.getProductCode();
         Long productId = bean.getProductId();
         Double promotionPrice = bean.getPromotionPrice();
@@ -88,7 +88,7 @@ public class PromotionDetailService extends BaseService {
         }
         else {
             productInfo = productService.getProductById(channelId, productId);
-            query.setQuery("{\"productCodes\":\"" + productInfo.getFields().getCode() + "\",\"cartId\":" + cartId + "}");
+            query.setQuery("{\"productCodes\":\"" + productInfo.getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
             groupModel = productGroupService.getProductGroupByQuery(channelId, query);
         }
 
@@ -110,7 +110,7 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
 
         List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
-        if (imgList.size() > 0) {
+        if (!imgList.isEmpty()) {
             cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
         }
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodesBean) == 0) {
@@ -119,7 +119,7 @@ public class PromotionDetailService extends BaseService {
 
         List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
         if (skusList == null || skusList.isEmpty()) {
-            $warn("addPromotionDetail product sku不存在 " + bean.toString());
+            $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
             throw new BusinessException("商品Sku数据不存在");
         }
         skusList.forEach(sku -> {
@@ -237,7 +237,7 @@ public class PromotionDetailService extends BaseService {
 
             List<CmsBtPromotionCodesBean> codes = cmsPromotionCodeDao.selectPromotionCodeList(param);
             codes.forEach(code -> {
-                List<Long> prodIdList = new ArrayList<Long>();
+                List<Long> prodIdList = new ArrayList<>();
                 prodIdList.add(code.getProductId());
                 productTagService.delete(channelId, code.getTagPath(), prodIdList, "tags", modifier);
 
@@ -265,7 +265,7 @@ public class PromotionDetailService extends BaseService {
         parm.put("code", cmsBtPromotionCodesBean.getProductCode());
         // 找出该code有没有参加其它的活动
         List<CmsBtTaskTejiabaoModel> tasks = cmsPromotionTaskDao.selectPromotionByCodeNotInAllPromotion(parm);
-        return !(tasks != null && tasks.size() > 0);
+        return !(tasks != null && !tasks.isEmpty());
     }
 
     /**

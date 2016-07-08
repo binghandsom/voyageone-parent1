@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import com.voyageone.common.util.JsonUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,13 +32,17 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String createTimeTo;
 
     private String brand;
-    private String[] freeTags;
+    private List<String> freeTags;
     private int freeTagType = 0;
+    private String lockFlg;
+
+    private String[] codeList;
+    private String fuzzyStr;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
-    private String[] productStatus;
-    private String[] platformStatus;
+    private List<String> productStatus;
+    private List<String> platformStatus;
 
     private String publishTimeStart;
     private String publishTimeTo;
@@ -55,7 +61,9 @@ public class CmsSearchInfoBean2 implements Serializable {
     private int shopCatStatus = 0;
 
     // 价格变动查询用标志位
-    private int priceChgFlg = 0;
+    private String priceChgFlg = null;
+    // 价格比较查询用标志位
+    private String priceDiffFlg = null;
     private String propertyStatus;
     private int hasErrorFlg = 0;
 
@@ -76,14 +84,11 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
-    private String[] codeList;
 
     // 文件下载类型
     private int fileType = 0;
 
     // ** 其它未定
-    // 价格比较查询用标志位
-    private int priceDiffFlg = 0;
     // MINI MALL 店铺时查询原始CHANNEL
     private String orgChaId = null;
 
@@ -114,19 +119,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.transStsFlg = transStsFlg;
     }
 
-    public int getPriceChgFlg() {
+    public String getPriceChgFlg() {
         return priceChgFlg;
     }
 
-    public void setPriceChgFlg(int priceChgFlg) {
+    public void setPriceChgFlg(String priceChgFlg) {
         this.priceChgFlg = priceChgFlg;
     }
 
-    public int getPriceDiffFlg() {
+    public String getPriceDiffFlg() {
         return priceDiffFlg;
     }
 
-    public void setPriceDiffFlg(int priceDiffFlg) {
+    public void setPriceDiffFlg(String priceDiffFlg) {
         this.priceDiffFlg = priceDiffFlg;
     }
 
@@ -138,11 +143,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.custAttrMap = custAttrMap;
     }
 
-    public String[] getProductStatus() {
+    public List<String> getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String[] productStatus) {
+    public void setProductStatus(List<String> productStatus) {
         this.productStatus = productStatus;
     }
 
@@ -154,11 +159,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.cartId = cartId;
     }
 
-    public String[] getPlatformStatus() {
+    public List<String> getPlatformStatus() {
         return platformStatus;
     }
 
-    public void setPlatformStatus(String[] platformStatus) {
+    public void setPlatformStatus(List<String> platformStatus) {
         this.platformStatus = platformStatus;
     }
 
@@ -248,6 +253,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setCodeList(String[] codeList) {
         this.codeList = codeList;
+    }
+
+    public String getFuzzyStr() {
+        return fuzzyStr;
+    }
+
+    public void setFuzzyStr(String fuzzyStr) {
+        this.fuzzyStr = fuzzyStr;
     }
 
     public String getSortOneName() {
@@ -346,11 +359,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.taxNoStatus = taxNoStatus;
     }
 
-    public String[] getFreeTags() {
+    public List<String> getFreeTags() {
         return freeTags;
     }
 
-    public void setFreeTags(String[] freeTags) {
+    public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
     }
 
@@ -481,4 +494,18 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
+
+    public String getLockFlg() {
+        return lockFlg;
+    }
+
+    public void setLockFlg(String lockFlg) {
+        this.lockFlg = lockFlg;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
+    }
+
 }

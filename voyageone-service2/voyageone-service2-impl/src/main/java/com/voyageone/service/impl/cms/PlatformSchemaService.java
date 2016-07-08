@@ -15,6 +15,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
+import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 平台Schema取得后，对应一些处理操作
@@ -39,7 +41,6 @@ public class PlatformSchemaService extends BaseService {
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
-
     @Autowired
     private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     @Autowired
@@ -61,6 +62,10 @@ public class PlatformSchemaService extends BaseService {
             return null;
         }
         CmsMtPlatformCategoryInvisibleFieldModel invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId(catId, cartId);
+        if (invisibleFieldModel == null) {
+            // 自己没有的话，用共通catId=0
+            invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId("0", cartId);
+        }
         CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId);
 
         Map<String, List<Field>> retMap = new HashMap<>();
@@ -103,7 +108,7 @@ public class PlatformSchemaService extends BaseService {
      * @param listField          平台产品或商品的fields
      * @param listInvisibleField 不想显示的fields
      * @param listExtendField    增加的fields
-     * @return
+     * @return List
      */
     private List<Field> getListFieldForProductImage(List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();
@@ -156,6 +161,15 @@ public class PlatformSchemaService extends BaseService {
         }});
         List<String> listCustomField = new ArrayList<>();
         cmsMtPlatformPropMappingCustomModels.forEach(model -> listCustomField.add(model.getPlatformPropId()));
+//        listCustomField = cmsMtPlatformPropMappingCustomModels.stream()
+//                                .filter(model-> CustomMappingType.valueOf(model.getMappingType()) != CustomMappingType.SKU_INFO)
+//                                .map(CmsMtPlatformPropMappingCustomModel::getPlatformPropId)
+//                                .collect(Collectors.toList());
+
+        // added by morse.lu 2016/07/04 start
+        // hscode不做Mapping了，写死从个人税号里去取
+        listCustomField.add("hscode");
+        // added by morse.lu 2016/07/04 end
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();

@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.stereotype.Repository;
@@ -21,19 +22,6 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
-    }
-
-    /**
-     * 根据updFlg来获取商品列表(updFlg=0: 等待反映到主数据, updFlg=1: 已经反映到主数据)
-     *
-     * @param channelId channel id
-     * @param updFlg    updFlg=0: 等待反映到主数据, updFlg=1: 已经反映到主数据
-     * @return 商品列表
-     */
-    public List<CmsBtFeedInfoModel> selectProductByUpdFlg(String channelId, int updFlg) {
-        String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, updFlg);
-
-        return select(query, channelId);
     }
 
     /**
@@ -62,6 +50,12 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         WriteResult updateRes = mongoTemplate.updateMulti("{updFlg: 1}", String.format("{ $set: {updFlg: %d}}", updFlg),
                 getCollectionName(channelId));
         return updateRes.getN();
+    }
+
+    public WriteResult updateAllUpdFlg(String channelId, String strQuery, int updFlg, String modifier){
+        WriteResult updateRes = mongoTemplate.updateMulti(strQuery, String.format("{ $set: {updFlg: %d,modified:'%s',modifier:'%s'}}", updFlg,DateTimeUtil.getNowTimeStamp(),modifier),
+                getCollectionName(channelId));
+        return updateRes;
     }
 
     /**

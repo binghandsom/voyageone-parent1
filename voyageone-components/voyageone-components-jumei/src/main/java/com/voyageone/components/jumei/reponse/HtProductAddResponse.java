@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * HtProductAddResponse(国际POP - 创建商品并同时创建Deal)
@@ -145,6 +144,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                 this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
+            logger.error("setBody ",ex);
             this.setIs_Success(false);
             this.setErrorMsg("返回参数解析错误" + this.body);
         }

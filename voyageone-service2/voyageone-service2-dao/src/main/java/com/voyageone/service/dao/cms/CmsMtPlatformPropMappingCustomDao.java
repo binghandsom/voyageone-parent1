@@ -18,6 +18,8 @@ public interface CmsMtPlatformPropMappingCustomDao {
 
     CmsMtPlatformPropMappingCustomModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformPropMappingCustomModel select(Integer id);
 
     int insert(CmsMtPlatformPropMappingCustomModel record);

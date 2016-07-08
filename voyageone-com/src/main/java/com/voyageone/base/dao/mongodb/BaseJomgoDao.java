@@ -144,4 +144,15 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
         }
         return IteratorUtils.toList(aggr.as(entityClass));
     }
+
+    public String getQueryStr(JomgoQuery quyObj) {
+        if (quyObj.getQuery() == null || quyObj.getQuery().isEmpty()) {
+            return "";
+        }
+        Object[] parametersTemp = quyObj.getParameters();
+        if (parametersTemp == null) {
+            parametersTemp = new Object[0];
+        }
+        return mongoTemplate.jongo.createQuery(quyObj.getQuery(), parametersTemp).toDBObject().toString();
+    }
 }

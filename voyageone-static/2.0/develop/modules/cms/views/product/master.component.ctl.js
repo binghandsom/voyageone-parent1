@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -17,11 +17,14 @@ define([
             link: function (scope) {
                 scope.vm = {
                     mastData:null,
-                    productComm:null
+                    productComm:null,
+                    categoryMark:null,
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[]}
                 };
 
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
+                scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
@@ -29,29 +32,50 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-                    var productMonitor = scope.$watch("productInfo.productDetails",function(data){
-
-                        // 没有就继续等待
-                        if (!data){
-                            return;
-                        }
-                       scope.vm.productDetails = data.productInfo;
-                       scope.vm.inventoryList = data.inventoryList;
-                       if ($rootScope.imageUrl == undefined) {
-                        $rootScope.imageUrl = '';
-                       }
-                       scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-                       scope.vm.currentImage = data.defaultImage;
-
-                        productMonitor();
-                        productMonitor = null;
-                    });
-
-                    productDetailService.getCommonProductInfo({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId}).then(function(resp){
+                    productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
 
+                        var _fields = scope.vm.productComm.fields;
+                        /**通知子页面税号状态和翻译状态*/
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
+                        scope.productInfo.hsCodeStatus =  _fields.hsCodeStatus == null ? 0: +_fields.hsCodeStatus;
+
+                        constructSchema(scope, $compile);
+
+                        /**图片显示*/
+                        if ($rootScope.imageUrl == undefined) {
+                            $rootScope.imageUrl = '';
+                        }
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
+                        scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+
+                        /**主商品提示*/
+                        if(!scope.vm.mastData.isMain){
+                            alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
+                        }
                     });
+                }
+
+                var schemaScope;
+
+                function constructSchema(parentScope, compile) {
+
+                    var element = $('#schemaContainer');
+
+                    if (schemaScope)
+                        schemaScope.$destroy();
+
+                    element.empty();
+
+                    element.append('<schema data="data"></schema>');
+                    schemaScope = parentScope.$new();
+                    schemaScope.data = parentScope.vm.productComm.schemaFields;
+
+                    compile(element)(schemaScope);
                 }
 
                 /**
@@ -61,14 +85,40 @@ define([
                  */
                 function masterCategoryMapping(popupNewCategory) {
                     systemCategoryService.getNewsCategoryList().then(function(res){
+                        if (!res.data || !res.data.length) {
+                            notify.danger("数据还未准备完毕");
+                            return;
+                        }
+
                         popupNewCategory({
-                            categories: res.data
+                            categories: res.data,
+                            from:scope.vm.productComm == null?"":scope.vm.productComm.catPath
                         }).then(function(context){
+                            //判断类目是否改变
+                            scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
+
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
 
-                            scope.productInfo.masterCategory = true;
                         });
+                    });
+                }
+
+                /**
+                 * 添加图片
+                 */
+                function openProImageSetting(imageType,openImageSetting) {
+                    openImageSetting({
+                        productId:  scope.productInfo.productId,
+                        imageType: imageType
+                    }).then(function(context){
+                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        _.map(scope.vm.productComm.schemaFields, function(item){
+                            if(item.id == context.imageType){
+                                item.complexValues = context.imageSchema[0].complexValues;
+                            }
+                        });
+                        constructSchema(scope, $compile);
                     });
                 }
 
@@ -76,14 +126,22 @@ define([
                  * 更新操作
                  */
                 function saveProduct(){
-
                     if (!validSchema()) {
                         return alert("保存失败，请查看产品的属性是否填写正确！");
                     }
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
-                        console.log(resp);
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        scope.vm.productComm.modified = resp.data.modified;
+                        scope.productInfo.translateStatus = resp.data.translateStatus == null ? 0 : +resp.data.translateStatus;
+                        scope.productInfo.hsCodeStatus =  resp.data.hsCodeStatus == null ? 0: +resp.data.hsCodeStatus ;
+
+                        //通知子页面
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        if(!scope.vm.categoryMark)
+                            scope.productInfo.masterCategory = new Date().getTime();
+                        notify.success("更新成功!");
+                    },function(){
+                        alert("更新失败","错误提示");
                     });
                 }
 
@@ -99,8 +157,8 @@ define([
                 function pageAnchor(index,speed){
                     var offsetTop = 0;
                     if(index != 1)
-                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
-                    $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                        offsetTop = ($("#master"+index).offset().top);
+                    $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 
             }

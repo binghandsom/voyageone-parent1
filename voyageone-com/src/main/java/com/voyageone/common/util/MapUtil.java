@@ -10,8 +10,12 @@ import java.util.Map;
 
 /**
  * Created by dell on 2016/5/27.
+ *
+ * @author dell
+ * @version 2.2.0
+ * @since 2.0.0
  */
-public class MapUtil {
+public final class MapUtil {
 
     public static <T> Map<String, Object> toMap(T entity) throws IllegalAccessException {
         List<Field> listField = ReflectUtil.getListField(entity.getClass());
@@ -22,7 +26,10 @@ public class MapUtil {
         Map<String, Object> map = new HashMap<>();
         for (Field field : listField) {
             field.setAccessible(true);
-            map.put(field.getName(), field.get(entity));
+           Object result= field.get(entity);
+            if(result!=null) {
+                map.put(field.getName(), result);
+            }
         }
         return map;
     }
@@ -64,5 +71,18 @@ public class MapUtil {
             listModel.add(toModel(map, classInfo, listField));
         }
         return listModel;
+    }
+
+    public static Map<String, Object> toMap(Object... args) {
+
+        if (args.length % 2 != 0)
+            throw new IllegalArgumentException("参数数组长度错误！键值匹配的参数数组应该是偶数长度！");
+
+        Map<String, Object> map = new HashMap<>();
+
+        for (int k = 0, v = 1; k < args.length; k += 2, v += 2)
+            map.put(String.valueOf(args[k]), args[v]);
+
+        return map;
     }
 }

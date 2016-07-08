@@ -119,7 +119,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
     }
 
     private double convertToDoubel(Object input) {
-        double result = 0;
+        double result = 0.00;
         if (input == null) {
             return result;
         }

@@ -1,6 +1,7 @@
 package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class HtProductUpdateResponse extends BaseJMResponse {
     }
 
     public void setBody(String body) throws IOException {
+        try {
         Map<String, Object> map = JacksonUtil.jsonToMap(body);
         if (map.containsKey("error_code") && "0".equals(map.get("error_code"))) {
             this.setIs_Success(true);
@@ -45,6 +47,11 @@ public class HtProductUpdateResponse extends BaseJMResponse {
             this.setErrorMsg(body);
         }
         this.body = body;
+        } catch (Exception ex) {
+            logger.error("setBody ",ex);
+            this.setIs_Success(false);
+            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+        }
     }
 
 }

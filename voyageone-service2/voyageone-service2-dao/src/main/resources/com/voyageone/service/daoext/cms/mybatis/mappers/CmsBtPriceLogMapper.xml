@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="channel_id" property="channelId" jdbcType="VARCHAR"/>
         <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="cart_id" property="cartId" jdbcType="INTEGER"/>
         <result column="code" property="code" jdbcType="VARCHAR"/>
         <result column="sku" property="sku" jdbcType="VARCHAR"/>
         <result column="msrp_price" property="msrpPrice" jdbcType="VARCHAR"/>
@@ -49,8 +50,9 @@
     </select>
 
     <select id="select_cms_bt_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
-        select count(1) from voyageone_cms2.cms_bt_price_log log
-        where log.code = #{code} and log.sku = #{sku} and log.channel_id = #{channelId}
+        SELECT count(1)
+        FROM voyageone_cms2.cms_bt_price_log log
+        WHERE log.code = #{code} AND log.sku = #{sku} AND log.channel_id = #{channelId}
     </select>
 
     <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
@@ -91,4 +93,79 @@
             )
         </foreach>
     </insert>
+
+    <select id="selectLastOneBySkuOnCart" resultMap="PriceLogMap">
+        SELECT
+            id,
+            channel_id,
+            product_id,
+            cart_id,
+            code,
+            sku,
+            msrp_price,
+            retail_price,
+            sale_price,
+            client_msrp_price,
+            client_retail_price,
+            client_net_price,
+            comment,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_cms2.cms_bt_price_log
+        WHERE channel_id = #{channel_id}
+              AND cart_id = #{cart_id}
+              AND sku = #{sku}
+        ORDER BY created DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectPageBySkuOnCart" resultMap="PriceLogMap">
+        SELECT
+            id,
+            channel_id,
+            product_id,
+            cart_id,
+            code,
+            sku,
+            msrp_price,
+            retail_price,
+            sale_price,
+            client_msrp_price,
+            client_retail_price,
+            client_net_price,
+            comment,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_cms2.cms_bt_price_log
+        WHERE channel_id = #{channel_id}
+              and code = #{code}
+              <if test="cart_id != null">
+                  and cart_id = #{cart_id}
+              </if>
+              <if test="sku != null">
+                  and sku = #{sku}
+              </if>
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+
+    </select>
+
+    <select id="selectCountBySkuOnCart" resultType="int">
+        SELECT
+            COUNT(1)
+        FROM voyageone_cms2.cms_bt_price_log
+        WHERE channel_id = #{channel_id}
+            and code = #{code}
+            <if test="cart_id != null">
+                and cart_id = #{cart_id}
+            </if>
+            <if test="sku != null">
+                and sku = #{sku}
+            </if>
+    </select>
 </mapper>

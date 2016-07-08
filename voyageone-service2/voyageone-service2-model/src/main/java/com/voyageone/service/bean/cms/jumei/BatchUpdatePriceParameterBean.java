@@ -10,7 +10,15 @@ public class BatchUpdatePriceParameterBean {
     double discount;
     double price;
     List<Long> listPromotionProductId;
+    int jmPromotionId;
 
+    public int getJmPromotionId() {
+        return jmPromotionId;
+    }
+
+    public void setJmPromotionId(int jmPromotionId) {
+        this.jmPromotionId = jmPromotionId;
+    }
 
     public int getPriceValueType() {
         return priceValueType;

@@ -9,12 +9,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by DELL on 2016/5/5.
- */
 public class VOCmsDaoGenerator {
     public static void main(String[] arg) throws Exception {
-        List<String> warnings = new ArrayList<String>();
+        List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
 
 //        File configurationFile = new File(VOCmsDaoGenerator.class.getResource("cmsGeneratorConfig.xml").toURI());
@@ -32,7 +29,8 @@ public class VOCmsDaoGenerator {
 
         myBatisGenerator.generate(null);
 
-        System.out.println(warnings);
-
+        for (String warning : warnings) {
+            System.out.println(warning);
+        }
     }
 }

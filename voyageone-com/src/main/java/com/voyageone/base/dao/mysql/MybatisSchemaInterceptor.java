@@ -57,11 +57,10 @@ public class MybatisSchemaInterceptor implements Interceptor, Serializable {
 //            System.out.println(o);
 //        }
         final Statement ms = (Statement) queryArgs[STATEMENT_INDEX];
-        Connection connection = null;
         Statement stmt = null;
         try {
             //get connection
-            connection = ms.getConnection();
+            Connection connection = ms.getConnection();
             String dbSchema = "";
             if (properties != null) {
                 dbSchema = (String) properties.get(DB_SCHEMA_SET);

@@ -9,7 +9,8 @@
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
         `creater`, `modified`, `modifier`, `created`, `image1`, `product_long_name`, `product_medium_name`, 
         `product_short_name`, `search_meta_text_custom`, `msrp_usd`, `msrp_rmb`, `retail_price`, 
-        `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`
+        `sale_price`, `hs_code`, `hs_name`, `hs_unit`, `material_en`, `material_cn`, `category_name`, 
+        `comment`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -134,6 +135,12 @@
             </if>
             <if test="materialCn != null" >
                 `material_cn`,
+            </if>
+            <if test="categoryName != null" >
+                `category_name`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -260,6 +267,12 @@
             <if test="materialCn != null" >
                 #{materialCn,jdbcType=VARCHAR},
             </if>
+            <if test="categoryName != null" >
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -382,6 +395,12 @@
             </if>
             <if test="materialCn != null" >
                 `material_cn` = #{materialCn,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryName != null" >
+                `category_name` = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -511,7 +530,14 @@
             <if test="materialCn != null" >
                 and `material_cn` = #{materialCn,jdbcType=VARCHAR}
             </if>
+            <if test="categoryName != null" >
+                and `category_name` = #{categoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
@@ -632,6 +658,138 @@
             </if>
             <if test="materialCn != null" >
                 and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+            </if>
+            <if test="categoryName != null" >
+                and `category_name` = #{categoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_jm_product
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="jumeiProductId != null" >
+                and `jumei_product_id` = #{jumeiProductId,jdbcType=VARCHAR}
+            </if>
+            <if test="originJmHashId != null" >
+                and `origin_jm_hash_id` = #{originJmHashId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="origin != null" >
+                and `origin` = #{origin,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameCn != null" >
+                and `product_name_cn` = #{productNameCn,jdbcType=VARCHAR}
+            </if>
+            <if test="voCategoryName != null" >
+                and `vo_category_name` = #{voCategoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="voBrandName != null" >
+                and `vo_brand_name` = #{voBrandName,jdbcType=VARCHAR}
+            </if>
+            <if test="brandName != null" >
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null" >
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesEn != null" >
+                and `product_des_en` = #{productDesEn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="attribute != null" >
+                and `attribute` = #{attribute,jdbcType=VARCHAR}
+            </if>
+            <if test="foreignLanguageName != null" >
+                and `foreign_language_name` = #{foreignLanguageName,jdbcType=VARCHAR}
+            </if>
+            <if test="addressOfProduce != null" >
+                and `address_of_produce` = #{addressOfProduce,jdbcType=VARCHAR}
+            </if>
+            <if test="availablePeriod != null" >
+                and `available_period` = #{availablePeriod,jdbcType=VARCHAR}
+            </if>
+            <if test="productDesCn != null" >
+                and `product_des_cn` = #{productDesCn,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="applicableCrowd != null" >
+                and `applicable_crowd` = #{applicableCrowd,jdbcType=VARCHAR}
+            </if>
+            <if test="specialnote != null" >
+                and `specialNote` = #{specialnote,jdbcType=VARCHAR}
+            </if>
+            <if test="colorEn != null" >
+                and `color_en` = #{colorEn,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
+            <if test="productLongName != null" >
+                and `product_long_name` = #{productLongName,jdbcType=VARCHAR}
+            </if>
+            <if test="productMediumName != null" >
+                and `product_medium_name` = #{productMediumName,jdbcType=VARCHAR}
+            </if>
+            <if test="productShortName != null" >
+                and `product_short_name` = #{productShortName,jdbcType=VARCHAR}
+            </if>
+            <if test="searchMetaTextCustom != null" >
+                and `search_meta_text_custom` = #{searchMetaTextCustom,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="hsName != null" >
+                and `hs_name` = #{hsName,jdbcType=VARCHAR}
+            </if>
+            <if test="hsUnit != null" >
+                and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
+            </if>
+            <if test="materialEn != null" >
+                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+            </if>
+            <if test="materialCn != null" >
+                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+            </if>
+            <if test="categoryName != null" >
+                and `category_name` = #{categoryName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

@@ -5,7 +5,23 @@
  */
 angular.module("voyageone.angular.factories").factory("$dialogs", function ($uibModal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
+    var template = '<div class="vo_modal">'
+                    + '<div class="modal-header">'
+                    + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">'
+                    + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>'
+                    + "</button>"
+                    + '<h5 class="modal-title" ng-bind-html="title"></h5>'
+                    + "</div>"
+                    + '<div class="modal-body wrapper-lg">'
+                    + '<div class="row">'
+                    + '<h5 class="text-center text-hs"><p class="text-left" ng-bind-html="content"></p></h5>'
+                    + "</div>"
+                    + "</div>"
+                    + '<div class="modal-footer">'
+                    + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>'
+                    + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>'
+                    + "</div>"
+                    + "</div>";
     $templateCache.put(templateName, template);
     function tran(translationId, values) {
         return $filter("translate")(translationId, values);

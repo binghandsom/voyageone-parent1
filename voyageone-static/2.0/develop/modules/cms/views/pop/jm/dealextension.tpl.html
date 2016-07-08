@@ -4,12 +4,22 @@
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title">&nbsp; Jumei Activity Product Deal Time Extend</h5>
     </div>
-    <div class="modal-body wrapper">
+    <div class="modal-body wrapper" style="height:260px">
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-8 col-sm-offset-1"> Jumei Activity Product Deal End Time :</label>
+                <label class="col-sm-8 col-sm-offset-1"> 专场原活动结束时间:</label>
+                <form role="form" class="form-horizontal">
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <div class="col-sm-12 input-group">
+                            <input type="text"  ng-readonly="true"  class="form-control"  ng-model="modelPromotion.activityEnd"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss"  />
+
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="form-group">
+                <label class="col-sm-8 col-sm-offset-1"> 专场最新活动结束时间:</label>
                 <form role="form" class="form-horizontal">
                     <div class="col-sm-8 col-sm-offset-2">
                         <div class="col-sm-12 input-group">
@@ -22,8 +32,24 @@
                     </div>
                 </form>
             </div>
-        </form>
+            <div class="form-group">
+                <form role="form" class="form-horizontal">
+                    <div class="col-sm-8 col-sm-offset-2">
+               <color style="color: red;display: block;font-size: 15px">PS：最新结束时间不得小于原结束时间</color>
 
+                点击“确定”，启动“全量延长时间”功能，专场内所有产品Deal有效期都将变更。
+                专场内所有“未上传”产品将全部强制上传。
+                专场内所有“上传失败”产品将全部强制重新上传。
+
+                点击“取消”，不执行任何操作，返回原画面。
+
+                如有问题及追加需求，欢迎随时联络产品部工作人员。
+                    </div>
+                </form>
+
+           </div>
+
+        </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>

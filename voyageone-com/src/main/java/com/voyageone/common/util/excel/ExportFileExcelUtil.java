@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class ExportFileExcelUtil {
 
+    @SafeVarargs
     public static <T> void exportExcel(String filePath, ExportExcelInfo<T>... infolist) throws IOException, ExcelException {
         FileOutputStream fileout = new FileOutputStream(filePath);
         exportExcel(Arrays.asList(infolist), fileout);

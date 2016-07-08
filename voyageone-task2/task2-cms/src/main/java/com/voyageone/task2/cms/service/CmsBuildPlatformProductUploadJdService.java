@@ -245,12 +245,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
-                $error(String.format("取得上新用的商品数据信息失败！[ChannelId:%s] [GroupId:%s] [sxData:null]", channelId, groupId));
-                // 回写详细错误信息表(cms_bt_business_log)用
-                sxData = new SxData();
-                sxData.setChannelId(channelId);
-                sxData.setCartId(cartId);
-                sxData.setGroupId(groupId);
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
             }
             // 如果取得上新对象商品信息出错时，报错
@@ -262,8 +256,18 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
             // 单个product内部的sku列表分别进行排序
             for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
+                // modified by morse.lu 2016/06/28 start
+                // product表结构变化
+//                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
                 sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
+                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
+                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+                // modified by morse.lu 2016/06/28 end
             }
+            // added by morse.lu 2016/06/28 start
+            // skuList也排序一下
+            sxProductService.sortSkuInfo(sxData.getSkuList());
+            // added by morse.lu 2016/06/28 end
 
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
@@ -558,7 +562,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
                 // 上新成功时状态回写操作
-                sxProductService.doUploadFinalProc(false, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
+                sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -582,7 +586,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //                // 回写workload表   (失败2)
 //                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
                 // 上新出错时状态回写操作
-                sxProductService.doUploadFinalProc(false, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
+                sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
                 return;
             }
         } catch (Exception ex) {
@@ -610,7 +614,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
 
             // 上新出错时状态回写操作
-            sxProductService.doUploadFinalProc(false, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
+            sxProductService.doUploadFinalProc(shopProp, false, sxData, cmsBtSxWorkloadModel, "", null, "", getTaskName());
             return;
         }
 
@@ -1112,7 +1116,16 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 设置该商品的自定义属性值别名(颜色1:颜色1的别名^颜色2:颜色2的别名)
             sbPropertyAlias.append(productColorMap.get(objProduct.getCommon().getFields().getCode())); // 产品CODE对应的颜色值ID
             sbPropertyAlias.append(Separtor_Colon);         // ":"
-            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
+            // 20160630 tom 防止code超长 START
+//            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
+
+            // 如果超过25个字(不管中文还是英文),  那就用color, 如果color也超长了, 京东上新会出错写入到business_log表里的, 运营直接修改common的颜色将其缩短即可.
+            String color = objProduct.getCommon().getFields().getCode();
+            if (color.length() > 25) {
+                color = objProduct.getCommon().getFields().getColor();
+            }
+            sbPropertyAlias.append(color);
+            // 20160630 tom 防止code超长 END
             sbPropertyAlias.append(Separtor_Xor);           // "^"
 
             List<BaseMongoMap<String, Object>> objProductSkuList = new ArrayList<>();
@@ -1626,10 +1639,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         Double resultPrice = 0.0;
         // 如果是平台售价(sale_price)，则取个平台相应的售价(platform.P29.sku.priceSale)
         if (PriceType_jdprice.equals(priceType)) {
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute("priceSale")).max().getAsDouble();
+            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else if (PriceType_marketprice.equals(priceType)) {
             // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
-            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute("priceMsrp")).max().getAsDouble();
+            resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else {
             $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceType);
         }

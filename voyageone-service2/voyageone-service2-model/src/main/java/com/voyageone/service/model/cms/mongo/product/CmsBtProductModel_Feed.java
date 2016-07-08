@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class CmsBtProductModel_Feed  {
 
-    private String catId;
+    private String catId = "";
 
-    private String catPath;
+    private String catPath = "";
 
     private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
 

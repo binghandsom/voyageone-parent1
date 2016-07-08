@@ -1,9 +1,4 @@
-
 package com.voyageone.components.channeladvisor.webservice;
-
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfDistributionCenterInfoResponse;
-import com.voyageone.components.channeladvisor.webservice.StoreInfo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

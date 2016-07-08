@@ -2,7 +2,12 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtilBeijing;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -12,15 +17,13 @@ import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
-import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,10 +64,33 @@ public class CmsBtJmPromotionProductService {
         return daoExt.selectListByWhere(map);
     }
 
-    public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        return daoExt.selectPageByWhere(map);
-    }
 
+    public List<MapModel> getPageByWhere(Map<String, Object> map) {
+        if(map.containsKey("code"))
+        {
+           String code= map.get("code").toString();
+          String[] codeList=code.split("\r\n|\n|\\s+");//split("\r\n");
+          map.put("codeList",codeList);
+        }
+        List<MapModel> list = daoExt.selectPageByWhere(map);
+        for (MapModel model : list) {
+            loadMap(model);
+        }
+        return list;
+    }
+      void  loadMap(MapModel map) {
+          String promotionTag = map.get("promotionTag").toString();
+          if (!StringUtils.isEmpty(promotionTag)) {
+              String[] tagStrList =  promotionTag.split("\\|");
+              List<String> tagNameList = new ArrayList<>();
+              for (String tagName : tagStrList) {
+                  if (!StringUtils.isEmpty(tagName)) {
+                      tagNameList.add(tagName);
+                  }
+              }
+              map.put("tagNameList",tagNameList);
+          }
+      }
     public int getCountByWhere(Map<String, Object> map) {
         return daoExt.selectCountByWhere(map);
     }
@@ -109,12 +135,22 @@ public class CmsBtJmPromotionProductService {
         return daoExt.jmNewByProductIdListInfo(parameter);
     }
 
-    //所有未上心商品上新
-    public int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+    //所有上新
+    public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        //获取本活动商品在其他活动,处于在售状态的商品
+        CmsBtJmPromotionProductModel modelJmPromotionProduct = daoExt.selectOnSaleByNoPromotionId(modelCmsBtJmPromotion.getChannelId(), parameter.getPromotionId(), DateTimeUtilBeijing.getCurrentBeiJingDate());
+        if (modelJmPromotionProduct != null) {
+
+            result.setMsg("该专场商品已在其它聚美专场上传，且未过期("+modelJmPromotionProduct.getJmHashId()+")。专场延期失败");
+            result.setResult(false);
+            return  result;
+        }
         modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
         daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
-        return daoExt.updateDealEndTimeAll(parameter);
+        daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
+        return result;
     }
 
     //部分商品上新

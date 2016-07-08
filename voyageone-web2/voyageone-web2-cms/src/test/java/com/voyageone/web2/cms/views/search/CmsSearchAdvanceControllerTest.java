@@ -6,8 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.BaseConstants;
-import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.views.channel.CmsFeedCustPropController;
+import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -65,7 +63,7 @@ public class CmsSearchAdvanceControllerTest {
         userInfo.setUserName("j");
         userInfo.setUserId(26);
 
-        String paraStr = JacksonUtil.bean2Json(new CmsSearchInfoBean());
+        String paraStr = JacksonUtil.bean2Json(new CmsSearchInfoBean2());
 
         MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.post("/cms/search/advance/search").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         mb.accept("application/json").contentType("application/json").content(paraStr);

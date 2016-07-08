@@ -106,6 +106,8 @@
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsDataAmountJob" method="run" cron="1 20 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 

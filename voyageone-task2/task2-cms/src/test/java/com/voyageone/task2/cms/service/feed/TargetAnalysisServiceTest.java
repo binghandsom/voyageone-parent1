@@ -25,7 +25,6 @@ public class TargetAnalysisServiceTest {
     @Test
     public void testOnStartup() throws Exception {
 
-
         targetAnalysisService.onStartup(new ArrayList<TaskControlBean>());
     }
 }

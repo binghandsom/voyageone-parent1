@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Channel Selection</title>
     <link href="static/css/app.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="libs/angular-block-ui/0.2.1/angular-block-ui.min.css">
 </head>
 <body ng-controller="channelController">
 <div class="navbar-header bg-black">
@@ -33,9 +34,11 @@
     <div class="channel-main-con text-center">
         <div class="channel-main" ng-repeat="channel in channels">
             <img ng-src="{{channel.channelImgUrl || '/static/img/NoImageAvailable.png'}}" alt="" class="img-circle">
-            <h4>{{channel.channelName}}</h4>
+            <h4 ng-bind="channel.channelName"></h4>
             <ul class="list-inline channel-list">
-                <li ng-repeat="app in channel.apps"><a href="javascript:void(0);" ng-click="choose(channel,app)">{{app.application}}</a></li>
+                <li ng-repeat="app in channel.apps">
+                    <a href ng-click="choose(channel,app)" ng-bind="app.application"></a>
+                </li>
             </ul>
         </div>
     </div>

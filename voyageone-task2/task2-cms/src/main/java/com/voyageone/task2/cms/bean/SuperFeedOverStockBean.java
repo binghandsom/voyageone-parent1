@@ -86,7 +86,7 @@ public class SuperFeedOverStockBean extends SuperFeedBean{
 
     private String shipsvialtl;
 
-    private String attribute;
+    private String attribute1;
 
     private String image;
 
@@ -454,12 +454,12 @@ public class SuperFeedOverStockBean extends SuperFeedBean{
         this.shipsvialtl = shipsvialtl == null ? null : shipsvialtl.trim();
     }
 
-    public String getAttribute() {
-        return attribute;
+    public String getAttribute1() {
+        return attribute1;
     }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute == null ? null : attribute.trim();
+    public void setAttribute1(String attribute1) {
+        this.attribute1 = attribute1;
     }
 
     public String getImage() {

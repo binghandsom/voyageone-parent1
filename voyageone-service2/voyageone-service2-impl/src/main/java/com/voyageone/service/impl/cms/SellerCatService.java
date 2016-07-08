@@ -21,28 +21,29 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.toMap;
 
 
 /**
  * Created by Ethan Shi on 2016/5/23.
  *
  * @author Ethan Shi
+ * @version 2.2.0
  * @version 2.1.0
  */
 @Service
 public class SellerCatService extends BaseService {
+
+    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
@@ -65,10 +66,8 @@ public class SellerCatService extends BaseService {
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
-
-    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
-
-    private static final String DEFAULT_SELLER_CAT_CNT = "10";
+    @Autowired
+    private ProductService productService;
 
 
     /**
@@ -102,7 +101,6 @@ public class SellerCatService extends BaseService {
      * 取得Category 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
-
         return getSellerCatsByChannelCart(channelId, cartId, true);
     }
 
@@ -216,7 +214,7 @@ public class SellerCatService extends BaseService {
 
         //更新product表中所有的店铺内分类
         if (changedList != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId, modifier);
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
         }
@@ -234,14 +232,20 @@ public class SellerCatService extends BaseService {
         if (isJDPlatform(shopCartId)) {
             jdShopService.deleteShopCategory(shopBean, cId);
         } else if (isTMPlatform(shopCartId)) {
-            throw new BusinessException(shopBean.getShop_name() + ":阿里系没有删除店铺内分类的API");
+            //去TM平台取店铺分类
+            List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
+            if(sellerCatList != null) {
+                if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId)).count() > 0) {
+                    throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
+                }
+            }
         }
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中所有的店铺内分类
         if (deleted != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId, modifier);
 
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
@@ -255,20 +259,8 @@ public class SellerCatService extends BaseService {
     private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
         if (list != null) {
             for (CmsBtProductModel product : list) {
-                if (product.getFields().getStatus().equals("Approved")) {
-                    List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + product.getFields().getCode() + "\"}", channelId);
-                    Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
-                    CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                    model.setChannelId(channelId);
-                    model.setGroupId(platformsMap.get(cartId));
-                    model.setCartId(cartId);
-                    model.setPublishStatus(0);
-                    model.setCreater(modifier);
-                    model.setModifier(modifier);
-                    cmsBtSxWorkloadDaoExt.insertSxWorkloadModel(model);
-                }
-
+                productService.insertSxWorkLoad(channelId, product, modifier);
             }
         }
     }
@@ -356,7 +348,7 @@ public class SellerCatService extends BaseService {
                     List<String> cIds = new ArrayList<>();
 
                     for (Field field : fields) {
-                        if (field.getId().equals("seller_cids")) {
+                        if ("seller_cids".equals(field.getId())) {
                             List<String> values = ((MultiCheckField) field).getDefaultValues();
 
                             for (String value : values) {
@@ -379,7 +371,7 @@ public class SellerCatService extends BaseService {
                             fullCatNames.add(leaf.getCatPath());
                             fullIds.add(leaf.getFullCatId());
 
-                            if (!leaf.getParentCatId().equals("0")) {
+                            if (!"0".equals(leaf.getParentCatId())) {
                                 CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
                                 catIds.add(parent.getCatId());
                                 catNames.add(parent.getCatName());
@@ -388,14 +380,14 @@ public class SellerCatService extends BaseService {
                             }
                         }
 
-                        HashMap<String, Object> updateMap = new HashMap<>();
+                        Map<String, Object> updateMap = new HashMap<>();
                         updateMap.put("sellerCats.cIds", catIds);
                         updateMap.put("sellerCats.cNames", catNames);
                         updateMap.put("sellerCats.fullCIds", fullIds);
                         updateMap.put("sellerCats.fullCNames", fullCatNames);
 
 
-                        HashMap<String, Object> queryMap = new HashMap<>();
+                        Map<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", product.getProdId());
 
                         BulkUpdateModel model = new BulkUpdateModel();
@@ -497,7 +489,7 @@ public class SellerCatService extends BaseService {
             }
         }
         root.setChildren(children);
-        if (children.size() > 0) {
+        if (!children.isEmpty()) {
             root.setIsParent(1);
         } else {
             root.setIsParent(0);
@@ -520,7 +512,7 @@ public class SellerCatService extends BaseService {
     private List<CmsBtSellerCatModel> findRoots(List<CmsBtSellerCatModel> allNodes) {
         List<CmsBtSellerCatModel> results = new ArrayList<>();
         for (CmsBtSellerCatModel node : allNodes) {
-            if (node.getParentCatId().equals("0")) {
+            if ("0".equals(node.getParentCatId())) {
                 results.add(node);
                 node.setCatPath(node.getCatName());
                 node.setFullCatId(node.getCatId());
@@ -543,7 +535,7 @@ public class SellerCatService extends BaseService {
 
 
     /**
-     * 是天猫品台
+     * 是天猫平台
      */
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||

@@ -18,6 +18,8 @@ public interface CmsMtImageCreateTaskDao {
 
     CmsMtImageCreateTaskModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtImageCreateTaskModel select(Integer id);
 
     int insert(CmsMtImageCreateTaskModel record);

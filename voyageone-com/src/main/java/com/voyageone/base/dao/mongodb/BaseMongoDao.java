@@ -76,6 +76,10 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.count(strQuery, collectionName);
     }
 
+    public long countByQuery(final String strQuery, Object[] parameters) {
+        return mongoTemplate.count(strQuery, parameters, collectionName);
+    }
+
     public WriteResult deleteById(String id) {
         return mongoTemplate.removeById(id, collectionName);
     }

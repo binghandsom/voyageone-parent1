@@ -66,14 +66,4 @@ public class CmsGroupDetailController extends CmsController {
         return success(new HashMap<>());
     }
 
-    /**
-     * 临时使用,用于清除聚美下的多个产品在一个group的数据
-     * @param channelId 渠道Id
-     * @return
-     */
-    @RequestMapping(value = "splitGroup", method = RequestMethod.GET)
-    public Object splitJmProductGroup(@RequestParam("channelId") String channelId) {
-        return productGroupService.splitJmProductGroup(channelId);
-    }
-
 }
