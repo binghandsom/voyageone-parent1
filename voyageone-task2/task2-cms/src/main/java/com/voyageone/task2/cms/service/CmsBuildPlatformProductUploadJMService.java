@@ -210,7 +210,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     String originHashId = jmCart.getpNumIId();
 
                     //取库存
-                    Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+                    Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
 
                     if (StringUtils.isNullOrBlank2(originHashId)) {
                         //如果OriginHashId不存在，则创建新商品
