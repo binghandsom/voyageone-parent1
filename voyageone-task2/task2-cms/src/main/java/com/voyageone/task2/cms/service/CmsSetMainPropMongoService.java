@@ -280,7 +280,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // 回写feedInfo表
                     feed.setUpdFlg(2);  // 2:feed->master导入失败
-                    feed.setUpdMessage(e.getMessage());
+                    feed.setUpdMessage(errMsg);
                     feed.setModifier(getTaskName());
                     feedInfoService.updateFeedInfo(feed);
                 }
@@ -697,7 +697,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     $info("feed->master导入:更新成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
                     // jeff 2016/04 add start
-                    updateCnt++;
+//                    updateCnt++;
                     // jeff 2016/04 add end
 
                 } else {
