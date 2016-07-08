@@ -231,16 +231,17 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
             cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
-            if (cmsMtPlatformMappingModel == null) {
-                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
-                        channelId, cartId, mainProduct.getCommon().getCatId());
-                $error(errMsg);
-                sxData.setErrorMessage(errMsg);
-                throw new BusinessException(errMsg);
-            }
+//            if (cmsMtPlatformMappingModel == null) {
+//                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
+//                        channelId, cartId, mainProduct.getCommon().getCatId());
+//                $error(errMsg);
+//                sxData.setErrorMessage(errMsg);
+//                throw new BusinessException(errMsg);
+//            }
 
             // 取得主产品类目对应的平台类目
-            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+//            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+            platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
             // 取得平台类目schema信息
             cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {
