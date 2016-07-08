@@ -14,7 +14,6 @@ define([
         $scope.initialize  = function () {
             if(context.id){
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    console.log(res);
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
@@ -68,13 +67,16 @@ define([
                 alert("预热时间检查：请输入结束时间>开始时间。")
                 return;
             }
-            $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
-            $scope.editModel.model.activityStart = formatToStr($scope.editModel.model.activityStart);
-            $scope.editModel.model.activityEnd = formatToStr($scope.editModel.model.activityEnd);
-            $scope.editModel.model.prePeriodStart = formatToStr($scope.editModel.model.prePeriodStart);
-            $scope.editModel.model.prePeriodEnd = formatToStr($scope.editModel.model.prePeriodEnd);
-            jmPromotionService.saveModel($scope.editModel).then(function (res) {
-                    $scope.$close();
+
+            var _upEntity = angular.copy($scope.editModel);
+            _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
+            _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
+            _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
+            _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
+            _upEntity.model.prePeriodEnd = formatToStr(_upEntity.model.prePeriodEnd);
+            jmPromotionService.saveModel(_upEntity).then(function () {
+                context =$scope.editModel.model;
+                $scope.$close(context);
                 if(context.search) {
                     context.search();
                 }

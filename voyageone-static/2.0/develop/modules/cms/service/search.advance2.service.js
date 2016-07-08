@@ -58,7 +58,7 @@ define([
                 // 获取group列表
                 _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
                 // 获取product列表
-                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
+                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
 
                 defer.resolve (res);
             });
@@ -296,7 +296,7 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps, selSalesTypes) {
+        function _resetProductList (data, commonProps, customProps, selSalesTypes, searchParam) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
                 var commArr = [];
@@ -348,7 +348,6 @@ define([
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
 
-                // TODO--为保持新旧业务兼容，carts要从platforms转化而来，下次发布carts将删除
                 var cartArr = [];
                 if (productInfo.platforms) {
                     _.forEach(productInfo.platforms, function (data) {
@@ -359,31 +358,41 @@ define([
                         cartItem.cartId = parseInt(data.cartId);
                         cartItem.platformStatus = data.pStatus;
                         cartItem.publishTime = data.pPublishTime;
+                        cartItem.numiid = data.pNumIId;
                         // 设置产品状态显示区域的css(背景色)
                         var cssVal = '';
+                        var statusTxt = '';
                         cartItem.cssVal = {};
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
+                            statusTxt = 'Error';
                         } else {
                             if (data.status == 'Approved') {
                                 if (data.pStatus == 'OnSale') {
                                     cssVal = 'DeepSkyBlue';
+                                    statusTxt = 'OnSale';
                                 } else if (data.pStatus == 'InStock') {
                                     cssVal = 'Orange';
+                                    statusTxt = 'InStock';
                                 } else if (data.pStatus == 'WaitingPublish') {
                                     cssVal = 'Chocolate';
+                                    statusTxt = 'WaitingPublish';
                                 } else {
                                     cssVal = 'YellowGreen';
+                                    statusTxt = 'Approved';
                                 }
                             } else if (data.status == 'Ready') {
                                 cssVal = 'yellow';
+                                statusTxt = 'Ready';
                             } else {
                                 cssVal = 'DarkGray';
+                                statusTxt = 'Pedding';
                             }
                         }
                         if (cssVal) {
                             cartItem.cssVal = { "background-color" : cssVal };
                         }
+                        cartItem.statusTxt = statusTxt;
                         cartArr.push(cartItem);
                     });
                 }
@@ -421,7 +430,7 @@ define([
                 // 设置price detail (数组形式)
                 productInfo.priceDetail = _setPriceDetail(productInfo.common.fields);
                 // 设置各sku在各平台上的价格
-                productInfo.priceSale = _setPriceSale(productInfo.platforms);
+                productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam);
 
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
@@ -513,12 +522,17 @@ define([
          * @returns {*}
          * @private
          */
-        function _setPriceSale(object) {
-            var result = [];
+        function _setPriceSale(object, searchParam) {
             if (object == null || object == undefined) {
-                return result;
+                return [];
             }
             if (object) {
+                var fstLine = [];
+                var result = [];
+                var fstCode = 0;
+                if (searchParam && searchParam.cartId) {
+                    fstCode = searchParam.cartId;
+                }
                 _.forEach(object, function (data) {
                     if (data == null || data == undefined || data.skus == null || data.skus == undefined) {
                         return;
@@ -548,10 +562,16 @@ define([
                         priceItem += " ~ ";
                         priceItem += $filter('number')(skuPriceList[skuPriceList.length - 1], 2);
                     }
-                    result.push(priceItem);
+                    if (fstCode == data.cartId) {
+                        fstLine.push(priceItem);
+                    } else {
+                        result.push(priceItem);
+                    }
                 });
+                fstLine = fstLine.concat(result);
+                return fstLine;
             }
-            return result;
+            return [];
         }
 
         /**

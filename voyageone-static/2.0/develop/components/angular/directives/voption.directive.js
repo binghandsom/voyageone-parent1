@@ -8,7 +8,7 @@ angular.module("voyageone.angular.directives").directive("voption", function ($t
     var templateKey_select = "voyageone.angular.directives.optionSelect.tpl.html";
     // 显示成select样式
     if (!$templateCache.get(templateKey_select)) {
-        $templateCache.put(templateKey_select, '<select class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
+        $templateCache.put(templateKey_select, '<select  chosen search-contains="true" class="form-control" ng-model="$$data.value.value" ng-options="option.value as option.displayName for option in $$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
     }
     return {
         restrict: "E",
