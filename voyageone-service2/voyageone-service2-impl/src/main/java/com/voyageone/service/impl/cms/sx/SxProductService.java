@@ -2253,9 +2253,6 @@ public class SxProductService extends BaseService {
         if (!isDarwin) {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
-            // test用 start
-            styleCode = "test." + styleCode;
-            // test用 end
             sxData.setStyleCode(styleCode);
             return styleCode;
         } else {
