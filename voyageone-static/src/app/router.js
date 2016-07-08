@@ -37,6 +37,12 @@ define(function () {
                 "templateUrl": "./views/shipment/index.html",
                 "controllerUrl": "./views/shipment/index.controller",
                 "controller": "ShipmentInfoController as ctrl"
+            },
+            {
+                "hash": "/shipment/shipment_info/shipment_detail",
+                "templateUrl": "./views/shipment/shipmentDetail.html",
+                "controllerUrl": "./views/shipment/shipmentDetail.controller",
+                "controller": "ShipmentDetailController as ctrl"
             }
         ]
     };

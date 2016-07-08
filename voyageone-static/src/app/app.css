@@ -319,6 +319,9 @@ a {
   line-height: 31px;
   color: aliceblue;
 }
+a:focus {
+  outline: none;
+}
 .margin-bottom-10 {
   margin-bottom: 10px;
 }
@@ -357,6 +360,9 @@ a {
 }
 .td-1 {
   width: 8.33333333%;
+}
+.no-min-width {
+  min-width: 0;
 }
 .bg-success {
   background-color: #5cb85c;
