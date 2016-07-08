@@ -348,7 +348,6 @@ define([
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
 
-                // TODO--为保持新旧业务兼容，carts要从platforms转化而来，下次发布carts将删除
                 var cartArr = [];
                 if (productInfo.platforms) {
                     _.forEach(productInfo.platforms, function (data) {
@@ -359,6 +358,7 @@ define([
                         cartItem.cartId = parseInt(data.cartId);
                         cartItem.platformStatus = data.pStatus;
                         cartItem.publishTime = data.pPublishTime;
+                        cartItem.numiid = data.pNumIId;
                         // 设置产品状态显示区域的css(背景色)
                         var cssVal = '';
                         var statusTxt = '';
