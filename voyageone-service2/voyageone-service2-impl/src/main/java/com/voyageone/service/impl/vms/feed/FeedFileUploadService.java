@@ -8,6 +8,7 @@ import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import org.apache.commons.io.FileUtils;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.impl.BaseService;
+import org.apache.poi.util.IntegerField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +29,16 @@ public class FeedFileUploadService extends BaseService {
     private VmsBtFeedFileDao vmsBtFeedFileDao;
 
     /**
-     * 新建一个Image插入到cms_bt_image_group表
+     * 新建一条文件信息到vms_bt_feed_file表
      *
      * @param channelId     渠道
      * @param fileName 文件名
      * @param newFileName 新文件名
      * @param status  状态
      * @param modifier 创建者
+     * @return id
      */
-    public void insertFeedFileInfo(String channelId, String fileName, String newFileName, String status, String modifier) {
+    public Integer insertFeedFileInfo(String channelId, String fileName, String newFileName, String status, String modifier) {
         VmsBtFeedFileModel model = new VmsBtFeedFileModel();
         model.setChannelId(channelId);
         model.setClientFileName(fileName);
@@ -45,6 +47,16 @@ public class FeedFileUploadService extends BaseService {
         model.setCreater(modifier);
         model.setModifier(modifier);
         vmsBtFeedFileDao.insert(model);
+        return model.getId();
+    }
+
+    /**
+     * 从vms_bt_feed_file表删除一条文件信息
+     *
+     * @param id  Key
+     */
+    public void deleteFeedFileInfo(Integer id) {
+        vmsBtFeedFileDao.delete(id);
     }
 
 
@@ -56,20 +68,16 @@ public class FeedFileUploadService extends BaseService {
      * @param inputStream 文件流
      * @return 新命名的文件名
      */
-    public String saveFile(String channelId, String fileName, InputStream inputStream) {
+    public void saveFile(String channelId, String fileName, InputStream inputStream) {
 
         // 取得Feed文件上传路径
         String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
         feedFilePath +=  "/" + channelId + "/feed/";
-
         try {
             FileUtils.copyInputStreamToFile(inputStream, new File(feedFilePath  + fileName));
         } catch (IOException e) {
             // Failed to upload file.
             throw new BusinessException("8000016");
         }
-
-        return fileName;
-
     }
 }

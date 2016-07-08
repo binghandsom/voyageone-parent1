@@ -13,8 +13,9 @@ public class VmsConstants {
 	 */
 	public final static class FeedFileStatus {
 		public final static String WAITING_IMPORT = "1";
-		public final static String IMPORT_COMPLETED = "2";
-		public final static String IMPORT_WITH_ERROR = "3";
+		public final static String IMPORTING = "2";
+		public final static String IMPORT_COMPLETED = "3";
+		public final static String IMPORT_WITH_ERROR = "4";
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package com.voyageone.task2.vms.service;
 
 import com.csvreader.CsvReader;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Channels;
@@ -51,6 +52,9 @@ public class VmsFeedFileScanService extends BaseTaskService {
     private VmsBtFeedFileDao vmsBtFeedFileDao;
 
     @Autowired
+    private VmsBtFeedFileDaoExt vmsBtFeedFileDaoExt;
+
+    @Autowired
     private MqSender sender;
 
     @Override
@@ -79,25 +83,60 @@ public class VmsFeedFileScanService extends BaseTaskService {
 
             // 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
             // 按渠道进行处理
-            for (final String orderChannelID : orderChannelIdList) {
+            for (String orderChannelID : orderChannelIdList) {
+                // 检测Feed文件,并且在vms_bt_feed_file表中新建一条文件管理信息
                 checkFeedFileDBInfo(orderChannelID);
+
+                // 在vms_bt_feed_file表有状态为2：正在导入的数据，那么略过
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", orderChannelID);
+                param.put("status", VmsConstants.FeedFileStatus.IMPORTING);
+                List<VmsBtFeedFileModel> importingFeedFileList = vmsBtFeedFileDao.selectList(param);
+                if (importingFeedFileList.size() > 0) {
+                    continue;
+                }
+
+                // 取出在vms_bt_feed_file表有状态为1：等待导入的一条创建时间最早的Feed文件信息，发MQ进行导入
+                Map<String, Object> param1 = new HashMap<>();
+                param1.put("channelId", orderChannelID);
+                param1.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
+                // Order 条件
+                String sortString = "created desc";
+//                Map<String, Object> newMap = MySqlPageHelper.queryParam(param1).sort(sortString).toMap();
+                List<VmsBtFeedFileModel> waitingImportingFeedFileList = vmsBtFeedFileDao.selectList(param1);
+                if (waitingImportingFeedFileList.size() > 0) {
+                    // 发MQ
+                    Map<String, Object> message = new HashMap<>();
+                    message.put("channelId", orderChannelID);
+                    message.put("model", waitingImportingFeedFileList.get(0));
+                    sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
+
+                    // 把文件管理的状态变为2：导入中
+                    VmsBtFeedFileModel feedFileModel = waitingImportingFeedFileList.get(0);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORTING);
+                    vmsBtFeedFileDao.update(feedFileModel);
+                }
             }
         }
     }
 
     /**
-     * 检测Feed文件是否在vms_bt_feed_file表中存在，如果不存在那么新建一条文件管理信息
+     * 检测Feed文件,并且在vms_bt_feed_file表中新建一条文件管理信息
      *
      * @param channelId 渠道
      */
     public void checkFeedFileDBInfo(String channelId) {
 
-        // 如果在vms_bt_feed_file表有存在状态为1：等待导入的数据，那么不进行Scan
+        // 如果在vms_bt_feed_file表有存在状态为1：等待导入和2：导入中 的数据，那么不进行Scan
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
-        param.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
-        List<VmsBtFeedFileModel> waitingImportFeedFileList = vmsBtFeedFileDao.selectList(param);
-        if (waitingImportFeedFileList != null && waitingImportFeedFileList.size() > 0) {
+        List<String> statusList = new ArrayList<>();
+        statusList.add(VmsConstants.FeedFileStatus.WAITING_IMPORT);
+        statusList.add(VmsConstants.FeedFileStatus.IMPORTING);
+        param.put("statusList", statusList);
+        List<VmsBtFeedFileModel> processFeedFileList = vmsBtFeedFileDaoExt.selectListByStatusList(param);
+        if (processFeedFileList != null && processFeedFileList.size() > 0) {
+            $info("存在准备/正在导入的Feed文件,channel：" + channelId);
             return;
         }
 
@@ -121,9 +160,9 @@ public class VmsFeedFileScanService extends BaseTaskService {
                     if (fileName.lastIndexOf(".csv") > -1) {
                         if (".csv".equals(fileName.substring(fileName.length() - 4))) {
                             // 存在csv文件，肯定是用户ftp上传的，加入文件管理表
-                            // 先更改下文件名为标准格式，Feed_[channel名称]_年月日_时分秒.csv
-                            OrderChannelBean channel = Channels.getChannel(channelId);
-                            File newFile = new File(feedFilePath + "Feed_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
+                            // 先更改下文件名为标准格式，Feed_[channelId]_年月日_时分秒.csv
+                            File newFile = new File(feedFilePath + "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv");
+                            // 进行改名，改名失败的情况说明这个文件正被占用，所以略过处理
                             boolean result = file.renameTo(newFile);
                             if (result) {
                                 // 更新状态为1：等待导入
@@ -135,11 +174,6 @@ public class VmsFeedFileScanService extends BaseTaskService {
                                 model.setCreater(getTaskName());
                                 model.setModifier(getTaskName());
                                 vmsBtFeedFileDao.insert(model);
-                                // 发MQ
-                                Map<String, Object> message = new HashMap<>();
-                                message.put("channelId", channelId);
-                                message.put("fileName", newFile.getName());
-                                sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
                                 // 只处理一个文件
                                 break;
                             }

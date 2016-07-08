@@ -43,6 +43,24 @@
             created desc
     </select>
 
+    <select id="selectListByStatusList" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from vms_bt_feed_file
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
     <update id="updateErrorFileInfo" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
         update vms_bt_feed_file
         <set >

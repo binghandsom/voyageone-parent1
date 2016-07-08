@@ -291,7 +291,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFileName = createErrorFile(errorList, codeCnt);
-                    // 把文件管理的状态变为3：导入错误
+                    // 把文件管理的状态变为4：导入错误
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
                     feedFileModel.setChannelId(channel.getOrder_channel_id());
@@ -301,7 +301,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
                     vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
                 } else {
-                    // 把文件管理的状态变为2：导入成功
+                    // 把文件管理的状态变为3：导入成功
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
                     feedFileModel.setChannelId(channel.getOrder_channel_id());
@@ -1242,7 +1242,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
                     // 生成错误文件
                     String feedErrorFileName = createErrorFile(error);
-                    // 把文件管理的状态变为3：导入错误
+                    // 把文件管理的状态变为4：导入错误
                     VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
                     // 更新条件
                     feedFileModel.setChannelId(channel.getOrder_channel_id());

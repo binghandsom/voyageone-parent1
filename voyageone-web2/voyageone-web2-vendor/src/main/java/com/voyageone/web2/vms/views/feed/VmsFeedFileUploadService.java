@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -72,11 +73,22 @@ public class VmsFeedFileUploadService extends BaseAppService {
             throw new BusinessException("8000016");
         }
 
-        // 上传文件
-        feedFileUploadService.saveFile(channelId, file.getOriginalFilename(), inputStream);
+        String newFileName = "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
         //更新vms_bt_feed_file表
-        // feedFileUploadService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+        Integer id = feedFileUploadService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+
+        // 保存文件
+        try {
+            feedFileUploadService.saveFile(channelId, newFileName, inputStream);
+        } catch (Exception ex) {
+            feedFileUploadService.deleteFeedFileInfo(id);
+            throw ex;
+        }
+
+
+
+
     }
 
     /**
