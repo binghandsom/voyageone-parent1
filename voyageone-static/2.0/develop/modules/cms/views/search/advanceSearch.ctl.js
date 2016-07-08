@@ -244,7 +244,6 @@ define([
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
                 $scope.vm.productList = res.data.productList;
-                console.log($scope.vm.groupList[0]);
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
                 for (idx in res.data.freeTagsList) {
