@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -44,34 +43,25 @@ public class VmsFeedFileUploadService extends BaseAppService {
         doSaveFeedFileCheck(channelId, file);
 
         // 上传文件流
-        InputStream inputStream = null;
-        try {
-            // 本地上传的场合
-            if (file != null) {
-                inputStream = file.getInputStream();
-            }
-        } catch (IOException ignored) {
-        }
+        try (InputStream inputStream = file.getInputStream();) {
 
-        // 上传文件失败
-        if (inputStream == null) {
+            String newFileName = "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
+
+            // 往vms_bt_feed_file表插入数据
+            Integer id = feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+
+            // 保存文件
+            try {
+                feedFileService.saveFile(channelId, newFileName, inputStream);
+            } catch (Exception ex) {
+                // 删除之前插入的数据，之所以先更新DB再保存文件，是因为batch也有读取相同目录下FTP上传的文件。
+                // 不希望客户系统上传的文件被batch读到。
+                feedFileService.deleteFeedFileInfo(id);
+                throw ex;
+            }
+        } catch (Exception ex) {
             // Failed to upload file.
             throw new BusinessException("8000016");
-        }
-
-        String newFileName = "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
-
-        // 往vms_bt_feed_file表插入数据
-        Integer id = feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
-
-        // 保存文件
-        try {
-            feedFileService.saveFile(channelId, newFileName, inputStream);
-        } catch (Exception ex) {
-            // 删除之前插入的数据，之所以先更新DB再保存文件，是因为batch也有读取相同目录下FTP上传的文件。
-            // 不希望客户系统上传的文件被batch读到。
-            feedFileService.deleteFeedFileInfo(id);
-            throw ex;
         }
     }
 
