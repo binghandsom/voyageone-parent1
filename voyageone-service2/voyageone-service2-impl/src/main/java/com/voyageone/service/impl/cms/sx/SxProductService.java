@@ -165,8 +165,13 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/06/28 start
 //            String sizeA = a.getSize();
 //            String sizeB = b.getSize();
-            String sizeA = StringUtils.null2Space(a.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
-            String sizeB = StringUtils.null2Space(b.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            // modified by morse.lu 2016/07/08 start
+            // 改成根据sizeSx来排序啦
+//            String sizeA = StringUtils.null2Space(a.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+//            String sizeB = StringUtils.null2Space(b.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            String sizeA = StringUtils.null2Space(a.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+            String sizeB = StringUtils.null2Space(b.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+            // modified by morse.lu 2016/07/08 end
             // modified by morse.lu 2016/06/28 end
 
             Integer sortA = getSizeSort(sizeA, mapSort);
@@ -881,22 +886,40 @@ public class SxProductService extends BaseService {
         }
 
         // 处理一下skuList的所有sizeSx尺码
-        for (BaseMongoMap<String, Object> skuMap : skuList) {
-			CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku)skuMap;
-
-			if (sizeSxMap.containsKey(sku.getSize())) {
+        // modified by morse.lu 2016/07/08 start
+        // 强转不了哦
+//        for (BaseMongoMap<String, Object> skuMap : skuList) {
+//			CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku)skuMap;
+//
+//			if (sizeSxMap.containsKey(sku.getSize())) {
+//                // 直接用Nick
+//                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+//			} else {
+//                // 用size的尺码, 并转换
+//                if (sizeMap.containsKey(sku.getSize())) {
+//                    sku.setSizeSx(sizeMap.get(sku.getSize()));
+//                } else {
+//                    sku.setSizeSx(sku.getSize());
+//                }
+//                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
+//			}
+//		}
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
+            if (sizeSxMap.containsKey(size)) {
                 // 直接用Nick
-                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+                sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeSxMap.get(size));
 			} else {
                 // 用size的尺码, 并转换
-                if (sizeMap.containsKey(sku.getSize())) {
-                    sku.setSizeSx(sizeMap.get(sku.getSize()));
+                if (sizeMap.containsKey(size)) {
+                    sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeMap.get(size));
                 } else {
-                    sku.setSizeSx(sku.getSize());
+                    sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), size);
                 }
-                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
+                sizeSxMap.put(size, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
 			}
-		}
+        }
+        // modified by morse.lu 2016/07/08 end
 
         // 把整理好的skuList里的sizeSx, 回写到mainProduct里的sizeSx 和 productList里的sizeSx里
         for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
@@ -909,8 +932,13 @@ public class SxProductService extends BaseService {
         }
 
         // 排序 (根据SizeSx来进行排序)
-        // TODO:
-
+        for (CmsBtProductModel productModel : productModelList) {
+            sortSkuInfo(productModel.getCommon().getSkus());
+            sortListBySkuCode(productModel.getPlatform(sxData.getCartId()).getSkus(),
+                    productModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+        }
+        // skuList也排序一下
+        sortSkuInfo(skuList);
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 END
 

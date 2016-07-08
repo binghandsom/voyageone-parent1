@@ -235,7 +235,7 @@
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox"
                                                        ng-repeat="productStatus in vm.masterData.productStatusList">
-                                                    <input type="checkbox" ng-value="productStatus.value"
+                                                    <input type="checkbox" ng-value="productStatus.value" style="margin: 0"
                                                            ng-model="vm.searchInfo.productStatus[productStatus.value]"><span
                                                         class="fa fa-check"></span> {{productStatus.name}}
                                                 </label>
@@ -247,7 +247,7 @@
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox"
                                                        ng-repeat="platformStatus in vm.masterData.platformStatusList">
-                                                    <input type="checkbox" ng-value="platformStatus.value"
+                                                    <input type="checkbox" ng-value="platformStatus.value" style="margin: 0"
                                                            ng-model="vm.searchInfo.platformStatus[platformStatus.value]"><span
                                                         class="fa fa-check"></span> {{platformStatus.name}}
                                                 </label>
@@ -258,7 +258,7 @@
                                                    translate="TXT_LIST_ERROR"></label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" ng-model="vm.searchInfo.hasErrorFlg"><span class="fa fa-check"></span> {{'TXT_ERROR'|translate}}
+                                                    <input type="checkbox" ng-model="vm.searchInfo.hasErrorFlg" style="margin: 0"><span class="fa fa-check"></span> {{'TXT_ERROR'|translate}}
                                                 </label>
                                             </div>
                                         </div>
@@ -300,7 +300,8 @@
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="vm.searchInfo.pCatStatus" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.pCatStatus" ng-change="chkSelStatus(1)" style="margin: 0">
+                                                        <span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">
@@ -318,7 +319,8 @@
                                             <div class="col-sm-4 text-right">
                                                 <div class="">
                                                     <label class="checkbox-inline c-checkbox">
-                                                        <input type="checkbox" ng-model="vm.searchInfo.shopCatStatus" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span> &nbsp;未设置
+                                                        <input type="checkbox" ng-model="vm.searchInfo.shopCatStatus" ng-change="chkSelStatus(2)" style="margin: 0">
+                                                        <span class="fa fa-check"></span> &nbsp;未设置
                                                     </label>
                                                 </div>
                                                 <div class="">

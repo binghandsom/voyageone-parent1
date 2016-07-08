@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.junit.Test;
@@ -111,8 +112,8 @@ public class ProductServiceTest {
 
     @Test
     public void testGetProductById() throws Exception {
-        productService.getOmsProductsInfo("018","14216721",null,null,null,"23",null);
-        productService.getWmsProductsInfo("018","14216721",null);
+        System.out.println(JacksonUtil.bean2Json(productService.getOmsProductsInfo("017", "017-101500", null, null, null, "27", null)));
+        System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
     }
 
 }
