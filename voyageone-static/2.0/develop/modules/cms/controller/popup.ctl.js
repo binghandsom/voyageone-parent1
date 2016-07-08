@@ -904,7 +904,7 @@ define([
          * @type {openHistoryPromotion}
          */
         $scope.openHistoryPromotion = openHistoryPromotion;
-        function openHistoryPromotion(viewSize, data) {
+        function openHistoryPromotion(viewSize, code , selectedCart) {
             require([popActions.history.promotion.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.history.promotion.templateUrl,
@@ -912,7 +912,10 @@ define([
                     size: viewSize,
                     resolve: {
                         data: function () {
-                            return data;
+                            return {
+                                code:code,
+                                cartId:selectedCart
+                            };
                         }
                     }
                 });

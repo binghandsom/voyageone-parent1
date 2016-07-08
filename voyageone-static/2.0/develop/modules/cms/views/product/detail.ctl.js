@@ -71,7 +71,7 @@ define([
                         lock: lock
                     }).then(function () {
                         var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
-                        $("#".concat(domId)).notify(notice, {className: "success", position: "top right"});
+                        $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
                     });
                 }, function () {
                     self.product.lockStatus = false;
