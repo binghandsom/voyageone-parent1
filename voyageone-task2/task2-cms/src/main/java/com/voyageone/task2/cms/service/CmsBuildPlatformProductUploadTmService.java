@@ -260,6 +260,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             $info("tomtomtom:006");
             boolean isDarwin = false;
             try {
+                $info("tomtomtom:006-0");
                 isDarwin = uploadTmProductService.getIsDarwin(sxData, shopProp, platformCategoryId, sxData.getBrandCode());
                 $info("tomtomtom:006-1");
                 $info("tomtomtom:006-2" + isDarwin);
