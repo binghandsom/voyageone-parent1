@@ -202,7 +202,7 @@ define([
                     }
 
                     if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
-                        alert("请选择要保存的SKU");
+                        alert("请至少选择一个sku进行发布");
                         return;
                     }
 
