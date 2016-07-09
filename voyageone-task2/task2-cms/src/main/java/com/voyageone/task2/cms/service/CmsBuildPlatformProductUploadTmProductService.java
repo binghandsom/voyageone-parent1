@@ -55,7 +55,8 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // 上新数据
         SxData sxData = expressionParser.getSxData();
         // 平台类目id
-        Long platformCategoryId = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
+//        Long platformCategoryId = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
+        Long platformCategoryId = Long.parseLong(sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatId());
 
         // 获取匹配产品规则
         List<Field> fieldList;
@@ -253,7 +254,8 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // 上新数据
         SxData sxData = expressionParser.getSxData();
         // 平台类目id
-        Long platformCategoryId = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
+//        Long platformCategoryId = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
+        Long platformCategoryId = Long.parseLong(sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatId());
         // 品牌code
         Long brandCode = Long.valueOf(sxData.getBrandCode());
         // 产品schema

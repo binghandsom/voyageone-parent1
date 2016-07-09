@@ -69,7 +69,7 @@ define([
                 return cart.value == cartId;
             });
 
-            return !cart.value ? "" : cart.label;
+            return (!cart || !cart.value) ? "" : cart.label;
         };
 
         PriceLogPopupController.prototype.export = function () {

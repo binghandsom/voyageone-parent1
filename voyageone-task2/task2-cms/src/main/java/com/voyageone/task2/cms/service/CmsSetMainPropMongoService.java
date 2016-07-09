@@ -27,7 +27,9 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
-import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -68,26 +70,32 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 //import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 
+/**
+ * feed->master导入服务
+ *
+ * @author tom on 2016/2/18.
+ * @version 2.2.0
+ * @since 2.0.0
+ */
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
-    @Autowired
-    private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
+//    @Autowired
+//    private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
     @Autowired
     private CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
-    @Autowired
-    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+//    @Autowired
+//    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
     private ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
     @Autowired
@@ -116,8 +124,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     private BusinessLogService businessLogService;
 
-    @Autowired
-    private DataAmountService dataAmountService;
+//    @Autowired
+//    private DataAmountService dataAmountService;
 
     @Autowired
     private ImagesService imagesService;
@@ -263,6 +271,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 将商品从feed导入主数据
                 // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
                 //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
+                // update by desmond 2016/07/05 start
+                // 增加try catch捕捉feed导入时出现的异常并新增失败时回写处理等,feed导入共通处理里面出错时改为抛出异常
                 try {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
@@ -284,6 +294,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setModifier(getTaskName());
                     feedInfoService.updateFeedInfo(feed);
                 }
+                // update by desmond 2016/07/05 end
 
             }
 
@@ -291,8 +302,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 将新建的件数，更新的件数插到cms_bt_data_amount表
 //            insertDataAmount();         // delete desmond 2016/07/04 以后不用更新这个表了
             // jeff 2016/04 add end
+            // add by desmond 2016/07/05 start
             $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
+            // add by desmond 2016/07/05 end
             $info(channel.getFull_name() + "产品导入主数据结束");
 
         }
@@ -1242,7 +1255,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 使用说明英文
             if (newFlg || StringUtils.isEmpty(productCommonField.getUsageEn()) || "1".equals(feed.getIsFeedReImport())) {
-//                productCommonField.setUsageEn(feed.getUsageEn()); // CmsBtFeedInfoModel里还没加这个字段；
+                productCommonField.setUsageEn(feed.getUsageEn());
             }
 
             // APP端启用开关
@@ -2363,7 +2376,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             Double priceCurrent = feedSkuInfo.getPriceCurrent();
 
             if (StringUtils.isEmpty(formula)) {
-                return 0.0;
+                return 0.00;
             }
 
             // 根据公式计算价格
@@ -2886,7 +2899,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                         // 设置priceChgFlg(指导售价变化状态（U/D） 这里是指导售价价格本身变化,与priceSale无关)
                                         if (oldRetailPrice < newRetailPrice) {
                                             // 指导售价升高的时候
-                                            if (oldRetailPrice == 0.0) {
+                                            if (oldRetailPrice == 0.00) {
                                                 platformSku.put("priceChgFlg", "U100%");
                                             } else {
                                                 platformSku.put("priceChgFlg", "U" + Math.round(((newRetailPrice - oldRetailPrice) / oldRetailPrice) * 100) + "%");
@@ -3128,62 +3141,64 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         }
 
-        /**
-         * 进行一些字符串或数字的特殊编辑
-         *
-         * @param inputValue 输入的字符串
-         * @param edit       目前支持的是 "in2cm" 英寸转厘米
-         * @param prefix     前缀
-         * @param suffix     后缀
-         * @return
-         */
-        private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
-            String value = inputValue;
-
-            // 根据edit进行变换
-            if (!StringUtils.isEmpty(edit)) {
-                if ("in2cm".equals(edit)) {
-                    // 奇怪的数据转换
-                    // 有时候别人提供的数字中会有类似于这样的数据：
-                    // 33 3/4 意思是 33又四分之三 -> 33.75
-                    // 33 1/2 意思是 33又二分之一 -> 33.5
-                    // 33 1/4 意思是 33又四分之一 -> 33.25
-                    // 33 5/8 意思是 33又八分之五 -> 33.625
-                    // 直接这边代码处理掉避免人工干预
-                    if (value.contains(" ")) {
-                        value = value.replaceAll(" +", " ");
-                        String[] strSplit = value.split(" ");
-
-                        String[] strSplitSub = strSplit[1].split("/");
-                        value = String.valueOf(
-                                Float.valueOf(strSplit[0]) +
-                                        (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
-                        );
-
-                    }
-
-                    // 英寸转厘米
-                    value = String.valueOf(Float.valueOf(value) * 2.54);
-
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    value = df.format(Float.valueOf(value));
-
-                }
-            }
-
-            // 设置前缀
-            if (!StringUtils.isEmpty(prefix)) {
-                value = prefix + value;
-            }
-
-            // 设置后缀
-            if (!StringUtils.isEmpty(suffix)) {
-                value = value + suffix;
-            }
-
-            return value;
-
-        }
+        // delete by desmond 2016/07/08 start
+//        /**
+//         * 进行一些字符串或数字的特殊编辑
+//         *
+//         * @param inputValue 输入的字符串
+//         * @param edit       目前支持的是 "in2cm" 英寸转厘米
+//         * @param prefix     前缀
+//         * @param suffix     后缀
+//         * @return
+//         */
+//        private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
+//            String value = inputValue;
+//
+//            // 根据edit进行变换
+//            if (!StringUtils.isEmpty(edit)) {
+//                if ("in2cm".equals(edit)) {
+//                    // 奇怪的数据转换
+//                    // 有时候别人提供的数字中会有类似于这样的数据：
+//                    // 33 3/4 意思是 33又四分之三 -> 33.75
+//                    // 33 1/2 意思是 33又二分之一 -> 33.5
+//                    // 33 1/4 意思是 33又四分之一 -> 33.25
+//                    // 33 5/8 意思是 33又八分之五 -> 33.625
+//                    // 直接这边代码处理掉避免人工干预
+//                    if (value.contains(" ")) {
+//                        value = value.replaceAll(" +", " ");
+//                        String[] strSplit = value.split(" ");
+//
+//                        String[] strSplitSub = strSplit[1].split("/");
+//                        value = String.valueOf(
+//                                Float.valueOf(strSplit[0]) +
+//                                        (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
+//                        );
+//
+//                    }
+//
+//                    // 英寸转厘米
+//                    value = String.valueOf(Float.valueOf(value) * 2.54);
+//
+//                    DecimalFormat df = new DecimalFormat("0.00");
+//                    value = df.format(Float.valueOf(value));
+//
+//                }
+//            }
+//
+//            // 设置前缀
+//            if (!StringUtils.isEmpty(prefix)) {
+//                value = prefix + value;
+//            }
+//
+//            // 设置后缀
+//            if (!StringUtils.isEmpty(suffix)) {
+//                value = value + suffix;
+//            }
+//
+//            return value;
+//
+//        }
+        // delete by desmond 2016/07/08 end
 
 
     }

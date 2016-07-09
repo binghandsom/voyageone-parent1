@@ -66,10 +66,12 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
     public AjaxResponse search(@RequestBody CmsSearchInfoBean2 params) {
-        try {
-            $info(JacksonUtil.bean2JsonNotNull(params));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if ($isDebugEnabled()) {
+            try {
+                $debug("高级检索 请求参数: " + JacksonUtil.bean2JsonNotNull(params));
+            } catch (IOException e) {
+                $error("转换输入参数时出错", e);
+            }
         }
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();

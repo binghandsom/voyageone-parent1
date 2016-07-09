@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -18,27 +19,22 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * 天猫平台产品上新服务
@@ -48,8 +44,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformProductUploadTmJob)
-public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
+public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
@@ -73,8 +68,13 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
     private PromotionDetailService promotionDetailService;
 
     @Override
-    public void onStartup(Map<String, Object> messageMap) throws Exception {
-        doMain(taskControlList);
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "CmsBuildPlatformProductUploadTmJob";
     }
 
     /**
@@ -82,7 +82,8 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
      *
      * @param taskControlList taskcontrol信息
      */
-    public void doMain(List<TaskControlBean> taskControlList) throws Exception {
+    @Override
+    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -230,16 +231,17 @@ public class CmsBuildPlatformProductUploadTmMqService extends BaseMQCmsService {
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
             cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
-            if (cmsMtPlatformMappingModel == null) {
-                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
-                        channelId, cartId, mainProduct.getCommon().getCatId());
-                $error(errMsg);
-                sxData.setErrorMessage(errMsg);
-                throw new BusinessException(errMsg);
-            }
+//            if (cmsMtPlatformMappingModel == null) {
+//                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
+//                        channelId, cartId, mainProduct.getCommon().getCatId());
+//                $error(errMsg);
+//                sxData.setErrorMessage(errMsg);
+//                throw new BusinessException(errMsg);
+//            }
 
             // 取得主产品类目对应的平台类目
-            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+//            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+            platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
             // 取得平台类目schema信息
             cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {

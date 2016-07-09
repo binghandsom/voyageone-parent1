@@ -9,10 +9,10 @@ define([
     angularAMD.controller('popPromotionHistoryCtl', function ($scope, $promotionHistoryService, data) {
 
         $scope.vm = {
-            code: data,
+            code: data.code,
             pageOption: {curr: 1, total: 0, size: 10, fetch: getPromotionList},
             promotionList: [],
-            cartId: '',
+            cartId: data.cartId ? data.cartId : "",
             cartList: []
         };
 
