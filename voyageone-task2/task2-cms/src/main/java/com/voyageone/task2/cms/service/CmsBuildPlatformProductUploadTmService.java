@@ -347,8 +347,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             }
             // add by morse.lu 2016/06/07 end
             // 上传产品失败，后面商品也不用上传，直接回写workload表   (失败2)
-            String errMsg = String.format("天猫平台产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
-                    channelId, cartId, groupId);
+            String errMsg = String.format("天猫平台产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
+                    channelId, cartId, groupId, ex.getMessage());
             $error(errMsg);
             ex.printStackTrace();
             // 如果上新数据中的errorMessage为空
