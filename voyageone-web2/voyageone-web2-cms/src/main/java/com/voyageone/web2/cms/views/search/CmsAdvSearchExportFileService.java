@@ -108,12 +108,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         String searchItemStr = CmsAdvanceSearchService.searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;common.catPath;lock;";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;lock;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            searchItemStr += "common.fields.model;common.catPath;";
+            searchItemStr += "common.fields.model;";
         } else if (searchValue.getFileType() == 1) {
-            searchItemStr += "common.fields.model;common.fields.color;common.catPath;lock;";
+            searchItemStr += "common.fields.model;common.fields.color;lock;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
@@ -475,11 +475,11 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                 } else {
-                    if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
+                    if (org.apache.commons.lang3.StringUtils.isNotEmpty(grpModel.getNumIId())) {
                         if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId() + ".html");
                         } else {
-                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
+                            FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId());
                         }
                     } else {
                         FileUtils.cell(row, index++, unlock).setCellValue("");

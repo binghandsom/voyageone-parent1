@@ -24,7 +24,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
@@ -70,8 +69,6 @@ public class CmsFieldEditService extends BaseAppService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductSkuService productSkuService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private SxProductService sxProductService;
     @Autowired
@@ -144,8 +141,8 @@ public class CmsFieldEditService extends BaseAppService {
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
-            updObj.setUpdateParameters(hsCode);
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
+            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("批量更新结果 " + rs.toString());
@@ -241,9 +238,10 @@ public class CmsFieldEditService extends BaseAppService {
 
             if (codeList.size() > 0) {
                 // 插入上新程序
-                List<Integer> cartIdList = new ArrayList<>(1);
-                cartIdList.add(cartIdVal);
-                productService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdList, userInfo.getUserName());
+                $debug("批量修改属性 (商品上下架) 开始记入SxWorkLoad表");
+                long sta = System.currentTimeMillis();
+                sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdVal, userInfo.getUserName());
+                $debug("批量修改属性 (商品上下架) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
             }
         }
 
@@ -433,24 +431,16 @@ public class CmsFieldEditService extends BaseAppService {
             updObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             updObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
             productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
-
-            // 这里需要确认更新成功后再记录上新操作表
-            CmsBtProductModel newProduct = productService.getProductById(userInfo.getSelChannelId(), productModel.getProdId());
-            // 执行product上新(针对各平台)
-            List<Integer> newcartList = new ArrayList<>();
-            for (Integer cartIdVal : cartList) {
-                // 如果该产品以前就是approved,则不做处理
-                if (!CmsConstants.ProductStatus.Approved.name().equals(productModel.getPlatformNotNull(cartIdVal).getStatus())) {
-                    continue;
-                }
-                newcartList.add(cartIdVal);
-            }
-            List<String> codeList = new ArrayList<>(1);
-            codeList.add(code);
-            // 插入上新程序
-            productService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, newcartList, userInfo.getUserName());
-
         }
+
+        // 插入上新程序
+        for (Integer cartIdVal : cartList) {
+            $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
+            long sta = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartIdVal, userInfo.getUserName());
+            $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        }
+
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -665,7 +655,7 @@ public class CmsFieldEditService extends BaseAppService {
                     rsMap.put("priceLimit", result);
                     return rsMap;
                 } else if ("4".equals(diffFlg)) {
-                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阀值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     rsMap.put("ecd", 3);
                     rsMap.put("prodCode", prodCode);
                     rsMap.put("skuCode", skuCode);
@@ -722,23 +712,12 @@ public class CmsFieldEditService extends BaseAppService {
         int cnt = cmsBtPriceLogDaoExt.insertCmsBtPriceLogList(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
-        // 再查询这批商品是否可上新
-        List<String> codeList = new ArrayList<>();
-        qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true},'platforms.P" + cartId + ".status':'Approved'}");
-        qryObj.setParameters(productCodes);
-        qryObj.setProjection("{'common.fields.code':1,'_id':0}");
-        prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
-        for (CmsBtProductModel prodObj : prodObjList) {
-            codeList.add(prodObj.getCommon().getFields().getCode());
-        }
+        // 插入上新程序
+        $debug("批量修改商品价格 开始记入SxWorkLoad表");
+        sta = System.currentTimeMillis();
+        sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
+        $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
-        if (codeList.size() > 0) {
-            // 插入上新程序
-            $debug("批量修改商品价格 开始记入SxWorkLoad表");
-            sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartId, userInfo.getUserName());
-            $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
-        }
         rsMap.put("ecd", 0);
         return rsMap;
     }

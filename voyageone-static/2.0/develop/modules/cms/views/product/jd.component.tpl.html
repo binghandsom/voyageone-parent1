@@ -214,8 +214,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">
-                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="'1'" ng-false-value="'0'" ng-checked="allSkuSale()" ng-if="cartInfo.value != 27">
-                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="'1'" ng-false-value="'0'" ng-checked="allSkuSale()" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved'">All
+                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value != 27">
+                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved'">All
                                         </th>
                                         <th class="text-center">skuCode</th>
                                         <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
@@ -235,7 +235,7 @@
                                     <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
                                         <td class="text-center v-middle">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
-                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == '1'">
+                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">
                                         </td>
                                         <td class="text-center v-middle">{{entity.skuCode}}</td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>

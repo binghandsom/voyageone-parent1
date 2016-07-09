@@ -59,22 +59,39 @@ public class ImageUploadService extends AbstractFileMonitoService {
     }
 
     @Override
+    protected FileMonitorBean[] getFilePaths() {
+        List<FileMonitorBean> filePaths = new ArrayList<>();
+        // get taskControlList
+        List<TaskControlBean> taskControlList = taskDao.getTaskControlList(getTaskName());
+
+        // 循环处理批量图片给上传
+        for (TaskControlBean taskControl : taskControlList) {
+            if ("order_channel_id".equals(taskControl.getCfg_name())) {
+                String channelId = taskControl.getCfg_val1();
+                String finalPath = taskControl.getCfg_val2();
+                filePaths.add(new FileMonitorBean(finalPath, channelId));
+            }
+        }
+        return filePaths.toArray(new FileMonitorBean[filePaths.size()]);
+    }
+
+    @Override
     protected String[] getInotifyEvents() {
         return EVENTS;
     }
 
     @Override
-    protected boolean eventCheck(String event, String watchPath, String filePath, String fileName, String channelId) {
+    protected boolean eventCheck(String event, File file, FileMonitorBean fileMonitorBean) {
         boolean result = true;
-        if (!fileName.endsWith(".zip")) {
+        if (!file.getName().endsWith(".zip")) {
             result = false;
         } else {
-            String watchPathTemp = watchPath;
+            String watchPathTemp = fileMonitorBean.getFilePath();
             if (!(watchPathTemp.endsWith("/") || watchPathTemp.endsWith("\\"))) {
                 watchPathTemp = watchPathTemp + "/";
             }
-            File file = new File(filePath);
-            String parentPath = file.getParent().replaceAll("\\\\", "/");
+            File pathFile = new File(file.getParent());
+            String parentPath = pathFile.getParent().replaceAll("\\\\", "/");
             if (!parentPath.endsWith("/")) {
                 parentPath = parentPath + "/";
             }
@@ -86,8 +103,11 @@ public class ImageUploadService extends AbstractFileMonitoService {
     }
 
     @Override
-    protected void doEvent(String event, String filePath, String fileName, String channelId) {
-        LOG.info(String.format("doEvent event=%s filePath=%s fileName=%s channelId=%s", event, filePath, fileName, channelId));
+    protected void doEvent(String event, File file, FileMonitorBean fileMonitorBean) {
+        String filePath = file.getParent();
+        String fileName = file.getName();
+        LOG.info(String.format("doEvent event=%s filePath=%s fileName=%s", event, filePath, fileName));
+        String channelId = fileMonitorBean.getExtendObj();
         List<TaskControlBean> taskControlList = taskDao.getTaskControlList(TASK_NAME);
         TaskControlBean taskControlBean = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.run_flg).get(0);
 
@@ -99,7 +119,6 @@ public class ImageUploadService extends AbstractFileMonitoService {
         String baseTempDir = buildDirPath(filePath, "temp");
         String baseErrorDir = buildDirPath(filePath, "error");
         String modifyDirName = new File(filePath).getName();
-        File file = new File(filePath + fileName);
 
         int readImgCount = 0;
         int failedImgCount = 0;
