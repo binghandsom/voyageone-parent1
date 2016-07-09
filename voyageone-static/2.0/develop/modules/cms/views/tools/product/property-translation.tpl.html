@@ -318,35 +318,47 @@
                 </form>
             </uib-tab>
         </uib-tabset>
-        <div ng-show="ctrl.searchBtnClicked">
-            <table class="table table-hover-new table-hover table_main">
-                <thead>
-                <tr>
-                    <th class="col-sm-1 text-center" translate="TXT_TRANSLATION_STATUS"></th>
-                    <th class="col-sm-1 text-center" translate="TXT_PREVIEW_IMAGE"></th>
-                    <th class="col-sm-3 text-center" translate="TXT_FEED_CATEGORY"></th>
-                    <th class="col-sm-1 text-center" translate="TXT_PRODUCT_CODE"></th>
-                    <th class="col-sm-3 text-center" translate="TXT_GROUP_NAME_WITH_COLON"></th>
-                    <th class="col-sm-2 text-center" translate="TXT_MASTER_CATEGORY"></th>
-                    <th class="col-sm-2 text-center">TranslateTime</th>
-                </tr>
-                </thead>
-                <tbody ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}">
-                <tr ng-repeat="task in ctrl.vm.taskList">
-                    <td class="text-center v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
-                    <td class="text-center v-middle">
-                        <img alt="ProductImage" class="thumb m-b-xs" image="{{task.image1}}">
-                    </td>
-                    <td class="text-center v-middle">{{task.feedCategory}}</td>
-                    <td class="text-center v-middle"><a href="" class="a a-link"> {{task.code}}</a></td>
-                    <td class="text-center v-middle">{{task.productName}}</td>
-                    <td class="text-center v-middle">{{task.catPath}}</td>
-                    <td class="text-center v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd HH:mm:ss"}}</td>
-                </tr>
-                </tbody>
-            </table>
-            <div if-no-rows="ctrl.vm.taskList.length"></div>
-            <vpagination config="ctrl.searchPageSettings">{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
+
+
+
+
+        <div class="panel-body" ng-show="ctrl.searchBtnClicked">
+            <div class="table-responsive box box-body">
+                <table class="table table-hover-new table-hover table_main">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-1 text-center" translate="TXT_TRANSLATION_STATUS"></th>
+                        <th class="col-sm-1 text-center" translate="TXT_PREVIEW_IMAGE"></th>
+                        <th class="col-sm-3 text-left" translate="TXT_FEED_CATEGORY"></th>
+                        <th class="col-sm-1 text-left" translate="TXT_PRODUCT_CODE"></th>
+                        <th class="col-sm-3 text-left" translate="TXT_GROUP_NAME_WITH_COLON"></th>
+                        <th class="col-sm-2 text-left" translate="TXT_MASTER_CATEGORY"></th>
+                        <th class="col-sm-2 text-left">翻译时间</th>
+                    </tr>
+                    </thead>
+                </table>
+
+                <div ng-style="{'background-color': list.selectedValue ? '#cfcaca': 'white'}" class="box-body" if-no-rows="ctrl.vm.taskList.length">
+                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                        <tbody>
+                        <tr ng-if="ctrl.vm.taskList.length > 0" ng-repeat="task in ctrl.vm.taskList">
+                            <td class="text-center col-sm-1 v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
+                            <td class="text-center col-sm-1 v-middle">
+                                <img alt="ProductImage" class="thumb m-b-xs" image="{{task.image1}}">
+                            </td>
+                            <td class="text-left col-sm-3 v-middle">{{task.feedCategory}}</td>
+                            <td class="text-left col-sm-1 v-middle"><a href="" class="a a-link"> {{task.code}}</a></td>
+                            <td class="text-left col-sm-3 v-middle">{{task.productName}}</td>
+                            <td class="text-left col-sm-2 v-middle">{{task.catPath}}</td>
+                            <td class="text-left col-sm-2 v-middle">{{ctrl.getDateTimeFromTimeStamp(task.translateTime) | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-12 m-t-lg m-b-lg">
+                <vpagination config="ctrl.searchPageSettings">{{ctrl.getDateTimeFromTimeStamp(task.translateTime)}}</vpagination>
+            </div>
         </div>
     </div>
 </div>
