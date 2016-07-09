@@ -756,6 +756,9 @@ define(function () {
         "TXT_EXPORT_FILE_NAME": "导出文件名",
         "TXT_EXPORT_REQUEST_TIME": "导出申请时间",
         "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
-        "TXT_EXPORT_REQUESTER": "导出申请者"
+        "TXT_EXPORT_REQUESTER": "导出申请者",
+
+
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:"
     };
 });
