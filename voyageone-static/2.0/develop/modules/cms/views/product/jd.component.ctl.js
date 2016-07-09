@@ -202,7 +202,7 @@ define([
                     }
 
                     if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
-                        alert("请选择要保存的SKU");
+                        alert("请至少选择一个sku进行发布");
                         return;
                     }
 
@@ -225,7 +225,7 @@ define([
                      });
 
                     if(scope.vm.status == "Approved"){
-                        confirm("您确定Approve这个商品吗？").result.then(function(){
+                        confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").result.then(function(){
                             callSave();
                         });
                     }else{
