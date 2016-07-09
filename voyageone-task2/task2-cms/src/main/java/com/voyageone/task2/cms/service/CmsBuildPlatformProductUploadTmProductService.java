@@ -475,6 +475,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             throw new BusinessException(ex.getMessage());
         }
 
+        if (isDarwin == null) {
+            return false;
+        }
         return isDarwin;
     }
 
