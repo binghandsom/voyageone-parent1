@@ -104,6 +104,10 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
                 try {
                     List<Map<String, Object>> listVal = (List<Map<String, Object>>) objSku;
                     Object objVal = null;
+                    if (StringUtils.isEmpty((String) listVal.get(0).get("sku_outerId"))) {
+                        // 画面没填的话，会有一条空的数据
+                        return null;
+                    }
                     boolean hasSkuCode = false;
                     for (Map<String, Object> mapSku : listVal) {
                         if (skuCode.equals(mapSku.get("sku_outerId"))) {
