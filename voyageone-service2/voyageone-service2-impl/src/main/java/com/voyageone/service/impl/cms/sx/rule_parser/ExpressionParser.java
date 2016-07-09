@@ -90,7 +90,7 @@ public class ExpressionParser extends VOAbsLoggable {
                         DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
                         if (dictWordDefine == null)
                         {
-                            $error("unknown dict word:" + ruleWord);
+                            $error("字典不存在:" + ruleWord);
                             return null;
                         }
 
