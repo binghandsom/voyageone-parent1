@@ -456,14 +456,18 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             isDarwin = tbProductService.isDarwin(Long.parseLong(strPlatformCategoryId), Long.parseLong(strBrandCode), shopBean, failCause);
             $info("tomtomtom:006-0-7");
             if (isDarwin == null && failCause.length() != 0) {
+                $info("tomtomtom:006-0-7-1");
                 if (failCause.indexOf("访问淘宝超时") == -1) {
+                    $info("tomtomtom:006-0-7-2");
                     String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                             platformCategoryId, brandCode, failCause.toString());
                     $error(errMsg);
                     sxData.setErrorMessage(errMsg);
+                    $info("tomtomtom:006-0-7-3");
                     throw new BusinessException(errMsg);
                 }
             }
+            $info("tomtomtom:006-0-7-4");
         } catch (ApiException ex) {
             $info("tomtomtom:006-0-8");
             // 调用API异常
@@ -487,6 +491,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             sxData.setErrorMessage(errMsg);
             $info("tomtomtom:006-0-14");
             throw new BusinessException(ex.getMessage());
+        }
+
+        if (isDarwin == null) {
+            $info("tomtomtom:006-0-15-1");
+        } else {
+            $info("tomtomtom:006-0-15-2");
+            $info("tomtomtom:006-0-15-3:" + isDarwin);
+            $info("tomtomtom:006-0-15-4");
         }
 
         $info("tomtomtom:006-0-15");
