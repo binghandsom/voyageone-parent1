@@ -1003,21 +1003,19 @@ public class SxProductService extends BaseService {
 
         // Step2:Mapping
         // 改成循环Mapping
-        List<MappingBean> propMapings = new ArrayList<>();
         if (cmsMtPlatformMappingModel != null) {
-            propMapings = cmsMtPlatformMappingModel.getProps();
-        }
+            List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
 
-        for (MappingBean mappingBean : propMapings) {
-            // modified by morse.lu 2016/06/24 start
+            for (MappingBean mappingBean : propMapings) {
+                // modified by morse.lu 2016/06/24 start
 //            mapProp.put(mappingBean.getPlatformPropId(), mappingBean);
-            Field field = fieldsMap.get(mappingBean.getPlatformPropId());
-            if (field == null) {
-                continue;
-            }
-            mapSp.put(field.getId(), field);
-            // deleted by morse.lu 2016/07/04 start
-            // hscode不做Mapping了，写死从个人税号里去取
+                Field field = fieldsMap.get(mappingBean.getPlatformPropId());
+                if (field == null) {
+                    continue;
+                }
+                mapSp.put(field.getId(), field);
+                // deleted by morse.lu 2016/07/04 start
+                // hscode不做Mapping了，写死从个人税号里去取
 //            if ("hscode".equals(field.getId())) {
 //                // HS海关代码
 //                if (!sxData.isHasSku()) {
@@ -1028,15 +1026,16 @@ public class SxProductService extends BaseService {
 //                }
 //                continue;
 //            }
-            // deleted by morse.lu 2016/07/04 end
-            Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
-            if (resolveField != null) {
-                if (retMap == null) {
-                    retMap = new HashMap<>();
+                // deleted by morse.lu 2016/07/04 end
+                Map<String, Field> resolveField = resolveMapping(mappingBean, field, shopBean, expressionParser, user);
+                if (resolveField != null) {
+                    if (retMap == null) {
+                        retMap = new HashMap<>();
+                    }
+                    retMap.putAll(resolveField);
                 }
-                retMap.putAll(resolveField);
+                // modified by morse.lu 2016/06/24 end
             }
-            // modified by morse.lu 2016/06/24 end
         }
 
         // Step3:schema的上记Step1,2以外的全部field
@@ -2007,6 +2006,13 @@ public class SxProductService extends BaseService {
                     retMap.put(field.getId(), field);
                     break;
                 }
+                case IMAGE: {
+                    for (Field field : processFields) {
+                        setImageFieldValue(field, expressionParser, shopBean, user);
+                        retMap.put(field.getId(), field);
+                    }
+                    break;
+                }
                 // modified by morse.lu 2016/06/29 end
             }
         }
@@ -2227,6 +2233,58 @@ public class SxProductService extends BaseService {
         }
     }
 
+    /**
+     * 图片属性设值
+     */
+    private void setImageFieldValue(Field field, ExpressionParser expressionParser, ShopBean shopBean, String user) throws Exception {
+        SxData sxData = expressionParser.getSxData();
+        String errorMsg = String.format("类目[%s]的图片[field_id=%s]的类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath(), field.getId());
+        boolean hasSetting = false;
+
+        if (field.getType() == FieldTypeEnum.COMPLEX) {
+            ComplexField complexField = (ComplexField) field;
+            ComplexValue complexValue = new ComplexValue();
+            complexField.setComplexValue(complexValue);
+
+            List<Field> subfields = complexField.getFields();
+
+            for (ImageProp imageProp : ImageProp.values()) {
+                if (imageProp.getPropId().equals(field.getId())) {
+                    hasSetting = true;
+                    for (int index = 1; index <= subfields.size(); index++) {
+                        Field valueField = deepCloneField(subfields.get(index - 1));
+                        if (valueField.getType() == FieldTypeEnum.INPUT) {
+                            String url = resolveDict(imageProp.getBaseDictName() + index, expressionParser, shopBean, user, null);
+                            complexValue.put(valueField);
+                            ((InputField) valueField).setValue(url);
+                        } else {
+                            sxData.setErrorMessage(errorMsg);
+                            throw new BusinessException(errorMsg);
+                        }
+                    }
+                    break;
+                }
+            }
+        } else if (field.getType() == FieldTypeEnum.INPUT) {
+            for (ImageProp imageProp : ImageProp.values()) {
+                if (imageProp.getPropId().equals(field.getId())) {
+                    hasSetting = true;
+                    // 第一张图
+                    String url = resolveDict(imageProp.getBaseDictName() + "1", expressionParser, shopBean, user, null);
+                    ((InputField) field).setValue(url);
+                    break;
+                }
+            }
+        } else {
+            sxData.setErrorMessage(errorMsg);
+            throw new BusinessException(errorMsg);
+        }
+
+        if (!hasSetting) {
+            $warn("有未设定的图片!");
+        }
+    }
+
     private void recursiveGetFields(List<Field> fields, List<Field> resultFields) {
         for (Field field : fields) {
             switch (field.getType()) {
@@ -2256,6 +2314,9 @@ public class SxProductService extends BaseService {
         if (!isDarwin) {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
+            // test用 start
+            styleCode = "test." + styleCode;
+            // test用 end
             sxData.setStyleCode(styleCode);
             return styleCode;
         } else {
@@ -2713,6 +2774,28 @@ public class SxProductService extends BaseService {
 
         private int getSort() {
             return this.sort;
+        }
+    }
+
+    private enum ImageProp {
+        PRODUCT_IMAGES("product_images", "产品图片-"), // 产品图片
+        ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
+        ;
+
+        private final String propId;
+        private final String baseDictName;
+
+        private ImageProp(String propId, String baseDictName) {
+            this.propId = propId;
+            this.baseDictName = baseDictName;
+        }
+
+        public String getPropId() {
+            return propId;
+        }
+
+        public String getBaseDictName() {
+            return baseDictName;
         }
     }
 

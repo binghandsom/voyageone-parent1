@@ -10,6 +10,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
@@ -40,6 +41,8 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private SxProductService sxProductService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
     private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
@@ -234,9 +237,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         $debug("更新店铺内分类结果：" + rslt.toString());
 
         //取得approved的code插入
-        List<Integer> cartIdList = new ArrayList<>(1);
-        cartIdList.add(cartId);
-        productService.insertSxWorkLoad(channelId, codeList, cartIdList, userName);
+        sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
     }
 
     /**

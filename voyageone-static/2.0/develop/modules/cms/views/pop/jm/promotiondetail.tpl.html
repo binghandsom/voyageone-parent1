@@ -38,7 +38,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动开始时间</label>
                 <div class="col-sm-7" >
-                    <input  type="datetime-local" class="form-control"  ng-readonly="editModel.model.status!=0"
+                    <input  type="datetime-local" class="form-control"
+                            ng-readonly="editModel.model.status!=0"
                             datepicker-popup
                             ng-model="editModel.model.activityStart" name="activityStart" required
                             max-date="editModel.model.activityEnd"
@@ -145,20 +146,25 @@
         </form>
     </div>
     <div class="table-responsive m-l-md m-r-md m-b-md">
-        <table class="table table-hover-new table-hover">
-            <thead>
-            <tr class="control-label">
-                <th>TAG</th>
-                <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="tag in getTagList()">
-                <td class="mfb-xxxsm"><input class="form-control" ng-model="tag.tagName" ng-required="true" maxlength="20"></td>
-                <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(tag)"><i class="fa fa-trash-o"></i></button></td>
-            </tr>
-            </tbody>
-        </table>
+        <form role="form" novalidate name="tagListForm">
+            <table class="table table-hover-new table-hover">
+                <thead>
+                <tr class="control-label">
+                    <th>TAG</th>
+                    <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="tag in getTagList()">
+                    <td class="mfb-xxxsm">
+                        <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required>
+                        <vo-message target="tagListForm['tagName' + $index]"></vo-message>
+                    </td>
+                    <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(tag)"><i class="fa fa-trash-o"></i></button></td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
         <div class="form-group">
             <button ng-disabled="isEdit" class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
         </div>
