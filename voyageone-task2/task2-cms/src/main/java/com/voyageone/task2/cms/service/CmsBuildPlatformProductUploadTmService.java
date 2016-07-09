@@ -178,8 +178,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
         // 天猫产品上新处理
         try {
+            $info("tomtomtom:001");
             // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            $info("tomtomtom:002");
             if (sxData == null) {
                 // modified by morse.lu 2016/06/12 start
                 // 异常的时候去做这段逻辑
@@ -241,9 +243,12 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
             // 取得主产品类目对应的平台类目
 //            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
+            $info("tomtomtom:003");
             platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
+            $info("tomtomtom:004");
             // 取得平台类目schema信息
             cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
+            $info("tomtomtom:005");
             if (cmsMtPlatformCategorySchemaModel == null) {
                 String errMsg = String.format("获取平台类目schema信息失败！[PlatformCategoryId:%s] [CartId:%s]", platformCategoryId, cartId);
                 $error(errMsg);
@@ -252,6 +257,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             }
 
             // 判断商品是否是达尔文
+            $info("tomtomtom:006");
             boolean isDarwin = false;
             try {
                 isDarwin = uploadTmProductService.getIsDarwin(sxData, shopProp, platformCategoryId, sxData.getBrandCode());
@@ -261,6 +267,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                         platformCategoryId, cartId, sxData.getBrandCode());
                 $error(errMsg);
             }
+            $info("tomtomtom:007");
             // 设置是否是达尔文体系标志位
             sxData.setDarwin(isDarwin);
 
@@ -273,7 +280,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             // 先看一下productGroup表和调用天猫API去平台上取看是否有platformPid,两个地方都没有才需要上传产品，
             // 只要有一个地方有就认为产品已存在，不用新增和更新产品，直接做后面的商品上新处理
             // 另外，天猫平台产品只有新增，不能更新（如果需要更新具体商品的产品信息，可以在商品页面手动更新）
+            $info("tomtomtom:008");
             if (StringUtils.isEmpty(platformProductId)) {
+                $info("tomtomtom:009");
                 // productGroup表中platformPid不存在的时候
 
                 // 匹配平台产品Id列表
@@ -282,12 +291,14 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 platformProductIdList = uploadTmProductService.getProductIdFromTmall(expressionParser, cmsMtPlatformCategorySchemaModel,
                         cmsMtPlatformMappingModel, shopProp, getTaskName());
 
+                $info("tomtomtom:010");
                 // added by morse.lu 2016/06/06 start
                 if (platformProductIdList != null) {
                     // null的话，表示该类目没有产品，直接进入商品上新
                     // added by morse.lu 2016/06/06 end
                     // 取得可以上传商品的平台产品id
                     // 如果发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品,则抛出异常，不做后续上传产品/商品处理)
+                    $info("tomtomtom:011");
                     platformProductId = uploadTmProductService.getUsefulProductId(sxData, platformProductIdList, shopProp);
 
                     // productGroup表和天猫平台上都不存在这个产品时，新增产品
@@ -303,6 +314,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                         }
                         // added by morse.lu 2016/06/08 end
                     }
+                    $info("tomtomtom:012");
 
                     // 以前productGroup表中没有，从天猫平台上找到匹配的productId 或者 向平台新增成功之后，回写SxData和ProductGroup表platformPid
                     if (!StringUtils.isEmpty(platformProductId)) {
@@ -328,13 +340,17 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 }
                 // added by morse.lu 2016/06/08 start
             } else {
+                $info("tomtomtom:013");
                 // 更新产品
                 if (!sxData.isDarwin()) {
                     uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                    $info("tomtomtom:014");
                 }
                 // added by morse.lu 2016/06/08 end
+                $info("tomtomtom:015");
             }
 
+            $info("tomtomtom:016");
         } catch (Exception ex) {
             // add by morse.lu 2016/06/07 start
             // 取得sxData为空
