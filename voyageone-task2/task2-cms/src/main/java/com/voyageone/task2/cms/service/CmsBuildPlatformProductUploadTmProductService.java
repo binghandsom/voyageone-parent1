@@ -439,69 +439,42 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的商品是否属于达尔文体系
      */
     public boolean getIsDarwin(SxData sxData, ShopBean shopBean, String platformCategoryId, String brandCode) {
-        $info("tomtomtom:006-0-1");
         //判断商品是否是达尔文体系
         StringBuffer failCause = new StringBuffer();
-        $info("tomtomtom:006-0-2");
         Boolean isDarwin = false;
-        $info("tomtomtom:006-0-3");
         String strPlatformCategoryId = (platformCategoryId == null) ? "0" : platformCategoryId;
-        $info("tomtomtom:006-0-4");
         String strBrandCode = (brandCode == null) ? "0" : brandCode;
-        $info("tomtomtom:006-0-5");
 
         try {
-            $info("tomtomtom:006-0-6");
             // 判断是否是达尔文（brandCode没有用到）
             isDarwin = tbProductService.isDarwin(Long.parseLong(strPlatformCategoryId), Long.parseLong(strBrandCode), shopBean, failCause);
-            $info("tomtomtom:006-0-7");
             if (isDarwin == null && failCause.length() != 0) {
-                $info("tomtomtom:006-0-7-1");
                 if (failCause.indexOf("访问淘宝超时") == -1) {
-                    $info("tomtomtom:006-0-7-2");
                     String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                             platformCategoryId, brandCode, failCause.toString());
                     $error(errMsg);
                     sxData.setErrorMessage(errMsg);
-                    $info("tomtomtom:006-0-7-3");
                     throw new BusinessException(errMsg);
                 }
             }
-            $info("tomtomtom:006-0-7-4");
         } catch (ApiException ex) {
-            $info("tomtomtom:006-0-8");
             // 调用API异常
             String errMsg = String.format("调用天猫API判断商品是否是达尔文体系失败(调用天猫API异常)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     platformCategoryId, brandCode, failCause.toString());
-            $info("tomtomtom:006-0-9");
             $error(errMsg);
             ex.printStackTrace();
-            $info("tomtomtom:006-0-10");
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(ex.getMessage());
         } catch (Exception ex) {
-            $info("tomtomtom:006-0-11");
             // 异常
             String errMsg = String.format("调用天猫API判断商品是否是达尔文体系失败！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                     platformCategoryId, brandCode, failCause.toString());
-            $info("tomtomtom:006-0-12");
             $error(errMsg);
             ex.printStackTrace();
-            $info("tomtomtom:006-0-13");
             sxData.setErrorMessage(errMsg);
-            $info("tomtomtom:006-0-14");
             throw new BusinessException(ex.getMessage());
         }
 
-        if (isDarwin == null) {
-            $info("tomtomtom:006-0-15-1");
-        } else {
-            $info("tomtomtom:006-0-15-2");
-            $info("tomtomtom:006-0-15-3:" + isDarwin);
-            $info("tomtomtom:006-0-15-4");
-        }
-
-        $info("tomtomtom:006-0-15");
         return isDarwin;
     }
 
