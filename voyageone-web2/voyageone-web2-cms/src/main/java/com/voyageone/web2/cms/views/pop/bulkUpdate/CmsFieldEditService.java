@@ -665,7 +665,7 @@ public class CmsFieldEditService extends BaseAppService {
                     rsMap.put("priceLimit", result);
                     return rsMap;
                 } else if ("4".equals(diffFlg)) {
-                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阀值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     rsMap.put("ecd", 3);
                     rsMap.put("prodCode", prodCode);
                     rsMap.put("skuCode", skuCode);
