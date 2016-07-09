@@ -19,11 +19,11 @@
                 </label>
             </div>
             <div class="form-group">
-                <label class="c-checkbox"><input class="form-control" type="checkbox" ng-model="ctrl.isOnlyShowMsrp"><span class="fa fa-check"></span>&nbsp;只查看MSRP和最终售价的历史</label>
+                <label class="c-checkbox"><input class="form-control" type="checkbox" ng-model="ctrl.isOnlyShowMsrp"><span class="fa fa-check"></span>&nbsp;中国建议零售价和中国最终售价</label>
             </div>
             <div class="form-group pull-right">
-                <button class="btn btn-default" ng-click="ctrl.reset()">Reset</button>
-                <button class="btn btn-default" ng-click="ctrl.export()">Export</button>
+                <button class="btn btn-default" ng-click="ctrl.reset()" translate="BTN_REFRESH"></button>
+                <button class="btn btn-default" ng-click="ctrl.export()" translate="BTN_EXPORT"></button>
             </div>
         </div>
         <div class="table-responsive" ng-switch="ctrl.isOnlyShowMsrp">
