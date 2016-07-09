@@ -261,15 +261,25 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             boolean isDarwin = false;
             try {
                 isDarwin = uploadTmProductService.getIsDarwin(sxData, shopProp, platformCategoryId, sxData.getBrandCode());
+                $info("tomtomtom:006-1");
+                $info("tomtomtom:006-2" + isDarwin);
+                $info("tomtomtom:006-3");
             } catch (BusinessException be) {
+                $info("tomtomtom:006-4");
                 // 判断商品是否是达尔文异常的时候默认为"非达尔文"
+                $info("tomtomtom:006-41-platformCategoryId" + platformCategoryId);
+                $info("tomtomtom:006-41-cartId" + cartId);
+                $info("tomtomtom:006-41-sxData.getBrandCode" + sxData.getBrandCode());
                 String errMsg = String.format("判断商品是否是达尔文异常结束，默认为非达尔文！[PlatformCategoryId:%s] [CartId:%s] [BrandCode:%s]",
                         platformCategoryId, cartId, sxData.getBrandCode());
+                $info("tomtomtom:006-5");
                 $error(errMsg);
+                $info("tomtomtom:006-6");
             }
             $info("tomtomtom:007");
             // 设置是否是达尔文体系标志位
             sxData.setDarwin(isDarwin);
+            $info("tomtomtom:007-1");
 
             // 表达式解析子
             expressionParser = new ExpressionParser(sxProductService, sxData);
