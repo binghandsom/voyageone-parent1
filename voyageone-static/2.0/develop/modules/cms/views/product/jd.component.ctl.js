@@ -300,7 +300,7 @@ define([
                  */
                 function checkSkuSale(){
                     return scope.vm.platform.skus.some(function(element){
-                        return element.isSale == true;
+                        return element.isSale === true;
                     });
                 }
 
@@ -315,7 +315,7 @@ define([
                         return false;
 
                     return scope.vm.platform.skus.every(function(element){
-                        return element.isSale == true;
+                        return element.isSale === true;
                     });
                 }
             }
