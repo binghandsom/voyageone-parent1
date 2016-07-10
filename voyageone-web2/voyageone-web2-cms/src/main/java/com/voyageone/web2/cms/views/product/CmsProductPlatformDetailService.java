@@ -313,10 +313,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     }
 
     private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, Integer cartId) {
-        Map<String, List<Field>> fields;
+        Map<String, List<Field>> fields = null;
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-            fields = platformSchemaService.getFieldForProductImage("1", cartId);
+            if(!StringUtil.isEmpty(catId)) {
+                fields = platformSchemaService.getFieldForProductImage("1", cartId);
+            }
         } else {
             fields = platformSchemaService.getFieldForProductImage(catId, cartId);
         }

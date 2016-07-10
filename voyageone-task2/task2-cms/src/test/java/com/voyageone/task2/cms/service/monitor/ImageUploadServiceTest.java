@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
+
 /**
  * @author aooer 2016/6/2.
  * @version 2.0.0
@@ -30,7 +32,11 @@ public class ImageUploadServiceTest {
         String watchPath = "/usr/ImageUpload";
         String strPath = "/usr/ImageUpload/images6/";
         String strFileName = "11111.zip";
+
         String channelId = "018";
-        imageUploadService.onEvent(event, watchPath, strPath, strFileName, channelId);
+        File file = new File(strPath + strFileName);
+        System.out.println((new File(file.getPath())).getName());
+        System.out.println(file.getName());
+        imageUploadService.onEvent(event, new File(strPath + strFileName), new FileMonitorBean(watchPath, channelId));
     }
 }

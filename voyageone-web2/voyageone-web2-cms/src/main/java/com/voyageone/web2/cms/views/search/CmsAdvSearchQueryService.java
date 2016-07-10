@@ -199,9 +199,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
-            queryObject.addQuery("{'common.catId':#}");
-            queryObject.addParameters(searchValue.getmCatId());
+        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
+            queryObject.addQuery("{'common.catPath':{'$regex':'^" + searchValue.getmCatPath() + "'}}");
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {

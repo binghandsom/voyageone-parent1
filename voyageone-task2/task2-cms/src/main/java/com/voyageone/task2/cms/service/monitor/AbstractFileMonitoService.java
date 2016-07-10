@@ -57,33 +57,27 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
     private void run() {
         LOG.info("AbstractFileMonitoService.run start");
 
-        // get taskControlList
-        List<TaskControlBean> taskControlList = taskDao.getTaskControlList(getTaskName());
-
         // 线程List
         List<Runnable> threads = new ArrayList<>();
         // 循环处理批量图片给上传
-        for (TaskControlBean taskControl : taskControlList) {
-            if ("order_channel_id".equals(taskControl.getCfg_name())) {
-                String finalPath = taskControl.getCfg_val2();
-                String channelId = taskControl.getCfg_val1();
-                LOG.info(String.format("AbstractFileMonitoService.run channelId:=%s;finalPath=%s", channelId, finalPath));
+        for (FileMonitorBean fileMonitorBean : getFilePaths()) {
+            String finalPath = fileMonitorBean.getFilePath();
+            LOG.info(String.format("AbstractFileMonitoService.run finalPath=%s", finalPath));
 
-                if (StringUtils.isEmpty(finalPath)) {
-                    continue;
-                }
-
-                File filePath = new File(finalPath);
-                if (!filePath.exists()) {
-                    LOG.warn(String.format("AbstractFileMonitoService.run filePath not found channelId:=%s;finalPath=%s", channelId, finalPath));
-                    continue;
-                }
-                if (!filePath.isDirectory()) {
-                    continue;
-                }
-
-                threads.add(() -> executeCmd(channelId, finalPath));
+            if (StringUtils.isEmpty(finalPath)) {
+                continue;
             }
+
+            File filePath = new File(finalPath);
+            if (!filePath.exists()) {
+                LOG.warn(String.format("AbstractFileMonitoService.run filePath not found finalPath=%s", finalPath));
+                continue;
+            }
+            if (!filePath.isDirectory()) {
+                continue;
+            }
+
+            threads.add(() -> executeCmd(fileMonitorBean));
         }
         // check threads
         if (!threads.isEmpty()) {
@@ -101,41 +95,8 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
         LOG.info("AbstractFileMonitoService.run end");
     }
 
-    /**
-     * getTaskName
-     */
-    protected abstract String getTaskName();
-
-    /**
-     * getInotifyEvents
-     */
-    protected abstract String[] getInotifyEvents();
-
-    /**
-     * 业务Check
-     */
-    protected abstract boolean eventCheck(String event, String watchPath, String filePath, String fileName, String channelId);
-
-    /**
-     * onEvent
-     */
-    protected void onEvent(String event, String watchPath, String filePath, String fileName, String channelId) {
-        try {
-            if (eventCheck(event, watchPath, filePath, fileName, channelId)) {
-                doEvent(event, filePath, fileName, channelId);
-            }
-        } catch (Exception ex) {
-            LOG.error(String.format("onEvent error event=%s filePath=%s fileName=%s channelId=%s", event, filePath, fileName, channelId), ex);
-        }
-    }
-
-    /**
-     * doEvent
-     */
-    protected abstract void doEvent(String event, String filePath, String fileName, String channelId);
-
-    private void executeCmd(String channelId, String watchPath) {
-
+    private void executeCmd(FileMonitorBean fileMonitorBean) {
+        String watchPath = fileMonitorBean.getFilePath();
         File workFolder = new File(System.getProperty("user.dir"));
 
         // kill process
@@ -165,10 +126,10 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                 String strPath = result[0];
                 String strFileName = result[1];
                 String event = result[2];
-                onEvent(event, watchPath, strPath, strFileName, channelId);
+                onEvent(event, new File(strPath+strFileName), fileMonitorBean);
             }
         } catch (Exception e) {
-            LOG.error("AbstractFileMonitoService.executeCmd error:", e.getMessage());
+            LOG.error("AbstractFileMonitoService.executeCmd error:" + e.getMessage());
         } finally {
             if (reader != null) {
                 try {
@@ -205,8 +166,46 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
                 return true;
             }
         } catch (Exception e) {
-            LOG.error("AbstractFileMonitoService.executeKill error:", e.getMessage());
+            LOG.error("AbstractFileMonitoService.executeKill error:" + e.getMessage());
         }
         return false;
     }
+
+    /**
+     * onEvent
+     */
+    protected void onEvent(String event, File file, FileMonitorBean fileMonitorBean) {
+        try {
+            if (eventCheck(event, file, fileMonitorBean)) {
+                doEvent(event, file, fileMonitorBean);
+            }
+        } catch (Exception ex) {
+            LOG.error(String.format("onEvent error event=%s filePath=%s fileName=%s", event, file.getPath(), file.getName()), ex);
+        }
+    }
+
+    /**
+     * getTaskName
+     */
+    protected abstract String getTaskName();
+
+    /**
+     * getFinalPaths
+     */
+    protected abstract FileMonitorBean[] getFilePaths();
+
+    /**
+     * getInotifyEvents
+     */
+    protected abstract String[] getInotifyEvents();
+
+    /**
+     * 业务Check
+     */
+    protected abstract boolean eventCheck(String event, File file, FileMonitorBean fileMonitorBean);
+    /**
+     * doEvent
+     */
+    protected abstract void doEvent(String event, File file, FileMonitorBean fileMonitorBean);
+
 }

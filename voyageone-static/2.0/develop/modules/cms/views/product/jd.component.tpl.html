@@ -213,9 +213,9 @@
                             <table class="table text-left">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="'1'" ng-false-value="'0'" ng-checked="allSkuSale()" ng-if="cartInfo.value != 27">
-                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="'1'" ng-false-value="'0'" ng-checked="allSkuSale()" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved'">All
+                                        <th class="text-center">
+                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value != 27">
+                                            <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved'">All
                                         </th>
                                         <th class="text-center">skuCode</th>
                                         <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
@@ -233,30 +233,30 @@
                                         <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10" style="padding: 0px"></td>
                                     </tr>
                                     <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
-                                        <td>
+                                        <td class="text-center v-middle">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
-                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == '1'">
+                                            <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">
                                         </td>
-                                        <td class="text-center">{{entity.skuCode}}</td>
-                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].qty}}</td>
-                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                        <td class="text-center">
-                                            <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                        <td class="text-center v-middle">{{entity.skuCode}}</td>
+                                        <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
+                                        <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                        <td class="text-center v-middle">
+                                            <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
                                         </td>
-                                        <td class="text-center">{{entity.priceRetail}}</td>
-                                        <td class="text-center"></td>
-                                        <td class="text-center" ng-if="cartInfo.value == 27">
+                                        <td class="text-center v-middle">{{entity.priceRetail}}</td>
+                                        <td class="text-center v-middle"></td>
+                                        <td class="text-center v-middle" ng-if="cartInfo.value == 27">
                                             <select ng-model="entity.property" class="form-control">
                                                 <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
                                                 <option value="FORMAL">正装</option>
                                                 <option value="MS">中小样</option>
                                             </select>
                                         </td>
-                                        <td class="text-center">
-                                            <label class="col-sm-3 control-label vo_reqfield ng-scope"></label>
+                                        <td class="text-center v-middle">
+                                            <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required></td>
-                                        <td class="text-center">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                        <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                     </tr>
                                 </tbody>
                             </table>

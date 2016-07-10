@@ -776,7 +776,7 @@
         // 2016-07-08 11:11:54
         // 增加对 isDisplay 属性的支持
         // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
-        if (field.isDisplay === "0")
+        if (field.isDisplay == "0")
             return;
 
         rules = getRules(field, schema);
