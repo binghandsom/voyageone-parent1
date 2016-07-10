@@ -220,6 +220,7 @@ define([
                     }
 
                     if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
+                        scope.vm.status = scope.vm.preStatus;
                         alert("请至少选择一个sku进行发布");
                         return;
                     }
@@ -299,7 +300,7 @@ define([
                  */
                 function checkSkuSale(){
                     return scope.vm.platform.skus.some(function(element){
-                        return element.isSale == true;
+                        return element.isSale === true;
                     });
                 }
 
@@ -314,7 +315,7 @@ define([
                         return false;
 
                     return scope.vm.platform.skus.every(function(element){
-                        return element.isSale == true;
+                        return element.isSale === true;
                     });
                 }
             }
