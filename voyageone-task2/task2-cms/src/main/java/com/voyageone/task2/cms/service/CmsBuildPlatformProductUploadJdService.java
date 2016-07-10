@@ -655,7 +655,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                                                  CmsMtPlatformCategorySchemaModel platformSchemaData,
                                                  Map<String, Integer> skuLogicQtyMap) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
-        List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
@@ -1050,6 +1049,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                                               ShopBean shop, Map<String, Object> productColorMap,
                                               Map<String, Integer> skuLogicQtyMap) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
+        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
 
         // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
         List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -1069,7 +1069,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         // SKU尺寸和尺寸值的Mapping表(Map<上新用尺码, 平台取下来的尺码值value>)
         Map<String, Object> skuSizeMap = new HashMap<>();
 
-        // 根据product列表取得要上新的产品颜色和尺寸Mapping关系
+        // 根据product列表取得要上新的产品颜色Mapping关系
         for (CmsBtProductModel product : productList) {
             // 取得颜色值列表中的第一个颜色值
             if (cmsColorList.size() > 0) {
@@ -1080,29 +1080,22 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             } else {
                 $warn("商品件数比cms_mt_platform_skus表中颜色值件数多，该商品未找到对应的颜色值！[ProductCode:%s]", product.getCommon().getFields().getCode());
             }
+        }
 
-            // 取得当前商品中每个SKU的size对应的sizeValue(从平台上取下来的，存在cms_mt_platform_skus表中的平台size值)
-//            List<BaseMongoMap<String, Object>> productSkuList = new ArrayList<>();
-//            CmsBtProductModel_Platform_Cart productPlatformCart = product.getPlatform(sxData.getCartId());
-//            if (productPlatformCart != null) {
-//                productSkuList = productPlatformCart.getSkus();
-//            }
-            List<CmsBtProductModel_Sku> productCommonSkuList = product.getCommon().getSkus();
-
-            for (BaseMongoMap<String, Object> sku : productCommonSkuList) {
-                // SKU和尺寸的Mapping表中不存在的话，追加进去(已存在不要再追加)
-                // skuSizeMap<上新用尺码, 平台取下来的尺码值value> 直接用共通方法里面转换后的上新用尺码作为尺码别名上新
-                // 上新用尺码(sizeSx)的设置顺序：sizeNick（特殊尺码转换信息） > 尺码转换表（共通尺码转换信息） > size (转换前尺码)
-                if (!skuSizeMap.containsKey(sku.getStringAttribute("sizeSx"))) {
-                    // 取得尺寸列表中的第一个尺寸值
-                    if (cmsSizeList.size() > 0) {
-                        // "SKU尺寸(3,3.5等)":"尺寸值Id" Mapping追加
-                        skuSizeMap.put(sku.getStringAttribute("sizeSx"), cmsSizeList.get(0).getAttrValue());
-                        // 已经Mapping过的尺寸值从尺寸列表中删除
-                        cmsSizeList.remove(0);
-                    } else {
-                        $warn("SKU尺寸件数比cms_mt_platform_skus表中尺寸值件数多，该尺寸未找到对应的尺寸值！[sizeSx:%s]", sku.getStringAttribute("sizeSx"));
-                    }
+        // 根据sku列表(根据sizeSx排序)取得要上新的产品尺寸Mapping关系
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            // SKU和尺寸的Mapping表中不存在的话，追加进去(已存在不要再追加)
+            // skuSizeMap<上新用尺码, 平台取下来的尺码值value> 直接用共通方法里面转换后的上新用尺码作为尺码别名上新
+            // 上新用尺码(sizeSx)的设置顺序：sizeNick（特殊尺码转换信息） > 尺码转换表（共通尺码转换信息） > size (转换前尺码)
+            if (!skuSizeMap.containsKey(sku.getStringAttribute("sizeSx"))) {
+                // 取得尺寸列表中的第一个尺寸值
+                if (cmsSizeList.size() > 0) {
+                    // "SKU尺寸(3,3.5等)":"尺寸值Id" Mapping追加
+                    skuSizeMap.put(sku.getStringAttribute("sizeSx"), cmsSizeList.get(0).getAttrValue());
+                    // 已经Mapping过的尺寸值从尺寸列表中删除
+                    cmsSizeList.remove(0);
+                } else {
+                    $warn("SKU尺寸件数比cms_mt_platform_skus表中尺寸值件数多，该尺寸未找到对应的尺寸值！[sizeSx:%s]", sku.getStringAttribute("sizeSx"));
                 }
             }
         }
