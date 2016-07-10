@@ -170,7 +170,19 @@ public class CmsBtPriceLogService extends BaseService {
     }
 
     private boolean compareAllPrice(CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, CmsBtPriceLogModel logModel) {
-        return commonSku.getClientMsrpPrice().equals(Double.valueOf(logModel.getClientMsrpPrice()))
+        return commonSku.getClientMsrpPrice() == null
+                || commonSku.getClientNetPrice() == null
+                || commonSku.getClientRetailPrice() == null
+                || !(platformSku.getDoubleAttribute("priceMsrp") == 0
+                || platformSku.getDoubleAttribute("priceRetail") == 0
+                || platformSku.getDoubleAttribute("priceSale") == 0)
+                && !(StringUtils.isEmpty(logModel.getClientMsrpPrice())
+                || StringUtils.isEmpty(logModel.getClientNetPrice())
+                || StringUtils.isEmpty(logModel.getClientRetailPrice())
+                || StringUtils.isEmpty(logModel.getMsrpPrice())
+                || StringUtils.isEmpty(logModel.getRetailPrice())
+                || StringUtils.isEmpty(logModel.getSalePrice()))
+                && commonSku.getClientMsrpPrice().equals(Double.valueOf(logModel.getClientMsrpPrice()))
                 && commonSku.getClientNetPrice().equals(Double.valueOf(logModel.getClientNetPrice()))
                 && commonSku.getClientRetailPrice().equals(Double.valueOf(logModel.getClientRetailPrice()))
                 && new Double(platformSku.getDoubleAttribute("priceMsrp")).equals(Double.valueOf(logModel.getMsrpPrice()))
