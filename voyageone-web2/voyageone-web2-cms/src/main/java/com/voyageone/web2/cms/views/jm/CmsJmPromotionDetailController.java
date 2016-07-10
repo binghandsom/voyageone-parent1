@@ -64,8 +64,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //end 2
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
      public AjaxResponse init(@RequestBody InitParameter parameter) {
-        InitResult result=new InitResult();
-         return success(service3.init(parameter));
+         return success(service3.init(parameter, getUser().getSelChannelId(), getLang()));
      }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
