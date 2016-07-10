@@ -209,6 +209,7 @@ define([
                     }
 
                     scope.vm.preStatus = angular.copy(scope.vm.status);
+
                     switch (scope.vm.status){
                         case "Pending":
                                 scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
