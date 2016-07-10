@@ -356,7 +356,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 modelCodes.setNumIid(groupModel.getNumIId());
                 modelCodes.setModelId(groupModel.getGroupId().intValue());
             }
-            modelCodes.setProductId(Integer.getInteger(productInfo.getProdId().toString()));
+            modelCodes.setProductId(Integer.valueOf(productInfo.getProdId().toString()));
             modelCodes.setProductCode(productInfo.getCommon().getFields().getCode());
             //modelCodes.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getCommon().getFields().get.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
             CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(CartEnums.Cart.JM.getValue());
@@ -397,7 +397,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), modelPromotion.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
             if(skusModel==null) {
                 skusModel=new CmsBtPromotionSkusModel();
-                skusModel.setProductId(Integer.getInteger(productInfo.getProdId().toString()));
+                skusModel.setProductId(Integer.valueOf(productInfo.getProdId().toString()));
                 skusModel.setProductCode(skuImport.getProductCode());
                 skusModel.setProductSku(skuImport.getSkuCode());
                 skusModel.setQty(0);
