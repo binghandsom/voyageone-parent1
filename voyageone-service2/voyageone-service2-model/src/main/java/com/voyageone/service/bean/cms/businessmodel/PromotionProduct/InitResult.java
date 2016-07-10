@@ -1,8 +1,10 @@
 package com.voyageone.service.bean.cms.businessmodel.PromotionProduct;
 
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +17,8 @@ public class InitResult {
     boolean isBegin;//活动是否开始
     boolean isEnd;//活动是否结束
     boolean isUpdateJM;//9：00 12：00 是否更新聚美
+    List<TypeChannelBean> brandList = new ArrayList<>();
+
     public boolean getIsBegin() {
         return isBegin;
     }
@@ -62,5 +66,13 @@ public class InitResult {
 
     public void setChangeCount(int changeCount) {
         this.changeCount = changeCount;
+    }
+
+    public List<TypeChannelBean> getBrandList() {
+        return brandList;
+    }
+
+    public void setBrandList(List<TypeChannelBean> brandList) {
+        this.brandList = brandList;
     }
 }
