@@ -220,6 +220,7 @@ define([
                     }
 
                     if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
+                        scope.vm.status = scope.vm.preStatus;
                         alert("请至少选择一个sku进行发布");
                         return;
                     }
