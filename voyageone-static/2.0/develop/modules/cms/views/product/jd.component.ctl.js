@@ -208,11 +208,6 @@ define([
                         return;
                     }
 
-                    if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
-                        alert("请至少选择一个sku进行发布");
-                        return;
-                    }
-
                     scope.vm.preStatus = angular.copy(scope.vm.status);
                     switch (scope.vm.status){
                         case "Pending":
@@ -221,6 +216,11 @@ define([
                         case "Ready":
                                 scope.vm.status = "Approved";
                                 break;
+                    }
+
+                    if((scope.vm.status == "Ready"|| scope.vm.status == "Approved") && !checkSkuSale()){
+                        alert("请至少选择一个sku进行发布");
+                        return;
                     }
 
                     if(scope.vm.checkFlag.attribute == 1)
