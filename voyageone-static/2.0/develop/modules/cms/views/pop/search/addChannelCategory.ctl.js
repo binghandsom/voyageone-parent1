@@ -37,6 +37,7 @@ define([
             this.cartIdValid = false;
             this._context = context;
             this.needSave = false;
+            this.alert = alert;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -75,7 +76,7 @@ define([
             save: function () {
                 var self = this;
                 if (!self._context.isQuery && !self.needSave) {
-                    alert("店铺内分类没有改变，不需要保存");
+                    self.alert("店铺内分类没有改变，不需要保存");
                     return;
                 }
 
@@ -89,7 +90,7 @@ define([
                 for (var key in self.orgDispMap) {
                     if (self.orgDispMap[key]) {
                         // 如果有半选状态，则提示
-                        alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
+                        self.alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
                         return;;
                     }
                 }
