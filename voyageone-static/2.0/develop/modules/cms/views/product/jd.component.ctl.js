@@ -25,7 +25,8 @@ define([
                     checkFlag:{translate:0, tax:0, category:0, attribute:0},
                     resultFlag:0,
                     sellerCats:[],
-                    productUrl:""
+                    productUrl:"",
+                    preStatus:null
                 };
 
                 initialize();
@@ -179,9 +180,15 @@ define([
 
                 /**
                  * 更新操作
-                 * @param mark  记录是否为ready状态
+                 * @param mark:记录是否为ready状态,temporary:暂存
                  */
                 function saveProduct(mark){
+
+                    /**用于保存报错*/
+                    if(mark == "temporary"){
+                        callSave("temporary");
+                        return;
+                    }
 
                     /**用于保存报错*/
                     if(mark == "ready"){
@@ -206,7 +213,7 @@ define([
                         return;
                     }
 
-                    var preStatus = angular.copy(scope.vm.status);
+                    scope.vm.preStatus = angular.copy(scope.vm.status);
                     switch (scope.vm.status){
                         case "Pending":
                                 scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
@@ -215,10 +222,15 @@ define([
                                 scope.vm.status = "Approved";
                                 break;
                     }
-                     scope.vm.platform.status = scope.vm.status;
-                     scope.vm.platform.pAttributeStatus = 1;
-                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
-                     scope.vm.platform.cartId = +scope.cartInfo.value;
+
+                    if(scope.vm.checkFlag.attribute == 1)
+                        scope.vm.platform.pAttributeStatus = "1";
+                    else
+                        scope.vm.platform.pAttributeStatus = "0";
+
+                    scope.vm.platform.status = scope.vm.status;
+                    scope.vm.platform.sellerCats = scope.vm.sellerCats;
+                    scope.vm.platform.cartId = +scope.cartInfo.value;
 
                      _.map(scope.vm.platform.skus, function(item){
                          item.property = item.property == null?"OTHER":item.property;
@@ -235,7 +247,7 @@ define([
                 }
 
                 /**调用服务器接口*/
-                function callSave(){
+                function callSave(mark){
 
                     /**判断价格*/
                     productDetailService.updateProductPlatformChk({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
@@ -243,14 +255,18 @@ define([
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     },function(resp){
                         if(resp.code != "4000091" && resp.code != "4000092"){
-                            scope.vm.status = preStatus;
+                            scope.vm.status = scope.vm.preStatus;
                             return;
                         }
+
                         confirm(resp.message + ",是否强制保存").result.then(function () {
                             productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                 scope.vm.platform.modified = resp.data.modified;
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             });
+                        },function(){
+                            if(mark != 'temporary')
+                                scope.vm.status = scope.vm.preStatus;
                         });
                     });
                 }
