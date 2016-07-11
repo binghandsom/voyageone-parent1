@@ -28,7 +28,7 @@
                 <div class="form-group">
                     <label class="control-label">Upload Time</label>
                      <span class="input-group">
-                        <input type="datetime" class="form-control"
+                        <input type="date" class="form-control"
                                uib-datepicker-popup
                                datepicker-options="{maxDate:ctrl.feedEndTime}"
                                ng-model="ctrl.feedStartTime"
@@ -39,7 +39,7 @@
                     </span>
                     <span>~</span>
                      <span class="input-group">
-                        <input type="datetime" class="form-control"
+                        <input type="date" class="form-control"
                                uib-datepicker-popup
                                datepicker-options="{minDate:ctrl.feedStartTime}"
                                ng-model="ctrl.feedEndTime"
@@ -58,6 +58,34 @@
     </div>
     <div class="panel panel-vo">
         <div class="panel-body">
+            <form role="form" novalidate class="form-horizontal" name="promotionForm">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
+                    <div class="col-sm-7 form-inline">
+                        <div class="col-sm-5 input-group">
+                            <input type="date" class="form-control"
+                                   ng-model="promotion.prePeriodStart"
+                                   uib-datepicker-popup
+                                   is-open="datePicker1"
+                                   max-date="promotion.prePeriodEnd"
+                                   date-model-format="yyyy-MM-dd">
+                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
+                        </div>
+                        &nbsp;~&nbsp;
+                        <div class="col-sm-5 input-group">
+                            <input type="date" class="form-control"
+                                   ng-model="promotion.prePeriodEnd"
+                                   uib-datepicker-popup
+                                   is-open="datePicker2"
+                                   min-date="promotion.prePeriodStart"
+                                   date-model-format="yyyy-MM-dd">
+                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
