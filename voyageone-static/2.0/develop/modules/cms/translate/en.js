@@ -236,7 +236,7 @@ define(function () {
         "TXT_PRODUCT_DETAIL": "产品详情",
         "TXT_PRICE": "价格",
         "TXT_PRICE_TYPE": "价格种类",
-        "TXT_PRICE_HISTORY": "价格履历",
+        "TXT_PRICE_HISTORY": "价格历史",
         "TXT_IS_FIX_TRANSLATED": "翻译完成?",
         "TXT_PRODUCT_CODE": "产品Code",
         "TXT_PROMOTION_STATUS": "活动状态",

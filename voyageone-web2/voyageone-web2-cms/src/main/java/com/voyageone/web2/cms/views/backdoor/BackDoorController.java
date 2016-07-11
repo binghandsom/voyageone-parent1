@@ -34,8 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Edward
@@ -164,7 +166,9 @@ public class BackDoorController extends CmsController {
 
         System.out.print("开始处理:" + oldProductInfo.size());
 
-        oldProductInfo.forEach(oldCmsBtProductModel -> {
+        Map<String, CmsMtPlatformCategoryTreeModel> platformCategoryMap =  getPlatformMap(channelId, 23);
+
+        oldProductInfo.parallelStream().forEach(oldCmsBtProductModel -> {
             System.out.print("开始处理:" + oldCmsBtProductModel.getFields().getCode());
 
             String oldStatus = oldCmsBtProductModel.getFields().getStatus();
@@ -205,7 +209,7 @@ public class BackDoorController extends CmsController {
                 }
 
                 // 设置feed数据
-                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, newField.getCode());
+                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, oldCmsBtProductModel.getFields().getCode());
 
                 // 设置Fields属性
                 newField.setAppSwitch(0);
@@ -438,7 +442,8 @@ public class BackDoorController extends CmsController {
 
                         if (!StringUtils.isEmpty(oldCmsBtProductModel.getCatPath())) {
                             platformInfo.setpCatPath(oldCmsBtProductModel.getCatPath());
-                            CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryService.getCategoryByCatPath(oldCmsBtProductModel.getCatPath(), Integer.valueOf(cartId));
+//                            CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryService.getCategoryByCatPath(oldCmsBtProductModel.getCatPath(), Integer.valueOf(cartId));
+                            CmsMtPlatformCategoryTreeModel platformCategory = platformCategoryMap.get(oldCmsBtProductModel.getCatPath());
                             if (platformCategory == null) {
                                 platformInfo.setpCatStatus("0");
                             } else {
@@ -575,6 +580,22 @@ public class BackDoorController extends CmsController {
         return builder.toString();
     }
 
+
+    @RequestMapping(value = "changeDataByNewGroup", method = RequestMethod.GET)
+    public Object changeDataBy20160708(@RequestParam("channelId") String channelId) {
+
+        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>Group 信息列表</h2>");
+        builder.append("<ul>");
+        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
     private List<String> checkGroupTransformOn20160708(String channelId) {
 
         List<String> messageList = new ArrayList<>();
@@ -608,6 +629,12 @@ public class BackDoorController extends CmsController {
                 long productCount = cmsBtProductDao.countByQuery("{ 'common.fields.code': # }", new Object[]{productCode}, channelId);
                 return productCount > 0;
             }).collect(toList());
+
+            // 如果 该group下面没有满足条件的code, 该group就删除
+            if (existedCodeList.isEmpty()) {
+                productGroupDao.delete(groupModel);
+                return;
+            }
 
             // 经过过滤的数据如果和之前的长度相同
             // 说明这个 group 下的 product 数据都是正常转换完成了的
@@ -661,9 +688,12 @@ public class BackDoorController extends CmsController {
 
                     productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
 
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("$set", productSetParams);
+
                     Map<String, Object> productQueryParams = new HashMap<>();
                     productQueryParams.put("_id", productModel.get_id());
-                    productService.updateProduct(channelId, productQueryParams, productSetParams);
+                    productService.updateProduct(channelId, productQueryParams, updateMap);
                 });
             }
 
@@ -671,6 +701,47 @@ public class BackDoorController extends CmsController {
         });
 
         return messageList;
+    }
+
+    /**
+     * 获取所有叶子类目的路径
+     *
+     * @param channelId 渠道
+     * @param cartId  平台 ID
+     * @return Map 键 -> CategoryId, 值 -> CategoryPath
+     */
+    private Map<String, CmsMtPlatformCategoryTreeModel> getPlatformMap(String channelId, Integer cartId) {
+
+        // --> 取平台所有类目
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModels = platformCategoryService.getPlatformCategories(channelId, cartId);
+
+        // --> 所有平台类目 --> 取所有叶子 --> 拍平
+        Stream<CmsMtPlatformCategoryTreeModel> platformCategoryTreeModelStream =
+                platformCategoryTreeModels.stream().flatMap(this::flattenFinal);
+
+        // --> 所有平台类目 --> 取所有叶子 --> 拍平 --> 转 Map, id 为键, path 为值
+        return platformCategoryTreeModelStream
+                .collect(toMap(
+                        CmsMtPlatformCategoryTreeModel::getCatPath,
+                        model -> model));
+    }
+
+    /**
+     * 拍平叶子类目,不包含父级
+     *
+     * @param platformCategoryTreeModel 平台类目模型
+     * @return 叶子类目数据流
+     */
+    private Stream<CmsMtPlatformCategoryTreeModel> flattenFinal(CmsMtPlatformCategoryTreeModel platformCategoryTreeModel) {
+
+        if (platformCategoryTreeModel.getIsParent() == 0)
+            return Stream.of(platformCategoryTreeModel);
+
+        List<CmsMtPlatformCategoryTreeModel> children = platformCategoryTreeModel.getChildren();
+
+        if (children == null) children = new ArrayList<>(0);
+
+        return children.stream().flatMap(this::flattenFinal);
     }
 
     /**

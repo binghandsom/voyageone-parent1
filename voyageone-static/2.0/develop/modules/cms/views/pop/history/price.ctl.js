@@ -86,8 +86,8 @@ define([
 
             var self = this;
 
-            self.selected.sku = self.skuList[0];
-            self.selected.cart = self.cartList[0];
+            //self.selected.sku = self.skuList[0];
+            //self.selected.cart = self.cartList[0];
 
             self.getData(0);
         };
