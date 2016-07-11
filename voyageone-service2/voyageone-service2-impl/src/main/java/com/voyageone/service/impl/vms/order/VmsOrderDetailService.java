@@ -29,16 +29,26 @@ public class VmsOrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.selectListLimitedByTime(orderSearchParams);
     }
 
+    /**
+     * 自条件搜索订单号
+     * @param orderSearchParams 搜索条件
+     * @return 订单号List
+     */
     public List<String> selectPlatformOrderIdList(Map<String, Object> orderSearchParams) {
 
-        return vmsBtOrderDetailDaoExt.selectPlatformOrderListLimitedByTime(orderSearchParams);
+        return vmsBtOrderDetailDaoExt.selectList(orderSearchParams);
 
     }
 
+    /**
+     * 获取订单总量
+     * @param orderSearchParamsWithLimitAndSort 搜索条件
+     * @return 订单总量
+     */
     public long getTotalOrderNum(Map<String, Object> orderSearchParamsWithLimitAndSort) {
 
         // TODO: 16-7-8 总数统计尚未完成
-        return 10;
-//        return vmsBtOrderDetailDaoExt.selectPlatformOrderListNumLimitedByTime(orderSearchParams);
+//        return 10;
+        return vmsBtOrderDetailDaoExt.selectPlatformOrderListNumLimitedByTime(orderSearchParamsWithLimitAndSort);
     }
 }
