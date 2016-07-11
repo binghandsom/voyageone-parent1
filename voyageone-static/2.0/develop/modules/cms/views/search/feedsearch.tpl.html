@@ -274,7 +274,7 @@
                                     </label>
                                     &nbsp;
                                     <div class="btn-group" uib-dropdown>
-                                        <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
+                                        <button ng-disabled="!vm.feedPageOption.total || vm.feedPageOption.total == 0" type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
                                             <i class="fa fa-exchange"></i>&nbsp;变更Feed产品状态&nbsp;<span class="caret"></span>
                                         </button>
                                         <ul uib-dropdown-menu>

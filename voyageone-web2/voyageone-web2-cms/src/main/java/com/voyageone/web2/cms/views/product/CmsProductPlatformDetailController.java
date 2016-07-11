@@ -1,8 +1,12 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -29,6 +33,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
     @Autowired
     private CmsProductPlatformDetailService cmsProductPlatformDetailService;
+
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
@@ -67,7 +74,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String,Object> platform = (Map<String, Object>) params.get("platform");
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform,getUser().getUserName()));
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName()));
 
         return success(result);
     }
@@ -89,6 +96,15 @@ public class CmsProductPlatformDetailController extends CmsController {
         }else{
             return doUpdateProductPlatform(params);
         }
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHECK_CATEGORY)
+    public AjaxResponse checkCategory (@RequestBody Map params){
+
+        String catPath = params.get("pCatPath").toString();
+        Integer cartId = (Integer) params.get("cartId");
+        CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryService.getCategoryByCatPath(getUser().getSelChannelId(),catPath,cartId);
+        return success(cmsMtPlatformCategoryTreeModel != null);
     }
 }
 
