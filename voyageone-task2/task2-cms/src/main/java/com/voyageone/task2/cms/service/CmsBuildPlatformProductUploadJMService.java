@@ -424,7 +424,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                             for (BaseMongoMap<String, Object> skuMap : newSkuList) {
 
-                                String skuCode = skuMap.getStringAttribute("skuCode");
+                                String skuCode = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                                 //旧SPU需要更新
                                 if (remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).count() > 0) {
                                     JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
@@ -437,7 +437,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     // update by desmond 2016/07/08 start
 //                                    String sizeStr = skuMap.getStringAttribute("size");
 //                                    sizeStr = getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType);
-                                    String sizeStr = skuMap.getStringAttribute("sizeSx");
+                                    String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                                     // update by desmond 2016/07/08 end
                                     htSpuUpdateRequest.setSize(sizeStr);
                                     htSpuUpdateRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
@@ -451,7 +451,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         {
                                             CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
                                             mySku.setJmSize(sizeStr);
-                                            mySku.setCmsSize(skuMap.getStringAttribute("size"));
+                                            mySku.setCmsSize(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
                                             mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                             mySku.setModifier(getTaskName());
                                             cmsBtJmSkuDao.update(mySku);
@@ -479,17 +479,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     {
                                         //需要增加SKU
                                         HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-                                        htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute("skuCode"));
+                                        htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                                         htSkuAddRequest.setSale_on_this_deal("1");
-                                        htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
-                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute("skuCode"))));
-                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceSale"));
-                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceMsrp"));
+                                        htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
                                         htSkuAddRequest.setJumei_hash_id(originHashId);
                                         htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
                                         HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                         if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
-                                            $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute("skuCode"));
+                                            $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                                             if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
                                             {
                                                 CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
@@ -514,7 +514,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     // update by desmond 2016/07/08 start
 //                                    String sizeStr = skuMap.getStringAttribute("size");
 //                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
-                                    String sizeStr = skuMap.getStringAttribute("sizeSx");
+                                    String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                                     htSpuAddRequest.setSize(sizeStr);
                                     // update by desmond 2016/07/08 end
                                     htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
@@ -529,17 +529,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         skuMap.setStringAttribute("jmSpuNo", htSpuAddResponse.getJumei_spu_no());
 
                                         HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-                                        htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute("skuCode"));
+                                        htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                                         htSkuAddRequest.setSale_on_this_deal("1");
-                                        htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute("skuCode"));
-                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute("skuCode"))));
-                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute("priceSale"));
-                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute("priceMsrp"));
+                                        htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                        htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                        htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                        htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
                                         htSkuAddRequest.setJumei_hash_id(originHashId);
                                         htSkuAddRequest.setJumei_spu_no(htSpuAddResponse.getJumei_spu_no());
                                         HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                         if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
-                                            $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute("skuCode"));
+                                            $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
 
                                             CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                             cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
@@ -760,6 +760,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             newSku.setAttribute("priceRetail", sku.getDoubleAttribute("priceRetail"));
             newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
             newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
+            newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
+            newSku.setStringAttribute("isSale", sku.getStringAttribute("isSale"));
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
             newSku.setStringAttribute("property", sku.getStringAttribute("property"));
@@ -949,7 +951,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // update by desmond 2016/07/08 start
 //            String size = jmSku.getStringAttribute("size");
 //            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
-            String sizeStr = jmSku.getStringAttribute("sizeSx");
+            String sizeStr = jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
             // update by desmond 2016/07/08 end
             spu.setSize(sizeStr);
 
@@ -1032,7 +1034,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // update by desmond 2016/07/08 start
 //            String size = jmSku.getStringAttribute("size");
 //            String  sizeStr = getSizeFromSizeMap(size, channelId, brandName, productType, sizeType);
-            String  sizeStr = jmSku.getStringAttribute("sizeSx");
+            String  sizeStr = jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
             // update by desmond 2016/07/08 end
             CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, jmSku, sizeStr);
             list.add(cmsBtJmSkuModel);
@@ -1198,10 +1200,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 jmSku.put("priceRetail", CommonSku.getPriceRetail());
                 jmSku.put("clientMsrpPrice", CommonSku.getClientMsrpPrice());
                 jmSku.put("clientRetailPrice", CommonSku.getClientRetailPrice());
-                jmSku.put("size", CommonSku.getSize());
+                jmSku.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), CommonSku.getSize());
                 // add by desmond 2016/07/08 start
                 jmSku.put("sizeNick", CommonSku.getSizeNick());
-                jmSku.put("sizeSx", CommonSku.getSizeSx());
+                jmSku.put(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), CommonSku.getSizeSx());
                 // add by desmond 2016/07/08 end
             }
         }
