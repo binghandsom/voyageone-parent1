@@ -19,10 +19,10 @@ public class OrderSearchInfo {
     private int curr = 1;
 
     @DateTimeFormat
-    private Date orderDateFrom;
+    private Date orderDateFrom = null;
 
     @DateTimeFormat
-    private Date orderDateTo;
+    private Date orderDateTo = null;
 
     public int getStatus() {
         return status;

@@ -59,16 +59,15 @@ define([
 
         OrderInfoController.prototype.search = function () {
 
-            if (this.orderDateFrom == undefined || this.orderDateTo == undefined) {
-                this.alert("Please input a valid date");
+            if (this.orderDateFrom)
+                this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
+            else this.searchInfo.orderDateFrom = undefined;
+            if (this.orderDateTo) {
+                var date = angular.copy(this.orderDateTo);
+                date.setDate(date.getDate() + 1);
+                this.searchInfo.orderDateTo = date.getTime();
             } else {
-                if (this.orderDateFrom)
-                    this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
-                if (this.orderDateTo) {
-                    var date = angular.copy(this.orderDateTo);
-                    date.setDate(date.getDate() + 1);
-                    this.searchInfo.orderDateTo = date.getTime();
-                }
+                this.searchInfo.orderDateTo = undefined;
             }
 
             this.orderInfoService.search(this.searchInfo).then((data) => {
