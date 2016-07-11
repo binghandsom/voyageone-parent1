@@ -15,13 +15,22 @@ define([
             this.threeDay = 3 * this.oneDay;
             this.oneMonth = 30 * this.oneDay;
 
-            this.orderDateFrom = new Date(new Date().getTime() - 6 * this.oneMonth);
-            this.orderDateTo = new Date();
+            var now = new Date();
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            this.orderDateFrom = new Date(today.getTime() - 6 * this.oneMonth);
+            this.orderDateTo = today;
 
-            this.searchInfo = {
+            this.pageInfo = {
                 curr: 1,
                 total: 0,
                 size: 10,
+                fetch: this.search.bind(this)
+            };
+
+            this.searchInfo = {
+                curr: this.pageInfo.curr,
+                total: this.pageInfo.total,
+                size: this.pageInfo.size,
                 status: "1",
                 orderId: "",
                 sku: "",
@@ -29,15 +38,8 @@ define([
                 orderDateTo: ""
             };
 
-            this.pageInfo = {
-                curr: this.searchInfo.curr,
-                total: this.searchInfo.total,
-                size: this.searchInfo.size,
-                fetch: this.search
-            };
-
             this.channelConfigs = {
-                venderOperateType: 'SKU'
+                vendorOperateType: 'SKU'
             };
             this.searchOrderStatus = [];
             this.data = [];
@@ -50,47 +52,47 @@ define([
 
                 // 记录用户的操作方式(sku/order)
                 this.channelConfigs = data.channelConfigs;
-                if (data.orderInfo) {
-                    this.searchInfo.total = data.orderInfo.total;
-                    // 获取现有的订单信息(默认为Open 订单时间倒序)
-                    this.data = data.orderInfo.orderList.map((item) => {
-                        item.className = '';
-                        if (item.status == '7')
-                            item.className = 'bg-gainsboro';
-                        else {
-                            var date = new Date(item.orderDateTimestamp);
-                            if ((new Date().getTime() - date) >= self.threeDay)
-                                item.className = 'bg-danger';
-                            else if ((new Date().getTime() - date) >= self.twoDay)
-                                item.className = 'bg-warning';
-                        }
-                        return item;
-                    })
-                }
+
+                this.search();
             });
         }
 
         OrderInfoController.prototype.search = function () {
-            var self = this;
-            this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
-            this.searchInfo.orderDateTo = this.orderDateTo.getTime();
+
+            if (this.orderDateFrom == undefined || this.orderDateTo == undefined) {
+                this.alert("Please input a valid date");
+            } else {
+                if (this.orderDateFrom)
+                    this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
+                if (this.orderDateTo) {
+                    var date = angular.copy(this.orderDateTo);
+                    date.setDate(date.getDate() + 1);
+                    this.searchInfo.orderDateTo = date.getTime();
+                }
+            }
 
             this.orderInfoService.search(this.searchInfo).then((data) => {
-                this.searchInfo.total = data.orderInfo.total;
+                this.pageInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
                     item.className = '';
                     if (item.status == '7')
                         item.className = 'bg-gainsboro';
                     else {
                         var date = new Date(item.orderDateTimestamp);
-                        if ((new Date().getTime() - date) >= self.threeDay)
+                        if ((new Date().getTime() - date) >= this.threeDay)
                             item.className = 'bg-danger';
-                        else if ((new Date().getTime() - date) >= self.twoDay)
+                        else if ((new Date().getTime() - date) >= this.twoDay)
                             item.className = 'bg-warning';
                     }
                     return item;
                 })
             })
+        };
+
+        OrderInfoController.prototype.cancelOrder = function (item) {
+            this.orderInfoService.cancelOrder(item).then(
+                this.search()
+            )
         };
 
         OrderInfoController.prototype.toggleAll = function () {

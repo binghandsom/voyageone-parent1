@@ -33,7 +33,9 @@
                 <div class="form-group">
                     <label class="control-label">ORDER DATE</label>
                     <span class="input-group">
-                        <input type="datetime" name="activityStart" class="form-control" title="From"
+                        <input name="activityStart" class="form-control"
+                               title="From"
+                               type="date"
                                ng-model="ctrl.orderDateFrom"
                                uib-datepicker-popup
                                datepicker-options="{maxDate:ctrl.orderDateTo}"
@@ -44,7 +46,9 @@
                     </span>
                     <span>~</span>
                     <span class="input-group">
-                        <input type="datetime" name="activityStart" class="form-control" title="To"
+                        <input name="activityStart" class="form-control"
+                               title="To"
+                               type="date"
                                ng-model="ctrl.orderDateTo"
                                uib-datepicker-popup
                                datepicker-options="{minDate:ctrl.orderDateFrom}"
@@ -98,7 +102,7 @@
                         <td ng-click="item.collapse = !item.collapse">{{item.status}}</td>
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
+                            <button class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)">CANCEL</button>
                             <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
@@ -115,7 +119,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <div vpagination="ctrl.pageInfo"></div>
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
             </div>
         </div>
     </div>

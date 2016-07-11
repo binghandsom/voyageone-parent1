@@ -11,6 +11,7 @@ public interface VmsUrlConstants {
             String ROOT = "/vms/order/order_info/";
             String INIT = "init";
             String SEARCH = "search";
+            String CANCEL_ORDER = "cancelOrder";
         }
     }
 

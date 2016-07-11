@@ -84,7 +84,7 @@ public class OrderInfoService extends BaseService {
     public VmsChannelSettings getChannelConfigs(UserSessionBean user) {
         VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(), ChannelConfig.VENDER_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
         VmsChannelSettings vmsChannelSettings = new VmsChannelSettings();
-        vmsChannelSettings.setVenderOperateType(vmsChannelConfigBean.getConfigValue1());
+        vmsChannelSettings.setVendorOperateType(vmsChannelConfigBean.getConfigValue1());
         return vmsChannelSettings;
     }
 
@@ -102,7 +102,7 @@ public class OrderInfoService extends BaseService {
         /**
          * 根据渠道配置设置
          */
-        switch (this.getChannelConfigs(user).getVenderOperateType()) {
+        switch (this.getChannelConfigs(user).getVendorOperateType()) {
 
             // sku级的订单获取
             case STATUS_VALUE.VENDER_OPERATE_TYPE.SKU: {
@@ -163,7 +163,8 @@ public class OrderInfoService extends BaseService {
 
     /**
      * 根据输入条件组出对应的搜索Map
-     * @param user 当前用户
+     *
+     * @param user            当前用户
      * @param orderSearchInfo 搜索条件
      * @return 搜索条件Map
      */
@@ -221,5 +222,20 @@ public class OrderInfoService extends BaseService {
     private long getTotalOrderNum(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
         Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo);
         return vmsOrderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
+    }
+
+    /**
+     * 取消订单
+     *
+     * @param item 订单
+     * @return 取消结果
+     */
+    public int cancelOrder(PlatformSubOrderInfoBean item) {
+
+        Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
+            put("orderId", item.getOrderId());
+            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
+        }};
+        return vmsOrderDetailService.updateOrderStatus(cancelOrderParam);
     }
 }

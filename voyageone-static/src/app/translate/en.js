@@ -7,6 +7,9 @@ define(function () {
         "TXT_OF": "of",
         "TXT_ITEMS": "items",
         "TXT_ALERT": "Alert",
-        "BTN_OK": "OK"
+        "BTN_OK": "OK",
+        "TXT_SHOWING_NO": "showing",
+        "TXT_PAGE": "page",
+        "BTN_GO": "GO"
     }
 });

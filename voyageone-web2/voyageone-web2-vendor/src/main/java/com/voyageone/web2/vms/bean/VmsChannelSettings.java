@@ -5,13 +5,13 @@ package com.voyageone.web2.vms.bean;
  * Created by vantis on 16-7-7.
  */
 public class VmsChannelSettings {
-    private String venderOperateType;
+    private String vendorOperateType;
 
-    public String getVenderOperateType() {
-        return venderOperateType;
+    public String getVendorOperateType() {
+        return vendorOperateType;
     }
 
-    public void setVenderOperateType(String venderOperateType) {
-        this.venderOperateType = venderOperateType;
+    public void setVendorOperateType(String vendorOperateType) {
+        this.vendorOperateType = vendorOperateType;
     }
 }
