@@ -69,7 +69,7 @@ public class CmsAdvanceSearchController extends CmsController {
         if ($isDebugEnabled()) {
             try {
                 $debug("高级检索 请求参数: " + JacksonUtil.bean2JsonNotNull(params));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 $error("转换输入参数时出错", e);
             }
         }
