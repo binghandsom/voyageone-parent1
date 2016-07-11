@@ -12,7 +12,7 @@ import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZ
  * Created by vantis on 16-7-7.
  */
 public class OrderSearchInfo {
-    private int status;
+    private Integer status = null;
     private String orderId;
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;
@@ -24,11 +24,11 @@ public class OrderSearchInfo {
     @DateTimeFormat
     private Date orderDateTo = null;
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
