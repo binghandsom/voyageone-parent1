@@ -88,9 +88,11 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
+                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'current':image.productCode == vm.mastData.productCode}">
+                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
+
                                         </div>
                                     </div>
                                 </div>
