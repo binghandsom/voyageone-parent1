@@ -1,21 +1,27 @@
-package com.voyageone.service.impl.cms.jumei.test;
+package com.voyageone.service.impl.cms;
 
-import com.voyageone.common.util.excel.ExcelException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOException;
+import static org.junit.Assert.*;
 
+/**
+ * @author james.li on 2016/7/11.
+ * @version 2.0.0
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class CmsBtJmPromotionExportTaskServiceTest {
+public class PlatformCategoryServiceTest {
+
     @Autowired
-   // CmsBtJmPromotionExportTaskService service;
+    PlatformCategoryService platformCategoryService;
+
     @Test
-    public  void  test() throws IOException, ExcelException {
-     //   service.export(1,"/usr/JMExport");
+    public void testGetCategoryByCatPath() throws Exception {
+
+        platformCategoryService.getCategoryByCatPath("111","运动/瑜伽/健身/球迷用品",23);
     }
 }

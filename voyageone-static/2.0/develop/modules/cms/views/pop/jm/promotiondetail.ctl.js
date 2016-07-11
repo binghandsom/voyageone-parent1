@@ -59,15 +59,22 @@ define([
             var start = new Date($scope.editModel.model.activityStart);
             var end = new Date($scope.editModel.model.activityEnd);
             if(end.getTime()-start.getTime() < 30*60*1000 ){
-                alert("活动时间检查：最小间隔为30分钟。")
+                alert("活动时间检查：最小间隔为30分钟。");
                 return;
             }
 
             if($scope.editModel.model.prePeriodStart > $scope.editModel.model.prePeriodEnd){
-                alert("预热时间检查：请输入结束时间>开始时间。")
+                alert("预热时间检查：请输入结束时间>开始时间。");
                 return;
             }
-
+            if($scope.editModel.model.prePeriodStart > $scope.editModel.model.activityStart){
+                alert("预热开始时间不能晚于活动开始时间");
+                return;
+            }
+            if($scope.editModel.model.prePeriodEnd > $scope.editModel.model.activityEnd){
+                alert("预热结束时间不能晚于活动结束时间");
+                return;
+            }
             var _upEntity = angular.copy($scope.editModel);
             _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
             _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
@@ -76,10 +83,8 @@ define([
             _upEntity.model.prePeriodEnd = formatToStr(_upEntity.model.prePeriodEnd);
             jmPromotionService.saveModel(_upEntity).then(function () {
                 context =$scope.editModel.model;
-                $scope.$close(context);
-                if(context.search) {
-                    context.search();
-                }
+                $scope.$close();
+
             })
         };
         /**

@@ -42,15 +42,15 @@ define([
                 data.priceType = self.priceType;
                 data.discount = self.hasDiscount ? self.discount / 10 : null;
                 self.jmPromotionProductAddService.add(data)
-                    .then(function(data) {
-                        if(data.data.errlist.length == 0) {
+                    .then(function(res) {
+                        if(res.data.errlist != null && res.data.errlist.length == 0) {
                             self.notify.success(self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             self.$uibModalInstance.close();
                         }else{
                             var message = "";
-                            _.each(data.data.errlist,function(item){
+                            _.each(res.data.errlist,function(item){
                                 message+=item+","
-                            })
+                            });
                             self.alert("以下code没有在聚美上新过不能加入promotion\n"+message);
                         }
                     });

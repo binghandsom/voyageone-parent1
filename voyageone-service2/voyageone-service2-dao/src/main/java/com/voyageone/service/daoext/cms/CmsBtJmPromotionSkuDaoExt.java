@@ -16,9 +16,9 @@ public interface CmsBtJmPromotionSkuDaoExt {
 
     CmsBtJmPromotionSkuModel selectBySkuCodeChannelIdCmsBtJmPromotionId(@Param("skuCode") String skuCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int CmsBtJmPromotionId);
 
-    List<Map<String, Object>> selectJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
+//    List<Map<String, Object>> selectJmSkuPriceInfoListByPromotionId(@Param("promotionId") int promotionId);
 
-    int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
+//    int updateDealPrice(@Param("dealPrice") BigDecimal dealPrice, @Param("productId") int productId);
 
     List<Map<String, Object>> selectListCmsBtJmImportSkuByPromotionId(int promotionId);
 

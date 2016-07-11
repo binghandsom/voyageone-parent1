@@ -100,7 +100,8 @@ define(function () {
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts"
+                    "updateProductAtts":"updateProductAtts",
+                    "checkCategory":"checkCategory"
                 }
             },
             "mapping": {
@@ -214,7 +215,9 @@ define(function () {
                     "batchDeleteProduct": "batchDeleteProduct",
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
-                    "updateDealPrice": "updateDealPrice"
+                    "updateDealPrice": "updateDealPrice",
+                    updatePromotionProduct:"updatePromotionProduct",
+                    updatePromotionProductTag:"updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {

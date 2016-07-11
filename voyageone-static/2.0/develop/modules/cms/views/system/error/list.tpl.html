@@ -76,7 +76,7 @@
 	<div class="box">
 		<div class="box-body">
 			<div class="table-responsive">
-				<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
+				<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px;table-layout: fixed;">
 					<thead>
 					<tr>
 						<th class="mfb-xt text-center" translate="TXT_SEQ"></th>
@@ -101,12 +101,13 @@
 								<span ng-if="!errorInfo.productId" ng-bind="::errorInfo.code"></span>
 						</td>
 						<td class="mfb-xxs text-left">
-                            <span ng-bind="::errorInfo.errorCode"></span><br/><span ng-bind="::errorInfo.errorMsg"></span>
+							<span ng-if="errorInfo.errorMsg.length > 50"><popover-text content="::errorInfo.errorMsg" direct="left" size="50"></popover-text></span>
+							<span ng-if="errorInfo.errorMsg.length <= 50">{{::errorInfo.errorMsg}}</span>
                         </td>
 						<td class="mfb-xt text-left" ng-bind="::errorInfo.created.substring(0, 19)"></td>
 						<td class="mfb-xt text-left" ng-bind="::errorInfo.creater"></td>
-						<td class="mfb-xt text-left">
-							<div class="onoffswitch">
+						<td class="mfb-xt text-center">
+							<div class="onoffswitch" style="margin: 0px auto;">
 								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{errorInfo.id}}"
                                        ng-change="updateFinishStatus(errorInfo.id)"
                                        ng-model="errorInfo.status">

@@ -50,13 +50,28 @@ public final class JacksonUtil {
         return sw.toString();
     }
 
-    public static String bean2JsonNotNull(Object obj) throws IOException {
+    public static String bean2JsonNotNull(Object obj) {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         StringWriter sw = new StringWriter();
-        JsonGenerator gen = new JsonFactory().createGenerator(sw);
-        mapper.writeValue(gen, obj);
-        gen.close();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        JsonGenerator gen;
+
+        try {
+            gen = new JsonFactory().createGenerator(sw);
+            mapper.writeValue(gen, obj);
+        } catch (IOException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
+
+        if (gen != null) {
+            try {
+                gen.close();
+            } catch (IOException e) {
+                throw new SystemException(e.getMessage(), e);
+            }
+        }
+
         return sw.toString();
     }
 
@@ -135,15 +150,23 @@ public final class JacksonUtil {
      * @param jsonString String
      * @return List
      */
-    public static List<Map<String, Object>> jsonToMapList(String jsonString) throws IOException {
+    public static List<Map<String, Object>> jsonToMapList(String jsonString)  {
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, Map.class);
-        return mapper.readValue(jsonString, javaType);
+        try {
+            return mapper.readValue(jsonString, javaType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public static <T> T ToObjectFromJson(String json, Class<T> c) throws Exception {
+
+    /**
+     * ToObjectFromJson
+     * use CMappingJacksonObjectMapper
+     */
+    public static <T> T ToObjectFromJson(String json, Class<T> cls) throws Exception {
         CMappingJacksonObjectMapper objectMapper = new CMappingJacksonObjectMapper();
-        T result = objectMapper.readValue(json,c);
-        return result;
+        return objectMapper.readValue(json, cls);
     }
 
 }

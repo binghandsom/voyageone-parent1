@@ -255,8 +255,8 @@ public class CmsBtJmPromotionService {
 
 
     //------------------聚美活动新增商品begin-----------------------------------------------------------------------------
-    @Resource
-    CmsBtJmPromotionImportTaskService jmPromotionImportTaskService;
+   // @Resource
+    //CmsBtJmPromotionImportTaskService jmPromotionImportTaskService;
 
     @Resource
     CmsBtProductDao productDao;  //用于获取mongo中的产品信息
@@ -279,7 +279,7 @@ public class CmsBtJmPromotionService {
                                          Integer priceType,
                                          String tagName,
                                          String tagId,
-                                         String creater) throws IllegalAccessException {
+                                         String creater){
 
         if (productIds == null || productIds.size() == 0) {
             log.warn("LOG00010:no product for adding to jumei promotion");
@@ -332,7 +332,11 @@ public class CmsBtJmPromotionService {
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
-        cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier(),false);
+        try {
+            cmsBtJmPromotionImportTask3Service.saveImport(promotion,listProductImport,listSkuImport,listProducctErrorMap,listSkuErrorMap,promotion.getModifier(),false);
+        } catch (IllegalAccessException ex) {
+            throw new BusinessException("添加商品到聚美活动一览失败,请联系IT处理");
+        }
 
         // 批量更新product表
         if (bulkList.size() > 0) {

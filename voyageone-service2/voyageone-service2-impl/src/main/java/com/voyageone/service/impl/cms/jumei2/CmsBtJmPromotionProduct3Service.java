@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
@@ -14,9 +16,9 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
+import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
-import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -40,12 +42,12 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmProductDaoExt daoExtCmsBtJmProductDaoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-    @Autowired
-    JuMeiProductPlatformService serviceJuMeiProductPlatform;
+//    @Autowired
+//    JuMeiProductPlatformService serviceJuMeiProductPlatform;
     @Autowired
     CmsMtJmConfigService serviceCmsMtJmConfig;
-    @Autowired
-    JMShopBeanService serviceJMShopBean;
+//    @Autowired
+//    JMShopBeanService serviceJMShopBean;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
     @Autowired
@@ -56,6 +58,8 @@ public class CmsBtJmPromotionProduct3Service {
     private ProductService productService;
     @Autowired
     private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
+    @Autowired
+    private CmsMtChannelValuesService cmsMtChannelValuesService;
 
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
@@ -65,7 +69,7 @@ public class CmsBtJmPromotionProduct3Service {
         return daoExt.selectPageByWhere(map);
     }
 
-    public InitResult init(InitParameter parameter) {
+    public InitResult init(InitParameter parameter, String channelId, String language) {
         InitResult result = new InitResult();
         result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));//CmsBtJmPromotion
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
@@ -77,6 +81,8 @@ public class CmsBtJmPromotionProduct3Service {
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
         result.setIsUpdateJM(!(hour >= 9 && hour <= 12));//是否可以更新聚美
+        // 获取brand list
+        result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
     }
 
@@ -88,14 +94,14 @@ public class CmsBtJmPromotionProduct3Service {
         return dao.delete(id);
     }
 
-    @VOTransactional
-    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
-        CmsBtJmPromotionProductModel model = dao.select(id);
-        model.setDealPrice(dealPrice);
-        model.setModifier(userName);
-        dao.update(model);
-        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
-    }
+//    @VOTransactional
+//    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
+//        CmsBtJmPromotionProductModel model = dao.select(id);
+//        model.setDealPrice(dealPrice);
+//        model.setModifier(userName);
+//        dao.update(model);
+//        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
+//    }
 
     @VOTransactional
     public void deleteByPromotionId(int promotionId) {

@@ -53,6 +53,7 @@ define([
         $scope.search = function () {
             //$scope.vm.status.open = false;//收缩搜索栏
             search();
+            $scope.vm._selall = false;
         };
         $scope.exportFile = exportFile;
         $scope.getGroupList = getGroupList;
@@ -290,6 +291,7 @@ define([
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
                     $scope.vm.groupSelList = res.data.groupSelList;
+                    $scope.vm._selall = false;
                 });
         }
 
@@ -302,6 +304,7 @@ define([
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
+                    $scope.vm._selall = false;
                     for (idx in res.data.freeTagsList) {
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
