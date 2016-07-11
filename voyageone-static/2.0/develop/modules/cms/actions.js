@@ -214,7 +214,9 @@ define(function () {
                     "batchDeleteProduct": "batchDeleteProduct",
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
-                    "updateDealPrice": "updateDealPrice"
+                    "updateDealPrice": "updateDealPrice",
+                    updatePromotionProduct:"updatePromotionProduct",
+                    updatePromotionProductTag:"updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {

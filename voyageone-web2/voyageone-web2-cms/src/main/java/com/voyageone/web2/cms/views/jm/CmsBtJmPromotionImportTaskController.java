@@ -5,7 +5,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
@@ -26,8 +26,8 @@ import java.util.*;
         method = RequestMethod.POST
 )
 public class CmsBtJmPromotionImportTaskController extends CmsController {
-    @Autowired
-    private CmsBtJmPromotionImportTaskService service;
+   @Autowired
+    private CmsBtJmPromotionImportTask3Service service;
     @Autowired
     private MqSender sender;
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionImportTask.LIST.INDEX.GET_BY_PROMOTIONID)

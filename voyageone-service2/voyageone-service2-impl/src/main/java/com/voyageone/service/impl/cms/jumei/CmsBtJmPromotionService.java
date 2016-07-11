@@ -255,8 +255,8 @@ public class CmsBtJmPromotionService {
 
 
     //------------------聚美活动新增商品begin-----------------------------------------------------------------------------
-    @Resource
-    CmsBtJmPromotionImportTaskService jmPromotionImportTaskService;
+   // @Resource
+    //CmsBtJmPromotionImportTaskService jmPromotionImportTaskService;
 
     @Resource
     CmsBtProductDao productDao;  //用于获取mongo中的产品信息

@@ -20,7 +20,9 @@ import java.math.BigDecimal;
 public class CmsBtJmPromotionSku3Service {
     @Autowired
     CmsBtJmPromotionSkuDao dao;
+    @Autowired
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
+    @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
 
     public CmsBtJmPromotionSkuModel select(int id) {
