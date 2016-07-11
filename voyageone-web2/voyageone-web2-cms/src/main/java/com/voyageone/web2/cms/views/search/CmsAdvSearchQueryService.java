@@ -457,12 +457,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         List<String> orgChaNameList = new ArrayList<>();
         List<List<Map<String, Object>>> prodIdList = new ArrayList<>();
         List<String> freeTagsList = new ArrayList<>();
+        List<List<CmsBtProductGroupModel>> grpPriceList = new ArrayList<>();
 
         if (hasImgFlg) {
-            rslt = new List[3];
+            rslt = new List[4];
             rslt[0] = chgFlgList;
             rslt[1] = imgList;
             rslt[2] = prodIdList;
+            rslt[3] = grpPriceList;
         } else {
             rslt = new List[3];
             rslt[0] = chgFlgList;
@@ -599,6 +601,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             imgList.add(images1Arr);
             prodIdList.add(groupProdIdList);
+
+            // 获取Group的价格区间
+            if (hasImgFlg) {
+                qrpQuy = new JomgoQuery();
+                qrpQuy.setQuery("{'mainProductCode':#,'cartId':{$nin:[null,'',0,1]}}");
+                qrpQuy.setParameters(prodCode);
+                grpList = productGroupService.getList(channelId, qrpQuy);
+                grpPriceList.add(grpList);
+            }
         }
         return rslt;
     }

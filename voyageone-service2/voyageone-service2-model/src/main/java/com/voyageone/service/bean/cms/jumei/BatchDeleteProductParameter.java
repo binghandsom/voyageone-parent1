@@ -8,6 +8,18 @@ import java.util.List;
 public class BatchDeleteProductParameter {
     List<Long> listPromotionProductId;
     int promotionId;
+    List<String> listProductCode;
+    public List<String> getListProductCode() {
+        return listProductCode;
+    }
+
+    public void setListProductCode(List<String> listProductCode) {
+        this.listProductCode = listProductCode;
+    }
+
+
+
+
     public int getPromotionId() {
         return promotionId;
     }

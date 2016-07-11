@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
@@ -8,13 +9,11 @@ import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
-import com.voyageone.service.dao.cms.CmsBtTagDao;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +36,21 @@ public class CmsBtJmPromotionProductService {
     CmsBtJmPromotionProductDaoExt daoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
+    @Autowired
+    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
+    @Autowired
+    private CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
+    @Autowired
+    private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
+
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
+    @Autowired
+    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
+    @Autowired
+    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
+    @Autowired
+    CmsBtPromotionDao daoCmsBtPromotion;
 //    @Autowired
 //    JuMeiProductPlatformService serviceJuMeiProductPlatform;
 //    @Autowired
@@ -111,18 +126,30 @@ public class CmsBtJmPromotionProductService {
 //        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
 //    }
 
-    @VOTransactional
-    public void deleteByPromotionId(int promotionId) {
-        daoExt.deleteByPromotionId(promotionId);
-        daoExtCmsBtJmPromotionSku.deleteByPromotionId(promotionId);
-    }
-
+//    @VOTransactional
+//    public void deleteByPromotionId(int jmPromotionId) {
+//        daoExt.deleteByPromotionId(jmPromotionId);
+//        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
+//        CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(jmPromotionId);
+//        if (modelCmsBtPromotion != null) {
+//            daoExtCamelCmsBtPromotionCodes.deleteByPromotionId(modelCmsBtPromotion.getId());
+//            daoExtCamelCmsBtPromotionGroups.deleteByPromotionId(modelCmsBtPromotion.getId());
+//            daoExtCamelCmsBtPromotionSkus.deleteByPromotionId(modelCmsBtPromotion.getId());
+//        }
+//    }
     @VOTransactional
     public void deleteByProductIdList(ProductIdListInfo parameter) {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
-
+//    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
+//    {
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("promotionId",jmPromotionId);
+//        map.put("cartId", CartEnums.Cart.JM.getValue());
+//        CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
+//        return  promotion;
+//    }
     //所有未上心商品上新
     public int jmNewUpdateAll(int promotionId) {
         return daoExt.jmNewUpdateAll(promotionId);

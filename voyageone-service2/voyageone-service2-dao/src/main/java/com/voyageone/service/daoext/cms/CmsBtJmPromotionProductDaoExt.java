@@ -61,8 +61,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     int batchCopyDealUpdatePrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
-    int copyDealAll(int promotionId);
-
+   // int copyDealAll(int promotionId);
+     int copyDealAll_UpdatePriceStatus (int promotionId);
+    int  copyDealAll_UpdateSynchStatus(int promotionId);
     int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllProduct(int promotionId);
