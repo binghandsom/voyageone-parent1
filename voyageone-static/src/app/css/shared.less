@@ -1,21 +1,28 @@
 .input.input-file{
   position: relative;
   display: block;
+  overflow: hidden;
   .button_browse{
-    right: 88px;
+    position: absolute;
     padding: 0 20px;
-    font-size: 13px;
-    background: #72c02c;
-    line-height: 29px;
-    color: aliceblue;
+    width: 986px;
+    left: -100px;
+    top: 4px;
+    opacity: 0.8;
+    -ms-transition: opacity 0.2s;
+    -moz-transition: opacity 0.2s;
+    -webkit-transition: opacity 0.2s;
+    overflow: hidden;
+    outline: none;
+    border: 0;
+    font: 300 15px/39px 'Open Sans', Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    display: block;
     #file{
-      position: absolute;
       top: 0;
-      right: 0;
       padding: 0;
-      font-size: 25px;
+      font-size: 16px;
       cursor: pointer;
-      outline: none;
     }
   }
   input{

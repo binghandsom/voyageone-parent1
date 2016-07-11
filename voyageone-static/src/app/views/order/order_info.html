@@ -33,24 +33,22 @@
                 <div class="form-group">
                     <label class="control-label">ORDER DATE</label>
                     <span class="input-group">
-                        <input name="activityStart" class="form-control"
-                               title="From"
+                        <input type="datetime" name="activityStart" class="form-control" title="From"
                                ng-model="ctrl.orderDateFrom"
                                uib-datepicker-popup
-                               is-open="datepicker3"
-                               placeholder="From">
+                               datepicker-options="{maxDate:ctrl.orderDateTo}"
+                               is-open="datepicker3" >
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker3=!datepicker3"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
                     <span>~</span>
                     <span class="input-group">
-                        <input name="activityStart" class="form-control"
-                               title="To"
+                        <input type="datetime" name="activityStart" class="form-control" title="To"
                                ng-model="ctrl.orderDateTo"
                                uib-datepicker-popup
-                               is-open="datepicker4"
-                               placeholder="To">
+                               datepicker-options="{minDate:ctrl.orderDateFrom}"
+                               is-open="datepicker4" >
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
