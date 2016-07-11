@@ -64,8 +64,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //end 2
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
      public AjaxResponse init(@RequestBody InitParameter parameter) {
-        InitResult result=new InitResult();
-         return success(service3.init(parameter));
+         return success(service3.init(parameter, getUser().getSelChannelId(), getLang()));
      }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
@@ -132,6 +131,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
+        //parameter.getDealEndTime().setTime(59);//聚美专场结束时间都以59秒结尾。
         CallResult result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();

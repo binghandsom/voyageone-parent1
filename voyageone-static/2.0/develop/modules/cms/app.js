@@ -2,45 +2,30 @@ define([
     'angularAMD',
     'angular',
     'underscore',
-    'json!modules/cms/routes.json',
-    'json!modules/cms/actions.json',
+    'modules/cms/routes',
+    'modules/cms/actions',
     'modules/cms/translate/en',
-    'modules/cms/translate/zh',
-    'voyageone-angular-com',
-    'voyageone-com',
-    'angular-block-ui',
-    'angular-ui-bootstrap',
-    'angular-ngStorage',
-    'angular-route',
-    'angular-sanitize',
-    'angular-animate',
-    'angular-translate',
-    'angular-cookies',
-    'angular-file-upload',
-    'filestyle',
-    'notify',
-    'angular-chosen'
-], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
+    'modules/cms/translate/zh'
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
-            'ngRoute',
-            'ngAnimate',
-            'ngCookies',
-            'ngSanitize',
-            'pascalprecht.translate',
-            'blockUI',
-            'voyageone.angular',
-            'voyageone.angular.vresources',
-            'ui.bootstrap',
-            'ngStorage',
-            'angularFileUpload',
-            'localytics.directives'
-        ])
-
-        // define
-        .constant('$actions', cActions)
-        .constant('cActions', cActions)
-        .constant('cRoutes', cRoutes)
+        'ngRoute',
+        'ngAnimate',
+        'ngCookies',
+        'ngSanitize',
+        'pascalprecht.translate',
+        'blockUI',
+        'voyageone.angular',
+        'voyageone.angular.vresources',
+        'ui.bootstrap',
+        'ui.indeterminate',
+        'ngStorage',
+        'angularFileUpload',
+        'localytics.directives',
+        'angular-md5',
+        'angular-drag'
+    ]).constant('cActions', actions)
+        .constant('cRoutes', routes)
         .constant('cLanguageType', {
             en: {
                 name: "en",
@@ -65,16 +50,25 @@ define([
         })
 
         // router config.
-        .config(function ($routeProvider) {
-            return _.each(cRoutes, function (module) {
+        // translate config.
+        .config(function ($routeProvider, $translateProvider, cLanguageType) {
+
+            _.each(cLanguageType, function (type) {
+                $translateProvider.translations(type.name, type.value);
+            });
+
+            _.each(routes, function (module) {
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
         })
 
-        // translate config.
-        .config(function ($translateProvider, cLanguageType) {
-            _.forEach(cLanguageType, function (type) {
-                $translateProvider.translations(type.name, type.value);
+        .run(function ($vresources, $localStorage) {
+            // 从会话中取出登录和选择渠道存储的数据
+            var userInfo = $localStorage.user;
+            // 传入 register 作为额外的缓存关键字
+            $vresources.register(null, actions, {
+                username: userInfo.name,
+                channel: userInfo.channel
             });
         })
 
@@ -101,7 +95,7 @@ define([
         // config
         $scope.app = {
             name: 'VoyageOne',
-            version: 'Version 2.1.0',
+            version: 'Version 2.2.0',
             copyRight: 'Copyright © 2016 VoyageOne. All Rights Reserved.',
             // for chart colors
             color: {
@@ -159,7 +153,7 @@ define([
         }
     }
 
-    function menuService($q, ajaxService, cookieService, translateService, cActions) {
+    function menuService($q, ajaxService, cookieService, translateService, cActions, $menuService) {
 
         this.getMenuHeaderInfo = getMenuHeaderInfo;
         this.setMenu = setMenu;
@@ -186,7 +180,7 @@ define([
                     //if (!_.isEmpty(cookieService.language()))
                     //    userlanguage = cookieService.language();
                     //else if (!_.isEmpty(data.userInfo.language))
-                        userlanguage = data.userInfo.language;
+                    userlanguage = data.userInfo.language;
 
                     // 设置画面用户显示的语言
                     _.forEach(data.languageList, function (language) {
@@ -261,12 +255,9 @@ define([
          * @returns {*}
          */
         function getCategoryInfo() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryInfo)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getCategoryInfo().then(function (res) {
+                return res.data;
+            });
         }
 
         /**
@@ -274,45 +265,25 @@ define([
          * @returns {*}
          */
         function getPlatformType() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getPlatformType)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.getPlatformType().then(function (res) {
+                return res.data;
+            });
         }
-
-        ///**
-        // * get categoryTree.
-        // * @returns {*}
-        // */
-        //function getCategoryTree() {
-        //    var defer = $q.defer();
-        //    ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-        //        .then(function (response) {
-        //            defer.resolve(response.data);
-        //        });
-        //    return defer.promise;
-        //}
 
         /**
-         *
          * set platformType.
-         * @param cTypeId
-         * @returns {*}
          */
         function setPlatformType(cType) {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setPlatformType, {"cTypeId": cType.add_name2, "cartId": parseInt(cType.value)})
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
+            return $menuService.setPlatformType({
+                "cTypeId": cType.add_name2,
+                "cartId": parseInt(cType.value)
+            }).then(function (res) {
+                return res.data;
+            });
         }
-
     }
 
-    function headerCtrl($scope,$rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -331,8 +302,8 @@ define([
                 vm.applicationList = data.applicationList;
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
-                $rootScope.menuTree=data.menuTree;
-                $rootScope.application=data.userInfo.application;
+                $rootScope.menuTree = data.menuTree;
+                $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
             });
         }
@@ -371,12 +342,12 @@ define([
          * search by input value.
          */
         function goSearchPage(value) {
-            if(value){
+            if (value) {
                 //searchInfoFactory.catId(null);
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
-                $location.path(cRoutes.search_advance_param.url + "2/" + value + "/0");
+                $location.path(cRoutes.search_advance_param.url + "2/" + encodeURIComponent(value) + '/0/0');
             }
         }
 
@@ -420,7 +391,7 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes,cookieService) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, cookieService) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
@@ -453,20 +424,19 @@ define([
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
-         *
          */
-        function goSearchPage(catPath,catId) {
+        function goSearchPage(catPath, catId) {
             var catPath = encodeURIComponent(catPath);
-            switch($rootScope.platformType.cTypeId){
-                case "MT":
+            switch ($rootScope.platformType.cTypeId) {
+                case "MT": // 已不使用
                     $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
                     break;
                 case "TH":
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
                     break;
                 default:
-                    $location.path(cRoutes.search_advance_param.url + "3/" + catId + "/" + $rootScope.platformType.cTypeId);
-
+                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
+                    break;
             }
         }
     }

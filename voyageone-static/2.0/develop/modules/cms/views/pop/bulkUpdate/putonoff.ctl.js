@@ -19,7 +19,7 @@ define([
                         return;
                     }
                     if (res.data.ecd == 1) {
-                        // 存在未ready状态
+                        // 未选择商品
                         alert($translate.instant('未选择商品，请选择后再操作'));
                         return;
                     }

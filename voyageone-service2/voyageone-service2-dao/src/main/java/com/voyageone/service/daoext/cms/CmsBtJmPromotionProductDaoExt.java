@@ -14,13 +14,13 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionProductDaoExt {
 
-    List selectListByWhere(Map<String, Object> map);
+    List<MapModel> selectListByWhere(Map<String, Object> map);
 
     CmsBtJmPromotionProductModel selectByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List selectExportInfoListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
 
-    List selectListCmsBtJmImportProductByPromotionId(int promotionId);
+    List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -35,7 +35,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
-    List selectPageByWhere(Map<String, Object> map);//add
+    List<MapModel> selectPageByWhere(Map<String, Object> map);//add
 
     int selectCountByWhere(Map<String, Object> ma);//add
 
@@ -46,7 +46,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel selectByProductCode(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List selectExportListByPromotionId(int promotionId);
+    List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
 
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
@@ -75,14 +75,14 @@ public interface CmsBtJmPromotionProductDaoExt {
      * @param channelId
      * @return
      */
-    List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    List<String> selectJmHashIds(@Param("channelId") String channelId, @Param("productCode") String productCode,@Param("nowDate") Date nowDate);
     //是否存在在销售的商品
-    CmsBtJmPromotionProductModel selectOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    CmsBtJmPromotionProductModel selectOnSaleByCode(@Param("channelId") String channelId, @Param("productCode") String productCode,@Param("nowDate") Date nowDate);
     int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
 //获取变更数量
     int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);
 
     //获取本活动商品在其他活动处于在售状态的商品
-    CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
+    CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId,@Param("nowDate") Date nowDate);
     //jm2 end
 }

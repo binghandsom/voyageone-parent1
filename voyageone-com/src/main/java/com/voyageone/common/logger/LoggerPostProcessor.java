@@ -1,13 +1,10 @@
 package com.voyageone.common.logger;
 
-import java.lang.reflect.Field;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.FieldCallback;
 
 /**
  * Component to inject the {@link Log} to each bean that has a {@link Log} annotation.

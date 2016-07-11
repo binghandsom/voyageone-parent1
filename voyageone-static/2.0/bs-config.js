@@ -11,7 +11,7 @@ module.exports = {
     },
     files: [
         'develop/static/**/*.css',
-        'develop/modules/**/*.{html, js, css}',
+        'develop/modules/**/*.{html,js}',
         'develop/components/**/*.js'
     ],
     notify: false,

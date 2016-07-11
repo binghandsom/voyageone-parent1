@@ -50,6 +50,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
     private Field colorExtend_basecolorField;
     private Field colorExtend_imageField;
 
+    // added by morse.lu 2016/07/04 start
+    private Field hscodeField;
+    // added by morse.lu 2016/07/04 end
+
     private int availableColorIndex = 0;
 
     private BuildSkuResult buildSkuResult;
@@ -59,20 +63,20 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         Map<String, CmsBtProductModel_Sku> colorCmsSkuPropMap;
 
         //Build prop extend result
-        Map<String, ComplexValue> codeValueComplexValueMap;
+//        Map<String, ComplexValue> codeValueComplexValueMap;
 
         public BuildSkuResult() {
             colorCmsSkuPropMap = new HashMap<>();
-            codeValueComplexValueMap = new HashMap<>();
+//            codeValueComplexValueMap = new HashMap<>();
         }
 
         public Map<String, CmsBtProductModel_Sku> getColorCmsSkuPropMap() {
             return colorCmsSkuPropMap;
         }
 
-        public Map<String, ComplexValue> getCodeValueComplexValueMap() {
-            return codeValueComplexValueMap;
-        }
+//        public Map<String, ComplexValue> getCodeValueComplexValueMap() {
+//            return codeValueComplexValueMap;
+//        }
     }
 
     @Override
@@ -87,6 +91,9 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 
         for (Field platformProp : platformProps) {
             if ("hscode".equals(platformProp.getId())) {
+                // added by morse.lu 2016/07/04 start
+                hscodeField = platformProp;
+                // added by morse.lu 2016/07/04 end
                 continue;
             }
 
@@ -159,15 +166,23 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         return true;
     }
 
-    private void buildSkuColor(ComplexValue skuFieldValue, ExpressionParser expressionParser, MappingBean colorMapping, CmsBtProductModel_Sku cmsSkuProp, ShopBean shopBean, String user) throws Exception {
+    // modified by morse.lu 2016/07/04 start
+    // 不用Mapping了
+//    private void buildSkuColor(ComplexValue skuFieldValue, ExpressionParser expressionParser, MappingBean colorMapping, CmsBtProductModel_Sku cmsSkuProp, ShopBean shopBean, String user) throws Exception {
+    private void buildSkuColor(ComplexValue skuFieldValue, CmsBtProductModel productModel, CmsBtProductModel_Sku cmsSkuProp) throws Exception {
+        // modified by morse.lu 2016/07/04 end
         if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> colorOptions = ((SingleCheckField)sku_colorField).getOptions();
             String colorValue = colorOptions.get(availableColorIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_colorField.getId(), new Value(colorValue));
             buildSkuResult.getColorCmsSkuPropMap().put(colorValue, cmsSkuProp);
         } else {
-            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
-            String skuColor = expressionParser.parse(skuColorExpression, shopBean, user, null);
+            // modified by morse.lu 2016/07/04 start
+            // 不用Mapping了
+//            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
+//            String skuColor = expressionParser.parse(skuColorExpression, shopBean, user, null);
+            String skuColor = getSkuValue(productModel, sku_colorField.getId(), cmsSkuProp.getSkuCode());
+            // modified by morse.lu 2016/07/04 end
             skuFieldValue.setInputFieldValue(sku_colorField.getId(), skuColor);
             buildSkuResult.getColorCmsSkuPropMap().put(skuColor, cmsSkuProp);
         }
@@ -177,55 +192,110 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         List<CmsBtProductModel> sxProducts = expressionParser.getSxData().getProductList();
         buildSkuResult = new BuildSkuResult();
 
-        ComplexMappingBean skuMappingComplex = (ComplexMappingBean) skuMapping;
-        List<MappingBean> subMappingBeans = skuMappingComplex.getSubMappings();
-        Map<String, Field> fieldMap = ((MultiComplexField)skuField).getFieldMap();
-
-        Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
-        for (MappingBean mappingBean : subMappingBeans) {
-            String propId = mappingBean.getPlatformPropId();
-            skuSubMappingMap.put(propId, mappingBean);
-        }
+        // deleted by morse.lu 2016/07/04 start
+        // 这一版不用Mapping啦,方法入参先留着,以防以后有特殊的需要Mapping的属性
+//        ComplexMappingBean skuMappingComplex = (ComplexMappingBean) skuMapping;
+//        List<MappingBean> subMappingBeans = skuMappingComplex.getSubMappings();
+//        Map<String, Field> fieldMap = ((MultiComplexField)skuField).getFieldMap();
+//
+//        Map<String, MappingBean> skuSubMappingMap = new HashMap<>();
+//        for (MappingBean mappingBean : subMappingBeans) {
+//            String propId = mappingBean.getPlatformPropId();
+//            skuSubMappingMap.put(propId, mappingBean);
+//        }
+        // deleted by morse.lu 2016/07/04 end
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
-            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
-                expressionParser.setSkuPropContext(cmsSkuProp);
+                // deleted by morse.lu 2016/07/04 start
+                // 不Mapping了,不用了吧,虽然留着也不影响,但是set的对象不对,应该是common下的skus + 各平台下面的skus
+//                expressionParser.setSkuPropContext(cmsSkuProp);
+                // deleted by morse.lu 2016/07/04 end
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
-                buildSkuColor(skuFieldValue, expressionParser, skuSubMappingMap.get(sku_colorField.getId()), cmsSkuProp, shopBean, user);
+                // modified by morse.lu 2016/07/04 start
+                // 不用Mapping了
+//                buildSkuColor(skuFieldValue, expressionParser, skuSubMappingMap.get(sku_colorField.getId()), cmsSkuProp, shopBean, user);
+                buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
+                // modified by morse.lu 2016/07/04 end
 
-                for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
-                    String propId = mappingBean.getPlatformPropId();
-                    // add by morse.lu 2016/05/15 start
-                    // target店上新临时添加写死用
-                    if ("hscode".equals(propId)) {
-                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
-                        skuFieldValue.setInputFieldValue(propId, propValue.split(",")[0]);
-//                        skuFieldValue.setInputFieldValue(propId, "0410004300");
+                // modified by morse.lu 2016/07/04 start
+                // 不用Mapping了
+//                for (MappingBean mappingBean : skuMappingComplex.getSubMappings()) {
+//                    String propId = mappingBean.getPlatformPropId();
+//                    // add by morse.lu 2016/05/15 start
+//                    // target店上新临时添加写死用
+//                    if ("hscode".equals(propId)) {
+//                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null); // "0410004300, 戒指 ,对" 或者  "0410004300, 戒指 ,只"
+//                        skuFieldValue.setInputFieldValue(propId, propValue.split(",")[0]);
+////                        skuFieldValue.setInputFieldValue(propId, "0410004300");
+//                        continue;
+//                    }
+//                    // add by morse.lu 2016/05/15 end
+//                    if (propId.equals(sku_colorField.getId())) {
+//                        continue;
+//                    } else if (propId.equals(sku_quantityField.getId())) {
+//                        int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
+//                        skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
+//                    } else {
+//                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
+//                        Field subField = fieldMap.get(propId);
+//                        if (subField != null) {
+//                            if (subField.getType() == FieldTypeEnum.INPUT) {
+//                                skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+//                            } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                                skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+//                            }
+//                        }
+//                    }
+//                }
+                for (Field field : ((MultiComplexField)skuField).getFields()) {
+                    String fieldId = field.getId();
+                    if (fieldId.equals(sku_colorField.getId())) {
                         continue;
                     }
-                    // add by morse.lu 2016/05/15 end
-                    if (propId.equals(sku_colorField.getId())) {
+                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
                         continue;
-                    } else if (propId.equals(sku_quantityField.getId())) {
-                        int skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
-                        skuFieldValue.setInputFieldValue(propId, String.valueOf(skuQuantity));
-                    } else {
-                        RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                        String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
-                        Field subField = fieldMap.get(propId);
-                        if (subField.getType() == FieldTypeEnum.INPUT) {
-                            skuFieldValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                        } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                            skuFieldValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+                    }
+                    if (sku_outerIdField != null && fieldId.equals(sku_outerIdField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_outerIdField.getId(), cmsSkuProp.getSkuCode());
+                        continue;
+                    }
+                    if (sku_priceField != null && fieldId.equals(sku_priceField.getId())) {
+                        skuFieldValue.setInputFieldValue(sku_priceField.getId(), String.valueOf(getSkuPrice(expressionParser.getSxData().getChannelId(), sxProduct, cmsSkuProp.getSkuCode())));
+                        continue;
+                    }
+                    if (sku_quantityField != null && fieldId.equals(sku_quantityField.getId())) {
+                        Integer skuQuantity = skuInventoryMap.get(cmsSkuProp.getSkuCode());
+                        if (skuQuantity == null) {
+                            skuQuantity = 0;
                         }
+                        skuFieldValue.setInputFieldValue(sku_quantityField.getId(), String.valueOf(skuQuantity));
+                        continue;
+                    }
+                    if (hscodeField != null && fieldId.equals(hscodeField.getId())) {
+                        // hscode不做Mapping了，写死从个人税号里去取
+                        String propValue = expressionParser.getSxData().getMainProduct().getCommon().getFields().getHsCodePrivate();
+                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        continue;
+                    }
+
+                    // 从各平台下面的fields.sku里取值
+                    String val = getSkuValue(sxProduct, fieldId, cmsSkuProp.getSkuCode());
+                    if (field.getType() == FieldTypeEnum.INPUT) {
+                        skuFieldValue.setInputFieldValue(fieldId, val);
+                    } else if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+                        skuFieldValue.setSingleCheckFieldValue(fieldId, new Value(val));
                     }
                 }
+                // modified by morse.lu 2016/07/04 end
             }
         }
 
@@ -238,7 +308,7 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         boolean hasSomeSku = false;
         Map<CmsBtProductModel_Sku, CmsBtProductModel> skuProductMap = new HashMap<>();
         for (CmsBtProductModel sxProduct : sxData.getProductList()) {
-            List<CmsBtProductModel_Sku> listSku = sxProduct.getSkus();
+            List<CmsBtProductModel_Sku> listSku = sxProduct.getCommon().getSkus();
             if (listSku.size() > 1) {
                 hasSomeSku = true;
             }
@@ -253,7 +323,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getColorCmsSkuPropMap().entrySet())
         {
             CmsBtProductModel_Sku cmsSkuProp = entry.getValue();
-            expressionParser.setSkuPropContext(cmsSkuProp);
+            // deleted by morse.lu 2016/07/04 start
+            // 不Mapping了,不用了吧,虽然留着也不影响,但是set的对象不对,应该是common下的skus + 各平台下面的skus
+//            expressionParser.setSkuPropContext(cmsSkuProp);
+            // deleted by morse.lu 2016/07/04 end
 
             ComplexValue complexValue = new ComplexValue();
 
@@ -264,12 +337,15 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
             }
 
             CmsBtProductModel sxProductBean = skuProductMap.get(cmsSkuProp);
-            // tom 设置当前的产品内容 START TODO: 这段写的不是优雅, 之后看情况修改
-            expressionParser.pushMasterPropContext(sxProductBean.getFields());
-            // tom 设置当前的产品内容 END TODO: 这段写的不是优雅, 之后看情况修改
+            // modified by morse.lu 2016/07/04 start
+            // 不用Mapping了
+//            // tom 设置当前的产品内容 START TODO: 这段写的不是优雅, 之后看情况修改
+//            expressionParser.pushMasterPropContext(sxProductBean.getCommon().getFields());
+//            // tom 设置当前的产品内容 END TODO: 这段写的不是优雅, 之后看情况修改
+            // modified by morse.lu 2016/07/04 end
 
             if (colorExtend_imageField != null) {
-                String propImage = sxProductBean.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = sxProductBean.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");
@@ -278,49 +354,66 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                         String codePropFullImageUrl = String.format(getCodeImageTemplate(), propImage);
 //                        String codePropFullImageUrl = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), getCodeImageTemplate(), propImage);
 //                    codePropFullImageUrl = expressionParser.getSxProductService().encodeImageUrl(codePropFullImageUrl);
-                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
+//                        complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
 
                         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
                             Set<String> url = new HashSet<>();
                             url.add(codePropFullImageUrl);
                             // 上传图片到天猫图片空间
+//                            expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
                             Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
-//                        } else {
-//                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
+                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), retMap.get(codePropFullImageUrl));
+                        } else {
+                            complexValue.setInputFieldValue(colorExtend_imageField.getId(), codePropFullImageUrl);
                         }
                     }
                 }
             }
 
-            for (MappingBean mappingBean : ((ComplexMappingBean)colorExtendMapping).getSubMappings()) {
-                String propId = mappingBean.getPlatformPropId();
-                if (propId.equals(colorExtend_colorField.getId())
-                        || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
-                    continue;
+            // modified by morse.lu 2016/07/04 start
+            // 不用Mapping了
+//            for (MappingBean mappingBean : ((ComplexMappingBean)colorExtendMapping).getSubMappings()) {
+//                String propId = mappingBean.getPlatformPropId();
+//                if (propId.equals(colorExtend_colorField.getId())
+//                        || (colorExtend_imageField  != null && propId.equals(colorExtend_imageField.getId()))) {
+//                    continue;
+//                } else {
+//                    // added by morse.lu 2016/05/27 start
+//                    // TODO:一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code(mapping表设定)
+//                    if (hasSomeSku && propId.equals(colorExtend_aliasnameField.getId())) {
+//                        // 别名
+//                        complexValue.setInputFieldValue(propId, cmsSkuProp.getSkuCode());
+//                        continue;
+//                    }
+//                    // added by morse.lu 2016/05/27 end
+//                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
+//                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
+//                    Field subField = fieldMap.get(propId);
+//                    if (subField.getType() == FieldTypeEnum.INPUT) {
+//                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
+//                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
+//                    }
+//                }
+//            }
+//
+//            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+//            expressionParser.popMasterPropContext();
+//            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
+
+            if (colorExtend_aliasnameField != null) {
+                // 别名
+                // 一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code
+                if (hasSomeSku) {
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), cmsSkuProp.getSkuCode());
                 } else {
-                    // added by morse.lu 2016/05/27 start
-                    // TODO:一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code(mapping表设定)
-                    if (hasSomeSku && propId.equals(colorExtend_aliasnameField.getId())) {
-                        // 别名
-                        complexValue.setInputFieldValue(propId, cmsSkuProp.getSkuCode());
-                        continue;
-                    }
-                    // added by morse.lu 2016/05/27 end
-                    RuleExpression ruleExpression = ((SimpleMappingBean)mappingBean).getExpression();
-                    String propValue = expressionParser.parse(ruleExpression, shopBean, user, null);
-                    Field subField = fieldMap.get(propId);
-                    if (subField.getType() == FieldTypeEnum.INPUT) {
-                        complexValue.setInputFieldValue(mappingBean.getPlatformPropId(), propValue);
-                    } else if (subField.getType() == FieldTypeEnum.SINGLECHECK) {
-                        complexValue.setSingleCheckFieldValue(mappingBean.getPlatformPropId(), new Value(propValue));
-                    }
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
                 }
             }
-
-            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
-            expressionParser.popMasterPropContext();
-            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
+            if (colorExtend_basecolorField != null) {
+                // 原先也没做,这版也暂时不做
+            }
+            // modified by morse.lu 2016/07/04 end
 
             complexValues.add(complexValue);
         }
@@ -335,16 +428,19 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         MappingBean skuMappingBean = null;
         MappingBean colorExtendMappingBean = null;
 
-        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
-
-        for (MappingBean mappingBean : mappingBeenList) {
-            if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
-                skuMappingBean = mappingBean;
-            }
-            if (colorExtendField != null && mappingBean.getPlatformPropId().equals(colorExtendField.getId())) {
-                colorExtendMappingBean = mappingBean;
-            }
-        }
+        // deleted by morse.lu 2016/07/04 start
+        // 这一版不用Mapping啦,方法入参先留着,以防以后有特殊的需要Mapping的属性
+//        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
+//
+//        for (MappingBean mappingBean : mappingBeenList) {
+//            if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
+//                skuMappingBean = mappingBean;
+//            }
+//            if (colorExtendField != null && mappingBean.getPlatformPropId().equals(colorExtendField.getId())) {
+//                colorExtendMappingBean = mappingBean;
+//            }
+//        }
+        // deleted by morse.lu 2016/07/04 end
 
         skuField = buildSkuProp(skuField, expressionParser, skuMappingBean, skuInventoryMap, shopBean, user);
         skuInfoFields.add(skuField);

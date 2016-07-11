@@ -55,6 +55,4 @@ public class PlatformMappingService extends BaseService {
     public String getSpecialMappingType(Integer cartId, String platformCategoryId, String propertyId) {
         return platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
     }
-
-
 }

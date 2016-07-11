@@ -18,6 +18,8 @@ public interface CmsBtTaskJiagepiluDao {
 
     CmsBtTaskJiagepiluModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtTaskJiagepiluModel select(Integer id);
 
     int insert(CmsBtTaskJiagepiluModel record);

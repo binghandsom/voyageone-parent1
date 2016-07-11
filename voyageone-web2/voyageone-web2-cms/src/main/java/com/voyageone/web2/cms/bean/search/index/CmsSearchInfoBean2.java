@@ -1,5 +1,8 @@
 package com.voyageone.web2.cms.bean.search.index;
 
+import com.voyageone.common.util.JsonUtil;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +11,7 @@ import java.util.Map;
  * @author Edward
  * @version 2.0.0, 15/12/15
  */
-public class CmsSearchInfoBean2 {
+public class CmsSearchInfoBean2 implements Serializable {
 
     private Integer groupPageNum = 0;
     private Integer groupPageSize = 0;
@@ -17,6 +20,7 @@ public class CmsSearchInfoBean2 {
 
     // ** 共通搜索条件 **
     private String mCatId;
+    private String mCatPath;
     private String fCatId;
 
     private String mCatStatus;
@@ -29,20 +33,24 @@ public class CmsSearchInfoBean2 {
     private String createTimeTo;
 
     private String brand;
-    private String[] freeTags;
+    private List<String> freeTags;
     private int freeTagType = 0;
+    private String lockFlg;
+
+    private String[] codeList;
+    private String fuzzyStr;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
-    private String[] productStatus;
-    private String[] platformStatus;
+    private List<String> productStatus;
+    private List<String> platformStatus;
 
     private String publishTimeStart;
     private String publishTimeTo;
 
     private String priceType;
-    private BigDecimal priceStart;
-    private BigDecimal priceEnd;
+    private Double priceStart;
+    private Double priceEnd;
 
     private String pCatId;
     private int pCatStatus = 0;
@@ -54,14 +62,16 @@ public class CmsSearchInfoBean2 {
     private int shopCatStatus = 0;
 
     // 价格变动查询用标志位
-    private int priceChgFlg = 0;
+    private String priceChgFlg = null;
+    // 价格比较查询用标志位
+    private String priceDiffFlg = null;
     private String propertyStatus;
     private int hasErrorFlg = 0;
 
     private String salesSortType = null;
     private String salesType = null;
-    private BigDecimal salesStart = null;
-    private BigDecimal salesEnd = null;
+    private Double salesStart = null;
+    private Double salesEnd = null;
 
     // ** 自定义搜索条件 **
     private String sortOneName;
@@ -75,14 +85,11 @@ public class CmsSearchInfoBean2 {
 
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
-    private String[] codeList;
 
     // 文件下载类型
     private int fileType = 0;
 
     // ** 其它未定
-    // 价格比较查询用标志位
-    private int priceDiffFlg = 0;
     // MINI MALL 店铺时查询原始CHANNEL
     private String orgChaId = null;
 
@@ -113,19 +120,19 @@ public class CmsSearchInfoBean2 {
         this.transStsFlg = transStsFlg;
     }
 
-    public int getPriceChgFlg() {
+    public String getPriceChgFlg() {
         return priceChgFlg;
     }
 
-    public void setPriceChgFlg(int priceChgFlg) {
+    public void setPriceChgFlg(String priceChgFlg) {
         this.priceChgFlg = priceChgFlg;
     }
 
-    public int getPriceDiffFlg() {
+    public String getPriceDiffFlg() {
         return priceDiffFlg;
     }
 
-    public void setPriceDiffFlg(int priceDiffFlg) {
+    public void setPriceDiffFlg(String priceDiffFlg) {
         this.priceDiffFlg = priceDiffFlg;
     }
 
@@ -137,11 +144,11 @@ public class CmsSearchInfoBean2 {
         this.custAttrMap = custAttrMap;
     }
 
-    public String[] getProductStatus() {
+    public List<String> getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String[] productStatus) {
+    public void setProductStatus(List<String> productStatus) {
         this.productStatus = productStatus;
     }
 
@@ -153,11 +160,11 @@ public class CmsSearchInfoBean2 {
         this.cartId = cartId;
     }
 
-    public String[] getPlatformStatus() {
+    public List<String> getPlatformStatus() {
         return platformStatus;
     }
 
-    public void setPlatformStatus(String[] platformStatus) {
+    public void setPlatformStatus(List<String> platformStatus) {
         this.platformStatus = platformStatus;
     }
 
@@ -169,19 +176,19 @@ public class CmsSearchInfoBean2 {
         this.priceType = priceType;
     }
 
-    public BigDecimal getPriceStart() {
+    public Double getPriceStart() {
         return priceStart;
     }
 
-    public void setPriceStart(BigDecimal priceStart) {
+    public void setPriceStart(Double priceStart) {
         this.priceStart = priceStart;
     }
 
-    public BigDecimal getPriceEnd() {
+    public Double getPriceEnd() {
         return priceEnd;
     }
 
-    public void setPriceEnd(BigDecimal priceEnd) {
+    public void setPriceEnd(Double priceEnd) {
         this.priceEnd = priceEnd;
     }
 
@@ -247,6 +254,14 @@ public class CmsSearchInfoBean2 {
 
     public void setCodeList(String[] codeList) {
         this.codeList = codeList;
+    }
+
+    public String getFuzzyStr() {
+        return fuzzyStr;
+    }
+
+    public void setFuzzyStr(String fuzzyStr) {
+        this.fuzzyStr = fuzzyStr;
     }
 
     public String getSortOneName() {
@@ -345,11 +360,11 @@ public class CmsSearchInfoBean2 {
         this.taxNoStatus = taxNoStatus;
     }
 
-    public String[] getFreeTags() {
+    public List<String> getFreeTags() {
         return freeTags;
     }
 
-    public void setFreeTags(String[] freeTags) {
+    public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
     }
 
@@ -409,19 +424,19 @@ public class CmsSearchInfoBean2 {
         this.salesType = salesType;
     }
 
-    public BigDecimal getSalesStart() {
+    public Double getSalesStart() {
         return salesStart;
     }
 
-    public void setSalesStart(BigDecimal salesStart) {
+    public void setSalesStart(Double salesStart) {
         this.salesStart = salesStart;
     }
 
-    public BigDecimal getSalesEnd() {
+    public Double getSalesEnd() {
         return salesEnd;
     }
 
-    public void setSalesEnd(BigDecimal salesEnd) {
+    public void setSalesEnd(Double salesEnd) {
         this.salesEnd = salesEnd;
     }
 
@@ -457,6 +472,14 @@ public class CmsSearchInfoBean2 {
         this.mCatId = mCatId;
     }
 
+    public String getmCatPath() {
+        return mCatPath;
+    }
+
+    public void setmCatPath(String mCatPath) {
+        this.mCatPath = mCatPath;
+    }
+
     public String getfCatId() {
         return fCatId;
     }
@@ -480,4 +503,18 @@ public class CmsSearchInfoBean2 {
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
     }
+
+    public String getLockFlg() {
+        return lockFlg;
+    }
+
+    public void setLockFlg(String lockFlg) {
+        this.lockFlg = lockFlg;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
+    }
+
 }

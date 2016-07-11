@@ -1,6 +1,7 @@
 package com.voyageone.web2.base;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MapUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.io.IOUtils;
@@ -126,6 +127,10 @@ public abstract class BaseController extends BaseAppComponent {
             $debug(String.format("当前请求url=%s 响应结果response=:%s", request.getServletPath(), JacksonUtil.bean2Json(response)));
         }
         return response;
+    }
+
+    public AjaxResponse json(Object... args) {
+        return success(MapUtil.toMap(args));
     }
 
     /**

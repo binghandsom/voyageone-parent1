@@ -2,17 +2,16 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSaveInfo;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtJmProductImportSaveInfo;
+import com.voyageone.service.bean.cms.businessmodel.JmProductImportAllInfo;
 import com.voyageone.service.model.cms.CmsBtJmProductImagesModel;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmImportSaveInfo;
-import com.voyageone.service.bean.cms.businessmodel.CmsBtJmProductImportSaveInfo;
-import com.voyageone.service.bean.cms.businessmodel.JmProductImportAllInfo;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,8 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 添加聚美活动的集成测试
@@ -34,10 +34,10 @@ import static org.junit.Assert.*;
 
 public class CmsBtJmPromotionServiceTest {
 
-    @Resource
+    @Autowired
     CmsBtJmPromotionService jmPromotionService;
 
-    @Resource
+    @Autowired
     CmsBtJmPromotionImportTaskService jmPromotionImportTaskService;
 
     String promotionStr = "{\"prePeriodStart\":\"2016-04-18 00:00:00\",\"created\":\"2016-04-18 13:51:16\",\"isDelete\":false," +
@@ -49,7 +49,7 @@ public class CmsBtJmPromotionServiceTest {
 
 
 
-//    @Resource
+//    @Autowired
 //    CmsBtTagDao cmsBtJmPromotionImportTaskDao;
 //
 //    @Test

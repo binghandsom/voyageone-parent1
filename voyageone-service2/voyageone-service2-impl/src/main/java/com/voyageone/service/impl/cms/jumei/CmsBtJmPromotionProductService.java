@@ -2,10 +2,12 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitResult;
+import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -15,9 +17,6 @@ import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
-import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -141,7 +140,7 @@ public class CmsBtJmPromotionProductService {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         //获取本活动商品在其他活动,处于在售状态的商品
-        CmsBtJmPromotionProductModel modelJmPromotionProduct = daoExt.selectOnSaleByNoPromotionId(modelCmsBtJmPromotion.getChannelId(), parameter.getPromotionId());
+        CmsBtJmPromotionProductModel modelJmPromotionProduct = daoExt.selectOnSaleByNoPromotionId(modelCmsBtJmPromotion.getChannelId(), parameter.getPromotionId(), DateTimeUtilBeijing.getCurrentBeiJingDate());
         if (modelJmPromotionProduct != null) {
 
             result.setMsg("该专场商品已在其它聚美专场上传，且未过期("+modelJmPromotionProduct.getJmHashId()+")。专场延期失败");

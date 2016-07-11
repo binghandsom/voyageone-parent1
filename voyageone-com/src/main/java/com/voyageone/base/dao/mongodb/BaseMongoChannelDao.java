@@ -3,6 +3,7 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.*;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.util.DateTimeUtil;
+import org.jongo.query.Query;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
 
-    public final static String SPLIT_PART = "c";
+    public static final String SPLIT_PART = "c";
 
     protected String getCollectionName(String channelId) {
         return mongoTemplate.getCollectionName(this.collectionName, channelId, SPLIT_PART);
@@ -83,6 +84,10 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
 
     public long countByQuery(final String strQuery, String channelId) {
         return mongoTemplate.count(strQuery, getCollectionName(channelId));
+    }
+
+    public long countByQuery(final String strQuery, Object[] parameters, String channelId) {
+        return mongoTemplate.count(strQuery, parameters, getCollectionName(channelId));
     }
 
     public WriteResult deleteById(String id, String channelId) {
@@ -185,6 +190,30 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
                     bwo.find(queryObj).update(updateObj);
                 }
             }
+        }
+        //最终批量运行
+        return bwo.execute();
+    }
+
+    /**
+     * 批量更新记录 (此方法只支持更新操作，不支持upsert)
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateWithMap(String channelId, List<JomgoUpdate> bulkList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
+
+        for (JomgoUpdate model: bulkList) {
+            //生成更新对象
+            Query updObj = mongoTemplate.jongo.createQuery(model.getUpdate(), model.getUpdateParameters());
+
+            //生成查询对象
+            Query queryObj = mongoTemplate.jongo.createQuery(model.getQuery(), model.getQueryParameters());
+
+            bwo.find(queryObj.toDBObject()).update(updObj.toDBObject());
         }
         //最终批量运行
         return bwo.execute();

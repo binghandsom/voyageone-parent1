@@ -39,19 +39,16 @@ public class CmsBtJmSkuService {
 
     /**
      * 返回
-     * @param skuList
-     * @param promotionSkuList
-     * @return
      */
     public List<JMUpdateSkuWithPromotionInfo> selectSkuList(List<CmsBtJmSkuModel> skuList, List<CmsBtJmPromotionSkuModel> promotionSkuList) {
         List<JMUpdateSkuWithPromotionInfo> result = new ArrayList<>();
         for (CmsBtJmSkuModel skuInfo : skuList) {
             JMUpdateSkuWithPromotionInfo data = new JMUpdateSkuWithPromotionInfo();
             data.setCmsBtJmSkuModel(skuInfo);
-            for (CmsBtJmPromotionSkuModel promotionSku : promotionSkuList) {
+//            for (CmsBtJmPromotionSkuModel promotionSku : promotionSkuList) {
 //                if (skuInfo.getId() == promotionSku.getCmsBtJmSkuId())
 //                    data.setCmsBtJmPromotionSkuModel(promotionSku);
-            }
+//            }
             result.add(data);
         }
         return result;

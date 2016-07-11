@@ -254,6 +254,7 @@ public class BeatJobService extends BaseTaskService {
             case BEATING:
                 beatInfoModel.setSynFlag(BeatFlag.SUCCESS);
                 break;
+            case SUCCESS:
             case REVERT:
                 beatInfoModel.setSynFlag(BeatFlag.RE_SUCCESS);
                 break;
@@ -265,6 +266,7 @@ public class BeatJobService extends BaseTaskService {
             case BEATING:
                 beatInfoModel.setSynFlag(BeatFlag.FAIL);
                 break;
+            case SUCCESS:
             case REVERT:
                 beatInfoModel.setSynFlag(BeatFlag.RE_FAIL);
                 break;

@@ -4,7 +4,6 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  *
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
- * @since 2.0.0
+ * @since 2.0.0JumeiProductService
  */
 public class HtDealUpdateRequest implements BaseJMRequest {
 

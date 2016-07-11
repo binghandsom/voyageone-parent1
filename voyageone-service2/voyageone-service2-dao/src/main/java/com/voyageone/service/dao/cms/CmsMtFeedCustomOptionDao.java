@@ -18,6 +18,8 @@ public interface CmsMtFeedCustomOptionDao {
 
     CmsMtFeedCustomOptionModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtFeedCustomOptionModel select(Integer id);
 
     int insert(CmsMtFeedCustomOptionModel record);

@@ -12,8 +12,8 @@ import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.common.masterdate.schema.rule.RequiredRule;
-import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.rule.*;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -28,14 +28,15 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Created by desmond on 2016/4/9.
  * 京东平台类目schema信息取得
+ *
+ * @author desmond on 2016/4/9.
+ * @version 2.2.0
+ * @since 2.0.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob)
@@ -58,6 +59,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
     // 京东类目属性的输入属性类型(3:inputfield 可输入)
     private final static int Input_Type_3 = 3;
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         setJdCategoryAttrInfo(taskControlList);
@@ -85,7 +87,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
         // 循环所有店铺
-        if (orderChannelIdList != null && orderChannelIdList.size() > 0) {
+        if (ListUtils.notNull(orderChannelIdList)) {
             for (ShopBean shop : shopList) {
                 boolean isRun = false;
 
@@ -107,7 +109,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
     /**
      * 京东平台类目属性信息取得
      *
-     * @param shop ShopBean 店铺信息
+     * @param shop   ShopBean 店铺信息
      * @param cartId int    平台ID
      */
     private void doSetPlatformCategoryAttrJd(ShopBean shop, int cartId) {
@@ -118,7 +120,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         allCategoryTreeLeaves = platformCategoryService.getCmsMtPlatformCategoryTreeModelLeafList(cartId);
 
         // 去掉重复项的类目叶子件数大于0的场合
-        if (allCategoryTreeLeaves.size() > 0) {
+        if (ListUtils.notNull(allCategoryTreeLeaves)) {
             int i = 1;
             int cnt = allCategoryTreeLeaves.size();
 
@@ -131,6 +133,11 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
             for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allCategoryTreeLeaves) {
                 // 京东类目属性schema信息插入
                 $info("京东类目属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
+                // 设置schema共通信息
+                if (i == 1) {
+                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel);
+                }
+                // 设置各个类目schema信息
                 doSetPlatformPropJdSub(shop, platformCategoriesModel);
 
                 i++;
@@ -141,7 +148,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
     /**
      * 京东类目属性schema信息插入
      *
-     * @param shop ShopBean  店铺信息
+     * @param shop                    ShopBean  店铺信息
      * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
      */
     private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
@@ -153,6 +160,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         schemaModel.setModifier(this.getTaskName());
         schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
+        // 从京东平台取得类目schema属性值信息转换成为XML设置到mongoDB的schema表中的propsItem字段
         // 调用京东API获取类目属性信息
         List<CategoryAttributeSearchResponse.Attribute> jdCategoryAttrList = new ArrayList<>();
         // 调用京东API获取类目属性信息
@@ -221,6 +229,206 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
     }
 
     /**
+     * 设置京东类目schema共通信息
+     * 将京东平台上新时用到一些平台相关的输入项目转换成XML设置到mongoDB的schema表中的propsItem字段
+     *
+     * @param shop ShopBean  店铺信息
+     * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
+     */
+    private void doSetPlatformJdSchemaCommon(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
+
+        CmsMtPlatformCategorySchemaModel schemaCommonModel = new CmsMtPlatformCategorySchemaModel();
+        schemaCommonModel.setCartId(platformCategoriesModel.getCartId());
+        schemaCommonModel.setCatId("1");
+        schemaCommonModel.setCreater(this.getTaskName());
+        schemaCommonModel.setModifier(this.getTaskName());
+        schemaCommonModel.setCatFullPath("京东共通");
+
+        // 类目属性schema作成用field列表
+        List<Field> productFieldsList = new ArrayList<>();
+
+        // 商品标题（最大45位字符）
+        addInputField(productFieldsList, "productTitle", "商品名称", "", true, "45", "");
+
+        // 长(单位:mm) (必须，最大长度5位, 默认值为50mm)
+        addInputField(productFieldsList, "productLengthMm", "长", "50", true, "5", "单位:mm");
+
+        // 宽(单位:mm) (必须，最大长度5位, 默认值为50mm)
+        addInputField(productFieldsList, "productWideMm", "宽", "50", true, "5", "单位:mm");
+
+        // 高(单位:mm) (必须，最大长度5位, 默认值为50mm)
+        addInputField(productFieldsList, "productHighMm", "高", "50", true, "5", "单位:mm");
+
+        // 重量(单位:kg) (必须，最大长度4位(9999公斤), 默认值为1公斤)
+        // 京东后台显示的是公斤
+        addInputField(productFieldsList, "productWeightKg", "重量", "1", true, "4", "单位:公斤");
+
+        // 是否先款后货, false为否，true为是(非必须，默认值为true)
+        List<Option> isPayFirstOptionList = new ArrayList<>();
+        Option isPayFirstOptionTrue = new Option();
+        isPayFirstOptionTrue.setValue("true");
+        isPayFirstOptionTrue.setDisplayName("是");
+        isPayFirstOptionList.add(isPayFirstOptionTrue);
+        Option isPayFirstOptionFalse = new Option();
+        isPayFirstOptionFalse.setValue("false");
+        isPayFirstOptionFalse.setDisplayName("否");
+        isPayFirstOptionList.add(isPayFirstOptionFalse);
+        addSingleCheckField(productFieldsList, "productIsPayFirst", "是否先款后货",
+                isPayFirstOptionTrue.getValue(), false, isPayFirstOptionList);
+
+        // 是否限制开增值税发票(非必须，默认值为true)
+        List<Option> isCanVatOptionList = new ArrayList<>();
+        Option isCanVatOptionTrue = new Option();
+        isCanVatOptionTrue.setValue("true");
+        isCanVatOptionTrue.setDisplayName("是");
+        isCanVatOptionList.add(isCanVatOptionTrue);
+        Option isCanVatOptionFalse = new Option();
+        isCanVatOptionFalse.setValue("false");
+        isCanVatOptionFalse.setDisplayName("否");
+        isCanVatOptionList.add(isCanVatOptionFalse);
+        addSingleCheckField(productFieldsList, "productIsCanVat", "是否限制开增值税发票",
+                isCanVatOptionTrue.getValue(), false, isCanVatOptionList);
+
+        // 根据京东平台上新时用到一些平台相关的输入项目转换成XML文件
+        String schemaCommonXmlContent = null;
+        if (productFieldsList.size() > 0) {
+            schemaCommonXmlContent = SchemaWriter.writeRuleXmlString(productFieldsList);
+            schemaCommonModel.setPropsItem(schemaCommonXmlContent);
+        }
+
+        // 把schema共通信息插进入到MangoDB中
+        platformCategoryService.insertPlatformCategorySchema(schemaCommonModel);
+    }
+
+    /**
+     * 根据参数生成Inputfield并添加到选项列表
+     *
+     * @param productFieldsList List<Field>  京东产品上新共通属性值列表
+     * @param fieldId String  filedId
+     * @param fieldName String  filed名称
+     * @param defaultValue String 默认值
+     * @param isRequired boolean  是否必须输入
+     * @param maxLength String  可输入最大字符数
+     * @return 空
+     */
+    private void addInputField(List<Field> productFieldsList, String fieldId, String fieldName, String defaultValue,
+                               boolean isRequired, String maxLength, String tipRuleString) {
+        // 输入框Field
+        InputField inputField = new InputField();
+
+        // field共通信息设定
+        // 属性id
+        inputField.setId(fieldId);
+        // 属性名(如果为空，则设为类目属性id)
+        inputField.setName(!StringUtils.isEmpty(fieldName) ? fieldName : fieldId);
+        // 类目属性类型
+        inputField.setType(FieldTypeEnum.INPUT);
+        // 属性默认值
+        inputField.setDefaultValue(defaultValue);
+
+        // field的rule信息设定
+        List<Rule> rulesList = new ArrayList<>();
+        // valueTypeRule
+        Rule valueTypeRule = new ValueTypeRule();
+        valueTypeRule.setName("valueTypeRule");
+        valueTypeRule.setValue("text");
+        rulesList.add(valueTypeRule);
+
+        // requiredRule
+        if (isRequired) {
+            Rule requiredRule = new RequiredRule();
+            requiredRule.setName("requiredRule");
+            requiredRule.setValue("true");
+            rulesList.add(requiredRule);
+        }
+
+        // minLengthRule
+        MinLengthRule minLengthRule = new MinLengthRule();
+        minLengthRule.setName("minLengthRule");
+        minLengthRule.setValue(isRequired ? "1" : "0");  // 必须输入时，最小值设为"1"
+        minLengthRule.setExProperty("include");
+        minLengthRule.setUnit("character");  // 可选"byte"或"character"，这里固定成"character"
+        rulesList.add(minLengthRule);
+
+        // maxLengthRule
+        MaxLengthRule maxLengthRule = new MaxLengthRule();
+        maxLengthRule.setName("maxLengthRule");
+        maxLengthRule.setValue(maxLength);
+        maxLengthRule.setExProperty("include");
+        maxLengthRule.setUnit("character");  // 可选"byte"或"character"，这里固定成"character"
+        rulesList.add(maxLengthRule);
+
+        // tipRule
+        if (!StringUtils.isEmpty(tipRuleString)) {
+            TipRule tipRule = new TipRule();
+            tipRule.setName("tipRule");
+            tipRule.setValue(tipRuleString);
+            rulesList.add(tipRule);
+        }
+
+        // Rule列表追加
+        if (ListUtils.notNull(rulesList)) {
+            inputField.setRules(rulesList);
+        }
+        // 类目属性列表追加
+        productFieldsList.add(inputField);
+    }
+
+    /**
+     * 根据参数生成SingleCheckfield并添加到选项列表
+     *
+     * @param productFieldsList List<Field>  京东产品上新共通属性值列表
+     * @param fieldId String  filedId
+     * @param fieldName String  filed名称
+     * @param defaultValue String 默认值
+     * @param isRequired boolean  是否必须输入(只支持必须requiredRule,不支持tipRule,disableRule,devTipRule等)
+     * @param  optionList List<Option> 可选值列表
+     * @return 空
+     */
+    private void addSingleCheckField(List<Field> productFieldsList, String fieldId, String fieldName,
+                                     String defaultValue, boolean isRequired, List<Option> optionList) {
+        // 单选
+        SingleCheckField singleCheckField = new SingleCheckField();
+        // field共通信息设定
+        // 属性id
+        singleCheckField.setId(fieldId);
+        // 属性名(如果为空，则设为类目属性id)
+        singleCheckField.setName(!StringUtils.isEmpty(fieldName) ? fieldName : fieldId);
+        // 类目属性类型
+        singleCheckField.setType(FieldTypeEnum.SINGLECHECK);
+
+        // field的rule信息设定
+        // rule作成
+        List<Rule> rulesList = new ArrayList<>();
+
+        // requiredRule
+        if (isRequired) {
+            Rule requiredRule = new RequiredRule();
+            requiredRule.setName("requiredRule");
+            requiredRule.setValue("true");
+            rulesList.add(requiredRule);
+        }
+
+        // Rule列表追加
+        if (ListUtils.notNull(rulesList)) {
+            singleCheckField.setRules(rulesList);
+        }
+
+        // 单选可选项列表设定
+        if (ListUtils.notNull(optionList)) {
+            singleCheckField.setOptions(optionList);
+        }
+
+        // 属性默认值
+        if (!StringUtils.isEmpty(defaultValue)) {
+            singleCheckField.setDefaultValue(defaultValue);
+        }
+
+        // 选可选项列表追加
+        productFieldsList.add(singleCheckField);
+    }
+
+    /**
      * 根据京东类目属性值列表取得单选field选项列表
      *
      * @param categoryAttr     CategoryAttributeSearchResponse.Attribute      京东类目属性
@@ -247,14 +455,16 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
         // field的rule信息设定
         List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
-        if (rulesList != null && rulesList.size() > 0) {
+        if (ListUtils.notNull(rulesList)) {
             singleCheckField.setRules(rulesList);
         }
 
         // 类目属性值选项列表取得
         attrValueOptionList = this.getOptionList(jdCategoryAttrValueList);
         // 类目属性选项列表设定
-        singleCheckField.setOptions(attrValueOptionList);
+        if (ListUtils.notNull(attrValueOptionList)) {
+            singleCheckField.setOptions(attrValueOptionList);
+        }
 
         return singleCheckField;
     }
@@ -323,7 +533,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
         // field的rule信息设定
         List<Rule> rulesList = this.getCategoryAttrRulesList(categoryAttr);
-        if (rulesList != null && rulesList.size() > 0) {
+        if (ListUtils.notNull(rulesList)) {
             inputField.setRules(rulesList);
         }
 
@@ -342,12 +552,15 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         List<AttValue> sortedCategoryAttrValueList = new ArrayList<>();
         List<Option> optionList = new ArrayList<>();
 
-        if (jdCategoryAttrValueList != null && jdCategoryAttrValueList.size() > 0) {
+        if (ListUtils.notNull(jdCategoryAttrValueList)) {
             // 对取得的京东类目属性值列表按照value从小到大排序
-            sortedCategoryAttrValueList = this.getSortedList(jdCategoryAttrValueList);
+//            sortedCategoryAttrValueList = this.getSortedList(jdCategoryAttrValueList);
+            sortedCategoryAttrValueList = jdCategoryAttrValueList.stream()
+                                          .sorted(Comparator.comparing(p -> p.getIndexId()))
+                                          .collect(Collectors.toList());
 
             // 类目属性值项目设定
-            for(AttValue catAttrValue:sortedCategoryAttrValueList) {
+            for (AttValue catAttrValue : sortedCategoryAttrValueList) {
                 // 属性值项目设定
                 Option attrValueOption =  new Option();
                 // 属性值id

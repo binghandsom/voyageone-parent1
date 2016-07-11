@@ -16,8 +16,11 @@
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!-- 上新 -->
-        <task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--&lt;!&ndash; 上新 &ndash;&gt;-->
+        <!--<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+
+        <!-- 天猫上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 京东上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -106,6 +109,8 @@
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsDataAmountJob" method="run" cron="1 20 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 

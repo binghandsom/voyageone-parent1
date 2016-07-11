@@ -98,26 +98,18 @@ public class JmGetProductInfo_Spus extends JmBaseBean {
         this.sku_list = sku_list;
     }
 
-    public String getSku_no()
-    {
-        if(sku_list != null && sku_list.size() > 0)
-        {
+    public String getSku_no() {
+        if (sku_list != null && !sku_list.isEmpty()) {
             return sku_list.get(0).getSku_no();
-        }
-        else
-        {
+        } else {
             return "";
         }
     }
 
-    public String getBusinessman_code()
-    {
-        if(sku_list != null && sku_list.size() > 0)
-        {
+    public String getBusinessman_code() {
+        if (sku_list != null && !sku_list.isEmpty()) {
             return sku_list.get(0).getBusinessman_code();
-        }
-        else
-        {
+        } else {
             return "";
         }
     }

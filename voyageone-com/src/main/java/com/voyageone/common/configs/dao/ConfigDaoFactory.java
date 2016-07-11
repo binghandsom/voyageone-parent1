@@ -66,4 +66,8 @@ public class ConfigDaoFactory {
     public static TypeChannelDao getChannelValueDao() {
         return SpringContext.getBean(TypeChannelDao.class);
     }
+
+    public static VmsChannelConfigDao getVmsChannelConfigDao() {
+        return SpringContext.getBean(VmsChannelConfigDao.class);
+    }
 }

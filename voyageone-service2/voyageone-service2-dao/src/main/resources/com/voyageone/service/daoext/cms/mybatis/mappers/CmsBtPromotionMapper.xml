@@ -136,6 +136,34 @@
         order by  id desc
     </select>
 
+    <!-- 查询有效活动信息(高级检索-加入促销活动下拉列表用)（查询JM活动时使用另外的sql） -->
+    <select id="select_cms_bt_promotion_4_adv_search" resultMap="PromotionMap" parameterType="Map">
+        select
+        a.id,
+        a.promotion_name,
+        a.activity_start,
+        a.activity_end,
+        a.ref_tag_id
+        from voyageone_cms2.cms_bt_promotion a
+        inner join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id  and (c.channel_id = #{channelId}
+            <if test="orgChannelId != null and orgChannelId != ''">
+                or c.channel_id = #{orgChannelId}
+            </if>
+            )
+        where
+        a.active = 1
+        and a.promotion_status = 0
+        and c.active = 1
+        and c.tag_status = 0
+        and a.cart_id = #{cartId,jdbcType=INTEGER}
+        and (a.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or a.channel_id = #{orgChannelId}
+        </if>
+        )
+        order by id desc
+    </select>
+
     <!-- 插入 -->
     <insert id="insert_cms_bt_promotion" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel">
         insert into voyageone_cms2.cms_bt_promotion

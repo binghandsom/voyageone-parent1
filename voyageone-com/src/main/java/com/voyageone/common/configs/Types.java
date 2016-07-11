@@ -24,7 +24,7 @@ public class Types {
 
     private static final Class selfClass = Types.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_Type.toString();

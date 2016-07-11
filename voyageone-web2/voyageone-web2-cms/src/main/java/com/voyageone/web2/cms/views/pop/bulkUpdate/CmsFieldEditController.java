@@ -54,7 +54,11 @@ public class CmsFieldEditController extends CmsController {
             } else if ("putonoff".equals(prop)) {
                 Map<String, Object> rs = propChangeService.setProductOnOff(params, getUser(), cmsSession);
                 return success(rs);
+            } else if ("saleprice".equals(prop)) {
+                Map<String, Object> rs = propChangeService.setProductSalePrice(params, getUser(), cmsSession);
+                return success(rs);
             }
+            return success(null);
         }
         Integer cartId = (Integer) params.get("cartId");
         int cartIdVal = 0;

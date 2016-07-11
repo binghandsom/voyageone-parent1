@@ -42,7 +42,7 @@ public class CmsPlatformProductImportServiceTest {
     @Test
     public void testSetMainProduct() throws Exception {
 
-        cmsPlatformProductImportService.doMain();
+//        cmsPlatformProductImportService.doMain();
 
     }
 

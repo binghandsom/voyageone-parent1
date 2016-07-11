@@ -2,6 +2,11 @@
  * Created by linanbin on 15/12/7.
  * @author sofia
  * @description 新增层级判断
+ *
+ * @Author piao
+ * @Date 2016-7-7
+ * @Description 添加了默认选中和选中背景
+                divtype："-"：为feed类目的分隔符， ">"：为主类目的分隔符
  */
 
 define(['cms',
@@ -31,6 +36,7 @@ define(['cms',
              * @type {object}
              */
             this.selected = null;
+            this.selectedCat = {};
             /**
              * 选择目录的路径
              * @type {Array}
@@ -40,7 +46,7 @@ define(['cms',
              * 父节点与子节点之间的区分符,缺省是'>'
              * @type {String}
              */
-            this.divType = null;
+            this.divType = ">";
         }
 
         PopCategoryController.prototype = {
@@ -56,49 +62,48 @@ define(['cms',
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
 
-                /**产品详情页平台schema默认选中*/
-                if (this.context.plateSchema)
-                    this.defaultCategroy();
+                this.defaultCategroy();
             },
             /**
              * 打开一个类目(选定一个类目)
              * 并尝试展示其子类目
              * @param {object} category 类目对象
              */
-            openCategory: function (category) {
+            openCategory: function (category, categoryItem) {
+                if (categoryItem.selectedCat == undefined) {
+                    categoryItem.selectedCat = [];
+                }
+                categoryItem.selectedCat = category.catName;
+
                 // 标记选中
                 this.selected = category;
-                if (!category.children || !category.children.length) return;
-                // 查询当前选中的是第几级
-                var level = 0;
-                if (this.selected.children[0].catPath.indexOf('-') > 0) this.divType = '-';
-                if (this.selected.children[0].catPath.indexOf('>') > 0) this.divType = '>';
-                if (this.divType == '-') {
-                    level = category.catPath.split('-').length;
-                } else if (this.divType == '>') {
-                    level = category.catPath.split('>').length;
-                } else {
-                    level = category.catPath.split(this.divType).length;
-                }
-                // 获取这一级别的数据
-                var pathItem = this.categoryPath[level];
 
+                // 查询当前选中的是第几级
+                var levelIdx = categoryItem.level - 1;
+
+                // 获取这一级别的数据
+                var pathItem = this.categoryPath[levelIdx + 1];
                 if (pathItem) {
                     // 如果有数据,那么当前级别和后续级别都需要清空
-                    this.categoryPath.splice(level);
+                    this.categoryPath.splice(levelIdx + 1);
                 }
-
-                this.categoryPath.push({level: level + 1, categories: category.children});
+                if (!category.children || !category.children.length) return;
+                this.categoryPath.push({level: levelIdx + 2, categories: category.children});
             },
             defaultCategroy: function () {
                 // 默认选中
-                var self = this;
-                var arrayCat = this.context.from.split(">");
+                if(!this.context.from)
+                    return;
+
+                var self = this,str = this.context.from+"";
+                var arrayCat = str.split(self.divType);
                 angular.forEach(arrayCat, function (item1, index) {
                     _.filter(self.categoryPath[index].categories, function (item2) {
                         if (item2.catName == item1) {
-                            if (item2.children.length != 0)
+                            self.categoryPath[index].selectedCat = item1;
+                            if (item2.children.length != 0){
                                 self.categoryPath.push({level: index + 2, categories: item2.children});
+                            }
                             else
                                 self.selected = item2;
                             return true;

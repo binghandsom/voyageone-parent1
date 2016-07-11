@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class MongoSequenceService extends BaseService {
 
     /**
-     *  Sequence Name
+     * Sequence Name
      */
     public enum CommSequenceName {
         CMS_BT_PRODUCT_PROD_ID("cms_bt_product_prodId"),

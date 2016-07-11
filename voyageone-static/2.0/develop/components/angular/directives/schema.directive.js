@@ -768,15 +768,27 @@
     function transField(field, schema, parentScope, compileCallback) {
 
         // 一次性解析字段的所有 rule
-        var rules = getRules(field, schema),
-            disableRule = rules.disableRule,
+        var rules,
+            disableRule,
             disabledExpression,
             fieldElement,
             fieldScope;
+        // 2016-07-08 11:11:54
+        // 增加对 isDisplay 属性的支持
+        // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
+        if (field.isDisplay == "0")
+            return;
+
+        rules = getRules(field, schema);
+        disableRule = rules.disableRule;
+
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
         // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
-        if (disableRule && disableRule.value === true)
+        // 不加入 disableRule instanceof DependentRule 判断, 这里也是可以正常运行的
+        // 因为原始的 rule 其 value 是字符串型, 所以 === true 会返回 false, 虽然字符串的内容确实是 "true"
+        // 但还是加上更靠谱, 所以我在 2016-07-07 21:58:50 补上了这段内容, 吓尿。。。
+        if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true)
             return;
 
         fieldElement = angular.element('<s-field>');

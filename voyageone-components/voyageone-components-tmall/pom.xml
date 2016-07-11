@@ -17,6 +17,7 @@
             <artifactId>voyageone-components-base</artifactId>
             <version>${voyageone.components.base.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>

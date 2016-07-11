@@ -35,7 +35,7 @@ public class CmsAddToPromotionController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_PROMOTION.ADD_TO_PROMOTION)
     public AjaxResponse addToPromotion(@RequestBody Map<String, Object> params) {
-        promotionSelectService.addToPromotion(params, getUser());
+        promotionSelectService.addToPromotion(params, getUser(), getCmsSession());
         return success(true);
     }
 

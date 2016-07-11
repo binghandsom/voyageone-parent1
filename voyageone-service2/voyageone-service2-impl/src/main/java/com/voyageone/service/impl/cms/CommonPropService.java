@@ -37,6 +37,11 @@ public class CommonPropService extends BaseService {
         return cmsMtCommonPropDaoExt.selectUserCustColumns(userId);
     }
 
+    // 取得用户自定义显示列设置
+    public List<Map<String, Object>> getUserCustColumnsSalesType(int userId) {
+        return cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
+    }
+
     @VOTransactional
     public int addUserCustColumn(int userId, String userName, String param1, String param2) {
         return cmsMtCommonPropDaoExt.insertUserCustColumns(userId, userName, param1, param2);
@@ -45,6 +50,16 @@ public class CommonPropService extends BaseService {
     @VOTransactional
     public int saveUserCustColumn(int userId, String userName, String param1, String param2) {
         return cmsMtCommonPropDaoExt.updateUserCustColumns(userId, userName, param1, param2);
+    }
+
+    @VOTransactional
+    public int addUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return cmsMtCommonPropDaoExt.insertUserCustColumnsSalesType(userId, userName, param1);
+    }
+
+    @VOTransactional
+    public int saveUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return cmsMtCommonPropDaoExt.updateUserCustColumnsSalesType(userId, userName, param1);
     }
 
 }

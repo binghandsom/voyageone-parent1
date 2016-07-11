@@ -2,7 +2,6 @@ package com.voyageone.common.redis;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisOperations;
@@ -12,6 +11,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
+ * LocalHashOperations
+ *
  * @author aooer 2016/4/5.
  * @version 2.0.0
  * @since 2.0.0
@@ -28,12 +29,14 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
 
     @Override
     public void delete(K key, Object... hashKeys) {
-        Arrays.asList(hashKeys).forEach(localCache.get(key)::remove);
+        if (localCache.get(key) != null) {
+            Arrays.asList(hashKeys).forEach(localCache.get(key)::remove);
+        }
     }
 
     @Override
     public Boolean hasKey(K key, Object hashKey) {
-        return localCache.get(key).containsKey(hashKey);
+        return localCache.get(key) != null && localCache.get(key).containsKey(hashKey);
     }
 
     public Boolean hasKey(K key) {
@@ -50,18 +53,27 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
     @Override
     public List<HV> multiGet(K key, Collection<HK> hashKeys) {
         List<HV> hvs = Lists.newCopyOnWriteArrayList();
-        hashKeys.forEach(k -> hvs.add(localCache.get(key).get(k)));
+        if (localCache.get(key) != null) {
+            hashKeys.forEach(k -> hvs.add(localCache.get(key).get(k)));
+        }
         return hvs;
     }
 
     @Override
     public Set<HK> keys(K key) {
-        return localCache.get(key).keySet();
+        if (localCache.get(key) != null) {
+            return localCache.get(key).keySet();
+        }
+        return new HashSet<>();
     }
 
     @Override
     public Long size(K key) {
-        return Integer.toUnsignedLong(localCache.get(key).size());
+        if (localCache.get(key) != null) {
+            return Integer.toUnsignedLong(localCache.get(key).size());
+        } else {
+            return 0L;
+        }
     }
 
     @Override
@@ -75,7 +87,7 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
         map.put(hashKey, value);
     }
 
-    Map<HK, HV> getCache(K key) {
+    private Map<HK, HV> getCache(K key) {
         Map<HK, HV> map = localCache.get(key);
         if (map == null) {
             createCache(key);
@@ -84,24 +96,29 @@ public class LocalHashOperations<K, HK, HV> implements HashOperations<K, HK, HV>
         return map;
     }
 
-    synchronized void createCache(K key) {
+    private synchronized void createCache(K key) {
         if (!localCache.containsKey(key)) {
-            Map<HK, HV> map = new HashedMap();
+            Map<HK, HV> map = new HashMap<>();
             localCache.put(key, map);
         }
     }
 
     @Override
     public Boolean putIfAbsent(K key, HK hashKey, HV value) {
-        if (localCache.get(key).containsKey(hashKey)) return false;
-        else put(key, hashKey, value);
-        return true;
+        if (localCache.get(key) != null && localCache.get(key).containsKey(hashKey)) {
+            return false;
+        } else {
+            put(key, hashKey, value);
+            return true;
+        }
     }
 
     @Override
     public List<HV> values(K key) {
         List<HV> values = Lists.newCopyOnWriteArrayList();
-        values.addAll(localCache.get(key).values());
+        if (localCache.get(key) != null) {
+            values.addAll(localCache.get(key).values());
+        }
         return values;
     }
 

@@ -7,8 +7,7 @@ define([
     'underscore',
     'modules/cms/enums/Carts'
 ], function (angularAMD, _, Carts) {
-    angularAMD
-        .service('searchAdvanceService2', searchAdvanceService2);
+    angularAMD.service('searchAdvanceService2', searchAdvanceService2);
 
     function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
 
@@ -59,7 +58,7 @@ define([
                 // 获取group列表
                 _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
                 // 获取product列表
-                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
+                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
 
                 defer.resolve (res);
             });
@@ -115,9 +114,9 @@ define([
          * @param data
          * @returns {*}
          */
-        function addFreeTag(tagPath, prodIdList) {
+        function addFreeTag(tagPath, prodIdList, selAllFlg) {
             var defer = $q.defer();
-            var data = {"tagPath":tagPath, "prodIdList":prodIdList};
+            var data = {"tagPath":tagPath, "prodIdList":prodIdList, "isSelAll":selAllFlg};
 
             $searchAdvanceService2.addFreeTag(data).then(function (res) {
                 defer.resolve (res);
@@ -222,6 +221,14 @@ define([
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = groupInfo.common.fields[data.propId];
+                    // 原始主商品的转换
+                    if (data.propId == 'isMasterMain') {
+                        if (itemVal == 1) {
+                            itemVal = '是';
+                        } else if (itemVal == 0) {
+                            itemVal = '否';
+                        }
+                    }
                     if (itemVal == undefined) {
                         itemVal = "";
                     }
@@ -289,12 +296,20 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps, selSalesTypes) {
+        function _resetProductList (data, commonProps, customProps, selSalesTypes, searchParam) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
                     var itemVal = productInfo.common.fields[data.propId];
+                    // 原始主商品的转换
+                    if (data.propId == 'isMasterMain') {
+                        if (itemVal == 1) {
+                            itemVal = '是';
+                        } else if (itemVal == 0) {
+                            itemVal = '否';
+                        }
+                    }
                     if (itemVal == undefined || itemVal == null) {
                         itemVal = "";
                     }
@@ -333,44 +348,59 @@ define([
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
 
-                // TODO--为保持新旧业务兼容，carts要从platforms转化而来，下次发布carts将删除
                 var cartArr = [];
                 if (productInfo.platforms) {
                     _.forEach(productInfo.platforms, function (data) {
+                        if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
+                            return;
+                        }
                         var cartItem = {};
                         cartItem.cartId = parseInt(data.cartId);
                         cartItem.platformStatus = data.pStatus;
                         cartItem.publishTime = data.pPublishTime;
+                        cartItem.numiid = data.pNumIId;
                         // 设置产品状态显示区域的css(背景色)
                         var cssVal = '';
+                        var statusTxt = '';
+                        var publishError = false;
                         cartItem.cssVal = {};
+
+                        if (data.status == 'Approved') {
+                            if (data.pStatus == 'OnSale') {
+                                cssVal = 'DeepSkyBlue';
+                                statusTxt = 'OnSale';
+                            } else if (data.pStatus == 'InStock') {
+                                cssVal = 'Orange';
+                                statusTxt = 'InStock';
+                            } else if (data.pStatus == 'WaitingPublish') {
+                                cssVal = 'Chocolate';
+                                statusTxt = 'WaitingPublish';
+                            } else {
+                                cssVal = 'YellowGreen';
+                                statusTxt = 'Approved';
+                            }
+                        } else if (data.status == 'Ready') {
+                            cssVal = 'yellow';
+                            statusTxt = 'Ready';
+                        } else {
+                            cssVal = 'DarkGray';
+                            statusTxt = 'Pedding';
+                        }
+
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
-                        } else {
-                            if (data.status == 'Approved') {
-                                if (data.pStatus == 'OnSale') {
-                                    cssVal = 'DeepSkyBlue';
-                                } else if (data.pStatus == 'InStock') {
-                                    cssVal = 'Orange';
-                                } else if (data.pStatus == 'WaitingPublish') {
-                                    cssVal = 'Chocolate';
-                                } else {
-                                    cssVal = 'YellowGreen';
-                                }
-                            } else if (data.status == 'Ready') {
-                                cssVal = 'yellow';
-                            } else {
-                                cssVal = 'DarkGray';
-                            }
+                            publishError = true;
                         }
+
                         if (cssVal) {
                             cartItem.cssVal = { "background-color" : cssVal };
                         }
+                        cartItem.statusTxt = statusTxt;
+                        cartItem.publishError = publishError;
                         cartArr.push(cartItem);
                     });
                 }
                 productInfo.carts = cartArr;
-
                 if (productInfo.carts) {
                     _.forEach(productInfo.carts, function (data) {
                         var cartInfo = Carts.valueOf(data.cartId);
@@ -399,12 +429,12 @@ define([
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
 
                 // 设置sku销售渠道信息
-                productInfo.skuDetail = _setSkuDetail(productInfo.skus);
+                productInfo.skuDetail = _setSkuDetail(productInfo.platforms);
 
                 // 设置price detail (数组形式)
                 productInfo.priceDetail = _setPriceDetail(productInfo.common.fields);
                 // 设置各sku在各平台上的价格
-                productInfo.priceSale = _setPriceSale(productInfo.platforms);
+                productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam);
 
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
@@ -433,20 +463,21 @@ define([
 
         /**
          * 设置sku的销售渠道信息
-         * @param skus
+         * @param platforms
          * @returns {Array}
          * @private
          */
-        function _setSkuDetail(skus) {
+        function _setSkuDetail(platforms) {
             var result = [];
-            _.forEach(skus, function (sku) {
-                var cartInfo = "";
-                _.forEach(sku.skuCarts, function (skuCart) {
-                    var CartInfo = Carts.valueOf(parseInt(skuCart));
-                    if (!_.isUndefined(CartInfo))
-                        cartInfo += CartInfo.name + ",";
-                });
-                result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
+            _.forEach(platforms, function (platformObj) {
+                if (platformObj.cartId && platformObj.cartId != 0 && platformObj.skus && platformObj.skus.length > 0) {
+                    var cartInfoObj = Carts.valueOf(parseInt(platformObj.cartId));
+                    var cartInfo = "";
+                    _.forEach(platformObj.skus, function (skuObj) {
+                         cartInfo += skuObj.skuCode + ",";
+                    });
+                    result.push(cartInfoObj.name + ": " + cartInfo.substr(0, cartInfo.length -1));
+                }
             });
             return result;
         }
@@ -495,12 +526,17 @@ define([
          * @returns {*}
          * @private
          */
-        function _setPriceSale(object) {
-            var result = [];
+        function _setPriceSale(object, searchParam) {
             if (object == null || object == undefined) {
-                return result;
+                return [];
             }
             if (object) {
+                var fstLine = [];
+                var result = [];
+                var fstCode = 0;
+                if (searchParam && searchParam.cartId) {
+                    fstCode = searchParam.cartId;
+                }
                 _.forEach(object, function (data) {
                     if (data == null || data == undefined || data.skus == null || data.skus == undefined) {
                         return;
@@ -530,10 +566,16 @@ define([
                         priceItem += " ~ ";
                         priceItem += $filter('number')(skuPriceList[skuPriceList.length - 1], 2);
                     }
-                    result.push(priceItem);
+                    if (fstCode == data.cartId) {
+                        fstLine.push(priceItem);
+                    } else {
+                        result.push(priceItem);
+                    }
                 });
+                fstLine = fstLine.concat(result);
+                return fstLine;
             }
-            return result;
+            return [];
         }
 
         /**

@@ -60,25 +60,22 @@ define([
                 function updateProductDetail () {
 
                     if (!validSchema()&& scope.vm.productDetails.productStatus.approveStatus == 'Approved') {
-
-                        confirm("保存失败，请查看产品的属性是否填写正确！如需继续保存,请点击[确认]按钮").result
-                            .then(function () {
-
-                                /**推算产品状态
-                                 如果该产品以前不是approve,这次变成approve的
-                                 变成ready,或者以前是approve这次数据发生变化的*/
-
-
-                                productDetailService.updateProductDetail(scope.vm.productDetails)
-                                    .then(function (res) {
-                                        scope.vm.productDetails.modified = res.modified;
-                                        scope.vm.productDetails.productStatus.approveStatus = res.approveStatus;
-                                        scope.vm.productDetails.productStatus.isApproved = res.isApproved;
-                                        scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
-                                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                                    });
-                            });
+                        return alert("保存失败，请查看产品的属性是否填写正确！");
                     }
+
+                    /**推算产品状态
+                       如果该产品以前不是approve,这次变成approve的
+                       变成ready,或者以前是approve这次数据发生变化的*/
+
+
+                    productDetailService.updateProductDetail(scope.vm.productDetails)
+                        .then(function (res) {
+                            scope.vm.productDetails.modified = res.modified;
+                            scope.vm.productDetails.productStatus.approveStatus = res.approveStatus;
+                            scope.vm.productDetails.productStatus.isApproved = res.isApproved;
+                            scope.vm.productDetailsCopy = angular.copy(scope.vm.productDetails);
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        });
                 }
 
                 scope.cancelProductDetail = cancelProductDetail;

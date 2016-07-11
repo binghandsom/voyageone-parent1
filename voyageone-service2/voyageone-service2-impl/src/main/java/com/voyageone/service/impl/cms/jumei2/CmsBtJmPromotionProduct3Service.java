@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
@@ -14,6 +16,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
+import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
@@ -56,6 +59,9 @@ public class CmsBtJmPromotionProduct3Service {
     private ProductService productService;
     @Autowired
     private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
+    @Autowired
+    private CmsMtChannelValuesService cmsMtChannelValuesService;
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -63,7 +69,8 @@ public class CmsBtJmPromotionProduct3Service {
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
         return daoExt.selectPageByWhere(map);
     }
-    public InitResult init(InitParameter parameter) {
+
+    public InitResult init(InitParameter parameter, String channelId, String language) {
         InitResult result = new InitResult();
         result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));//CmsBtJmPromotion
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
@@ -75,6 +82,8 @@ public class CmsBtJmPromotionProduct3Service {
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
         result.setIsUpdateJM(!(hour >= 9 && hour <= 12));//是否可以更新聚美
+        // 获取brand list
+        result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
     }
 
@@ -114,7 +123,9 @@ public class CmsBtJmPromotionProduct3Service {
 //        <option value="0">中国官网价格</option> <!--msrp_rmb-->
 //        <option value="1">中国指导价格</option> <!--retail_price-->
 //        <option value="2">中国最终售价</option> <!--sale_price-->
-        if (parameter.getListPromotionProductId().size() == 0) return result;
+
+        if (parameter.getListPromotionProductId().isEmpty()) return result;
+
         String price = "";
         if (parameter.getPriceValueType() == 1) {//价格
             price = Double.toString(parameter.getPrice());
@@ -154,11 +165,13 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
-        if (parameter.getListPromotionProductId().size() == 0) return;
+
+        if (parameter.getListPromotionProductId().isEmpty()) return;
+
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
         boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchSynchPrice(parameter.getListPromotionProductId(),isPreStart);
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), isPreStart);
     }
 
     //全量同步价格
@@ -177,7 +190,8 @@ public class CmsBtJmPromotionProduct3Service {
     @VOTransactional
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
-        if (parameter.getListPromotionProductId().size() == 0) return;
+        if (parameter.getListPromotionProductId().isEmpty()) return;
+
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
@@ -246,7 +260,7 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     @VOTransactional
-    public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String userName) {
+    public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String userName) {
         String tagNameList = "";
         for (ProductTagInfo tagInfo : parameter.getTagList()) {
             tagNameList += "|" + tagInfo.getTagName();
@@ -276,8 +290,9 @@ public class CmsBtJmPromotionProduct3Service {
         updateCmsBtProductTags(model, modelPromotion, parameter, userName);
         return 1;
     }
+
     //更新mongo  product  tag
-    private void updateCmsBtProductTags(CmsBtJmPromotionProductModel model,CmsBtJmPromotionModel modelPromotion,UpdatePromotionProductTagParameter parameter,String modifier) {
+    private void updateCmsBtProductTags(CmsBtJmPromotionProductModel model, CmsBtJmPromotionModel modelPromotion, UpdatePromotionProductTagParameter parameter, String modifier) {
         //更新商品Tags  sunpt
         CmsBtProductModel productModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());
         if (productModel != null) {
@@ -286,7 +301,7 @@ public class CmsBtJmPromotionProduct3Service {
             //1.移除该活动的所有tag
             for (int i = size - 1; i >= 0; i--) {
                 String tag = String.format("-%s-", modelPromotion.getRefTagId().toString());
-                if (tags.get(i).indexOf(tag)== 0) {
+                if (tags.get(i).indexOf(tag) == 0) {
                     tags.remove(i);
                 }
             }
@@ -300,9 +315,8 @@ public class CmsBtJmPromotionProduct3Service {
         }
     }
 
-    public  int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId)
-    {
-        return  daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    public int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId) {
+        return daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
     }
 }
 

@@ -12,12 +12,8 @@ define([
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
         $scope.initialize  = function () {
-            console.log("aaP");
-            console.log(context);
-            if(context.id)
-            {
+            if(context.id){
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    console.log(res);
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
@@ -25,14 +21,15 @@ define([
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
                 });
-            }
-            else
-            {
+            }else{
                 $scope.editModel.model.status=0;
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
             }
+
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
+
         };
         $scope.addTag = function () {
             if ($scope.editModel.tagList) {
@@ -55,16 +52,39 @@ define([
         $scope.ok = function() {
             if (!$scope.promotionForm.$valid)
                 return;
-            $scope.editModel.tagList= _.filter( $scope.editModel.tagList, function(tag){ return tag.tagName!=""; });
-            $scope.editModel.model.activityStart = formatToStr($scope.editModel.model.activityStart);
-            $scope.editModel.model.activityEnd = formatToStr($scope.editModel.model.activityEnd);
-            $scope.editModel.model.prePeriodStart = formatToStr($scope.editModel.model.prePeriodStart);
-            $scope.editModel.model.prePeriodEnd = formatToStr($scope.editModel.model.prePeriodEnd);
-            jmPromotionService.saveModel($scope.editModel).then(function (res) {
-                    $scope.$close();
-                if(context.search) {
-                    context.search();
-                }
+            if($scope.editModel.model.activityStart > $scope.editModel.model.activityEnd){
+                alert("活动时间检查：请输入结束时间>开始时间，最小间隔为30分钟。")
+                return;
+            }
+            var start = new Date($scope.editModel.model.activityStart);
+            var end = new Date($scope.editModel.model.activityEnd);
+            if(end.getTime()-start.getTime() < 30*60*1000 ){
+                alert("活动时间检查：最小间隔为30分钟。");
+                return;
+            }
+
+            if($scope.editModel.model.prePeriodStart > $scope.editModel.model.prePeriodEnd){
+                alert("预热时间检查：请输入结束时间>开始时间。");
+                return;
+            }
+            if($scope.editModel.model.prePeriodStart > $scope.editModel.model.activityStart){
+                alert("预热开始时间不能晚于活动开始时间");
+                return;
+            }
+            if($scope.editModel.model.prePeriodEnd > $scope.editModel.model.activityEnd){
+                alert("预热结束时间不能晚于活动结束时间");
+                return;
+            }
+            var _upEntity = angular.copy($scope.editModel);
+            _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
+            _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
+            _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
+            _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
+            _upEntity.model.prePeriodEnd = formatToStr(_upEntity.model.prePeriodEnd);
+            jmPromotionService.saveModel(_upEntity).then(function () {
+                context =$scope.editModel.model;
+                $scope.$close();
+
             })
         };
         /**

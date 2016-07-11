@@ -20,8 +20,8 @@ public interface CmsUrlConstants {
             String GET_CATE_TYPE = "getPlatformType";
 
             String SET_CATE_TYPE = "setPlatformType";
+            String GetHomeSumData="getHomeSumData";
         }
-
     }
 
     interface JMPROMOTION {
@@ -315,6 +315,10 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
+            String EXPORT = "export";
+            String REEXPORT = "reExport";
+            String EXPORTSEARCH = "exportSearch";
+            String DOWNLOAD = "download";
         }
     }
 
@@ -417,6 +421,8 @@ public interface CmsUrlConstants {
             String GET_CATEGORY_DETAIL = "getCategoryDetail";
 
             String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
+
+            String GET_NEW_CATEGORY_LIST = "getNewsCategoryList";
         }
 
         interface ERROR {
@@ -466,11 +472,13 @@ public interface CmsUrlConstants {
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
-        interface PRICE {
+        interface PRICE_LOG {
 
-            String ROOT = "/cms/pop/history_price/";
+            String ROOT = "/cms/price/log";
 
-            String GET_PRICE_HISTORY = "getPriceHistory";
+            String PAGE = "page";
+
+            String EXPORT = "export";
         }
 
         interface PROMOTION {
@@ -487,7 +495,7 @@ public interface CmsUrlConstants {
             String UPLOAD_IMAGE = "uploadImage";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
-            String ROOT = "/cms/pop/add_to_channel_category/";
+            String ROOT = "/cms/pop/add_to_channel_category";
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
         }
@@ -520,6 +528,16 @@ public interface CmsUrlConstants {
 
             String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
 
+            String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
+
+            String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
+
+            String UPDATE_LOCK = "updateLock";
+
+            String UPDATE_FEED_ATTS = "updateProductAtts";
+
+            String CHECK_CATEGORY = "checkCategory";
+
         }
 
     }
@@ -544,21 +562,17 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/translation/tasks";
 
-            String GET_TASKS = "getTasks";
+            String INIT = "init";
 
-            String SEARCH_HISTORY_TASKS = "searchHistoryTasks";
+            String SEARCH = "search";
 
-            String ASSIGN_TASKS = "assignTasks";
+            String ASSIGN = "assign";
 
-            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+            String SAVE = "save";
 
-            String SAVE_TASK = "saveTask";
+            String SUBMIT = "submit";
 
-            String SUBMIT_TASK = "submitTask";
-
-            String CANCEL_TASK = "cancelTask";
-
-            String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+            String GET = "get";
         }
     }
 
@@ -669,7 +683,7 @@ public interface CmsUrlConstants {
     interface TOOLS{
         interface PRODUCT {
 
-            String ROOT = "/cms/tools/product";
+            String ROOT = "/cms/tools/product/";
 
             String INIT_HS_CODE_INFO = "initHsCodeInfo";
 

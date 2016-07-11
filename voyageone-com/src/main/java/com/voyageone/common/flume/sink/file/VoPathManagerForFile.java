@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class VoPathManagerForFile {
-    private final static String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
     private File baseDirectory;
     private AtomicInteger fileIndex = new AtomicInteger();
     private File currentFile;

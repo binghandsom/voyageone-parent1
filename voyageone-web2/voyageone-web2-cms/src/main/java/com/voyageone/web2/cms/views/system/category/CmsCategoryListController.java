@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.system.category;
 
+import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -29,6 +30,9 @@ public class CmsCategoryListController extends CmsController {
     @Autowired
     private CmsCategoryListService cmsCategoryListService;
 
+    @Autowired
+    CategoryTreeAllService categoryTreeAllService;
+
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_LIST)
     public AjaxResponse getCategoryList(@RequestBody Map params) {
 
@@ -40,6 +44,13 @@ public class CmsCategoryListController extends CmsController {
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    @RequestMapping(SYSTEM.CATEGORY.GET_NEW_CATEGORY_LIST)
+    public AjaxResponse getNewCategoryList(@RequestBody Map params) {
+
+        // 返回用户信息
+        return success(categoryTreeAllService.getCategoriesByChannelId(getUser().getSelChannelId(), getLang()));
     }
 
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_DETAIL)

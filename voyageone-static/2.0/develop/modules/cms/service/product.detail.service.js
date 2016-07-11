@@ -24,6 +24,11 @@ define([
 		this.updateProductPlatformChk = updateProductPlatformChk;
 		this.updateProductPlatform = updateProductPlatform;
 		this.updateProductFeed = updateProductFeed;
+		this.getCommonProductInfo = getCommonProductInfo;
+		this.updateCommonProductInfo = updateCommonProductInfo;
+		this.updateLock = updateLock;
+		this.updateProductAtts = updateProductAtts;
+		this.checkCategory = checkCategory;
 
 		/**
 		 * 获取页面产品信息
@@ -262,6 +267,86 @@ define([
 					defer.resolve(res);
 				});
 
+			return defer.promise;
+		}
+
+		/**
+		 * 获取产品的平台属性
+		 * @param { prodId:"",cartId:""} 产品id，平台id
+		 * @returns
+		 */
+		function getCommonProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getCommonProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * master保存操作
+		 * @param { prodId:"",productComm:""} 产品id，productComm(产品共通属性)
+		 * @returns
+		 * */
+		function updateCommonProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.updateCommonProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * master锁定操作
+		 * @param { prodId:"",lock:""} 产品id，lock:'0','1'
+		 * @returns
+		 * */
+		function updateLock(req){
+			var defer = $q.defer();
+			$productDetailService.updateLock(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * feed修改操作
+		 * @param { prodId:"",feedInfo:""} 产品id，feed产品信息
+		 * @returns
+		 * */
+		function updateProductAtts(req){
+			var defer = $q.defer();
+			$productDetailService.updateProductAtts(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * @param { cartId:"",catpath:""} 平台id，类目path
+		 * 检查类目操作
+		 */
+		function checkCategory(req){
+			var defer = $q.defer();
+			$productDetailService.checkCategory(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
 			return defer.promise;
 		}
 	}

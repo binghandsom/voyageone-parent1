@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -30,6 +33,9 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     FeedCustomPropService feedCustomPropService;
+
+    @Autowired
+    ProductService productService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params) {
@@ -106,18 +112,52 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap) {
 
-        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getLang());
+        Map<String, Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getCmsSession());
 
         return success(resultMap);
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_COMMON_PRODUCTINFO)
     public AjaxResponse doGetMastProductInfo(@RequestBody Map requestMap) {
 
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
         String channelId = getUser().getSelChannelId();
 
-        return success(productPropsEditService.getMastProductInfo(channelId,prodId));
+        return success(productPropsEditService.getMastProductInfo(channelId,prodId,getLang()));
 
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
+    public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> productComm = (Map<String, Object>) requestMap.get("productComm");
+
+        return success(productPropsEditService.updateCommonProductinfo(channelId, prodId, productComm, getUser().getUserName()));
+
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_LOCK)
+    public AjaxResponse doLock(@RequestBody Map requestMap){
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String lock = (String) requestMap.get("lock");
+        productService.updateProductLock(getUser().getSelChannelId(),prodId,lock,getUser().getUserName());
+
+        return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_FEED_ATTS)
+    public AjaxResponse updateProductAtts(@RequestBody Map requestMap){
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+        if(requestMap.get("feedInfo") != null){
+            List<CustomPropBean> cnProps =  JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
+            productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
+        }
+        return success(null);
     }
 }

@@ -1,9 +1,15 @@
 package com.voyageone.components.jumei.reponse;
 
+import java.io.Serializable;
+
 /**
- * Created by Ethan Shi on 2016/6/12.
+ * HtProductAddResponse_Spu
+ *
+ * @author Ethan Shi,2016/6/12.
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtProductAddResponse_Spu {
+public class HtProductAddResponse_Spu implements Serializable {
     private String partner_spu_no;
     private String jumei_spu_no;
     private String partner_sku_no;

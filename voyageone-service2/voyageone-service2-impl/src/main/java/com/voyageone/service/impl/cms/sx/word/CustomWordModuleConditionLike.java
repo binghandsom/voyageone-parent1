@@ -9,7 +9,6 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)

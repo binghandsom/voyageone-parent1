@@ -1,8 +1,6 @@
 package com.voyageone.service.impl.cms.jumei.enumjm;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.excel.EnumExcelColumnType;
-import com.voyageone.common.util.excel.FunctionFormatter;
-import com.voyageone.service.model.cms.CmsBtJmProductModel;
 
 public enum EnumImportBase {
         ProductCode("product_code", 0, "jm_bt_product", "产品编号"),//Ajm_bt_product
@@ -54,7 +52,7 @@ public enum EnumImportBase {
         private EnumExcelColumnType columnType;
         private double columnWidth;
         private boolean isNull;
-        private FunctionFormatter<Object, CmsBtJmProductModel, Integer, Object> formatter;
+        //private FunctionFormatter<Object, CmsBtJmProductModel, Integer, Object> formatter;
 
         private EnumImportBase(String columnName, int orderIndex, String tableName, String text) {
             this.columnName = columnName;

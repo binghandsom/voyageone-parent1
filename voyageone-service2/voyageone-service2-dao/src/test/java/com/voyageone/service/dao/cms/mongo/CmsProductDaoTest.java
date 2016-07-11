@@ -5,17 +5,15 @@ import com.mongodb.*;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import net.minidev.json.JSONObject;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.net.UnknownHostException;
 import java.util.*;
+
+//import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 @ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsProductDaoTest {
@@ -183,7 +181,7 @@ public class CmsProductDaoTest {
         skuModel.setBarcode("12341111");
         skuModel.setPriceMsrp((double)187);
         skuModel.setPriceRetail((double)243);
-        skuModel.setPriceSale((double)358);
+//        skuModel.setPriceSale((double)358);
 
 
         DBCollection coll = cmsBtProductDao.getDBCollection("100");
@@ -267,7 +265,7 @@ public class CmsProductDaoTest {
         skuModel.setBarcode("12311111");
         skuModel.setPriceMsrp((double)387);
         skuModel.setPriceRetail((double)543);
-        skuModel.setPriceSale((double)858);
+//        skuModel.setPriceSale((double)858);
         //skuModel.setPlatformArrCode("1110");
 
         System.out.println(JsonUtil.bean2Json(skuModel));
@@ -284,7 +282,7 @@ public class CmsProductDaoTest {
         CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku();
         skuModel.setPriceMsrp((double)187);
         skuModel.setPriceRetail((double)243);
-        skuModel.setPriceSale((double)358);
+//        skuModel.setPriceSale((double)358);
 
         BulkWriteOperation b1 = coll.initializeUnorderedBulkOperation();
 

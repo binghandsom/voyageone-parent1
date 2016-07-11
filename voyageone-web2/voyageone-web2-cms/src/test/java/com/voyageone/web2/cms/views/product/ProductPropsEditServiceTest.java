@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class ProductPropsEditServiceTest {
         userSession.setSelChannelId("013");
         userSession.setUserName("lewis");
 
-        Map<String,Object> resMap = productPropsEditService.changeProductCategory(requestMap,userSession, "en");
+        Map<String,Object> resMap = productPropsEditService.changeProductCategory(requestMap,userSession, new CmsSessionBean());
 
         System.out.println();
 

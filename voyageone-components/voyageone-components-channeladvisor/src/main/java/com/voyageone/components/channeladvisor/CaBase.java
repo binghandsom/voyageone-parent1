@@ -3,8 +3,6 @@ package com.voyageone.components.channeladvisor;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.ComponentBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
