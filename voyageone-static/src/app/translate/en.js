@@ -11,6 +11,7 @@ define(function () {
         "TXT_SHOWING_NO": "The",
         "TXT_PAGE": "Page",
         "BTN_GO": "GO",
-        "BTN_OK": "OK"
+        "BTN_OK": "OK",
+        "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date."
     }
 });
