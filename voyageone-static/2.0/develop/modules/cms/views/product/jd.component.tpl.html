@@ -233,7 +233,7 @@
                                     <tr>
                                         <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10" style="padding: 0px"></td>
                                     </tr>
-                                    <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0">
+                                    <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
                                         <td class="text-center v-middle">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">
@@ -249,7 +249,7 @@
                                         <td class="text-center v-middle"></td>
                                         <td class="text-center v-middle" ng-if="cartInfo.value == 27">
                                             <select ng-model="entity.property" class="form-control">
-                                                <option value="OTHER" ng-selected="{{!entity.property || entity.property == 'OTHER'}}">其他</option>
+                                                <option value="OTHER">其他</option>
                                                 <option value="FORMAL">正装</option>
                                                 <option value="MS">中小样</option>
                                             </select>
