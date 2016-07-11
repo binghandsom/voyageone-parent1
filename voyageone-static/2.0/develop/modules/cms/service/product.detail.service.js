@@ -28,6 +28,7 @@ define([
 		this.updateCommonProductInfo = updateCommonProductInfo;
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
+		this.checkCategory = checkCategory;
 
 		/**
 		 * 获取页面产品信息
@@ -326,6 +327,21 @@ define([
 		function updateProductAtts(req){
 			var defer = $q.defer();
 			$productDetailService.updateProductAtts(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * @param { cartId:"",catpath:""} 平台id，类目path
+		 * 检查类目操作
+		 */
+		function checkCategory(req){
+			var defer = $q.defer();
+			$productDetailService.checkCategory(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){
