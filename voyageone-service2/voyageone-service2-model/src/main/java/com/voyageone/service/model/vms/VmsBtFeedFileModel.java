@@ -29,6 +29,11 @@ public class VmsBtFeedFileModel extends BaseModel {
     protected String fileName;
 
     /**
+     * 1:online导入；2：ftp导入
+     */
+    protected String uploadType;
+
+    /**
      * 1:等待导入；2：导入完成；3：导入错误
      */
     protected String status;
@@ -60,6 +65,14 @@ public class VmsBtFeedFileModel extends BaseModel {
 
     public void setFileName(String fileName) {
         this.fileName = fileName == null ? null : fileName.trim();
+    }
+
+    public String getUploadType() {
+        return uploadType;
+    }
+
+    public void setUploadType(String uploadType) {
+        this.uploadType = uploadType == null ? null : uploadType.trim();
     }
 
     public String getStatus() {

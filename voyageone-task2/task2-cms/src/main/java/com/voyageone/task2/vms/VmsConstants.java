@@ -19,6 +19,14 @@ public class VmsConstants {
 	}
 
 	/**
+	 * Feed文件上传类型
+	 */
+	public final static class FeedFileUploadType {
+		public final static String ONLINE = "1";
+		public final static String FTP = "2";
+	}
+
+	/**
 	 * ChannelConfig
 	 */
 	public interface ChannelConfig {

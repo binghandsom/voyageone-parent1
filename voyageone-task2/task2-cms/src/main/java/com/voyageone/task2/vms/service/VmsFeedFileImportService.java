@@ -138,8 +138,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         String channelId = (String) messageMap.get("channelId");
         // 处理的csv文件名
         String fileName = (String) messageMap.get("fileName");
+        // 文件上传类型
+        String uploadType = (String) messageMap.get("uploadType");
         if (!StringUtils.isEmpty(channelId) && fileName != null) {
-            new ImportFeedFile(channelId, fileName).doRun();
+            new ImportFeedFile(channelId, fileName, uploadType).doRun();
         } else {
             $error("参数channelId或者fileName为空");
         }
@@ -151,10 +153,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     public class ImportFeedFile {
         private OrderChannelBean channel;
         private String fileName;
+        private String uploadType;
 
-        public ImportFeedFile(String orderChannelId, String fileName) {
+        public ImportFeedFile(String orderChannelId, String fileName, String uploadType) {
             this.channel = Channels.getChannel(orderChannelId);
             this.fileName = fileName;
+            this.uploadType = uploadType;
         }
 
         public void doRun() {
@@ -174,13 +178,25 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 //                $error("找不到要处理的数据,channel:" + channel.getFull_name()  + ",fileName:" + fileName);
 //                return;
 //            }
+
+
             // 取得Feed文件上传路径
-            String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
+            String feedFilePath = "";
+            // online上传的场合
+            if (VmsConstants.FeedFileUploadType.ONLINE.equals(uploadType)) {
+                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+                feedFilePath +=  "/" + channel.getOrder_channel_id() + "/";
+            } else {
+                // ftp上传的场合
+                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+                feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
+            }
+
             // 存在需要导入的Feed文件
-            File feedFile = new File(feedFilePath + "/" + channel.getOrder_channel_id() + "/feed/" + fileName);
+            File feedFile = new File(feedFilePath + fileName);
             // 文件存在的话那么处理
             if (feedFile.exists()) {
-                $info("Feed文件处理开始 文件路径：" + fileName + ",channel：" + channel.getFull_name());
+                $info("Feed文件处理开始 文件路径：" + feedFilePath + fileName + ",channel：" + channel.getFull_name());
                 // 把Feed数据插入vms_bt_feed_info_temp表
                 boolean result = readCsvToDB(feedFile);
                 if (!result) {
@@ -190,7 +206,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 $info("Feed文件处理结束,channel：" + channel.getFull_name());
             } else {
                 // 一般情况下不可能发生，除非手动删除文件
-                $error("Feed文件不存在 文件路径：" + fileName + ",channel：" + channel.getFull_name());
+                $error("Feed文件不存在 文件路径：" + feedFilePath + fileName + ",channel：" + channel.getFull_name());
             }
             $info(channel.getFull_name() + "产品 Feed文件导入结束");
         }
@@ -1414,8 +1430,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          */
         private void moveFeedFileToBak(String feedFileName) {
             // 取得Feed文件上传路径
-            String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
-            feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
+            String feedFilePath ="";
+            // online上传的场合
+            if (VmsConstants.FeedFileUploadType.ONLINE.equals(uploadType)) {
+                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+                feedFilePath +=  "/" + channel.getOrder_channel_id() + "/";
+            } else {
+                // ftp上传的场合
+                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+                feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
+            }
             // 创建文件目录
             FileUtils.mkdirPath(feedFilePath + "bak/");
             FileUtils.moveFile(feedFilePath + feedFileName, feedFilePath + "bak/" + feedFileName);

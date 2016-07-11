@@ -33,15 +33,17 @@ public class FeedFileService extends BaseService {
      * @param channelId   渠道
      * @param fileName    文件名
      * @param newFileName 新文件名
+     * @param uploadType 上传状态
      * @param status      状态
      * @param modifier    创建者
      * @return id
      */
-    public Integer insertFeedFileInfo(String channelId, String fileName, String newFileName, String status, String modifier) {
+    public Integer insertFeedFileInfo(String channelId, String fileName, String newFileName, String uploadType, String status, String modifier) {
         VmsBtFeedFileModel model = new VmsBtFeedFileModel();
         model.setChannelId(channelId);
         model.setClientFileName(fileName);
         model.setFileName(newFileName);
+        model.setUploadType(uploadType);
         model.setStatus(status);
         model.setCreater(modifier);
         model.setModifier(modifier);
@@ -65,28 +67,18 @@ public class FeedFileService extends BaseService {
     }
 
     /**
-     * 从vms_bt_feed_file表删除一条文件信息
-     *
-     * @param id  Key
-     */
-    public void deleteFeedFileInfo(Integer id) {
-        vmsBtFeedFileDao.delete(id);
-    }
-
-
-    /**
-     * 文件保存到服务器指定的路径
+     * 保存online上传的文件到服务器指定的路径
      *
      * @param channelId   渠道id
      * @param fileName 文件名
      * @param inputStream 文件流
      * @return 新命名的文件名
      */
-    public void saveFile(String channelId, String fileName, InputStream inputStream) {
+    public void saveOnlineFile(String channelId, String fileName, InputStream inputStream) {
 
         // 取得Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
-        feedFilePath +=  "/" + channelId + "/feed/";
+        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+        feedFilePath +=  "/" + channelId + "/";
         try {
             FileUtils.copyInputStreamToFile(inputStream, new File(feedFilePath  + fileName));
         } catch (IOException e) {

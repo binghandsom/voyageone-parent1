@@ -47,18 +47,15 @@ public class VmsFeedFileUploadService extends BaseAppService {
 
             String newFileName = "Feed_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
-            // 往vms_bt_feed_file表插入数据
-            Integer id = feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
-
             // 保存文件
-            try {
-                feedFileService.saveFile(channelId, newFileName, inputStream);
-            } catch (Exception ex) {
-                // 删除之前插入的数据，之所以先更新DB再保存文件，是因为batch也有读取相同目录下FTP上传的文件。
-                // 不希望客户系统上传的文件被batch读到。
-                feedFileService.deleteFeedFileInfo(id);
-                throw ex;
-            }
+            feedFileService.saveOnlineFile(channelId, newFileName, inputStream);
+
+            // 往vms_bt_feed_file表插入数据
+            feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileUploadType.ONLINE,
+                    VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+
+        } catch (BusinessException ex) {
+            throw ex;
         } catch (Exception ex) {
             // Failed to upload file.
             throw new BusinessException("8000016");
@@ -73,27 +70,33 @@ public class VmsFeedFileUploadService extends BaseAppService {
      */
     private void doSaveFeedFileCheck(String channelId, MultipartFile uploadFile) {
 
-        // 取得Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
-        feedFilePath +=  "/" + channelId + "/feed/";
-
-        // vms_bt_feed_file表存在状态为1：等待上传的数据也是不允许上传
-        List<VmsBtFeedFileModel> models = feedFileService.getFeedFileInfoByStatus(channelId, VmsConstants.FeedFileStatus.WAITING_IMPORT);
-        if (models.size() > 0) {
+        // vms_bt_feed_file表存在状态为1：等待上传或者2：上传中的数据那么不允许上传
+        List<VmsBtFeedFileModel> waitingImportModels = feedFileService.getFeedFileInfoByStatus(channelId, VmsConstants.FeedFileStatus.WAITING_IMPORT);
+        List<VmsBtFeedFileModel> importingModels = feedFileService.getFeedFileInfoByStatus(channelId, VmsConstants.FeedFileStatus.IMPORTING);
+        if (waitingImportModels.size() > 0 || importingModels.size() > 0) {
             // Have Feed file is processing, please upload later.
             throw new BusinessException("8000013");
         }
 
+        // 取得ftp测 Feed文件上传路径
+        String feedFileFtpPath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+        feedFileFtpPath +=  "/" + channelId + "/feed/";
+
         // 目录下有文件存在的话不允许上传（FTP有上传的情况下）
-        File root = new File(feedFilePath);
+        File root = new File(feedFileFtpPath);
         // 扫描根目录下面的所有文件（不包含子目录）
         File[] files = root.listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
                 // 只处理文件，跳过目录
                 if (!file.isDirectory()) {
-                    // Have Feed file is processing, please upload later.
-                    throw new BusinessException("8000013");
+                    String fileName = file.getName().toLowerCase();
+                    if (fileName.lastIndexOf(".csv") > -1) {
+                        if (".csv".equals(fileName.substring(fileName.length() - 4))) {
+                            // Have Feed file is processing, please upload later.
+                            throw new BusinessException("8000013");
+                        }
+                    }
                 }
             }
         }
