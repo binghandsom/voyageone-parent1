@@ -4,6 +4,7 @@ package com.voyageone.common.configs.beans;
  */
 public class TypeBean {
 
+    private int value_id;
     private int type_id;
     private String type_code;
     private String value;
@@ -12,6 +13,14 @@ public class TypeBean {
     private String add_name2;
     private String lang_id;
     private String comment;
+
+    public int getValue_id() {
+        return value_id;
+    }
+
+    public void setValue_id(int value_id) {
+        this.value_id = value_id;
+    }
 
     public int getType_id() {
         return type_id;
