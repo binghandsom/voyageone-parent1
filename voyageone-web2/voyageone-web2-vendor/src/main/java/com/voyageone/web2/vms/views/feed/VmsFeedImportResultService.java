@@ -3,10 +3,13 @@ package com.voyageone.web2.vms.views.feed;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.feed.FeedFileService;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,7 @@ public class VmsFeedImportResultService extends BaseAppService {
      */
     public Map<String, Object> init (Map<String, Object> param) {
 
-        Map<String, Object> result = new HashMap<>();
+       Map<String, Object> result = new HashMap<>();
 
         // 状态
         result.put("statusList", Types.getTypeList(83, (String)param.get("lang")));
@@ -52,7 +55,17 @@ public class VmsFeedImportResultService extends BaseAppService {
         int curr = (int) param.get("curr");
         int size = (int) param.get("size");
 
-        Map<String, Object> newMap = MySqlPageHelper.build(param).page(curr).limit(size).addSort("created", Order.Direction.DESC).toMap();
+        String uploadDateStart = String.valueOf(param.get("uploadDateStart"));
+        if (!StringUtils.isEmpty(uploadDateStart)) {
+            param.put("uploadDateStart", new Date(Long.parseLong(uploadDateStart)));
+        }
+
+        String uploadDateEnd = String.valueOf(param.get("uploadDateEnd"));
+        if (!StringUtils.isEmpty(uploadDateEnd)) {
+            param.put("uploadDateEnd", new Date(Long.parseLong(uploadDateEnd)));
+        }
+
+       Map<String, Object> newMap = MySqlPageHelper.build(param).page(curr).limit(size).addSort("created", Order.Direction.DESC).toMap();
 
         // 根据条件取得检索结果
         List<Map<String, Object>> feedImportResultList = feedFileService.getFeedFileList(newMap);
