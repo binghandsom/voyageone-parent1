@@ -26,7 +26,6 @@ define([
             self.code = context.code;
             self.selected = selected;
             self.priceLogService = priceLogService;
-            self.isOnlyShowMsrp = false;
 
             self.paging = {
                 size: 10,
