@@ -7,6 +7,8 @@ define([
     vms.controller('FeedImportResultController', (function () {
 
         function FeedImportResultController() {
+            this.feedStartTime = "";
+            this.feedEndTime = "";
         }
         return FeedImportResultController;
 

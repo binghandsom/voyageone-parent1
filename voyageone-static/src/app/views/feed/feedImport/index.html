@@ -28,18 +28,18 @@
                 <div class="form-group">
                     <label class="control-label">Upload Time</label>
                      <span class="input-group">
-                        <input class="form-control" ng-model="ctrl.feedStartTime" uib-datepicker-popup
-                               is-open="datepicker1" date-model-format="yyyy-MM-dd"  placeholder="Start Date">
+                        <input type="text" class="form-control" ng-model="ctrl.feedStartTime" max-date="ctrl.feedEndTime" uib-datepicker-popup
+                               is-open="ctrl.datepicker1" date-model-format="yyyy-MM-dd"  placeholder="Start Date" ng-required="true" close-text="Close">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button class="btn btn-default" ng-click="ctrl.datepicker1=!ctrl.datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
                     <span>~</span>
                      <span class="input-group">
-                        <input class="form-control" ng-model="ctrl.feedEndTime" uib-datepicker-popup
-                               is-open="datepicker2" date-model-format="yyyy-MM-dd"  placeholder="Expected finish date">
+                        <input type="text" class="form-control" ng-model="ctrl.feedEndTime" min-date="ctrl.feedStartTime" uib-datepicker-popup
+                               is-open="ctrl.datepicker2" date-model-format="yyyy-MM-dd"  placeholder="Expected finish date" ng-required="true" close-text="Close">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button class="btn btn-default" ng-click="ctrl.datepicker2=!ctrl.datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
                 </div>
