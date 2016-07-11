@@ -88,11 +88,9 @@ public class Types {
      * @return TypeBean
      */
     public static TypeBean getTypeBean(String typeName, String langId) {
-        List<TypeBean> beans = CacheHelper.getAllBeans(KEY, selfClass);
-        for (TypeBean typeBean : beans) {
-            if (typeBean.getType_code().equals(typeName) && typeBean.getLang_id().equals(langId)) return typeBean;
-        }
-        return null;
+        List<TypeBean> typeList = getTypeList(typeName, langId);
+        if (CollectionUtils.isEmpty(typeList)) return null;
+        return typeList.get(0);
     }
 
     public static Map<String, String> getTypeMap(int typeId, String langId) {
@@ -183,14 +181,12 @@ public class Types {
     }
 
     public static List<TypeBean> getTypeList(int typeId, String langId) {
-        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
-        if (CollectionUtils.isEmpty(keySet)) return null;
-        List<String> keyList = new ArrayList<>();
-        keySet.forEach(k -> {
-            if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
-        });
-        Collections.sort(keyList);
-        return CollectionUtils.isEmpty(keyList) ? null : CacheHelper.getBeans(KEY, keyList, selfClass);
+        List<TypeBean> allBeans = CacheHelper.getAllBeans(KEY, selfClass);
+        List<TypeBean> beans = allBeans
+                .stream()
+                .filter(b -> typeId == b.getType_id() && b.getLang_id().equals(langId))
+                .collect(Collectors.toList());
+        return CollectionUtils.isEmpty(beans) ? null : beans;
     }
 
     public static List<TypeBean> getTypeList(String typeName, String langId) {
