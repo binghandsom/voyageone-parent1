@@ -12,6 +12,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -32,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Edward
@@ -46,6 +47,10 @@ public class BackDoorController extends CmsController {
 
     @Autowired
     private ProductGroupService productGroupService;
+
+    @Autowired
+    private CmsBtProductGroupDao productGroupDao;
+
     @Autowired
     private JmBtDealImportService serviceJmBtDealImport;
     @Autowired
@@ -151,6 +156,8 @@ public class BackDoorController extends CmsController {
     @RequestMapping(value = "changeDataByNewModel", method = RequestMethod.GET)
     public Object changeDataBy20160708(@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
 
+        final String productNewStatusName = CmsConstants.ProductStatus.New.name();
+
         List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, code);
 
         List<String> errorCode = new ArrayList<>();
@@ -159,6 +166,14 @@ public class BackDoorController extends CmsController {
 
         oldProductInfo.forEach(oldCmsBtProductModel -> {
             System.out.print("开始处理:" + oldCmsBtProductModel.getFields().getCode());
+
+            String oldStatus = oldCmsBtProductModel.getFields().getStatus();
+
+            if (oldStatus.equals(productNewStatusName)) {
+                cmsBtProductDao.deleteById(oldCmsBtProductModel.get_id(), channelId);
+                return;
+            }
+
             try {
                 CmsBtProductModel cmsBtProductModel = new CmsBtProductModel();
                 // 设计基础属性
@@ -540,7 +555,81 @@ public class BackDoorController extends CmsController {
             }
         });
 
+        checkGroupTransformOn20160708(channelId);
+
         return "成功处理数据件数:" + oldProductInfo.size() + ",错误列表:" + errorCode.toString();
+    }
+
+    private void checkGroupTransformOn20160708(String channelId) {
+
+        // 在 product 全部更新完成后
+        // 获取所有的渠道下的 group
+        // 对每个 group 做 product 的检查
+        List<CmsBtProductGroupModel> groupModelList = productGroupDao.selectAll(channelId);
+
+        groupModelList.parallelStream().forEach(groupModel -> {
+
+            // 如果 product 的 status 是 new, 会在上一步的 product 处理时删除掉
+            // 那么此时, group 的 code list 中也许就包含已经被删除, 即数据库现在不存在的 code
+            // 先过滤掉这些不存在的 code
+            List<String> existedCodeList = groupModel.getProductCodes().stream().filter(productCode -> {
+                long productCount = cmsBtProductDao.countByQuery("{ 'common.fields.code': # }", new Object[]{productCode}, channelId);
+                return productCount > 0;
+            }).collect(toList());
+
+            // 经过过滤的数据如果和之前的长度相同
+            // 说明这个 group 下的 product 数据都是正常转换完成了的
+            // 对于 group 来说就不需要再进一步处理了
+            if (groupModel.getProductCodes().size() == existedCodeList.size())
+                return;
+
+            String oldMainProductCode = groupModel.getMainProductCode();
+            Map<String, Object> groupSetParams = new HashMap<>(2);
+
+            if (existedCodeList.contains(oldMainProductCode)) {
+                // 如果存在, 说明还没有删除
+                // 那么维持老的数据即可
+                // 只需要扔掉那些删除掉得 code
+                groupModel.setProductCodes(existedCodeList);
+            } else {
+                // 如果 group 现在使用的 main product 不在过滤后的集合里
+                // 说明这个 code 已经被上一步删除了
+                // 那么
+                // 除了切换 group 的 main product code 外
+                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
+                String newMainProductCode = existedCodeList.get(0);
+                groupModel.setMainProductCode(newMainProductCode);
+                existedCodeList.forEach(existedCode -> {
+                    // 更新每一个 code
+                    // 更新他们平台属性下, 所有平台下的 pIsMain 和 mainProductCode
+                    // 不过 P0 只有 mainProductCode
+                    // 同时还要更新 common fields 里的 isMasterMain 属性
+                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
+                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
+                    boolean isMain = existedCode.equals(newMainProductCode);
+                    Map<String, Object> productSetParams = new HashMap<>(3);
+
+                    if (isMain)
+                        productSetParams.put("common.fields.isMasterMain", 1);
+
+                    productModel.getPlatforms().forEach((platformName, platformModel) -> {
+                        if (isMain && !platformName.equals("P0")) {
+                            productSetParams.put("platforms." + platformName + ".pIsMain", 1);
+                        }
+                        productSetParams.put("platforms." + platformName + ".mainProductCode", newMainProductCode);
+                    });
+
+                    if (productSetParams.isEmpty())
+                        return;
+
+                    Map<String, Object> productQueryParams = new HashMap<>();
+                    productQueryParams.put("_id", productModel.get_id());
+                    productService.updateProduct(channelId, productQueryParams, productSetParams);
+                });
+            }
+
+            productGroupService.update(groupModel);
+        });
     }
 
     /**
