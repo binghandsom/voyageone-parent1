@@ -35,10 +35,11 @@
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
                                title="From"
+                               type="date"
                                ng-model="ctrl.orderDateFrom"
                                uib-datepicker-popup
-                               is-open="datepicker3"
-                               placeholder="From">
+                               datepicker-options="{maxDate:ctrl.orderDateTo}"
+                               is-open="datepicker3" >
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker3=!datepicker3"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -47,10 +48,11 @@
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
                                title="To"
+                               type="date"
                                ng-model="ctrl.orderDateTo"
                                uib-datepicker-popup
-                               is-open="datepicker4"
-                               placeholder="To">
+                               datepicker-options="{minDate:ctrl.orderDateFrom}"
+                               is-open="datepicker4" >
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -100,7 +102,7 @@
                         <td ng-click="item.collapse = !item.collapse">{{item.status}}</td>
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
-                            <button class="btn btn-xs btn-warning">CANCEL</button>
+                            <button class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)">CANCEL</button>
                             <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
@@ -117,7 +119,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <div vpagination="ctrl.pageInfo"></div>
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
             </div>
         </div>
     </div>

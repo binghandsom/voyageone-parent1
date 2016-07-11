@@ -1,14 +1,8 @@
-/**
- * @Description:
- * table中无数据范围的数据
- * @User: linanbin
- * @Version: 2.0.0, 15/12/11
- */
 angular.module("vo.directives").directive("ifNoRows", function ($templateCache, $compile) {
-    var tempNoDataKey = "vo.directives.ifNoRows.tpl.html";
+    var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     // 没有数据显示警告
     if (!$templateCache.get(tempNoDataKey)) {
-        $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_ALERT\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
+        $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData"><h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;<span translate="TXT_ALERT"></span></h4><span translate="TXT_MSG_NO_DATE"></span></dv>');
     }
     return {
         restrict: "A",

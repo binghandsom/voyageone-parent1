@@ -20,4 +20,6 @@ public interface VmsBtOrderDetailDaoExt {
     List<String> selectList(Map<String, Object> orderSearchParams);
 
     long selectPlatformOrderListNumLimitedByTime(Map<String, Object> orderSearchParamsWithLimitAndSort);
+
+    int updateOrderStatus(Map<String, Object> changeStatusParam);
 }

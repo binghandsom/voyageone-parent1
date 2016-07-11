@@ -17,9 +17,9 @@
             <h2>Choose File</h2>
             <label for="file" class="input input-file">
                 <div class="button_browse">
-                    <input type="file" id="file" name="file" uploader="ctrl.uploader" accept=".csv" nv-file-select />
-                    <button class="">Browse</button>
+                    <input type="file" id="file" name="file" uploader="ctrl.uploader" accept=".csv" nv-file-select/>
                 </div>
+                <input type="text" readonly>
             </label>
             <button class="button_upload"  ng-click="ctrl.upload()">Upload</button>
         </div>

@@ -1,36 +1,15 @@
-/**
- * @Description:
- * 用于分页
- * @User:    Edward
- * @Version: 0.2.0, 2015-12-08
- */
 angular.module("vo.directives").directive("vpagination", function ($templateCache, $compile, vpagination) {
-    var templateKey = "vo.directives.pagination.tpl.html";
-    var templateKeyNoData = "vo.directives.paginationNoData.tpl.html";
+    var templateKey = "voyageone.angular.directives.pagination.tpl.html";
+    var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
     // 有数据分页样式
     if (!$templateCache.get(templateKey)) {
-        $templateCache.put(templateKey, '<div class="col-sm-3">\n' + '    ' +
-            '<div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' +
-            '<button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' +
-            "</div>\n" + "</div>\n" + '<div class="col-sm-4 text-center">\n' +
-            /**添加每页可选，add by pwj*/
-            '<small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_PAGER_SIZE\' | translate}}&nbsp;&nbsp;<select ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption"></select></small>' +
-            "&emsp;<small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" +
-            "</div>\n" + '<div class="col-sm-5 text-right text-center-xs"><div>' +
-            '<ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' +
-            '<li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first">' +
-            '<a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' +
-            '<li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' +
-            '<li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' +
-            '<li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' +
-            '<li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' +
-            '<li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next">' +
-            '<a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' +
-            '<li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "</ul>\n" + "</div>");
+        // 这个 html 是经过压缩的 html , 如果需要修改分页的 html 结构, 请去 vpagination.directive.html 修改, 修改后压缩并粘贴覆盖这里的代码
+        $templateCache.put(templateKey, '<div class="row"><div class="col-sm-3"><span translate="TXT_SHOWING_NO"></span><span>&nbsp;</span><input class="text-center" type="text" ng-model="curr.pageNo"><span>&nbsp;</span><span>/</span><span>&nbsp;</span><span ng-bind="totalPages"></span><span>&nbsp;</span><span translate="TXT_PAGE"></span><span>&nbsp;</span><button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button></div><div class="col-sm-4 text-center"><span translate="TXT_PAGER_SIZE"></span><span>&nbsp;</span><select ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption"></select><span>&nbsp;</span><span translate="TXT_SHOWING"></span><span>&nbsp;</span><span ng-bind="curr.start"></span><span>&nbsp;</span><span>-</span><span>&nbsp;</span><span ng-bind="curr.end"></span><span>&nbsp;</span><span translate="TXT_OF"></span><span>&nbsp;</span><span ng-bind="totalItems"></span><span>&nbsp;</span><span translate="TXT_ITEMS"></span></div><div class="col-sm-5 text-right"><ul class="pagination"><li ng-class="{disabled: curr.isFirst}"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li><li ng-class="{disabled: curr.isFirst}"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li><li ng-if="curr.isShowStart"><a href>...</a></li><li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}"><a href ng-click="goPage(page)">{{page}}</a></li><li ng-if="curr.isShowEnd"><a href>...</a></li><li ng-class="{disabled: curr.isLast}"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li><li ng-class="{disabled: curr.isLast}"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li></ul></div></div>');
     }
     // 无数据分页样式
     if (!$templateCache.get(templateKeyNoData)) {
-        $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_OF' | translate}}&nbsp;0&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>");
+        // 这里同上
+        $templateCache.put(templateKeyNoData, '<div class="text-center">&nbsp;<span translate="TXT_SHOWING"></span>&nbsp;<span>0&nbsp;-&nbsp;0</span>&nbsp;<span translate="TXT_OF"></span>&nbsp;<span>0</span>&nbsp;<span translate="TXT_ITEMS"></span></div>');
     }
     var defConfig = {
         curr: 1,
@@ -41,7 +20,6 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
     };
     return {
         restrict: "AE",
-        //templateUrl: templateKey,
         replace: false,
         scope: {
             $$configNameForA: "@vpagination",
@@ -89,6 +67,13 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
                 scope.totalItems = p.getTotal();
                 // 获取当前页的信息
                 scope.curr = p.getCurr();
+                // 获取每页数量
+                scope.config.size = p.getSize();
+
+                scope.perpages = {
+                    availableOptions: [10, 20, 50, 100],
+                    selectedOption: scope.config.size
+                };
                 // 根据总数量显示不同的分页样式
                 var tempHtml;
                 if (p.getTotal() == 0) {
@@ -98,11 +83,6 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
                 }
                 element.html(tempHtml);
             }
-
-            scope.perpages = {
-                availableOptions: [10, 20, 50, 100],
-                selectedOption: scope.config.size
-            };
 
             scope.changePerPage = function (perpage) {
                 scope.config.size = parseInt(perpage);
@@ -127,6 +107,16 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
         this.getTotal = function () {
             return config.total;
         };
+
+
+        /**
+         * 获取每页数量
+         * @returns {*}
+         */
+        this.getSize = function () {
+            return config.size;
+        };
+
         /**
          * 返回当前页的开始和结束号
          * @returns {{start: number, end: number}}

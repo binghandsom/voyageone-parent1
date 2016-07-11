@@ -163,7 +163,8 @@ define(function (require) {
 
         orderInfoService: new CommonDataService('/vms/order/order_info', {
             init: "init",
-            search: "search"
+            search: "search",
+            cancelOrder: "cancelOrder"
         })
     }
 });
