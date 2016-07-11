@@ -7,6 +7,10 @@ define(function () {
         "TXT_OF": "of",
         "TXT_ITEMS": "items",
         "TXT_ALERT": "Alert",
+        "TXT_SELECT_NO_VALUE": "Select...",
+        "TXT_SHOWING_NO": "The",
+        "TXT_PAGE": "Page",
+        "BTN_GO": "GO",
         "BTN_OK": "OK"
     }
 });

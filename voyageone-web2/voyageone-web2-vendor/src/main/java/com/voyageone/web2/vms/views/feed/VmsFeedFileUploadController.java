@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by jeff.duan on 2016/5/5.
+ * VmsFeedFileUploadController
+ * Created on 16/07/11.
+ * @author jeff.duan
+ * @version 1.0
  */
 @RestController
 @RequestMapping(

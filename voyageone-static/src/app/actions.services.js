@@ -156,6 +156,11 @@ define(function (require) {
             setChannel: 'setChannel'
         }),
 
+        feedImportResultService: new CommonDataService('/vms/feed/feed_import_result', {
+            init: "init",
+            search: "search"
+        }),
+
         orderInfoService: new CommonDataService('/vms/order/order_info', {
             init: "init",
             search: "search"

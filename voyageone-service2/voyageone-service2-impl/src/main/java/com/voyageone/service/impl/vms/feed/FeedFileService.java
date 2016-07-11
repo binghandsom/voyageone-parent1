@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.vms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import org.apache.commons.io.FileUtils;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * FeedFileUploadService
+ * FeedFileService
  *
  * @author jeff.duan 16/7/7
  * @version 1.0.0
@@ -26,6 +27,9 @@ public class FeedFileService extends BaseService {
 
     @Autowired
     private VmsBtFeedFileDao vmsBtFeedFileDao;
+
+    @Autowired
+    private VmsBtFeedFileDaoExt vmsBtFeedFileDaoExt;
 
     /**
      * 新建一条文件信息到vms_bt_feed_file表
@@ -85,5 +89,27 @@ public class FeedFileService extends BaseService {
             // Failed to upload file.
             throw new BusinessException("8000016");
         }
+    }
+
+    /**
+     * 条件搜索FeedFile
+     * @param param 搜索条件
+     * @return FeedFile列表
+     */
+    public List<Map<String, Object>> getFeedFileList(Map<String, Object> param) {
+
+        return vmsBtFeedFileDaoExt.selectList(param);
+
+    }
+
+    /**
+     * 条件搜索FeedFile
+     * @param param 搜索条件
+     * @return FeedFile列表
+     */
+    public long getFeedFileListCount(Map<String, Object> param) {
+
+        return vmsBtFeedFileDaoExt.selectListCount(param);
+
     }
 }
