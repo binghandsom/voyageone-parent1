@@ -242,11 +242,8 @@ define([
         }
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
-            if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
-            {
-                return "上传异常";
-            }
-            else if (model.synchStatus == 1) {
+
+             if (model.synchStatus == 1) {
                 return "待上传";
             }
             else if (model.updateStatus == 1 || model.priceStatus == 1) {
@@ -254,6 +251,10 @@ define([
             }
             else if (model.dealEndTimeStatus == 1) {
                 return "待延期";
+            }
+           else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
+            {
+                return "上传异常";
             }
             else if (model.synchStatus == 0) {
                 return "未更新";
@@ -298,7 +299,7 @@ define([
             });
         };
         $scope.batchSynchPrice = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择同步价格的商品!");
                 return;
@@ -336,7 +337,7 @@ define([
             });
         }
         $scope.batchCopyDeal = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择上传的商品!");
                 return;

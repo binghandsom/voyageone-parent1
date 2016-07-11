@@ -109,12 +109,12 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 //        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
 //    }
 
-    @VOTransactional
-    public void deleteByPromotionId(int jmPromotionId) {
-        daoExt.deleteByPromotionId(jmPromotionId);
-        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
-
-    }
+//    @VOTransactional
+//    public void deleteByPromotionId(int jmPromotionId) {
+//        daoExt.deleteByPromotionId(jmPromotionId);
+//        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
+//
+//    }
     public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
     {
         Map<String, Object> map = new HashMap<>();
@@ -208,6 +208,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     }
 
     //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
+    @VOTransactional
     public CallResult copyDealAll(int promotionId) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotionId);
@@ -216,7 +217,8 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             result.setResult(false);
             return result;
         }
-        daoExt.copyDealAll(promotionId);
+        daoExt.copyDealAll_UpdatePriceStatus(promotionId);
+        daoExt.copyDealAll_UpdateSynchStatus(promotionId);
         return result;
     }
 
