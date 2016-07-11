@@ -226,13 +226,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             listSkuModel.removeAll(listErroSku);
         }
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
-
     }
 
     //save
     public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName,boolean isImportExcel) throws IllegalAccessException {
         //check
-        check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check 移除不能导入的product
+        check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check  if isImportExcel==true  移除不能导入的product
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
 
         CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
@@ -275,7 +274,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setCreater(userName);
             saveInfo.jmProductModel.setCreated(new Date());
             saveInfo.jmProductModel.setJmHashId("");
-            saveInfo.jmProductModel.setErrorMsg("");
+            if (!com.voyageone.common.util.StringUtils.isEmpty(product.getErrorMsg())) {
+                saveInfo.jmProductModel.setErrorMsg(product.getErrorMsg());
+            } else {
+                saveInfo.jmProductModel.setErrorMsg("");
+            }
             saveInfo.jmProductModel.setPriceStatus(0);
             saveInfo.jmProductModel.setDealPrice(new BigDecimal(0));
             saveInfo.jmProductModel.setMarketPrice(new BigDecimal(0));
