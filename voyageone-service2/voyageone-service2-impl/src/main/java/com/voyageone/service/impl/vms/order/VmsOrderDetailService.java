@@ -17,11 +17,14 @@ import java.util.Map;
 @Service
 public class VmsOrderDetailService extends BaseService {
 
-    @Autowired
-    VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;
+    private VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;
+    private VmsBtOrderDetailDao vmsBtOrderDetailDao;
 
     @Autowired
-    VmsBtOrderDetailDao vmsBtOrderDetailDao;
+    public VmsOrderDetailService (VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao vmsBtOrderDetailDao) {
+        this.vmsBtOrderDetailDaoExt = vmsBtOrderDetailDaoExt;
+        this.vmsBtOrderDetailDao = vmsBtOrderDetailDao;
+    }
 
     public List<VmsBtOrderDetailModel> selectOrderList(Map<String, Object> orderSearchParams) {
 

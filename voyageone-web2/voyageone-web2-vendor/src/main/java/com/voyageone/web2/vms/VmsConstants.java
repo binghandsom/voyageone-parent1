@@ -85,7 +85,7 @@ public class VmsConstants {
         String COMMON_CONFIG_CODE = "0";
 
         // 是订单级别的操作还是SKU级别的操作
-        String VENDER_OPERATE_TYPE = "VENDER_OPERATE_TYPE";
+        String VENDOR_OPERATE_TYPE = "VENDOR_OPERATE_TYPE";
         // CSV分隔符
         String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
         // CSV文件编码

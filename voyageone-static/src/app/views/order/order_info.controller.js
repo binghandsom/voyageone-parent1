@@ -45,7 +45,9 @@ define([
             this.data = [];
 
             this.orderInfoService.init().then((data) => {
-                var self = this;
+
+                // 获取当前shipment
+                this.currentShipment = data.currentShipment;
 
                 // 获取可选的订单状态
                 this.searchOrderStatus = data.searchOrderStatus;

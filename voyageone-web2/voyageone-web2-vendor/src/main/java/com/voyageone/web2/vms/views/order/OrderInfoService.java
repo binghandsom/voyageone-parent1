@@ -3,7 +3,6 @@ package com.voyageone.web2.vms.views.order;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -11,7 +10,9 @@ import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.VmsOrderDetailService;
+import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
+import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants.ChannelConfig;
 import com.voyageone.web2.vms.VmsConstants.STATUS_VALUE;
@@ -36,10 +37,12 @@ import java.util.stream.Collectors;
 public class OrderInfoService extends BaseService {
 
     private VmsOrderDetailService vmsOrderDetailService;
+    private VmsShipmentService vmsShipmentService;
 
     @Autowired
-    public OrderInfoService(VmsOrderDetailService vmsOrderDetailService) {
+    public OrderInfoService(VmsOrderDetailService vmsOrderDetailService, VmsShipmentService vmsShipmentService) {
         this.vmsOrderDetailService = vmsOrderDetailService;
+        this.vmsShipmentService = vmsShipmentService;
     }
 
     /**
@@ -69,10 +72,12 @@ public class OrderInfoService extends BaseService {
      * @param user 当前用户
      * @return shipmentBean
      */
-    public ShipmentBean getCurrentShipment(UserSessionBean user) {
-        ChannelConfigEnums.Channel channel = user.getSelChannel();
+    public VmsBtShipmentModel getCurrentShipment(UserSessionBean user) {
 
-        return null;
+        Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel());
+        }};
+        return vmsShipmentService.select(shipmentSearchParams);
     }
 
     /**
@@ -82,7 +87,9 @@ public class OrderInfoService extends BaseService {
      * @return 当前用户所选择channel的配置
      */
     public VmsChannelSettings getChannelConfigs(UserSessionBean user) {
-        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(), ChannelConfig.VENDER_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
+
+        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
+                ChannelConfig.VENDOR_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
         VmsChannelSettings vmsChannelSettings = new VmsChannelSettings();
         vmsChannelSettings.setVendorOperateType(vmsChannelConfigBean.getConfigValue1());
         return vmsChannelSettings;
@@ -106,7 +113,8 @@ public class OrderInfoService extends BaseService {
 
             // sku级的订单获取
             case STATUS_VALUE.VENDER_OPERATE_TYPE.SKU: {
-                List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService.selectOrderList(orderSearchParamsWithLimitAndSort);
+                List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService.selectOrderList
+                        (orderSearchParamsWithLimitAndSort);
                 return vmsBtOrderDetailModelList.stream()
                         .map(vmsBtOrderDetailModel -> {
                             SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
@@ -127,14 +135,16 @@ public class OrderInfoService extends BaseService {
                         .map(orderId -> {
 
                             // 获取平台订单id下的所有的sku
-                            List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService.selectOrderList(new HashMap<String, Object>() {{
-                                put("orderId", orderId);
-                            }});
+                            List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService
+                                    .selectOrderList(new HashMap<String, Object>() {{
+                                        put("orderId", orderId);
+                                    }});
 
                             // 按照第一个sku初始化平台订单id内容
                             PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
                             platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getOrderId());
-                            platformOrderInfoBean.setOrderDateTimestamp(vmsBtOrderDetailModelList.get(0).getOrderTime().getTime());
+                            platformOrderInfoBean.setOrderDateTimestamp(vmsBtOrderDetailModelList.get(0).
+                                    getOrderTime().getTime());
                             platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
                             // 将订单下的sku信息压入
@@ -169,6 +179,7 @@ public class OrderInfoService extends BaseService {
      * @return 搜索条件Map
      */
     private Map<String, Object> organizeOrderSearchParams(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
+
         Map<String, Object> orderSearchParams;
         try {
             orderSearchParams = MapUtil.toMap(orderSearchInfo);
@@ -195,10 +206,10 @@ public class OrderInfoService extends BaseService {
      * @param user 当前用户
      * @return Order信息内容
      */
+    @Deprecated
     public OrderInfoBean getOrderInfo(UserSessionBean user) {
 
         OrderInfoBean orderInfoBean = new OrderInfoBean();
-
         OrderSearchInfo defaultOrderSearchInfo = new OrderSearchInfo();
         defaultOrderSearchInfo.setStatus(STATUS_VALUE.SHIPMENT_STATUS.OPEN);
         return this.getOrderInfo(user, defaultOrderSearchInfo);
@@ -213,13 +224,20 @@ public class OrderInfoService extends BaseService {
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
 
         OrderInfoBean orderInfoBean = new OrderInfoBean();
-
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfo));
         orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfo));
         return orderInfoBean;
     }
 
+    /**
+     * 获取条件下的订单总数
+     *
+     * @param user            当前用户
+     * @param orderSearchInfo 搜索条件
+     * @return 订单总数
+     */
     private long getTotalOrderNum(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
+
         Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo);
         return vmsOrderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
     }
@@ -227,12 +245,14 @@ public class OrderInfoService extends BaseService {
     /**
      * 取消订单
      *
-     * @param item 订单
-     * @return 取消结果
+     * @param user 当前用户
+     * @param item 被取消订单
+     * @return 取消条目数
      */
-    public int cancelOrder(PlatformSubOrderInfoBean item) {
+    public int cancelOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
 
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel());
             put("orderId", item.getOrderId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
         }};
