@@ -536,6 +536,8 @@ public interface CmsUrlConstants {
 
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
+            String CHECK_CATEGORY = "checkCategory";
+
         }
 
     }

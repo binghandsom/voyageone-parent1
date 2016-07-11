@@ -239,6 +239,24 @@ public class PlatformCategoryService extends BaseService {
     }
 
     /**
+     * 根据类目PATH 找到相应的节点
+     *
+     * @return CmsMtCategoryTreeAllModel
+     */
+    public CmsMtPlatformCategoryTreeModel getCategoryByCatPath(String channelId, String catPath, int cartId) {
+        String cats[] = catPath.split(">");
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeList = getFstLvlCategory(channelId,cartId);
+        for (CmsMtPlatformCategoryTreeModel platformCategoryTree : platformCategoryTreeList) {
+            if(!platformCategoryTree.getCatName().equalsIgnoreCase(cats[0])) continue;
+            CmsMtPlatformCategoryTreeModel model = findCategory(platformCategoryTree, catPath);
+            if (model != null) {
+                return model;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 取得一级类目列表（所有平台数据）
      *
      * @return CmsMtCategoryTreeAllModel
