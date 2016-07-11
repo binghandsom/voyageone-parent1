@@ -7,6 +7,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.mail.Mail;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.dao.cms.mongo.CmsZiIndexDao;
 import com.voyageone.service.model.cms.mongo.meta.CmsZiIndexModel;
 import com.voyageone.service.model.cms.mongo.meta.CmsZiIndexModel_Index;
@@ -149,7 +150,11 @@ public class CmsMongoOptimizeIndexService extends BaseTaskService {
             // 取得通知接收者
             String receiver = Codes.getCodeName(Constants.MAIL.EMAIL_RECEIVER, "MONGODB_INDEX_AUTO_MAINTAIN");
             $info("receiver from code table:" + receiver);
-            Mail.send(receiver, subject, content.toString());
+            if (StringUtil.isEmpty(receiver)) {
+                $info("没有取到邮件接收者！");
+            } else {
+                Mail.send(receiver, subject, content.toString());
+            }
         }
     }
 
