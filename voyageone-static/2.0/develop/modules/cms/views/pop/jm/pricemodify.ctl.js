@@ -23,13 +23,15 @@ define([
         $scope.ok = function () {
             $scope.model.listPromotionProductId =listPromotionProductId;
             $scope.model.jmPromotionId=jmPromotionId;
-            $scope.model.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
+            var parameter= angular.copy($scope.model);
+            parameter.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
+
             if(listPromotionProductId.length==0)
             {
                 alert("请选择修改价格的商品!");
                 return;
             }
-            jmPromotionDetailService.batchUpdateDealPrice( $scope.model).then(function (res) {
+            jmPromotionDetailService.batchUpdateDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
                     alert(res.data.msg);
                     return;

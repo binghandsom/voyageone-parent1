@@ -4,7 +4,6 @@ import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.CmsProperty;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionExportTaskService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -32,8 +31,6 @@ import java.util.Map;
         method = RequestMethod.POST
 )
 public class CmsBtJmPromotionExportTaskController extends CmsController {
-    @Autowired
-    private CmsBtJmPromotionExportTaskService service;
 
     @Autowired
     private CmsBtJmPromotionExportTask3Service service3;
@@ -46,14 +43,14 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
     @ResponseBody
     public AjaxResponse getByPromotionId(@RequestBody int promotionId) {
-        return success(service.getByPromotionId(promotionId));
+        return success(service3.getByPromotionId(promotionId));
     }
 
     @RequestMapping("downloadExcel")
     public void downloadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String source = request.getParameter("source");
         HashMap<String, Object> hm = JacksonUtil.ToObjectFromJson(source, HashMap.class);
-        CmsBtJmPromotionExportTaskModel model = service.get(Integer.parseInt(hm.get("id").toString()));
+        CmsBtJmPromotionExportTaskModel model = service3.get(Integer.parseInt(hm.get("id").toString()));
         String path = Properties.readValue(CmsProperty.Props.CMS_JM_EXPORT_PATH);
         String fileName = model.getFileName().trim();
         String filePath = path + "/" + fileName;

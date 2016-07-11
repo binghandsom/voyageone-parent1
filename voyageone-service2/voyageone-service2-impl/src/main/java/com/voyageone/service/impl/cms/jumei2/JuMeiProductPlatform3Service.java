@@ -17,8 +17,9 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+//import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
+//import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
@@ -56,7 +57,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     ProductService productService;
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatformService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);

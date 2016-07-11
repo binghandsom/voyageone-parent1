@@ -5,7 +5,6 @@ import com.voyageone.components.jumei.bean.JmBrandBean;
 import com.voyageone.components.jumei.service.JumeiBrandService;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.daoext.cms.CmsBtJmMasterBrandDaoExt;
-import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,6 @@ import java.util.List;
 @Service
 public class CmsBtJmMasterBrandService {
     @Autowired
-    JMShopBeanService serviceJMShopBean;
-    @Autowired
     JumeiBrandService serviceJumeiBrand;
     @Autowired
     TransactionRunner transactionRunner;
@@ -27,7 +24,8 @@ public class CmsBtJmMasterBrandService {
     CmsBtJmMasterBrandDao dao;
     @Autowired
     CmsBtJmMasterBrandDaoExt daoExtCmsBtJmMasterBrand;
-
+    @Autowired
+    JMShopBeanService serviceJMShopBean;
     public void loadJmMasterBrand(String userName,String channelId) throws Exception {
         List<CmsBtJmMasterBrandModel> listCmsBtJmMasterBrand = new ArrayList<>();
         List<JmBrandBean> list = serviceJumeiBrand.getBrands(serviceJMShopBean.getShopBean(channelId));

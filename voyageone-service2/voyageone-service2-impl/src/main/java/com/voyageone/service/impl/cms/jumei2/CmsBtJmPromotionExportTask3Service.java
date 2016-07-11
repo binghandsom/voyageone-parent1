@@ -174,5 +174,6 @@ public class CmsBtJmPromotionExportTask3Service {
         model.setFilePath("");
         dao.insert(model);
     }
+
 }
 
