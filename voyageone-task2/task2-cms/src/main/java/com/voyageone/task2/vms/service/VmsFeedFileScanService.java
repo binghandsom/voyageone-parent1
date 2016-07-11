@@ -73,7 +73,6 @@ public class VmsFeedFileScanService extends BaseTaskService {
                 // 检测Feed文件,并且在vms_bt_feed_file表中新建一条文件管理信息
                 checkFeedFileDBInfo(orderChannelID);
 
-
                 // 取出在vms_bt_feed_file表有状态为1：等待导入的一条创建时间最早的Feed文件信息，发MQ进行导入
                 Map<String, Object> param1 = new HashMap<>();
                 param1.put("channelId", orderChannelID);
@@ -90,6 +89,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                     Map<String, Object> message = new HashMap<>();
                     message.put("channelId", orderChannelID);
                     message.put("fileName", waitingImportingFeedFileList.get(0).getFileName());
+                    message.put("uploadType", waitingImportingFeedFileList.get(0).getUploadType());
                     sender.sendMessage("voyageone_mq_vms_feed_file_import", message);
 
                     // 把文件管理的状态变为2：导入中
@@ -119,8 +119,8 @@ public class VmsFeedFileScanService extends BaseTaskService {
             return;
         }
 
-        // 取得Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.upload");
+        // 取得FTP测Feed文件上传路径
+        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
         feedFilePath += "/" + channelId + "/feed/";
 
         // 这个渠道的Feed文件的根目录
@@ -150,6 +150,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                                 model.setChannelId(channelId);
                                 model.setClientFileName(file.getName());
                                 model.setFileName(newFile.getName());
+                                model.setUploadType(VmsConstants.FeedFileUploadType.FTP);
                                 model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
                                 model.setCreater(getTaskName());
                                 model.setModifier(getTaskName());

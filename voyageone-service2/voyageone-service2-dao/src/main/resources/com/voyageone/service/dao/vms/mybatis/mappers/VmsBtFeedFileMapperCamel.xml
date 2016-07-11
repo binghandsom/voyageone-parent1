@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.vms.VmsBtFeedFileDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtFeedFileModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `client_file_name`, `file_name`, `status`, `error_file_name`, 
+        `id`, `channel_id`, `client_file_name`, `file_name`, `upload_type`, `status`, `error_file_name`, 
         `created`, `creater`, `modified`, `modifier`
     </sql>
 
@@ -25,6 +25,9 @@
             </if>
             <if test="fileName != null" >
                 `file_name`,
+            </if>
+            <if test="uploadType != null" >
+                `upload_type`,
             </if>
             <if test="status != null" >
                 `status`,
@@ -53,6 +56,9 @@
             </if>
             <if test="fileName != null" >
                 #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadType != null" >
+                #{uploadType,jdbcType=VARCHAR},
             </if>
             <if test="status != null" >
                 #{status,jdbcType=VARCHAR},
@@ -95,6 +101,9 @@
             </if>
             <if test="fileName != null" >
                 `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadType != null" >
+                `upload_type` = #{uploadType,jdbcType=VARCHAR},
             </if>
             <if test="status != null" >
                 `status` = #{status,jdbcType=VARCHAR},
@@ -140,6 +149,9 @@
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
             </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
             </if>
@@ -176,6 +188,9 @@
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
             </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
             </if>
@@ -208,6 +223,9 @@
             </if>
             <if test="fileName != null" >
                 and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
