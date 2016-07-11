@@ -58,7 +58,7 @@
     </div>
     <div class="panel panel-vo">
         <div class="panel-body">
-            <div class="table-responsive" if-no-rows="ctrl.feedImportResultList.length">
+            <div class="table table-responsive" if-no-rows="ctrl.feedImportResultList.length">
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
                     <tr>
@@ -75,7 +75,7 @@
                         <td class="text-center">{{feedImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-center">{{feedImportResult.creater}}</td>
                         <td class="text-center">{{feedImportResult.statusName}}</td>
-                        <td class="text-center"><i class="fa fa-cloud-download fa-lg"></i></td>
+                        <td class="text-center"><button class="btn btn-success"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                     </tr>
                     </tbody>
                 </table>
