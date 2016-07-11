@@ -555,12 +555,29 @@ public class BackDoorController extends CmsController {
             }
         });
 
-        checkGroupTransformOn20160708(channelId);
+        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
 
-        return "成功处理数据件数:" + oldProductInfo.size() + ",错误列表:" + errorCode.toString();
+        StringBuilder builder = new StringBuilder("<body>");
+
+        builder.append("<h2>成功处理数据件数: ").append(oldProductInfo.size()).append("</h2>");
+        builder.append("<hr>");
+        builder.append("<h2>错误列表</h2>");
+        builder.append("<ul>");
+        errorCode.forEach(_errorCode -> builder.append("<li>").append(_errorCode).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<hr>");
+        builder.append("<h2>Group 信息列表</h2>");
+        builder.append("<ul>");
+        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
     }
 
-    private void checkGroupTransformOn20160708(String channelId) {
+    private List<String> checkGroupTransformOn20160708(String channelId) {
+
+        List<String> messageList = new ArrayList<>();
 
         // 在 product 全部更新完成后
         // 获取所有的渠道下的 group
@@ -568,6 +585,21 @@ public class BackDoorController extends CmsController {
         List<CmsBtProductGroupModel> groupModelList = productGroupDao.selectAll(channelId);
 
         groupModelList.parallelStream().forEach(groupModel -> {
+
+            Integer groupCartId = groupModel.getCartId();
+
+            if (groupCartId == null) {
+                messageList.add(String.format("groupModel.getCartId() 返回 null: %s", groupModel.get_id()));
+                return;
+            }
+
+            // 先判断 group 所属平台
+            // 如果是 1, 那么该数据将不再使用
+            // 直接删除
+            if (groupCartId.equals(1)) {
+                productGroupDao.delete(groupModel);
+                return;
+            }
 
             // 如果 product 的 status 是 new, 会在上一步的 product 处理时删除掉
             // 那么此时, group 的 code list 中也许就包含已经被删除, 即数据库现在不存在的 code
@@ -584,7 +616,6 @@ public class BackDoorController extends CmsController {
                 return;
 
             String oldMainProductCode = groupModel.getMainProductCode();
-            Map<String, Object> groupSetParams = new HashMap<>(2);
 
             if (existedCodeList.contains(oldMainProductCode)) {
                 // 如果存在, 说明还没有删除
@@ -601,7 +632,7 @@ public class BackDoorController extends CmsController {
                 groupModel.setMainProductCode(newMainProductCode);
                 existedCodeList.forEach(existedCode -> {
                     // 更新每一个 code
-                    // 更新他们平台属性下, 所有平台下的 pIsMain 和 mainProductCode
+                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
                     // 不过 P0 只有 mainProductCode
                     // 同时还要更新 common fields 里的 isMasterMain 属性
                     // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
@@ -609,18 +640,26 @@ public class BackDoorController extends CmsController {
                     boolean isMain = existedCode.equals(newMainProductCode);
                     Map<String, Object> productSetParams = new HashMap<>(3);
 
-                    if (isMain)
-                        productSetParams.put("common.fields.isMasterMain", 1);
+                    // 因为有可能并行 (parallelStream) 执行
+                    // 也就是有可能并发更新同一个商品
+                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
+                    // common 下的属性交给 P0 平台更新
 
-                    productModel.getPlatforms().forEach((platformName, platformModel) -> {
-                        if (isMain && !platformName.equals("P0")) {
-                            productSetParams.put("platforms." + platformName + ".pIsMain", 1);
-                        }
-                        productSetParams.put("platforms." + platformName + ".mainProductCode", newMainProductCode);
-                    });
+                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
 
-                    if (productSetParams.isEmpty())
+                    if (currentGroupProductPlatform == null) {
+                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
                         return;
+                    }
+
+                    if (isMain) {
+                        if (groupCartId.equals(0))
+                            productSetParams.put("common.fields.isMasterMain", 1);
+                        else
+                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
+                    }
+
+                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
 
                     Map<String, Object> productQueryParams = new HashMap<>();
                     productQueryParams.put("_id", productModel.get_id());
@@ -630,6 +669,8 @@ public class BackDoorController extends CmsController {
 
             productGroupService.update(groupModel);
         });
+
+        return messageList;
     }
 
     /**
