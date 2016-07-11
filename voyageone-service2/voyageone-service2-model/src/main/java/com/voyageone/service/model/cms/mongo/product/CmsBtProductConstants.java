@@ -85,8 +85,10 @@ public interface CmsBtProductConstants {
 		priceRetail,
 		/* priceSale(共通) */
 		priceSale,
-		/* 价格变更状态（U/D/XU/XD）(共通) */
+		/* 指导售价变化状态（U99%/D99%）(分平台) */
 		priceChgFlg,
+        /* 最终售价与指导售价的变化状态（1:等于指导价/2:比指导价低/3:比指导价高/4:向上击穿警告/5:向下击穿警告）(分平台) */
+        priceDiffFlg,
 		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
 		isSale,
 		/* size */
