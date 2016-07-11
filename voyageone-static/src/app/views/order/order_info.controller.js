@@ -10,12 +10,12 @@ define([
             this.orderInfoService = orderInfoService;
             this.popups = popups;
 
-            var oneDay = 24 * 60 * 60 * 1000;
-            var twoDay = 2 * oneDay;
-            var threeDay = 3 * oneDay;
-            var oneMonth = 30 * oneDay;
+            this.oneDay = 24 * 60 * 60 * 1000;
+            this.twoDay = 2 * this.oneDay;
+            this.threeDay = 3 * this.oneDay;
+            this.oneMonth = 30 * this.oneDay;
 
-            this.orderDateFrom = new Date(new Date().getTime() - 6 * oneMonth);
+            this.orderDateFrom = new Date(new Date().getTime() - 6 * this.oneMonth);
             this.orderDateTo = new Date();
 
             this.searchInfo = {
@@ -43,6 +43,7 @@ define([
             this.data = [];
 
             this.orderInfoService.init().then((data) => {
+                var self = this;
 
                 // 获取可选的订单状态
                 this.searchOrderStatus = data.searchOrderStatus;
@@ -54,13 +55,13 @@ define([
                     // 获取现有的订单信息(默认为Open 订单时间倒序)
                     this.data = data.orderInfo.orderList.map((item) => {
                         item.className = '';
-                        if (item.status === "7")
+                        if (item.status == '7')
                             item.className = 'bg-gainsboro';
                         else {
                             var date = new Date(item.orderDateTimestamp);
-                            if ((new Date().getTime() - date) >= threeDay)
+                            if ((new Date().getTime() - date) >= self.threeDay)
                                 item.className = 'bg-danger';
-                            else if ((new Date().getTime() - date) >= twoDay)
+                            else if ((new Date().getTime() - date) >= self.twoDay)
                                 item.className = 'bg-warning';
                         }
                         return item;
@@ -70,7 +71,7 @@ define([
         }
 
         OrderInfoController.prototype.search = function () {
-
+            var self = this;
             this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
             this.searchInfo.orderDateTo = this.orderDateTo.getTime();
 
@@ -78,13 +79,13 @@ define([
                 this.searchInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
                     item.className = '';
-                    if (item.status === 'cancel')
+                    if (item.status == '7')
                         item.className = 'bg-gainsboro';
                     else {
                         var date = new Date(item.orderDateTimestamp);
-                        if ((new Date().getTime() - date) >= this.threeDay)
+                        if ((new Date().getTime() - date) >= self.threeDay)
                             item.className = 'bg-danger';
-                        else if ((new Date().getTime() - date) >= this.twoDay)
+                        else if ((new Date().getTime() - date) >= self.twoDay)
                             item.className = 'bg-warning';
                     }
                     return item;
