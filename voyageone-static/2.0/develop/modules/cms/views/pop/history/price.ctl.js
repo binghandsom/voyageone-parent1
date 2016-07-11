@@ -49,7 +49,7 @@ define([
                 cartList.unshift(defaultCart);
 
                 if (!selected.cart)
-                    selected.cart = defaultCart;
+                    selected.cart = cartList[1];
                 else
                     selected.cart = _.find(cartList, function (cart) {
                         return cart.value === selected.cart;
