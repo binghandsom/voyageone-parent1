@@ -3,11 +3,14 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -15,7 +18,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +36,12 @@ public class CmsBtPriceLogService extends BaseService {
 
     @Autowired
     private CmsBtPriceLogDao priceLogDao;
-
     @Autowired
     private CmsBtPriceLogDaoExt priceLogDaoExt;
-
     @Autowired
     private CmsBtProductDao productDao;
+    @Autowired
+    private MqSender sender;
 
     public List<CmsBtPriceLogModel> getList(String sku, String code, String cartId, String channelId) {
         return priceLogDaoExt.selectListBySkuOnCart(sku, code, cartId, channelId);
@@ -55,15 +60,20 @@ public class CmsBtPriceLogService extends BaseService {
     }
 
     /**
-     * 对指定的 sku 进行价格变动检查
-     *
-     * @param skuList   将要检查的 sku 列表
-     * @param channelId 所属渠道
-     * @param username  变动人 / 检查人
-     * @param comment   变动备注 / 检查备注
+     * 批量插入价格变更履历（高级搜索->中国最终售价设置专用，只更新了sku的中国最终售价）
+     * @param paramList
+     * @return
      */
-    public void logAll(List<String> skuList, String channelId, String username, String comment) {
-        logAll(skuList, channelId, null, username, comment);
+    public int insertCmsBtPriceLogList(List<CmsBtPriceLogModel> paramList) {
+        int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
+
+        // 向Mq发送消息同步sku,code,group价格范围
+        for (CmsBtPriceLogModel newLog : paramList) {
+            newLog.setRetailPrice(null);
+            newLog.setMsrpPrice(null);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
+        }
+        return rs;
     }
 
     /**
@@ -84,14 +94,15 @@ public class CmsBtPriceLogService extends BaseService {
 
         CmsBtProductModel productModel = getProduct(sku, channelId);
 
-        if (productModel == null)
+        if (productModel == null) {
+            $warn(String.format("价格变更历史 产品不存在 sku=%s, channelid=%s", sku, channelId));
             return;
-
+        }
         CmsBtProductModel_Sku commonSku = productModel.getCommon().getSku(sku);
-
-        if (commonSku == null)
+        if (commonSku == null) {
+            $error(String.format("价格变更历史 产品common数据不存在 sku=%s, channelid=%s", sku, channelId));
             return;
-
+        }
         if (cartId != null) {
 
             if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
@@ -99,11 +110,11 @@ public class CmsBtPriceLogService extends BaseService {
 
             CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(cartId);
 
-            if (cartProduct == null)
+            if (cartProduct == null) {
+                $error(String.format("价格变更历史 产品platform数据不存在 sku=%s, channelid=%s, cartid=%d", sku, channelId, cartId));
                 return;
-
+            }
             log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
-
             return;
         }
 
@@ -140,8 +151,11 @@ public class CmsBtPriceLogService extends BaseService {
             return;
 
         CmsBtPriceLogModel newLog = makeLog(sku, cartId, channelId, productModel, commonSku, cartSku, username, comment);
+        int rs = priceLogDao.insert(newLog);
+        $debug(String.format("价格变更历史 结果=%d sku=%s, channelid=%s, cartid=%d", rs, sku, channelId, cartId));
 
-        priceLogDao.insert(newLog);
+        // 向Mq发送消息同步sku,code,group价格范围
+        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
     }
 
     private CmsBtPriceLogModel makeLog(String sku, Integer cartId, String channelId, CmsBtProductModel productModel, CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, String username, String comment) {

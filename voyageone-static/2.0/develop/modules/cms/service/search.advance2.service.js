@@ -56,7 +56,7 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType);
+                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
                 // 获取product列表
                 _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
 
@@ -214,8 +214,12 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetGroupList (data, commonProps, customProps, selSalesTypes) {
+        function _resetGroupList (data, commonProps, customProps, selSalesTypes, searchParam) {
             tempGroupSelect.clearCurrPageRows();
+            for (idx in data.groupList) {
+                var prodObj = data.groupList[idx];
+                prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
+            }
             _.forEach(data.groupList, function (groupInfo, index) {
 
                 var commArr = [];
@@ -268,14 +272,8 @@ define([
                 // 初始化数据选中需要的数组
                 tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
 
-                // 设置Inventory Detail
-                // TODO 因为group显示的时候只返回了主商品的信息,所以无法拿到下面所有product的库存.
-                //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
-
                 // 设置price detail
-                groupInfo.groupBean.priceDetail = _setPriceDetail(groupInfo.groupBean);
-
-                groupInfo.groupBean.priceSale = _setGroupPriceSale(groupInfo.groupBean);
+                groupInfo.groupBean.priceSale = _setGroupPriceSale(groupInfo, searchParam);
 
                 // 设置time detail
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
@@ -425,16 +423,15 @@ define([
                 // 初始化数据选中需要的数组
                 tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
 
-                // 设置Inventory Detail
-                productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
-
                 // 设置sku销售渠道信息
                 productInfo.skuDetail = _setSkuDetail(productInfo.platforms);
 
-                // 设置price detail (数组形式)
-                productInfo.priceDetail = _setPriceDetail(productInfo.common.fields);
-                // 设置各sku在各平台上的价格
-                productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam);
+                // 设置在各平台上的建议售价
+                productInfo.priceMsrp = _setPriceSale(productInfo.platforms, searchParam, 'pPriceMsrpSt', 'pPriceMsrpEd');
+                // 设置指导售价
+                productInfo.priceDetail = _setPriceDetail(productInfo.platforms, cartArr);
+                // 设置在各平台上的最终售价
+                productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam, 'pPriceSaleSt', 'pPriceSaleEd');
 
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
@@ -446,19 +443,6 @@ define([
             data.productSelList = tempProductSelect.selectRowsInfo;
 
             return data;
-        }
-
-        /**
-         * 设置Inventory Detail
-         * @param skus
-         * @private
-         */
-        function _setInventoryDetail(skus) {
-            var result = [];
-            _.forEach(skus, function (sku) {
-                result.push(sku.skuCode + ": " + (sku.qty ? sku.qty: 0));
-            });
-            return result;
         }
 
         /**
@@ -483,50 +467,41 @@ define([
         }
 
         /**
-         * 设置Price Detail
+         * 设置Price Detail 产品指导价
          * @param groups
-         * @returns {Array}
+         * @returns {string}
          * @private
          */
-        function _setPriceDetail(object) {
-            var result = [];
-            var tempMsrpDetail = _setOnePriceDetail("", object.priceMsrpSt, object.priceMsrpEd);
-            if (!_.isNull(tempMsrpDetail)) {
-                result.push(tempMsrpDetail);
-            } else {
-                result.push('');
+        function _setPriceDetail(object, cartArr) {
+            if (cartArr == null || cartArr == undefined || cartArr.length == 0) {
+                return '';
             }
-
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail("", object.priceRetailSt, object.priceRetailEd);
-            if (!_.isNull(tempRetailPriceDetail)) {
-                result.push(tempRetailPriceDetail);
-            } else {
-                result.push('');
+            var platObj = object["P" + cartArr[0].cartId];
+            if (platObj == null || platObj == undefined) {
+                return '';
             }
-            return result;
+            var tempRetailPriceDetail = _setOnePriceDetail("", platObj.pPriceRetailSt, platObj.pPriceRetailEd);
+            return tempRetailPriceDetail;
         }
 
         /**
-         * 设置页面上显示的价格
+         * 设置页面上显示的价格 group最终价格
          * @param object
          * @returns {*}
          * @private
          */
-        function _setGroupPriceSale(object) {
-            if (object.priceSaleSt == object.priceSaleEd)
-                return object.priceSaleSt != null ? $filter('number')(object.priceSaleSt, 2) : '0.00';
-            else
-                return $filter('number')(object.priceSaleSt, 2) + '~' + $filter('number')(object.priceSaleEd, 2);
+        function _setGroupPriceSale(object, searchParam) {
+            return _setPriceSale(object._grpPriceInfoList, searchParam, 'priceSaleSt', 'priceSaleEd');
         }
 
         /**
-         * 设置页面上显示的价格
+         * 设置页面上显示的最终价格
          * @param object
          * @returns {*}
          * @private
          */
-        function _setPriceSale(object, searchParam) {
+        function _setPriceSale(object, searchParam, stakey, endKey) {
             if (object == null || object == undefined) {
                 return [];
             }
@@ -538,7 +513,7 @@ define([
                     fstCode = searchParam.cartId;
                 }
                 _.forEach(object, function (data) {
-                    if (data == null || data == undefined || data.skus == null || data.skus == undefined) {
+                    if (data == null || data == undefined || data.cartId == 0) {
                         return;
                     }
                     var priceItem = '';
@@ -550,21 +525,12 @@ define([
                     }
                     priceItem += ': ';
                     // 合计sku价格的上下限
-                    var skuPriceList = [];
-                    if (data.skus) {
-                        _.forEach(data.skus, function (skusData) {
-                            skuPriceList.push(skusData.priceSale);
-                        });
-                    }
-                    skuPriceList = _.compact(skuPriceList);
-                    skuPriceList = _.sortBy(skuPriceList);
-                    skuPriceList = _.uniq(skuPriceList, true);
-                    if (skuPriceList.length == 1) {
-                        priceItem += $filter('number')(skuPriceList[0], 2);
-                    } else if (skuPriceList.length > 1) {
-                        priceItem += $filter('number')(skuPriceList[0], 2);
+                    if (data[stakey] == data[endKey]) {
+                        priceItem += $filter('number')(data[stakey], 2);
+                    } else {
+                        priceItem += $filter('number')(data[stakey], 2);
                         priceItem += " ~ ";
-                        priceItem += $filter('number')(skuPriceList[skuPriceList.length - 1], 2);
+                        priceItem += $filter('number')(data[endKey], 2);
                     }
                     if (fstCode == data.cartId) {
                         fstLine.push(priceItem);

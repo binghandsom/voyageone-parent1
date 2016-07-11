@@ -692,12 +692,9 @@
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_INVENTORY"
                                         style="display:inline-block;width:85px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_MSRP_WITH_COLON"
-                                        style="display:inline-block;width:150px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_RETAIL_PRICE_WITH_COLON"
-                                        style="display:inline-block;width:150px;padding-left:8px"></td>
-                                    <td class="text-center"
-                                        style="display:inline-block;width:170px;padding-left:8px">Sku Sale Price</td>
+                                    <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国建议售价</td>
+                                    <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国指导售价</td>
+                                    <td class="text-center" style="display:inline-block;width:170px;padding-left:8px">中国最终售价</td>
                                     <td class="text-center" translate="TXT_SKU_COUNT"
                                         style="display:inline-block;width:165px;padding-left:8px"></td>
                                     <td class="text-left" translate="TXT_TIME"
@@ -779,16 +776,18 @@
                                             {{productInfo.common.fields.brand}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:85px;">
-                                            <!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
-                                                    popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
-                                                    class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            {{productInfo.priceDetail[0]}}
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
+                                                    popover-html="showInfo({{productInfo.priceMsrp}})"
+                                                    popover-title="{{'TXT_PRICE' | translate}}" type="button"
+                                                    popover-placement="left" class="btn btn-default btn-xs">
+                                                {{productInfo.priceMsrp[0]}}
+                                            </button>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            {{productInfo.priceDetail[1]}}<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                            {{productInfo.priceDetail}}<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:170px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
@@ -865,8 +864,7 @@
                                         | translate}}&nbsp;</label>
                                         <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
                                     </th>
-                                    <th class="text-center" translate="TXT_SALE_PRICE"
-                                        style="display:inline-block;width:150px;padding-left:8px"></th>
+                                    <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国最终售价</th>
                                     <th class="text-left" translate="TXT_BRAND"
                                         style="display:inline-block;width:150px;padding-left:8px"></th>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
@@ -942,11 +940,11 @@
                                             </div>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            <button ng-controller="showPopoverCtrl"
-                                                    popover-html="showInfo({{groupInfo.groupBean.priceDetail}})"
+                                            <button ng-controller="showPopoverCtrl" ng-if="groupInfo.groupBean.priceSale.length>0"
+                                                    popover-html="showInfo({{groupInfo.groupBean.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
                                                     popover-placement="left" class="btn btn-default btn-xs">
-                                                {{groupInfo.groupBean.priceSale}}
+                                                {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
                                             <label ng-if="groupInfo._grpProdChgInfo == 1"
                                                    style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>

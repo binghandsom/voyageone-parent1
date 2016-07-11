@@ -659,7 +659,8 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function () {
+                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>")
+                    .result.then(function () {
                     callback(cartId, null, context);
                 });
             }
