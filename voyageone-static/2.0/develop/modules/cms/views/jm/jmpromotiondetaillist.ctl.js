@@ -2,11 +2,10 @@
  * Created by linanbin on 15/12/7.
  */
 define([
-    'angularAMD',
     'underscore',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
-    function detailController($scope, popups, jmPromotionService, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory, platformMappingService, $feedSearchService) {
+], function () {
+    function detailController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm, platformMappingService) {
 
         $scope.datePicker = [];
         $scope.vm = {
@@ -31,12 +30,9 @@ define([
                 $scope.vm.isBegin=res.data.isBegin;
                 $scope.vm.isEnd=res.data.isEnd;
                 $scope.vm.isUpdateJM=res.data.isUpdateJM;
+                $scope.vm.brandList = res.data.brandList;
 
             });
-            $feedSearchService.init()
-                .then(function (res) {
-                    $scope.vm.masterData = res.data;
-                });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
@@ -476,7 +472,7 @@ define([
             parameter.tagList = productTagList;
             parameter.id = m.id;
             jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
-                 //   alert($translate.instant('TXT_SUCCESS'));
+                //   alert($translate.instant('TXT_SUCCESS'));
             }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
             });
@@ -505,6 +501,6 @@ define([
         }
     }
 
-    detailController.$inject = ['$scope', 'popups', 'jmPromotionService', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'notify', '$routeParams', '$location', 'alert', '$translate', 'confirm', 'cRoutes', 'selectRowsFactory', 'platformMappingService', '$feedSearchService'];
+    detailController.$inject = ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService'];
     return detailController;
 });

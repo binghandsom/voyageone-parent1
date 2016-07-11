@@ -24,7 +24,7 @@
                                     <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                     <div class="col-sm-8">
                                         <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.brand"
-                                                ng-options="brand.value as brand.key for brand in vm.masterData.brandList">
+                                                ng-options="brand.value as brand.key for brand in vm.masterData.brandList" width="'100%'">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
@@ -38,7 +38,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.productType" chosen  search-contains="true"
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.productType" chosen  search-contains="true" width="'100%'"
                                                 ng-options="productType.value as productType.key for productType in vm.masterData.productType">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
@@ -47,7 +47,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.sizeType" chosen  search-contains="true"
+                                        <select class="form-control m-r-xs" ng-model="vm.searchInfo.sizeType" chosen  search-contains="true"  width="'100%'"
                                                 ng-options="sizeType.value as sizeType.key for sizeType in vm.masterData.sizeType">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
