@@ -66,7 +66,29 @@ define([
                 $scope.promotion.activityEnd = dateToString($scope.promotion.activityEnd);
                 $scope.promotion.preSaleStart = dateToString($scope.promotion.preSaleStart);
                 $scope.promotion.preSaleEnd = dateToString($scope.promotion.preSaleEnd);
+            if($scope.promotion.activityStart > $scope.promotion.activityEnd){
+                alert("活动时间检查：请输入结束时间>开始时间。")
+                return;
+            }
 
+            if($scope.promotion.preSaleStart > $scope.promotion.preSaleEnd){
+                alert("预售时间检查：请输入结束时间>开始时间。")
+                return;
+            }
+
+            if($scope.promotion.prePeriodStart > $scope.promotion.prePeriodEnd){
+                alert("预热时间检查：请输入结束时间>开始时间。")
+                return;
+            }
+
+            if($scope.promotion.prePeriodStart > $scope.promotion.activityStart){
+                alert("预热开始时间不能晚于活动开始时间");
+                return;
+            }
+            if($scope.promotion.preSaleStart > $scope.promotion.activityStart){
+                alert("预售开始时间不能晚于活动开始时间");
+                return;
+            }
             if (!items) {
                 promotionService.insertPromotion($scope.promotion).then(function () {
                     $scope.$close();
