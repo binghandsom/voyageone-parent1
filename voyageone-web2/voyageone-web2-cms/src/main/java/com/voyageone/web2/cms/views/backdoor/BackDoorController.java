@@ -66,6 +66,7 @@ public class BackDoorController extends CmsController {
 
     /**
      * 临时使用,用于清除聚美下的多个产品在一个group的数据(/cms/backdoor/splitGroup/015)
+     *
      * @param channelId 渠道Id
      * @return
      */
@@ -76,6 +77,7 @@ public class BackDoorController extends CmsController {
 
     /**
      * 将老的聚美数据导入都cms(/cms/backdoor/importJM/015)
+     *
      * @param channelId 渠道Id
      * @return
      */
@@ -86,10 +88,11 @@ public class BackDoorController extends CmsController {
 
     /**
      * 创建996的测试数据(/cms/backdoor/createTestData)
+     *
      * @return
      */
     @RequestMapping(value = "createTestData", method = RequestMethod.GET)
-    public Object createTestData () {
+    public Object createTestData() {
 
         List<CmsBtFeedInfoModel> allFeedInfoList = new ArrayList<CmsBtFeedInfoModel>();
 
@@ -139,13 +142,14 @@ public class BackDoorController extends CmsController {
 
     /**
      * 用于20160708的数据移植
-     * @param channelId 店铺Id
+     *
+     * @param channelId  店铺Id
      * @param platformId 平台种类Id
-     * @param code 产品code
+     * @param code       产品code
      * @return
      */
     @RequestMapping(value = "changeDataByNewModel", method = RequestMethod.GET)
-    public Object changeDataBy20160708 (@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
+    public Object changeDataBy20160708(@RequestParam("channelId") String channelId, @RequestParam("platformId") String platformId, @RequestParam("productCode") String code) {
 
         List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, code);
 
@@ -191,7 +195,7 @@ public class BackDoorController extends CmsController {
                 // 设置Fields属性
                 newField.setAppSwitch(0);
                 newField.setCode(oldCmsBtProductModel.getFields().getCode());
-                newField.setOriginalCode(StringUtils.isEmpty(oldCmsBtProductModel.getFields().getOriginalCode())? oldCmsBtProductModel.getFields().getCode() : oldCmsBtProductModel.getFields().getOriginalCode());
+                newField.setOriginalCode(StringUtils.isEmpty(oldCmsBtProductModel.getFields().getOriginalCode()) ? oldCmsBtProductModel.getFields().getCode() : oldCmsBtProductModel.getFields().getOriginalCode());
                 newField.setClientProductUrl(oldCmsBtProductModel.getFields().getClientProductUrl());
                 newField.setIsMasterMain(oldCmsBtProductModel.getFields().getIsMasterMain());
                 newField.setProductNameEn(oldCmsBtProductModel.getFields().getProductNameEn());
@@ -330,7 +334,7 @@ public class BackDoorController extends CmsController {
                             newSku.put("priceMsrp", sku.getPriceMsrp());
                             newSku.put("priceRetail", sku.getPriceRetail());
                             newSku.put("PriceSale", sku.getPriceRetail());
-                            newSku.put("isSale", 1);
+                            newSku.put("isSale", true);
                             newSku.put("priceDiffFlg", "1");
 
                             if (!skuInfo1.contains(newSku))
@@ -400,15 +404,15 @@ public class BackDoorController extends CmsController {
                         // 如果group数据能渠道
                         if (platformGroupInfo != null) {
                             platformInfo.setpProductId(platformGroupInfo.getPlatformPid());
-                            platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? platformGroupInfo .getNumIId(): cartInfo.getNumIid());
+                            platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? platformGroupInfo.getNumIId() : cartInfo.getNumIid());
                             platformInfo.setpPublishTime(cartInfo.getPublishTime());
-                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? platformGroupInfo.getPlatformStatus(): cartInfo.getPlatformStatus());
-                        } 
+                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? platformGroupInfo.getPlatformStatus() : cartInfo.getPlatformStatus());
+                        }
                         // 如果group数据取不到
                         else {
                             platformInfo.setpNumIId(StringUtils.isEmpty(cartInfo.getNumIid()) ? "" : cartInfo.getNumIid());
                             platformInfo.setpPublishTime(cartInfo.getPublishTime());
-                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? CmsConstants.PlatformStatus.InStock: cartInfo.getPlatformStatus());
+                            platformInfo.setpStatus(cartInfo.getPlatformStatus() == null ? CmsConstants.PlatformStatus.InStock : cartInfo.getPlatformStatus());
                         }
                     }
                     platformInfo.setModified(oldCmsBtProductModel.getModified());
@@ -463,12 +467,12 @@ public class BackDoorController extends CmsController {
                             newSku.remove("client_retail_price");
                             newSku.remove("client_net_price");
 
-                            newSku.put("isSale", sku.getSkuCarts().contains(23) ? 1 : 0);
+                            newSku.put("isSale", sku.getSkuCarts().contains(23));
                             newSku.put("priceChgFlg", sku.getPriceChgFlg());
                             String diffFlg = "1";
-                            if(sku.getPriceSale() < sku.getPriceRetail()){
+                            if (sku.getPriceSale() < sku.getPriceRetail()) {
                                 diffFlg = "2";
-                            }else if(sku.getPriceSale() < sku.getPriceRetail()){
+                            } else if (sku.getPriceSale() < sku.getPriceRetail()) {
                                 diffFlg = "3";
                             }
                             newSku.put("priceDiffFlg", diffFlg);
@@ -496,7 +500,7 @@ public class BackDoorController extends CmsController {
 
                     // 设置是否该平台的主商品
 
-                    if(platformGroupInfo != null ) {
+                    if (platformGroupInfo != null) {
                         Integer isMain = platformGroupInfo.getMainProductCode().equals(oldCmsBtProductModel.getFields().getCode()) ? 1 : 0;
                         platformInfo.setpIsMain(isMain);
                         platformInfo.setMainProductCode(platformGroupInfo.getMainProductCode());
@@ -541,27 +545,29 @@ public class BackDoorController extends CmsController {
 
     /**
      * 测试getWmsProductsInfo方法
-     * @param channelId 店铺Id
+     *
+     * @param channelId  店铺Id
      * @param productSku sku
      * @return ProductForWmsBean对象
      */
     @RequestMapping(value = "testGetWmsProductInfo", method = RequestMethod.GET)
-    public Object testGetWmsProductInfo (@RequestParam("channelId") String channelId, @RequestParam("productSku") String productSku) {
+    public Object testGetWmsProductInfo(@RequestParam("channelId") String channelId, @RequestParam("productSku") String productSku) {
         return JacksonUtil.bean2Json(productService.getWmsProductsInfo(channelId, productSku, null));
     }
 
     /**
      * 测试getOmsProductsInfo方法
-     * @param channelId 店铺Id
-     * @param skuIncludes 检索sku
-     * @param skuFlg 1:单个sku,2:多个sku
-     * @param nameIncludes 名称
+     *
+     * @param channelId           店铺Id
+     * @param skuIncludes         检索sku
+     * @param skuFlg              1:单个sku,2:多个sku
+     * @param nameIncludes        名称
      * @param descriptionIncludes 描述
-     * @param cartId 平台Id
+     * @param cartId              平台Id
      * @return List<ProductForOmsBean>对象
      */
     @RequestMapping(value = "testGetOmsProductInfo", method = RequestMethod.GET)
-    public Object testGetWmsProductInfo (@RequestParam("channelId") String channelId, @RequestParam("skuIncludes") String skuIncludes
+    public Object testGetWmsProductInfo(@RequestParam("channelId") String channelId, @RequestParam("skuIncludes") String skuIncludes
             , @RequestParam("skuFlg") String skuFlg
             , @RequestParam("nameIncludes") String nameIncludes
             , @RequestParam("descriptionIncludes") String descriptionIncludes
