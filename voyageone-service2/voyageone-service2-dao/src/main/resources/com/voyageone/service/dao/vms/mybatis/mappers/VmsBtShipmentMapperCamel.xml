@@ -68,7 +68,7 @@
                 #{shipmentName,jdbcType=VARCHAR},
             </if>
             <if test="shippedDate != null" >
-                #{shippedDate,jdbcType=VARCHAR},
+                #{shippedDate,jdbcType=TIMESTAMP},
             </if>
             <if test="expresscompany != null" >
                 #{expresscompany,jdbcType=VARCHAR},
@@ -80,13 +80,13 @@
                 #{comment,jdbcType=VARCHAR},
             </if>
             <if test="arrivedTime != null" >
-                #{arrivedTime,jdbcType=VARCHAR},
+                #{arrivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="arriver != null" >
                 #{arriver,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
-                #{receivedTime,jdbcType=VARCHAR},
+                #{receivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="receiver != null" >
                 #{receiver,jdbcType=VARCHAR},
@@ -125,7 +125,7 @@
                 `shipment_name` = #{shipmentName,jdbcType=VARCHAR},
             </if>
             <if test="shippedDate != null" >
-                `shipped_date` = #{shippedDate,jdbcType=VARCHAR},
+                `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
             </if>
             <if test="expresscompany != null" >
                 `expressCompany` = #{expresscompany,jdbcType=VARCHAR},
@@ -137,13 +137,13 @@
                 `comment` = #{comment,jdbcType=VARCHAR},
             </if>
             <if test="arrivedTime != null" >
-                `arrived_time` = #{arrivedTime,jdbcType=VARCHAR},
+                `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="arriver != null" >
                 `arriver` = #{arriver,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
-                `received_time` = #{receivedTime,jdbcType=VARCHAR},
+                `received_time` = #{receivedTime,jdbcType=TIMESTAMP},
             </if>
             <if test="receiver != null" >
                 `receiver` = #{receiver,jdbcType=VARCHAR},
@@ -184,7 +184,7 @@
                 and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
             </if>
             <if test="shippedDate != null" >
-                and `shipped_date` = #{shippedDate,jdbcType=VARCHAR}
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
             <if test="expresscompany != null" >
                 and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
@@ -196,13 +196,13 @@
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
             <if test="arrivedTime != null" >
-                and `arrived_time` = #{arrivedTime,jdbcType=VARCHAR}
+                and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="arriver != null" >
                 and `arriver` = #{arriver,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="receiver != null" >
                 and `receiver` = #{receiver,jdbcType=VARCHAR}
@@ -235,7 +235,7 @@
                 and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
             </if>
             <if test="shippedDate != null" >
-                and `shipped_date` = #{shippedDate,jdbcType=VARCHAR}
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
             <if test="expresscompany != null" >
                 and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
@@ -247,13 +247,13 @@
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
             <if test="arrivedTime != null" >
-                and `arrived_time` = #{arrivedTime,jdbcType=VARCHAR}
+                and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="arriver != null" >
                 and `arriver` = #{arriver,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="receiver != null" >
                 and `receiver` = #{receiver,jdbcType=VARCHAR}
@@ -283,7 +283,7 @@
                 and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
             </if>
             <if test="shippedDate != null" >
-                and `shipped_date` = #{shippedDate,jdbcType=VARCHAR}
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
             <if test="expresscompany != null" >
                 and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
@@ -295,13 +295,13 @@
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
             <if test="arrivedTime != null" >
-                and `arrived_time` = #{arrivedTime,jdbcType=VARCHAR}
+                and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="arriver != null" >
                 and `arriver` = #{arriver,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
             <if test="receiver != null" >
                 and `receiver` = #{receiver,jdbcType=VARCHAR}

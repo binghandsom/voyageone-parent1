@@ -8,6 +8,7 @@
 package com.voyageone.service.model.vms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import java.util.Date;
 
 /**
  * 
@@ -23,7 +24,10 @@ public class VmsBtShipmentModel extends BaseModel {
      */
     protected String shipmentName;
 
-    protected String shippedDate;
+    /**
+     *  发货日期
+     */
+    protected Date shippedDate;
 
     /**
      * 物流公司id
@@ -43,7 +47,7 @@ public class VmsBtShipmentModel extends BaseModel {
     /**
      * 到达VoyageOne时间
      */
-    protected String arrivedTime;
+    protected Date arrivedTime;
 
     /**
      * 到达确认者
@@ -53,7 +57,7 @@ public class VmsBtShipmentModel extends BaseModel {
     /**
      * VoyageOne确认收货时间
      */
-    protected String receivedTime;
+    protected Date receivedTime;
 
     /**
      * 确认收货者
@@ -76,12 +80,12 @@ public class VmsBtShipmentModel extends BaseModel {
         this.shipmentName = shipmentName == null ? null : shipmentName.trim();
     }
 
-    public String getShippedDate() {
+    public Date getShippedDate() {
         return shippedDate;
     }
 
-    public void setShippedDate(String shippedDate) {
-        this.shippedDate = shippedDate == null ? null : shippedDate.trim();
+    public void setShippedDate(Date shippedDate) {
+        this.shippedDate = shippedDate;
     }
 
     public String getExpresscompany() {
@@ -108,12 +112,12 @@ public class VmsBtShipmentModel extends BaseModel {
         this.comment = comment == null ? null : comment.trim();
     }
 
-    public String getArrivedTime() {
+    public Date getArrivedTime() {
         return arrivedTime;
     }
 
-    public void setArrivedTime(String arrivedTime) {
-        this.arrivedTime = arrivedTime == null ? null : arrivedTime.trim();
+    public void setArrivedTime(Date arrivedTime) {
+        this.arrivedTime = arrivedTime;
     }
 
     public String getArriver() {
@@ -124,12 +128,12 @@ public class VmsBtShipmentModel extends BaseModel {
         this.arriver = arriver == null ? null : arriver.trim();
     }
 
-    public String getReceivedTime() {
+    public Date getReceivedTime() {
         return receivedTime;
     }
 
-    public void setReceivedTime(String receivedTime) {
-        this.receivedTime = receivedTime == null ? null : receivedTime.trim();
+    public void setReceivedTime(Date receivedTime) {
+        this.receivedTime = receivedTime;
     }
 
     public String getReceiver() {

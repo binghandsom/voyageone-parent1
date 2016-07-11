@@ -12,7 +12,7 @@ define([
             this.feedImportResultList = [];
             this.statusList = [];
             this.status="";
-            this.fileName = "";
+            this.clientFileName = "";
             this.uploadDateStart = "";
             this.uploadDateEnd = "";
             this.pageOption = {
@@ -31,7 +31,7 @@ define([
             },
             getFeedImportResultList: function () {
                 var main = this;
-                if (this.uploadDateStart == undefined || this.uploadDateEnd == undefined) {
+                if (this.uploadDateStart === undefined || this.uploadDateEnd === undefined) {
                     this.alert("Please input a valid date");
                     return;
                 }
@@ -47,7 +47,7 @@ define([
                 }
                 main.feedImportResultService.search({
                     "status": main.status,
-                    "fileName": main.fileName,
+                    "clientFileName": main.clientFileName,
                     "uploadDateStart": uploadDateStart1,
                     "uploadDateEnd": uploadDateEnd1,
                     "curr": main.pageOption.curr,
