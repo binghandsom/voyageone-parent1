@@ -73,7 +73,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         String[] commList = commStr.split(",");
         StringBuilder commonPropsStr = new StringBuilder();
         if (commList.length > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 Map<String, String> atts = new HashMap<>(2);
@@ -165,7 +165,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         List<Map<String, Object>> commonProp2 = new ArrayList<>();
         StringBuilder commonPropsStr = new StringBuilder();
         if (param2 != null && param2.size() > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (param2.contains(propId)) {
