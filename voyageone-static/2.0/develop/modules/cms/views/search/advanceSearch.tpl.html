@@ -698,6 +698,10 @@
                                         style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center"
                                         style="display:inline-block;width:170px;padding-left:8px">Sku Sale Price</td>
+                                    <td class="text-center" translate="TXT_SKU_COUNT"
+                                        style="display:inline-block;width:165px;padding-left:8px"></td>
+                                    <td class="text-left" translate="TXT_TIME"
+                                        style="display:inline-block;width:165px;padding-left:8px"></td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps"
                                         style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
@@ -707,10 +711,6 @@
                                     <th class="text-center" ng-repeat="prop3 in vm.selSalesType"
                                         style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}
                                     </th>
-                                    <td class="text-center" translate="TXT_SKU_COUNT"
-                                        style="display:inline-block;width:165px;padding-left:8px"></td>
-                                    <td class="text-left" translate="TXT_TIME"
-                                        style="display:inline-block;width:165px;padding-left:8px"></td>
                                 </tr>
                                 </thead>
                             </table>
@@ -730,9 +730,13 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.statusTxt}}">
-                                                    <span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}</a></span>
-                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在库</a></span>
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在售</a></span>
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}</a></span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'">{{cartsObj._pname}}:在库</span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'">{{cartsObj._pname}}:在售</span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')">{{cartsObj._pname}}</span>
                                                 </span>
                                             </span>
                                             <span class="label label-danger m-t-xs m-r-sm m-l-sm" style="font-size:12px"
@@ -794,23 +798,12 @@
                                                 {{productInfo.priceSale[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
-                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
-                                        </td>
-                                        <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}" style="display:inline-block;width:120px;">
-                                            <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
-                                        </td>
-                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">
-                                            <span ng-if="prop3.value.length > 50"><popover-text content="prop3.value" direct="left" size="50"></popover-text></span>
-                                            <span ng-if="prop3.value.length <= 50">{{prop3.value}}</span>
-                                        </td>
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
                                                     popover-html="showInfo({{productInfo.skuDetail}})"
                                                     popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
-                                                    type="button" popover-placement="left" class="btn btn-default btn-xs">
+                                                    type="button" popover-placement="left" class="btn btn-default btn-xs"
+                                            >
                                                 {{productInfo.common.skus.length}}
                                             </button>
                                         </td>
@@ -832,6 +825,18 @@
                                                     </ul>
                                                 </div>
                                             </small>
+                                        </td>
+                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
+                                            <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
+                                        </td>
+                                        <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}" style="display:inline-block;width:120px;">
+                                            <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
+                                        </td>
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">
+                                            <span ng-if="prop3.value.length > 50"><popover-text content="prop3.value" direct="left" size="50"></popover-text></span>
+                                            <span ng-if="prop3.value.length <= 50">{{prop3.value}}</span>
                                         </td>
                                     </tr>
                                     </tbody>
