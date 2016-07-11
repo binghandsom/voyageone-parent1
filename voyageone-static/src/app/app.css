@@ -314,6 +314,7 @@ a {
   padding: 0;
   font-size: 16px;
   cursor: pointer;
+  outline: none;
 }
 .input.input-file input {
   width: 100%;
@@ -478,6 +479,9 @@ a {
   margin-top: 5px;
   font-size: 12px;
   font-style: italic;
+}
+.home_data h3:hover {
+  color: #74C52C;
 }
 .home_data li {
   color: #888;
