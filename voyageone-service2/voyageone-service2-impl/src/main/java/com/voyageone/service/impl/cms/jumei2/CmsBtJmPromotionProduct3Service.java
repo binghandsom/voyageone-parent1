@@ -18,8 +18,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
-import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductPlatformService;
+
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -43,12 +42,12 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmProductDaoExt daoExtCmsBtJmProductDaoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-    @Autowired
-    JuMeiProductPlatformService serviceJuMeiProductPlatform;
+//    @Autowired
+//    JuMeiProductPlatformService serviceJuMeiProductPlatform;
     @Autowired
     CmsMtJmConfigService serviceCmsMtJmConfig;
-    @Autowired
-    JMShopBeanService serviceJMShopBean;
+//    @Autowired
+//    JMShopBeanService serviceJMShopBean;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
     @Autowired
@@ -95,14 +94,14 @@ public class CmsBtJmPromotionProduct3Service {
         return dao.delete(id);
     }
 
-    @VOTransactional
-    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
-        CmsBtJmPromotionProductModel model = dao.select(id);
-        model.setDealPrice(dealPrice);
-        model.setModifier(userName);
-        dao.update(model);
-        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
-    }
+//    @VOTransactional
+//    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
+//        CmsBtJmPromotionProductModel model = dao.select(id);
+//        model.setDealPrice(dealPrice);
+//        model.setModifier(userName);
+//        dao.update(model);
+//        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
+//    }
 
     @VOTransactional
     public void deleteByPromotionId(int promotionId) {

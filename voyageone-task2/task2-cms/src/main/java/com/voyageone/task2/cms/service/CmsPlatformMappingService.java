@@ -64,7 +64,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     }
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+    protected void onStartup(List<TaskControlBean> taskControlList)  {
 
         commonProp = cmsMtCommonPropDaoExt.selectCommonProp().stream().filter(cmsMtCommonPropModel -> !StringUtils.isEmpty(cmsMtCommonPropModel.getPlatformPropRefId())).collect(Collectors.toList());
 
@@ -122,7 +122,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
         return JsonUtil.jsonToBeanList(JsonUtil.bean2Json(jsonArray), CmsMtPlatformCategoryTreeModel.class);
     }
 
-    private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree) throws Exception {
+    private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree)  {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = new CmsMtPlatformMappingModel();
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
@@ -144,7 +144,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     /**
      * Props生成
      */
-    private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
+    private List<MappingBean> makeProps(int cartId, String categoryId)  {
 
         List<MappingBean> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(categoryId, cartId);

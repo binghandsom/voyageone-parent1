@@ -114,6 +114,10 @@ s-complex[multi] s-toolbox {
     padding-left: 6px;
 }
 
+s-container label {
+    margin-right: 10px;
+}
+
 s-tip {
     display: block;
     color: #ee903d;
