@@ -58,8 +58,10 @@ define([
         }
 
         OrderInfoController.prototype.search = function () {
-
-            if (this.orderDateFrom)
+            if (this.orderDateFrom === undefined || this.orderDateTo === undefined) {
+                this.alert("'TXT_PLEASE_INPUT_A_VALID_DATE'");
+                return;
+            } else if (this.orderDateFrom)
                 this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
             else this.searchInfo.orderDateFrom = undefined;
             if (this.orderDateTo) {

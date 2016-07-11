@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">File Name</label>
-                    <input id="fileName" type="text" ng-model="ctrl.fileName" class="form-control input-sm">
+                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm">
                 </div>
                 <div class="form-group">
                     <label class="control-label">Upload Date</label>
@@ -58,7 +58,7 @@
     </div>
     <div class="panel panel-vo">
         <div class="panel-body">
-            <div class="table-responsive">
+            <div class="table-responsive" if-no-rows="ctrl.feedImportResultList.length">
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
                     <tr>
@@ -79,6 +79,8 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="col-sm-12 m-t-md">
                 <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
             </div>
         </div>
