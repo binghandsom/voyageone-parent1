@@ -1087,15 +1087,16 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // SKU和尺寸的Mapping表中不存在的话，追加进去(已存在不要再追加)
             // skuSizeMap<上新用尺码, 平台取下来的尺码值value> 直接用共通方法里面转换后的上新用尺码作为尺码别名上新
             // 上新用尺码(sizeSx)的设置顺序：sizeNick（特殊尺码转换信息） > 尺码转换表（共通尺码转换信息） > size (转换前尺码)
-            if (!skuSizeMap.containsKey(sku.getStringAttribute("sizeSx"))) {
+            if (!skuSizeMap.containsKey(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()))) {
                 // 取得尺寸列表中的第一个尺寸值
                 if (cmsSizeList.size() > 0) {
                     // "SKU尺寸(3,3.5等)":"尺寸值Id" Mapping追加
-                    skuSizeMap.put(sku.getStringAttribute("sizeSx"), cmsSizeList.get(0).getAttrValue());
+                    skuSizeMap.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()), cmsSizeList.get(0).getAttrValue());
                     // 已经Mapping过的尺寸值从尺寸列表中删除
                     cmsSizeList.remove(0);
                 } else {
-                    $warn("SKU尺寸件数比cms_mt_platform_skus表中尺寸值件数多，该尺寸未找到对应的尺寸值！[sizeSx:%s]", sku.getStringAttribute("sizeSx"));
+                    $warn("SKU尺寸件数比cms_mt_platform_skus表中尺寸值件数多，该尺寸未找到对应的尺寸值！[sizeSx:%s]",
+                            sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
                 }
             }
         }
@@ -1141,7 +1142,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                 sbSkuProperties.append(productColorMap.get(objProduct.getCommon().getFields().getCode()));
                 sbSkuProperties.append(Separtor_Xor);        // "^"
-                sbSkuProperties.append(skuSizeMap.get(objSku.getStringAttribute("sizeSx")));
+                sbSkuProperties.append(skuSizeMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name())));
                 sbSkuProperties.append(Separtor_Vertical);   // "|"
 
                 // sku价格(100.0|150.0|100.0|100.0)
@@ -1150,11 +1151,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sbSkuPrice.append(Separtor_Vertical);        // "|"
 
                 // sku 库存(100.0|150.0|100.0|100.0)
-                sbSkuStocks.append(skuLogicQtyMap.get(objSku.getStringAttribute("skuCode")));
+                sbSkuStocks.append(skuLogicQtyMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
                 sbSkuStocks.append(Separtor_Vertical);   // "|"
 
                 // SKU外部ID(200001-001-41|200001-001-42)
-                sbSkuOuterId.append(objSku.getStringAttribute("skuCode"));
+                sbSkuOuterId.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                 sbSkuOuterId.append(Separtor_Vertical);   // "|"
             }
         }
