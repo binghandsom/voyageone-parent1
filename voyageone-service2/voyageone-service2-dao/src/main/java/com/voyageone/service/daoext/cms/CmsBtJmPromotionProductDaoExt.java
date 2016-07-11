@@ -18,9 +18,9 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel selectByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
+   // List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
 
-    List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
+   // List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -32,7 +32,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter);
 
-    int updateDealEndTime(ParameterUpdateDealEndTime parameter);
+//    int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
     List<MapModel> selectPageByWhere(Map<String, Object> map);//add

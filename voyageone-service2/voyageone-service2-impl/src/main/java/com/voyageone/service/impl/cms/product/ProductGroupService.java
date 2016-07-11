@@ -308,7 +308,7 @@ public class ProductGroupService extends BaseService {
 
         List<String> unPublishedProducts = new ArrayList<>();
         if (ListUtils.notNull(products)) {
-            products.stream().map(p -> unPublishedProducts.add(p.getCommon().getFields().getCode()));
+            products.forEach(p -> unPublishedProducts.add(p.getCommon().getFields().getCode()));
         }
 
         return unPublishedProducts;
