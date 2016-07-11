@@ -568,6 +568,17 @@ public class ChannelConfigEnums {
         OverStock("024"),
 
         /**
+         * OverStock
+         */
+        FragranceNet("025"),
+
+
+        /**
+         * LightHouse
+         */
+        LightHouse("026"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
