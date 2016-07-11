@@ -114,9 +114,11 @@ public class CmsMongoOptimizeIndexService extends BaseTaskService {
         $info("#############维护索引结束###############");
 
         // 3.邮件通知处理结果(被创建，删除，未定义的索引)
+        boolean isNeedMailNotify = true;
         StringBuilder content = new StringBuilder();
         if ((proccessResult == null || proccessResult.isEmpty()) && (nonDefIndexList == null || nonDefIndexList.isEmpty()) && (ignoreCollList == null || ignoreCollList.isEmpty())) {
             content.append("mongodb索引正常，不需要特别处理！");
+            isNeedMailNotify = false;
         } else {
             for (String oper : proccessResult) {
                 content.append(oper);
@@ -142,12 +144,13 @@ public class CmsMongoOptimizeIndexService extends BaseTaskService {
             }
         }
 
-        String subject = "mongodb索引维护结果通知 ";
-        // 取得通知接收者
-        String receiver = Codes.getCodeName(Constants.MAIL.EMAIL_RECEIVER, CodeConstants.EmailReceiver.VOYAGEONE_ERROR);
-        $info("receiver from code table:" + receiver);
-        Mail.send("jindong.yang@voyageone.cn", subject, content.toString());
-
+        if (isNeedMailNotify) {
+            String subject = "mongodb索引维护结果通知 ";
+            // 取得通知接收者
+            String receiver = Codes.getCodeName(Constants.MAIL.EMAIL_RECEIVER, "MONGODB_INDEX_AUTO_MAINTAIN");
+            $info("receiver from code table:" + receiver);
+            Mail.send(receiver, subject, content.toString());
+        }
     }
 
 
@@ -167,7 +170,12 @@ public class CmsMongoOptimizeIndexService extends BaseTaskService {
                     continue;
                 }
 
-                String keyExists = idxExisting.get("key").toString().replace(" ", "");
+                DBObject keyObj = (DBObject) idxExisting.get("key");
+                keyObj.keySet().stream().filter(s -> keyObj.get(s) instanceof Double).forEach(s -> {
+                    keyObj.put(s, ((Double) keyObj.get(s)).intValue());
+                });
+
+                String keyExists = keyObj.toString().replace(" ", "");
                 boolean uniqueExists = false;
                 if (idxExisting.containsField("unique")) {
                     uniqueExists = (Boolean) idxExisting.get("unique");
