@@ -184,13 +184,11 @@ define([
                  */
                 function saveProduct(mark){
 
-                    /**用于保存报错*/
                     if(mark == "temporary"){
                         callSave("temporary");
                         return;
                     }
 
-                    /**用于保存报错*/
                     if(mark == "ready"){
                         if(!validSchema()){
                             alert("请输入必填属性，或者输入的属性格式不正确");
@@ -225,6 +223,7 @@ define([
                         return;
                     }
 
+                    /**构造调用接口上行参数*/
                     if(scope.vm.checkFlag.attribute == 1)
                         scope.vm.platform.pAttributeStatus = "1";
                     else
@@ -240,7 +239,14 @@ define([
 
                     if(scope.vm.status == "Approved"){
                         confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").result.then(function(){
-                            callSave();
+                            productDetailService.checkCategory({cartId:scope.vm.platform.cartId,pCatPath:scope.vm.platform.pCatPath}).then(function(resp){
+                                if(resp.data === false && scope.vm.platform.cartId != 27){
+                                    confirm("当前类目没有申请 是否还需要保存？").result.then(function(){
+                                        scope.vm.platform.status = scope.vm.status = "Pending";
+                                        callSave();
+                                    });
+                                }
+                            });
                         });
                     }else{
                         callSave();

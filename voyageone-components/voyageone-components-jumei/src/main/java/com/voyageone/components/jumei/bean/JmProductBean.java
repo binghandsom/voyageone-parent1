@@ -134,7 +134,7 @@ public class JmProductBean extends JmBaseBean {
         this.dealInfo = dealInfo;
     }
 
-    public String toJsonStr() throws IOException {
+    public String toJsonStr() {
         JmProductBean resultBean = new JmProductBean();
         resultBean.setProduct_spec_number(product_spec_number);
         resultBean.setCategory_v3_4_id(category_v3_4_id);
@@ -149,12 +149,12 @@ public class JmProductBean extends JmBaseBean {
     }
 
     @JsonIgnore
-    public String getSpusString() throws IOException {
+    public String getSpusString() {
         return JacksonUtil.bean2JsonNotNull(spus);
     }
 
     @JsonIgnore
-    public String getDealInfoString() throws IOException {
+    public String getDealInfoString() {
         List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
         dealInfos.add(dealInfo);
         return JacksonUtil.bean2JsonNotNull(dealInfos);
