@@ -1318,8 +1318,26 @@ define([
             return openModel(popActions.jumei.jmProductDetail.detail, context);
         };
 
-        $scope.openJmPromotionDetail = function (context) {
-            return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        $scope.openJmPromotionDetail = openJmPromotionDetail;
+        function openJmPromotionDetail(context,fnInitial) {
+            require([popActions.jumei.jmPromotionDetail.detail.controllerUrl], function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
+                    controller: popActions.jumei.jmPromotionDetail.detail.controller,
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
         };
 
         $scope.openJmPromotionProductImport = openJmPromotionProductImport;
