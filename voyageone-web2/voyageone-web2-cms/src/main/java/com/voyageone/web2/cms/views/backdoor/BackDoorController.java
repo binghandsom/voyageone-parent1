@@ -349,7 +349,7 @@ public class BackDoorController extends CmsController {
                             priceSaleEd[0] = priceRetailEd[0];
 
 
-                            newSku.put("skuCdoe", sku.getSkuCode());
+                            newSku.put("skuCode", sku.getSkuCode());
                             newSku.put("priceMsrp", sku.getPriceMsrp());
                             newSku.put("priceRetail", sku.getPriceRetail());
                             newSku.put("PriceSale", sku.getPriceRetail());

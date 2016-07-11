@@ -33,6 +33,7 @@ public class CmsBtJmPromotionImportSave3Service {
     private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
+
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -59,22 +60,16 @@ public class CmsBtJmPromotionImportSave3Service {
             }
         }
 
-        if(info.codesModel!=null)
-        {
+        if (info.codesModel != null) {
             daoCmsBtPromotionCodes.insert(info.codesModel);
         }
-        if(info.groupsModel!=null)
-        {
+        if (info.groupsModel != null) {
             daoCmsBtPromotionGroups.insert(info.groupsModel);
         }
-        if(info.skusModels!=null) {
+        if (info.skusModels != null) {
             for (CmsBtPromotionSkusModel skusModel : info.skusModels) {
                 daoCmsBtPromotionSkus.insert(skusModel);
             }
         }
     }
-
-
-
-
 }

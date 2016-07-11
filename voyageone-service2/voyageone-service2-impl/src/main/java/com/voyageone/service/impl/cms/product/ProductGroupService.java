@@ -382,6 +382,10 @@ public class ProductGroupService extends BaseService {
         return "成功处理group的总件数:" + allGroupList.size();
     }
 
+    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+        return cmsBtProductGroupDao.updateFirst(updObj, channelId);
+    }
+
     public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateMulti(updObj, channelId);
     }

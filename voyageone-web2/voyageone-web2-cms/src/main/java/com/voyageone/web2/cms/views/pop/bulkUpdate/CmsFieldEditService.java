@@ -21,9 +21,9 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
@@ -72,7 +72,7 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private SxProductService sxProductService;
     @Autowired
-    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -709,7 +709,7 @@ public class CmsFieldEditService extends BaseAppService {
         // 需要记录价格变更履历
         $debug("批量修改商品价格 开始记入价格变更履历");
         sta = System.currentTimeMillis();
-        int cnt = cmsBtPriceLogDaoExt.insertCmsBtPriceLogList(priceLogList);
+        int cnt = cmsBtPriceLogService.insertCmsBtPriceLogList(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
         // 插入上新程序
