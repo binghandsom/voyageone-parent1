@@ -1,26 +1,17 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
-import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ethan Shi on 2016/6/13.
@@ -113,4 +104,19 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         }
 
     }
+
+    @Test
+    public void testUpdateProduct2() throws Exception {
+
+        CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
+        workload.setId(185);
+        workload.setChannelId("017");
+        workload.setCartId(27);
+        workload.setGroupId(Long.parseLong("389898"));
+        workload.setPublishStatus(0);
+
+        cmsBuildPlatformProductUploadJMService.updateProduct(workload);
+
+    }
+
 }

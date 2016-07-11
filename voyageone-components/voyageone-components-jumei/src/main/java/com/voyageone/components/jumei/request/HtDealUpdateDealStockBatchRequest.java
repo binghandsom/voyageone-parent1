@@ -32,7 +32,7 @@ public class HtDealUpdateDealStockBatchRequest implements BaseJMRequest {
 
 
     @Override
-    public Map<String, Object> getParameter() throws IOException {
+    public Map<String, Object> getParameter() {
         Map<String, Object> params = new HashMap<>();
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
