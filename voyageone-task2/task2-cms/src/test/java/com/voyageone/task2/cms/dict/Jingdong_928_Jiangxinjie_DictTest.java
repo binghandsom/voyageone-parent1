@@ -133,7 +133,7 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                     RuleExpression imageTemplate = new RuleExpression();
                     // 模板url里面如果需要出力%，需要(% -> %%)，不然String.format()会报错
                     // 错误信息(java.util.UnknownFormatConversionException: Conversion = 'i')
-                    imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%2D20150730%%2Dx790%%2D600x?$790x600$&$790%%5F600$&$product=%s"));
+                    imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/790X500%%2Dimg%%2DJXJ?$790%%5F500$&$img=%s"));
 
                     RuleExpression imageType = new RuleExpression();
                     imageType.addRuleWord(new TextWord(C_商品图片));
