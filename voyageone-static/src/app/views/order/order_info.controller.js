@@ -61,6 +61,7 @@ define([
 
             if (this.orderDateFrom == undefined || this.orderDateTo == undefined) {
                 this.alert("Please input a valid date");
+                return;
             } else {
                 if (this.orderDateFrom)
                     this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
