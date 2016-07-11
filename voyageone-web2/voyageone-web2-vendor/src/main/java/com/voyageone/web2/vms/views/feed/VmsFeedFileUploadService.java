@@ -15,10 +15,10 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * CmsImageGroupDetail Service
- *
- * @author jeff.duan 2016/5/5.
- * @version 2.0.0
+ * VmsFeedFileUploadService
+ * Created on 2016/5/5.
+ * @author jeff.duan
+ * @version 1.0
  */
 @Service
 public class VmsFeedFileUploadService extends BaseAppService {

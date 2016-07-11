@@ -21,5 +21,10 @@ public interface VmsUrlConstants {
             String DOWNLOAD_SAMPLE_FEED_FILE = "downSampleFeedFile";
             String UPLOAD_FEED_FILE = "uploadFeedFile";
         }
+        interface FEED_IMPORT_RESULT {
+            String ROOT = "/vms/feed/feed_import_result/";
+            String INIT = "init";
+            String SEARCH = "search";
+        }
     }
 }

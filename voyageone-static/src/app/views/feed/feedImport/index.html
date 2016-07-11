@@ -8,7 +8,7 @@
         </ul>
     </div>
 </div>
-<div class="container content">
+<div class="container content" ng-init="ctrl.init()">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h5 class="panel-title">Search</h5>
@@ -16,17 +16,18 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">STATUS</label>
-                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm">
-                        <option value="">Select</option>
+                    <label class="control-label">Status</label>
+                    <select name="status" id="status" ng-model="ctrl.status" class="form-control input-sm"
+                            ng-options="status.value as status.name for status in ctrl.statusList">
+                        <option value="" translate="TXT_SELECT_NO_VALUE" />
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="control-label">File Name</label>
-                    <input id="ORDER_ID" type="text" class="form-control input-sm">
+                    <input id="fileName" type="text" ng-model="ctrl.fileName" class="form-control input-sm">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Upload Time</label>
+                    <label class="control-label">Upload Date</label>
                      <span class="input-group">
                         <input type="date" class="form-control"
                                uib-datepicker-popup
@@ -50,8 +51,7 @@
                     </span>
                 </div>
                 <div class="form-group pull-right">
-                    <button class="btn btn-default btn-sm">CLEAR</button>
-                    <button class="btn btn-primary btn-sm">SEARCH</button>
+                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">Search</button>
                 </div>
             </div>
         </div>
@@ -70,29 +70,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Feed_20160602_201030.xslt</td>
-                        <td class="text-center">2016/06/02 20:10:30</td>
-                        <td class="text-center">will</td>
-                        <td class="text-center">Waiting Import</td>
-                        <td class="text-center"><i class="fa fa-cloud-download fa-lg"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Feed_20160602_201030.xslt</td>
-                        <td class="text-center">2016/06/02 20:10:30</td>
-                        <td class="text-center">will</td>
-                        <td class="text-center">Waiting Import</td>
-                        <td class="text-center"><i class="fa fa-cloud-download fa-lg"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Feed_20160602_201030.xslt</td>
-                        <td class="text-center">2016/06/02 20:10:30</td>
-                        <td class="text-center">will</td>
-                        <td class="text-center">Waiting Import</td>
+                    <tr ng-repeat="feedImportResult in ctrl.feedImportResultList">
+                        <td>{{feedImportResult.client_file_name}}</td>
+                        <td class="text-center">{{feedImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-center">{{feedImportResult.creater}}</td>
+                        <td class="text-center">{{feedImportResult.statusName}}</td>
                         <td class="text-center"><i class="fa fa-cloud-download fa-lg"></i></td>
                     </tr>
                     </tbody>
                 </table>
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
             </div>
         </div>
     </div>
