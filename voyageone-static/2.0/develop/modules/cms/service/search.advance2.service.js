@@ -362,37 +362,41 @@ define([
                         // 设置产品状态显示区域的css(背景色)
                         var cssVal = '';
                         var statusTxt = '';
+                        var publishError = false;
                         cartItem.cssVal = {};
+
+                        if (data.status == 'Approved') {
+                            if (data.pStatus == 'OnSale') {
+                                cssVal = 'DeepSkyBlue';
+                                statusTxt = 'OnSale';
+                            } else if (data.pStatus == 'InStock') {
+                                cssVal = 'Orange';
+                                statusTxt = 'InStock';
+                            } else if (data.pStatus == 'WaitingPublish') {
+                                cssVal = 'Chocolate';
+                                statusTxt = 'WaitingPublish';
+                            } else {
+                                cssVal = 'YellowGreen';
+                                statusTxt = 'Approved';
+                            }
+                        } else if (data.status == 'Ready') {
+                            cssVal = 'yellow';
+                            statusTxt = 'Ready';
+                        } else {
+                            cssVal = 'DarkGray';
+                            statusTxt = 'Pedding';
+                        }
+
                         if (data.pPublishError == 'Error') {
                             cssVal = 'red';
-                            statusTxt = 'Error';
-                        } else {
-                            if (data.status == 'Approved') {
-                                if (data.pStatus == 'OnSale') {
-                                    cssVal = 'DeepSkyBlue';
-                                    statusTxt = 'OnSale';
-                                } else if (data.pStatus == 'InStock') {
-                                    cssVal = 'Orange';
-                                    statusTxt = 'InStock';
-                                } else if (data.pStatus == 'WaitingPublish') {
-                                    cssVal = 'Chocolate';
-                                    statusTxt = 'WaitingPublish';
-                                } else {
-                                    cssVal = 'YellowGreen';
-                                    statusTxt = 'Approved';
-                                }
-                            } else if (data.status == 'Ready') {
-                                cssVal = 'yellow';
-                                statusTxt = 'Ready';
-                            } else {
-                                cssVal = 'DarkGray';
-                                statusTxt = 'Pedding';
-                            }
+                            publishError = true;
                         }
+
                         if (cssVal) {
                             cartItem.cssVal = { "background-color" : cssVal };
                         }
                         cartItem.statusTxt = statusTxt;
+                        cartItem.publishError = publishError;
                         cartArr.push(cartItem);
                     });
                 }
