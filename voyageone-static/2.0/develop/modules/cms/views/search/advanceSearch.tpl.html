@@ -730,9 +730,13 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.statusTxt}}">
-                                                    <span ng-if="cartsObj._purl&&cartsObj._pname"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}</a></span>
-                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname">{{cartsObj._pname}}</span>
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在库</a></span>
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在售</a></span>
+                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}</a></span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'">{{cartsObj._pname}}:在库</span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'">{{cartsObj._pname}}:在售</span>
+                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')">{{cartsObj._pname}}</span>
                                                 </span>
                                             </span>
                                             <span class="label label-danger m-t-xs m-r-sm m-l-sm" style="font-size:12px"
