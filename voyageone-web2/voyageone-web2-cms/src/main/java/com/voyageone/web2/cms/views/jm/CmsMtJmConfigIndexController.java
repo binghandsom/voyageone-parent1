@@ -1,6 +1,4 @@
 package com.voyageone.web2.cms.views.jm;
-
-import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterPlatService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.model.cms.CmsMtJmConfigModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -24,44 +22,44 @@ import static com.voyageone.common.CmsConstants.JmMasterPlatCode;
         method = RequestMethod.POST
 )
 public class CmsMtJmConfigIndexController extends CmsController {
-    @Autowired
-    private CmsMtJmConfigService service;
-    @Autowired
-    private CmsBtJmMasterPlatService masterPlatService;
+//    @Autowired
+//    private CmsMtJmConfigService service;
+//    @Autowired
+//    private CmsBtJmMasterPlatService masterPlatService;
 
-    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INIT)
-    public AjaxResponse init() {
+//    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INIT)
+//    public AjaxResponse init() {
+//
+//        Map<String, Object> masterData = new HashMap<>();
+//
+//        masterData.put("jmShippingStockList", masterPlatService.selectListByCode(JmMasterPlatCode.STOCK));
+//
+//        return success(masterData);
+//    }
 
-        Map<String, Object> masterData = new HashMap<>();
+//    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INSERT)
+//    public AjaxResponse insert(@RequestBody CmsMtJmConfigModel params) {
+//        String channelId = getUser().getSelChannelId();
+//        params.setChannelId(channelId);
+//        params.setModifier(getUser().getUserName());
+//        params.setCreater(getUser().getUserName());
+//        params.setCreated(new Date());
+//        return success(service.insert(params));
+//    }
 
-        masterData.put("jmShippingStockList", masterPlatService.selectListByCode(JmMasterPlatCode.STOCK));
-
-        return success(masterData);
-    }
-
-    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.INSERT)
-    public AjaxResponse insert(@RequestBody CmsMtJmConfigModel params) {
-        String channelId = getUser().getSelChannelId();
-        params.setChannelId(channelId);
-        params.setModifier(getUser().getUserName());
-        params.setCreater(getUser().getUserName());
-        params.setCreated(new Date());
-        return success(service.insert(params));
-    }
-
-    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.UPDATE)
-    public AjaxResponse update(@RequestBody CmsMtJmConfigModel params) {
-        String channelId = getUser().getSelChannelId();
-        params.setChannelId(channelId);
-        params.setModifier(getUser().getUserName());
-        return success(service.update(params));
-    }
-
-    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.GETBYKEY)
-    public Object getByKey(@RequestBody CmsMtJmConfigModel params) {//@RequestParam("id")
-        String channelId = getUser().getSelChannelId();
-        return success(service.getByKey(channelId, params.getKey()));
-    }
+//    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.UPDATE)
+//    public AjaxResponse update(@RequestBody CmsMtJmConfigModel params) {
+//        String channelId = getUser().getSelChannelId();
+//        params.setChannelId(channelId);
+//        params.setModifier(getUser().getUserName());
+//        return success(service.update(params));
+//    }
+//
+//    @RequestMapping(CmsUrlConstants.CMSMTJMCONFIG.LIST.INDEX.GETBYKEY)
+//    public Object getByKey(@RequestBody CmsMtJmConfigModel params) {//@RequestParam("id")
+//        String channelId = getUser().getSelChannelId();
+//        return success(service.getByKey(channelId, params.getKey()));
+//    }
 
 
 }

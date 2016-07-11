@@ -26,11 +26,11 @@
                             <label class=" ">{{category.catName}}</label>
                         </div>
                         <div class="m-t-xs" ng-if="category.isParent == 0">
-                            <label class="">
-                                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
-                                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                                &nbsp;
-                                <label>{{category.catName}}</label>
+                            <label class="checkbox-inline c-checkbox">
+                                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)"><span
+                                    class="fa fa-check"></span>
+                                &nbsp;{{category.catName}}
                             </label>
                         </div>
                         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
@@ -59,11 +59,11 @@
             <label class=" ">{{category.catName}}</label>
         </div>
         <div class="m-t-xs" ng-if="category.isParent == 0">
-            <label class="">
-                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
-                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                &nbsp;
-                <label>{{category.catName}}</label>
+            <label class="checkbox-inline c-checkbox">
+                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)"><span
+                    class="fa fa-check"></span>
+                &nbsp;{{category.catName}}
             </label>
         </div>
         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"

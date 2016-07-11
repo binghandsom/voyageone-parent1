@@ -1923,8 +1923,8 @@ public class SxProductService extends BaseService {
                         }
                     } else {
                         final String sellerCategoryPropId = "seller_cids";
-                        String numIId = sxData.getPlatform().getNumIId();
-                        if (!StringUtils.isEmpty(numIId)) {
+//                        String numIId = sxData.getPlatform().getNumIId();
+//                        if (!StringUtils.isEmpty(numIId)) {
                             // 更新
                             // modified by morse.lu 2016/06/21 start
                             // 改成从表里取cid
@@ -1966,7 +1966,7 @@ public class SxProductService extends BaseService {
                                 retMap.put(sellerCategoryPropId, multiCheckField);
                             }
                             // modified by morse.lu 2016/06/21 end
-                        }
+//                        }
                     }
                     break;
                 }
