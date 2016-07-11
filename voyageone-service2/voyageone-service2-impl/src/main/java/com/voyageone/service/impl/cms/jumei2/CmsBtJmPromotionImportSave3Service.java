@@ -3,12 +3,16 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
+import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
 import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by dell on 2016/7/1.
@@ -29,7 +33,6 @@ public class CmsBtJmPromotionImportSave3Service {
     private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
-
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -70,4 +73,8 @@ public class CmsBtJmPromotionImportSave3Service {
             }
         }
     }
+
+
+
+
 }

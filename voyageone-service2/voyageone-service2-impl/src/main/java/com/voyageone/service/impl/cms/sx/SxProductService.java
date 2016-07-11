@@ -1923,8 +1923,8 @@ public class SxProductService extends BaseService {
                         }
                     } else {
                         final String sellerCategoryPropId = "seller_cids";
-                        String numIId = sxData.getPlatform().getNumIId();
-                        if (!StringUtils.isEmpty(numIId)) {
+//                        String numIId = sxData.getPlatform().getNumIId();
+//                        if (!StringUtils.isEmpty(numIId)) {
                             // 更新
                             // modified by morse.lu 2016/06/21 start
                             // 改成从表里取cid
@@ -1966,7 +1966,7 @@ public class SxProductService extends BaseService {
                                 retMap.put(sellerCategoryPropId, multiCheckField);
                             }
                             // modified by morse.lu 2016/06/21 end
-                        }
+//                        }
                     }
                     break;
                 }
@@ -2113,6 +2113,12 @@ public class SxProductService extends BaseService {
      * @param field 无线描述的field
      */
     private void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
+        Integer appSwitch = expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch();
+        if (appSwitch == null || appSwitch.intValue() != 1) {
+            return;
+        }
+
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
         String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
         if (StringUtils.isEmpty(descriptionValue)) {
@@ -2120,12 +2126,6 @@ public class SxProductService extends BaseService {
             return;
         }
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
-
-        // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        Integer appSwitch = expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch();
-        if (appSwitch == null || appSwitch.intValue() != 1) {
-            return;
-        }
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, expressionParser.getSxData());
@@ -2315,7 +2315,7 @@ public class SxProductService extends BaseService {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
             // test用 start
-            styleCode = "test." + styleCode;
+//            styleCode = "test." + styleCode;
             // test用 end
             sxData.setStyleCode(styleCode);
             return styleCode;

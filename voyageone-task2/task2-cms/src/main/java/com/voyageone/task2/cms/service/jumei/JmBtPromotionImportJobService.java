@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;
+
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;

@@ -53,6 +53,7 @@
 
     <select id="com_mt_value_getAll" resultType="com.voyageone.common.configs.beans.TypeBean">
         SELECT
+          mt_value.id value_id,
           mt_value.type_id,
           mt_type.name as type_code,
           mt_value.value,

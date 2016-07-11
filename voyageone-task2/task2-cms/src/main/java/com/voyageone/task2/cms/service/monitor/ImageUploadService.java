@@ -405,7 +405,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
             updateProductModel(model.getChannelId(), model.getProdId(), modifyDirName, images);
 
             LOG.info("mongoOperator success:" + code);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.info(String.format("mongoOperator code:%s error:", code), e);
         }
     }

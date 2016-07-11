@@ -384,7 +384,7 @@ define([
                             statusTxt = 'Ready';
                         } else {
                             cssVal = 'DarkGray';
-                            statusTxt = 'Pedding';
+                            statusTxt = 'Pendding';
                         }
 
                         if (data.pPublishError == 'Error') {
