@@ -100,7 +100,8 @@ define(function () {
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts"
+                    "updateProductAtts":"updateProductAtts",
+                    "checkCategory":"checkCategory"
                 }
             },
             "mapping": {
