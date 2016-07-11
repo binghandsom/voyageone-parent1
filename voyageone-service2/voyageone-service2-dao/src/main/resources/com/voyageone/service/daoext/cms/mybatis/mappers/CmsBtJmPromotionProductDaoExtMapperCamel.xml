@@ -403,7 +403,7 @@
     </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product
-        WHERE synch_status=0 and   id in
+        WHERE synch_status!=2 and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
