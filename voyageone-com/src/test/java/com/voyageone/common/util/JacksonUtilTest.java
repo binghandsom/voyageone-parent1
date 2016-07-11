@@ -28,28 +28,28 @@ public class JacksonUtilTest {
     }
 
     @Test
-    public void testJson2Bean() throws IOException {
+    public void testJson2Bean() {
         String str = "{\"cart_id\":null,\"cart_type\":null,\"platform_id\":null,\"order_channel_id\":null,\"appKey\":\"72\",\"appSecret\":\"62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac\",\"sessionKey\":\"e5f9d143815a520726576040460bd67f\",\"app_url\":\"http://182.138.102.82:8868/\",\"shop_name\":null,\"platform\":null,\"comment\":null,\"cart_name\":null}";
         ShopBean shopBean = JacksonUtil.json2Bean(str, ShopBean.class);
         System.out.println(shopBean.getAppKey()+";"+shopBean.getSessionKey());
     }
 
     @Test
-    public void testJsonToMap() throws IOException {
+    public void testJsonToMap() {
         String str = "{\"cart_id\":null,\"cart_type\":null,\"platform_id\":null,\"order_channel_id\":null,\"appKey\":\"72\",\"appSecret\":\"62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac\",\"sessionKey\":\"e5f9d143815a520726576040460bd67f\",\"app_url\":\"http://182.138.102.82:8868/\",\"shop_name\":null,\"platform\":null,\"comment\":null,\"cart_name\":null}";
         Map<String, Object> map = JacksonUtil.jsonToMap(str);
         System.out.println(map.get("appKey")+";"+map.get("sessionKey"));
     }
 
     @Test
-    public void testJsonToBeanList() throws IOException {
+    public void testJsonToBeanList() {
         String str = "[{\"cart_id\":null,\"cart_type\":null,\"platform_id\":null,\"order_channel_id\":null,\"appKey\":\"72\",\"appSecret\":\"62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac\",\"sessionKey\":\"e5f9d143815a520726576040460bd67f\",\"app_url\":\"http://182.138.102.82:8868/\",\"shop_name\":null,\"platform\":null,\"comment\":null,\"cart_name\":null}]";
         List<ShopBean> list = JacksonUtil.jsonToBeanList(str, ShopBean.class);
         System.out.println(list.get(0).getAppKey() + ";" + list.get(0).getSessionKey());
     }
 
     @Test
-    public void testJsonToMapList() throws IOException {
+    public void testJsonToMapList() {
         String str = "[{\"cart_id\":null,\"cart_type\":null,\"platform_id\":null,\"order_channel_id\":null,\"appKey\":\"72\",\"appSecret\":\"62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac\",\"sessionKey\":\"e5f9d143815a520726576040460bd67f\",\"app_url\":\"http://182.138.102.82:8868/\",\"shop_name\":null,\"platform\":null,\"comment\":null,\"cart_name\":null}]";
         List<Map<String, Object>> list = JacksonUtil.jsonToMapList(str);
         System.out.println(list.get(0).get("appKey")+";"+list.get(0).get("sessionKey"));
@@ -78,5 +78,17 @@ public class JacksonUtilTest {
         jomgoQuery.setQuery(str);
         jomgoQuery.addParameters("aaa\"afasfd");
         System.out.println(jomgoQuery.getQueryMap());
+    }
+
+    @Test
+    public void testBean2JsonNotNull() {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey("72");
+        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
+        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
+        shopBean.setApp_url(null);
+
+        String startMap = JacksonUtil.bean2JsonNotNull(shopBean);
+        System.out.println(startMap);
     }
 }

@@ -1521,8 +1521,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 List<BaseMongoMap<String, Object>> skuList = new ArrayList<>();
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
-                    skuInfo.put("skuCode", sku.getSku());
-                    skuInfo.put("isSale", true);
+                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
+                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), true);
                     skuList.add(skuInfo);
                 }
 
@@ -2030,7 +2030,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     boolean blnFound = false;
                     if (entry.getValue().getSkus() != null) {
                         for (BaseMongoMap<String, Object> platFormSku : entry.getValue().getSkus()) {
-                            if (feedSku.getSku().equals(platFormSku.get("skuCode"))) {
+                            if (feedSku.getSku().equals(platFormSku.get(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
                                 blnFound = true;
                                 break;
                             }
@@ -2039,8 +2039,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                     if (!blnFound) {
                         BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
-                        skuInfo.put("skuCode", feedSku.getSku());
-                        skuInfo.put("isSale", true);
+                        skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), feedSku.getSku());
+                        skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), true);
                         if (entry.getValue().getSkus() == null) {
                             entry.getValue().setSkus(new ArrayList<BaseMongoMap<String, Object>>());
                         }
@@ -2885,46 +2885,46 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         if (platformSkus != null && platformSkus.size() > 0) {
                             for (BaseMongoMap<String, Object> platformSku : platformSkus) {
                                 // 找到platform下面的sku
-                                if (sku.getSku().equals(platformSku.get("skuCode"))) {
+                                if (sku.getSku().equals(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
                                     // 设定平台的Msrp
-                                    platformSku.put("priceMsrp", commonSku.getPriceMsrp());
+                                    platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), commonSku.getPriceMsrp());
 
                                     // update desmond 2016/07/07 start
                                     // 设定平台的RetailPrice(销售指导价)
-                                    if (platformSku.get("priceRetail") != null) {
-                                        Double oldRetailPrice = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
-                                        platformSku.put("priceRetail", commonSku.getPriceRetail());
-                                        Double newRetailPrice = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
+                                    if (platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name()) != null) {
+                                        Double oldRetailPrice = Double.parseDouble(String.valueOf(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name())));
+                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name(), commonSku.getPriceRetail());
+                                        Double newRetailPrice = Double.parseDouble(String.valueOf(platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name())));
 
                                         // 设置priceChgFlg(指导售价变化状态（U/D） 这里是指导售价价格本身变化,与priceSale无关)
                                         if (oldRetailPrice < newRetailPrice) {
                                             // 指导售价升高的时候
                                             if (oldRetailPrice == 0.00) {
-                                                platformSku.put("priceChgFlg", "U100%");
+                                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "U100%");
                                             } else {
-                                                platformSku.put("priceChgFlg", "U" + Math.round(((newRetailPrice - oldRetailPrice) / oldRetailPrice) * 100) + "%");
+                                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "U" + Math.round(((newRetailPrice - oldRetailPrice) / oldRetailPrice) * 100) + "%");
                                             }
                                         } else if (oldRetailPrice > newRetailPrice) {
                                             // 指导售价降低的时候
-                                            platformSku.put("priceChgFlg", "D" + Math.round(((oldRetailPrice - newRetailPrice) / oldRetailPrice) * 100) + "%");
+                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "D" + Math.round(((oldRetailPrice - newRetailPrice) / oldRetailPrice) * 100) + "%");
                                         } else {
                                             // 指导售价不变的时候
-                                            platformSku.put("priceChgFlg", "");
+                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "");
                                         }
                                     } else {
                                         // 平台销售指导价为null的情况下属于新建
-                                        platformSku.put("priceRetail", commonSku.getPriceRetail());
-                                        platformSku.put("priceChgFlg", "");
+                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceRetail.name(), commonSku.getPriceRetail());
+                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), "");
                                     }
 
                                     // 设定平台的最终价格(priceChgFlg与priceSale没有关系了，所以下面代码删除)
-                                    if (platformSku.get("priceSale") != null) {
+                                    if (platformSku.get(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()) != null) {
 //                                        Double newPrice = Double.parseDouble(String.valueOf(platformSku.get("priceRetail")));
 //                                        Double oldPrice = Double.parseDouble(String.valueOf(platformSku.get("priceSale")));
 
                                         // 是否自动同步最终售价
                                         if (blnAutoApproveFlg) {
-                                            platformSku.put("priceSale", commonSku.getPriceRetail());
+                                            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), commonSku.getPriceRetail());
 //                                            platformSku.put("priceChgFlg", "");
                                         } //else {
 //                                            // 不设置最终售价
@@ -2966,7 +2966,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                                     } else {
                                         // 平台最终价格为null的情况下属于新建，那么设定最终价格 = RetailPrice
-                                        platformSku.put("priceSale", commonSku.getPriceRetail());
+                                        platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceSale.name(), commonSku.getPriceRetail());
 //                                        platformSku.put("priceChgFlg", "");
                                     }
                                     // update desmond 2016/07/07 end
@@ -2975,7 +2975,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                 // 设置最终售价变化状态,这里表示最终售价(priceSale)与销售指导价(priceRetail)的比较结果
                                 // （比指导价低:2，比指导价高:3，等于指导价:1，向上击穿警告:4，向下击穿警告:5）
                                 String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
-                                platformSku.put("priceDiffFlg", priceDiffFlg);
+                                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
                                 // add by desmond 2016/07/05 end
                             }
                         }
