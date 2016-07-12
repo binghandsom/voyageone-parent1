@@ -233,8 +233,8 @@ define([
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps, function (data) {
-                    sumCustomProps.push(data.feed_prop_translation)
-                    sumCustomProps.push(data.feed_prop_original)
+                    sumCustomProps.push({'name': data.feed_prop_translation});
+                    sumCustomProps.push({'name': data.feed_prop_original});
                 });
                 $scope.vm.sumCustomProps = sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
