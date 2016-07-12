@@ -39,6 +39,10 @@ define([
                 orderDateTo: ""
             };
 
+            this.downloadInfo = {
+                orderType: 'SKU'
+            };
+
             this.channelConfigs = {
                 vendorOperateType: 'SKU'
             };
@@ -119,6 +123,14 @@ define([
             })
         };
 
+        OrderInfoController.prototype.downloadPickingList = function () {
+
+            this.orderInfoService.downloadPickingList().then(function (res) {
+                console.info(res);
+            });
+            $.download.post('/vms/order/order_info/downloadPickingList', this.downloadInfo);
+        };
+
         OrderInfoController.prototype.toggleAll = function () {
             var collapse = (this.collapse = !this.collapse);
             this.data.forEach(function (item) {
@@ -134,10 +146,10 @@ define([
             return currentStatus.name;
         };
 
-        OrderInfoController.prototype.popNewShipment = function () {
-            this.popups.openNewShipment(this.searchOrderStatus);
+        OrderInfoController.prototype.popNewShipment = function (newShipment) {
+            this.popups.openShipment(this.searchOrderStatus, newShipment);
         };
-        OrderInfoController.prototype.popToAddShipment = function () {
+        OrderInfoController.prototype.popAddToShipment = function () {
             this.popups.openAddShipment();
         };
         return OrderInfoController;

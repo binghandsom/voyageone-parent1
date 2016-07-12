@@ -165,7 +165,8 @@ define(function (require) {
             init: "init",
             search: "search",
             cancelOrder: "cancelOrder",
-            cancelSku: "cancelSku"
+            cancelSku: "cancelSku",
+            downloadPickingList: "downloadPickingList"
         })
     }
 });

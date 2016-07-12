@@ -23,6 +23,7 @@ define(function () {
         "TXT_MSG_UPLOAD_SUCCESS": "Upload feed file success",
         "TXT_NO_CURRENT_SHIPMENT": "No Current Shipment",
         "TXT_OF": "of",
+        "TXT_ORDER_BY_ORDER": "Order by Order",
         "TXT_ORDER_BY_SKU": "Order by SKU",
         "TXT_ORDER_DATE": "Order Date",
         "TXT_ORDER_ID": "Order ID",

@@ -12,7 +12,7 @@ define([
 
         ShipmentInfoController.prototype = {
             popNewShipment: function () {
-                this.popups.openNewShipment();
+                this.popups.openShipment();
             }
         };
         return ShipmentInfoController;

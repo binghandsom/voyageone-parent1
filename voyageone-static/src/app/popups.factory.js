@@ -48,7 +48,7 @@ define([
         }
 
         return {
-            openNewShipment: function (searchOrderStatus) {
+            openShipment: function (searchOrderStatus) {
                 open(popups.orderInfo.newShipment, searchOrderStatus);
             },
             openAddShipment: function () {

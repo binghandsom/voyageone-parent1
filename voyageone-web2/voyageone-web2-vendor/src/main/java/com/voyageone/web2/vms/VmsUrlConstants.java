@@ -13,6 +13,7 @@ public interface VmsUrlConstants {
             String SEARCH = "search";
             String CANCEL_ORDER = "cancelOrder";
             String CANCEL_SKU = "cancelSku";
+            String DOWNLOAD_PICKING_LIST = "downloadPickingList";
         }
     }
 

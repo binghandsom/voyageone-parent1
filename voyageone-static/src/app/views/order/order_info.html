@@ -66,18 +66,20 @@
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6">
-            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)" translate="BTN_NEW_SHIPMENT"></button>
+        <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openShipment, true)" translate="BTN_NEW_SHIPMENT"></button>
             <button ng-show="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-show="ctrl.currentShipment" href="?">{{ctrl.currentShipment.shipmentName}}</a>
+                <a ng-show="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment(openShipment, false)">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
+        <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <select class="form-control input-sm">
-                <option value="" translate="TXT_ORDER_BY_SKU"></option>
+            <select class="form-control input-sm" ng-model="ctrl.downloadInfo.orderType">
+                <option value="SKU" translate="TXT_ORDER_BY_SKU"></option>
+                <option value="ORDER" translate="TXT_ORDER_BY_ORDER"></option>
             </select>
-            <button class="btn btn-primary btn-sm" TRANSLATE="BTN_DOWNLOAD_PICKING_LIST"></button>
+            <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
@@ -107,8 +109,8 @@
                         <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
-                            <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
-                            <button ng-show="item.status == 1" class="btn btn-xs btn-success" ng-click="ctrl.popToAddShipment(openAddShipment)"
+                            <button class="btn btn-xs btn-warning" ng-show="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
+                            <button class="btn btn-xs btn-success" ng-show="item.status == 1" ng-click="ctrl.popAddToShipment(openAddShipment)" ng-disabled="!ctrl.currentShipment"
                                     translate="BTN_ADD_TO_SHIPMENT">
                             </button>
                         </td>
@@ -143,18 +145,18 @@
                         <th class="td-2" translate="TXT_DESCRIPTION"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_PRICE"></th>
-                        <th style="width: 100px" translate="TXT_ACTION"></th>
+                        <th style="width: 150px" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
                         <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
-                        <td><strong>{{item.orderId}}</strong></td>
-                        <td><strong>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
-                        <td><strong>{{item.sku}}</strong></td>
-                        <td><strong>{{item.desc}}</strong></td>
-                        <td><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
-                        <td><strong>${{item.price}}</strong></td>
+                        <td>{{item.orderId}}</td>
+                        <td>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td>{{item.sku}}</td>
+                        <td>{{item.desc}}</td>
+                        <td>{{ctrl.getStatusName(item.status)}}</td>
+                        <td>${{item.price}}</td>
                         <td>
                             <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
                         </td>

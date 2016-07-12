@@ -76,4 +76,8 @@ public class VmsOrderDetailService extends BaseService {
 
         return vmsBtOrderDetailDaoExt.selectSkuListNumLimitedByTime(skuSearchParamsWithLimitAndSort);
     }
+
+    public List<VmsBtOrderDetailModel> select(Map<String, Object> cancelOrderParam) {
+        return vmsBtOrderDetailDao.selectList(cancelOrderParam);
+    }
 }
