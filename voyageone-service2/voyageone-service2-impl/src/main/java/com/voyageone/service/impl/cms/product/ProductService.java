@@ -579,6 +579,10 @@ public class ProductService extends BaseService {
             resultInfo = new ProductForWmsBean();
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            if(product == null) {
+                $error("该产品不存在:" + productSku);
+                throw new BusinessException("该产品不存在:" + productSku);
+            }
             resultInfo.setChannelId(product.getChannelId());
             resultInfo.setCode(product.getCommon().getFields().getCode());
             resultInfo.setName(product.getCommon().getFields().getProductNameEn());
