@@ -6,9 +6,9 @@
                         <!----------------------------------------历史按钮---------------------------------------------->
                         <div class="col-md-12 form-group" ng-controller="popupCtrl">
                             <button type="button" class="btn btn-info btn-pop" ng-click="openHistoryPrice(vm.productComm.fields.code,vm.productComm.skus)"><i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史</button>&emsp;
-                            <button type="button" class="btn btn-success btn-pop" ng-click="openHistoryPromotion('lg', vm.productComm.fields.code)"><i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史</button>&emsp;
-                            <button type="button" class="btn btn-warning btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史</button>&emsp;
-                            <button type="button" class="btn btn-danger btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;关键共通属性-Feed关联变更历史</button>
+                            <button type="button" class="btn btn-info btn-pop" ng-click="openHistoryPromotion('lg', vm.productComm.fields.code)"><i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史</button>&emsp;
+                            <button type="button" class="btn btn-info btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史</button>&emsp;
+                            <button type="button" class="btn btn-info btn-pop" ng-if="false"><i class="fa fa-arrow-circle-right"></i>&nbsp;关键共通属性-Feed关联变更历史</button>
                         </div>
                     </div>
                     <div class="row">
@@ -31,7 +31,8 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
+                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'current':image.productCode == vm.mastData.productCode}">
+                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                         </div>
@@ -46,6 +47,12 @@
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label"><strong>商品相关备注</strong></label>
+                                <div class="col-md-8">
+                                    <textarea type="text" rows="4" class="form-control no-resize" ng-model="vm.productComm.comment"></textarea>
                                 </div>
                             </div>
                         </div>

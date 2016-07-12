@@ -27,7 +27,7 @@ public class CmsBtPromotionGroupsDaoExtTest {
         map.put("start", 1);
         map.put("length", 1);
 
-        cmsBtPromotionGroupsDaoExt.selectPromotionModelList(map);
+      //  cmsBtPromotionGroupsDaoExt.selectPromotionModelList(map);
 
     }
 

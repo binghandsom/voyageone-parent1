@@ -58,7 +58,7 @@ public class HtProductUpdateRequest implements BaseJMRequest {
     }
 
     @Override
-    public Map<String, Object> getParameter() throws IOException {
+    public Map<String, Object> getParameter() {
         Map<String, Object> params = new HashMap<>();
         if (!StringUtils.isEmpty(getJumei_product_id()))  params.put("jumei_product_id", this.getJumei_product_id());
         if (!StringUtils.isEmpty(getJumei_product_name()))  params.put("jumei_product_name", this.getJumei_product_name());

@@ -196,6 +196,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 // modified by morse.lu 2016/06/12 end
             }
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+                // 取得上新数据出错时，cartId有可能没有设置
+                sxData.setCartId(cartId);
                 // 有错误的时候，直接报错
                 throw new BusinessException(sxData.getErrorMessage());
             }

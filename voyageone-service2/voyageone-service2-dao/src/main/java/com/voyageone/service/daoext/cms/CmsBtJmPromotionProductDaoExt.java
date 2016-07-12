@@ -18,9 +18,9 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     CmsBtJmPromotionProductModel selectByProductCodeChannelIdCmsBtJmPromotionId(@Param("productCode") String productCode, @Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId);
 
-    List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
+   // List<Map<String, Object>> selectExportInfoListByPromotionId(int promotionId);
 
-    List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
+   // List<Map<String, Object>> selectListCmsBtJmImportProductByPromotionId(int promotionId);
 
     int deleteByPromotionId(int promotionId);
 
@@ -32,7 +32,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter);
 
-    int updateDealEndTime(ParameterUpdateDealEndTime parameter);
+//    int updateDealEndTime(ParameterUpdateDealEndTime parameter);
 
     //jm2 begin
     List<MapModel> selectPageByWhere(Map<String, Object> map);//add
@@ -61,8 +61,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     int batchCopyDealUpdatePrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
-    int copyDealAll(int promotionId);
-
+   // int copyDealAll(int promotionId);
+     int copyDealAll_UpdatePriceStatus (int promotionId);
+    int  copyDealAll_UpdateSynchStatus(int promotionId);
     int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllProduct(int promotionId);

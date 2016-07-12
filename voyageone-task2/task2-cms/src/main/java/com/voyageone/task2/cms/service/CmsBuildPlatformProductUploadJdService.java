@@ -251,6 +251,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
                 String errorMsg = sxData.getErrorMessage();
                 sxData.setErrorMessage(""); // 这里设为空之后，异常捕捉到之后msg前面会加上店铺名称
+                // 取得上新数据出错时，cartId有可能没有设置
+                sxData.setCartId(cartId);
                 // 有错误的时候，直接报错
                 throw new BusinessException(errorMsg);
             }

@@ -103,7 +103,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", commonPropService.getSortColumns());
+        masterData.put("sortList", commonPropService.getCustColumns(3));
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
@@ -378,7 +378,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 取得自定义显示列设置
      */
     public List<Map<String, Object>> getCustColumns() {
-        return commonPropService.getCustColumns();
+        return commonPropService.getCustColumns(2);
     }
 
     /**

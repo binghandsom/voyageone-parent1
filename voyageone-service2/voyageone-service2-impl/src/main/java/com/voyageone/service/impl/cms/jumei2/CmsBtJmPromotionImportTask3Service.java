@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.idsnowflake.FactoryIdWorker;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -65,8 +66,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtJmProductDaoExt daoExtCmsBtJmProduct;
     @Autowired
     CmsBtJmSkuDaoExt daoExtCmsBtJmSkuDao;
-    @Autowired
-    TransactionRunner transactionRunner;
+
     @Autowired
     CmsBtJmPromotionExportTask3Service serviceCmsBtJmPromotionExportTask3Service;
 
@@ -86,6 +86,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtPromotionDao daoCmsBtPromotion;
     @Autowired
     CmsBtJmPromotionImportSave3Service serviceCmsBtJmPromotionImportSave3;
+    @Autowired
+    TransactionRunner transactionRunner;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
@@ -224,13 +226,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             listSkuModel.removeAll(listErroSku);
         }
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
-
     }
 
     //save
     public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName,boolean isImportExcel) throws IllegalAccessException {
         //check
-        check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check 移除不能导入的product
+        check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check  if isImportExcel==true  移除不能导入的product
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
 
         CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
@@ -273,7 +274,11 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setCreater(userName);
             saveInfo.jmProductModel.setCreated(new Date());
             saveInfo.jmProductModel.setJmHashId("");
-            saveInfo.jmProductModel.setErrorMsg("");
+            if (!com.voyageone.common.util.StringUtils.isEmpty(product.getErrorMsg())) {
+                saveInfo.jmProductModel.setErrorMsg(product.getErrorMsg());
+            } else {
+                saveInfo.jmProductModel.setErrorMsg("");
+            }
             saveInfo.jmProductModel.setPriceStatus(0);
             saveInfo.jmProductModel.setDealPrice(new BigDecimal(0));
             saveInfo.jmProductModel.setMarketPrice(new BigDecimal(0));
@@ -480,6 +485,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmSkuList.add(skuModel);
             skuModel = null;
         }
+
     }
 
     private List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport, String productCode) {
@@ -497,8 +503,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             return;
         }
         CmsBtJmPromotionTagProductModel tagProductModel = null;
-        String[] tagList = promotionTag.split("|");
-
+        String[] tagList = promotionTag.split("\\|");
         //获取该活动的所有tag
         List<CmsBtTagModel> listCmsBtTag = daoExtCmsBtTag.selectListByParentTagId(model.getRefTagId());
 
@@ -546,5 +551,26 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "PC端模块ID"));
         list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "Deal每人限购"));
         return list;
+    }
+
+    public CmsBtJmPromotionImportTaskModel get(int id) {
+        return cmsBtJmPromotionImportTaskDao.select(id);
+    }
+
+    public int update(CmsBtJmPromotionImportTaskModel entity) {
+        return cmsBtJmPromotionImportTaskDao.update(entity);
+    }
+
+    public int create(CmsBtJmPromotionImportTaskModel entity) {
+        return cmsBtJmPromotionImportTaskDao.insert(entity);
+    }
+    @VOTransactional
+    public void saveList(List<CmsBtJmPromotionImportTaskModel> list) {
+        for (CmsBtJmPromotionImportTaskModel model : list) {
+            cmsBtJmPromotionImportTaskDao.insert(model);
+        }
+    }
+    public List<CmsBtJmPromotionImportTaskModel> getByPromotionId(int promotionId) {
+        return     cmsBtJmPromotionImportTaskDaoExt.selectByPromotionId(promotionId);
     }
 }

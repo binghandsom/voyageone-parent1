@@ -66,7 +66,7 @@ define([
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
                             scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
-                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null ? "Failed":scope.vm.platform.pStatus;
+                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null && scope.vm.platform.pPublishError != "" ? "Failed":scope.vm.platform.pStatus;
                         }
 
                         _.each(scope.vm.mastData.skus,function(mSku){
@@ -239,14 +239,20 @@ define([
 
                     if(scope.vm.status == "Approved"){
                         confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").result.then(function(){
-                            productDetailService.checkCategory({cartId:scope.vm.platform.cartId,pCatPath:scope.vm.platform.pCatPath}).then(function(resp){
-                                if(resp.data === false && scope.vm.platform.cartId != 27){
-                                    confirm("当前类目没有申请 是否还需要保存？").result.then(function(){
-                                        scope.vm.platform.status = scope.vm.status = "Pending";
+                            if(scope.vm.platform.cartId != 27){
+                                productDetailService.checkCategory({cartId:scope.vm.platform.cartId,pCatPath:scope.vm.platform.pCatPath}).then(function(resp){
+                                    if(resp.data === false){
+                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").result.then(function(){
+                                            scope.vm.platform.status = scope.vm.status = "Pending";
+                                            callSave();
+                                        });
+                                    }else{
                                         callSave();
-                                    });
-                                }
-                            });
+                                    }
+                                });
+                            }else{
+                                callSave();
+                            }
                         });
                     }else{
                         callSave();
