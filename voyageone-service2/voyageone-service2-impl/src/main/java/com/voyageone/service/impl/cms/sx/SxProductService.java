@@ -624,13 +624,13 @@ public class SxProductService extends BaseService {
         // 获取group信息
         CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
         if (grpModel == null) {
-            // update by desmond start
+            // update by desmond 2016/07/12 start
 //            return null;
             String errMsg = "取得上新数据(SxData)失败! 没找到对应的group数据(groupId=" + groupId + ")";
             $error(errMsg);
             sxData.setErrorMessage(errMsg);
             return sxData;
-            // update by desmond end
+            // update by desmond 2016/07/12 end
         }
 
         sxData.setPlatform(grpModel);
@@ -865,11 +865,13 @@ public class SxProductService extends BaseService {
         // added by morse.lu 2016/06/12 start
         if (productModelList.isEmpty()) {
             // 没有对象
-            // update by desmond start
+            // update by desmond 2016/07/12 start
 //            return null;
-            sxData.setErrorMessage("取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品");
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
             return sxData;
-            // update by desmond end
+            // update by desmond 2016/07/12 end
         }
         // added by morse.lu 2016/06/12 end
 
