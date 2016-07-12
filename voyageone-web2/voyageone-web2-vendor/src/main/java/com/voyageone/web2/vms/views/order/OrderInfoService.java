@@ -82,7 +82,7 @@ public class OrderInfoService extends BaseService {
      * @return 当前用户所选择channel的配置
      */
     public VmsChannelSettings getChannelConfigs(UserSessionBean user) {
-        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(), ChannelConfig.VENDER_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
+        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(), ChannelConfig.VENDOR_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
         VmsChannelSettings vmsChannelSettings = new VmsChannelSettings();
         vmsChannelSettings.setVendorOperateType(vmsChannelConfigBean.getConfigValue1());
         return vmsChannelSettings;
@@ -105,7 +105,7 @@ public class OrderInfoService extends BaseService {
         switch (this.getChannelConfigs(user).getVendorOperateType()) {
 
             // sku级的订单获取
-            case STATUS_VALUE.VENDER_OPERATE_TYPE.SKU: {
+            case STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU: {
                 List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService.selectOrderList(orderSearchParamsWithLimitAndSort);
                 return vmsBtOrderDetailModelList.stream()
                         .map(vmsBtOrderDetailModel -> {
@@ -121,7 +121,7 @@ public class OrderInfoService extends BaseService {
             }
 
             // 平台订单级获取
-            case STATUS_VALUE.VENDER_OPERATE_TYPE.ORDER: {
+            case STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER: {
 
                 return vmsOrderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).stream()
                         .map(orderId -> {

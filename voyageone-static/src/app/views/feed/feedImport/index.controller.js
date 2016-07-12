@@ -57,9 +57,22 @@ define([
                     main.pageOption.total = res.total;
                 })
             },
+
             search: function () {
                 this.pageOption.curr = 1;
                 this.getFeedImportResultList();
+            },
+
+            download: function (error_file_name) {
+                var main = this;
+                $.download.post('/vms/feed/feed_import_result/downloadFeedErrorFile', {"error_file_name": error_file_name}, this.afterDownload, main);
+            },
+
+            afterDownload:function (responseContent, param, context) {
+                var res = JSON.parse(responseContent);
+                if (res.message != '') {
+                    context.alert(res.message);
+                }
             }
         }
         return FeedImportResultController;

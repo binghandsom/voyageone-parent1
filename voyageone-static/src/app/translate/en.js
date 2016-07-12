@@ -12,6 +12,7 @@ define(function () {
         "TXT_PAGE": "Page",
         "BTN_GO": "GO",
         "BTN_OK": "OK",
-        "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date."
+        "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date.",
+        "TXT_MSG_NO_DATE": "No Data..."
     }
 });

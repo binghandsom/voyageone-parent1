@@ -58,4 +58,23 @@ public class VmsFeedImportResultController extends BaseController {
         Map<String, Object>  result = vmsFeedImportResultService.search(param);
         return success(result);
     }
+
+    /**
+     *  下载Feed错误文件
+     *
+     * @return Feed错误文件
+     */
+    @RequestMapping(VmsUrlConstants.FEED.FEED_IMPORT_RESULT.DOWN_FEED_ERROR_FILE)
+    public ResponseEntity downloadFeedErrorFile(@RequestParam String errorFileName) throws IOException {
+        // Feed错误文件路径
+        String checkResultFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+        checkResultFilePath += "/" + getUser().getSelChannelId() + "/";
+
+        try(FileInputStream file = new FileInputStream(checkResultFilePath + errorFileName)) {
+            return genResponseEntityFromStream(errorFileName, file);
+        } catch (FileNotFoundException ex) {
+            // Lost FeedCheckErrorFile.
+            throw new BusinessException("8000018");
+        }
+    }
 }

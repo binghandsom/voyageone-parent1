@@ -25,6 +25,7 @@ public interface VmsUrlConstants {
             String ROOT = "/vms/feed/feed_import_result/";
             String INIT = "init";
             String SEARCH = "search";
+            String DOWN_FEED_ERROR_FILE = "downloadFeedErrorFile";
         }
     }
 }
