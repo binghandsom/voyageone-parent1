@@ -4,8 +4,8 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
     // 有数据分页样式
     if (!$templateCache.get(templateKey)) {
         // 这个 html 是经过压缩的 html , 如果需要修改分页的 html 结构, 请去 vpagination.directive.html 修改, 修改后压缩并粘贴覆盖这里的代码
-        $templateCache.put(templateKey, '<div class="col-sm-12 form-inline">' +
-            '<div class="col-sm-3">' +
+        $templateCache.put(templateKey, '<div class="row form-inline">' +
+            '<div class="col-sm-3" style="padding: 0;margin-left: -10px;">' +
             '<span class=" col-sm-2" translate="TXT_SHOWING_NO"></span>' +
             '<input class="text-center form-control input-sm" type="text" ng-model="curr.pageNo" style="max-width: 50px;max-height: 26px;"><span>&nbsp;</span>' +
             '<span>/</span><span>&nbsp;</span><span ng-bind="totalPages"></span><span>&nbsp;</span>' +
