@@ -6,31 +6,7 @@
  * @Version: 2.0.0
  */
 
-require.config({
-    paths: {
-        'angular': 'libs/angular.js/1.5.6/angular',
-        'angular-cookies': 'libs/angular.js/1.5.6/angular-cookies',
-        'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-        'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
-        'voyageone-angular-com': 'components/dist/voyageone.angular.com'
-    },
-    shim: {
-        'angular-block-ui': ['angular'],
-        'voyageone-angular-com': ['angular'],
-        'angular-cookies': ['angular'],
-        'angular-ngStorage': ['angular'],
-        'angular': {exports: 'angular'}
-    }
-});
-
-// Bootstrap App !!
-require([
-    'angular',
-    'angular-block-ui',
-    'angular-cookies',
-    'angular-ngStorage',
-    'voyageone-angular-com'
-], function (angular) {
+define(['components/dist/voyageone.angular.com'], function () {
     angular.module('voyageone.cms.channel', [
         'blockUI',
         'ngCookies',
