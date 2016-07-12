@@ -63,9 +63,9 @@ define([
                 this.getFeedImportResultList();
             },
 
-            download: function (error_file_name) {
+            download: function (errorFileName) {
                 var main = this;
-                $.download.post('/vms/feed/feed_import_result/downloadFeedErrorFile', {"error_file_name": error_file_name}, this.afterDownload, main);
+                $.download.post('/vms/feed/feed_import_result/downloadFeedErrorFile', {"errorFileName": errorFileName}, this.afterDownload, main);
             },
 
             afterDownload:function (responseContent, param, context) {
