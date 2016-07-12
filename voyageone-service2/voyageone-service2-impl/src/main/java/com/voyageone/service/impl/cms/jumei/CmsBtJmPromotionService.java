@@ -369,20 +369,23 @@ public class CmsBtJmPromotionService {
      */
     private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
 
-
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
-        return model.getCommon().getSkus().stream().map(oldSku -> {
+        return model.getPlatform(CartEnums.Cart.JM).getSkus().stream().map(oldSku -> {
+
+            Double priceMsrp = oldSku.getDoubleAttribute("priceMsrp");
+            Double priceSale = oldSku.getDoubleAttribute("priceSale");
+
             SkuImportBean bean = new SkuImportBean();
             bean.setProductCode(model.getCommon().getFields().getCode());
-            bean.setSkuCode(oldSku.getSkuCode());
-            bean.setMarketPrice(oldSku.getPriceMsrp());
+            bean.setSkuCode(oldSku.getStringAttribute("skuCode"));
+            bean.setMarketPrice(priceMsrp);
             Double finalPrice;
             if (discount != null) {
                 final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
-                finalPrice = Math.ceil(priceTypeCopy == 1 ? (oldSku.getPriceMsrp() * discountCopy) : (oldSku.getClientRetailPrice() * discountCopy));
+                finalPrice = Math.ceil(priceTypeCopy == 1 ? (priceMsrp * discountCopy) : (priceSale * discountCopy));
             } else {
-                finalPrice = oldSku.getClientRetailPrice();//.getPriceSale();
+                finalPrice = priceSale;
             }
             bean.setDealPrice(finalPrice);
             bean.setDiscount(discount);
