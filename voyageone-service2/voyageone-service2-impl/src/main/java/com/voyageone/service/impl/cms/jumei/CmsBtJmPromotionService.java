@@ -369,7 +369,6 @@ public class CmsBtJmPromotionService {
      */
     private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
 
-
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
 
         return model.getPlatform(CartEnums.Cart.JM).getSkus().stream().map(oldSku -> {
