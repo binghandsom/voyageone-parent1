@@ -1,33 +1,33 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left">Feed File Manage</h4>
+        <h4 class="pull-left">{{'TXT_FEED_IMPORT_RESULT' | translate}}</h4>
         <ul class="pull-right breadcrumb">
-            <li><a href="#/home">Home</a></li>
-            <li><a href="javascript:void(0)">Feed</a></li>
-            <li class="active selecte">Feed Import Result</li>
+            <li><a href="#/home">{{'TXT_HOME' | translate}}</a></li>
+            <li><a href="javascript:void(0)">{{'TXT_FEED' | translate}}</a></li>
+            <li class="active selecte">{{'TXT_FEED_IMPORT_RESULT' | translate}}</li>
         </ul>
     </div>
 </div>
 <div class="container content" ng-init="ctrl.init()">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5 class="panel-title">Search</h5>
+            <h5 class="panel-title">{{'TXT_SEARCH' | translate}}</h5>
         </div>
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">Status</label>
+                    <label class="control-label">{{'TXT_STATUS' | translate}}</label>
                     <select name="status" id="status" ng-model="ctrl.status" class="form-control input-sm"
                             ng-options="status.value as status.name for status in ctrl.statusList">
                         <option value="" translate="TXT_SELECT_NO_VALUE" />
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">File Name</label>
+                    <label class="control-label">{{'TXT_FILE_NAME' | translate}}</label>
                     <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Upload Date</label>
+                    <label class="control-label">{{'TXT_UPLOAD_DATE' | translate}}</label>
                      <span class="input-group">
                         <input type="date" class="form-control"
                                uib-datepicker-popup
@@ -62,11 +62,11 @@
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
                     <tr>
-                        <th class="td-2">File Name</th>
-                        <th class="td-2 text-center">Upload Time</th>
-                        <th class="td-2 text-center">Upload User</th>
-                        <th class="td-2 text-center">Status</th>
-                        <th class="td-1 text-center">Export Error File</th>
+                        <th class="td-2">{{'TXT_FILE_NAME' | translate}}</th>
+                        <th class="td-2 text-center">{{'TXT_UPLOAD_DATE' | translate}}</th>
+                        <th class="td-2 text-center">{{'TXT_UPLOAD_USER' | translate}}</th>
+                        <th class="td-2 text-center">{{'TXT_STATUS' | translate}}</th>
+                        <th class="td-1 text-center">{{'TXT_EXPORT_ERROR_FILE' | translate}}</th>
                     </tr>
                     </thead>
                     <tbody>
