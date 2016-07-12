@@ -372,11 +372,6 @@ define([
                         alert("未设置变更项目，请设置后再操作。");
                         return;
                     }
-                    if (res.data.ecd == 4) {
-                        alert("下列商品不在 " + res.data.cartStr + " 上销售，无法继续操作，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
-                        return;
-                    }
-
                     $scope.search();
                 })
             }
