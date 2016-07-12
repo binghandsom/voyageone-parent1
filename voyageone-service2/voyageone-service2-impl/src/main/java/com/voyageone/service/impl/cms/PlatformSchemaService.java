@@ -67,6 +67,10 @@ public class PlatformSchemaService extends BaseService {
             invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId("0", cartId);
         }
         CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId);
+        if (extendFieldModel == null) {
+            // 自己没有的话，用共通catId=0
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId);
+        }
 
         Map<String, List<Field>> retMap = new HashMap<>();
 
