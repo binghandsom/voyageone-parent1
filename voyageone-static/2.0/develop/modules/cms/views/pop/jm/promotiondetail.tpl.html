@@ -39,7 +39,7 @@
                 <label class="col-sm-3 control-label vo_reqfield">活动开始时间</label>
                 <div class="col-sm-7">
                     <input  type="datetime-local" class="form-control"
-                            ng-readonly="editModel.model.status!=0"
+                            ng-readonly="vm.isBegin||editModel.model.status!=0"
                             datepicker-popup
                             ng-model="editModel.model.activityStart" name="activityStart" required
                             max-date="editModel.model.activityEnd"
@@ -53,7 +53,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label vo_reqfield">活动结束时间</label>
                     <div class="col-sm-7">
-                        <input  type="datetime-local" class="form-control" ng-readonly="editModel.model.status!=0"
+                        <input  type="datetime-local" class="form-control" ng-readonly="vm.isBegin||editModel.model.status!=0"
                                 datepicker-popup
                                 ng-model="editModel.model.activityEnd" name="activityEnd" required
                                 min-date="editModel.model.activityStart"
@@ -74,7 +74,7 @@
                 <label class="col-sm-3 control-label vo_reqfield">预热开始时间</label>
                 <div class="col-sm-7" >
                     <input  type="datetime-local" class="form-control"
-                            datepicker-popup
+                            datepicker-popup ng-readonly="vm.isBegin"
                             ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
                             max-date="editModel.model.prePeriodEnd"
                             date-model-format="yyyy-MM-dd HH:mm:ss"
@@ -88,7 +88,7 @@
                 <label class="col-sm-3 control-label vo_reqfield">预热结束时间</label>
                 <div class="col-sm-7" >
                     <input  type="datetime-local" class="form-control"
-                            datepicker-popup
+                            datepicker-popup ng-readonly="vm.isBegin"
                             ng-model="editModel.model.prePeriodEnd" name="prePeriodEnd" required
                             min-date="editModel.model.prePeriodStart"
                             date-model-format="yyyy-MM-dd HH:mm:ss"
