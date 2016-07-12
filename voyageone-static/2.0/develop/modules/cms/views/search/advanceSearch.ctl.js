@@ -122,7 +122,7 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == '4') {
+                if ($routeParams.type == '4' && $sessionStorage.feedSearch) {
                     // 从主页而来的检索
                     if ($routeParams.value1 > 10) {
                         $scope.vm._cart_tab_act = true;
