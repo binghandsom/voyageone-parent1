@@ -81,7 +81,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     private void doMain(String channelId){
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{cartId:23,numIId:{$ne:\"\"}}");
+        queryObject.setQuery("{cartId:23,numIId:{$nin:[\"\",null]}}");
         Long cnt = productGroupService.countByQuery(queryObject.getQuery(),channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, 23);
@@ -99,7 +99,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
         final List<CmsBtSellerCatModel> finalSellerCat = sellerCat;
         cmsBtProductGroupModels.forEach(item -> {
             try {
-                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i[0],cnt));
+                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i[0], cnt));
                 doSetProduct(shopBean, item, finalSellerCat);
                 i[0]++;
             } catch (Exception e) {

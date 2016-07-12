@@ -255,10 +255,13 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
                     if (fieldId.equals(sku_sizeField.getId())) {
                         continue;
                     }
-                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
-                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
-                        continue;
-                    }
+                    // deleted by morse.lu 2016/07/12 start
+                    // 暂时不要条形码
+//                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
+//                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
+//                        continue;
+//                    }
+                    // deleted by morse.lu 2016/07/12 end
                     if (sku_outerIdField != null && fieldId.equals(sku_outerIdField.getId())) {
                         skuFieldValue.setInputFieldValue(sku_outerIdField.getId(), cmsSkuProp.getSkuCode());
                         continue;
