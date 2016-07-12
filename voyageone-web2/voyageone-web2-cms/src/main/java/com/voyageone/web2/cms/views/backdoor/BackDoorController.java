@@ -216,7 +216,7 @@ public class BackDoorController extends CmsController {
                 }
 
                 // 设置feed数据
-                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, oldCmsBtProductModel.getFields().getCode());
+                CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, oldCmsBtProductModel.getFields().getOriginalCode());
 
                 // 设置Fields属性
                 newField.setAppSwitch(0);
@@ -711,6 +711,49 @@ public class BackDoorController extends CmsController {
         builder.append("</body>");
 
         return builder.toString();
+    }
+
+    @RequestMapping(value = "updateFeedFlagTo9", method = RequestMethod.GET)
+    public Object updateFeedFlagTo9(@RequestParam("channelId") String channelId) {
+
+        List<String> messageList = new ArrayList<>();
+        List<String> successList = new ArrayList<>();
+
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery("{\"updFlg\": {$ne: 9}}");
+        queryObject.setProjection("{code: 1}");
+        List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channelId, queryObject);
+        feeds.parallelStream().forEach(feed -> {
+            String code = feed.getCode();
+            try {
+                List<CmsBtProductModel> productInfo = productService.getProductByOriginalCode(channelId, code);
+                CmsBtProductModel productInfo1 = productService.getProductByCode(channelId, code);
+                if(productInfo.size() == 0 && productInfo1 == null){
+                    // 更新 feedinfo表中的updFlg 重新出发 feed->mast
+                    HashMap<String, Object> paraMap = new HashMap<>(1);
+                    paraMap.put("code", code);
+                    HashMap<String, Object> valueMap = new HashMap<>(1);
+                    valueMap.put("updFlg", 9);
+                    System.out.println("更新成功:" + code);
+                    successList.add(code);
+                    feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
+                }
+            } catch (Exception ex) {
+                messageList.add(code);
+            }
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        messageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        successList.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return messageList.toString();
     }
 
     private List<String> checkGroupTransformOn20160708(String channelId) {
