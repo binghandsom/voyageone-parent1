@@ -122,6 +122,7 @@ public class OrderInfoService extends BaseService {
                 return vmsBtOrderDetailModelList.stream()
                         .map(vmsBtOrderDetailModel -> {
                             SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
+                            orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
                             orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
                             orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
                             orderInfoBean.setDesc(vmsBtOrderDetailModel.getDecription());
@@ -151,11 +152,12 @@ public class OrderInfoService extends BaseService {
                             platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
                             platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
-                            // 将订单下的sku信息压入
+                            // 将订单下的sku信息录入
                             vmsBtOrderDetailModelList.stream()
                                     .map(vmsBtOrderDetailModel -> new SubOrderInfoBean() {{
 
                                         // 整理格式
+                                        setReservationId(vmsBtOrderDetailModel.getReservationId());
                                         setOrderId(vmsBtOrderDetailModel.getOrderId());
                                         setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                                         setDesc(vmsBtOrderDetailModel.getDecription());
@@ -163,8 +165,6 @@ public class OrderInfoService extends BaseService {
                                         setSku(vmsBtOrderDetailModel.getClientSku());
                                         setStatus(vmsBtOrderDetailModel.getStatus());
                                     }})
-
-                                    // 压入
                                     .forEach(platformOrderInfoBean::pushOrderInfoBean);
 
                             return platformOrderInfoBean;
@@ -267,5 +267,17 @@ public class OrderInfoService extends BaseService {
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
         }};
         return vmsOrderDetailService.updateOrderStatus(cancelOrderParam);
+    }
+
+    public int cancelSku(UserSessionBean user, SubOrderInfoBean item) {
+
+        Map<String, Object> cancelSkuParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel());
+            put("orderId", item.getOrderId());
+            put("sku", item.getSku());
+            put("reservationId", item.getReservationId());
+            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
+        }};
+        return vmsOrderDetailService.updateOrderStatus(cancelSkuParam);
     }
 }

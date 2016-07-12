@@ -21,5 +21,7 @@ public interface VmsBtOrderDetailDaoExt {
 
     long selectPlatformOrderListNumLimitedByTime(Map<String, Object> orderSearchParamsWithLimitAndSort);
 
+    long selectSkuListNumLimitedByTime(Map<String, Object> skuSearchParamsWithLimitAndSort);
+
     int updateOrderStatus(Map<String, Object> changeStatusParam);
 }

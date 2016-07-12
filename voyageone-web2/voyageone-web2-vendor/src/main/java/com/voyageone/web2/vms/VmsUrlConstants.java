@@ -12,6 +12,7 @@ public interface VmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String CANCEL_ORDER = "cancelOrder";
+            String CANCEL_SKU = "cancelSku";
         }
     }
 

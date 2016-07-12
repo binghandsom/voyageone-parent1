@@ -143,14 +143,14 @@
                         <th class="td-2" translate="TXT_DESCRIPTION"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_PRICE"></th>
-                        <th style="width: 200px" translate="TXT_ACTION"></th>
+                        <th style="width: 100px" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
                         <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
                         <td><strong>{{item.orderId}}</strong></td>
-                        <td><strong>{{item.orderDateTime | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
+                        <td><strong>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
                         <td><strong>{{item.sku}}</strong></td>
                         <td><strong>{{item.desc}}</strong></td>
                         <td><strong>{{ctrl.getStatusName(item.status)}}</strong></td>

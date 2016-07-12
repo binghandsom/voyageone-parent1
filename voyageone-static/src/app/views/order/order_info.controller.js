@@ -79,14 +79,22 @@ define([
                 this.pageInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
                     item.className = '';
+                    var date = new Date();
                     if (item.status == '7')
                         item.className = 'bg-gainsboro';
                     else if (item.status == '1') {
-                        var date = new Date(item.orderDateTime);
+                        if (this.channelConfigs.vendorOperateType == 'ORDER') {
+                            date = new Date(item.orderDateTime);
+                        } else if (this.channelConfigs.vendorOperateType == 'SKU') {
+                            date = new Date(item.orderDateTimestamp);
+                        } else {
+                            this.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
+                        }
                         if ((new Date().getTime() - date) >= this.threeDay)
                             item.className = 'bg-danger';
                         else if ((new Date().getTime() - date) >= this.twoDay)
                             item.className = 'bg-warning';
+
                     }
                     return item;
                 })
@@ -106,7 +114,7 @@ define([
             var self = this;
             this.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
                 self.orderInfoService.cancelSku(item).then(function () {
-                    self.search()
+                    self.search();
                 })
             })
         };

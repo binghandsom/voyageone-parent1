@@ -17,6 +17,7 @@ define(function () {
         "TXT_FROM": "From",
         "TXT_HOME": "Home",
         "TXT_ITEMS": "Items",
+        "TXT_MISSING_REQUIRED_CHANNEL_CONFIG": "Missing required configures for this channel, please contact with the system administrator for help.",
         "TXT_MSG_NO_DATA": "No Data...",
         "TXT_MSG_NO_UPLOAD": "Please choose a file",
         "TXT_MSG_UPLOAD_SUCCESS": "Upload feed file success",
