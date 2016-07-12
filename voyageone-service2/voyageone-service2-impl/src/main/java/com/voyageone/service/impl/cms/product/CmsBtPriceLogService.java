@@ -18,9 +18,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +59,7 @@ public class CmsBtPriceLogService extends BaseService {
 
     /**
      * 批量插入价格变更履历（高级搜索->中国最终售价设置专用，只更新了sku的中国最终售价）
+     *
      * @param paramList
      * @return
      */
@@ -184,24 +183,46 @@ public class CmsBtPriceLogService extends BaseService {
     }
 
     private boolean compareAllPrice(CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, CmsBtPriceLogModel logModel) {
-        return commonSku.getClientMsrpPrice() == null
-                || commonSku.getClientNetPrice() == null
-                || commonSku.getClientRetailPrice() == null
-                || !(platformSku.getDoubleAttribute("priceMsrp") == 0
-                || platformSku.getDoubleAttribute("priceRetail") == 0
-                || platformSku.getDoubleAttribute("priceSale") == 0)
-                && !(StringUtils.isEmpty(logModel.getClientMsrpPrice())
-                || StringUtils.isEmpty(logModel.getClientNetPrice())
-                || StringUtils.isEmpty(logModel.getClientRetailPrice())
-                || StringUtils.isEmpty(logModel.getMsrpPrice())
-                || StringUtils.isEmpty(logModel.getRetailPrice())
-                || StringUtils.isEmpty(logModel.getSalePrice()))
-                && commonSku.getClientMsrpPrice().equals(Double.valueOf(logModel.getClientMsrpPrice()))
-                && commonSku.getClientNetPrice().equals(Double.valueOf(logModel.getClientNetPrice()))
-                && commonSku.getClientRetailPrice().equals(Double.valueOf(logModel.getClientRetailPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceMsrp")).equals(Double.valueOf(logModel.getMsrpPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceRetail")).equals(Double.valueOf(logModel.getRetailPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceSale")).equals(Double.valueOf(logModel.getSalePrice()));
+
+        Double clientMsrpPrice = 0d, clientNetPrice = 0d, clientRetailPrice = 0d,
+                msrpPrice = 0d, retailPrice = 0d, salePrice = 0d;
+
+        Double logClientMsrpPrice, logClientNetPrice, logClientRetailPrice,
+                logMsrpPrice, logRetailPrice, logSalePrice;
+
+        if (commonSku != null) {
+            clientMsrpPrice = tryGetPrice(commonSku.getClientMsrpPrice());
+            clientNetPrice = tryGetPrice(commonSku.getClientNetPrice());
+            clientRetailPrice = tryGetPrice(commonSku.getClientRetailPrice());
+        }
+
+        if (platformSku != null) {
+            msrpPrice = platformSku.getDoubleAttribute("priceMsrp");
+            retailPrice = platformSku.getDoubleAttribute("priceRetail");
+            salePrice = platformSku.getDoubleAttribute("priceSale");
+        }
+
+        logClientMsrpPrice = tryGetPrice(logModel.getClientMsrpPrice());
+        logClientNetPrice = tryGetPrice(logModel.getClientNetPrice());
+        logClientRetailPrice = tryGetPrice(logModel.getClientRetailPrice());
+        logMsrpPrice = tryGetPrice(logModel.getMsrpPrice());
+        logRetailPrice = tryGetPrice(logModel.getRetailPrice());
+        logSalePrice = tryGetPrice(logModel.getSalePrice());
+
+        return clientMsrpPrice.equals(logClientMsrpPrice)
+                && clientNetPrice.equals(logClientNetPrice)
+                && clientRetailPrice.equals(logClientRetailPrice)
+                && msrpPrice.equals(logMsrpPrice)
+                && retailPrice.equals(logRetailPrice)
+                && salePrice.equals(logSalePrice);
+    }
+
+    private Double tryGetPrice(Double fromPrice) {
+        return fromPrice == null ? 0d : fromPrice;
+    }
+
+    private Double tryGetPrice(String fromPrice) {
+        return StringUtils.isEmpty(fromPrice) ? 0d : Double.valueOf(fromPrice);
     }
 
     private CmsBtProductModel getProduct(String sku, String channelId) {
