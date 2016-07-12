@@ -772,7 +772,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                   .map(CmsBtProductModel_Sku::getSkuCode)
                                   .collect(Collectors.toList());
                     // 记录商品价格变动履历
-                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), getTaskName(), "feed->master导入");
+                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), null, getTaskName(), "feed->master导入");
                 }
                 // add by desmond 2016/07/05 end
 
