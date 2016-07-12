@@ -61,6 +61,7 @@ public class CmsBtJmPromotionService {
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
+
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
