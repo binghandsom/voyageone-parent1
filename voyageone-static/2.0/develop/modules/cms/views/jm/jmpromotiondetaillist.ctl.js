@@ -447,6 +447,7 @@ define([
             popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
         }
         $scope.openProductDetailWin = function (object) {
+
             popups.openJmProductDetail(object).then(function () {
                 $scope.search();
             });
@@ -455,9 +456,10 @@ define([
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
         $scope.openJmPromotionDetailWin = function () {
-
-            popups.openJmPromotionDetail({
-                id : $routeParams.parentId}).then(function(context){
+            var parameter={ id : $routeParams.parentId};
+            parameter.isBegin= $scope.vm.isBegin;//活动是否开始
+            parameter.isEnd= $scope.vm.isEnd;//活动是否结束
+            popups.openJmPromotionDetail(parameter).then(function(context){
                 $scope.parentModel = context;
             });
 
