@@ -580,7 +580,7 @@ public class ProductService extends BaseService {
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             if(product == null) {
-                $error("该产品不存在:" + productSku);
+                $error("该产品不存在:" + productSku  + "--" + channelId);
                 throw new BusinessException("该产品不存在:" + productSku);
             }
             resultInfo.setChannelId(product.getChannelId());

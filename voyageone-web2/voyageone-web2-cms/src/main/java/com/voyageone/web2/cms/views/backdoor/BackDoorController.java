@@ -770,14 +770,14 @@ public class BackDoorController extends CmsController {
             cartList.forEach(channelBean -> {
                 String cartId = channelBean.getValue();
 
-                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatform(Integer.valueOf(cartId));
+                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
 
                 JomgoQuery query = new JomgoQuery();
                 query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
                 query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
                 CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
 
-                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && StringUtils.isEmpty(groupModel.getNumIId())) {
+                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && groupModel != null && StringUtils.isEmpty(groupModel.getNumIId())) {
 
                     groupModel.setNumIId(platformInfo.getpNumIId());
                     groupModel.setPlatformPid(platformInfo.getpProductId());
