@@ -38,7 +38,6 @@ public class OrderInfoController extends BaseController {
         return success(initialInfo);
     }
 
-
     @RequestMapping(VmsUrlConstants.ORDER.ORDER_INFO.SEARCH)
     public AjaxResponse search(@RequestBody OrderSearchInfo orderSearchInfo) {
         Map<String, Object> orderInfo = new HashMap<>();
@@ -50,7 +49,7 @@ public class OrderInfoController extends BaseController {
     public AjaxResponse cancelOrder(@RequestBody PlatformSubOrderInfoBean item) {
         Map<String, Object> result = new HashMap<>();
         // TODO: 16-7-11 对于取消订单前的状态检查尚未考虑完善 vantis
-        result.put("success", orderInfoService.cancelOrder(item));
+        result.put("success", orderInfoService.cancelOrder(this.getUser(), item));
 
         return success(result);
     }

@@ -13,6 +13,7 @@ define(function () {
         "BTN_GO": "GO",
         "BTN_OK": "OK",
         "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date.",
+        "TXT_NO_CURRENT_SHIPMENT": "No Current Shipment.",
         "TXT_MSG_NO_DATE": "No Data..."
     }
 });

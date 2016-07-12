@@ -176,9 +176,16 @@ input::-webkit-clear-button {
 .table {
   margin-bottom: 10px;
   min-width: 1000px;
+  background: #F8F8F8;
 }
 .table thead th {
   font-size: 14px;
+}
+#noData {
+  color: #999;
+}
+#noData .text-vo {
+  color: #74C52C;
 }
 .dropdown-toggle-arr:after {
   font-family: FontAwesome;
@@ -314,6 +321,7 @@ a {
   padding: 0;
   font-size: 16px;
   cursor: pointer;
+  outline: none;
 }
 .input.input-file input {
   width: 100%;
@@ -478,6 +486,9 @@ a {
   margin-top: 5px;
   font-size: 12px;
   font-style: italic;
+}
+.home_data h3:hover {
+  color: #74C52C;
 }
 .home_data li {
   color: #888;

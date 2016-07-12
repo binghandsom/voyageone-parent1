@@ -39,7 +39,7 @@
                                ng-model="ctrl.orderDateFrom"
                                uib-datepicker-popup
                                datepicker-options="{maxDate:ctrl.orderDateTo}"
-                               is-open="datepicker3" >
+                               is-open="datepicker3">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker3=!datepicker3"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -53,7 +53,7 @@
                                ng-model="ctrl.orderDateTo"
                                uib-datepicker-popup
                                datepicker-options="{minDate:ctrl.orderDateFrom}"
-                               is-open="datepicker4" >
+                               is-open="datepicker4">
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -68,7 +68,9 @@
     <div class="row margin-bottom-10">
         <div class="col-sm-6">
             <button class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)">NEW/END SHIPMENT</button>
-            <span class="form-text">CURRENT SHIPMENT : <a href="?">2016-06-27 15:47:50</a></span>
+            <span class="form-text">CURRENT SHIPMENT :
+                <a ng-show="ctrl.currentShipment" href="?">{{ctrl.currentShipment.shipmentName}}</a>
+                <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
         <div class="col-sm-6 text-right form-inline">
             <select class="form-control input-sm">
@@ -94,7 +96,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className" >
+                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td ng-click="item.collapse = !item.collapse">{{item.orderId}}</td>
                         <td ng-click="item.collapse = !item.collapse">{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>

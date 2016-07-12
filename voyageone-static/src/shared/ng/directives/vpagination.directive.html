@@ -1,10 +1,8 @@
 <!-- 此内容仅供备份, 便于后期变更外观使用, 修改 js 内的 html 时, 请同步修改这里 -->
-<div class="row">
+<div class="col-sm-12 form-inline">
     <div class="col-sm-3">
-        <span translate="TXT_SHOWING_NO"></span>
-        <span>&nbsp;</span>
-        <input class="text-center" type="text" ng-model="curr.pageNo">
-        <span>&nbsp;</span>
+        <span class="col-sm-2" translate="TXT_SHOWING_NO"></span>
+        <input class="text-center col-sm-2 form-control" type="text" ng-model="curr.pageNo" style="max-width: 50px;max-height: 26px;">
         <span>/</span>
         <span>&nbsp;</span>
         <span ng-bind="totalPages"></span>
@@ -16,7 +14,7 @@
     <div class="col-sm-4 text-center">
         <span translate="TXT_PAGER_SIZE"></span>
         <span>&nbsp;</span>
-        <select ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption"></select>
+        <select class="form-control input-sm" ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption" style="max-width: 65px;max-height: 26px;"></select>
         <span>&nbsp;</span>
         <span translate="TXT_SHOWING"></span>
         <span>&nbsp;</span>
@@ -33,7 +31,7 @@
         <span translate="TXT_ITEMS"></span>
     </div>
     <div class="col-sm-5 text-right">
-        <ul class="pagination">
+        <ul class="pagination" style="margin: 0">
             <li ng-class="{disabled: curr.isFirst}">
                 <a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a>
             </li>
