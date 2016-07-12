@@ -417,8 +417,8 @@
                                                 <div>
                                                     <select class="form-control" ng-model="vm.searchInfo.priceChgFlg">
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                        <option value="U">涨价</option>
-                                                        <option value="D">降价</option>
+                                                        <option value="U">指导售价涨价</option>
+                                                        <option value="D">指导售价降价</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -475,7 +475,7 @@
                                             </div>
                                             <div class="col-sm-2">
                                                 <select class="form-control" ng-model="option.inputOpts"
-                                                    ng-options="optsObj.value as optsObj.name for optsObj in option._inputOptsList">
+                                                        ng-options="optsObj.value as optsObj.name for optsObj in option._inputOptsList">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
                                             </div>
@@ -688,25 +688,18 @@
                                                    ng-disabled="!vm.productList.length">
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
                                     </td>
-                                    <td class="text-left" translate="TXT_BRAND"
-                                        style="display:inline-block;width:150px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_INVENTORY"
-                                        style="display:inline-block;width:85px;padding-left:8px"></td>
+                                    <td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></td>
+                                    <td class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:85px;padding-left:8px"></td>
                                     <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国建议售价</td>
                                     <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国指导售价</td>
                                     <td class="text-center" style="display:inline-block;width:170px;padding-left:8px">中国最终售价</td>
-                                    <td class="text-center" translate="TXT_SKU_COUNT"
-                                        style="display:inline-block;width:165px;padding-left:8px"></td>
-                                    <td class="text-left" translate="TXT_TIME"
-                                        style="display:inline-block;width:165px;padding-left:8px"></td>
-                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps"
-                                        style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
+                                    <td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
+                                    <td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
+                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}
                                     </th>
-                                    <th class="text-left" ng-repeat="prop2 in vm.customProps"
-                                        style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}
+                                    <th class="text-left" ng-repeat="prop2 in vm.customProps"  style="display:inline-block;width:120px;padding-left:8px">{{prop2.feed_prop_translation}}
                                     </th>
-                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType"
-                                        style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}
+                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}
                                     </th>
                                 </tr>
                                 </thead>

@@ -26,6 +26,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -297,9 +298,14 @@ public class SellerCatService extends BaseService {
 
     }
 
-    @Deprecated
     public void refeshAllProduct(String channelId, int cartId, String creator) {
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        ShopBean shopBean = Shops.getShop(channelId, 23);
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopBean.setAppKey("21008948");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+        shopBean.setShop_name("Jewelry海外旗舰店");
 
         String shopCartId = shopBean.getCart_id();
 
@@ -308,25 +314,9 @@ public class SellerCatService extends BaseService {
         if (isTMPlatform(shopCartId)) {
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
+            convert2Tree(sellerCat);
         }
 
-        List<CmsBtSellerCatModel> treeList = convert2Tree(sellerCat);
-
-
-        List<CmsBtSellerCatModel> result = new ArrayList<>();
-
-        for (CmsBtSellerCatModel node : treeList) {
-            CmsBtSellerCatModel copyRoot = copyCmsBtSellerCatModel(node);
-            result.add(copyRoot);
-
-            result.addAll(findAllChildren(node));
-        }
-
-        //只支持2层结构
-        Map<String, CmsBtSellerCatModel> sellerCatMap = new HashMap<>();
-        for (CmsBtSellerCatModel model : result) {
-            sellerCatMap.put(model.getCatId(), model);
-        }
 
         //得到所有的product_group
         String query = "{\"numIId\": {\"$ne\": \"\"} }";
@@ -360,41 +350,28 @@ public class SellerCatService extends BaseService {
 
                     for (CmsBtProductModel product : productList) {
 
-                        Set<String> catIds = new HashSet<>();
-                        Set<String> catNames = new HashSet<>();
-                        Set<String> fullCatNames = new HashSet<>();
-                        Set<String> fullIds = new HashSet<>();
+                        List<Map<String, Object>> sellerCats = new ArrayList<>();
 
-                        for (String cId : cIds) {
-                            CmsBtSellerCatModel leaf = sellerCatMap.get(cId);
-                            catIds.add(cId);
-                            catNames.add(leaf.getCatName());
-                            fullCatNames.add(leaf.getCatPath());
-                            fullIds.add(leaf.getFullCatId());
+                        for (String pCId : cIds) {
+                            CmsBtSellerCatModel leaf = sellerCat.stream().filter(w -> pCId.equals(w.getCatId())).findFirst().get();
+                            Map<String, Object> model =  new HashMap<>();
+                            model.put("cId", leaf.getCatId());
+                            model.put("cName", leaf.getCatPath());
+                            model.put("cIds", leaf.getFullCatId().split("-"));
+                            model.put("cNames", leaf.getCatPath().split(">"));
 
-                            if (!"0".equals(leaf.getParentCatId())) {
-                                CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
-                                catIds.add(parent.getCatId());
-                                catNames.add(parent.getCatName());
-                                fullCatNames.add(parent.getCatPath());
-                                fullIds.add(parent.getFullCatId());
-                            }
+                            sellerCats.add(model);
                         }
 
                         Map<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("sellerCats.cIds", catIds);
-                        updateMap.put("sellerCats.cNames", catNames);
-                        updateMap.put("sellerCats.fullCIds", fullIds);
-                        updateMap.put("sellerCats.fullCNames", fullCatNames);
-
-
+                        updateMap.put("platform.P"+cartId+".sellerCats" , sellerCats);
                         Map<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", product.getProdId());
 
-                        BulkUpdateModel model = new BulkUpdateModel();
-                        model.setUpdateMap(updateMap);
-                        model.setQueryMap(queryMap);
-                        bulkList.add(model);
+                        BulkUpdateModel bulk = new BulkUpdateModel();
+                        bulk.setUpdateMap(updateMap);
+                        bulk.setQueryMap(queryMap);
+                        bulkList.add(bulk);
                     }
                 }
 
