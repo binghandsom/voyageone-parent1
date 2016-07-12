@@ -676,7 +676,7 @@ public class SxProductService extends BaseService {
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
                     // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
-                    String errMsg = "取得上新数据(SxDaa)失败! 该商品对应的feed信息不存在(OriginalCode/Code=" + prodOrgCode + ")";
+                    String errMsg = "取得上新数据(SxData)失败! 该商品对应的feed信息不存在(OriginalCode/Code=" + prodOrgCode + ")";
                     $error(errMsg);
                     sxData.setErrorMessage(errMsg);
                     break;

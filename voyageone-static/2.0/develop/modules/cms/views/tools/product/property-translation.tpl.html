@@ -179,7 +179,9 @@
                                 </div>
                                 <div class="col-sm-2 imageContainer">
                                     <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
-                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}"></a>
+                                        <!--图片为3:4比例缩放 added by piao-->
+                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}" style="max-height: 160px;max-width: 120px;">
+                                    </a>
                                 </div>
                             </div>
                         </div>
