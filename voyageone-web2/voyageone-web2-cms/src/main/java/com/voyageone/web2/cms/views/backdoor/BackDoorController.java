@@ -760,7 +760,7 @@ public class BackDoorController extends CmsController {
 
     @RequestMapping(value = "updateGroupNumberIid", method = RequestMethod.GET)
     public Object updateGroupNumberIid(@RequestParam("channelId") String channelId) {
-        List<Long> code = new ArrayList<>();
+        List<String> code = new ArrayList<>();
 
         List<CmsBtProductModel> products = cmsBtProductDao.selectAll(channelId);
 
@@ -770,14 +770,18 @@ public class BackDoorController extends CmsController {
             cartList.forEach(channelBean -> {
                 String cartId = channelBean.getValue();
 
-                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatform(Integer.valueOf(cartId));
+                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
 
                 JomgoQuery query = new JomgoQuery();
                 query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
                 query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
                 CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+                if (groupModel == null) {
+                    code.add("group不存在:" + platformInfo.getMainProductCode() + "--" + platformInfo.getCartId());
 
-                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && StringUtils.isEmpty(groupModel.getNumIId())) {
+                }
+
+                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && groupModel != null && StringUtils.isEmpty(groupModel.getNumIId())) {
 
                     groupModel.setNumIId(platformInfo.getpNumIId());
                     groupModel.setPlatformPid(platformInfo.getpProductId());
@@ -785,7 +789,7 @@ public class BackDoorController extends CmsController {
                     groupModel.setPublishTime(platformInfo.getpPublishTime());
 
                     productGroupService.update(groupModel);
-                    code.add(groupModel.getGroupId());
+                    code.add(groupModel.getGroupId().toString() + ":" + platformInfo.getpNumIId());
                 }
 
             });
