@@ -75,6 +75,8 @@ public class BackDoorController extends CmsController {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductSkuService productSkuSerivice;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
 
 
     /**
@@ -753,8 +755,56 @@ public class BackDoorController extends CmsController {
         builder.append("</ul>");
         builder.append("</body>");
 
-        return messageList.toString();
+        return builder.toString();
     }
+
+    @RequestMapping(value = "updateGroupNumberIid", method = RequestMethod.GET)
+    public Object updateGroupNumberIid(@RequestParam("channelId") String channelId) {
+        List<Long> code = new ArrayList<>();
+
+        List<CmsBtProductModel> products = cmsBtProductDao.selectAll(channelId);
+
+        products.parallelStream().forEach(productInfo -> {
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+
+            cartList.forEach(channelBean -> {
+                String cartId = channelBean.getValue();
+
+                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatform(Integer.valueOf(cartId));
+
+                JomgoQuery query = new JomgoQuery();
+                query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
+                query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
+                CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+
+                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && StringUtils.isEmpty(groupModel.getNumIId())) {
+
+                    groupModel.setNumIId(platformInfo.getpNumIId());
+                    groupModel.setPlatformPid(platformInfo.getpProductId());
+                    groupModel.setPlatformStatus(platformInfo.getpStatus());
+                    groupModel.setPublishTime(platformInfo.getpPublishTime());
+
+                    productGroupService.update(groupModel);
+                    code.add(groupModel.getGroupId());
+                }
+
+            });
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+
+    }
+
 
     private List<String> checkGroupTransformOn20160708(String channelId) {
 
