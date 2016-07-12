@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
@@ -149,6 +150,13 @@ private CmsBtPromotionDao daoCmsBtPromotion;
                 price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
+        if(StringUtils.isEmpty(price))
+        {
+            result.setResult(false);
+            result.setMsg("修改价格失败!");
+            return  result;
+        }
+         price="CEIL("+price+")";//向上取整
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
         if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             result.setResult(false);

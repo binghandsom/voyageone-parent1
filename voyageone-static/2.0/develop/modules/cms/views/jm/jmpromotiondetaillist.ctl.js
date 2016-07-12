@@ -439,7 +439,7 @@ define([
             }
         };
         $scope.openPriceModifyWin = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
