@@ -26,6 +26,11 @@ public class VmsOrderDetailService extends BaseService {
         this.vmsBtOrderDetailDao = vmsBtOrderDetailDao;
     }
 
+    /**
+     * 查询订单
+     * @param orderSearchParams 搜索条件
+     * @return 订单详情
+     */
     public List<VmsBtOrderDetailModel> selectOrderList(Map<String, Object> orderSearchParams) {
 
         // TODO: 16-7-7 条件暂未测试 vantis
@@ -53,8 +58,22 @@ public class VmsOrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.selectPlatformOrderListNumLimitedByTime(orderSearchParamsWithLimitAndSort);
     }
 
-
+    /**
+     * 更新订单状态
+     * @param changeStatusParam 更新条件
+     * @return 更新条数
+     */
     public int updateOrderStatus(Map<String, Object> changeStatusParam) {
         return vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParam);
+    }
+
+    /**
+     * 条件查询sku总数
+     * @param skuSearchParamsWithLimitAndSort 搜索条件
+     * @return sku总数
+     */
+    public long getTotalSkuNum(Map<String, Object> skuSearchParamsWithLimitAndSort) {
+        // TODO: 16-7-12 sku统计尚未完成 vantis
+        return 0;
     }
 }

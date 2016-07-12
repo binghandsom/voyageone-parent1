@@ -104,6 +104,15 @@ define([
                 item.collapse = collapse;
             });
         };
+
+        OrderInfoController.prototype.getStatusName = function (statusValue) {
+            var statusName = this.searchOrderStatus.find(function (status, index, array) {
+                status.value = statusValue;
+            });
+            if (!statusName) statusName = statusValue;
+            return statusName;
+        };
+
         OrderInfoController.prototype.popNewShipment = function () {
             this.popups.openNewShipment();
         };

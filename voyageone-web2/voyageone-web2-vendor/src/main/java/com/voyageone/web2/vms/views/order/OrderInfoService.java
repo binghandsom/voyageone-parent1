@@ -90,6 +90,10 @@ public class OrderInfoService extends BaseService {
 
         VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
                 ChannelConfig.VENDOR_OPERATE_TYPE, ChannelConfig.COMMON_CONFIG_CODE);
+
+        // Missing required configures for this channel, please contact with the system administrator for help.
+        if (null == vmsChannelConfigBean) throw new BusinessException("8000019");
+
         VmsChannelSettings vmsChannelSettings = new VmsChannelSettings();
         vmsChannelSettings.setVendorOperateType(vmsChannelConfigBean.getConfigValue1());
         return vmsChannelSettings;
@@ -191,7 +195,8 @@ public class OrderInfoService extends BaseService {
 
         // limit sort条件
         Map<String, Object> orderSearchParamsWithLimitAndSort = MySqlPageHelper.build(orderSearchParams)
-                .addSort("order_time", (orderSearchInfo.getStatus() == 1 ? Order.Direction.DESC : Order.Direction.ASC))
+                .addSort("order_time", ((null != orderSearchInfo.getStatus() && orderSearchInfo.getStatus() == 1) ?
+                        Order.Direction.DESC : Order.Direction.ASC))
                 .limit(orderSearchInfo.getSize())
                 .page(orderSearchInfo.getCurr())
                 .toMap();
@@ -238,8 +243,13 @@ public class OrderInfoService extends BaseService {
      */
     private long getTotalOrderNum(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
 
-        Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo);
-        return vmsOrderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(this.getChannelConfigs(user).getVendorOperateType())) {
+            Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo);
+            return vmsOrderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
+        } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(this.getChannelConfigs(user).getVendorOperateType())) {
+            Map<String, Object> skuSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo);
+            return vmsOrderDetailService.getTotalSkuNum(skuSearchParamsWithLimitAndSort);
+        } else return 0;
     }
 
     /**

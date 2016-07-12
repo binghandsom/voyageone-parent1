@@ -16,25 +16,25 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label for="SKU_STATUS" class="control-label">STATUS</label>
+                    <label for="SKU_STATUS" class="control-label" translate="TXT_STATUS"></label>
                     <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
                             ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
-                        <option value="">All</option>
+                        <option value="" translate="TXT_ALL"></option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="ORDER_ID" class="control-label">ORDER ID</label>
+                    <label for="ORDER_ID" class="control-label" translate="TXT_ORDER_ID"></label>
                     <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.orderId">
                 </div>
                 <div class="form-group">
-                    <label for="SKU" class="control-label">SKU</label>
+                    <label for="SKU" class="control-label" translate="TXT_SKU"></label>
                     <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">ORDER DATE</label>
+                    <label class="control-label" translate="TXT_ORDER_DATE"></label>
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
-                               title="From"
+                               ng-attr-title="{{'TXT_FROM' | translate}}"
                                type="date"
                                ng-model="ctrl.orderDateFrom"
                                uib-datepicker-popup
@@ -48,7 +48,7 @@
                     <span>~</span>
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
-                               title="To"
+                               ng-attr-title="{{'TXT_TO' | translate}}"
                                type="date"
                                ng-model="ctrl.orderDateTo"
                                uib-datepicker-popup
@@ -67,16 +67,17 @@
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6">
-            <button class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)">NEW/END SHIPMENT</button>
-            <span class="form-text">CURRENT SHIPMENT :
+            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-show="ctrl.currentShipment"  class="btn btn-success btn-sm" ng-click="" translate="BTN_END_SHIPMENT"></button>
+            <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-show="ctrl.currentShipment" href="?">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
         <div class="col-sm-6 text-right form-inline">
             <select class="form-control input-sm">
-                <option value="">ORDER BY SKU</option>
+                <option value="" translate="TXT_ORDER_BY_SKU"></option>
             </select>
-            <button class="btn btn-primary btn-sm">DOWNLOAD PICKING LIST</button>
+            <button class="btn btn-primary btn-sm" TRANSLATE="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
     <div class="panel panel-vo">
@@ -86,13 +87,13 @@
                     <thead>
                     <tr>
                         <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>
-                        <th class="td-2">ORDER ID</th>
-                        <th class="td-2">ORDER DATE</th>
-                        <th class="td-1">SKU</th>
-                        <th class="td-2">DESCRIPTION</th>
-                        <th class="td-1">STATUS</th>
-                        <th class="td-1">PRICE</th>
-                        <th style="width: 200px">ACTION</th>
+                        <th class="td-2" translate="TXT_ORDER_ID"></th>
+                        <th class="td-2" translate="TXT_ORDER_DATE"></th>
+                        <th class="td-1" translate="TXT_SKU"></th>
+                        <th class="td-2" translate="TXT_DESCRIPTION"></th>
+                        <th class="td-1" translate="TXT_STATUS"></th>
+                        <th class="td-1" translate="TXT_PRICE"></th>
+                        <th style="width: 200px" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -102,11 +103,11 @@
                         <td ng-click="item.collapse = !item.collapse">{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td ng-click="item.collapse = !item.collapse">-</strong></td>
                         <td ng-click="item.collapse = !item.collapse">-</td>
-                        <td ng-click="item.collapse = !item.collapse">{{item.status}}</td>
+                        <td ng-click="item.collapse = !item.collapse">{{ctrl.getStatusName(item.status)}}</td>
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
-                            <button class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)">CANCEL</button>
-                            <button class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
+                            <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)">CANCEL</button>
+                            <button ng-show="item.status == 1" class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
                         </td>
                     </tr>
                     <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
