@@ -8,12 +8,21 @@ import java.util.Date;
  * Created by vantis on 16-7-6.
  */
 public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
+    private String reservationId;
     private String orderId;
     private long orderDateTimestamp;
     private String sku;
     private String desc;
     private String status;
     private BigDecimal price = BigDecimal.ZERO;
+
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
+    }
 
     public String getOrderId() {
         return orderId;
@@ -23,7 +32,7 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.orderId = orderId;
     }
 
-    public long getOrderDateTime() {
+    public long getOrderDateTimestamp() {
         return orderDateTimestamp;
     }
 
