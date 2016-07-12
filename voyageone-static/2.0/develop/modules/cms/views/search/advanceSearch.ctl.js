@@ -450,7 +450,13 @@ define([
         }
 
         // 当选择搜索时设置输入框
-        $scope.setSelValue = function (option, custAtts) {
+        $scope.setSelValue = function (option, custAtts, typeVal) {
+            if (typeVal && typeVal == 2) {
+                if (option.inputOpts == 4 || option.inputOpts == 5) {
+                    option.inputVal = '';
+                }
+                return;
+            }
             if (custAtts == null || custAtts == undefined) {
                 option.inputType = '';
                 option.inputOptsKey = '';

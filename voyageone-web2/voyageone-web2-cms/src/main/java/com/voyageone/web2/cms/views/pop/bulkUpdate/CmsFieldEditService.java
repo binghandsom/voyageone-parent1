@@ -218,29 +218,11 @@ public class CmsFieldEditService extends BaseAppService {
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         for (Integer cartIdVal : cartList) {
-            // 这里需要确认更新成功后再记录上新操作表
-            JomgoQuery qurObj = new JomgoQuery();
-            qurObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#.status':#}");
-            qurObj.setParameters(productCodes, cartIdVal, CmsConstants.ProductStatus.Approved);
-            qurObj.setProjection("{'common.fields.code':1,'_id':0}");
-
-            List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), qurObj);
-            List<String> codeList = new ArrayList<>(prodList.size());
-            for (CmsBtProductModel prodObj : prodList) {
-                if (prodObj.getCommon() == null) {
-                    continue;
-                }
-                CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-                if (field != null && field.getCode() != null) {
-                    codeList.add(field.getCode());
-                }
-            }
-
-            if (codeList.size() > 0) {
+            if (productCodes.size() > 0) {
                 // 插入上新程序
                 $debug("批量修改属性 (商品上下架) 开始记入SxWorkLoad表");
                 long sta = System.currentTimeMillis();
-                sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdVal, userInfo.getUserName());
+                sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartIdVal, userInfo.getUserName());
                 $debug("批量修改属性 (商品上下架) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
             }
         }

@@ -182,10 +182,33 @@ s-field textarea.s-html {
 }
 
 .nav-stacked {
-    width: 110px;
-    position: absolute;
-    top: 15px;
-    left: 1px;
+    min-width: 360px;
+}
+.nav-stacked .nav-tabs{
+
+    float: left;
+}
+.nav-stacked ul {
+    max-width: 125px;
+}
+.nav-stacked li{
+    min-width:129px;
+}
+.nav-stacked li.active,.nav-stacked .nav-tabs > li.active > a{
+    border-left: 3px solid #e67e22;
+    border-top: 1px solid #d4cfcf;
+}
+.nav-stacked div.tab-content{
+    float: left;
+    border: 1px solid #d4cfcf !important;
+    min-width: 238px;
+    max-width: 304px;
+    min-height: 171px;
+}
+@media screen and (max-width: 1544px) {
+    .nav-stacked div.tab-content {
+        max-width: 238px;
+    }
 }
 
 /**为店铺管理页面和标签管理页面提供样式 addedy by tony-piao*/
