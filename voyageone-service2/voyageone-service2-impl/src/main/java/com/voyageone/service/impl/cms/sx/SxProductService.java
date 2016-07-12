@@ -294,7 +294,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getPlatform(sxData.getCartId()).getpCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -1733,7 +1733,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
