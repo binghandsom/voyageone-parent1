@@ -34,7 +34,7 @@ public class MqResumeService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "mqConsumJob";
+        return "mqResumeJob";
     }
 
     @Override
