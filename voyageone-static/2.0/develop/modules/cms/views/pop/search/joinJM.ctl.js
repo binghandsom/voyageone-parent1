@@ -46,12 +46,12 @@ define([
                 self.jmPromotionProductAddService.add(data)
                     .then(function(res) {
                         if (res.data.ecd == null || res.data.ecd == undefined) {
-                            self.alert($translate.instant('TXT_COMMIT_ERROR'));
+                            self.alert(self.$translate.instant('TXT_COMMIT_ERROR'));
                             return;
                         }
                         if (res.data.ecd == 1) {
                             // 未选择商品
-                            self.alert($translate.instant('未选择商品，请选择后再操作'));
+                            self.alert(self.$translate.instant('未选择商品，请选择后再操作'));
                             return;
                         }
                         if (res.data.ecd == 2) {
