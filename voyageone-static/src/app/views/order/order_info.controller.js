@@ -114,7 +114,7 @@ define([
             var self = this;
             this.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
                 self.orderInfoService.cancelSku(item).then(function () {
-                    self.search()
+                    self.search();
                 })
             })
         };
