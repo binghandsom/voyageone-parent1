@@ -677,9 +677,9 @@ public class CmsFieldEditService extends BaseAppService {
                 cmsBtPriceLogModel.setRetailPrice(result.toString());
                 CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
                 if (comSku == null) {
-                    cmsBtPriceLogModel.setClientMsrpPrice(" ");
-                    cmsBtPriceLogModel.setClientRetailPrice(" ");
-                    cmsBtPriceLogModel.setClientNetPrice(" ");
+                    cmsBtPriceLogModel.setClientMsrpPrice("0");
+                    cmsBtPriceLogModel.setClientRetailPrice("0");
+                    cmsBtPriceLogModel.setClientNetPrice("0");
                 } else {
                     cmsBtPriceLogModel.setClientMsrpPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientMsrpPrice()));
                     cmsBtPriceLogModel.setClientRetailPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientRetailPrice()));

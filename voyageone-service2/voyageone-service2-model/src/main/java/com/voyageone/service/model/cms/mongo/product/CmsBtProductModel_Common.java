@@ -44,6 +44,14 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setStringAttribute("catPath", catPath);
     }
 
+    //comment
+    public String getComment() {
+        return getStringAttribute("comment");
+    }
+    public void setComment(String comment) {
+        setStringAttribute("comment", comment);
+    }
+
     // 更新者
     public String getModifier() {
         return getStringAttribute("modifier");
