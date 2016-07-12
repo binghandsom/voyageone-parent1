@@ -118,6 +118,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("grpProdChgInfoList", infoArr[0]);
         // 获取该组商品的prodId
         resultBean.put("grpProdIdList", infoArr[2]);
+        resultBean.put("grpPriceInfoList", infoArr[3]);
 
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
@@ -161,6 +162,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("grpProdChgInfoList", infoArr[0]);
         // 获取该组商品的prodId
         resultBean.put("grpProdIdList", infoArr[2]);
+        resultBean.put("grpPriceInfoList", infoArr[3]);
 
         // 返回用户信息
         return success(resultBean);

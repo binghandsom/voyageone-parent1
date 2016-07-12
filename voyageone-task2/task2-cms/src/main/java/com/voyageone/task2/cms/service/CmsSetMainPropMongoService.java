@@ -772,7 +772,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                   .map(CmsBtProductModel_Sku::getSkuCode)
                                   .collect(Collectors.toList());
                     // 记录商品价格变动履历
-                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), getTaskName(), "feed->master导入");
+                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), null, getTaskName(), "feed->master导入");
                 }
                 // add by desmond 2016/07/05 end
 
@@ -2388,8 +2388,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         .replaceAll("\\[priceMsrp\\]", String.valueOf(priceMsrp))
                         .replaceAll("\\[priceCurrent\\]", String.valueOf(priceCurrent));
                 double valueDouble = parser.parseExpression(formula).getValue(Double.class);
-                // 四舍五入取整
-                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
+                // update by desmond 2016/07/12 start
+//                // 四舍五入取整
+//                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
+                // 向上取整(3.01->4.00)
+                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_UP);
+                // update by desmond 2016/07/12 end
                 return valueBigDecimal.doubleValue();
 
             } catch (Exception ex) {

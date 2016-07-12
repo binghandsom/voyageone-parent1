@@ -24,13 +24,11 @@ public class CommonPropService extends BaseService {
     private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     // 取得自定义显示列设置
-    public List<Map<String, Object>> getCustColumns() {
-        return cmsMtCommonPropDaoExt.selectCustColumns();
-    }
-
-    // 取得排序用显示列设置
-    public List<Map<String, Object>> getSortColumns() {
-        return cmsMtCommonPropDaoExt.selectSortColumns();
+    // selType=1:  自定义搜索条件用
+    // selType=2:  设置自定义显示列弹出画面用
+    // selType=3:  排序条件
+    public List<Map<String, Object>> getCustColumns(int selType) {
+        return cmsMtCommonPropDaoExt.selectCustColumns(selType);
     }
 
     public List<Map<String, Object>> getCustColumnsByUserId(int userId) {

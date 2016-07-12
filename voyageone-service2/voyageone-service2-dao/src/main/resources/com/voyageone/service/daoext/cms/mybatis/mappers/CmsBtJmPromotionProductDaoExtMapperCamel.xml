@@ -348,7 +348,7 @@
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
         JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
-        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price,a.update_state=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
+        SET a.deal_Price=${dealPrice},a.discount=${dealPrice}/a.market_price,a.update_status=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
@@ -392,18 +392,21 @@
                                  open="(" separator="," close=")">#{item}</foreach>
         and synch_status=2;
     </update>
-    <update id="copyDealAll">
-        UPDATE cms_bt_jm_promotion_product set synch_status=1
-        ,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+    <update id="copyDealAll_UpdatePriceStatus">
 
         UPDATE cms_bt_jm_promotion_product set price_status=1
         ,error_msg=''
         WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (2);
     </update>
+    <update id="copyDealAll_UpdateSynchStatus">
+        UPDATE cms_bt_jm_promotion_product set synch_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+
+    </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product
-        WHERE synch_status=0 and   id in
+        WHERE synch_status!=2 and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}

@@ -75,7 +75,7 @@
     <delete id="batchDeleteSku">
         DELETE a FROM cms_bt_jm_promotion_sku AS a
         JOIN `cms_bt_jm_promotion_product` AS b ON a.`cms_bt_jm_promotion_product_id`=b.`id`
-        WHERE b.`synch_status`=0 and b.id in
+        WHERE b.`synch_status`!=2 and b.id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}

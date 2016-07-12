@@ -27,8 +27,8 @@ define([
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.vm.tagList = res.data.listTag;
                 $scope.vm.changeCount = res.data.changeCount;
-                $scope.vm.isBegin=res.data.isBegin;
-                $scope.vm.isEnd=res.data.isEnd;
+                $scope.vm.isBegin=res.data.isBegin;//活动是否开始
+                $scope.vm.isEnd=res.data.isEnd;//活动是否结束
                 $scope.vm.isUpdateJM=res.data.isUpdateJM;
                 $scope.vm.brandList = res.data.brandList;
 
@@ -151,10 +151,25 @@ define([
                     alert("该商品已上传，禁止删除!");
                     return
                 }
-                jmPromotionDetailService.delete(data.id).then(function () {
-                    $scope.vm.modelList.splice(index, 1);
+                var parameter={};
+                parameter.promotionId = $scope.vm.promotionId;
+                parameter.listPromotionProductId =[data.id];
+                parameter.listProductCode=[data.productCode];
+                jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
+                    if (res.data.result) {
+                        $scope.search();
+                        alert($translate.instant('TXT_SUCCESS'));
+                    }
+                    else {
+                        alert($translate.instant('TXT_FAIL'));
+                    }
                 }, function (res) {
-                })
+                    alert($translate.instant('TXT_FAIL'));
+                });
+                //jmPromotionDetailService.delete(data.id).then(function () {
+                //    $scope.vm.modelList.splice(index, 1);
+                //}, function (res) {
+                //})
             })
         };
 
@@ -227,11 +242,8 @@ define([
         }
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
-            if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
-            {
-                return "上传异常";
-            }
-            else if (model.synchStatus == 1) {
+
+             if (model.synchStatus == 1) {
                 return "待上传";
             }
             else if (model.updateStatus == 1 || model.priceStatus == 1) {
@@ -240,12 +252,16 @@ define([
             else if (model.dealEndTimeStatus == 1) {
                 return "待延期";
             }
+           else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
+            {
+                return "上传异常";
+            }
             else if (model.synchStatus == 0) {
                 return "未更新";
             }
             return "更新完成";
         }
-        $scope.getSelectedProductIdList = function () {
+        $scope.getSelectedPromotionProductIdList = function () {
             var listPromotionProductId = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].isChecked) {
@@ -253,6 +269,15 @@ define([
                 }
             }
             return listPromotionProductId;
+        }
+        $scope.getSelectedProductCodeList = function () {
+            var listPromotionProductCode = [];
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    listPromotionProductCode.push($scope.vm.modelList[i].productCode);
+                }
+            }
+            return listPromotionProductCode;
         }
         $scope.updateJM = function (promotionProductId) {
             confirm("您确定要重新上传商品吗?").result.then(function () {
@@ -274,7 +299,7 @@ define([
             });
         };
         $scope.batchSynchPrice = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择同步价格的商品!");
                 return;
@@ -312,7 +337,7 @@ define([
             });
         }
         $scope.batchCopyDeal = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择上传的商品!");
                 return;
@@ -353,10 +378,12 @@ define([
 
         $scope.batchDeleteProduct = function () {
             //已再售的不删除
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
+            var listProductCode = $scope.getSelectedProductCodeList();
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
+            parameter.listProductCode=listProductCode;
             if (listPromotionProductId.length == 0) {
                 alert("请选择删除的商品!");
                 return;
@@ -412,7 +439,7 @@ define([
             }
         };
         $scope.openPriceModifyWin = function () {
-            var listPromotionProductId = $scope.getSelectedProductIdList();
+            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
@@ -420,6 +447,7 @@ define([
             popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
         }
         $scope.openProductDetailWin = function (object) {
+
             popups.openJmProductDetail(object).then(function () {
                 $scope.search();
             });
@@ -428,9 +456,10 @@ define([
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
         $scope.openJmPromotionDetailWin = function () {
-
-            popups.openJmPromotionDetail({
-                id : $routeParams.parentId}).then(function(context){
+            var parameter={ id : $routeParams.parentId};
+            parameter.isBegin= $scope.vm.isBegin;//活动是否开始
+            parameter.isEnd= $scope.vm.isEnd;//活动是否结束
+            popups.openJmPromotionDetail(parameter).then(function(context){
                 $scope.parentModel = context;
             });
 
