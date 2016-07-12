@@ -616,15 +616,23 @@ public class SxProductService extends BaseService {
      * @return SxData
      */
     public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
-        // 获取group信息
-        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
-        if (grpModel == null) {
-            return null;
-        }
 
         SxData sxData = new SxData();
         sxData.setChannelId(channelId);
         sxData.setGroupId(groupId);
+
+        // 获取group信息
+        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
+        if (grpModel == null) {
+            // update by desmond 2016/07/12 start
+//            return null;
+            String errMsg = "取得上新数据(SxData)失败! 没找到对应的group数据(groupId=" + groupId + ")";
+            $error(errMsg);
+            sxData.setErrorMessage(errMsg);
+            return sxData;
+            // update by desmond 2016/07/12 end
+        }
+
         sxData.setPlatform(grpModel);
 
         // 该group下的主商品code
@@ -668,7 +676,9 @@ public class SxProductService extends BaseService {
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
                     // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
-                    sxData.setErrorMessage("该商品对应的feed信息不存在");
+                    String errMsg = "取得上新数据(SxData)失败! 该商品对应的feed信息不存在(OriginalCode/Code=" + prodOrgCode + ")";
+                    $error(errMsg);
+                    sxData.setErrorMessage(errMsg);
                     break;
                 }
                 // Add by desmond 2016/06/12 end
@@ -855,7 +865,13 @@ public class SxProductService extends BaseService {
         // added by morse.lu 2016/06/12 start
         if (productModelList.isEmpty()) {
             // 没有对象
-            return null;
+            // update by desmond 2016/07/12 start
+//            return null;
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+            // update by desmond 2016/07/12 end
         }
         // added by morse.lu 2016/06/12 end
 
