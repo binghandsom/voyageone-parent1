@@ -49,7 +49,8 @@ define(function () {
                     "getCategoryInfo": session('getCategoryInfo'),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
-                    "getHomeSumData":"getHomeSumData"
+                    "getHomeSumData":"getHomeSumData",
+                    "getCmsConfig":session('getCmsConfig',[KEY.CHANNEL])
                 }
             },
             "search": {
