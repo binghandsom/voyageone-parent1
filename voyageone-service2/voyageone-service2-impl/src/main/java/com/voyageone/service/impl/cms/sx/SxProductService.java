@@ -294,7 +294,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getPlatform(sxData.getCartId()).getpCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -880,12 +880,20 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
 
+        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
+        Map<String, String> mapSizeNick = new HashMap<>();
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
+        }
+        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
+
         // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
         Map<String, String> sizeSxMap = new HashMap<>();
         // 优先mainProduct里的sizeNick
         for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            if (!StringUtils.isEmpty(sku.getSizeNick())) {
-                sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+            String sizeNick = mapSizeNick.get(sku.getSkuCode());
+            if (!StringUtils.isEmpty(sizeNick)) {
+                sizeSxMap.put(sku.getSize(), sizeNick);
             }
         }
         // 然后把productList里的也一样的做一遍
@@ -894,8 +902,9 @@ public class SxProductService extends BaseService {
             for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                 // 已经设置过的size就不用再设置了
                 if (!sizeSxMap.containsKey(sku.getSize())) {
-                    if (!StringUtils.isEmpty(sku.getSizeNick())) {
-                        sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
+                    if (!StringUtils.isEmpty(sizeNick)) {
+                        sizeSxMap.put(sku.getSize(), sizeNick);
                     }
                 }
             }
@@ -1724,7 +1733,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);

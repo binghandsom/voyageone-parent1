@@ -180,7 +180,7 @@
                                 <div class="col-sm-2 imageContainer">
                                     <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
                                         <!--图片为3:4比例缩放 added by piao-->
-                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}" style="max-height: 160px;max-width: 120px;">
+                                        <img alt="ProductImage" class="thumb-xl m-b-xs" image="{{ctrl.vm.taskDetail.commonFields.images1[0].image1}}" style="max-height: 160px;max-width: 120px;width: auto;height: auto">
                                     </a>
                                 </div>
                             </div>
@@ -346,7 +346,7 @@
                         <tr ng-if="ctrl.vm.taskList.length > 0" ng-repeat="task in ctrl.vm.taskList">
                             <td class="text-center col-sm-1 v-middle">{{ctrl.getStatusNameFromStatusValue(task.translateStatus) | translate}}</td>
                             <td class="text-center col-sm-1 v-middle">
-                                <img alt="ProductImage" class="thumb m-b-xs" image="{{task.image1}}">
+                                <img alt="ProductImage" class="thumb-md m-b-xs" image="{{task.image1}}">
                             </td>
                             <td class="text-left col-sm-3 v-middle">{{task.feedCategory}}</td>
                             <td class="text-left col-sm-1 v-middle"><a ng-click="ctrl.get(task)" class="a a-link"> {{task.code}}</a></td>

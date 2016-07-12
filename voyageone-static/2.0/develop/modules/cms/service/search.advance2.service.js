@@ -460,7 +460,11 @@ define([
                     _.forEach(platformObj.skus, function (skuObj) {
                          cartInfo += skuObj.skuCode + ",";
                     });
-                    result.push(cartInfoObj.name + ": " + cartInfo.substr(0, cartInfo.length -1));
+                    var skuTxt = cartInfo.substr(0, cartInfo.length -1);
+                    if (skuTxt == undefined || skuTxt == null) {
+                        skuTxt = '';
+                    }
+                    result.push(cartInfoObj.name + ": " + skuTxt);
                 }
             });
             return result;
