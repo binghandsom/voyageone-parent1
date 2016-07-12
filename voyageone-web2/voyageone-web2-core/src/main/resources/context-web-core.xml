@@ -10,7 +10,7 @@
 
     <!-- 异常处理 -->
     <bean class="com.voyageone.web2.base.ExceptionHandler">
-        <property name="debug" value="false"/>
+        <property name="debug" value="true"/>
     </bean>
     <!-- 配置内容初始化Bean -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>

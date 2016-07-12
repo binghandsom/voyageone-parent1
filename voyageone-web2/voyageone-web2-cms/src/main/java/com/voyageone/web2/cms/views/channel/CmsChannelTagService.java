@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.impl.cms.TagService;
@@ -14,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author gjl
@@ -36,25 +41,33 @@ public class CmsChannelTagService extends BaseAppService {
         List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
         //取得所有的标签类型
         result.put("tagTree",tagsList);
-        //标签类型
-        result.put("tagTypeList", Types.getTypeList(74, lang));
+
+        List<TypeBean>  types = Types.getTypeList(74, lang);
+        if(types != null) {
+            //标签类型
+            result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
+        }
         //返回数据类型
         return result;
     }
+
     /**
      * 根据channelId取得素有的标签并对其进行分类
      *
-     * @param param Map
+     * @param params Map
      * @return ret
      */
-    public List<CmsBtTagBean> getTagInfoByChannelId(Map param) {
+    public List<CmsBtTagBean> getTagInfoByChannelId(Map params) {
         //公司平台销售渠道
-        String channelId = (String) param.get("channelId");
-        //标签类型
-        String tagTypeSelectValue = (String) param.get("tagTypeSelectValue");
-        Integer cartId = (Integer) param.get("cartId");
+        String channelId = (String) params.get("channelId");
+        if (Channels.isUsJoi(channelId)) {
+            params.put("orgChannelId", channelId);
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
         //取得所有的标签类型
-        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(channelId, tagTypeSelectValue, cartId);
+        List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(params);
 
         //返回数据类型
         return convertToTree(categoryList);

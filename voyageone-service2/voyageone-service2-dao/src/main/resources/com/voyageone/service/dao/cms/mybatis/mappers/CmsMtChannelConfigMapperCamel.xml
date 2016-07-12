@@ -208,12 +208,58 @@
                 and `config_type` = #{configType,jdbcType=INTEGER}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_channel_config
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="configKey != null" >
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null" >
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue1 != null" >
+                and `config_value1` = #{configValue1,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue2 != null" >
+                and `config_value2` = #{configValue2,jdbcType=VARCHAR}
+            </if>
+            <if test="configValue3 != null" >
+                and `config_value3` = #{configValue3,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="configType != null" >
+                and `config_type` = #{configType,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_channel_config
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}

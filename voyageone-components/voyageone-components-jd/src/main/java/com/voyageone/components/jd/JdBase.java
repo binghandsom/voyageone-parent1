@@ -8,7 +8,6 @@ import com.jd.open.api.sdk.response.AbstractResponse;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.ComponentConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 京东调用基础类

@@ -1,8 +1,5 @@
 package com.voyageone.components.channeladvisor.webservice;
 
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.OrderServiceSoap;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;

@@ -3,8 +3,6 @@ package com.voyageone.base.dao.mongodb;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
-import org.apache.commons.collections.IteratorUtils;
-import org.jongo.Aggregate;
 
 import java.util.Iterator;
 import java.util.List;
@@ -76,6 +74,10 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
 
     public long countByQuery(final String strQuery) {
         return mongoTemplate.count(strQuery, collectionName);
+    }
+
+    public long countByQuery(final String strQuery, Object[] parameters) {
+        return mongoTemplate.count(strQuery, parameters, collectionName);
     }
 
     public WriteResult deleteById(String id) {

@@ -33,6 +33,16 @@ public class CmsBtPromotionDaoExt extends ServiceBaseDao {
     }
 
     /**
+     * 条件查询
+     *
+     * @param condtionParams condtionParams
+     * @return List<CmsBtPromotionModel>
+     */
+    public List<CmsBtPromotionBean> select4AdvSearch(Map<?, ?> condtionParams) {
+        return selectList("select_cms_bt_promotion_4_adv_search", condtionParams);
+    }
+
+    /**
      * 根据id查询
      *
      * @param condtionParams condtion Params

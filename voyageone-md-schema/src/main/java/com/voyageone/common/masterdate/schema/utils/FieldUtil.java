@@ -35,9 +35,17 @@ public class FieldUtil {
             switch(inputField.getType()) {
                 case COMPLEX:
                     fieldList = ((ComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((ComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
                 case MULTICOMPLEX:
                     fieldList = ((MultiComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((MultiComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
             }
 
@@ -70,9 +78,17 @@ public class FieldUtil {
             switch(inputField.getType()) {
                 case COMPLEX:
                     fieldList = ((ComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((ComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
                 case MULTICOMPLEX:
                     fieldList = ((MultiComplexField)inputField).getFields();
+                    // added by morse.lu 2016/06/23 start
+                    // map清一下，方便之后取得map时是转换后的field_id
+                    ((MultiComplexField)inputField).clearMapField();
+                    // added by morse.lu 2016/06/23 end
                     break;
             }
 
@@ -274,15 +290,15 @@ public class FieldUtil {
      */
     public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueMap){
         if (rootFields != null && valueMap != null) {
-            List<Field> delResult = new ArrayList<>();
+//            List<Field> delResult = new ArrayList<>();
             for (Field rootField : rootFields) {
-                if (rootField.getIsDisplay() == 1) {
+//                if (rootField.getIsDisplay() == 1) {
                     rootField.setFieldValueFromMap(valueMap);
-                } else {
-                    delResult.add(rootField);
-                }
+//                } else {
+//                    delResult.add(rootField);
+//                }
             }
-            rootFields.removeAll(delResult);
+//            rootFields.removeAll(delResult);
         }
     }
 

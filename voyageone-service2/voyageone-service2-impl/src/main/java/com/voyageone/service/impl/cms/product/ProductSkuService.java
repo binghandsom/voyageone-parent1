@@ -6,6 +6,9 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -13,7 +16,6 @@ import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +38,6 @@ public class ProductSkuService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
-
-    @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
-    private ProductService productService;
 
     /**
      * save Skus
@@ -53,7 +48,7 @@ public class ProductSkuService extends BaseService {
 
         saveSkusAddBlukUpdateModel(channelId, productId, null, skus, bulkInsertList, bulkUpdateList);
 
-        if (bulkInsertList.size() > 0) {
+        if (!bulkInsertList.isEmpty()) {
             BasicDBObject queryObj = (BasicDBObject)bulkInsertList.get(0).getQueryMap();
             BasicDBList skusList = new BasicDBList();
             for (BulkUpdateModel bulkInsert : bulkInsertList) {
@@ -64,7 +59,7 @@ public class ProductSkuService extends BaseService {
             cmsBtProductDao.getDBCollection(channelId).update(queryObj, pushObj);
         }
 
-        if (bulkUpdateList.size() > 0) {
+        if (!bulkUpdateList.isEmpty()) {
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkUpdateList, null, "$set");
         }
     }
@@ -82,7 +77,7 @@ public class ProductSkuService extends BaseService {
                                             Long productId, String productCode,
                                             List<CmsBtProductModel_Sku> models,
                                             List<BulkUpdateModel> bulkInsertList, List<BulkUpdateModel> bulkUpdateList) {
-        if (models == null || models.size() == 0) {
+        if (models == null || models.isEmpty()) {
             return;
         }
 
@@ -97,14 +92,14 @@ public class ProductSkuService extends BaseService {
             queryObject.setQuery("{\"prodId\":" + productId + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else if (StringUtils.isEmpty(productCode)) {
-            queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
+            queryObject.setQuery("{\"common.fields.code\":\"" + productCode + "\"}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
         if (findModel != null) {
             Set<String> findSkuSet = new HashSet<>();
-            if (findModel.getSkus() != null) {
-                for (CmsBtProductModel_Sku findSku : findModel.getSkus()) {
+            if (findModel.getCommon().getSkus() != null) {
+                for (CmsBtProductModel_Sku findSku : findModel.getCommon().getSkus()) {
                     if (findSku != null && findSku.getSkuCode() != null) {
                         findSkuSet.add(findSku.getSkuCode());
                     }
@@ -119,7 +114,7 @@ public class ProductSkuService extends BaseService {
                 if (productId != null) {
                     queryMap.append("prodId", productId);
                 } else {
-                    queryMap.append("fields.code", productCode);
+                    queryMap.append("common.fields.code", productCode);
                 }
                 if (StringUtils.isEmpty(model.getSkuCode())) {
                     throw new RuntimeException("SkuCode not found!");
@@ -129,7 +124,7 @@ public class ProductSkuService extends BaseService {
 
                     BasicDBObject dbObject = model.toUpdateBasicDBObject("skus.$.");
 
-                    if (dbObject.size() > 0) {
+                    if (!dbObject.isEmpty()) {
                         BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                         skuUpdateModel.setUpdateMap(dbObject);
                         skuUpdateModel.setQueryMap(queryMap);
@@ -138,7 +133,7 @@ public class ProductSkuService extends BaseService {
                     }
                 } else {
                     BasicDBObject dbObject = model.toUpdateBasicDBObject("");
-                    if (dbObject.size() > 0) {
+                    if (!dbObject.isEmpty()) {
                         BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                         skuUpdateModel.setUpdateMap(dbObject);
                         skuUpdateModel.setQueryMap(queryMap);
@@ -154,7 +149,7 @@ public class ProductSkuService extends BaseService {
      */
     public int updatePrices(String channelId, List<ProductPriceBean> productPrices, String modifier) {
 
-        if (productPrices == null || productPrices.size() == 0) {
+        if (productPrices == null || productPrices.isEmpty()) {
             throw new RuntimeException("ProductPrices not found!");
         }
 
@@ -172,7 +167,7 @@ public class ProductSkuService extends BaseService {
 
         int result = 0;
         // 更新sku价格变更
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
             result = bulkWriteResult.getInsertedCount() + bulkWriteResult.getModifiedCount();
 
@@ -199,6 +194,12 @@ public class ProductSkuService extends BaseService {
         // 更新platforms.Pxx的RetailPrice和SalePrice的价格区间
         if (cmsProduct.getPlatforms() != null) {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+                // add desmond 2016/07/06 start
+                // P0（主数据）平台不用设置sku（不加这个条件会加一个P0.skus=null）
+                if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                    continue;
+                }
+                // add desmond 2016/07/06 end
                 updateMap.put("platforms.P" + entry.getValue().getCartId() + ".skus", entry.getValue().getSkus());
                 if (entry.getValue().getSkus() != null) {
                     Map<String, Double> result = getPlatformPriceScope(entry.getValue().getSkus());
@@ -248,6 +249,67 @@ public class ProductSkuService extends BaseService {
     }
 
     /**
+     * sku共同属性PriceDiffFlg计算方法
+     * @param channelId 渠道Id
+     * @param sku sku数据
+     * @return 判断结果
+     */
+    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
+
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
+                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+
+        Double breakThreshold = 0.00;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
+        }
+
+        String diffFlg = "1";
+        if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (1.0-breakThreshold);
+            if (priceRetail > sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
+            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (breakThreshold+1.0);
+            if (priceRetail >= sku.getDoubleAttribute("priceSale")) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
+    }
+
+    /**
+     * sku共同属性PriceDiffFlg计算方法
+     * @param breakThreshold 价格计算阀值
+     * @param priceSale 中国最终售价
+     * @param priceRetail 中国指导售价
+     * @return 判断结果
+     */
+    public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
+        String diffFlg = "1";
+        if (priceSale < priceRetail) {
+            if (priceSale < priceRetail * (1 - breakThreshold)) {
+                diffFlg = "5";
+            } else {
+                diffFlg = "2";
+            }
+        } else if (priceSale > priceRetail) {
+            if (priceSale <= priceRetail * (breakThreshold + 1)) {
+                diffFlg = "3";
+            } else {
+                diffFlg = "4";
+            }
+        }
+        return diffFlg;
+    }
+
+    /**
      *  更新group里的价格
      */
     private void updateNewGroupPrice(String channelId, Long ProdId, String modifier) {
@@ -255,19 +317,19 @@ public class ProductSkuService extends BaseService {
         // 先根据产品id找到产品code
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{\"prodId\":" + ProdId + "}", channelId);
         // 再根据产品code从group表中找出其所在group的信息
-        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{\"productCodes\":\"" + findModel.getFields().getCode() + "\"},{\"productCodes\":1,\"groupId\":1}", channelId);
+        List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{\"productCodes\":\"" + findModel.getCommon().getFields().getCode() + "\"},{\"productCodes\":1,\"groupId\":1}", channelId);
         grpList.forEach(grpObj -> {
             // 其所在group下的所有产品code
             List<String> codeList = grpObj.getProductCodes();
-            if (codeList != null && codeList.size() > 0) {
+            if (codeList != null && !codeList.isEmpty()) {
                 // 再找到所有产品fields信息
                 String[] codeArr = new String[codeList.size()];
                 codeArr = codeList.toArray(codeArr);
-                List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{\"common.fields\":1,\"platform\":1}", channelId);
+                List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "},{\"common.fields\":1,\"platform\":1}", channelId);
                 bulkList.add(calculateNewPriceRange(prodList, grpObj, modifier));
             }
         });
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
@@ -279,22 +341,22 @@ public class ProductSkuService extends BaseService {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         for (ProductPriceBean model : productPrices) {
             // 先根据产品id找到产品code
-            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{\"prodId\":" + model.getProductId() + "},{\"fields.code\":1}", channelId);
+            CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery("{\"prodId\":" + model.getProductId() + "},{\"common.fields.code\":1}", channelId);
             // 再根据产品code从group表中找出其所在group的信息
-            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{\"productCodes\":\"" + findModel.getFields().getCode() + "\"},{\"productCodes\":1,\"groupId\":1}", channelId);
+            List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select("{\"productCodes\":\"" + findModel.getCommon().getFields().getCode() + "\"},{\"productCodes\":1,\"groupId\":1}", channelId);
             grpList.forEach(grpObj -> {
                 // 其所在group下的所有产品code
                 List<String> codeList = grpObj.getProductCodes();
-                if (codeList != null && codeList.size() > 0) {
+                if (codeList != null && !codeList.isEmpty()) {
                     // 再找到所有产品fields信息
                     String[] codeArr = new String[codeList.size()];
                     codeArr = codeList.toArray(codeArr);
-                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "},{\"fields\":1}", channelId);
+                    List<CmsBtProductModel> prodList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "},{\"common.fields\":1}", channelId);
                     bulkList.add(calculatePriceRange(prodList, grpObj.getGroupId()));
                 }
             });
         }
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
             cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", false);
         }
     }
@@ -309,25 +371,25 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpEd = null;
 
         for (CmsBtProductModel product : products) {
-            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt) {
-                priceSaleSt = product.getFields().getPriceSaleSt();
+//            if (priceSaleSt == null || product.getCommon().getFields().getPriceSaleSt() < priceSaleSt) {
+//                priceSaleSt = product.getCommon().getFields().getPriceSaleSt();
+//            }
+//            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd) {
+//                priceSaleEd = product.getFields().getPriceSaleEd();
+//            }
+
+            if (priceRetailSt == null || product.getCommon().getFields().getPriceRetailSt() < priceRetailSt) {
+                priceRetailSt = product.getCommon().getFields().getPriceRetailSt();
             }
-            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd) {
-                priceSaleEd = product.getFields().getPriceSaleEd();
+            if (priceRetailEd == null || product.getCommon().getFields().getPriceRetailEd() > priceRetailEd) {
+                priceRetailEd = product.getCommon().getFields().getPriceRetailEd();
             }
 
-            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt) {
-                priceRetailSt = product.getFields().getPriceRetailSt();
+            if (priceMsrpSt == null || product.getCommon().getFields().getPriceMsrpSt() < priceMsrpSt) {
+                priceMsrpSt = product.getCommon().getFields().getPriceMsrpSt();
             }
-            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd) {
-                priceRetailEd = product.getFields().getPriceRetailEd();
-            }
-
-            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt) {
-                priceMsrpSt = product.getFields().getPriceMsrpSt();
-            }
-            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd) {
-                priceMsrpEd = product.getFields().getPriceMsrpEd();
+            if (priceMsrpEd == null || product.getCommon().getFields().getPriceMsrpEd() > priceMsrpEd) {
+                priceMsrpEd = product.getCommon().getFields().getPriceMsrpEd();
             }
         }
 
@@ -358,8 +420,10 @@ public class ProductSkuService extends BaseService {
         Double priceMsrpEd = null;
 
         for (CmsBtProductModel product : products) {
+            // update desmond 2016/07/01 start
+            // 删除group.getCartId() == 23的这种情况
             // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-            if (group.getCartId() != 23) {
+//            if (group.getCartId() != 23) {
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                     if (group.getCartId() == entry.getValue().getCartId()) {
                         if (priceSaleSt == null || entry.getValue().getpPriceSaleSt() < priceSaleSt) {
@@ -370,16 +434,16 @@ public class ProductSkuService extends BaseService {
                         }
                     }
                 }
-            } else{
-                for (CmsBtProductModel_Sku sku : product.getSkus()) {
-                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
-                        priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                    }
-                    if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
-                        priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
-                    }
-                }
-            }
+//            } else{
+//                for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                    if (priceSaleSt == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) < priceSaleSt) {
+//                        priceSaleSt = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+//                    }
+//                    if (priceSaleEd == null || Double.parseDouble(String.valueOf(sku.get("priceSale"))) > priceSaleEd) {
+//                        priceSaleEd = Double.parseDouble(String.valueOf(sku.get("priceSale")));
+//                    }
+//                }
+//            }
 
             if (group.getCartId() == 0 || group.getCartId() == 1) {
                 if (product.getCommon() != null && product.getCommon().getFields() != null && product.getCommon().getFields().getPriceRetailSt() != null) {
@@ -394,7 +458,7 @@ public class ProductSkuService extends BaseService {
                 }
             } else {
                 // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-                if (group.getCartId() != 23) {
+//                if (group.getCartId() != 23) {
                     for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                         if (group.getCartId() == entry.getValue().getCartId()) {
                             if (priceRetailSt == null || entry.getValue().getpPriceRetailSt() < priceRetailSt) {
@@ -405,16 +469,16 @@ public class ProductSkuService extends BaseService {
                             }
                         }
                     }
-                } else{
-                    for (CmsBtProductModel_Sku sku : product.getSkus()) {
-                        if (priceRetailSt == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) < priceRetailSt) {
-                            priceRetailSt = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
-                        }
-                        if (priceRetailEd == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) > priceRetailEd) {
-                            priceRetailEd = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
-                        }
-                    }
-                }
+//                } else{
+//                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                        if (priceRetailSt == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) < priceRetailSt) {
+//                            priceRetailSt = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+//                        }
+//                        if (priceRetailEd == null || Double.parseDouble(String.valueOf(sku.get("priceRetail"))) > priceRetailEd) {
+//                            priceRetailEd = Double.parseDouble(String.valueOf(sku.get("priceRetail")));
+//                        }
+//                    }
+//                }
             }
 
             if (group.getCartId() == 0 || group.getCartId() == 1) {
@@ -430,7 +494,7 @@ public class ProductSkuService extends BaseService {
                 }
             } else {
                 // TODO 0630前暂时的方案，之后会把group.getCartId() == 23的这种情况删除
-                if (group.getCartId() != 23) {
+//                if (group.getCartId() != 23) {
                     for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
                         if (group.getCartId() == entry.getValue().getCartId()) {
                             if (priceMsrpSt == null || entry.getValue().getpPriceMsrpSt() < priceMsrpSt) {
@@ -441,16 +505,17 @@ public class ProductSkuService extends BaseService {
                             }
                         }
                     }
-                } else{
-                    for (CmsBtProductModel_Sku sku : product.getSkus()) {
-                        if (priceMsrpSt == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) < priceMsrpSt) {
-                            priceMsrpSt = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
-                        }
-                        if (priceMsrpEd == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) > priceMsrpEd) {
-                            priceMsrpEd = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
-                        }
-                    }
-                }
+//                } else{
+//                    for (CmsBtProductModel_Sku sku : product.getCommon().getSkus()) {
+//                        if (priceMsrpSt == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) < priceMsrpSt) {
+//                            priceMsrpSt = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+//                        }
+//                        if (priceMsrpEd == null || Double.parseDouble(String.valueOf(sku.get("priceMsrp"))) > priceMsrpEd) {
+//                            priceMsrpEd = Double.parseDouble(String.valueOf(sku.get("priceMsrp")));
+//                        }
+//                    }
+//                }
+                // update desmond 2016/07/01 end
             }
         }
 
@@ -496,22 +561,22 @@ public class ProductSkuService extends BaseService {
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         } else {
-            productQueryMap.put("fields.code", model.getProductCode());
-            queryObject.setQuery("{\"fields.code\":\"" + model.getProductCode() + "\"}");
+            productQueryMap.put("common.fields.code", model.getProductCode());
+            queryObject.setQuery("{\"common.fields.code\":\"" + model.getProductCode() + "\"}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         }
 
-        if (findModel == null || findModel.getSkus() == null) {
+        if (findModel == null || findModel.getCommon().getSkus() == null) {
             return;
         }
-        List<CmsBtProductModel_Sku> findSkuList = findModel.getSkus();
+        List<CmsBtProductModel_Sku> findSkuList = findModel.getCommon().getSkus();
 
         //Sku price set
         List<Double> msrpPriceList = new ArrayList<>();
         List<Double> retailPriceList = new ArrayList<>();
         List<Double> salePriceList = new ArrayList<>();
 
-        if (model.getSkuPrices() != null && model.getSkuPrices().size()>0) {
+        if (model.getSkuPrices() != null && !model.getSkuPrices().isEmpty()) {
 
             // 循环原始sku列表
             for (CmsBtProductModel_Sku skuModelBefore : findSkuList) {
@@ -564,7 +629,7 @@ public class ProductSkuService extends BaseService {
                                 updateMap.put("skus.$.priceChgFlg", skuModel.getPriceChgFlg());
                             }
 
-                            if (updateMap.size() > 0) {
+                            if (!updateMap.isEmpty()) {
                                 BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                                 skuUpdateModel.setUpdateMap(updateMap);
                                 skuUpdateModel.setQueryMap(skuQueryMap);
@@ -588,15 +653,15 @@ public class ProductSkuService extends BaseService {
                     if (skuModelBefore.getPriceRetail() != null) {
                         retailPriceList.add(skuModelBefore.getPriceRetail());
                     }
-                    if (skuModelBefore.getPriceSale() != null) {
-                        salePriceList.add(skuModelBefore.getPriceSale());
-                    }
+//                    if (skuModelBefore.getPriceSale() != null) {
+//                        salePriceList.add(skuModelBefore.getPriceSale());
+//                    }
                 }
             }
         }
 
         //get price price
-        Map<String, Object> resultField = getNewPriceWithFields(findModel.getFields(), msrpPriceList, retailPriceList, salePriceList);
+        Map<String, Object> resultField = getNewPriceWithFields(findModel.getCommon().getFields(), msrpPriceList, retailPriceList, salePriceList);
 
         HashMap<String, Object> productUpdateMap = new HashMap<>();
         if (model.getPriceChange() != null) {
@@ -625,7 +690,7 @@ public class ProductSkuService extends BaseService {
             }
         }
 
-        if (productUpdateMap.size() > 0) {
+        if (!productUpdateMap.isEmpty()) {
             BulkUpdateModel productUpdateModel = new BulkUpdateModel();
             productUpdateModel.setUpdateMap(productUpdateMap);
             productUpdateModel.setQueryMap(productQueryMap);
@@ -675,10 +740,10 @@ public class ProductSkuService extends BaseService {
         if (skuBefore.getPriceRetail() != null) {
             priceRetailBefore = new BigDecimal(skuBefore.getPriceRetail());
         }
-        BigDecimal priceSaleBefore = null;
-        if (skuBefore.getPriceSale() != null) {
-            priceSaleBefore = new BigDecimal(skuBefore.getPriceSale());
-        }
+//        BigDecimal priceSaleBefore = null;
+//        if (skuBefore.getPriceSale() != null) {
+//            priceSaleBefore = new BigDecimal(skuBefore.getPriceSale());
+//        }
 
         BigDecimal priceMsrpAfter = null;
         if (skuAfter.getPriceMsrp() != null) {
@@ -688,10 +753,10 @@ public class ProductSkuService extends BaseService {
         if (skuAfter.getPriceRetail() != null) {
             priceRetailAfter = new BigDecimal(skuAfter.getPriceRetail());
         }
-        BigDecimal priceSaleAfter = null;
-        if (skuAfter.getPriceSale() != null) {
-            priceSaleAfter = new BigDecimal(skuAfter.getPriceSale());
-        }
+//        BigDecimal priceSaleAfter = null;
+//        if (skuAfter.getPriceSale() != null) {
+//            priceSaleAfter = new BigDecimal(skuAfter.getPriceSale());
+//        }
 
         // true:变更前=变更后（没有变更）；false：变更前<>变更后（变更了）
         boolean clientPriceMsrpFlg = true;
@@ -699,7 +764,7 @@ public class ProductSkuService extends BaseService {
         boolean clientPriceNetFlg = true;
         boolean priceMsrpFlg = true;
         boolean priceRetailFlg = true;
-        boolean priceSaleFlg = true;
+//        boolean priceSaleFlg = true;
 
         // 变更后和变更前都存在的情况下进行比较，
         // 变更后值存在,变更前值不存在的情况下，认为变更
@@ -746,16 +811,16 @@ public class ProductSkuService extends BaseService {
             priceRetailFlg = false;
         }
 
-        if (priceSaleBefore != null && priceSaleAfter != null) {
-            if (priceSaleBefore.compareTo(priceSaleAfter) != 0) {
-                priceSaleFlg = false;
-            }
-        } else if (priceSaleAfter != null) {
-            // 变更后值存在,变更前值不存在的情况下，认为变更
-            priceSaleFlg = false;
-        }
+//        if (priceSaleBefore != null && priceSaleAfter != null) {
+//            if (priceSaleBefore.compareTo(priceSaleAfter) != 0) {
+//                priceSaleFlg = false;
+//            }
+//        } else if (priceSaleAfter != null) {
+//            // 变更后值存在,变更前值不存在的情况下，认为变更
+//            priceSaleFlg = false;
+//        }
 
-        return !(clientPriceMsrpFlg && clientPriceRetailFlg && clientPriceNetFlg && priceMsrpFlg && priceRetailFlg && priceSaleFlg);
+        return !(clientPriceMsrpFlg && clientPriceRetailFlg && clientPriceNetFlg && priceMsrpFlg && priceRetailFlg);
     }
 
     /**
@@ -769,14 +834,14 @@ public class ProductSkuService extends BaseService {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> msrpMap = getNewPriceScope(msrpPriceList, field.getPriceMsrpSt(), field.getPriceMsrpEd());
         Map<String, Object> retailMap = getNewPriceScope(retailPriceList, field.getPriceRetailSt(), field.getPriceRetailEd());
-        Map<String, Object> saleMap = getNewPriceScope(salePriceList, field.getPriceSaleSt(), field.getPriceSaleEd());
-        if ((boolean) msrpMap.get("isChanged") || (boolean) retailMap.get("isChanged") || (boolean) saleMap.get("isChanged")) {
+//        Map<String, Object> saleMap = getNewPriceScope(salePriceList, field.getPriceSaleSt(), field.getPriceSaleEd());
+        if ((boolean) msrpMap.get("isChanged") || (boolean) retailMap.get("isChanged")) {
             result.put("priceMsrpSt", msrpMap.get("start"));
             result.put("priceMsrpEd", msrpMap.get("end"));
             result.put("priceRetailSt", retailMap.get("start"));
             result.put("priceRetailEd", retailMap.get("end"));
-            result.put("priceSaleSt", saleMap.get("start"));
-            result.put("priceSaleEd", saleMap.get("end"));
+//            result.put("priceSaleSt", saleMap.get("start"));
+//            result.put("priceSaleEd", saleMap.get("end"));
             result.put("isChanged", true);
         } else {
             result.put("isChanged", false);
@@ -794,7 +859,7 @@ public class ProductSkuService extends BaseService {
         Double start = priceStart;
         Double end = priceEnd;
         Boolean isChanged = false;
-        if (priceList.size() > 0) {
+        if (!priceList.isEmpty()) {
             priceList.sort((o1, o2) -> o2.compareTo(o1));
             start = priceList.get(priceList.size() - 1);
             end = priceList.get(0);
@@ -870,7 +935,7 @@ public class ProductSkuService extends BaseService {
     /**
      * 取得Sku区间
      */
-    private Map<String, Double> getPriceScope(List<CmsBtProductModel_CommonSku> commonSkus) {
+    private Map<String, Double> getPriceScope(List<CmsBtProductModel_Sku> commonSkus) {
 
         Double priceMsrpSt = null;
         Double priceMsrpEd = null;
@@ -878,7 +943,7 @@ public class ProductSkuService extends BaseService {
         Double priceRetailEd = null;
 
         Map<String, Double> result = new HashMap<>();
-        for (CmsBtProductModel_CommonSku commonSku : commonSkus) {
+        for (CmsBtProductModel_Sku commonSku : commonSkus) {
             if (priceMsrpSt == null) {
                 priceMsrpSt = commonSku.getPriceMsrp();
             } else if (priceMsrpSt > commonSku.getPriceMsrp()) {

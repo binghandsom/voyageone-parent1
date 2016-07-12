@@ -15,6 +15,8 @@ import static java.lang.String.format;
  */
 public abstract class VOAbsLoggable {
 
+    private static final String TEMPLATE = "Thread-%s\t| %s";
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
@@ -34,7 +36,7 @@ public abstract class VOAbsLoggable {
             logger.info(arg);
             return;
         }
-        logger.info(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
+        logger.info(String.format(TEMPLATE, Thread.currentThread().getId(), arg));
     }
 
     /**
@@ -48,7 +50,7 @@ public abstract class VOAbsLoggable {
             logger.info(format(template, args));
             return;
         }
-        logger.info(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
+        logger.info(format(TEMPLATE, Thread.currentThread().getId(), format(template, args)));
     }
 
     /**
@@ -61,7 +63,7 @@ public abstract class VOAbsLoggable {
             logger.warn(arg);
             return;
         }
-        logger.warn(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
+        logger.warn(String.format(TEMPLATE, Thread.currentThread().getId(), arg));
     }
 
     /**
@@ -75,7 +77,7 @@ public abstract class VOAbsLoggable {
             logger.warn(format(template, args));
             return;
         }
-        logger.warn(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
+        logger.warn(format(TEMPLATE, Thread.currentThread().getId(), format(template, args)));
     }
 
     /**
@@ -88,20 +90,20 @@ public abstract class VOAbsLoggable {
             logger.error(arg);
             return;
         }
-        logger.error(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
+        logger.error(String.format(TEMPLATE, Thread.currentThread().getId(), arg));
     }
 
     /**
      * logger.error 的辅助方法
      *
-     * @param t   Throwable
+     * @param t Throwable
      */
     public void $error(Throwable t) {
         if (!getLogWithThread()) {
             logger.error(CommonUtil.getMessages(t));
             return;
         }
-        logger.error(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), t.getMessage()), t);
+        logger.error(String.format(TEMPLATE, Thread.currentThread().getId(), t.getMessage()), t);
     }
 
     /**
@@ -115,7 +117,7 @@ public abstract class VOAbsLoggable {
             logger.error(msg, t);
             return;
         }
-        logger.error(format("Thread-%s\t| %s", Thread.currentThread().getId(), msg), t);
+        logger.error(format(TEMPLATE, Thread.currentThread().getId(), msg), t);
     }
 
     /**
@@ -129,7 +131,7 @@ public abstract class VOAbsLoggable {
             logger.error(format(template, args));
             return;
         }
-        logger.error(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
+        logger.error(format(TEMPLATE, Thread.currentThread().getId(), format(template, args)));
     }
 
     public boolean $isDebugEnabled() {
@@ -146,7 +148,7 @@ public abstract class VOAbsLoggable {
             logger.debug(arg);
             return;
         }
-        logger.debug(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
+        logger.debug(String.format(TEMPLATE, Thread.currentThread().getId(), arg));
     }
 
     /**
@@ -160,7 +162,7 @@ public abstract class VOAbsLoggable {
             logger.debug(format(template, args));
             return;
         }
-        logger.debug(format("Thread-%s\t| %s", Thread.currentThread().getId(), format(template, args)));
+        logger.debug(format(TEMPLATE, Thread.currentThread().getId(), format(template, args)));
     }
 
     /**
@@ -171,6 +173,6 @@ public abstract class VOAbsLoggable {
             logger.debug(msg, t);
             return;
         }
-        logger.debug(format("Thread-%s\t| %s", Thread.currentThread().getId(), msg), t);
+        logger.debug(format(TEMPLATE, Thread.currentThread().getId(), msg), t);
     }
 }

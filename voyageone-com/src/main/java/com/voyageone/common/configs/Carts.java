@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class Carts {
     private static final Class selfClass = Carts.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString();

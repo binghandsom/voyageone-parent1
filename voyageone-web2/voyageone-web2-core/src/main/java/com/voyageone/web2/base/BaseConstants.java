@@ -38,4 +38,5 @@ public interface BaseConstants {
      * 未知异常Message
      */
     String UNKNOWN_ERROR_MSG = "Unknown exception, please contact the administrator.";
+
 }

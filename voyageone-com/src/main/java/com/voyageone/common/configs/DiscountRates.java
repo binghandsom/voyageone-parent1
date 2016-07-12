@@ -22,7 +22,7 @@ public class DiscountRates {
 
     private static final Class selfClass = DiscountRates.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_DiscountRateConfigs.toString();

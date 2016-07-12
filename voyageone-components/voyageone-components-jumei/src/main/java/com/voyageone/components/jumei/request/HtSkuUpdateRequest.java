@@ -72,7 +72,7 @@ public class HtSkuUpdateRequest implements BaseJMRequest {
     }
 
     @Override
-    public Map<String, Object> getParameter() throws IOException {
+    public Map<String, Object> getParameter() {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_sku_no", this.getJumei_sku_no());
         params.put("jumei_hash_id", this.getJumei_hash_id());

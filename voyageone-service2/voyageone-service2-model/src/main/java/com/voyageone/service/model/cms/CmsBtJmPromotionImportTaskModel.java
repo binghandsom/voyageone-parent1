@@ -64,6 +64,11 @@ public class CmsBtJmPromotionImportTaskModel extends BaseModel {
      */
     protected Date endTime;
 
+    /**
+     * 源文件名
+     */
+    protected String originFileName;
+
     public Integer getCmsBtJmPromotionId() {
         return cmsBtJmPromotionId;
     }
@@ -142,5 +147,13 @@ public class CmsBtJmPromotionImportTaskModel extends BaseModel {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getOriginFileName() {
+        return originFileName;
+    }
+
+    public void setOriginFileName(String originFileName) {
+        this.originFileName = originFileName == null ? null : originFileName.trim();
     }
 }

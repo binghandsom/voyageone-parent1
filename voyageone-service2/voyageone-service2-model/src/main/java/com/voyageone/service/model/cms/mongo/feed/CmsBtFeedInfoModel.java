@@ -29,7 +29,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String code;
     private String name;
     private String model;
-    private String color;
+    private String color; // 对应主数据的codeDiff:商品特质英文（颜色/口味/香型等）
     private String origin;
     private String sizeType;
     private List<String> image;
@@ -41,11 +41,12 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<Map> attributeList;
     private Map<String, List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
-    private int updFlg;
+    private Integer updFlg;
+    private String updMessage="";
     private String clientProductURL = "";
     private Integer qty = 0;
+    private String usageEn = "";
     private String isFeedReImport;
-
     private String productType;
     private String material;
 
@@ -242,11 +243,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.attributeList = null;
     }
 
-    public int getUpdFlg() {
+    public Integer getUpdFlg() {
         return updFlg;
     }
 
-    public void setUpdFlg(int updFlg) {
+    public void setUpdFlg(Integer updFlg) {
         this.updFlg = updFlg;
     }
 
@@ -281,6 +282,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
         cmsBtFeedInfoModel.setProductType(this.productType);
         cmsBtFeedInfoModel.setMaterial(this.material);
+        cmsBtFeedInfoModel.setUsageEn(this.usageEn);
         return cmsBtFeedInfoModel;
     }
 
@@ -311,4 +313,20 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public String getIsFeedReImport() { return isFeedReImport; }
 
     public void setIsFeedReImport(String isFeedReImport) { this.isFeedReImport = isFeedReImport; }
+
+    public String getUpdMessage() {
+        return updMessage;
+    }
+
+    public void setUpdMessage(String updMessage) {
+        this.updMessage = updMessage;
+    }
+
+    public String getUsageEn() {
+        return usageEn;
+    }
+
+    public void setUsageEn(String usageEn) {
+        this.usageEn = usageEn;
+    }
 }

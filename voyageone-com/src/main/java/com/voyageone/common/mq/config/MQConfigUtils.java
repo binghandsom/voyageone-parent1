@@ -15,9 +15,7 @@ public class MQConfigUtils {
     private static String addStr = null;
 
     public static String getAddStrQueneName(String queneName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(queneName).append("_").append(getIP()).append(EXISTS_IP);
-        return sb.toString();
+        return queneName + "_" + getIP() + EXISTS_IP;
     }
 
     public static String getIP(){

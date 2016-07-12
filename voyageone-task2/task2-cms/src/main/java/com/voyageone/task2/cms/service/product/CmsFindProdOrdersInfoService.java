@@ -113,7 +113,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 // check product sales exist
                 List<CmsBtProductModel> prodListThead = new ArrayList<>();
                 for (CmsBtProductModel prodObj : prodList) {
-                    if (prodCodeSet.contains(prodObj.getFields().getCode())) {
+                    if (prodCodeSet.contains(prodObj.getCommon().getFields().getCode())) {
                         prodListThead.add(prodObj);
                     }
                 }

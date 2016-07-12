@@ -5,7 +5,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionImportTaskService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
@@ -26,8 +26,8 @@ import java.util.*;
         method = RequestMethod.POST
 )
 public class CmsBtJmPromotionImportTaskController extends CmsController {
-    @Autowired
-    private CmsBtJmPromotionImportTaskService service;
+   @Autowired
+    private CmsBtJmPromotionImportTask3Service service;
     @Autowired
     private MqSender sender;
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionImportTask.LIST.INDEX.GET_BY_PROMOTIONID)
@@ -61,17 +61,19 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         String userName = getUser().getUserName();
         String path = Properties.readValue(CmsProperty.Props.CMS_JM_IMPORT_PATH);
         FileUtils.mkdirPath(path);
-        List<String> listFileName = FileUtils.uploadFile(request, path);//上传文件
+        String timerstr = DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS");
+        List<String> listFileName = FileUtils.uploadFile(request, path,timerstr);//上传文件
         List<CmsBtJmPromotionImportTaskModel> listModel = new ArrayList<>();
         CmsBtJmPromotionImportTaskModel model = null;
         for (String fileName : listFileName) {
             model = new CmsBtJmPromotionImportTaskModel();
-            model.setFileName(fileName);
+            model.setFileName(timerstr+fileName);
             model.setCmsBtJmPromotionId(promotionId);
             model.setCreater(userName);
             model.setCreated(new Date());
             model.setModifier(userName);
             model.setModified(new Date());
+            model.setOriginFileName(fileName);
 
             model.setBeginTime(DateTimeUtil.getCreatedDefaultDate());
             model.setEndTime(DateTimeUtil.getCreatedDefaultDate());

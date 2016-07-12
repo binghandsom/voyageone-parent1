@@ -67,9 +67,6 @@ public class CmsBtPromotionModel extends BaseModel {
      */
     protected Integer isAllPromotion;
 
-    /**
-     * promotionId(jm,tm,jd等)
-     */
     protected Integer promotionId;
 
     public String getChannelId() {

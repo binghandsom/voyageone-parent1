@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class Shops {
     private static final Class selfClass = Shops.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();

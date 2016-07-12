@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.web2.base.BaseAppService;
@@ -24,8 +23,6 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
     private CommonPropService commonPropService;
     @Autowired
     private FeedCustomPropService feedCustomPropService;
-    @Autowired
-    private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
     @Autowired
     private CmsAdvSearchQueryService advSearchQueryService;
 
@@ -76,7 +73,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         String[] commList = commStr.split(",");
         StringBuilder commonPropsStr = new StringBuilder();
         if (commList.length > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 Map<String, String> atts = new HashMap<>(2);
@@ -99,7 +96,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         cmsSession.putAttribute("_adv_search_customProps", customProps2);
         cmsSession.putAttribute("_adv_search_commonProps", commonProp2);
 
-        List<Map<String, Object>> rsList2 = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
+        List<Map<String, Object>> rsList2 = commonPropService.getUserCustColumnsSalesType(userId);
         List<String> itemList = new ArrayList<>();
         if (!rsList2.isEmpty()) {
             String itemVal = org.apache.commons.lang3.StringUtils.trimToNull((String) rsList2.get(0).get("cfg_val2"));
@@ -119,7 +116,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         Map<String, Object> rsMap = new HashMap<>();
         rsMap.put("salesTypeList", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
 
-        List<Map<String, Object>> rsList2 = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userInfo.getUserId());
+        List<Map<String, Object>> rsList2 = commonPropService.getUserCustColumnsSalesType(userInfo.getUserId());
         if (rsList2 == null || rsList2.isEmpty()) {
             rsMap.put("selSalesTypeList", new String[]{});
         } else {
@@ -168,7 +165,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         List<Map<String, Object>> commonProp2 = new ArrayList<>();
         StringBuilder commonPropsStr = new StringBuilder();
         if (param2 != null && param2.size() > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (param2.contains(propId)) {
@@ -194,7 +191,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
             $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
 
-        rsList = cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userInfo.getUserId());
+        rsList = commonPropService.getUserCustColumnsSalesType(userInfo.getUserId());
         String selStr;
         if (selSalesTypeList == null || selSalesTypeList.isEmpty()) {
             selStr = "";
@@ -202,9 +199,9 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
             selStr = selSalesTypeList.stream().collect(Collectors.joining(","));
         }
         if (rsList == null || rsList.isEmpty()) {
-            rs = cmsMtCommonPropDaoExt.insertUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
+            rs = commonPropService.addUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
         } else {
-            rs = cmsMtCommonPropDaoExt.updateUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
+            rs = commonPropService.saveUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
         }
         if (selSalesTypeList == null) {
             selSalesTypeList = new ArrayList<>(0);

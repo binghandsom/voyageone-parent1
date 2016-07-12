@@ -147,12 +147,43 @@
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_bt_size_map
+        <where >
+            <if test="sizeMapGroupId != null" >
+                and `size_map_group_id` = #{sizeMapGroupId,jdbcType=INTEGER}
+            </if>
+            <if test="originalSize != null" >
+                and `original_size` = #{originalSize,jdbcType=VARCHAR}
+            </if>
+            <if test="adjustSize != null" >
+                and `adjust_size` = #{adjustSize,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_size_map
         <where >
             <if test="sizeMapGroupId != null" >
                 and `size_map_group_id` = #{sizeMapGroupId,jdbcType=INTEGER}

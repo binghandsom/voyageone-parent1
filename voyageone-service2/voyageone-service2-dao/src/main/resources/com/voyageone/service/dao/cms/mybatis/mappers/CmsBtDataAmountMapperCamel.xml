@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtDataAmountModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `amount_name`, `amount_val`, `comment`, `created`, `creater`, 
-        `modified`, `modifier`
+        `modified`, `modifier`, `cart_id`, `data_amount_type_id`, `link_url`, `link_parameter`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,6 +39,18 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="dataAmountTypeId != null" >
+                `data_amount_type_id`,
+            </if>
+            <if test="linkUrl != null" >
+                `link_url`,
+            </if>
+            <if test="linkParameter != null" >
+                `link_parameter`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -75,6 +87,18 @@
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="dataAmountTypeId != null" >
+                #{dataAmountTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="linkUrl != null" >
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="linkParameter != null" >
+                #{linkParameter,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -107,6 +131,18 @@
             </if>
             <if test="creater != null" >
                 `modifier` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="dataAmountTypeId != null" >
+                `data_amount_type_id` = #{dataAmountTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="linkUrl != null" >
+                `link_url` = #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="linkParameter != null" >
+                `link_parameter` = #{linkParameter,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -146,7 +182,20 @@
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="dataAmountTypeId != null" >
+                and `data_amount_type_id` = #{dataAmountTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="linkUrl != null" >
+                and `link_url` = #{linkUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="linkParameter != null" >
+                and `link_parameter` = #{linkParameter,jdbcType=VARCHAR}
+            </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
@@ -177,6 +226,60 @@
             </if>
             <if test="creater != null" >
                 and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="dataAmountTypeId != null" >
+                and `data_amount_type_id` = #{dataAmountTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="linkUrl != null" >
+                and `link_url` = #{linkUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="linkParameter != null" >
+                and `link_parameter` = #{linkParameter,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_data_amount
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="amountName != null" >
+                and `amount_name` = #{amountName,jdbcType=VARCHAR}
+            </if>
+            <if test="amountVal != null" >
+                and `amount_val` = #{amountVal,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="dataAmountTypeId != null" >
+                and `data_amount_type_id` = #{dataAmountTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="linkUrl != null" >
+                and `link_url` = #{linkUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="linkParameter != null" >
+                and `link_parameter` = #{linkParameter,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

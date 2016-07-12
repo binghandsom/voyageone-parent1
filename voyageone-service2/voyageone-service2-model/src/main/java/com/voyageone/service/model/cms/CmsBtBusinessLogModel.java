@@ -19,8 +19,6 @@ public class CmsBtBusinessLogModel extends BaseModel {
 
     protected Integer cartId;
 
-    protected String cartName;
-
     protected String groupId;
 
     protected String groupName;
@@ -200,13 +198,5 @@ public class CmsBtBusinessLogModel extends BaseModel {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getCartName() {
-        return cartName;
-    }
-
-    public void setCartName(String cartName) {
-        this.cartName = cartName;
     }
 }

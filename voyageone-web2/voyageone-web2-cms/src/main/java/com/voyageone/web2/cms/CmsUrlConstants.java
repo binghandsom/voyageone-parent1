@@ -20,8 +20,8 @@ public interface CmsUrlConstants {
             String GET_CATE_TYPE = "getPlatformType";
 
             String SET_CATE_TYPE = "setPlatformType";
+            String GetHomeSumData="getHomeSumData";
         }
-
     }
 
     interface JMPROMOTION {
@@ -29,7 +29,7 @@ public interface CmsUrlConstants {
             interface INDEX {
                 String ROOT = "/cms/jmpromotion/index";
                 String INIT = "init";
-                String GET_LIST_BY_WHERE = "selectListByWhere";
+                String GET_LIST_BY_WHERE = "getListByWhere";
                 String SaveModel = "saveModel";
                 String DELETE = "delete";
                 String GET = "get";
@@ -41,10 +41,8 @@ public interface CmsUrlConstants {
 
             interface DETAIL {
                 String ROOT = "/cms/jmpromotion/detail";
-
                 String INIT = "init";
-
-                String GET_LIST_BY_WHERE = "selectListByWhere";
+                String GET_LIST_BY_WHERE = "getListByWhere";
                 String GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE = "getPromotionProductInfoListByWhere";
                 String GetPromotionProductInfoCountByWhere = "getPromotionProductInfoCountByWhere";
                 String INSERT = "insert";
@@ -74,6 +72,9 @@ public interface CmsUrlConstants {
                 String DeleteAllProduct="deleteAllProduct";
                 String GetProductView="getProductView";
                 String UpdateDealPrice="updateDealPrice";
+                String UpdatePromotionProduct="updatePromotionProduct";
+                String UpdatePromotionProductTag="updatePromotionProductTag";
+                String SelectChangeCountByPromotionId="selectChangeCountByPromotionId";
             }
         }
     }
@@ -102,12 +103,12 @@ public interface CmsUrlConstants {
             interface INDEX {
                 String ROOT = "/cms/cmsmtmasterinfo/index";
                 String INIT = "init";
-                String GET_LIST_BY_WHERE = "selectListByWhere";
+                String GET_LIST_BY_WHERE = "getListByWhere";
                 String INSERT = "insert";
                 String UPDATE = "update";
                 String GET = "get";
                 String UPDATEJMIMG = "updateJMImg";
-                String GetCountByWhere = "selectCountByWhere";
+                String GetCountByWhere = "getCountByWhere";
                 String LoadJmMasterBrand = "loadJmMasterBrand";
             }
         }
@@ -120,7 +121,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String INSERT = "insert";
                 String UPDATE = "update";
-                String GETBYKEY = "selectByKey";
+                String GETBYKEY = "getByKey";
 
             }
         }
@@ -314,6 +315,10 @@ public interface CmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
+            String EXPORT = "export";
+            String REEXPORT = "reExport";
+            String EXPORTSEARCH = "exportSearch";
+            String DOWNLOAD = "download";
         }
     }
 
@@ -416,6 +421,8 @@ public interface CmsUrlConstants {
             String GET_CATEGORY_DETAIL = "getCategoryDetail";
 
             String UPDATE_CATEGORY_SCHEMA = "updateCategorySchema";
+
+            String GET_NEW_CATEGORY_LIST = "getNewsCategoryList";
         }
 
         interface ERROR {
@@ -465,11 +472,13 @@ public interface CmsUrlConstants {
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
-        interface PRICE {
+        interface PRICE_LOG {
 
-            String ROOT = "/cms/pop/history_price/";
+            String ROOT = "/cms/price/log";
 
-            String GET_PRICE_HISTORY = "getPriceHistory";
+            String PAGE = "page";
+
+            String EXPORT = "export";
         }
 
         interface PROMOTION {
@@ -486,7 +495,7 @@ public interface CmsUrlConstants {
             String UPLOAD_IMAGE = "uploadImage";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
-            String ROOT = "/cms/pop/add_to_channel_category/";
+            String ROOT = "/cms/pop/add_to_channel_category";
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
         }
@@ -519,6 +528,16 @@ public interface CmsUrlConstants {
 
             String CHANGE_PLATFORM_CATEGORY ="changePlatformCategory";
 
+            String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
+
+            String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
+
+            String UPDATE_LOCK = "updateLock";
+
+            String UPDATE_FEED_ATTS = "updateProductAtts";
+
+            String CHECK_CATEGORY = "checkCategory";
+
         }
 
     }
@@ -543,21 +562,17 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/translation/tasks";
 
-            String GET_TASKS = "getTasks";
+            String INIT = "init";
 
-            String SEARCH_HISTORY_TASKS = "searchHistoryTasks";
+            String SEARCH = "search";
 
-            String ASSIGN_TASKS = "assignTasks";
+            String ASSIGN = "assign";
 
-            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+            String SAVE = "save";
 
-            String SAVE_TASK = "saveTask";
+            String SUBMIT = "submit";
 
-            String SUBMIT_TASK = "submitTask";
-
-            String CANCEL_TASK = "cancelTask";
-
-            String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+            String GET = "get";
         }
     }
 
@@ -604,7 +619,7 @@ public interface CmsUrlConstants {
         interface CHANNEL_IMAGE_TEMPLATE {
             String ROOT = "/cms/channel/image_template";
             String Init = "init";
-            String GetPage = "selectPage";
+            String GetPage = "getPage";
             String GetCount = "getCount";
             String Save = "save";
             String Delete = "delete";
@@ -659,8 +674,8 @@ public interface CmsUrlConstants {
     interface ImageCreate {
         String ROOT = "/cms/imagecreate/index";
         String Upload = "upload";
-        String GetPageByWhere = "selectPageByWhere";
-        String GetCountByWhere = "selectCountByWhere";
+        String GetPageByWhere = "getPageByWhere";
+        String GetCountByWhere = "getCountByWhere";
         String DownloadExcel = "downloadExcel";
         String DownloadImportErrorExcel = "downloadImportErrorExcel";
     }
@@ -668,7 +683,7 @@ public interface CmsUrlConstants {
     interface TOOLS{
         interface PRODUCT {
 
-            String ROOT = "/cms/tools/product";
+            String ROOT = "/cms/tools/product/";
 
             String INIT_HS_CODE_INFO = "initHsCodeInfo";
 

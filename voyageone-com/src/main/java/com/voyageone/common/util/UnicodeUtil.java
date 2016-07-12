@@ -1,8 +1,5 @@
 package com.voyageone.common.util;
 
-/**
- * Created by dell on 2016/6/2.
- */
 public class UnicodeUtil {
     public static String decodeUnicode(String theString) {
 
@@ -10,9 +7,9 @@ public class UnicodeUtil {
 
         int len = theString.length();
 
-        StringBuffer outBuffer = new StringBuffer(len);
+        StringBuilder outBuffer = new StringBuilder(len);
 
-        for (int x = 0; x < len;) {
+        for (int x = 0; x < len; ) {
 
             aChar = theString.charAt(x++);
 

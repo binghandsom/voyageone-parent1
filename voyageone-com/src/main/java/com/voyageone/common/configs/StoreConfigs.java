@@ -20,7 +20,7 @@ import java.util.*;
 public class StoreConfigs {
     private static final Class selfClass = StoreConfigs.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_StoreConfigConfigs.toString();

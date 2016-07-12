@@ -34,6 +34,15 @@ a:focus {
     text-decoration: none;
 }
 
+a.a-link{
+    color: #e67e22;
+    text-decoration: underline;
+}
+
+a.a-link:hover{
+    color: #000;
+}
+
 label {
     font-weight: normal;
 }

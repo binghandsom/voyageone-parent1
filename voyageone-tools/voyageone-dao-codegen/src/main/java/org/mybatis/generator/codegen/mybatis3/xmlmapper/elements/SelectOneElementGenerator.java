@@ -5,6 +5,8 @@ import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.internal.util.StringUtility;
 
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 
@@ -82,6 +84,17 @@ public class SelectOneElementGenerator extends AbstractXmlElementGenerator {
 
             isNotNullElement.addElement(new TextElement(sb.toString()));
         }
+
+        //order by
+        String orderByClause = introspectedTable.getTableConfigurationProperty(PropertyRegistry.TABLE_SELECT_ORDER_BY_CLAUSE);
+        boolean hasOrderBy = StringUtility.stringHasValue(orderByClause);
+        if (hasOrderBy) {
+            XmlElement ifElement = getOrderByIncludeElement();
+            answer.addElement(ifElement);
+        }
+
+        TextElement textElement = getLimitOneIncludeElement();
+        answer.addElement(textElement);
 
         if (context.getPlugins()
                 .sqlMapSelectByPrimaryKeyElementGenerated(answer,

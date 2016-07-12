@@ -21,12 +21,6 @@ public class DataAmountService extends BaseService {
 
     /**
      * 插入统计数据表
-     * @param channelId
-     * @param amountName
-     * @param amountVal
-     * @param comment
-     * @param modifier
-     * @return
      */
     public int updateWithInsert(String channelId, String amountName, String amountVal, String comment, String modifier) {
         boolean upFlg = true;
@@ -49,9 +43,9 @@ public class DataAmountService extends BaseService {
             result.setModifier(modifier);
         }
 
-        if(upFlg)
+        if (upFlg) {
             return cmsBtDataAmountDao.update(result);
-        else {
+        } else {
             return cmsBtDataAmountDao.insert(result);
         }
 

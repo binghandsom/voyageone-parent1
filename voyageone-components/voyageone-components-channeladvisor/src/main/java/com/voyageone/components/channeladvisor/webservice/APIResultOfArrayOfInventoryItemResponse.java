@@ -1,10 +1,6 @@
 
 package com.voyageone.components.channeladvisor.webservice;
 
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.ArrayOfInventoryItemResponse;
-import com.voyageone.components.channeladvisor.webservice.ResultStatus;
-
 import javax.xml.bind.annotation.*;
 
 

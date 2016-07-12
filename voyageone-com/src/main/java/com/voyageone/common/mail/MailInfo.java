@@ -19,13 +19,13 @@ import java.util.Properties;
  * @version 0.0.1
  */
 public final class MailInfo {
-    private final static String contentType = "text/html;charset=GB2312";
+    private static final String contentType = "text/html;charset=GB2312";
 
-    private final static String meta = "<meta http-equiv=Context-Type context=text/html;charset=gb2312>";
+    private static final String meta = "<meta http-equiv=Context-Type context=text/html;charset=gb2312>";
 
-    private final static String key_host = "mail.smtp.host";
-    private final static String key_timeout = "mail.smtp.timeout";
-    private final static String key_auth = "mail.smtp.auth";
+    private static final String key_host = "mail.smtp.host";
+    private static final String key_timeout = "mail.smtp.timeout";
+    private static final String key_auth = "mail.smtp.auth";
 
     private static Properties properties;
 

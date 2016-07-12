@@ -29,7 +29,7 @@
 	</sql>
 
     <!-- 根据条件查询 -->
-    <select id="select_business_log_By_Condition" resultType="com.voyageone.service.model.cms.CmsBtBusinessLogModel"
+    <select id="select_business_log_By_Condition" resultType="com.voyageone.service.bean.cms.CmsBtBusinessLogBean"
             parameterType="Map">
         select
         <include refid="fields"/>

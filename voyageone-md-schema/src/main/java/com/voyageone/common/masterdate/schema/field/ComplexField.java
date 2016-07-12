@@ -48,6 +48,10 @@ public class ComplexField extends Field {
         fields = new ArrayList<>();
         mapField = null;
     }
+
+    public void clearMapField() {
+        mapField = null;
+    }
     // added by morse.lu 2016/06/22 end
 
     public ComplexValue getComplexValue() {

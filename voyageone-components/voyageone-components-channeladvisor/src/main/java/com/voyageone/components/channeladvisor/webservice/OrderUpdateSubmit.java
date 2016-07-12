@@ -1,16 +1,13 @@
 package com.voyageone.components.channeladvisor.webservice;
 
+import com.voyageone.components.channeladvisor.bean.orders.BillingInfoUpdateSubmit;
+import com.voyageone.components.channeladvisor.bean.orders.PaymentInfoUpdateSubmit;
+import com.voyageone.components.channeladvisor.bean.orders.ShippingInfoUpdateSubmit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import com.voyageone.components.channeladvisor.bean.orders.BillingInfoUpdateSubmit;
-import com.voyageone.components.channeladvisor.bean.orders.PaymentInfoUpdateSubmit;
-import com.voyageone.components.channeladvisor.bean.orders.ShippingInfoUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.OrderStatusUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.ShippingMethodInfoUpdateSubmit;
-import com.voyageone.components.channeladvisor.webservice.TransactionNoteSubmit;
 
 /**
  * <p>

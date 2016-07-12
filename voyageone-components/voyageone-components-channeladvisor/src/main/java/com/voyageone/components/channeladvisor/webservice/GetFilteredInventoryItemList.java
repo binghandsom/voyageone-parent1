@@ -1,8 +1,4 @@
-
 package com.voyageone.components.channeladvisor.webservice;
-
-import com.voyageone.components.channeladvisor.webservice.*;
-import com.voyageone.components.channeladvisor.webservice.InventoryItemDetailLevel;
 
 import javax.xml.bind.annotation.*;
 

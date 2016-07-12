@@ -10,10 +10,10 @@ package com.voyageone.common.configs.Enums;
  */
 public class CacheKeyEnums {
 
-    public final static String CONFIG_ALL_KEY_REGEX = "ConfigData_*";
+    public static final String CONFIG_ALL_KEY_REGEX = "ConfigData_*";
 
     /* 公用分隔符，防止因分割符产生的bug而声明 */
-    public final static String SKIP = "$-SKIP-$";
+    public static final String SKIP = "$-SKIP-$";
 
     public enum KeyEnum {
 
@@ -53,6 +53,8 @@ public class CacheKeyEnums {
 
         ConfigData_CartConfigs,
 
-        ConfigData_UsJois;
+        ConfigData_UsJois,
+
+        ConfigData_VmsChannelConfigs;
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class Properties {
 
-    private final static Logger logger = LoggerFactory.getLogger(Properties.class);
+    private static final Logger logger = LoggerFactory.getLogger(Properties.class);
 
     private static Map<String, String> keyValueMap;
 
@@ -64,11 +64,13 @@ public class Properties {
      * 读取配置值
      */
     public static String readValue(String key) {
-        if(keyValueMap == null) try {
-            init();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(keyValueMap == null) {
+            try {
+                init();
+            } catch (IOException e) {
+                logger.warn(e.getMessage());
+            }
         }
-        return keyValueMap.get(key);
+        return keyValueMap != null ? keyValueMap.get(key) : null;
     }
 }

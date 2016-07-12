@@ -24,17 +24,20 @@ public class CommonPropService extends BaseService {
     private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
     // 取得自定义显示列设置
-    public List<Map<String, Object>> getCustColumns() {
-        return cmsMtCommonPropDaoExt.selectCustColumns();
-    }
-
-    // 取得排序用显示列设置
-    public List<Map<String, Object>> getSortColumns() {
-        return cmsMtCommonPropDaoExt.selectSortColumns();
+    // selType=1:  自定义搜索条件用
+    // selType=2:  设置自定义显示列弹出画面用
+    // selType=3:  排序条件
+    public List<Map<String, Object>> getCustColumns(int selType) {
+        return cmsMtCommonPropDaoExt.selectCustColumns(selType);
     }
 
     public List<Map<String, Object>> getCustColumnsByUserId(int userId) {
         return cmsMtCommonPropDaoExt.selectUserCustColumns(userId);
+    }
+
+    // 取得用户自定义显示列设置
+    public List<Map<String, Object>> getUserCustColumnsSalesType(int userId) {
+        return cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
     }
 
     @VOTransactional
@@ -45,6 +48,16 @@ public class CommonPropService extends BaseService {
     @VOTransactional
     public int saveUserCustColumn(int userId, String userName, String param1, String param2) {
         return cmsMtCommonPropDaoExt.updateUserCustColumns(userId, userName, param1, param2);
+    }
+
+    @VOTransactional
+    public int addUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return cmsMtCommonPropDaoExt.insertUserCustColumnsSalesType(userId, userName, param1);
+    }
+
+    @VOTransactional
+    public int saveUserCustColumnsSalesType(int userId, String userName, String param1) {
+        return cmsMtCommonPropDaoExt.updateUserCustColumnsSalesType(userId, userName, param1);
     }
 
 }

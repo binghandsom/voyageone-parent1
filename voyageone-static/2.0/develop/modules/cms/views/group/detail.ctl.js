@@ -14,7 +14,8 @@ define([
             productList: [],
             productIds: [],
             //productPageOption: {curr: 1, total: 0, fetch: getProductList},
-            groupInfo: null
+            groupInfo: null,
+            productUrl: ""
         };
 
         $scope.initialize = initialize;
@@ -35,6 +36,7 @@ define([
                     //$scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productIds = res.data.productIds;
                     $scope.vm.groupInfo = res.data.groupInfo;
+                    $scope.vm.productUrl = res.data.productUrl
                 });
         }
 

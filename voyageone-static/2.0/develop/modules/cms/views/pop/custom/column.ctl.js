@@ -5,7 +5,7 @@ define([
     'angularAMD'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService, $modalInstance) {
+    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService2, $modalInstance) {
         // 从后台取得的全部列
         $scope.cus = {
             customProps:[],
@@ -16,7 +16,7 @@ define([
          * 初始化数据.
          */
         $scope.initialize = function () {
-            $searchAdvanceService.getCustColumnsInfo().then(function (res) {
+            $searchAdvanceService2.getCustColumnsInfo().then(function (res) {
                 $scope.cus.customProps = res.data.customProps;
                 $scope.cus.commonProps = res.data.commonProps;
                 $scope.cus.salesTypeList = res.data.salesTypeList;
@@ -29,6 +29,28 @@ define([
                 _.forEach($scope.cus.salesTypeList, function (data) {
                     data.isChk = _.contains(res.data.selSalesTypeList, data.value);
                 });
+                // 检查全选框
+                var chkSts = false;
+                for (keyIdx in $scope.cus.commonProps) {
+                    if (!$scope.cus.commonProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_commonData = !chkSts;
+                chkSts = false;
+                for (keyIdx in $scope.cus.customProps) {
+                    if (!$scope.cus.customProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_customData = !chkSts;
+                chkSts = false;
+                for (keyIdx in $scope.cus.salesTypeList) {
+                    if (!$scope.cus.salesTypeList[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_salesType = !chkSts;
             })
         };
 
@@ -58,7 +80,7 @@ define([
             params.customProps = customProps;
             params.commonProps = commonProps;
             params.selSalesTypeList = selSalesTypeList;
-            $searchAdvanceService.saveCustColumnsInfo(params).then(function() {
+            $searchAdvanceService2.saveCustColumnsInfo(params).then(function() {
                 $modalInstance.close('');
             });
         };
@@ -67,6 +89,49 @@ define([
             $modalInstance.dismiss();
         }
 
+        // 全选框的操作
+        $scope.chkSelStatus = function (stsType) {
+            if (stsType == 1) {
+                _.forEach($scope.cus.commonProps, function (data) {
+                    data.isChk = $scope.cus.all_commonData;
+                });
+            } else if (stsType == 2) {
+                _.forEach($scope.cus.customProps, function (data) {
+                    data.isChk = $scope.cus.all_customData;
+                });
+            } else if (stsType == 3) {
+                _.forEach($scope.cus.salesTypeList, function (data) {
+                    data.isChk = $scope.cus.all_salesType;
+                });
+            }
+        };
+
+        // 勾选明细时对全选框的操作
+        $scope.chkItemStatus = function (stsType) {
+            var chkSts = false;
+            if (stsType == 1) {
+                for (keyIdx in $scope.cus.commonProps) {
+                    if (!$scope.cus.commonProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_commonData = !chkSts;
+            } else if (stsType == 2) {
+                for (keyIdx in $scope.cus.customProps) {
+                    if (!$scope.cus.customProps[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_customData = !chkSts;
+            } else if (stsType == 3) {
+                for (keyIdx in $scope.cus.salesTypeList) {
+                    if (!$scope.cus.salesTypeList[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_salesType = !chkSts;
+            }
+        };
     });
 
 });

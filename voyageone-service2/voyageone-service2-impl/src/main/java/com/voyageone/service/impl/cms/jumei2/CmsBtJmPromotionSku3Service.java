@@ -1,8 +1,12 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.jumei.UpdateSkuDealPriceParameter;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,10 @@ import java.math.BigDecimal;
 public class CmsBtJmPromotionSku3Service {
     @Autowired
     CmsBtJmPromotionSkuDao dao;
+    @Autowired
+    CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
+    @Autowired
+    CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
 
     public CmsBtJmPromotionSkuModel select(int id) {
         return dao.select(id);
@@ -33,16 +41,21 @@ public class CmsBtJmPromotionSku3Service {
         return dao.delete(id);
     }
 
-
-   public int updateDealPrice(UpdateSkuDealPriceParameter parameter,String modifier) {
-
-       CmsBtJmPromotionSkuModel model = dao.select(parameter.getPromotionSkuId());
-       model.setDealPrice(new BigDecimal(parameter.getDealPrice()));
-       model.setMarketPrice(new BigDecimal(parameter.getMarketPrice()));
-       model.setDiscount(BigDecimalUtil.divide(model.getDealPrice(),model.getMarketPrice(),4));
-       model.setModifier(modifier);
-       return update(model);
-   }
-
+    @VOTransactional
+    public int updateDealPrice(UpdateSkuDealPriceParameter parameter, String modifier) {
+        CmsBtJmPromotionSkuModel model = dao.select(parameter.getPromotionSkuId());
+        model.setDealPrice(BigDecimal.valueOf(parameter.getDealPrice()));
+        model.setMarketPrice(BigDecimal.valueOf(parameter.getMarketPrice()));
+        model.setDiscount(BigDecimalUtil.divide(model.getDealPrice(), model.getMarketPrice(), 4));
+        model.setModifier(modifier);
+        int result = update(model);
+        CmsBtJmPromotionProductModel modelCmsBtJmPromotionProduct = daoCmsBtJmPromotionProduct.select(model.getCmsBtJmPromotionProductId());
+        if (modelCmsBtJmPromotionProduct.getUpdateStatus() != 1) {
+            modelCmsBtJmPromotionProduct.setUpdateStatus(1);
+            daoCmsBtJmPromotionProduct.update(modelCmsBtJmPromotionProduct);
+        }
+        daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(model.getCmsBtJmPromotionProductId());//更新平均价格
+        return result;
+    }
 }
 

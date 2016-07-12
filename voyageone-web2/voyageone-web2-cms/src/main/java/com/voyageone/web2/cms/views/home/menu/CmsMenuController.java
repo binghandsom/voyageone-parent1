@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.CmsBtDataAmountService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.model.cms.enums.CartType;
@@ -38,7 +39,8 @@ public class CmsMenuController extends CmsController {
     ImageTemplateService imageTemplateService;
     @Autowired
     PlatformService platformService;
-
+    @Autowired
+    CmsBtDataAmountService serviceCmsBtDataAmount;
     /**
      * 返回categoryType, categoryList, categoryTreeList
      */
@@ -119,4 +121,9 @@ public class CmsMenuController extends CmsController {
         return getCategoryInfo();
     }
 
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GetHomeSumData)
+    public AjaxResponse getHomeSumData()
+    {
+        return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
+    }
 }

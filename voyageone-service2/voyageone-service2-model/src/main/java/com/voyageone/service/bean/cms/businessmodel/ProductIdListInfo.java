@@ -4,6 +4,13 @@ import java.util.List;
 public class ProductIdListInfo  implements Serializable {
     int promotionId;
     List<Integer> productIdList;
+    List<Integer> productCodeList;
+    public List<Integer> getProductCodeList() {
+        return productCodeList;
+    }
+    public void setProductCodeList(List<Integer> productCodeList) {
+        this.productCodeList = productCodeList;
+    }
     public List<Integer> getProductIdList() {
         return productIdList;
     }

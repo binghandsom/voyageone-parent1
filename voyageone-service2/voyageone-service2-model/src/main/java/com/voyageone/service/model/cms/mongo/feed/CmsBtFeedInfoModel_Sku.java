@@ -91,6 +91,7 @@ public class CmsBtFeedInfoModel_Sku {
     }
 
     public Integer getQty() {
+        if (qty == null) return 0;
         return qty;
     }
 

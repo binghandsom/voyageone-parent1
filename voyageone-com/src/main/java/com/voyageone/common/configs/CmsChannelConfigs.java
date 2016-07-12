@@ -23,7 +23,7 @@ public class CmsChannelConfigs {
 
     private static final Class selfClass = CmsChannelConfigs.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString();

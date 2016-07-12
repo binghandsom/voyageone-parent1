@@ -234,21 +234,17 @@ public final class ImgUtils {
 
 	/**
 	 * 获取图片的后缀名
-	 * @param imageUrl
-	 * @return
 	 */
 	public static String getImageExtend (String imageUrl) {
 		String tempExtend = imageUrl.substring(imageUrl.lastIndexOf(".") > 0 ? imageUrl.lastIndexOf(".") : 0);
-		return tempExtend.substring(0, tempExtend.indexOf("?") > 0 ? tempExtend.indexOf("?") : tempExtend.length()).toLowerCase();
+		return tempExtend.substring(0, tempExtend.contains("?") ? tempExtend.indexOf("?") : tempExtend.length()).toLowerCase();
 	}
 
 	/**
 	 * 获取图片的名字和后缀
-	 * @param imageUrl
-	 * @return
 	 */
 	public static String getImageName (String imageUrl) {
 		String tempExtend = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-		return tempExtend.substring(0, tempExtend.indexOf(".") > 0 ? tempExtend.indexOf(".") : tempExtend.length());
+		return tempExtend.substring(0, tempExtend.contains(".") ? tempExtend.indexOf(".") : tempExtend.length());
 	}
 }

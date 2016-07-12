@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtPlatformImagesDao;
-import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,6 @@ public class PlatformImagesService extends BaseService {
 
     @Autowired
     private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
-
-    @Autowired
-    private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
 
     /**
      * 根据cartId,imageName,templateId查找对应数据是否存在,如果数据存在则返回该数据,不存在则返回初始化的数据.

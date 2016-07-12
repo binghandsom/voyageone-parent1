@@ -23,7 +23,7 @@ public class CmsBtPromotionSkuBean extends CmsBtPromotionGroupsBean {
 
         super(productInfo, groupModel, promotionId, operator);
         this.setProductId(productInfo.getProdId());
-        this.setProductCode(productInfo.getFields().getCode());
+        this.setProductCode(productInfo.getCommon().getFields().getCode());
         this.setProductSku(productSku);
         this.setQty(qty == null ? 0 : qty);
     }

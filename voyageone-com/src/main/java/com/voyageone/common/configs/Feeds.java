@@ -21,7 +21,7 @@ public class Feeds {
 
     private static final Class selfClass = Feeds.class;
 
-    private final static Logger logger = LoggerFactory.getLogger(selfClass);
+    private static final Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_FeedConfigs.toString();

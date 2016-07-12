@@ -18,15 +18,15 @@ public class AliUpdDesc extends PlatformMethod implements PlatformMethodInterfac
 
 	@Override
 	public void doJob(SxWorkLoadBean workLoadBean) {
-		// 获取product表中, 指定group的所有product的信息
-		SxData sxData = sxGetProductInfo.getProductInfoByGroupId(workLoadBean.getChannelId(), workLoadBean.getGroupId());
-
-		// 数据准备
-
-		// 更新描述信息
-
-		// 记录完成: 正常结束
-		doComplete(workLoadBean, 1);
+//		// 获取product表中, 指定group的所有product的信息
+//		SxData sxData = sxGetProductInfo.getProductInfoByGroupId(workLoadBean.getChannelId(), workLoadBean.getGroupId());
+//
+//		// 数据准备
+//
+//		// 更新描述信息
+//
+//		// 记录完成: 正常结束
+//		doComplete(workLoadBean, 1);
 
 	}
 }

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * BaseMQAnnoService
+ *
  * @author aooer 2016/4/18.
  * @version 2.0.0
  * @since 2.0.0
@@ -92,12 +94,19 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     @VOMQStart
     public boolean startMQ() {
-        MQControlHelper.start(getClass().getName());
-        // set concurrentConsumers
-        String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-        int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-        MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
-        return true;
+        try {
+            MQControlHelper.start(getClass().getName());
+            // set concurrentConsumers
+            String threadCount = null;
+            if (taskControlList != null) {
+                threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+            }
+            int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
+            MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     @VOMQStop
@@ -105,6 +114,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         MQControlHelper.stop(getClass().getName());
         return true;
     }
+
     /**
      * 监听通知消息，执行任务
      *

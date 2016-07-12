@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * 字典（表达式）的增删改查管理
- * <p>
+ *
  * Created by Jonas on 9/11/15.
  */
 @Service
@@ -53,6 +53,7 @@ public class DictService extends BaseService {
 
     /**
      * 检测现有数据是否符合
+     *
      * @param cmsMtPlatformDictModel CmsMtDictModel
      */
     private void checkDict(CmsMtPlatformDictModel cmsMtPlatformDictModel, boolean isNameCheck) {

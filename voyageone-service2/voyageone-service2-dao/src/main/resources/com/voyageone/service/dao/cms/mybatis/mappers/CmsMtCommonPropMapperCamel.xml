@@ -244,12 +244,67 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+        limit 1
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from cms_mt_common_prop
+        <where >
+            <if test="propId != null" >
+                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            </if>
+            <if test="propParentId != null" >
+                and `prop_parent_id` = #{propParentId,jdbcType=VARCHAR}
+            </if>
+            <if test="propName != null" >
+                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            </if>
+            <if test="propType != null" >
+                and `prop_type` = #{propType,jdbcType=VARCHAR}
+            </if>
+            <if test="actionType != null" >
+                and `action_type` = #{actionType,jdbcType=INTEGER}
+            </if>
+            <if test="platformPropRefId != null" >
+                and `platform_prop_ref_id` = #{platformPropRefId,jdbcType=VARCHAR}
+            </if>
+            <if test="rules != null" >
+                and `rules` = #{rules,jdbcType=VARCHAR}
+            </if>
+            <if test="defult != null" >
+                and `defult` = #{defult,jdbcType=VARCHAR}
+            </if>
+            <if test="isComm != null" >
+                and `is_comm` = #{isComm,jdbcType=INTEGER}
+            </if>
+            <if test="isCode != null" >
+                and `is_code` = #{isCode,jdbcType=INTEGER}
+            </if>
+            <if test="tips != null" >
+                and `tips` = #{tips,jdbcType=VARCHAR}
+            </if>
+            <if test="valueType != null" >
+                and `value_type` = #{valueType,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_common_prop
         <where >
             <if test="propId != null" >
                 and `prop_id` = #{propId,jdbcType=VARCHAR}

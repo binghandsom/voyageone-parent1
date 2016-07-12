@@ -18,6 +18,8 @@ public interface CmsMtChannelSkuConfigDao {
 
     CmsMtChannelSkuConfigModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtChannelSkuConfigModel select(Integer id);
 
     int insert(CmsMtChannelSkuConfigModel record);

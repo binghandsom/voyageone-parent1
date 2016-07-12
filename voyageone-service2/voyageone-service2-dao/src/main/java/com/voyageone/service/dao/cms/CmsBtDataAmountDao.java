@@ -18,6 +18,8 @@ public interface CmsBtDataAmountDao {
 
     CmsBtDataAmountModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtDataAmountModel select(Integer id);
 
     int insert(CmsBtDataAmountModel record);
