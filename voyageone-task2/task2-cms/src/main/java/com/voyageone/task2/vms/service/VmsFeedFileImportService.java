@@ -58,6 +58,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     public static final int MATERIALS = 16;
     public static final int VENDOR_PRODUCT_URL = 17;
 
+    public static final int LIMIT_COUNT = 50000;
+
 
     public final static Map<Object, String> columnMap = new HashMap() {{
         put(SKU_INDEX, "sku");
@@ -363,8 +365,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             }
 
             // 先Check Code应该有的那些内容
-            // Code（sku之前已经check过了）
+            // Code
             String sku = codeModel.getSku();
+            Map<String, Object> param = new HashMap<>();
+            param.put("channelId", channel.getOrder_channel_id());
+            param.put("sku", codeModel.getSku());
+            List<VmsBtFeedInfoTempModel> skus = vmsBtFeedInfoTempDaoExt.selectList(param);
+            if (skus.size() > 0) {
+                // sku(%s) is duplicated.
+                addErrorMessage(errorList, "8000003", new Object[]{sku}, codeModel.getRow(), columnMap.get(SKU_INDEX));
+            }
 
             // title
             String title = codeModel.getTitle();
@@ -888,6 +898,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // product-id is Required.
                 addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(PRODUCT_ID)}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
                 errorFlg = true;
+            } else {
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", channel.getOrder_channel_id());
+                param.put("sku", productId);
+                List<VmsBtFeedInfoTempModel> productIds = vmsBtFeedInfoTempDaoExt.selectList(param);
+                if (productIds.size() > 0) {
+                    // product-id(%s) is duplicated.
+                    addErrorMessage(errorList, "8000012", new Object[]{productId}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
+                }
             }
 
             // price
@@ -932,12 +951,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         private boolean readCsvToDB(File feedFile) {
 
             try {
-                $info("删除临时表数据开始,channel：" + channel.getFull_name());
-
-                // 先删除这个channel下的临时数据
-                int delCnt = vmsBtFeedInfoTempDaoExt.deleteByChannel(channel.getOrder_channel_id());
-
-                $info("删除临时表数据结束,一共删除数据：" + delCnt + "件;channel：" + channel.getFull_name());
+                // 删除临时表vms_bt_feed_info_temp里的数据
+                deleteFeedInfoTemp(channel.getOrder_channel_id());
 
                 // 转成vms_bt_feed_info_temp的Model列表
                 List<VmsBtFeedInfoTempModel> feedInfoTempModels = new ArrayList<>();
@@ -963,10 +978,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     csvEncode = vmsChannelConfigBean.getConfigValue1();
                 }
 
-                // Sku列表
-                Map<String, String> skuMap = new HashMap<>();
-                // Sku列表
-                Map<String, String> productIdMap = new HashMap<>();
                 // Error信息
                 StringBuilder error = new StringBuilder();
 
@@ -993,14 +1004,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (item.getBytes().length > 128) {
                         addErrorMessage(error, "8000011", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
                     }
-                    // sku唯一验证
-                    if (!StringUtils.isEmpty(item)) {
-                        if (skuMap.get(item) != null) {
-                            addErrorMessage(error, "8000003", new Object[]{item}, rowNum, columnMap.get(SKU_INDEX));
-                        } else {
-                            skuMap.put(item, item);
-                        }
-                    }
+
                     model.setSku(item);
 
                     // parent-id
@@ -1029,14 +1033,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     item = reader.get(i++);
                     if (item.getBytes().length > 128) {
                         addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ID)}, rowNum, columnMap.get(PRODUCT_ID));
-                    }
-                    // product-id唯一验证
-                    if (!StringUtils.isEmpty(item)) {
-                        if (productIdMap.get(item) != null) {
-                            addErrorMessage(error, "8000012", new Object[]{item}, rowNum, columnMap.get(PRODUCT_ID));
-                        } else {
-                            productIdMap.put(item, item);
-                        }
                     }
                     model.setProductId(item);
 
@@ -1291,6 +1287,31 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         }
 
         /**
+         * 删除临时表vms_bt_feed_info_temp里的数据
+         *
+         * @param channelId  渠道id
+         */
+        private void deleteFeedInfoTemp(String channelId) {
+            int delCnt = 0;
+            long all = vmsBtFeedInfoTempDaoExt.selectListCount(channelId);
+            // 算出每一次删除5万条数据，那么一共要删除几次
+            int loopCnt = new Long(all).intValue() / LIMIT_COUNT;
+            if (new Long(all).intValue() % LIMIT_COUNT > 0) {
+                loopCnt++;
+            }
+
+            $info("删除临时表数据开始,channel：" + channel.getFull_name());
+
+            for (int i=0; i < loopCnt; i++) {
+                // 先删除这个channel下的临时数据
+                delCnt += vmsBtFeedInfoTempDaoExt.deleteByChannelWithLimit(channelId);
+                $info("已经删除数据：" + delCnt + "件;channel：" + channel.getFull_name());
+            }
+
+            $info("删除临时表数据结束,一共删除数据：" + delCnt + "件;channel：" + channel.getFull_name());
+        }
+
+        /**
          * 追加ErrorMessage
          *
          * @param errorList  所有Error内容
@@ -1395,7 +1416,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // 先加一个头
                 String header = "";
                 if (successCnt > 0) {
-                    header = "The following data have errors, other data have been imported successfully.\n";
+                    header = "\"The following data have errors, other data have been imported successfully.\"\n";
                 }
                 header += "row,column,message\n";
                 byte[] headerInBytes = header.getBytes();

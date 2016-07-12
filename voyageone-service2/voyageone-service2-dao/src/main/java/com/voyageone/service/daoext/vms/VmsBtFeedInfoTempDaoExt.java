@@ -17,9 +17,11 @@ import java.util.Map;
 public interface VmsBtFeedInfoTempDaoExt {
     int insertList(List<VmsBtFeedInfoTempModel> records);
 
-    int deleteByChannel(String channelId);
+    int deleteByChannelWithLimit(String channelId);
 
     List<VmsBtFeedInfoTempModel> selectList(Map<String, Object> map);
 
     int updateStatus(VmsBtFeedInfoTempModel record);
+
+    long selectListCount(String channelId);
 }

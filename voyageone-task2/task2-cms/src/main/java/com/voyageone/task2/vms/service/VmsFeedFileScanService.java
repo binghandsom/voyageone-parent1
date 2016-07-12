@@ -152,7 +152,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                                 model.setFileName(newFile.getName());
                                 model.setUploadType(VmsConstants.FeedFileUploadType.FTP);
                                 model.setStatus(VmsConstants.FeedFileStatus.WAITING_IMPORT);
-                                model.setCreater(getTaskName());
+                                model.setCreater("ftp user");
                                 model.setModifier(getTaskName());
                                 vmsBtFeedFileDao.insert(model);
                                 // 只处理一个文件

@@ -352,9 +352,15 @@
         </foreach>
     </insert>
 
-    <delete id="deleteByChannel" parameterType="java.lang.String" >
+    <select id="selectListCount" parameterType="java.lang.String" resultType="java.lang.Long">
+        select count(sku) from vms_bt_feed_info_temp
+        where `channel_id` = #{channelId}
+    </select>
+
+    <delete id="deleteByChannelWithLimit" parameterType="java.lang.String" >
         delete from vms_bt_feed_info_temp
         where `channel_id` = #{channelId}
+        limit 50000
     </delete>
 
     <update id="updateStatus" parameterType="com.voyageone.service.model.vms.VmsBtFeedInfoTempModel" >
