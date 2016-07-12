@@ -4,9 +4,10 @@ define([
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
-        function OrderInfoController(alert, notify, orderInfoService, popups) {
+        function OrderInfoController(alert, notify, confirm, orderInfoService, popups) {
             this.alert = alert;
             this.notify = notify;
+            this.confirm = confirm;
             this.orderInfoService = orderInfoService;
             this.popups = popups;
 
@@ -80,8 +81,8 @@ define([
                     item.className = '';
                     if (item.status == '7')
                         item.className = 'bg-gainsboro';
-                    else {
-                        var date = new Date(item.orderDateTimestamp);
+                    else if (item.status == '1') {
+                        var date = new Date(item.orderDateTime);
                         if ((new Date().getTime() - date) >= this.threeDay)
                             item.className = 'bg-danger';
                         else if ((new Date().getTime() - date) >= this.twoDay)
@@ -93,9 +94,21 @@ define([
         };
 
         OrderInfoController.prototype.cancelOrder = function (item) {
-            this.orderInfoService.cancelOrder(item).then(
-                this.search()
-            )
+            var self = this;
+            this.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
+                self.orderInfoService.cancelOrder(item).then(function () {
+                    self.search()
+                })
+            })
+        };
+
+        OrderInfoController.prototype.cancelSku = function (item) {
+            var self = this;
+            this.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
+                self.orderInfoService.cancelSku(item).then(function () {
+                    self.search()
+                })
+            })
         };
 
         OrderInfoController.prototype.toggleAll = function () {
@@ -106,17 +119,17 @@ define([
         };
 
         OrderInfoController.prototype.getStatusName = function (statusValue) {
-            var statusName = this.searchOrderStatus.find(function (status, index, array) {
-                status.value = statusValue;
+            var currentStatus = this.searchOrderStatus.find(function (status) {
+                return status.value == statusValue;
             });
-            if (!statusName) statusName = statusValue;
-            return statusName;
+            if (!currentStatus) return statusValue;
+            return currentStatus.name;
         };
 
         OrderInfoController.prototype.popNewShipment = function () {
-            this.popups.openNewShipment();
+            this.popups.openNewShipment(this.searchOrderStatus);
         };
-        OrderInfoController.prototype.popAddShipment = function () {
+        OrderInfoController.prototype.popToAddShipment = function () {
             this.popups.openAddShipment();
         };
         return OrderInfoController;

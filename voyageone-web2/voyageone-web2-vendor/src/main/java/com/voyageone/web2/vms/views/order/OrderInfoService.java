@@ -123,6 +123,7 @@ public class OrderInfoService extends BaseService {
                         .map(vmsBtOrderDetailModel -> {
                             SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
                             orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
+                            orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
                             orderInfoBean.setDesc(vmsBtOrderDetailModel.getDecription());
                             orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                             orderInfoBean.setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
@@ -147,8 +148,7 @@ public class OrderInfoService extends BaseService {
                             // 按照第一个sku初始化平台订单id内容
                             PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
                             platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getOrderId());
-                            platformOrderInfoBean.setOrderDateTimestamp(vmsBtOrderDetailModelList.get(0).
-                                    getOrderTime().getTime());
+                            platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
                             platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
                             // 将订单下的sku信息压入

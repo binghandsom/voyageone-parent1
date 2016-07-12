@@ -18,9 +18,9 @@ define([
                 size: 'md'
             },
             addShipment: {
-                templateUrl: "views/pop/orderInfo/addShipment/index.tpl.html",
-                controllerUrl: "views/pop/orderInfo/addShipment/index.ctl",
-                controller: 'AddShipmentController as ctrl',
+                templateUrl: "views/pop/orderInfo/addToShipment/index.tpl.html",
+                controllerUrl: "views/pop/orderInfo/addToShipment/index.ctl",
+                controller: 'AddToShipmentController',
                 backdrop: 'static',
                 size: 'lg'
             }
@@ -48,8 +48,8 @@ define([
         }
 
         return {
-            openNewShipment: function () {
-                open(popups.orderInfo.newShipment);
+            openNewShipment: function (searchOrderStatus) {
+                open(popups.orderInfo.newShipment, searchOrderStatus);
             },
             openAddShipment: function () {
                 open(popups.orderInfo.addShipment);
