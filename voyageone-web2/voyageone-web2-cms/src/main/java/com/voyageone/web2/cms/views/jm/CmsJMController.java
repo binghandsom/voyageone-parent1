@@ -5,6 +5,7 @@ import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,11 @@ import java.util.stream.Collectors;
 )
 public class CmsJMController extends CmsController {
     private static final Logger log = LoggerFactory.getLogger(CmsJMController.class);
-    @Resource
-    CmsBtJmPromotionService service;
+
     @Autowired
     private TagService tagService;
+    @Autowired
+    private CmsJmPromotionService jmPromotionService;
 
     public static final class AddPromotionParam {
 
@@ -49,6 +51,7 @@ public class CmsJMController extends CmsController {
         Integer priceType=1; //默认用官方销售价计算
         String tagName;
         String tagId;
+        private Integer isSelAll = null;
 
         public String getTagName() {
             return tagName;
@@ -108,27 +111,27 @@ public class CmsJMController extends CmsController {
             }).collect(Collectors.toList());
         }
 
+        public Integer getIsSelAll() {
+            return isSelAll;
+        }
+
+        public void setIsSelAll(Integer isSelAll) {
+            this.isSelAll = isSelAll;
+        }
     }
 
+    /**
+     * 高级检索画面，批量添加到JM活动
+     * @param param
+     * @return
+     */
     @RequestMapping("promotion/product/add")
     public AjaxResponse doProductAdd(@RequestBody AddPromotionParam param) {
-
         UserSessionBean user = getUser();
-        Map<String,Object> response = new HashMap<>();
-        response.put("errlist",service.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
-                param.discount,
-                param.priceType,
-                param.tagName,
-                param.tagId,
-                user.getUserName()));
+        Map<String, Object> response = jmPromotionService.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
+                param.discount, param.priceType, param.tagName, param.tagId, user.getUserName(), param.getIsSelAll(), getCmsSession());
         return success(response);
-//        try {
-//        } catch (Exception e) {
-//            log.error("LOG00030:添加产品到聚美活动失败:参数"+new Gson().toJson(param), e);
-//            throw new BusinessException("添加产品到聚美活动失败,原因为:"+e.getMessage(), e);
-//        }
     }
-
 
     @RequestMapping("discounts")
     public AjaxResponse getDiscount() {

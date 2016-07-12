@@ -308,7 +308,7 @@ public class ProductGroupService extends BaseService {
 
         List<String> unPublishedProducts = new ArrayList<>();
         if (ListUtils.notNull(products)) {
-            products.stream().map(p -> unPublishedProducts.add(p.getCommon().getFields().getCode()));
+            products.forEach(p -> unPublishedProducts.add(p.getCommon().getFields().getCode()));
         }
 
         return unPublishedProducts;
@@ -380,6 +380,10 @@ public class ProductGroupService extends BaseService {
         }
 
         return "成功处理group的总件数:" + allGroupList.size();
+    }
+
+    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+        return cmsBtProductGroupDao.updateFirst(updObj, channelId);
     }
 
     public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {

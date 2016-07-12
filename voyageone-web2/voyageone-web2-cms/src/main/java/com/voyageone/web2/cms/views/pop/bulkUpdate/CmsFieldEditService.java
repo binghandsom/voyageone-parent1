@@ -21,9 +21,9 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
@@ -72,7 +72,7 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private SxProductService sxProductService;
     @Autowired
-    private CmsBtPriceLogDaoExt cmsBtPriceLogDaoExt;
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -218,29 +218,11 @@ public class CmsFieldEditService extends BaseAppService {
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
 
         for (Integer cartIdVal : cartList) {
-            // 这里需要确认更新成功后再记录上新操作表
-            JomgoQuery qurObj = new JomgoQuery();
-            qurObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#.status':#}");
-            qurObj.setParameters(productCodes, cartIdVal, CmsConstants.ProductStatus.Approved);
-            qurObj.setProjection("{'common.fields.code':1,'_id':0}");
-
-            List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), qurObj);
-            List<String> codeList = new ArrayList<>(prodList.size());
-            for (CmsBtProductModel prodObj : prodList) {
-                if (prodObj.getCommon() == null) {
-                    continue;
-                }
-                CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-                if (field != null && field.getCode() != null) {
-                    codeList.add(field.getCode());
-                }
-            }
-
-            if (codeList.size() > 0) {
+            if (productCodes.size() > 0) {
                 // 插入上新程序
                 $debug("批量修改属性 (商品上下架) 开始记入SxWorkLoad表");
                 long sta = System.currentTimeMillis();
-                sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), codeList, cartIdVal, userInfo.getUserName());
+                sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartIdVal, userInfo.getUserName());
                 $debug("批量修改属性 (商品上下架) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
             }
         }
@@ -677,9 +659,9 @@ public class CmsFieldEditService extends BaseAppService {
                 cmsBtPriceLogModel.setRetailPrice(result.toString());
                 CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
                 if (comSku == null) {
-                    cmsBtPriceLogModel.setClientMsrpPrice(" ");
-                    cmsBtPriceLogModel.setClientRetailPrice(" ");
-                    cmsBtPriceLogModel.setClientNetPrice(" ");
+                    cmsBtPriceLogModel.setClientMsrpPrice("0");
+                    cmsBtPriceLogModel.setClientRetailPrice("0");
+                    cmsBtPriceLogModel.setClientNetPrice("0");
                 } else {
                     cmsBtPriceLogModel.setClientMsrpPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientMsrpPrice()));
                     cmsBtPriceLogModel.setClientRetailPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientRetailPrice()));
@@ -709,7 +691,7 @@ public class CmsFieldEditService extends BaseAppService {
         // 需要记录价格变更履历
         $debug("批量修改商品价格 开始记入价格变更履历");
         sta = System.currentTimeMillis();
-        int cnt = cmsBtPriceLogDaoExt.insertCmsBtPriceLogList(priceLogList);
+        int cnt = cmsBtPriceLogService.insertCmsBtPriceLogList(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
         // 插入上新程序
