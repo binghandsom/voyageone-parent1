@@ -474,7 +474,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-2">
-                                                <select class="form-control" ng-model="option.inputOpts"
+                                                <select class="form-control" ng-model="option.inputOpts" ng-change="setSelValue(option,null,2)"
                                                         ng-options="optsObj.value as optsObj.name for optsObj in option._inputOptsList">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>

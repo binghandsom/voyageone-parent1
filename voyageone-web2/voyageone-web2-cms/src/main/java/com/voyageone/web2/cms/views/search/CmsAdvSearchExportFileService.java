@@ -465,7 +465,11 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             Cell cell = FileUtils.cell(row, index++, unlock);
             cell.setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty((String) codeImgMap.get(fields.getCode())));
             cell.setCellStyle(cs);
-            row.setHeightInPoints((Integer) codeImgMap.get(fields.getCode() + "_img_cnt") * sheet.getDefaultRowHeightInPoints());
+            Integer imgCnt = (Integer) codeImgMap.get(fields.getCode() + "_img_cnt");
+            if (imgCnt == null) {
+                imgCnt = 0;
+            }
+            row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getLock()));
 
             if (commonProps != null) {
