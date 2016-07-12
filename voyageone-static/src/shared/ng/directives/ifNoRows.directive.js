@@ -2,7 +2,7 @@ angular.module("vo.directives").directive("ifNoRows", function ($templateCache, 
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     // 没有数据显示警告
     if (!$templateCache.get(tempNoDataKey)) {
-        $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData"><h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;<span translate="TXT_ALERT"></span></h4><span translate="TXT_MSG_NO_DATE"></span></dv>');
+        $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData"><h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;<span translate="TXT_ALERT"></span></h4><span translate="TXT_MSG_NO_DATA"></span></dv>');
     }
     return {
         restrict: "A",
