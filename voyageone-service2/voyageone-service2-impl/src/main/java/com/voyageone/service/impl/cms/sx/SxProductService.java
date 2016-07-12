@@ -15,6 +15,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
@@ -989,6 +990,10 @@ public class SxProductService extends BaseService {
      * @throws Exception
      */
     public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+        // added by morse.lu 2016/07/13 start
+        FieldUtil.replaceFieldIdDot(fields); // 把field中的【.】替换成【->】
+        // added by morse.lu 2016/07/13 end
+
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
