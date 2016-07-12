@@ -928,7 +928,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setAddress_of_produce(jmFields.getStringAttribute("originCn"));
         deal.setStart_time(System.currentTimeMillis() / 1000);
         Calendar rightNow = Calendar.getInstance();
-        rightNow.add(Calendar.MINUTE, 30);
+        // edward 2016-07-11 时间从30分钟改成3分钟
+        rightNow.add(Calendar.MINUTE, 3);
         deal.setEnd_time(rightNow.getTimeInMillis() / 1000);
         List<String> skuCodeList = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
