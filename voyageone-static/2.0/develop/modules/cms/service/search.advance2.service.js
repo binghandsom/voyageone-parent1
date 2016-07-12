@@ -513,7 +513,7 @@ define([
                     fstCode = searchParam.cartId;
                 }
                 _.forEach(object, function (data) {
-                    if (data == null || data == undefined || data.cartId == 0) {
+                    if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
                         return;
                     }
                     var priceItem = '';

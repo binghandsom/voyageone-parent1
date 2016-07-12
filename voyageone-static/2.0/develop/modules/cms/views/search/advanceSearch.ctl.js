@@ -133,6 +133,9 @@ define([
                         getCat($scope.vm._cartType_);
                     }
                     $scope.vm.searchInfo = angular.copy($sessionStorage.feedSearch);
+                    if ($scope.vm.searchInfo == undefined) {
+                        $scope.vm.searchInfo = {};
+                    }
                     search();
                     if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                 }
