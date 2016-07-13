@@ -13,6 +13,7 @@ public class VmsConstants {
 
     public final static int DEFAULT_PAGE_SIZE = 10;
 
+    public final static String ORDER_TIME = "order_time";
     /**
      * Feed文件导入状态
      */
