@@ -46,7 +46,7 @@
                 #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="groupId != null" >
-                #{groupId,jdbcType=INTEGER},
+                #{groupId,jdbcType=BIGINT},
             </if>
             <if test="publishStatus != null" >
                 #{publishStatus,jdbcType=INTEGER},
@@ -85,7 +85,7 @@
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="groupId != null" >
-                `group_id` = #{groupId,jdbcType=INTEGER},
+                `group_id` = #{groupId,jdbcType=BIGINT},
             </if>
             <if test="publishStatus != null" >
                 `publish_status` = #{publishStatus,jdbcType=INTEGER},
@@ -126,7 +126,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=INTEGER}
+                and `group_id` = #{groupId,jdbcType=BIGINT}
             </if>
             <if test="publishStatus != null" >
                 and `publish_status` = #{publishStatus,jdbcType=INTEGER}
@@ -159,7 +159,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=INTEGER}
+                and `group_id` = #{groupId,jdbcType=BIGINT}
             </if>
             <if test="publishStatus != null" >
                 and `publish_status` = #{publishStatus,jdbcType=INTEGER}
@@ -189,7 +189,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=INTEGER}
+                and `group_id` = #{groupId,jdbcType=BIGINT}
             </if>
             <if test="publishStatus != null" >
                 and `publish_status` = #{publishStatus,jdbcType=INTEGER}
