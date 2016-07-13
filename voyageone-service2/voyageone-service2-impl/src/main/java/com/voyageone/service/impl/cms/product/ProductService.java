@@ -1048,7 +1048,7 @@ public class ProductService extends BaseService {
         List<CustomPropBean> props = new ArrayList<>();
 
         //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getOriginalCode());
+        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
         Map<String, List<String>> feedAttr = feedInfo.getAttribute();
 
         //读cms_mt_feed_custom_prop
