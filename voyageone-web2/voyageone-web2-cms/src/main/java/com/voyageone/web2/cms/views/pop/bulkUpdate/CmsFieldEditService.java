@@ -268,35 +268,44 @@ public class CmsFieldEditService extends BaseAppService {
             cartList.add(cartId);
         }
 
-        // 先判断是否是ready状态
-        JomgoQuery queryObject = new JomgoQuery();
-        StringBuilder qryStr = new StringBuilder();
-        qryStr.append("{'common.fields.code':{$in:#},");
+        // 先判断是否是ready状态（minimall店铺不验证）
+        List<Integer> newcartList = new ArrayList<>();
         for (Integer cartIdVal : cartList) {
-            qryStr.append("$and:[{'platforms.P" + cartIdVal + ".status':{$ne:'Ready'}},{'platforms.P" + cartIdVal + ".status':{$ne:'Approved'}}],");
-        }
-        qryStr.deleteCharAt(qryStr.length() - 1);
-        qryStr.append("}");
-        queryObject.setQuery(qryStr.toString());
-        queryObject.setParameters(productCodes);
-        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
-
-        List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
-        if (prodList != null && prodList.size() > 0) {
-            // 存在未ready状态
-            List<String> codeList = new ArrayList<>(prodList.size());
-            for (CmsBtProductModel prodObj : prodList) {
-                if (prodObj.getCommon() == null) {
-                    continue;
-                }
-                CmsBtProductModel_Field field = prodObj.getCommon().getFields();
-                if (field != null && field.getCode() != null) {
-                    codeList.add(field.getCode());
-                }
+            TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartIdVal.toString(), "en");
+            if (!"3".equals(cartType.getCartType())) {
+                newcartList.add(cartIdVal);
             }
-            rsMap.put("ecd", 2);
-            rsMap.put("codeList", codeList);
-            return rsMap;
+        }
+        if (newcartList.size() > 0) {
+            JomgoQuery queryObject = new JomgoQuery();
+            StringBuilder qryStr = new StringBuilder();
+            qryStr.append("{'common.fields.code':{$in:#},$or:[");
+            for (Integer cartIdVal : newcartList) {
+                qryStr.append("{'platforms.P" + cartIdVal + ".status':{$ne:'Ready'}},");
+            }
+            qryStr.deleteCharAt(qryStr.length() - 1);
+            qryStr.append("]}");
+            queryObject.setQuery(qryStr.toString());
+            queryObject.setParameters(productCodes);
+            queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+
+            List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
+            if (prodList != null && prodList.size() > 0) {
+                // 存在未ready状态
+                List<String> codeList = new ArrayList<>(prodList.size());
+                for (CmsBtProductModel prodObj : prodList) {
+                    if (prodObj.getCommon() == null) {
+                        continue;
+                    }
+                    CmsBtProductModel_Field field = prodObj.getCommon().getFields();
+                    if (field != null && field.getCode() != null) {
+                        codeList.add(field.getCode());
+                    }
+                }
+                rsMap.put("ecd", 2);
+                rsMap.put("codeList", codeList);
+                return rsMap;
+            }
         }
 
         // 检查商品价格 notChkPrice=1时表示忽略价格问题
@@ -330,7 +339,6 @@ public class CmsFieldEditService extends BaseAppService {
                 double priceLimit = 0;
 
                 for (Integer cartIdVal : cartList) {
-                    qryStr.append("'platforms.P" + cartIdVal + ".status':{$ne:'Ready',$ne:'Approved'},");
                     CmsBtProductModel_Platform_Cart ptmObj = productModel.getPlatform(cartIdVal);
                     if (ptmObj == null) {
                         continue;
