@@ -193,7 +193,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
             fieldMap.forEach((s1, o) -> {
-                updateMap.put("platforms.P23.fields."+s1, o);
+                updateMap.put("platforms.P23.fields." + s1, o);
             });
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
@@ -206,6 +206,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     private Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
+        if(StringUtils.isEmpty(productId)) return fieldMap;
         String schema = tbProductService.getProductSchema(Long.parseLong(productId), shopBean);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
