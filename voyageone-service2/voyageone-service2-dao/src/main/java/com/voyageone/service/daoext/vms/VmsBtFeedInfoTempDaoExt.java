@@ -23,5 +23,9 @@ public interface VmsBtFeedInfoTempDaoExt {
 
     int updateStatus(VmsBtFeedInfoTempModel record);
 
-    long selectListCount(String channelId);
+    long  selectListCount(String channelId);
+
+    List<Map<String, Object>>  selectSameSku(String channelId);
+
+    List<Map<String, Object>>  selectSameProductId(String channelId);
 }

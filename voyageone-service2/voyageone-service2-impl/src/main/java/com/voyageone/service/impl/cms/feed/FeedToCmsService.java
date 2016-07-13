@@ -189,16 +189,19 @@ public class FeedToCmsService extends BaseService {
                 failProduct.add(product);
             }
         }
+        $info("point-mongo-point1" + ",channel：" + channelId);
 
         // 更新类目中属性
         for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
             updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
         }
+        $info("point-mongo-point2" + ",channel：" + channelId);
 
         //0:brand 1:sizeType 2:productType
         insertCmsMtChannelValues(channelId, brandList, 0, modifier);
         insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
         insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
+        $info("point-mongo-point3" + ",channel：" + channelId);
 
         Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);

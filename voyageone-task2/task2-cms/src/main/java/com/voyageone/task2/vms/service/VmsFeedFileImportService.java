@@ -59,6 +59,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     public static final int VENDOR_PRODUCT_URL = 17;
 
     public static final int LIMIT_COUNT = 50000;
+    public static final String BLANK_PARENT_ID = "999999";
 
 
     public final static Map<Object, String> columnMap = new HashMap() {{
@@ -223,14 +224,41 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             try {
                 // Error错误
                 List<Map<String, Object>> errorList = new ArrayList<>();
-                int i=1;
+                // checkSku重复
+                List<Map<String, Object>> skuList = vmsBtFeedInfoTempDaoExt.selectSameSku(channel.getOrder_channel_id());
+                for (Map<String, Object> skuMap : skuList) {
+                    Map<String, Object> paramSku = new HashMap<>();
+                    paramSku.put("channelId", channel.getOrder_channel_id());
+                    paramSku.put("sku", (String) skuMap.get("sku"));
+                    List<VmsBtFeedInfoTempModel> skuModels = vmsBtFeedInfoTempDao.selectList(paramSku);
+                    for (VmsBtFeedInfoTempModel skuModel : skuModels) {
+                        // sku(%s) is duplicated.
+                        addErrorMessage(errorList, "8000003", new Object[]{skuModel.getSku()}, skuModel.getRow(), columnMap.get(SKU_INDEX));
+                    }
+                }
+                // checkProductId重复
+                List<Map<String, Object>> productIdList = vmsBtFeedInfoTempDaoExt.selectSameProductId(channel.getOrder_channel_id());
+                for (Map<String, Object> productIdMap : productIdList) {
+                    if (!StringUtils.isEmpty((String)productIdMap.get("product_id"))) {
+                        Map<String, Object> paramProductId = new HashMap<>();
+                        paramProductId.put("channelId", channel.getOrder_channel_id());
+                        paramProductId.put("productId", (String) productIdMap.get("productId"));
+                        List<VmsBtFeedInfoTempModel> productIdModels = vmsBtFeedInfoTempDao.selectList(paramProductId);
+                        for (VmsBtFeedInfoTempModel productIdModel : productIdModels) {
+                            // product-id(%s) is duplicated.
+                            addErrorMessage(errorList, "8000012", new Object[]{productIdModel.getProductId()}, productIdModel.getRow(), columnMap.get(PRODUCT_ID));
+                        }
+                    }
+                }
+
                 int codeCnt = 0;
+                int i=1;
                 // 取得需要处理的Code级别的数据,每次取得固定件数
                 while (true) {
                     List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
                     Map<String, Object> param = new HashMap<>();
                     param.put("channelId", channel.getOrder_channel_id());
-                    param.put("parentId", "");
+                    param.put("parentId", BLANK_PARENT_ID);
                     param.put("updateFlg", "0");
                     List<VmsBtFeedInfoTempModel> codeList = vmsBtFeedInfoTempDaoExt.selectList(param);
                     // 直到全部拿完那么终止
@@ -256,22 +284,25 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         // 更新对象
                         updateCodeModel.setUpdateFlg("1");
                         vmsBtFeedInfoTempDao.update(updateCodeModel);
-
-                        // 更新Sku级别数据
-                        VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
-                        // 更新条件
-                        updateSkuModel.setChannelId(channel.getOrder_channel_id());
-                        updateSkuModel.setParentId(codeModel.getSku());
-                        // 更新对象
-                        updateSkuModel.setUpdateFlg("1");
-                        vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
+                        if (skuModels.size() > 0) {
+                            // 更新Sku级别数据
+                            VmsBtFeedInfoTempModel updateSkuModel = new VmsBtFeedInfoTempModel();
+                            // 更新条件
+                            updateSkuModel.setChannelId(channel.getOrder_channel_id());
+                            updateSkuModel.setParentId(codeModel.getSku());
+                            // 更新对象
+                            updateSkuModel.setUpdateFlg("1");
+                            vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
+                        }
                     }
+                    $info("point-mongo-start" + ",channel：" + channel.getFull_name());
                     // 插入MongoDb表
                     if (feedInfoModelList.size() > 0) {
                         Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
                     }
+                    $info("point-mongo-end" + ",channel：" + channel.getFull_name());
                     i++;
                 }
                 $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
@@ -367,14 +398,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 先Check Code应该有的那些内容
             // Code
             String sku = codeModel.getSku();
-            Map<String, Object> param = new HashMap<>();
-            param.put("channelId", channel.getOrder_channel_id());
-            param.put("sku", codeModel.getSku());
-            List<VmsBtFeedInfoTempModel> skus = vmsBtFeedInfoTempDaoExt.selectList(param);
-            if (skus.size() > 0) {
-                // sku(%s) is duplicated.
-                addErrorMessage(errorList, "8000003", new Object[]{sku}, codeModel.getRow(), columnMap.get(SKU_INDEX));
-            }
 
             // title
             String title = codeModel.getTitle();
@@ -898,15 +921,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // product-id is Required.
                 addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(PRODUCT_ID)}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
                 errorFlg = true;
-            } else {
-                Map<String, Object> param = new HashMap<>();
-                param.put("channelId", channel.getOrder_channel_id());
-                param.put("sku", productId);
-                List<VmsBtFeedInfoTempModel> productIds = vmsBtFeedInfoTempDaoExt.selectList(param);
-                if (productIds.size() > 0) {
-                    // product-id(%s) is duplicated.
-                    addErrorMessage(errorList, "8000012", new Object[]{productId}, codeModel.getRow(), columnMap.get(PRODUCT_ID));
-                }
             }
 
             // price
@@ -1012,7 +1026,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (item.getBytes().length > 128) {
                         addErrorMessage(error, "8000011", new Object[]{columnMap.get(PARENT_ID)}, rowNum, columnMap.get(PARENT_ID));
                     }
-                    model.setParentId(item);
+                    if (StringUtils.isEmpty(item)) {
+                        model.setParentId(BLANK_PARENT_ID);
+                    } else {
+                        model.setParentId(item);
+                    }
 
                     // relationship-type
                     item = reader.get(i++);
