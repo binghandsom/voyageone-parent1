@@ -4,8 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `shipment_name`, `shipped_date`, `expressCompany`, `tracking_no`, 
-        `comment`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`, `creater`, 
-        `modified`, `modifier`
+        `comment`, `status`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`, 
+        `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -35,6 +35,9 @@
             </if>
             <if test="comment != null" >
                 `comment`,
+            </if>
+            <if test="status != null" >
+                `status`,
             </if>
             <if test="arrivedTime != null" >
                 `arrived_time`,
@@ -78,6 +81,9 @@
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=VARCHAR},
             </if>
             <if test="arrivedTime != null" >
                 #{arrivedTime,jdbcType=TIMESTAMP},
@@ -135,6 +141,9 @@
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=VARCHAR},
             </if>
             <if test="arrivedTime != null" >
                 `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP},
@@ -195,6 +204,9 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
             <if test="arrivedTime != null" >
                 and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
             </if>
@@ -246,6 +258,9 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
             <if test="arrivedTime != null" >
                 and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
             </if>
@@ -293,6 +308,9 @@
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
             </if>
             <if test="arrivedTime != null" >
                 and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}

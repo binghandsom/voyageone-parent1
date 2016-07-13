@@ -20,12 +20,15 @@
             <ul class="container list-inline">
                 <li ng-bind="topbar.userName"></li>
                 <li>(</li>
-                <li uib-dropdown>
+                <li uib-dropdown ng-if="topbar.channelList.length > 1">
                     <span class="dropdown-toggle-arr" uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
                     <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
                         <li ng-repeat="channel in topbar.channelList" ng-click="topbar.setChannel(channel.id)" ng-bind="::channel.name">
                         </li>
                     </ul>
+                </li>
+                <li ng-if="topbar.channelList.length == 1">
+                    <span>11{{topbar.channelList[0].name}}22</span>
                 </li>
                 <li>)</li>
                 <li>|</li>

@@ -45,6 +45,11 @@ public class VmsBtShipmentModel extends BaseModel {
     protected String comment;
 
     /**
+     * 1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
+     */
+    protected String status;
+
+    /**
      * 到达VoyageOne时间
      */
     protected Date arrivedTime;
@@ -110,6 +115,14 @@ public class VmsBtShipmentModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
     }
 
     public Date getArrivedTime() {
