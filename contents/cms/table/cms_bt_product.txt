@@ -77,6 +77,8 @@
     * clientNetPrice      ->客户成本价
     * priceMsrp           ->中国建议零售价
     * priceRetail         ->中国指导价
+    * weight              ->20160713,重量
+    * weightUnit          ->20160713,重量单位
 * platforms    ->平台属性
   * P0  ->主数据
     * cartId
