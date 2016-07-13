@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtFeeCommissionDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtFeeCommissionModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `platform_id`, `cart_id`, `commision_type`, `cat_id`, `cat_path`, 
-        `commison_rate`, `created`, `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `platform_id`, `cart_id`, `commission_type`, `cat_id`, `cat_path`, 
+        `commisson_rate`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -26,8 +26,8 @@
             <if test="cartId != null" >
                 `cart_id`,
             </if>
-            <if test="commisionType != null" >
-                `commision_type`,
+            <if test="commissionType != null" >
+                `commission_type`,
             </if>
             <if test="catId != null" >
                 `cat_id`,
@@ -35,8 +35,8 @@
             <if test="catPath != null" >
                 `cat_path`,
             </if>
-            <if test="commisonRate != null" >
-                `commison_rate`,
+            <if test="commissonRate != null" >
+                `commisson_rate`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -60,8 +60,8 @@
             <if test="cartId != null" >
                 #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="commisionType != null" >
-                #{commisionType,jdbcType=VARCHAR},
+            <if test="commissionType != null" >
+                #{commissionType,jdbcType=VARCHAR},
             </if>
             <if test="catId != null" >
                 #{catId,jdbcType=VARCHAR},
@@ -69,8 +69,8 @@
             <if test="catPath != null" >
                 #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="commisonRate != null" >
-                #{commisonRate,jdbcType=DOUBLE},
+            <if test="commissonRate != null" >
+                #{commissonRate,jdbcType=DOUBLE},
             </if>
             <if test="created == null" >
                 now(),
@@ -108,8 +108,8 @@
             <if test="cartId != null" >
                 `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="commisionType != null" >
-                `commision_type` = #{commisionType,jdbcType=VARCHAR},
+            <if test="commissionType != null" >
+                `commission_type` = #{commissionType,jdbcType=VARCHAR},
             </if>
             <if test="catId != null" >
                 `cat_id` = #{catId,jdbcType=VARCHAR},
@@ -117,8 +117,8 @@
             <if test="catPath != null" >
                 `cat_path` = #{catPath,jdbcType=VARCHAR},
             </if>
-            <if test="commisonRate != null" >
-                `commison_rate` = #{commisonRate,jdbcType=DOUBLE},
+            <if test="commissonRate != null" >
+                `commisson_rate` = #{commissonRate,jdbcType=DOUBLE},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -158,8 +158,8 @@
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="commisionType != null" >
-                and `commision_type` = #{commisionType,jdbcType=VARCHAR}
+            <if test="commissionType != null" >
+                and `commission_type` = #{commissionType,jdbcType=VARCHAR}
             </if>
             <if test="catId != null" >
                 and `cat_id` = #{catId,jdbcType=VARCHAR}
@@ -167,8 +167,8 @@
             <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="commisonRate != null" >
-                and `commison_rate` = #{commisonRate,jdbcType=DOUBLE}
+            <if test="commissonRate != null" >
+                and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -200,8 +200,8 @@
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="commisionType != null" >
-                and `commision_type` = #{commisionType,jdbcType=VARCHAR}
+            <if test="commissionType != null" >
+                and `commission_type` = #{commissionType,jdbcType=VARCHAR}
             </if>
             <if test="catId != null" >
                 and `cat_id` = #{catId,jdbcType=VARCHAR}
@@ -209,8 +209,8 @@
             <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="commisonRate != null" >
-                and `commison_rate` = #{commisonRate,jdbcType=DOUBLE}
+            <if test="commissonRate != null" >
+                and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -239,8 +239,8 @@
             <if test="cartId != null" >
                 and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="commisionType != null" >
-                and `commision_type` = #{commisionType,jdbcType=VARCHAR}
+            <if test="commissionType != null" >
+                and `commission_type` = #{commissionType,jdbcType=VARCHAR}
             </if>
             <if test="catId != null" >
                 and `cat_id` = #{catId,jdbcType=VARCHAR}
@@ -248,8 +248,8 @@
             <if test="catPath != null" >
                 and `cat_path` = #{catPath,jdbcType=VARCHAR}
             </if>
-            <if test="commisonRate != null" >
-                and `commison_rate` = #{commisonRate,jdbcType=DOUBLE}
+            <if test="commissonRate != null" >
+                and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

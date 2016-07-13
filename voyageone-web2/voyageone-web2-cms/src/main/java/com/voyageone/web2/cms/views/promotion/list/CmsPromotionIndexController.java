@@ -1,8 +1,10 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +40,14 @@ public class CmsPromotionIndexController extends CmsController {
     @RequestMapping(PROMOTION.LIST.INDEX.InitByPromotionId)
     public AjaxResponse initByPromotionId(@RequestBody int PromotionId) {
         return success(cmsPromotionService.initByPromotionId(PromotionId, getUser().getSelChannelId(), getLang()));
+    }
+    @RequestMapping(PROMOTION.LIST.INDEX.GetPage)
+    public List<MapModel> getPage(@RequestBody PageQueryParameters parameters) {
+        return promotionService.getPage(parameters);
+    }
+    @RequestMapping(PROMOTION.LIST.INDEX.GetCount)
+    public long getCount(@RequestBody PageQueryParameters parameters) {
+        return promotionService.getCount(parameters);
     }
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
