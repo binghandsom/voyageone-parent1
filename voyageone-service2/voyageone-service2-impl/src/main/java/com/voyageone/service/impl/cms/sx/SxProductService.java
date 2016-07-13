@@ -17,9 +17,6 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
-import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
-import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -63,6 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -96,8 +94,6 @@ public class SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
-    @Autowired
-    private ImageCreateService imageCreateService;
     @Autowired
     private FeedCustomPropService customPropService;
     @Autowired
@@ -418,12 +414,57 @@ public class SxProductService extends BaseService {
                     String destUrl = "";
                     String pictureId = "";
 
+                    // update by desmond 2016/07/13 start 上传图片出错时不抛出异常
+                    try {
+                        if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                            Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                            // test用 start
+    //                    Picture picture = new Picture();
+    //                    picture.setPicturePath("456.jgp");
+    //                    picture.setPictureId(Long.valueOf("456"));
+                            // test用 end
+                            if (picture != null) {
+                                destUrl = picture.getPicturePath();
+                                pictureId = String.valueOf(picture.getPictureId());
+                            }
+                        } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
+                            String picture = uploadImageByUrl_JM(srcUrl, shopBean);
+                            if (!StringUtils.isEmpty(picture)) {
+                                destUrl = picture;
+                            }
+                        }
+                    } catch (Exception e) {
+                        // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了，这里不做任何处理
+                    }
+                    // update by desmond 2016/07/13 end
+                    // 将变换前后的图片url加到map中，即使平台图片url(destUrl)为空也追加，外面要根据空来做删除处理
+                    retUrls.put(srcUrl, destUrl);
+                    // update by desmond 2016/07/13 start  增加destUrl非空的判断
+                    if (!StringUtils.isEmpty(destUrl)) {
+                        model.setPlatformImgUrl(destUrl);
+                        model.setPlatformImgId(pictureId);
+                        model.setUpdFlg(UPD_FLG_UPLOADED);
+
+                        cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
+                    }
+                    // update by desmond 2016/07/13 end
+                } else if (UPD_FLG_UPLOADED == updFlg) {
+                    // upd_flg=1,已经上传
+                    retUrls.put(srcUrl, model.getPlatformImgUrl());
+                }
+            } else {
+                // 无数据，需要上传
+                // 上传后, 插入cms_bt_platform_images
+                String destUrl = "";
+                String pictureId = "";
+                // update by desmond 2016/07/13 start 上传图片出错时不抛出异常
+                try {
                     if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
                         Picture picture = uploadImageByUrl(srcUrl, shopBean);
                         // test用 start
-//                    Picture picture = new Picture();
-//                    picture.setPicturePath("456.jgp");
-//                    picture.setPictureId(Long.valueOf("456"));
+    //                Picture picture = new Picture();
+    //                picture.setPicturePath("123.jgp");
+    //                picture.setPictureId(Long.valueOf("123"));
                         // test用 end
                         if (picture != null) {
                             destUrl = picture.getPicturePath();
@@ -435,53 +476,28 @@ public class SxProductService extends BaseService {
                             destUrl = picture;
                         }
                     }
-                    retUrls.put(srcUrl, destUrl);
-
-                    model.setPlatformImgUrl(destUrl);
-                    model.setPlatformImgId(pictureId);
-                    model.setUpdFlg(UPD_FLG_UPLOADED);
-
-                    cmsBtPlatformImagesDaoExt.updatePlatformImagesById(model, user);
-                } else if (UPD_FLG_UPLOADED == updFlg) {
-                    // upd_flg=1,已经上传
-                    retUrls.put(srcUrl, model.getPlatformImgUrl());
+                } catch (Exception e) {
+                    // 上传图片出错时不抛出异常，具体的错误信息在上传图片方法里面已经输出了,这里不做任何处理
                 }
-            } else {
-                // 无数据，需要上传
-                // 上传后, 插入cms_bt_platform_images
-                String destUrl = "";
-                String pictureId = "";
-                if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-                    Picture picture = uploadImageByUrl(srcUrl, shopBean);
-                    // test用 start
-//                Picture picture = new Picture();
-//                picture.setPicturePath("123.jgp");
-//                picture.setPictureId(Long.valueOf("123"));
-                    // test用 end
-                    if (picture != null) {
-                        destUrl = picture.getPicturePath();
-                        pictureId = String.valueOf(picture.getPictureId());
-                    }
-                } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
-                    String picture = uploadImageByUrl_JM(srcUrl, shopBean);
-                    if (!StringUtils.isEmpty(picture)) {
-                        destUrl = picture;
-                    }
-                }
+                // update by desmond 2016/07/13 end
+                // 将变换前后的图片url加到map中，即使平台图片url(destUrl)为空也追加，外面要根据空来做删除处理
                 retUrls.put(srcUrl, destUrl);
-
-                CmsBtPlatformImagesModel imageUrlInfo = new CmsBtPlatformImagesModel();
-                imageUrlInfo.setCartId(cartId);
-                imageUrlInfo.setChannelId(channelId);
-                imageUrlInfo.setSearchId(groupId);
-                imageUrlInfo.setImgName(""); // 暂定为空
-                imageUrlInfo.setOriginalImgUrl(srcUrl);
-                imageUrlInfo.setPlatformImgUrl(destUrl);
-                imageUrlInfo.setPlatformImgId(pictureId);
-                imageUrlInfo.setUpdFlg(UPD_FLG_UPLOADED);
-                imageUrlInfo.setCreater(user);
-                imageUrlInfo.setModifier(user);
-                imageUrlSaveModels.add(imageUrlInfo);
+                // update by desmond 2016/07/13 start  增加destUrl非空的判断
+                if (!StringUtils.isEmpty(destUrl)) {
+                    CmsBtPlatformImagesModel imageUrlInfo = new CmsBtPlatformImagesModel();
+                    imageUrlInfo.setCartId(cartId);
+                    imageUrlInfo.setChannelId(channelId);
+                    imageUrlInfo.setSearchId(groupId);
+                    imageUrlInfo.setImgName(""); // 暂定为空
+                    imageUrlInfo.setOriginalImgUrl(srcUrl);
+                    imageUrlInfo.setPlatformImgUrl(destUrl);
+                    imageUrlInfo.setPlatformImgId(pictureId);
+                    imageUrlInfo.setUpdFlg(UPD_FLG_UPLOADED);
+                    imageUrlInfo.setCreater(user);
+                    imageUrlInfo.setModifier(user);
+                    imageUrlSaveModels.add(imageUrlInfo);
+                }
+                // update by desmond 2016/07/13 end
             }
         }
 
@@ -584,18 +600,43 @@ public class SxProductService extends BaseService {
     
     public String uploadImageByUrl_JM(String picUrl, ShopBean shopBean) throws Exception {
 
-        // 读取图片
-        InputStream inputStream = getImgInputStream(picUrl, 3);
+        // 图片流
+        InputStream inputStream = null;
 
-        //上传图片
-        JmImageFileBean fileBean = new JmImageFileBean();
-        //用UUID命名
-        fileBean.setImgName(UUID.randomUUID().toString());
-        fileBean.setInputStream(inputStream);
-        fileBean.setNeedReplace(false);
-        fileBean.setDirName(shopBean.getOrder_channel_id());
-        fileBean.setExtName("jpg");
-        return jumeiImageFileService.imageFileUpload(shopBean, fileBean);
+        try {
+            // 读取图片
+            inputStream = getImgInputStream(picUrl, 3);
+        } catch (Exception e) {
+            // 即使scene7上URL对应的图片不存在也不要报异常，直接返回空字符串
+            String errMsg = "通过scene7上聚美图片URL取得对应的图片流失败 [picUrl:" + picUrl + "]";
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        try {
+            //上传图片
+            JmImageFileBean fileBean = new JmImageFileBean();
+            //用UUID命名
+            fileBean.setImgName(UUID.randomUUID().toString());
+            fileBean.setInputStream(inputStream);
+            fileBean.setNeedReplace(false);
+            fileBean.setDirName(shopBean.getOrder_channel_id());
+            fileBean.setExtName("jpg");
+            return jumeiImageFileService.imageFileUpload(shopBean, fileBean);
+        } catch (Exception e) {
+            // 图片上传到聚美平台失败
+            String errMsg = "上传图片到聚美平台失败 [errMsg:" + e.getMessage() + "]";
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
     }
 
 
@@ -2801,7 +2842,8 @@ public class SxProductService extends BaseService {
             }
             if (matchModels.size() == 1) {
                 $info("找到image_template记录!");
-                retUrl = getImageByTemplateId(channelId, String.valueOf(matchModels.get(0).getImageTemplateId()), imageParam);
+//                retUrl = getImageByTemplateId(channelId, String.valueOf(matchModels.get(0).getImageTemplateId()), imageParam);
+                retUrl = String.format(matchModels.get(0).getImageTemplateContent(), imageParam);
                 break;
             }
         }
@@ -2811,17 +2853,18 @@ public class SxProductService extends BaseService {
 
     // 20160513 tom 图片服务器切换 START
     public String getImageByTemplateId(String channelId, String imageTemplateId, String... imageParam) throws Exception {
-        ImageCreateGetRequest request = new ImageCreateGetRequest();
-        request.setChannelId(channelId);
-        request.setTemplateId(Integer.parseInt(imageTemplateId));
-        request.setFile(imageTemplateId + "_" + imageParam[0]); // 模板id + "_" + 第一个参数(一般是图片名)
-        request.setVParam(imageParam);
-        try {
-            ImageCreateGetResponse response = imageCreateService.getImage(request);
-            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-        } catch (Exception e) {
-            throw new BusinessException("图片取得失败! 模板id:" + imageTemplateId + ", 图片名:" + imageParam[0]);
-        }
+        return null;
+//        ImageCreateGetRequest request = new ImageCreateGetRequest();
+//        request.setChannelId(channelId);
+//        request.setTemplateId(Integer.parseInt(imageTemplateId));
+//        request.setFile(imageTemplateId + "_" + imageParam[0]); // 模板id + "_" + 第一个参数(一般是图片名)
+//        request.setVParam(imageParam);
+//        try {
+//            ImageCreateGetResponse response = imageCreateService.getImage(request);
+//            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+//        } catch (Exception e) {
+//            throw new BusinessException("图片取得失败! 模板id:" + imageTemplateId + ", 图片名:" + imageParam[0]);
+//        }
     }
     // 20160513 tom 图片服务器切换 END
 

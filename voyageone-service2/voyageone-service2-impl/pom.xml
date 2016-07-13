@@ -73,11 +73,11 @@
             <!--<artifactId>voyageone-components-uscdn</artifactId>-->
             <!--<version>${voyageone.components.uscdn.version}</version>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-components-imagecreate</artifactId>
-            <version>${voyageone.components.imagecreate.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>voyageone-components-imagecreate</artifactId>-->
+            <!--<version>${voyageone.components.imagecreate.version}</version>-->
+        <!--</dependency>-->
         <!-- liquifire END -->
 
         <dependency>
