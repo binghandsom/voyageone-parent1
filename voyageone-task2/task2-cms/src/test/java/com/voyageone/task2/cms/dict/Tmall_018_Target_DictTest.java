@@ -21,8 +21,8 @@ public class Tmall_018_Target_DictTest {
 	@Test
 	public void startupTest() {
 
-//		doCreateJson("详情页描述", false, doDict_详情页描述());
-		doCreateJson("无线描述", false, doDict_无线描述());
+		doCreateJson("详情页描述", false, doDict_详情页描述());
+//		doCreateJson("无线描述", false, doDict_无线描述());
 
 	}
 
@@ -143,7 +143,7 @@ public class Tmall_018_Target_DictTest {
 							}
 						}
 
-						CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
+						CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null);
 						ruleRoot.addRuleWord(new CustomWord(word));
 					}
 
