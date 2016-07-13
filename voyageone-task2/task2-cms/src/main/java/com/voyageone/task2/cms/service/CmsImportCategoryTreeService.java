@@ -63,6 +63,8 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
     // 主类目开始列
     private final static int CATEGORY_START_INDEX = 1;
+    // 类目的 sku 分割标识位的其实列位置 (对应 Excel 的 M)
+    private final static int SKU_SPLIT_START_INDEX = 12;
     // 主类目的列数
     private final static int CATEGORY_MAX_LEVEL = 10;
     // 平台类目开始列
@@ -340,6 +342,8 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
                     categoryTree.setIsParent(1);
                 }
 
+                categoryTree.setSkuSplit(tryGetSkuSplit(row, 1));
+
                 categoryTree.setCreater(getTaskName());
                 categoryTree.setModifier(getTaskName());
 
@@ -348,36 +352,19 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
             CmsMtCategoryTreeAllModel levelModel = categoryTree;
 
-            // 在下面的循环还没执行前
-            // 当前类目的层级数, 就只有 1 级
-            // 如果下面的循环在一开始就 break, 也就是还在 i = 2 的时候, 即第二层级名称为空时 break
-            // 那么 level = i - 1 (i = 2)
-            // level = 1
-            // 所以这里初始化为何值无所谓, 但保险起见仍为 1, 不初始化则编译报错
-            int categoryLevel = 1;
-
             // 取得xls的一行数据，做出这棵树
             for (int i = CATEGORY_START_INDEX + 1; i < CATEGORY_START_INDEX + CATEGORY_MAX_LEVEL; i++) {
 
                 // 某个层级下面的类目对象
                 String categoryNamePart = ExcelUtils.getString(row, i);
                 // 直到这一列的值为空白，那么这条数据结束
-                if (StringUtils.isEmpty(categoryNamePart)) {
-                    categoryLevel = i - 1;
+                if (StringUtils.isEmpty(categoryNamePart))
                     break;
-                }
+
                 categoryPath += ">" + categoryNamePart;
 
                 levelModel = makeCategoryObject(levelModel, categoryNamePart, categoryPath, row, i);
             }
-
-            Integer skuSplitFlag = 0;
-            String skuSplitFlagString = row.getCell(categoryLevel + 11).getStringCellValue();
-
-            if (!StringUtils.isEmpty(skuSplitFlagString) && StringUtils.isNumeric(skuSplitFlagString))
-                skuSplitFlag = Integer.valueOf(skuSplitFlagString);
-
-            categoryTree.setSkuSplit(skuSplitFlag);
 
             if (insertFlg) {
                 cmsMtCategoryTreeAllDao.insert(categoryTree);
@@ -419,8 +406,9 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             findCategoryTree.setCreater(null);
             findCategoryTree.setCreated(null);
             modelParent.getChildren().add(findCategoryTree);
-
         }
+
+        findCategoryTree.setSkuSplit(tryGetSkuSplit(row, index));
 
         return findCategoryTree;
     }
@@ -441,5 +429,15 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
         categoryTree.setCreater(null);
         categoryTree.setCreated(null);
         categoryTree.getChildren().forEach(this::removeItemCreateUpdate);
+    }
+
+    private Integer tryGetSkuSplit(Row row, int categoryLevel) {
+        Integer skuSplitFlag = 0;
+        String skuSplitFlagString = row.getCell(SKU_SPLIT_START_INDEX + categoryLevel - 1).getStringCellValue();
+
+        if (!StringUtils.isEmpty(skuSplitFlagString) && StringUtils.isNumeric(skuSplitFlagString))
+            skuSplitFlag = Integer.valueOf(skuSplitFlagString);
+
+        return skuSplitFlag;
     }
 }
