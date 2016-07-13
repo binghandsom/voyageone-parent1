@@ -22,11 +22,9 @@ import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -209,11 +207,15 @@ public class OrderInfoService extends BaseService {
                 vmsOrderDetailService.select(sortedSelectParams);
         $debug("pickingList data: " + orderDetailList.size() + " in total.");
 
+        // 生成Excel
         $debug("Creating Excel...");
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         sxssfWorkbook.setCompressTempFiles(true); // 防止缓存文件过大 采用压缩方式处理
 
+        // 页脚
         Sheet sheet = sxssfWorkbook.createSheet("PickingList");
+        Footer footer = sheet.getFooter();
+        footer.setCenter("Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages());
 
         // 设置单元格默认格式
         CellStyle defaultRowCellStyle = sxssfWorkbook.createCellStyle();
@@ -221,10 +223,9 @@ public class OrderInfoService extends BaseService {
         defaultRowCellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         defaultRowCellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         defaultRowCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        defaultRowCellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        defaultRowCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 
-        sheet.setDefaultColumnStyle(0, defaultRowCellStyle);
-        sheet.setDefaultColumnStyle(1, defaultRowCellStyle);
-        sheet.setDefaultColumnStyle(2, defaultRowCellStyle);
 
         // 标题行格式
         CellStyle titleRowCellStyle = sxssfWorkbook.createCellStyle();
@@ -234,6 +235,11 @@ public class OrderInfoService extends BaseService {
         titleRowCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         titleRowCellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         titleRowCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        Font font = sxssfWorkbook.createFont();
+        font.setBold(true);
+        titleRowCellStyle.setFont(font);
+        titleRowCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        titleRowCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 
         /* 设置标题行 */
         Row titleRow = sheet.createRow(0);
@@ -241,11 +247,13 @@ public class OrderInfoService extends BaseService {
         int skuCellNumber = 0;
         int descriptionCellNumber = 1;
         int orderIdCellNumber = 2;
+
         // 设置内容
         if (VmsConstants.PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfo.getOrderType())) {
             skuCellNumber = 2;
             orderIdCellNumber = 0;
         }
+
         Cell titleRowCell0 = titleRow.createCell(skuCellNumber);
         titleRowCell0.setCellValue("SKU");
         titleRowCell0.setCellStyle(titleRowCellStyle);
@@ -262,15 +270,26 @@ public class OrderInfoService extends BaseService {
         for (int i = 0; i < orderDetailList.size(); i++) {
             VmsBtOrderDetailModel vmsBtOrderDetailModel = orderDetailList.get(i);
             Row dataRow = sheet.createRow(i + 1);
-            dataRow.createCell(skuCellNumber).setCellValue(vmsBtOrderDetailModel.getClientSku());
-            dataRow.createCell(descriptionCellNumber).setCellValue(vmsBtOrderDetailModel.getDecription());
-            dataRow.createCell(orderIdCellNumber).setCellValue(vmsBtOrderDetailModel.getOrderId());
+            Cell skuCell = dataRow.createCell(skuCellNumber);
+            skuCell.setCellValue(vmsBtOrderDetailModel.getClientSku());
+            skuCell.setCellStyle(defaultRowCellStyle);
+
+            Cell descriptionCell = dataRow.createCell(descriptionCellNumber);
+            descriptionCell.setCellValue(vmsBtOrderDetailModel.getDecription());
+            descriptionCell.setCellStyle(defaultRowCellStyle);
+
+            Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
+            orderIdCell.setCellValue(vmsBtOrderDetailModel.getOrderId());
+            orderIdCell.setCellStyle(defaultRowCellStyle);
         }
 
         // 整理宽度
         sheet.autoSizeColumn(skuCellNumber);
         sheet.autoSizeColumn(descriptionCellNumber);
         sheet.autoSizeColumn(orderIdCellNumber);
+
+        // 设定首行冻结
+        sheet.createFreezePane(0, 1, 0, 1);
 
         $debug("Excel file created");
 
