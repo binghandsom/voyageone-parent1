@@ -368,12 +368,12 @@
         <if test="modifier != null">
             , `modifier` = #{modifier, jdbcType=VARCHAR}
         </if>
-        where `order_id` = #{orderId, jdbcType=VARCHAR}
-        <if test="sku != null">
-            and `client_sku` = #{sku, jdbcType=VARCHAR}
+        where
+        <if test="orderId != null">
+            and `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
         </if>
         <if test="reservationId != null">
-            and `reservation_id` = #{reservationId}
+            and `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
         </if>
     </update>
 </mapper>

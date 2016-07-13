@@ -89,6 +89,7 @@ public class OrderInfoService extends BaseService {
 
         Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
+            put("status", STATUS_VALUE.SHIPMENT_STATUS.OPEN);
         }};
         return vmsShipmentService.select(shipmentSearchParams);
     }
@@ -121,7 +122,8 @@ public class OrderInfoService extends BaseService {
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
         SortParam sortParam = new SortParam();
         sortParam.setColumnName(ORDER_TIME);
-        sortParam.setDirection((null != orderSearchInfo.getStatus() && orderSearchInfo.getStatus() == 1) ?
+        sortParam.setDirection((null != orderSearchInfo.getStatus()
+                && orderSearchInfo.getStatus() == STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
                 Order.Direction.ASC : Order.Direction.DESC);
         OrderInfoBean orderInfoBean = new OrderInfoBean();
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfo, sortParam));
@@ -143,6 +145,7 @@ public class OrderInfoService extends BaseService {
          */
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel());
+            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
             put("orderId", item.getOrderId());
             put("modifier", user.getUserName());
         }};
@@ -154,7 +157,7 @@ public class OrderInfoService extends BaseService {
                         .PRODUCT_STATUS.OPEN)))
                 .collect(Collectors.toList());
 
-        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0) throw new BusinessException("8000019");
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0) throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
         cancelOrderParam.put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
@@ -172,8 +175,6 @@ public class OrderInfoService extends BaseService {
 
         Map<String, Object> cancelSkuParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel());
-            put("orderId", item.getOrderId());
-            put("sku", item.getSku());
             put("reservationId", item.getReservationId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
             put("modifier", user.getUserName());
@@ -215,19 +216,26 @@ public class OrderInfoService extends BaseService {
 
         // 设置单元格默认格式
         CellStyle defaultRowCellStyle = sxssfWorkbook.createCellStyle();
-        defaultRowCellStyle.setAlignment((short) 1);
+        defaultRowCellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        defaultRowCellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        defaultRowCellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        defaultRowCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 
         sheet.setDefaultColumnStyle(0, defaultRowCellStyle);
         sheet.setDefaultColumnStyle(1, defaultRowCellStyle);
         sheet.setDefaultColumnStyle(2, defaultRowCellStyle);
 
-        /* 设置标题行 */
-        Row titleRow = sheet.createRow(0);
         // 标题行格式
         CellStyle titleRowCellStyle = sxssfWorkbook.createCellStyle();
-        titleRowCellStyle.setAlignment((short) 1);
+        titleRowCellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        titleRowCellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        titleRowCellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        titleRowCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         titleRowCellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         titleRowCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        /* 设置标题行 */
+        Row titleRow = sheet.createRow(0);
 
         // 设置内容
         Cell titleRowCell0 = titleRow.createCell(0);
