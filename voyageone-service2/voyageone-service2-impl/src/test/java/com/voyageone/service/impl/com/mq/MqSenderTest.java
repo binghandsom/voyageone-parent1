@@ -35,8 +35,8 @@ public class MqSenderTest extends TestCase {
 
         Map<String, Object> message = new HashMap<>();
         message.put("id", String.valueOf(9));
-        message.put("aa", "aa1");
-        message.put("bb", "bb1");
+        message.put("aa", "中国");
+        message.put("bb", "上海");
         sender.sendMessage("voyageone_mq_error_handle_testing", message);
     }
 
