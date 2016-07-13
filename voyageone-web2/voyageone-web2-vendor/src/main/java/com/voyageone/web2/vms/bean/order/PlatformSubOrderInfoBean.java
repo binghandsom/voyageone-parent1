@@ -2,6 +2,7 @@ package com.voyageone.web2.vms.bean.order;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String orderId;
-    private long orderDateTimestamp;
+    private Date orderDateTime;
     private String status;
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private List<SubOrderInfoBean> orderInfoBeanList = new ArrayList<>();
@@ -23,12 +24,12 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.orderId = orderId;
     }
 
-    public long getOrderDateTimestamp() {
-        return orderDateTimestamp;
+    public Date getOrderDateTime() {
+        return orderDateTime;
     }
 
-    public void setOrderDateTimestamp(long orderDateTimestamp) {
-        this.orderDateTimestamp = orderDateTimestamp;
+    public void setOrderDateTime(Date orderDateTime) {
+        this.orderDateTime = orderDateTime;
     }
 
     public BigDecimal getTotalPrice() {
@@ -62,7 +63,8 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
 //
 //        }
 
-        if (!orderInfoBean.getStatus().equals(this.status)) this.status = "-";
+        if (null == this.status) this.status = orderInfoBean.getStatus();
+        else if (!orderInfoBean.getStatus().equals(this.status)) this.status = "-";
         this.totalPrice = totalPrice.add(orderInfoBean.getPrice());
         this.orderInfoBeanList.add(orderInfoBean);
         return true;

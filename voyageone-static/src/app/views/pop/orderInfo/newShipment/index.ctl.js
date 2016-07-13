@@ -5,7 +5,10 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('NewShipmentController', (function () {
-        function NewShipmentController() {
+        function NewShipmentController(context) {
+
+            // 用搜索条件中的选项
+            this.searchOrderStatus = context;
         }
 
         NewShipmentController.prototype = function () {

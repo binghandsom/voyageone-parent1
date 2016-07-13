@@ -14,14 +14,22 @@ import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsConstants.ChannelConfig;
 import com.voyageone.web2.vms.VmsConstants.STATUS_VALUE;
 import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +46,8 @@ public class OrderInfoService extends BaseService {
 
     private VmsOrderDetailService vmsOrderDetailService;
     private VmsShipmentService vmsShipmentService;
+
+    private int BUFFER_SIZE = 65535;
 
     @Autowired
     public OrderInfoService(VmsOrderDetailService vmsOrderDetailService, VmsShipmentService vmsShipmentService) {
@@ -75,7 +85,7 @@ public class OrderInfoService extends BaseService {
     public VmsBtShipmentModel getCurrentShipment(UserSessionBean user) {
 
         Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel());
+            put("channelId", user.getSelChannel().getId());
         }};
         return vmsShipmentService.select(shipmentSearchParams);
     }
@@ -122,7 +132,9 @@ public class OrderInfoService extends BaseService {
                 return vmsBtOrderDetailModelList.stream()
                         .map(vmsBtOrderDetailModel -> {
                             SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
+                            orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
                             orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
+                            orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
                             orderInfoBean.setDesc(vmsBtOrderDetailModel.getDecription());
                             orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                             orderInfoBean.setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
@@ -147,15 +159,15 @@ public class OrderInfoService extends BaseService {
                             // 按照第一个sku初始化平台订单id内容
                             PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
                             platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getOrderId());
-                            platformOrderInfoBean.setOrderDateTimestamp(vmsBtOrderDetailModelList.get(0).
-                                    getOrderTime().getTime());
+                            platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
                             platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
-                            // 将订单下的sku信息压入
+                            // 将订单下的sku信息录入
                             vmsBtOrderDetailModelList.stream()
                                     .map(vmsBtOrderDetailModel -> new SubOrderInfoBean() {{
 
                                         // 整理格式
+                                        setReservationId(vmsBtOrderDetailModel.getReservationId());
                                         setOrderId(vmsBtOrderDetailModel.getOrderId());
                                         setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                                         setDesc(vmsBtOrderDetailModel.getDecription());
@@ -163,8 +175,6 @@ public class OrderInfoService extends BaseService {
                                         setSku(vmsBtOrderDetailModel.getClientSku());
                                         setStatus(vmsBtOrderDetailModel.getStatus());
                                     }})
-
-                                    // 压入
                                     .forEach(platformOrderInfoBean::pushOrderInfoBean);
 
                             return platformOrderInfoBean;
@@ -261,11 +271,60 @@ public class OrderInfoService extends BaseService {
      */
     public int cancelOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
 
+        /**
+         * 检测当前订单的状态
+         */
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel());
             put("orderId", item.getOrderId());
-            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
+            put("modifier", user.getUserName());
         }};
+
+        // TODO: 16-7-12 订单当前状态测试 vantis
+        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(cancelOrderParam)
+                .stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(String.valueOf(STATUS_VALUE
+                        .PRODUCT_STATUS.OPEN)))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0) throw new BusinessException("8000019");
+
+        // 检测通过 进行状态变更
+        cancelOrderParam.put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
         return vmsOrderDetailService.updateOrderStatus(cancelOrderParam);
+    }
+
+    /**
+     * sku级别的取消
+     * @param user 当前用户
+     * @param item 需要取消的对象
+     * @return 取消条数
+     */
+    public int cancelSku(UserSessionBean user, SubOrderInfoBean item) {
+
+        Map<String, Object> cancelSkuParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel());
+            put("orderId", item.getOrderId());
+            put("sku", item.getSku());
+            put("reservationId", item.getReservationId());
+            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
+            put("modifier", user.getUserName());
+        }};
+        return vmsOrderDetailService.updateOrderStatus(cancelSkuParam);
+    }
+
+
+    public byte[] getExcelBytes(UserSessionBean user, DownloadInfo downloadInfo) throws IOException {
+
+        SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+        Sheet sheet = sxssfWorkbook.createSheet();
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0).setCellValue("=。=");
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        sxssfWorkbook.write(byteArrayOutputStream);
+
+        return byteArrayOutputStream.toByteArray();
     }
 }

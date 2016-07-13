@@ -37,3 +37,73 @@ html, body {
 .first-hidden {
     display: none !important;
 }
+
+.footer-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.footer {
+    color: #dadada;
+    background: #585f69;
+    padding: 20px 0 30px;
+    height: 264px;
+}
+.footer h2 {
+    color: #e4e4e4;
+    background: none;
+    text-shadow: none;
+}
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 970px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+
+.container {
+    width: 1500px;
+}
+
+.headline {
+    display: block;
+    margin: 4px 0 25px 0;
+    border-bottom: 1px dotted #e4e9f0;
+}
+.headline h2 {
+    border-bottom: 2px solid #72c02c;
+    margin: 0 0 -2px 0;
+    padding-bottom: 1px;
+    display: inline-block;
+    font-size: 22px;
+    font-family: 'Microsoft Yahei', sans-serif;
+}
+.copyright {
+    font-size: 12px;
+    padding: 11px 0 7px;
+    background: #3e4753;
+    border-top: solid 1px #777;
+    height:58px;
+}
+.copyright p {
+    color: #dadada;
+    margin-top: 12px;
+}

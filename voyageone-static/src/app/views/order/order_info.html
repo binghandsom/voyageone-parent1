@@ -4,14 +4,14 @@
         <ul class="pull-right breadcrumb">
             <li><a href="#/home">Home</a></li>
             <li><a href="javascript:void(0)">Order</a></li>
-            <li class="active selecte">Order Info</li>
+            <li class="active selected">Order Info</li>
         </ul>
     </div>
 </div>
 <div class="container content">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5 class="panel-title">Search</h5>
+            <h5 class="panel-title" translate="TXT_SEARCH"></h5>
         </div>
         <div class="panel-body">
             <div class="form-inline">
@@ -60,27 +60,29 @@
                     </span>
                 </div>
                 <div class="form-group pull-right">
-                    <button ng-click="ctrl.search()" class="btn btn-primary btn-sm">SEARCH</button>
+                    <button ng-click="ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
                 </div>
             </div>
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6">
-            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openNewShipment)" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-show="ctrl.currentShipment"  class="btn btn-success btn-sm" ng-click="" translate="BTN_END_SHIPMENT"></button>
+        <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openShipment, true)" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-show="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-show="ctrl.currentShipment" href="?">{{ctrl.currentShipment.shipmentName}}</a>
+                <a ng-show="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment(openShipment, false)">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
+        <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <select class="form-control input-sm">
-                <option value="" translate="TXT_ORDER_BY_SKU"></option>
+            <select class="form-control input-sm" ng-model="ctrl.downloadInfo.orderType">
+                <option value="SKU" translate="TXT_ORDER_BY_SKU"></option>
+                <option value="ORDER" translate="TXT_ORDER_BY_ORDER"></option>
             </select>
-            <button class="btn btn-primary btn-sm" TRANSLATE="BTN_DOWNLOAD_PICKING_LIST"></button>
+            <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
-    <div class="panel panel-vo">
+    <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
         <div class="panel-body">
             <div class="table-responsive">
                 <table class="table table-fixed table-vo">
@@ -99,15 +101,18 @@
                     <tbody>
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
-                        <td ng-click="item.collapse = !item.collapse">{{item.orderId}}</td>
-                        <td ng-click="item.collapse = !item.collapse">{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td ng-click="item.collapse = !item.collapse">-</strong></td>
-                        <td ng-click="item.collapse = !item.collapse">-</td>
-                        <td ng-click="item.collapse = !item.collapse">{{ctrl.getStatusName(item.status)}}</td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderId}}</strong></td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        </td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
                         <td>
-                            <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelOrder(item)">CANCEL</button>
-                            <button ng-show="item.status == 1" class="btn btn-xs btn-success" ng-click="ctrl.popAddShipment(openAddShipment)">ADD TO SHIPMENT</button>
+                            <button class="btn btn-xs btn-warning" ng-show="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
+                            <button class="btn btn-xs btn-success" ng-show="item.status == 1" ng-click="ctrl.popAddToShipment(openAddShipment)" ng-disabled="!ctrl.currentShipment"
+                                    translate="BTN_ADD_TO_SHIPMENT">
+                            </button>
                         </td>
                     </tr>
                     <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
@@ -116,7 +121,7 @@
                         <td>{{detail.orderDate}}</td>
                         <td>{{detail.sku}}</td>
                         <td>{{detail.desc}}</td>
-                        <td>{{detail.status}}</td>
+                        <td>{{ctrl.getStatusName(detail.status)}}</td>
                         <td>${{detail.price}}</td>
                         <td>
                         </td>
@@ -127,4 +132,40 @@
             </div>
         </div>
     </div>
+    <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-fixed table-vo">
+                    <thead>
+                    <tr>
+                        <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->
+                        <th class="td-2" translate="TXT_ORDER_ID"></th>
+                        <th class="td-2" translate="TXT_ORDER_DATE"></th>
+                        <th class="td-1" translate="TXT_SKU"></th>
+                        <th class="td-2" translate="TXT_DESCRIPTION"></th>
+                        <th class="td-1" translate="TXT_STATUS"></th>
+                        <th class="td-1" translate="TXT_PRICE"></th>
+                        <th style="width: 150px" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
+                        <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
+                        <td>{{item.orderId}}</td>
+                        <td>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td>{{item.sku}}</td>
+                        <td>{{item.desc}}</td>
+                        <td>{{ctrl.getStatusName(item.status)}}</td>
+                        <td>${{item.price}}</td>
+                        <td>
+                            <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
+            </div>
+        </div>
+    </div>
+
 </div>

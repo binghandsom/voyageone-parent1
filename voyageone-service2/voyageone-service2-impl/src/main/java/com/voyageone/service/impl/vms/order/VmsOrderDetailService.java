@@ -73,7 +73,11 @@ public class VmsOrderDetailService extends BaseService {
      * @return sku总数
      */
     public long getTotalSkuNum(Map<String, Object> skuSearchParamsWithLimitAndSort) {
-        // TODO: 16-7-12 sku统计尚未完成 vantis
-        return 0;
+
+        return vmsBtOrderDetailDaoExt.selectSkuListNumLimitedByTime(skuSearchParamsWithLimitAndSort);
+    }
+
+    public List<VmsBtOrderDetailModel> select(Map<String, Object> cancelOrderParam) {
+        return vmsBtOrderDetailDao.selectList(cancelOrderParam);
     }
 }

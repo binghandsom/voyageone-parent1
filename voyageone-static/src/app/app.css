@@ -227,6 +227,7 @@ input::-webkit-clear-button {
   background: #585f69;
   padding: 20px 0 30px;
   height: 265px;
+  font-size: small;
 }
 .footer h2 {
   color: #e4e4e4;
@@ -497,4 +498,13 @@ a {
   min-height: 32px;
   border-color: #fff !important;
   border-bottom: solid 1px #f5f9e7;
+}
+.v-middle {
+  vertical-align: middle !important;
+}
+.v-top {
+  vertical-align: top !important;
+}
+.v-bottom {
+  vertical-align: bottom !important;
 }

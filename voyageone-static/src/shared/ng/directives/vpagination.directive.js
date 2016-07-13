@@ -5,21 +5,20 @@ angular.module("vo.directives").directive("vpagination", function ($templateCach
     if (!$templateCache.get(templateKey)) {
         // 这个 html 是经过压缩的 html , 如果需要修改分页的 html 结构, 请去 vpagination.directive.html 修改, 修改后压缩并粘贴覆盖这里的代码
         $templateCache.put(templateKey, '<div class="col-sm-12 form-inline">' +
-            '<div class="col-sm-3" style="padding: 0;margin-left: -40px;">' +
-            '<span class=" col-sm-2" translate="TXT_SHOWING_NO"></span>' +
-            '<input class="text-center form-control input-sm" type="text" ng-model="curr.pageNo" style="max-width: 50px;max-height: 26px;"><span>&nbsp;</span>' +
+            '<div class="col-sm-3 v-middle" style="padding:0;margin-left:-15px;line-height:38px;">' +
+            '<span class="" translate="TXT_SHOWING_NO"></span><span>&nbsp;</span>' +
+            '<input class="text-center form-control input-sm" type="text" ng-model="curr.pageNo" style="max-width:50px;max-height:26px;"><span>&nbsp;</span>' +
             '<span>/</span><span>&nbsp;</span><span ng-bind="totalPages"></span><span>&nbsp;</span>' +
             '<span translate="TXT_PAGE"></span><span>&nbsp;</span><span>&nbsp;</span>' +
-
             '<button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>' +
             '</div>' +
-            '<div class="col-sm-4 text-center"><span translate="TXT_PAGER_SIZE"></span><span>&nbsp;</span>' +
+            '<div class="col-sm-4 text-center" style="line-height:38px;"><span translate="TXT_PAGER_SIZE"></span><span>&nbsp;</span>' +
             '<select class="form-control input-sm" ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption" style="max-width: 65px;max-height: 26px;"></select>' +
             '<span>&nbsp;</span><span translate="TXT_SHOWING"></span><span>&nbsp;</span><span ng-bind="curr.start"></span><span>&nbsp;</span>' +
             '<span>-</span><span>&nbsp;</span><span ng-bind="curr.end"></span><span>&nbsp;</span>' +
             '<span translate="TXT_OF"></span><span>&nbsp;</span>' +
             '<span ng-bind="totalItems"></span><span>&nbsp;</span><span translate="TXT_ITEMS"></span></div>' +
-            '<div class="col-sm-5 text-right">' +
+            '<div class="col-sm-5 text-right v-middle" style="line-height:18px;">' +
             '<ul class="pagination" style="margin: 0">' +
             '<li ng-class="{disabled: curr.isFirst}"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>' +
             '<li ng-class="{disabled: curr.isFirst}"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>' +

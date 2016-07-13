@@ -4,9 +4,10 @@ define([
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
-        function OrderInfoController(alert, notify, orderInfoService, popups) {
+        function OrderInfoController(alert, notify, confirm, orderInfoService, popups) {
             this.alert = alert;
             this.notify = notify;
+            this.confirm = confirm;
             this.orderInfoService = orderInfoService;
             this.popups = popups;
 
@@ -36,6 +37,10 @@ define([
                 sku: "",
                 orderDateFrom: "",
                 orderDateTo: ""
+            };
+
+            this.downloadInfo = {
+                orderType: 'SKU'
             };
 
             this.channelConfigs = {
@@ -78,14 +83,22 @@ define([
                 this.pageInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
                     item.className = '';
+                    var date = new Date();
                     if (item.status == '7')
                         item.className = 'bg-gainsboro';
-                    else {
-                        var date = new Date(item.orderDateTimestamp);
+                    else if (item.status == '1') {
+                        if (this.channelConfigs.vendorOperateType == 'ORDER') {
+                            date = new Date(item.orderDateTime);
+                        } else if (this.channelConfigs.vendorOperateType == 'SKU') {
+                            date = new Date(item.orderDateTimestamp);
+                        } else {
+                            this.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
+                        }
                         if ((new Date().getTime() - date) >= this.threeDay)
                             item.className = 'bg-danger';
                         else if ((new Date().getTime() - date) >= this.twoDay)
                             item.className = 'bg-warning';
+
                     }
                     return item;
                 })
@@ -93,9 +106,29 @@ define([
         };
 
         OrderInfoController.prototype.cancelOrder = function (item) {
-            this.orderInfoService.cancelOrder(item).then(
-                this.search()
-            )
+            var self = this;
+            this.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
+                self.orderInfoService.cancelOrder(item).then(function () {
+                    self.search()
+                })
+            })
+        };
+
+        OrderInfoController.prototype.cancelSku = function (item) {
+            var self = this;
+            this.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
+                self.orderInfoService.cancelSku(item).then(function () {
+                    self.search();
+                })
+            })
+        };
+
+        OrderInfoController.prototype.downloadPickingList = function () {
+
+            this.orderInfoService.downloadPickingList().then(function (res) {
+                console.info(res);
+            });
+            $.download.post('/vms/order/order_info/downloadPickingList', this.downloadInfo);
         };
 
         OrderInfoController.prototype.toggleAll = function () {
@@ -106,17 +139,17 @@ define([
         };
 
         OrderInfoController.prototype.getStatusName = function (statusValue) {
-            var statusName = this.searchOrderStatus.find(function (status, index, array) {
-                status.value = statusValue;
+            var currentStatus = this.searchOrderStatus.find(function (status) {
+                return status.value == statusValue;
             });
-            if (!statusName) statusName = statusValue;
-            return statusName;
+            if (!currentStatus) return statusValue;
+            return currentStatus.name;
         };
 
-        OrderInfoController.prototype.popNewShipment = function () {
-            this.popups.openNewShipment();
+        OrderInfoController.prototype.popNewShipment = function (newShipment) {
+            this.popups.openShipment(this.searchOrderStatus, newShipment);
         };
-        OrderInfoController.prototype.popAddShipment = function () {
+        OrderInfoController.prototype.popAddToShipment = function () {
             this.popups.openAddShipment();
         };
         return OrderInfoController;
