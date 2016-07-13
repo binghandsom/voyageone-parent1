@@ -3,16 +3,23 @@ package com.voyageone.web2.vms.views.order;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.VmsUrlConstants;
-import com.voyageone.web2.vms.bean.order.*;
+import com.voyageone.web2.vms.bean.order.DownloadInfo;
+import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
+import com.voyageone.web2.vms.bean.order.PlatformSubOrderInfoBean;
+import com.voyageone.web2.vms.bean.order.SubOrderInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.voyageone.web2.vms.VmsUrlConstants.*;
+import static com.voyageone.web2.vms.VmsConstants.PICKING_LIST;
+import static com.voyageone.web2.vms.VmsConstants.XLSX;
+import static com.voyageone.web2.vms.VmsUrlConstants.ORDER;
+
 /**
  * order info controller(/vms/order/order_info)
  * Created by vantis on 16-7-6.
@@ -63,14 +70,12 @@ public class OrderInfoController extends BaseController {
         return success(result);
     }
 
-    /**
-     * 下载拣货单
-     * @param downloadInfo 搜索条件
-     * @return 表格
-     */
     @RequestMapping(ORDER.ORDER_INFO.DOWNLOAD_PICKING_LIST)
-    public ResponseEntity<byte[]> downloadPickingList(@RequestBody DownloadInfo downloadInfo) throws IOException {
-
-        return genResponseEntityFromBytes("test.xlsx", orderInfoService.getExcelBytes(this.getUser(), downloadInfo));
+    public ResponseEntity<byte[]> downloadPickingList(@RequestParam Map<String, Object> downloadParams) throws
+            IOException {
+        DownloadInfo downloadInfo = new DownloadInfo();
+        downloadInfo.setOrderType(downloadParams.get("orderType").toString());
+        return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
+                orderInfoService.getExcelBytes(this.getUser(), downloadInfo));
     }
 }

@@ -7,7 +7,11 @@ public class VmsConstants {
     // utf-8
     public final static String UTF_8 = "utf-8";
 
+    // xlsx后缀
+    public final static String XLSX = ".xlsx";
+    public final static String PICKING_LIST = "PickingList";
 
+    public final static int DEFAULT_PAGE_SIZE = 10;
     /**
      * Feed文件导入状态
      */
@@ -73,8 +77,6 @@ public class VmsConstants {
         }
 
     }
-
-    public int DEFAULT_PAGE_SIZE = 10;
 
     /**
      * ChannelConfig

@@ -40,7 +40,7 @@ define([
             };
 
             this.downloadInfo = {
-                orderType: 'SKU'
+                orderType: 'client_sku'
             };
 
             this.channelConfigs = {
@@ -125,10 +125,10 @@ define([
 
         OrderInfoController.prototype.downloadPickingList = function () {
 
-            this.orderInfoService.downloadPickingList().then(function (res) {
-                console.info(res);
-            });
-            $.download.post('/vms/order/order_info/downloadPickingList', this.downloadInfo);
+            // this.orderInfoService.downloadPickingList().then(function (res) {
+            //     console.info(res);
+            // });
+            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": this.downloadInfo.orderType});
         };
 
         OrderInfoController.prototype.toggleAll = function () {

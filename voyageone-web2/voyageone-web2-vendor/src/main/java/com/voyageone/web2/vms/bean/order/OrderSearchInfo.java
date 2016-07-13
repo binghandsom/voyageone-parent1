@@ -1,18 +1,19 @@
 package com.voyageone.web2.vms.bean.order;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
+import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
 
 /**
  * 订单检索条件
  * Created by vantis on 16-7-7.
  */
 public class OrderSearchInfo {
-    private Integer status = null;
+    private Integer status = VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN;
     private String orderId;
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;

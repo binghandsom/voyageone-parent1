@@ -76,8 +76,8 @@
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
             <select class="form-control input-sm" ng-model="ctrl.downloadInfo.orderType">
-                <option value="SKU" translate="TXT_ORDER_BY_SKU"></option>
-                <option value="ORDER" translate="TXT_ORDER_BY_ORDER"></option>
+                <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
+                <option value="order_id" translate="TXT_ORDER_BY_ORDER"></option>
             </select>
             <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
