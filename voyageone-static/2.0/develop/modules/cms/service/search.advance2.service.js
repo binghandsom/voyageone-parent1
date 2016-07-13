@@ -464,7 +464,12 @@ define([
                     if (skuTxt == undefined || skuTxt == null) {
                         skuTxt = '';
                     }
-                    result.push(cartInfoObj.name + ": " + skuTxt);
+                    if (cartInfoObj == undefined) {
+                        skuTxt = platformObj.cartId + ": " + skuTxt
+                    } else {
+                        skuTxt = cartInfoObj.name + ": " + skuTxt
+                    }
+                    result.push(skuTxt);
                 }
             });
             return result;
