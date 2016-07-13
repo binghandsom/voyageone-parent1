@@ -34,7 +34,7 @@ public class VmsBtFeedFileModel extends BaseModel {
     protected String uploadType;
 
     /**
-     * 1:等待导入；2：导入完成；3：导入错误
+     * 1:等待导入；2：导入中；3：导入完成；4：导入错误；5：导入系统异常
      */
     protected String status;
 
@@ -42,6 +42,11 @@ public class VmsBtFeedFileModel extends BaseModel {
      * 错误文件路径
      */
     protected String errorFileName;
+
+    /**
+     *  系统异常错误信息
+     */
+    protected String errorMsg;
 
     public String getChannelId() {
         return channelId;
@@ -89,5 +94,13 @@ public class VmsBtFeedFileModel extends BaseModel {
 
     public void setErrorFileName(String errorFileName) {
         this.errorFileName = errorFileName == null ? null : errorFileName.trim();
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg == null ? null : errorMsg.trim();
     }
 }

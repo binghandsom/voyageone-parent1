@@ -48,9 +48,6 @@ public class OrderInfoService extends BaseService {
     private VmsOrderDetailService vmsOrderDetailService;
     private VmsShipmentService vmsShipmentService;
 
-    private static int BUFFER_SIZE = 65535;
-    private static String ORDER_TIME = "order_time";
-
     @Autowired
     public OrderInfoService(VmsOrderDetailService vmsOrderDetailService, VmsShipmentService vmsShipmentService) {
         this.vmsOrderDetailService = vmsOrderDetailService;
@@ -120,7 +117,7 @@ public class OrderInfoService extends BaseService {
      */
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
         SortParam sortParam = new SortParam();
-        sortParam.setColumnName(ORDER_TIME);
+        sortParam.setColumnName(VmsConstants.ORDER_TIME);
         sortParam.setDirection((null != orderSearchInfo.getStatus()
                 && orderSearchInfo.getStatus() == STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
                 Order.Direction.ASC : Order.Direction.DESC);
@@ -143,7 +140,7 @@ public class OrderInfoService extends BaseService {
          * 检测当前订单的状态
          */
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel());
+            put("channelId", user.getSelChannel().getId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
             put("orderId", item.getOrderId());
             put("modifier", user.getUserName());
@@ -173,7 +170,7 @@ public class OrderInfoService extends BaseService {
     public int cancelSku(UserSessionBean user, SubOrderInfoBean item) {
 
         Map<String, Object> cancelSkuParam = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel());
+            put("channelId", user.getSelChannel().getId());
             put("reservationId", item.getReservationId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
             put("modifier", user.getUserName());

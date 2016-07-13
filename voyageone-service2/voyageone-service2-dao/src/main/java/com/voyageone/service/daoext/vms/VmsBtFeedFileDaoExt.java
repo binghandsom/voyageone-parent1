@@ -10,7 +10,7 @@ import java.util.Map;
 @Repository
 public interface VmsBtFeedFileDaoExt {
 
-    int updateErrorFileInfo(VmsBtFeedFileModel record);
+    int updateErrorInfo(VmsBtFeedFileModel record);
 
     List<Map<String, Object>> selectList(Map<String, Object> map);
 

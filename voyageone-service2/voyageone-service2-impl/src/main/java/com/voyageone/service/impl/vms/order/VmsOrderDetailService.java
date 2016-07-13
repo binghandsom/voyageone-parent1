@@ -1,12 +1,16 @@
 package com.voyageone.service.impl.vms.order;
 
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.vms.VmsBtOrderDetailDao;
+import com.voyageone.service.dao.vms.VmsBtOrderLogDao;
 import com.voyageone.service.daoext.vms.VmsBtOrderDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
+import com.voyageone.service.model.vms.VmsBtOrderLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,30 +19,35 @@ import java.util.Map;
  * Created by vantis on 16-7-6.
  */
 @Service
+@VOTransactional
 public class VmsOrderDetailService extends BaseService {
 
     private VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;
     private VmsBtOrderDetailDao vmsBtOrderDetailDao;
+    private VmsBtOrderLogDao vmsBtOrderLogDao;
 
     @Autowired
-    public VmsOrderDetailService (VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao vmsBtOrderDetailDao) {
+    public VmsOrderDetailService(VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao
+            vmsBtOrderDetailDao, VmsBtOrderLogDao vmsBtOrderLogDao) {
         this.vmsBtOrderDetailDaoExt = vmsBtOrderDetailDaoExt;
         this.vmsBtOrderDetailDao = vmsBtOrderDetailDao;
+        this.vmsBtOrderLogDao = vmsBtOrderLogDao;
     }
 
     /**
      * 查询订单
+     *
      * @param orderSearchParams 搜索条件
      * @return 订单详情
      */
     public List<VmsBtOrderDetailModel> selectOrderList(Map<String, Object> orderSearchParams) {
 
-        // TODO: 16-7-7 条件暂未测试 vantis
         return vmsBtOrderDetailDaoExt.selectListLimitedByTime(orderSearchParams);
     }
 
     /**
      * 自条件搜索订单号
+     *
      * @param orderSearchParams 搜索条件
      * @return 订单号List
      */
@@ -50,6 +59,7 @@ public class VmsOrderDetailService extends BaseService {
 
     /**
      * 获取订单总量
+     *
      * @param orderSearchParamsWithLimitAndSort 搜索条件
      * @return 订单总量
      */
@@ -60,15 +70,32 @@ public class VmsOrderDetailService extends BaseService {
 
     /**
      * 更新订单状态
+     *
      * @param changeStatusParam 更新条件
      * @return 更新条数
      */
+    @VOTransactional
     public int updateOrderStatus(Map<String, Object> changeStatusParam) {
+
+        Map<String, Object> logParams = new HashMap<String, Object>() {{
+            putAll(changeStatusParam);
+        }};
+        logParams.remove("status");
+        this.select(logParams).stream()
+                .map(vmsBtOrderDetailModel -> new VmsBtOrderLogModel() {{
+                    setChannelId(vmsBtOrderDetailModel.getChannelId());
+                    setStatus(vmsBtOrderDetailModel.getStatus());
+                    setReservationId(vmsBtOrderDetailModel.getReservationId());
+                    setCreater(changeStatusParam.get("modifier").toString());
+                }})
+                .forEach(vmsBtOrderLogModel -> vmsBtOrderLogDao.insert(vmsBtOrderLogModel));
         return vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParam);
     }
 
+
     /**
      * 条件查询sku总数
+     *
      * @param skuSearchParamsWithLimitAndSort 搜索条件
      * @return sku总数
      */
@@ -77,7 +104,13 @@ public class VmsOrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.selectSkuListNumLimitedByTime(skuSearchParamsWithLimitAndSort);
     }
 
-    public List<VmsBtOrderDetailModel> select(Map<String, Object> cancelOrderParam) {
-        return vmsBtOrderDetailDao.selectList(cancelOrderParam);
+    /**
+     * 查找记录
+     *
+     * @param searchParam 搜索条件
+     * @return 订单列表
+     */
+    public List<VmsBtOrderDetailModel> select(Map<String, Object> searchParam) {
+        return vmsBtOrderDetailDao.selectList(searchParam);
     }
 }

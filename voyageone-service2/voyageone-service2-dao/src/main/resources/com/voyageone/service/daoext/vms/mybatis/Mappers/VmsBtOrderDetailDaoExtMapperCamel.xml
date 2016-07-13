@@ -369,11 +369,13 @@
             , `modifier` = #{modifier, jdbcType=VARCHAR}
         </if>
         where
-        <if test="orderId != null">
-            and `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
-        </if>
-        <if test="reservationId != null">
-            and `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
-        </if>
+        <choose>
+        <when test="orderId != null">
+            `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
+        </when>
+        <when test="reservationId != null">
+            `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
+        </when>
+        </choose>
     </update>
 </mapper>
