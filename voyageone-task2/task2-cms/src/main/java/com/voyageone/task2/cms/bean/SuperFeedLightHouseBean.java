@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.bean;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by gjl on 2016/7/5.
  */
@@ -101,7 +104,11 @@ public class SuperFeedLightHouseBean extends SuperFeedBean {
     }
 
     public String getMd5() {
-        return md5;
+        StringBuffer temp = new StringBuffer();
+        Set<String> noMd5Fields = new HashSet<>();
+        noMd5Fields.add("md5");
+        noMd5Fields.add("updateflag");
+        return  beanToMd5(this,noMd5Fields);
     }
 
     public void setMd5(String md5) {
