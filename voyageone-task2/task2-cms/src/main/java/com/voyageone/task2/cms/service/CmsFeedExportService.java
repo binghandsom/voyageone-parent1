@@ -84,6 +84,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             OutputStream outputStream = new FileOutputStream(outPath + fileName);
             InputStream inputStream = new FileInputStream(templatePath);
             Workbook book = WorkbookFactory.create(inputStream);
+
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
                 $info("导出第" + pageNum + "页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
