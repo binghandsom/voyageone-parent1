@@ -72,6 +72,9 @@
         <!-- OverStock feed 导入 cms2 -->
         <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
+        <!-- FragranceNet feed 导入 cms2 -->
+        <task:scheduled ref="CmsFragranceNetAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+
         <!-- OverStock feed 导入 cms2 -->
         <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
