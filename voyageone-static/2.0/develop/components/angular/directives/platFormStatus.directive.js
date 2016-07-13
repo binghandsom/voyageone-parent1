@@ -41,6 +41,12 @@ angular.module('voyageone.angular.directives').directive('platformStatus', funct
                         /**聚美*/
                         this.statusData.detailUrl = "http://item.jumeiglobal.com/"+this.statusData.numberId+".html";
                         break;
+                    case 28:
+                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
+                        break;
+                    case 29:
+                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
+                        break;
                 }
             }
         };
