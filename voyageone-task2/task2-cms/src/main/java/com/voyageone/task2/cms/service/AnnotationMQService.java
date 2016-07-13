@@ -20,10 +20,10 @@ public class AnnotationMQService extends BaseMQCmsService {
 
 //    static long start=System.currentTimeMillis();
 
-    @Override
-    public boolean isRunnable() {
-        return true;
-    }
+//    @Override
+//    public boolean isRunnable() {
+//        return true;
+//    }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -32,17 +32,17 @@ public class AnnotationMQService extends BaseMQCmsService {
 //        System.out.println(JacksonUtil.bean2Json(taskControlList));
         int id = Integer.parseInt((String)messageMap.get("id"));
         //Thread.sleep(id%2*1000);
-        System.out.println(id + " " + System.currentTimeMillis());
+        //System.out.println(id + " " + System.currentTimeMillis());
 
         TimeUnit.SECONDS.sleep(3);
 
         if (id == 9) {
-            System.out.println(id + " AAA " + System.currentTimeMillis());
+            //System.out.println(id + " AAA " + System.currentTimeMillis());
             //TimeUnit.SECONDS.sleep(300);
             throw new RuntimeException("AAA9");
         }
 
-        System.out.println(id + " OK " + System.currentTimeMillis());
+        //System.out.println(id + " OK " + System.currentTimeMillis());
     }
 
 }

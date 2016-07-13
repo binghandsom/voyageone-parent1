@@ -31,7 +31,7 @@ public class CmsMtFeeCommissionModel extends BaseModel {
     /**
      * 佣金类型:VO,VO佣金;PF,平台佣金;RT,退款率
      */
-    protected String commisionType;
+    protected String commissionType;
 
     /**
      * 平台类目Id
@@ -46,7 +46,7 @@ public class CmsMtFeeCommissionModel extends BaseModel {
     /**
      * 佣金比例
      */
-    protected Double commisonRate;
+    protected Double commissonRate;
 
     public String getChannelId() {
         return channelId;
@@ -72,12 +72,12 @@ public class CmsMtFeeCommissionModel extends BaseModel {
         this.cartId = cartId;
     }
 
-    public String getCommisionType() {
-        return commisionType;
+    public String getCommissionType() {
+        return commissionType;
     }
 
-    public void setCommisionType(String commisionType) {
-        this.commisionType = commisionType == null ? null : commisionType.trim();
+    public void setCommissionType(String commissionType) {
+        this.commissionType = commissionType == null ? null : commissionType.trim();
     }
 
     public String getCatId() {
@@ -96,11 +96,11 @@ public class CmsMtFeeCommissionModel extends BaseModel {
         this.catPath = catPath == null ? null : catPath.trim();
     }
 
-    public Double getCommisonRate() {
-        return commisonRate;
+    public Double getCommissonRate() {
+        return commissonRate;
     }
 
-    public void setCommisonRate(Double commisonRate) {
-        this.commisonRate = commisonRate;
+    public void setCommissonRate(Double commissonRate) {
+        this.commissonRate = commissonRate;
     }
 }
