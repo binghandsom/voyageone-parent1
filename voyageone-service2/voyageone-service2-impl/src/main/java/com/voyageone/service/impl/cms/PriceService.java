@@ -14,6 +14,7 @@ public class PriceService  extends BaseService {
     @Autowired
 
 
+
     private double getShippingFee(String channelId, int cartId, String shippingType, double weight)
     {
 
