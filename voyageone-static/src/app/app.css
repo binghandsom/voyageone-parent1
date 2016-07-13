@@ -3,9 +3,6 @@ body {
   height: 100%;
   font-family: "Microsoft Yahei", sans-serif;
 }
-.container {
-  width: 1500px;
-}
 @media (max-width: 1520px) {
   .container {
     width: 1300px;
@@ -13,7 +10,7 @@ body {
 }
 @media (max-width: 1350px) {
   .container {
-    width: 1150px;
+    width: 1000px;
   }
 }
 @media (max-width: 768px) {
@@ -53,7 +50,7 @@ body {
 .wrapper {
   position: relative;
   min-height: 100%;
-  padding-bottom: 325px;
+  padding-bottom: 224px;
 }
 input::-webkit-calendar-picker-indicator,
 input::-webkit-inner-spin-button,
