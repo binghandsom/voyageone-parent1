@@ -140,7 +140,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             throw new MQIgnoreException(me);
         } catch (Exception ex) {
             if (isOutRetryTimes(message)) {
-                logIssue(ex, ex.getMessage() + String.format("{%s}", messageStr));
+                logIssue(ex, ex.getMessage() + messageStr);
             }
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
