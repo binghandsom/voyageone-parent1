@@ -78,7 +78,8 @@ define([
             } else {
                 this.searchInfo.orderDateTo = undefined;
             }
-
+            this.searchInfo.curr = this.pageInfo.curr;
+            this.searchInfo.size = this.pageInfo.size;
             this.orderInfoService.search(this.searchInfo).then((data) => {
                 this.pageInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
