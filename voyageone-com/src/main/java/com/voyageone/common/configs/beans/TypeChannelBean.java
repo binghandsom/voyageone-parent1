@@ -105,6 +105,10 @@ public class TypeChannelBean {
         this.comment = comment;
     }
 
+    /**
+     *
+     * @return 1:国内店铺，2:海外店铺，3:minimall店铺
+     */
     public String getCartType() {
         return cartType;
     }
