@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.home.menu;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
@@ -125,5 +127,13 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse getHomeSumData()
     {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
+    }
+
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)
+    public AjaxResponse getCmsConfig()
+    {
+        Map<String,Object> response = new HashMap<>();
+        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
+        return success(response);
     }
 }
