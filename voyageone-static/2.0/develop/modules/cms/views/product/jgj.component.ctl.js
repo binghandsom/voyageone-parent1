@@ -52,10 +52,6 @@ define([
                  * 更新操作
                  */
                 function saveProduct(){
-                    if(scope.vm.platform.pBrandName == null){
-                        notify.danger("请先确认是否在后台申请过相应品牌");
-                        return;
-                    }
 
                     scope.vm.platform.status = "Approved";
                     scope.vm.platform.cartId = +scope.cartInfo.value;

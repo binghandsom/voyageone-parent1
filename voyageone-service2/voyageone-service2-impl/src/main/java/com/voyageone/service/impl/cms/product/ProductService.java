@@ -702,7 +702,8 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            product.getPlatform(Integer.parseInt(cartId)).getSkus().forEach(skuInfo -> {
+            product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                    .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).forEach(skuInfo -> {
                 ProductForOmsBean bean = new ProductForOmsBean();
                 // 设置商品的原始channelId
                 bean.setChannelId(product.getOrgChannelId());
@@ -717,7 +718,10 @@ public class ProductService extends BaseService {
                 param.put("channelId", product.getOrgChannelId());
                 param.put("sku", skuCode);
                 WmsBtInventoryCenterLogicModel skuInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-                bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+
+                if(skuInventory != null) {
+                    bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+                }
                 String imagePath = "";
                 if (!product.getCommon().getFields().getImages1().isEmpty()) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
