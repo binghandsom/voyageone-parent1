@@ -279,6 +279,10 @@ define(function () {
             "hash": "/system/cache/index",
             "templateUrl": "views/system/cache/index.tpl.html"
         },
+        "system_mq_send": {
+            "hash": "/system/mq/index",
+            "templateUrl": "views/system/mq/index.tpl.html"
+        },
         "system_category_setting": {
             "hash": "/system/categorysetting/:type",
             "templateUrl": "views/system/categorysetting/maincatunion.tpl.html",
