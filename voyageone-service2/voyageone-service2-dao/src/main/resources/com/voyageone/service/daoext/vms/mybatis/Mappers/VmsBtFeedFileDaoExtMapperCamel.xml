@@ -3,9 +3,9 @@
 <mapper namespace="com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt">
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `client_file_name`, `file_name`, `upload_type`, `status`, `error_file_name`,
-        `created`, `creater`, `modified`, `modifier`
+        `error_msg`, `created`, `creater`, `modified`, `modifier`
     </sql>
-    <update id="updateErrorFileInfo" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
+    <update id="updateErrorInfo" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
         update vms_bt_feed_file
         <set >
             <if test="status != null" >
@@ -13,6 +13,9 @@
             </if>
             <if test="errorFileName != null" >
                 `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -56,6 +59,9 @@
             <if test="errorFileName != null and errorFileName != ''" >
                 and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
+            <if test="errorMsg != null and errorMsg != ''" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
             <if test="uploadDateStart !=null and uploadDateStart != ''">
                 and `created` >= #{uploadDateStart,jdbcType=TIMESTAMP}
             </if>
@@ -87,6 +93,9 @@
             </if>
             <if test="errorFileName != null and errorFileName != ''" >
                 and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null and errorMsg != ''" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
             <if test="uploadDateStart !=null and uploadDateStart != ''">
                 and `created` >= #{uploadDateStart,jdbcType=TIMESTAMP}

@@ -22,6 +22,7 @@ public class VmsConstants {
         public final static String IMPORTING = "2";
         public final static String IMPORT_COMPLETED = "3";
         public final static String IMPORT_WITH_ERROR = "4";
+        public final static String IMPORT_WITH_SYSTEM_ERROR = "5";
     }
 
     /**
