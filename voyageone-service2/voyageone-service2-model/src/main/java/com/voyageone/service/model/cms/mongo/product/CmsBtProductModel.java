@@ -28,8 +28,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private Long prodId;
     //商品lock
     private String lock = "";
-    //商品注释
-    private String comment = "";
     //共通属性
     private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
     //平台属性Map
@@ -72,14 +70,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     }
     public void setLock(String lock) {
         this.lock = lock;
-    }
-
-    //comment
-    public String getComment() {
-        return comment;
-    }
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     //common

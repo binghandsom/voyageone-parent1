@@ -294,7 +294,7 @@ public class SxProductService extends BaseService {
         // 渠道id
         businessLogModel.setChannelId(sxData.getChannelId());
         // 类目id
-        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getCommon().getCatId());
+        if (mainProduct != null) businessLogModel.setCatId(mainProduct.getPlatform(sxData.getCartId()).getpCatId());
         // 平台id
         businessLogModel.setCartId(sxData.getCartId());
         // Group id
@@ -616,15 +616,23 @@ public class SxProductService extends BaseService {
      * @return SxData
      */
     public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
-        // 获取group信息
-        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
-        if (grpModel == null) {
-            return null;
-        }
 
         SxData sxData = new SxData();
         sxData.setChannelId(channelId);
         sxData.setGroupId(groupId);
+
+        // 获取group信息
+        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + groupId + "}", channelId);
+        if (grpModel == null) {
+            // update by desmond 2016/07/12 start
+//            return null;
+            String errMsg = "取得上新数据(SxData)失败! 没找到对应的group数据(groupId=" + groupId + ")";
+            $error(errMsg);
+            sxData.setErrorMessage(errMsg);
+            return sxData;
+            // update by desmond 2016/07/12 end
+        }
+
         sxData.setPlatform(grpModel);
 
         // 该group下的主商品code
@@ -668,7 +676,9 @@ public class SxProductService extends BaseService {
                 // Add by desmond 2016/06/12 start
                 if (feedInfo == null) {
                     // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
-                    sxData.setErrorMessage("该商品对应的feed信息不存在");
+                    String errMsg = "取得上新数据(SxData)失败! 该商品对应的feed信息不存在(OriginalCode/Code=" + prodOrgCode + ")";
+                    $error(errMsg);
+                    sxData.setErrorMessage(errMsg);
                     break;
                 }
                 // Add by desmond 2016/06/12 end
@@ -855,7 +865,13 @@ public class SxProductService extends BaseService {
         // added by morse.lu 2016/06/12 start
         if (productModelList.isEmpty()) {
             // 没有对象
-            return null;
+            // update by desmond 2016/07/12 start
+//            return null;
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+            // update by desmond 2016/07/12 end
         }
         // added by morse.lu 2016/06/12 end
 
@@ -864,12 +880,20 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
 
+        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
+        Map<String, String> mapSizeNick = new HashMap<>();
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
+        }
+        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
+
         // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
         Map<String, String> sizeSxMap = new HashMap<>();
         // 优先mainProduct里的sizeNick
         for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            if (!StringUtils.isEmpty(sku.getSizeNick())) {
-                sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+            String sizeNick = mapSizeNick.get(sku.getSkuCode());
+            if (!StringUtils.isEmpty(sizeNick)) {
+                sizeSxMap.put(sku.getSize(), sizeNick);
             }
         }
         // 然后把productList里的也一样的做一遍
@@ -878,8 +902,9 @@ public class SxProductService extends BaseService {
             for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                 // 已经设置过的size就不用再设置了
                 if (!sizeSxMap.containsKey(sku.getSize())) {
-                    if (!StringUtils.isEmpty(sku.getSizeNick())) {
-                        sizeSxMap.put(sku.getSize(), sku.getSizeNick());
+                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
+                    if (!StringUtils.isEmpty(sizeNick)) {
+                        sizeSxMap.put(sku.getSize(), sizeNick);
                     }
                 }
             }
@@ -1708,7 +1733,7 @@ public class SxProductService extends BaseService {
 
                     sxData.setHasSku(true);
 
-                    String errorLog = " 类目id是:" + sxData.getMainProduct().getCommon().getCatId() + ". groupId:" + sxData.getGroupId();
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
 
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
@@ -2113,6 +2138,12 @@ public class SxProductService extends BaseService {
      * @param field 无线描述的field
      */
     private void setWirelessDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
+        // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
+        Integer appSwitch = expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch();
+        if (appSwitch == null || appSwitch.intValue() != 1) {
+            return;
+        }
+
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
         String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
         if (StringUtils.isEmpty(descriptionValue)) {
@@ -2120,12 +2151,6 @@ public class SxProductService extends BaseService {
             return;
         }
         Map<String, Object> mapValue = JacksonUtil.jsonToMap(descriptionValue);
-
-        // common里的appSwitch,如果是1，那么就启用字典中配置好的天猫无线端模板,如果是0或未设定，那么天猫关于无线端的所有字段都设置为不启用
-        Integer appSwitch = expressionParser.getSxData().getMainProduct().getCommon().getFields().getAppSwitch();
-        if (appSwitch == null || appSwitch.intValue() != 1) {
-            return;
-        }
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, expressionParser.getSxData());
@@ -2315,7 +2340,7 @@ public class SxProductService extends BaseService {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
             // test用 start
-            styleCode = "test." + styleCode;
+//            styleCode = "test." + styleCode;
             // test用 end
             sxData.setStyleCode(styleCode);
             return styleCode;

@@ -31,8 +31,8 @@ public class CmsBtPromotionCodesDaoExtTest {
         map.put("promotionId", "7");
         map.put("start", 1);
         map.put("length", 1);
-        List<CmsBtPromotionCodesBean> list =  cmsBtPromotionCodesDaoExt.selectPromotionCodeList(map);
-        System.out.println(JacksonUtil.bean2Json(list));
+       // List<CmsBtPromotionCodesBean> list =  cmsBtPromotionCodesDaoExt.selectPromotionCodeList(map);
+       // System.out.println(JacksonUtil.bean2Json(list));
 
     }
 

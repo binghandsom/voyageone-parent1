@@ -3,6 +3,7 @@ package com.voyageone.common.util;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
 import com.voyageone.common.configs.beans.ShopBean;
+import org.apache.commons.beanutils.BeanUtils;
 import org.jongo.query.Query;
 import org.junit.Test;
 
@@ -90,5 +91,13 @@ public class JacksonUtilTest {
 
         String startMap = JacksonUtil.bean2JsonNotNull(shopBean);
         System.out.println(startMap);
+
+        Map mapp = null;
+        try {
+            mapp = BeanUtils.describe(shopBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(mapp);
     }
 }

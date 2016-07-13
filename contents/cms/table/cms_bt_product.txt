@@ -11,10 +11,10 @@
 //* fields    ->暂时保留（用于TG上新）
 //* skus      ->暂时保留（用于TG上新）
 * lock    ->锁住该产品，不能进行任何操作(暂时功能不开放),1:lock, 0:unLock
-* comment   ->添加产品注释(暂时功能不开放)
 * common    ->共通属性
   * catId    ->新的主类目Id
   * catPath  ->新的主类目完整路径
+  * comment   ->添加产品注释(暂时功能不开放)
   * fields
     * model
     * code
@@ -77,6 +77,8 @@
     * clientNetPrice      ->客户成本价
     * priceMsrp           ->中国建议零售价
     * priceRetail         ->中国指导价
+    * weight              ->20160713,重量
+    * weightUnit          ->20160713,重量单位
 * platforms    ->平台属性
   * P0  ->主数据
     * cartId

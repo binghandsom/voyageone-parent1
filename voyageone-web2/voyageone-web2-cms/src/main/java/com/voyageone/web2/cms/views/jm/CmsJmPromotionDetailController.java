@@ -98,33 +98,33 @@ public class CmsJmPromotionDetailController extends CmsController {
 //        return success(result);
 //    }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
-    public AjaxResponse delete(@RequestBody int id) {
-        ProductIdListInfo deleteInfo = new ProductIdListInfo();
-        List<Integer> deleteId = new ArrayList<>();
-        deleteId.add(id);
-        deleteInfo.setProductIdList(deleteId);
-        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
+//    public AjaxResponse delete(@RequestBody int id) {
+//        ProductIdListInfo deleteInfo = new ProductIdListInfo();
+//        List<Integer> deleteId = new ArrayList<>();
+//        deleteId.add(id);
+//        deleteInfo.setProductIdList(deleteId);
+//        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
-    //全部删除
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
-    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
-        serviceCmsBtJmPromotionProduct.deleteByPromotionId(promotionId);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    //全部删除
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
+//    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
+//        service3.deleteByPromotionId(promotionId);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
-    //部分商品删除
-    ///cms/jmpromotion/detail/deleteByProductIdList
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
-    public AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
-        serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    //部分商品删除
+//    ///cms/jmpromotion/detail/deleteByProductIdList
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
+//    public AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
+//        serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
 
     ///cms/jmpromotion/detail/updateDealEndTimeAll

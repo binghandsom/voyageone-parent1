@@ -122,7 +122,7 @@ define([
                     search();
                     return;
                 }
-                if ($routeParams.type == '4') {
+                if ($routeParams.type == '4' && $sessionStorage.feedSearch) {
                     // 从主页而来的检索
                     if ($routeParams.value1 > 10) {
                         $scope.vm._cart_tab_act = true;
@@ -133,6 +133,9 @@ define([
                         getCat($scope.vm._cartType_);
                     }
                     $scope.vm.searchInfo = angular.copy($sessionStorage.feedSearch);
+                    if ($scope.vm.searchInfo == undefined) {
+                        $scope.vm.searchInfo = {};
+                    }
                     search();
                     if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                 }
@@ -230,8 +233,8 @@ define([
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps, function (data) {
-                    sumCustomProps.push(data.feed_prop_translation)
-                    sumCustomProps.push(data.feed_prop_original)
+                    sumCustomProps.push({'name': data.feed_prop_translation});
+                    sumCustomProps.push({'name': data.feed_prop_original});
                 });
                 $scope.vm.sumCustomProps = sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
@@ -369,11 +372,6 @@ define([
                         alert("未设置变更项目，请设置后再操作。");
                         return;
                     }
-                    if (res.data.ecd == 4) {
-                        alert("下列商品不在 " + res.data.cartStr + " 上销售，无法继续操作，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
-                        return;
-                    }
-
                     $scope.search();
                 })
             }
@@ -452,7 +450,13 @@ define([
         }
 
         // 当选择搜索时设置输入框
-        $scope.setSelValue = function (option, custAtts) {
+        $scope.setSelValue = function (option, custAtts, typeVal) {
+            if (typeVal && typeVal == 2) {
+                if (option.inputOpts == 4 || option.inputOpts == 5) {
+                    option.inputVal = '';
+                }
+                return;
+            }
             if (custAtts == null || custAtts == undefined) {
                 option.inputType = '';
                 option.inputOptsKey = '';
@@ -659,7 +663,8 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function () {
+                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>")
+                    .result.then(function () {
                     callback(cartId, null, context);
                 });
             }

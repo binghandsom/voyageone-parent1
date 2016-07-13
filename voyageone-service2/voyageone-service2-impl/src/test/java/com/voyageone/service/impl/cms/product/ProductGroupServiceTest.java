@@ -158,4 +158,13 @@ public class ProductGroupServiceTest {
 
         System.out.print(model);
     }
+
+    @Test
+    public void testGetUnPublishedProducts() throws Exception {
+//        CmsBtProductGroupModel model = service.getProductGroupByGroupId("017", 389785L);
+        CmsBtProductGroupModel model = service.getProductGroupByGroupId("017", 389767L);
+
+        List<String> unPublishedProducts = service.getUnPublishedProducts(model);
+        unPublishedProducts.forEach(p -> System.out.print(p));
+    }
 }

@@ -237,10 +237,13 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
                     if (fieldId.equals(sku_masterField.getId())) {
                         continue;
                     }
-                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
-                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
-                        continue;
-                    }
+                    // deleted by morse.lu 2016/07/12 start
+                    // 暂时不要条形码
+//                    if (sku_barCodeField != null && fieldId.equals(sku_barCodeField.getId())) {
+//                        skuFieldValue.setInputFieldValue(sku_barCodeField.getId(), sxProduct.getCommon().getSku(cmsSkuProp.getSkuCode()).getBarcode());
+//                        continue;
+//                    }
+                    // deleted by morse.lu 2016/07/12 end
                     if (sku_outerIdField != null && fieldId.equals(sku_outerIdField.getId())) {
                         skuFieldValue.setInputFieldValue(sku_outerIdField.getId(), cmsSkuProp.getSkuCode());
                         continue;
@@ -344,10 +347,10 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
         MappingBean skuMappingBean = null;
         MappingBean skuExtendMappingBean = null;
 
-        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
-
         // deleted by morse.lu 2016/07/04 start
         // 这一版不用Mapping啦,方法入参先留着,以防以后有特殊的需要Mapping的属性
+//        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
+//        
 //        for (MappingBean mappingBean : mappingBeenList) {
 //            if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
 //                skuMappingBean = mappingBean;
