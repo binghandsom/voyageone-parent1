@@ -129,7 +129,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     private TaskControlEnums.Status process(Message message) {
         String messageStr = "";
         try {
-            messageStr = new String(message.getBody(), "UTF-8");
+            messageStr = new String(message.getBody());
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
             onStartup(messageMap);
         } catch (BusinessException be) {
