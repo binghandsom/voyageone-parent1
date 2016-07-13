@@ -295,6 +295,10 @@ a {
 [ng-click] {
   cursor: pointer;
 }
+vpagination {
+  display: block;
+  margin: 5px auto;
+}
 .input.input-file {
   position: relative;
   display: block;
@@ -342,6 +346,9 @@ a {
 }
 .margin-bottom-10 {
   margin-bottom: 10px;
+}
+.no-padding {
+  padding: 0;
 }
 .td-12 {
   width: 100%;
