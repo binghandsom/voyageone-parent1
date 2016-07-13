@@ -17,6 +17,9 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateGetResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -32,10 +35,7 @@ import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
@@ -43,6 +43,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -52,10 +53,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
+import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
@@ -98,11 +96,14 @@ public class SxProductService extends BaseService {
     private BusinessLogService businessLogService;
     @Autowired
     private ConditionPropValueService conditionPropValueService;
-
+    @Autowired
+    private ImageCreateService imageCreateService;
     @Autowired
     private FeedCustomPropService customPropService;
     @Autowired
     private SizeChartService sizeChartService;
+    @Autowired
+    private ImageTemplateService imageTemplateService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -2712,26 +2713,115 @@ public class SxProductService extends BaseService {
         return retSizeMap;
     }
 
+    /**
+     * 从cms_bt_image_template(mongo)取得图片url，取得逻辑与getImageUrls相同
+     *
+     * @param channelId
+     * @param cartId
+     * @param imageTemplateType 1:商品图片模版 2:产品图片模版 3：详情细节模版 4：参数模版 5:自定义图片模版 6:商品包装模版
+     * @param viewType 1:PC端 2：APP端
+     * @param brandName product.fields.brand
+     * @param productType product.fields.productType
+     * @param sizeType product.fields.sizeType
+     * @param imageParam 参数
+     * @return url
+     */
+    public String getImageTemplate(String channelId, int cartId, int imageTemplateType, int viewType, String brandName, String productType, String sizeType, String... imageParam) throws Exception {
+        Map<Integer, List<CmsBtImageTemplateModel>> matchMap = new HashMap<>(); // Map<完全匹配key的位置，List>
+        for (int index = 0; index < 1 << 3; index++) {
+            // 初期化
+            // 这一版的key是3个：brandName, productType, sizeType
+            matchMap.put(index, new ArrayList<>());
+        }
+        List<Integer> sortKey = new ArrayList<>(); // key的sort
+        {
+            // TODO 初期化设值不够好看，暂时没想到好方法，以后想到再改
+            sortKey.add(7); // 111
+            sortKey.add(6); // 110
+            sortKey.add(5); // 101
+            sortKey.add(3); // 011
+            sortKey.add(4); // 100
+            sortKey.add(2); // 010
+            sortKey.add(1); // 001
+            sortKey.add(0); // 000
+        }
+
+        String paramBrandName = brandName;
+        String paramProductType = productType;
+        String paramSizeType = sizeType;
+        List<String> brandNameList = new ArrayList<>();
+        List<String> productTypeList = new ArrayList<>();
+        List<String> sizeTypeList = new ArrayList<>();
+        if (StringUtils.isEmpty(brandName)) {
+            paramBrandName = SizeChartService.VALUE_ALL;
+        } else {
+            brandNameList.add(brandName);
+        }
+        if (StringUtils.isEmpty(productType)) {
+            paramProductType = SizeChartService.VALUE_ALL;
+        } else {
+            productTypeList.add(productType);
+        }
+        if (StringUtils.isEmpty(sizeType)) {
+            paramSizeType = SizeChartService.VALUE_ALL;
+        } else {
+            sizeTypeList.add(sizeType);
+        }
+
+        List<CmsBtImageTemplateModel> modelsAll = imageTemplateService.getCmsBtImageTemplateModelList(channelId, cartId, imageTemplateType, viewType, brandNameList, productTypeList, sizeTypeList);
+        for (CmsBtImageTemplateModel model : modelsAll) {
+            String matchVal = "";
+            if (model.getBrandName().contains(paramBrandName)) {
+                matchVal += "1";
+            } else {
+                matchVal += "0";
+            }
+            if (model.getProductType().contains(paramProductType)) {
+                matchVal += "1";
+            } else {
+                matchVal += "0";
+            }
+            if (model.getSizeType().contains(paramSizeType)) {
+                matchVal += "1";
+            } else {
+                matchVal += "0";
+            }
+            matchMap.get(Integer.parseInt(matchVal, 2)).add(model);
+        }
+
+        String retUrl = null;
+        for (Integer key : sortKey) {
+            List<CmsBtImageTemplateModel> matchModels =  matchMap.get(key);
+            if (matchModels.size() > 1) {
+                throw new BusinessException("图片模板表找到两条以上符合的记录,请修正设定!" +
+                        "channelId= " + channelId +
+                        ",BrandName= " + paramBrandName +
+                        ",ProductType= " + paramProductType +
+                        ",SizeType=" + paramSizeType);
+            }
+            if (matchModels.size() == 1) {
+                $info("找到image_template记录!");
+                retUrl = getImageByTemplateId(channelId, String.valueOf(matchModels.get(0).getImageTemplateId()), imageParam);
+                break;
+            }
+        }
+
+        return retUrl;
+    }
+
     // 20160513 tom 图片服务器切换 START
-    public String getImageByTemplateId(String channelId, String imageTemplate, String... imageName) throws Exception {
-        return null;
-        /**
-         * REMOVE LiquidFire
-         * liang 2016/06/29
-         */
-//        ImageCreateGetRequest request = new ImageCreateGetRequest();
-//        request.setChannelId(channelId);
-//        request.setTemplateId(Integer.parseInt(imageTemplate));
-//        request.setFile(imageTemplate + "_" + imageName); // 模板id + "_" + 第一个参数(一般是图片名)
-//        String[] vPara = imageName;
-//        request.setVParam(vPara);
-//        ImageCreateGetResponse response = null;
-//        try {
-//            response = imageCreateService.getImage(request);
-//            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
-//        } catch (Exception e) {
-//            throw new BusinessException("图片取得失败! 模板id:" + imageTemplate + ", 图片名:" + imageName);
-//        }
+    public String getImageByTemplateId(String channelId, String imageTemplateId, String... imageParam) throws Exception {
+        ImageCreateGetRequest request = new ImageCreateGetRequest();
+        request.setChannelId(channelId);
+        request.setTemplateId(Integer.parseInt(imageTemplateId));
+        request.setFile(imageTemplateId + "_" + imageParam[0]); // 模板id + "_" + 第一个参数(一般是图片名)
+        request.setVParam(imageParam);
+        try {
+            ImageCreateGetResponse response = imageCreateService.getImage(request);
+            return imageCreateService.getOssHttpURL(response.getResultData().getFilePath());
+        } catch (Exception e) {
+            throw new BusinessException("图片取得失败! 模板id:" + imageTemplateId + ", 图片名:" + imageParam[0]);
+        }
     }
     // 20160513 tom 图片服务器切换 END
 
