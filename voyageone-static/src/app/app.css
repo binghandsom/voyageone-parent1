@@ -225,8 +225,8 @@ input::-webkit-clear-button {
 .footer {
   color: #dadada;
   background: #585f69;
-  padding: 20px 0 30px;
-  height: 265px;
+  padding: 20px 0 20px;
+  height: 184px;
   font-size: small;
 }
 .footer h2 {
@@ -248,7 +248,7 @@ input::-webkit-clear-button {
 }
 .copyright {
   font-size: 12px;
-  padding: 11px 0 7px;
+  padding: 0;
   background: #3e4753;
   border-top: solid 1px #777;
 }
