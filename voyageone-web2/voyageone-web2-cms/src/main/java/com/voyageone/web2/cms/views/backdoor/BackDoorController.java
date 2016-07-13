@@ -168,7 +168,11 @@ public class BackDoorController extends CmsController {
 
         final String productNewStatusName = CmsConstants.ProductStatus.New.name();
 
-        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, code);
+        List<String> codes = new ArrayList<>();
+        if (!StringUtils.isEmpty(code))
+            codes.add(code);
+
+        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, codes);
 
         List<String> errorCode = new ArrayList<>();
 
@@ -599,7 +603,7 @@ public class BackDoorController extends CmsController {
             }
         });
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
+        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
 
         StringBuilder builder = new StringBuilder("<body>");
 
@@ -633,55 +637,68 @@ public class BackDoorController extends CmsController {
 
                 CmsBtProductModel_Platform_Cart platformInfo = product.getPlatform(Integer.valueOf(cartId));
 
-                if (StringUtils.isEmpty(platformInfo.getpNumIId()))
+                if (StringUtils.isEmpty(platformInfo.getpNumIId())) {
                     platformInfo.setStatus(CmsConstants.ProductStatus.Pending);
+                    platformInfo.setAttribute("pStatus", "");
+                    platformInfo.setpAttributeStatus("0");
+                    platformInfo.setpAttributeSetter("");
+                }
+
                 else {
 
                     platformInfo.setStatus(CmsConstants.ProductStatus.Approved);
+//                    platformInfo.setAttribute("pStatus", "");
+                    if (!StringUtils.isEmpty(platformInfo.getpCatPath())) {
+                        platformInfo.setpCatStatus("1");
+                    } else {
+                        platformInfo.setpCatStatus("0");
+                    }
+                    platformInfo.setpAttributeStatus("1");
+                    platformInfo.setpAttributeSetter("数据移行设置");
                     if (CmsConstants.PlatformStatus.WaitingPublish.name().equals(platformInfo.getpStatus().name()))
                         platformInfo.setpStatus(CmsConstants.PlatformStatus.InStock);
                 }
 
-                final Double[] priceMsrpSt = {0.00};
-                final Double[] priceMsrpEd = {0.00};
-                final Double[] priceRetailSt = {0.00};
-                final Double[] priceRetailEd = {0.00};
-                final Double[] priceSaleSt = {0.00};
-                final Double[] priceSaleEd = {0.00};
-
-                platformInfo.getSkus().forEach(sku -> {
-
-                    double priceMsrp = sku.getDoubleAttribute("priceMsrp");
-                    double priceRetail = sku.getDoubleAttribute("priceRetail");
-                    double priceSale = sku.getDoubleAttribute("priceSale");
-
-                    if (priceMsrpSt[0].compareTo(0D) == 0 || priceMsrpSt[0].compareTo(priceMsrp) >= 0)
-                        priceMsrpSt[0] = priceMsrp;
-                    if (priceMsrpEd[0].compareTo(priceMsrp) <= 0)
-                        priceMsrpEd[0] = priceMsrp;
-                    if (priceRetailSt[0].compareTo(0D) == 0 || priceRetailSt[0].compareTo(priceRetail) >= 0)
-                        priceRetailSt[0] = priceRetail;
-                    if (priceRetailEd[0].compareTo(priceRetail) <= 0)
-                        priceRetailEd[0] = priceRetail;
-                    if (priceSaleSt[0].compareTo(0D) == 0 || priceSaleSt[0].compareTo(priceSale) >= 0)
-                        priceSaleSt[0] = priceSale;
-                    if (priceSaleEd[0].compareTo(priceSale) <= 0)
-                        priceSaleEd[0] = priceSale;
-                });
-
-                platformInfo.setpPriceMsrpSt(priceMsrpSt[0]);
-                platformInfo.setpPriceMsrpEd(priceMsrpEd[0]);
-                platformInfo.setpPriceRetailSt(priceRetailSt[0]);
-                platformInfo.setpPriceRetailEd(priceRetailEd[0]);
-                platformInfo.setpPriceSaleSt(priceSaleSt[0]);
-                platformInfo.setpPriceSaleEd(priceSaleEd[0]);
-
-                platformInfo.getSkus().forEach(sku -> {
-                    if (sku.containsKey("PriceSale")) {
-                        sku.put("priceSale",sku.getDoubleAttribute("PriceSale"));
-                        sku.remove("PriceSale");
-                    }
-                });
+//                final Double[] priceMsrpSt = {0.00};
+//                final Double[] priceMsrpEd = {0.00};
+//                final Double[] priceRetailSt = {0.00};
+//                final Double[] priceRetailEd = {0.00};
+//                final Double[] priceSaleSt = {0.00};
+//                final Double[] priceSaleEd = {0.00};
+//
+//                platformInfo.getSkus().forEach(sku -> {
+//
+//                    double priceMsrp = sku.getDoubleAttribute("priceMsrp");
+//                    double priceRetail = sku.getDoubleAttribute("priceRetail");
+//                    double priceSale = sku.getDoubleAttribute("priceSale");
+//
+//                    if (priceMsrpSt[0].compareTo(0D) == 0 || priceMsrpSt[0].compareTo(priceMsrp) >= 0)
+//                        priceMsrpSt[0] = priceMsrp;
+//                    if (priceMsrpEd[0].compareTo(priceMsrp) <= 0)
+//                        priceMsrpEd[0] = priceMsrp;
+//                    if (priceRetailSt[0].compareTo(0D) == 0 || priceRetailSt[0].compareTo(priceRetail) >= 0)
+//                        priceRetailSt[0] = priceRetail;
+//                    if (priceRetailEd[0].compareTo(priceRetail) <= 0)
+//                        priceRetailEd[0] = priceRetail;
+//                    if (priceSaleSt[0].compareTo(0D) == 0 || priceSaleSt[0].compareTo(priceSale) >= 0)
+//                        priceSaleSt[0] = priceSale;
+//                    if (priceSaleEd[0].compareTo(priceSale) <= 0)
+//                        priceSaleEd[0] = priceSale;
+//                });
+//
+//                platformInfo.setpPriceMsrpSt(priceMsrpSt[0]);
+//                platformInfo.setpPriceMsrpEd(priceMsrpEd[0]);
+//                platformInfo.setpPriceRetailSt(priceRetailSt[0]);
+//                platformInfo.setpPriceRetailEd(priceRetailEd[0]);
+//                platformInfo.setpPriceSaleSt(priceSaleSt[0]);
+//                platformInfo.setpPriceSaleEd(priceSaleEd[0]);
+//
+//                platformInfo.getSkus().forEach(sku -> {
+//                    if (sku.containsKey("PriceSale")) {
+//                        sku.put("priceSale",sku.getDoubleAttribute("PriceSale"));
+//                        sku.remove("PriceSale");
+//                    }
+//                });
 
 
                 HashMap<String, Object> queryMap = new HashMap<>();
@@ -703,7 +720,7 @@ public class BackDoorController extends CmsController {
     @RequestMapping(value = "changeDataByNewGroup", method = RequestMethod.GET)
     public Object changeDataBy20160708Group(@RequestParam("channelId") String channelId) {
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
+        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, null);
 
         StringBuilder builder = new StringBuilder("<body>");
         builder.append("<h2>Group 信息列表</h2>");
@@ -810,7 +827,7 @@ public class BackDoorController extends CmsController {
     }
 
 
-    private List<String> checkGroupTransformOn20160708(String channelId) {
+    private List<String> checkGroupTransformOn20160708(String channelId, String code) {
 
         List<String> messageList = new ArrayList<>();
 
