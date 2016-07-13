@@ -72,7 +72,10 @@ public class ImagesService extends BaseService {
         CmsChannelConfigBean imageCompareRule = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.IMAGE_COMPARE_RULE);
 
         if (imageCompareRule == null)
-            throw new BusinessException(channelId + "该店铺对应的PRICE_RETAIL_CALC_FORMULA在cms_mt_channel_config表中不存在");
+            // update by desmond 2016/07/13 start
+//            throw new BusinessException(channelId + "该店铺对应的PRICE_RETAIL_CALC_FORMULA在cms_mt_channel_config表中不存在");
+            throw new BusinessException(channelId + "该店铺对应的IMAGE_COMPARE_RULE在cms_mt_channel_config表中不存在");
+            // update by desmond 2016/07/13 end
 
         if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME.equals(imageCompareRule.getConfigValue1())) {
             String imageName = ImgUtils.getImageName(originalUrl);//originalUrl.substring(originalUrl.lastIndexOf("/") + 1).substring(0, originalUrl.substring(originalUrl.lastIndexOf("/") + 1).indexOf("?"));
