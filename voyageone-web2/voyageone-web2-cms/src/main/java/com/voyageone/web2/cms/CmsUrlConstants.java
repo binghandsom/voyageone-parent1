@@ -138,6 +138,8 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/index";
                 String INIT = "init";
                 String InitByPromotionId="initByPromotionId";
+                String GetPage="getPage";
+                String GetCount="getCount";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";

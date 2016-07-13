@@ -5,6 +5,7 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -14,14 +15,17 @@ import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +52,24 @@ public class PromotionService extends BaseService {
 
     @Autowired
     private CmsBtPromotionDao promotionDao;
+    @Autowired
+    private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
+    //分页 begin
+    public List<MapModel> getPage(PageQueryParameters parameters) {
+
+        List<MapModel> list = daoExtCamelCmsBtPromotionDaoExtCamel.selectPage(parameters.getSqlMapParameter());
+        for (MapModel model : list) {
+            loadMap(model);
+        }
+        return list;
+    }
+    void  loadMap(MapModel map) {
+
+    }
+    public long getCount(PageQueryParameters parameters) {
+       return  daoExtCamelCmsBtPromotionDaoExtCamel.selectCount(parameters.getSqlMapParameter());
+    }
+    //分页 end
 
     /**
      * 根据PromotionId查询
