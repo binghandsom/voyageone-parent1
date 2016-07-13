@@ -20,7 +20,9 @@ import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
 import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -195,6 +197,7 @@ public class OrderInfoService extends BaseService {
             put("status", STATUS_VALUE.PRODUCT_STATUS.OPEN);
         }};
 
+        $debug("Getting pickingList data...");
         Map<String, Object> sortedSelectParams = MySqlPageHelper.build(selectParams)
                 .addSort(downloadInfo.getOrderType(), Order.Direction.ASC)
                 .toMap();
@@ -202,9 +205,13 @@ public class OrderInfoService extends BaseService {
         // 获取订单信息
         List<VmsBtOrderDetailModel> orderDetailList =
                 vmsOrderDetailService.select(sortedSelectParams);
+        $debug("pickingList data: " + orderDetailList.size() + " in total.");
 
+        $debug("Creating Excel...");
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
-        Sheet sheet = sxssfWorkbook.createSheet();
+        sxssfWorkbook.setCompressTempFiles(true); // 防止缓存文件过大 采用压缩方式处理
+
+        Sheet sheet = sxssfWorkbook.createSheet("PickingList");
 
         // 设置单元格默认格式
         CellStyle defaultRowCellStyle = sxssfWorkbook.createCellStyle();
@@ -216,15 +223,25 @@ public class OrderInfoService extends BaseService {
 
         /* 设置标题行 */
         Row titleRow = sheet.createRow(0);
-        // 设置格式
+        // 标题行格式
         CellStyle titleRowCellStyle = sxssfWorkbook.createCellStyle();
         titleRowCellStyle.setAlignment((short) 1);
-        titleRowCellStyle.setFillForegroundColor(HSSFColor.BLUE_GREY.index);
-        titleRow.setRowStyle(titleRowCellStyle);
+
+        titleRowCellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+        titleRowCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
         // 设置内容
-        titleRow.createCell(0).setCellValue("SKU");
-        titleRow.createCell(1).setCellValue("Description");
-        titleRow.createCell(2).setCellValue("OrderID");
+        Cell titleRowCell0 = titleRow.createCell(0);
+        titleRowCell0.setCellValue("SKU");
+        titleRowCell0.setCellStyle(titleRowCellStyle);
+
+        Cell titleRowCell1 = titleRow.createCell(1);
+        titleRowCell1.setCellValue("Description");
+        titleRowCell1.setCellStyle(titleRowCellStyle);
+
+        Cell titleRowCell2 = titleRow.createCell(2);
+        titleRowCell2.setCellValue("OrderID");
+        titleRowCell2.setCellStyle(titleRowCellStyle);
 
         // 设置数据行
         for (int i = 0; i < orderDetailList.size(); i++) {
@@ -240,6 +257,7 @@ public class OrderInfoService extends BaseService {
         sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2);
 
+        $debug("Excel file created");
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
