@@ -76,7 +76,7 @@ public class MenuController extends BaseController {
 
         // 如果一个用户对应多了多了channel，把这些加进去
         List<UserConfigBean> channelList = getUser().getUserConfig().get("channel_id");
-        if (channelList != null && channelList.size() > 1) {
+        if (channelList != null && channelList.size() > 0) {
             List<Map<String, String>> channels = new ArrayList<>();
             for (UserConfigBean channel : channelList) {
                 if (!getUser().getSelChannel().getId().equals(channel.getCfg_val1())) {
