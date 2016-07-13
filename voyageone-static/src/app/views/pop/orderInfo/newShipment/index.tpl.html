@@ -1,7 +1,9 @@
 <div class="modal-content modal-blue">
     <div class="modal-header">
-        <h4 class="modal-title" id="newShipmentTitle"><i class="fa fa-tasks"></i>New Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
-        <h4 class="modal-title" id="editShipmentTitle" ng-show=""><i class="fa fa-tasks"></i>Edit Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="newShipmentTitle" ng-show="!ctrl.shipment">
+            <i class="fa fa-tasks"></i>New Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="editShipmentTitle" ng-show="ctrl.shipment">
+            <i class="fa fa-tasks"></i>Edit Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -11,10 +13,8 @@
                 </div>
                 <div ng-class="{'form-group':true, 'has-error': !newShipmentForm.shipmentStatus.$valid}">
                     <select class="form-control" name="shipmentStatus" ng-model="ctrl.shipment.status" required>
-                        <option value="" translate="TXT_STATUS" disabled selected></option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
+                        <option value="" translate="TXT_STATUS" disabled></option>
+                        <option value="1" translate="TXT_OPEN" selected></option>
                     </select>
                 </div>
                 <div class="form-group">

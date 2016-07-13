@@ -5,15 +5,17 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('NewShipmentController', (function () {
-        function NewShipmentController(context) {
 
-            // 用搜索条件中的选项
-            this.searchOrderStatus = context;
+
+        function NewShipmentController(alert, notify, confirm, shipmentService, context) {
+            this.alert = alert;
+            this.notify = notify;
+            this.confirm = confirm;
+            this.shipmentService = shipmentService;
+            this.shipment = context.shipment;
+            if (!this.shipment) this.shipment = {status: "1"};
         }
 
-        NewShipmentController.prototype = function () {
-
-        };
         return NewShipmentController;
     })());
 });

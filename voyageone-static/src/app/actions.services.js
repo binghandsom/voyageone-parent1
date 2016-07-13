@@ -167,6 +167,10 @@ define(function (require) {
             cancelOrder: "cancelOrder",
             cancelSku: "cancelSku",
             downloadPickingList: "downloadPickingList"
+        }),
+
+        shipmentService: new CommonDataService('/vms/shipment/shipment_info', {
+            init: "init"
         })
     }
 });

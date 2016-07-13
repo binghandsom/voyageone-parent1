@@ -41,6 +41,7 @@ define(function () {
         "TXT_TO": "To",
         "TXT_UPLOAD_DATE": "Upload Date",
         "TXT_UPLOAD_USER": "Upload User",
+        "TXT_OPEN": "Open",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

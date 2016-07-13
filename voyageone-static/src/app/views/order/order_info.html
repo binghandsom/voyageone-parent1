@@ -3,8 +3,8 @@
         <h4 class="pull-left">Order Info</h4>
         <ul class="pull-right breadcrumb">
             <li><a href="#/home">Home</a></li>
-            <li><a href="javascript:void(0)">Order</a></li>
-            <li class="active selected">Order Info</li>
+            <li class="active disabled">Order</li>
+            <li class="active selecte">Order Info</li>
         </ul>
     </div>
 </div>
@@ -67,10 +67,10 @@
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
-            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment(openShipment, true)" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment()" translate="BTN_NEW_SHIPMENT"></button>
             <button ng-show="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-show="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment(openShipment, false)">{{ctrl.currentShipment.shipmentName}}</a>
+                <a ng-show="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment()">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>

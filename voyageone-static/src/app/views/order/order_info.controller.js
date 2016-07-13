@@ -1,10 +1,9 @@
 define([
-    'vms',
-    './order_info.mock.service'
+    'vms'
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
-        function OrderInfoController(alert, notify, confirm, orderInfoService, popups) {
+        function OrderInfoController(alert, notify, confirm, popups, orderInfoService) {
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
@@ -147,8 +146,12 @@ define([
             return currentStatus.name;
         };
 
-        OrderInfoController.prototype.popNewShipment = function (newShipment) {
-            this.popups.openShipment(this.searchOrderStatus, newShipment);
+        OrderInfoController.prototype.popNewShipment = function () {
+            var shipmentInfo = {
+                shipment: this.currentShipment,
+                searchOrderStatus: this.searchOrderStatus
+            };
+            this.popups.openShipment(shipmentInfo);
         };
         OrderInfoController.prototype.popAddToShipment = function () {
             this.popups.openAddShipment();
