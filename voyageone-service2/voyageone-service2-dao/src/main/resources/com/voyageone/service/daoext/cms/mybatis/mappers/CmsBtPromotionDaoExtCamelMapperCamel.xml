@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel">
-    <select id="selectPage" resultType="Map">
+    <select id="selectPage" resultType="MapModel">
         select *
         from cms_bt_promotion
         inner join (select a.Id from cms_bt_promotion  as  a
@@ -37,7 +37,7 @@
         order by ${orderByColumn}  limit #{offset},#{pageRowCount}) as a on a.Id=cms_bt_promotion.Id
     </select>
     <select id="selectCount" resultType="Long">
-        select count(*) from cms_bt_promotion
+        select count(*) from cms_bt_promotion as a
         <where>
             a.active = 1
             and (a.channel_id = #{channelId}
