@@ -242,13 +242,34 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (!StringUtils.isEmpty((String)productIdMap.get("product_id"))) {
                         Map<String, Object> paramProductId = new HashMap<>();
                         paramProductId.put("channelId", channel.getOrder_channel_id());
-                        paramProductId.put("productId", (String) productIdMap.get("productId"));
+                        paramProductId.put("productId", (String) productIdMap.get("product_id"));
                         List<VmsBtFeedInfoTempModel> productIdModels = vmsBtFeedInfoTempDao.selectList(paramProductId);
                         for (VmsBtFeedInfoTempModel productIdModel : productIdModels) {
                             // product-id(%s) is duplicated.
                             addErrorMessage(errorList, "8000012", new Object[]{productIdModel.getProductId()}, productIdModel.getRow(), columnMap.get(PRODUCT_ID));
                         }
                     }
+                }
+                // 如果有Sku或者ProductId重复错误，那么直接返回
+                if (errorList.size() > 0) {
+                    $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
+                    // 生成错误文件
+                    String feedErrorFileName = createErrorFile(errorList, 0);
+
+                    // 移动文件到bak目录下
+                    moveFeedFileToBak(feedFileName);
+
+                    // 把文件管理的状态变为4：导入错误
+                    VmsBtFeedFileModel feedFileModel = new VmsBtFeedFileModel();
+                    // 更新条件
+                    feedFileModel.setChannelId(channel.getOrder_channel_id());
+                    feedFileModel.setFileName(feedFileName);
+                    // 更新内容
+                    feedFileModel.setErrorFileName(feedErrorFileName);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setModifier(getTaskName());
+                    vmsBtFeedFileDaoExt.updateErrorFileInfo(feedFileModel);
+                    return;
                 }
 
                 int codeCnt = 0;
