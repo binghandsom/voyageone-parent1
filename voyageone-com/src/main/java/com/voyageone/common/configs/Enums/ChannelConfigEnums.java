@@ -576,6 +576,15 @@ public class ChannelConfigEnums {
          * TestChannel089
          */
         TestChannel089("089"),
+        /**
+         * TestChannel090
+         */
+        TestChannel090("090"),
+
+        /**
+         * TestChannel091
+         */
+        TestChannel091("091"),
 
         /**
          * US匠心界
@@ -646,6 +655,8 @@ public class ChannelConfigEnums {
                 case "024": return OverStock;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
+                case "090": return TestChannel090;
+                case "091": return TestChannel091;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;

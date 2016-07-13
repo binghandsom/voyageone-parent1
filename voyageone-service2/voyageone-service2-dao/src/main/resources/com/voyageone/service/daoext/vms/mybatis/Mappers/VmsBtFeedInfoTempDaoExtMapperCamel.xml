@@ -356,6 +356,18 @@
         select count(sku) from vms_bt_feed_info_temp
         where `channel_id` = #{channelId}
     </select>
+    <select id="selectSameSku" parameterType="java.lang.String" resultType="HashMap">
+        select sku,count(sku) as count_sku
+        from vms_bt_feed_info_temp
+        where channel_id = #{channelId}
+        group by sku having count(sku) > 1
+    </select>
+    <select id="selectSameProductId" parameterType="java.lang.String" resultType="HashMap">
+        select product_id,count(product_id) as count_product_id
+        from vms_bt_feed_info_temp
+        where channel_id = #{channelId}
+        group by product_id having count(product_id) > 1
+    </select>
 
     <delete id="deleteByChannelWithLimit" parameterType="java.lang.String" >
         delete from vms_bt_feed_info_temp
