@@ -54,7 +54,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     String outPath = CmsBtExportTaskService.savePath;
 
-    Integer maxRowCnt = 50000;
+    Integer maxRowCnt = 10000;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
