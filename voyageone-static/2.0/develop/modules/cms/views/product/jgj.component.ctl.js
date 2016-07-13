@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("jgjSchema", function (productDetailService,$translate,alert,notify) {
+    cms.directive("jgjSchema", function (productDetailService,$translate,alert,notify,confirm) {
         return {
             restrict: "E",
             templateUrl : "views/product/jgj.component.tpl.html",
@@ -53,15 +53,20 @@ define([
                  */
                 function saveProduct(){
 
-                    scope.vm.platform.status = "Approved";
-                    scope.vm.platform.cartId = +scope.cartInfo.value;
+                    confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").result.then(function(){
 
-                    productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
-                        scope.vm.platform.modified = resp.data.modified;
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    },function(){
-                        alert("更新失败","错误提示");
+                        scope.vm.platform.status = "Approved";
+                        scope.vm.platform.cartId = +scope.cartInfo.value;
+
+                        productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
+                            scope.vm.platform.modified = resp.data.modified;
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        },function(){
+                            alert("更新失败","错误提示");
+                        });
+
                     });
+
                 }
 
             }
