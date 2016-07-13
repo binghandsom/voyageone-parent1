@@ -360,7 +360,7 @@ public class Jingdong_010_Jewelry_DictTest {
 //                        }
                     }
 
-                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
+                    CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null);
                     ruleRoot.addRuleWord(new CustomWord(word));
 
                     {

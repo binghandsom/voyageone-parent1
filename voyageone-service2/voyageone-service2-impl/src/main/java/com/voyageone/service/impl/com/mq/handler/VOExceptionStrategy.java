@@ -77,7 +77,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
             // RETRY>3 return
             if (!MapUtils.isEmpty(headers) && //headers非空
                     !StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY)) && //CONSUMER_RETRY_KEY非空
-                    (Integer.parseInt(headers.get(CONSUMER_RETRY_KEY).toString()) > MAX_RETRY_TIMES)) { //CONSUMER_RETRY_KEY > 3
+                    (Integer.parseInt(headers.get(CONSUMER_RETRY_KEY).toString()) >= MAX_RETRY_TIMES)) { //CONSUMER_RETRY_KEY > 3
                 return; //不做任何处理
             }
 
@@ -85,7 +85,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
             Map<String, Object> msgMap = JacksonUtil.jsonToMap(new String(message.getBody(), "UTF-8"));
 
             /* 加入CONSUMER_RETRY_KEY */
-            msgMap.put(CONSUMER_RETRY_KEY, StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY)) ? 1 : 1 + (int)headers.get(CONSUMER_RETRY_KEY));
+            msgMap.put(CONSUMER_RETRY_KEY, StringUtils.isEmpty(headers.get(CONSUMER_RETRY_KEY)) ? 1 : (int) headers.get(CONSUMER_RETRY_KEY) + 1);
 
             mqBackMessageService.addBackMessage(messageProperties.getReceivedRoutingKey(), msgMap);
         } catch (UnsupportedEncodingException e) {
