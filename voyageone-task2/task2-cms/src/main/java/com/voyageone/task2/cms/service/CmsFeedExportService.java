@@ -54,7 +54,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
     String outPath = CmsBtExportTaskService.savePath;
 
-    Integer maxRowCnt = 50000;
+    Integer maxRowCnt = 10000;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -84,6 +84,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             OutputStream outputStream = new FileOutputStream(outPath + fileName);
             InputStream inputStream = new FileInputStream(templatePath);
             Workbook book = WorkbookFactory.create(inputStream);
+
             for (int pageNum = 1; pageNum <= pageCnt; pageNum++) {
                 $info("导出第" + pageNum + "页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
