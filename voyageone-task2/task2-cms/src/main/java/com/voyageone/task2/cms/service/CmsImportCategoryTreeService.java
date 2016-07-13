@@ -301,15 +301,16 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
      * 导入主类目数据
      */
     private void importCategoryData(Sheet sheet) {
-        int index = 0;
 
         for (Row row : sheet) {
+
             boolean insertFlg = false;
-            if (index == 0) {
+
+            if (row.getRowNum() == 0) {
                 // 跳过第一行header
-                index++;
                 continue;
             }
+
             // 这一行的类目路径
             String categoryPath = "";
 
@@ -325,16 +326,20 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             CmsMtCategoryTreeAllModel categoryTree = categoryTreeAllService.getFirstLevelCategoryByCatPath(categoryNamePart1);
 
             if (categoryTree == null) {
+
                 categoryTree = new CmsMtCategoryTreeAllModel();
+
                 categoryTree.setCatId(MD5.getMD5(categoryNamePart1));
                 categoryTree.setCatName(categoryNamePart1);
                 categoryTree.setCatPath(categoryNamePart1);
                 categoryTree.setParentCatId("0");
+
                 if (StringUtils.isEmpty(ExcelUtils.getString(row, CATEGORY_START_INDEX + 1))) {
                     categoryTree.setIsParent(0);
                 } else {
                     categoryTree.setIsParent(1);
                 }
+
                 categoryTree.setCreater(getTaskName());
                 categoryTree.setModifier(getTaskName());
 
@@ -343,6 +348,14 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
             CmsMtCategoryTreeAllModel levelModel = categoryTree;
 
+            // 在下面的循环还没执行前
+            // 当前类目的层级数, 就只有 1 级
+            // 如果下面的循环在一开始就 break, 也就是还在 i = 2 的时候, 即第二层级名称为空时 break
+            // 那么 level = i - 1 (i = 2)
+            // level = 1
+            // 所以这里初始化为何值无所谓, 但保险起见仍为 1, 不初始化则编译报错
+            int categoryLevel = 1;
+
             // 取得xls的一行数据，做出这棵树
             for (int i = CATEGORY_START_INDEX + 1; i < CATEGORY_START_INDEX + CATEGORY_MAX_LEVEL; i++) {
 
@@ -350,6 +363,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
                 String categoryNamePart = ExcelUtils.getString(row, i);
                 // 直到这一列的值为空白，那么这条数据结束
                 if (StringUtils.isEmpty(categoryNamePart)) {
+                    categoryLevel = i - 1;
                     break;
                 }
                 categoryPath += ">" + categoryNamePart;
@@ -357,13 +371,20 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
                 levelModel = makeCategoryObject(levelModel, categoryNamePart, categoryPath, row, i);
             }
 
+            Integer skuSplitFlag = 0;
+            String skuSplitFlagString = row.getCell(categoryLevel + 11).getStringCellValue();
+
+            if (!StringUtils.isEmpty(skuSplitFlagString) && StringUtils.isNumeric(skuSplitFlagString))
+                skuSplitFlag = Integer.valueOf(skuSplitFlagString);
+
+            categoryTree.setSkuSplit(skuSplitFlag);
+
             if (insertFlg) {
                 cmsMtCategoryTreeAllDao.insert(categoryTree);
             } else {
                 removeCreateUpdateInfo(categoryTree);
                 cmsMtCategoryTreeAllDao.update(categoryTree);
             }
-            index++;
         }
     }
 
@@ -378,6 +399,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             if (levelCategoryTree.getCatPath().equals(categoryPath)) {
                 // 找到
                 findCategoryTree = levelCategoryTree;
+                break;
             }
         }
         // 找不到新加一个
