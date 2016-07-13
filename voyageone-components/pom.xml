@@ -26,7 +26,7 @@
         <module>voyageone-components-yimei</module>
         <module>voyageone-components-liquifire</module>
         <module>voyageone-components-uscdn</module>
-        <!--<module>voyageone-components-imagecreate</module>-->
+        <module>voyageone-components-imagecreate</module>
         <module>voyageone-components-ftp</module>
         <module>voyageone-components-overstock</module>
     </modules>
