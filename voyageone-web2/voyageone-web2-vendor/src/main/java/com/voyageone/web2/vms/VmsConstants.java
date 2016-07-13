@@ -12,6 +12,7 @@ public class VmsConstants {
     public final static String PICKING_LIST = "PickingList";
 
     public final static int DEFAULT_PAGE_SIZE = 10;
+
     /**
      * Feed文件导入状态
      */
@@ -76,6 +77,11 @@ public class VmsConstants {
             String ORDER = "ORDER";
         }
 
+    }
+
+    public interface PICKING_LIST_ORDER_TYPE {
+        String CLIENT_SKU = "client_sku";
+        String ORDER = "order_id";
     }
 
     /**

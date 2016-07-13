@@ -14,6 +14,7 @@ import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsConstants.ChannelConfig;
 import com.voyageone.web2.vms.VmsConstants.STATUS_VALUE;
 import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
@@ -237,16 +238,23 @@ public class OrderInfoService extends BaseService {
         /* 设置标题行 */
         Row titleRow = sheet.createRow(0);
 
+        int skuCellNumber = 0;
+        int descriptionCellNumber = 1;
+        int orderIdCellNumber = 2;
         // 设置内容
-        Cell titleRowCell0 = titleRow.createCell(0);
+        if (VmsConstants.PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfo.getOrderType())) {
+            skuCellNumber = 2;
+            orderIdCellNumber = 0;
+        }
+        Cell titleRowCell0 = titleRow.createCell(skuCellNumber);
         titleRowCell0.setCellValue("SKU");
         titleRowCell0.setCellStyle(titleRowCellStyle);
 
-        Cell titleRowCell1 = titleRow.createCell(1);
+        Cell titleRowCell1 = titleRow.createCell(descriptionCellNumber);
         titleRowCell1.setCellValue("Description");
         titleRowCell1.setCellStyle(titleRowCellStyle);
 
-        Cell titleRowCell2 = titleRow.createCell(2);
+        Cell titleRowCell2 = titleRow.createCell(orderIdCellNumber);
         titleRowCell2.setCellValue("OrderID");
         titleRowCell2.setCellStyle(titleRowCellStyle);
 
@@ -254,15 +262,15 @@ public class OrderInfoService extends BaseService {
         for (int i = 0; i < orderDetailList.size(); i++) {
             VmsBtOrderDetailModel vmsBtOrderDetailModel = orderDetailList.get(i);
             Row dataRow = sheet.createRow(i + 1);
-            dataRow.createCell(0).setCellValue(vmsBtOrderDetailModel.getClientSku());
-            dataRow.createCell(1).setCellValue(vmsBtOrderDetailModel.getDecription());
-            dataRow.createCell(2).setCellValue(vmsBtOrderDetailModel.getOrderId());
+            dataRow.createCell(skuCellNumber).setCellValue(vmsBtOrderDetailModel.getClientSku());
+            dataRow.createCell(descriptionCellNumber).setCellValue(vmsBtOrderDetailModel.getDecription());
+            dataRow.createCell(orderIdCellNumber).setCellValue(vmsBtOrderDetailModel.getOrderId());
         }
 
-        // 整理格式
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
-        sheet.autoSizeColumn(2);
+        // 整理宽度
+        sheet.autoSizeColumn(skuCellNumber);
+        sheet.autoSizeColumn(descriptionCellNumber);
+        sheet.autoSizeColumn(orderIdCellNumber);
 
         $debug("Excel file created");
 
