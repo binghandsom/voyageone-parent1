@@ -122,7 +122,7 @@ public class OrderInfoService extends BaseService {
         SortParam sortParam = new SortParam();
         sortParam.setColumnName(ORDER_TIME);
         sortParam.setDirection((null != orderSearchInfo.getStatus() && orderSearchInfo.getStatus() == 1) ?
-                Order.Direction.DESC : Order.Direction.ASC);
+                Order.Direction.ASC : Order.Direction.DESC);
         OrderInfoBean orderInfoBean = new OrderInfoBean();
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfo, sortParam));
         orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfo, sortParam));
@@ -226,7 +226,6 @@ public class OrderInfoService extends BaseService {
         // 标题行格式
         CellStyle titleRowCellStyle = sxssfWorkbook.createCellStyle();
         titleRowCellStyle.setAlignment((short) 1);
-
         titleRowCellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         titleRowCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
