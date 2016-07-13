@@ -42,12 +42,14 @@ public class CmsPromotionIndexController extends CmsController {
         return success(cmsPromotionService.initByPromotionId(PromotionId, getUser().getSelChannelId(), getLang()));
     }
     @RequestMapping(PROMOTION.LIST.INDEX.GetPage)
-    public List<MapModel> getPage(@RequestBody PageQueryParameters parameters) {
-        return promotionService.getPage(parameters);
+    public AjaxResponse getPage(@RequestBody PageQueryParameters parameters) {
+        parameters.put("channelId",getUser().getSelChannelId());
+        return success(promotionService.getPage(parameters));
     }
     @RequestMapping(PROMOTION.LIST.INDEX.GetCount)
-    public long getCount(@RequestBody PageQueryParameters parameters) {
-        return promotionService.getCount(parameters);
+    public AjaxResponse getCount(@RequestBody PageQueryParameters parameters) {
+        parameters.put("channelId",getUser().getSelChannelId());
+        return success(promotionService.getCount(parameters));
     }
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
@@ -62,7 +64,6 @@ public class CmsPromotionIndexController extends CmsController {
         cmsBtPromotionBean.setModifier(getUser().getUserName());
         return success(cmsPromotionService.addOrUpdate(cmsBtPromotionBean));
     }
-
     @RequestMapping(PROMOTION.LIST.INDEX.DEL_PROMOTION)
     public AjaxResponse delPromotion(@RequestBody CmsBtPromotionBean cmsBtPromotionBean) {
         String channelId = getUser().getSelChannelId();
@@ -71,14 +72,11 @@ public class CmsPromotionIndexController extends CmsController {
         cmsBtPromotionBean.setModifier(getUser().getUserName());
         return success(cmsPromotionService.delete(cmsBtPromotionBean));
     }
-
-
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
     public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {
 
         byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
         return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
-
     }
 }
