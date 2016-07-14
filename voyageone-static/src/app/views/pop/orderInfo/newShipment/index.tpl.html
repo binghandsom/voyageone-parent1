@@ -1,38 +1,41 @@
 <div class="modal-content modal-blue">
     <div class="modal-header">
-        <h4 class="modal-title" id="newShipmentTitle" ng-show="!ctrl.shipment">
-            <i class="fa fa-tasks"></i>New Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
-        <h4 class="modal-title" id="editShipmentTitle" ng-show="ctrl.shipment">
-            <i class="fa fa-tasks"></i>Edit Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="newShipmentTitle" ng-if="!ctrl.shipmentExisted">
+            <i class="fa fa-tasks"></i>{{'TXT_NEW_SHIPMENT' | translate}}<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
+        </h4>
+        <h4 class="modal-title" id="editShipmentTitle" ng-if="ctrl.shipmentExisted">
+            <i class="fa fa-tasks"></i>Edit Shipment<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
+        </h4>
     </div>
     <div class="modal-body">
         <div class="row">
-            <form class="col-md-10 form-horizontal" name="newShipmentForm" novalidate>
+            <form class="col-md-10 form-horizontal" name="shipmentForm" novalidate>
                 <div class="form-group">
-                    <label for="shipmentName" class="col-md-3 col-md-offset-1 control-label" translate="TXT_NAME"></label>
-                    <div ng-class="{'col-md-8':true, 'has-error': !newShipmentForm.shipmentName.$valid}">
-                        <input id="shipmentName" type="text" class="form-control" ng-model="ctrl.shipment.name" name="shipmentName" required>
+                    <label for="shipmentName" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_NAME"></strong></label>
+                    <div ng-class="{'col-md-8':true, 'has-error': !shipmentForm.shipmentName.$valid}">
+                        <input id="shipmentName" type="text" class="form-control" ng-model="ctrl.shipment.shipmentName" name="shipmentName" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="shipmentStatus" class="col-md-3 col-md-offset-1 control-label" translate="TXT_STATUS"></label>
-                    <div ng-class="{'col-md-8':true, 'has-error': !newShipmentForm.shipmentStatus.$valid}">
+                    <label for="shipmentStatus" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_STATUS"></strong></label>
+                    <div ng-class="{'col-md-8':true, 'has-error': !shipmentForm.shipmentStatus.$valid}">
                         <select id="shipmentStatus" class="form-control" name="shipmentStatus" ng-model="ctrl.shipment.status" required>
                             <option value="" translate="TXT_STATUS" disabled></option>
                             <option value="1" translate="TXT_OPEN" selected></option>
+                            <option value="3" translate="TXT_SHIPPED" ng-if="ctrl.shipmentExisted"></option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="shippedDate" class="col-md-3 col-md-offset-1 control-label" translate="TXT_SHIPPED_DATE"></label>
-                    <div class="col-md-8">
+                    <label for="shippedDate" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_SHIPPED_DATE"></strong></label>
+                    <div ng-class="{'col-md-8':true, 'has-error': !shipmentForm.shippedDate.$valid}">
                         <div class="input-group">
                             <input id="shippedDate" name="shippedDate" class="form-control"
                                    ng-attr-title="{{'TXT_SHIPPED_DATE' | translate}}"
                                    type="date"
                                    ng-model="ctrl.shipment.shippedDate"
                                    uib-datepicker-popup
-                                   is-open="datepicker1" required>
+                                   is-open="datepicker1" ng-required="ctrl.shipment.status==3">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
@@ -40,24 +43,33 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <select class="form-control" required>
-                        <option value="" translate="TXT_EXPRESS_COMPANY" disabled selected></option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                    </select>
+                    <label for="expressCompany" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_EXPRESS_COMPANY"></strong></label>
+                    <div ng-class="{'col-md-8':true, 'has-error': (ctrl.shipmentExisted && ctrl.shipment.status == 3 && !ctrl.shipment.expressCompany) || !shipmentForm.expressCompany.$valid}">
+                        <select id="expressCompany" name="expressCompany"
+                                class="col-md-8 form-control"
+                                ng-options="option.value as option.name for option in ctrl.expressCompanies"
+                                ng-required="ctrl.shipment.status==3" ng-model="ctrl.shipment.expressCompany">
+                            <option value="" translate="TXT_SELECT_EXPRESS_COMPANY" disabled selected></option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control required" placeholder="Tracking No" ng-model="trackingNo" name="trackingNo" required>
+                    <label for="trackingNo" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_TRACKING_NO"></strong></label>
+                    <div ng-class="{'col-md-8':true, 'has-error': (ctrl.shipmentExisted && ctrl.shipment.status == 3 && !ctrl.shipment.trackingNo) || !shipmentForm.trackingNo.$valid}">
+                        <input id="trackingNo" type="text" class="form-control required" ng-model="ctrl.shipment.trackingNo" name="trackingNo" ng-required="ctrl.shipment.status==3">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" placeholder="Comments"></textarea>
+                    <label for="comments" class="col-md-3 col-md-offset-1 control-label"><strong translate="TXT_COMMENTS"></strong></label>
+                    <div class="col-md-8">
+                        <textarea id="comments" class="form-control" ng-model="ctrl.shipment.comment"></textarea>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn-vo btn-vo-blue">Submit</button>
-        <button type="button" class="btn-vo btn-vo-default">Back</button>
+        <button type="button" class="btn btn-u-blue" ng-click="ctrl.submit()" disabled="{{shipmentForm.$valid}}">Submit</button>
+        <button type="button" class="btn btn-default" ng-click="$dismiss()" translate="BTN_CLOSE"></button>
     </div>
 </div>

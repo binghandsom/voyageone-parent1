@@ -172,7 +172,7 @@ define(function (require) {
             downloadPickingList: "downloadPickingList"
         }),
 
-        shipmentService: new CommonDataService('/vms/shipment/shipment_info', {
+        shipmentPopupService: new CommonDataService('/vms/popup/shipment', {
             init: "init"
         })
     }

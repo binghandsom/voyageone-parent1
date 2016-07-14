@@ -79,6 +79,7 @@ define([
             }
             this.searchInfo.curr = this.pageInfo.curr;
             this.searchInfo.size = this.pageInfo.size;
+
             this.orderInfoService.search(this.searchInfo).then((data) => {
                 this.pageInfo.total = data.orderInfo.total;
                 this.data = data.orderInfo.orderList.map((item) => {
@@ -106,10 +107,10 @@ define([
         };
 
         OrderInfoController.prototype.cancelOrder = function (item) {
-            var self = this;
-            this.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
-                self.orderInfoService.cancelOrder(item).then(function () {
-                    self.search()
+
+            this.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(() => {
+                this.orderInfoService.cancelOrder(item).then(() => {
+                    this.search()
                 })
             })
         };
