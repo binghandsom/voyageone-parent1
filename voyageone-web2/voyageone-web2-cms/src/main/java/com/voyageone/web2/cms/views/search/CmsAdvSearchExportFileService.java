@@ -4,8 +4,10 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
@@ -32,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -91,6 +94,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 cartId = 0;
             }
             prodCodeList = searchIndexService.getGroupCodeList(searchValue, userInfo, cmsSessionBean);
+            if (prodCodeList == null) {
+                prodCodeList = new ArrayList<>(0);
+            }
             recCount = prodCodeList.size();
         }
 
@@ -122,6 +128,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+        if (lockStatusMap == null) {
+            List<TypeBean> lockStatusList = TypeConfigEnums.MastType.procLockStatus.getList(language);
+            lockStatusMap = lockStatusList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
+        }
 
         InputStream inputStream = new FileInputStream(templatePath);
         Workbook book = WorkbookFactory.create(inputStream);
@@ -461,16 +471,17 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceRetailSt(), ptfObj.getpPriceRetailEd()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceSaleSt(), ptfObj.getpPriceSaleEd()));
             }
-
-            Cell cell = FileUtils.cell(row, index++, unlock);
+            int nowIdx = index++;
+            Cell cell = FileUtils.cell(row, nowIdx, unlock);
             cell.setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty((String) codeImgMap.get(fields.getCode())));
             cell.setCellStyle(cs);
+            sheet.autoSizeColumn(nowIdx);
             Integer imgCnt = (Integer) codeImgMap.get(fields.getCode() + "_img_cnt");
-            if (imgCnt == null) {
-                imgCnt = 0;
+            if (imgCnt != null && imgCnt > 1) {
+                row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
             }
-            row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
-            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getLock()));
+
+            FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
 
             if (commonProps != null) {
                 for (Map<String, String> prop : commonProps) {
@@ -728,7 +739,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                         }
                     }
                 }
-                FileUtils.cell(row, index++, unlock).setCellValue(item.getLock());
+                FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
             }
         }
 
@@ -755,4 +766,15 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         return output;
     }
 
+    private static Map<String, String> lockStatusMap = null;
+    private String getLockStatusTxt(String code) {
+        if (lockStatusMap == null || code == null) {
+            return "";
+        }
+        String rs = lockStatusMap.get(code);
+        if (rs == null) {
+            rs = "";
+        }
+        return rs;
+    }
 }

@@ -17,10 +17,6 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
     private String colormap;
     private String colorname;
     private String departmentname;
-    private String ebaymaincolor;
-    private String ebaystorecategorytext;
-    private String externalproductid;
-    private String externalproductidtype;
     private String feedproducttype;
     private String gender;
     private String generickeywords;
@@ -138,38 +134,6 @@ public class CmsBtFeedInfoShoeZooModel extends CmsBtFeedInfoModel {
 
     public void setDepartmentname(String departmentname) {
         this.departmentname = departmentname;
-    }
-
-    public String getEbaymaincolor() {
-        return ebaymaincolor;
-    }
-
-    public void setEbaymaincolor(String ebaymaincolor) {
-        this.ebaymaincolor = ebaymaincolor;
-    }
-
-    public String getEbaystorecategorytext() {
-        return ebaystorecategorytext;
-    }
-
-    public void setEbaystorecategorytext(String ebaystorecategorytext) {
-        this.ebaystorecategorytext = ebaystorecategorytext;
-    }
-
-    public String getExternalproductid() {
-        return externalproductid;
-    }
-
-    public void setExternalproductid(String externalproductid) {
-        this.externalproductid = externalproductid;
-    }
-
-    public String getExternalproductidtype() {
-        return externalproductidtype;
-    }
-
-    public void setExternalproductidtype(String externalproductidtype) {
-        this.externalproductidtype = externalproductidtype;
     }
 
     public String getFeedproducttype() {
