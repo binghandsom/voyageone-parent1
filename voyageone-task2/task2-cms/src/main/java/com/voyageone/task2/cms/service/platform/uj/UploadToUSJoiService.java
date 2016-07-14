@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
@@ -16,6 +17,7 @@ import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.MongoSequenceService;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -59,6 +62,9 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
+
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -115,32 +121,6 @@ public class UploadToUSJoiService extends BaseTaskService {
                     productModel.setTags(new ArrayList<>());
                     creatGroup(productModel, usJoiChannelId);
 
-                    List<ProductPriceBean> productPrices = new ArrayList<>();
-                    List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
-
-                    // 根据com_mt_us_joi_config表给sku 设cartId
-
-                    productModel.getCommon().getSkus().forEach(sku -> {
-                        ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
-
-                        skuPriceBean.setSkuCode(sku.getSkuCode());
-
-                        skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-                        sku.setClientMsrpPrice(null);
-
-                        skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-                        sku.setClientNetPrice(null);
-
-                        skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-                        sku.setClientRetailPrice(null);
-
-                        skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-                        sku.setPriceMsrp(null);
-
-                        skuPriceBean.setPriceRetail(sku.getPriceRetail());
-                        sku.setPriceRetail(null);
-                    });
-
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
@@ -156,75 +136,30 @@ public class UploadToUSJoiService extends BaseTaskService {
                         cartIds.forEach(cart -> finalProductModel.setPlatform(cart, platform));
                     }
 
+                    CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
+                    CmsBtProductModel_Platform_Cart p0 = new CmsBtProductModel_Platform_Cart();
+                    p0.put("cartId",0);
+                    p0.put("mainProductCode",groupModel.getMainProductCode());
+                    productModel.getPlatforms().put("P0",p0);
+
+
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
-                    ProductPriceBean priceBean = new ProductPriceBean();
-                    priceBean.setProductId(productModel.getProdId());
-
-                    priceBean.setSkuPrices(skuPriceBeans);
-                    productPrices.add(priceBean);
-                    productSkuService.updatePrices(usJoiChannelId, productPrices, sxWorkLoadBean.getModifier());
                 } else {
-                    List<ProductPriceBean> productPrices = new ArrayList<>();
-                    List<ProductSkuPriceBean> skuPriceBeans = new ArrayList<>();
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
                         if (oldSku == null) {
-                            ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
-
-                            skuPriceBean.setSkuCode(sku.getSkuCode());
-
-                            skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-                            sku.setClientMsrpPrice(null);
-
-                            skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-                            sku.setClientNetPrice(null);
-
-                            skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-                            sku.setClientRetailPrice(null);
-
-                            skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-                            sku.setPriceMsrp(null);
-
-                            skuPriceBean.setPriceRetail(sku.getPriceRetail());
-                            sku.setPriceRetail(null);
-
-                            skuPriceBeans.add(skuPriceBean);
                             pr.getCommon().getSkus().add(sku);
                         } else {
                             if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
                                     || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
-                                ProductSkuPriceBean skuPriceBean = new ProductSkuPriceBean();
-
-                                skuPriceBean.setSkuCode(sku.getSkuCode());
-
-                                skuPriceBean.setClientMsrpPrice(sku.getClientMsrpPrice());
-
-                                skuPriceBean.setClientNetPrice(sku.getClientNetPrice());
-
-                                skuPriceBean.setClientRetailPrice(sku.getClientRetailPrice());
-
-                                skuPriceBean.setPriceMsrp(sku.getPriceMsrp());
-
-                                skuPriceBean.setPriceRetail(sku.getPriceRetail());
-
-                                skuPriceBeans.add(skuPriceBean);
+                                oldSku.setClientMsrpPrice(sku.getClientMsrpPrice());
+                                oldSku.setClientNetPrice(sku.getClientNetPrice());
+                                oldSku.setClientRetailPrice(sku.getClientRetailPrice());
+                                oldSku.setPriceMsrp(sku.getPriceMsrp());
+                                oldSku.setPriceRetail(sku.getPriceRetail());
                             }
                         }
-                    }
-
-                    if (skuPriceBeans.size() > 0) {
-                        ProductUpdateBean requestModel = new ProductUpdateBean();
-                        requestModel.setProductModel(pr);
-                        requestModel.setModifier(sxWorkLoadBean.getModifier());
-                        requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-                        productService.updateProduct(usJoiChannelId, requestModel);
-
-                        ProductPriceBean priceBean = new ProductPriceBean();
-                        priceBean.setProductId(pr.getProdId());
-                        priceBean.setSkuPrices(skuPriceBeans);
-                        productPrices.add(priceBean);
-                        productSkuService.updatePrices(usJoiChannelId, productPrices, sxWorkLoadBean.getModifier());
                     }
 
                     final CmsBtProductModel finalProductModel1 = productModel;
@@ -271,7 +206,23 @@ public class UploadToUSJoiService extends BaseTaskService {
                     if (pr.getCommon() == null || pr.getCommon().size() == 0) {
                         productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(),getTaskName(),false);
                     }
+                    if(pr.getPlatform(0) == null){
+                        CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
+                        CmsBtProductModel_Platform_Cart p0 = new CmsBtProductModel_Platform_Cart();
+                        p0.put("cartId",0);
+                        p0.put("mainProductCode",groupModel.getMainProductCode());
+                        HashMap<String, Object> queryMap = new HashMap<>();
+                        queryMap.put("prodId", pr.getProdId());
 
+                        List<BulkUpdateModel> bulkList = new ArrayList<>();
+                        HashMap<String, Object> updateMap = new HashMap<>();
+                        updateMap.put("platforms.P0", p0);
+                        BulkUpdateModel model = new BulkUpdateModel();
+                        model.setUpdateMap(updateMap);
+                        model.setQueryMap(queryMap);
+                        bulkList.add(model);
+                        cmsBtProductDao.bulkUpdateWithMap(usJoiChannelId, bulkList, null, "$set");
+                    }
                 }
             }
             sxWorkLoadBean.setPublishStatus(1);

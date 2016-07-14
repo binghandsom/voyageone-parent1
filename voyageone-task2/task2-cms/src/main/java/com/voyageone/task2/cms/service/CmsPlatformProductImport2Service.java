@@ -29,6 +29,7 @@ import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -44,10 +45,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author james.li on 2016/7/11.
@@ -59,6 +57,9 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     @Autowired
     private ProductGroupService productGroupService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private TbProductService tbProductService;
@@ -79,34 +80,39 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
         doMain((String) messageMap.get("channelId"));
     }
 
-    private void doMain(String channelId){
+    private void doMain(String channelId) throws Exception {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery("{cartId:23,numIId:{$nin:[\"\",null]}}");
-        Long cnt = productGroupService.countByQuery(queryObject.getQuery(),channelId);
+        Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, 23);
 //        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+//        shopBean.setShop_name("Target海外旗舰店");
+
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
         List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
         sellerCat = formatTMModel(sellerCatList, channelId, 23, getTaskName());
         convert2Tree(sellerCat);
 
-        final Long[] i = {1L};
         final List<CmsBtSellerCatModel> finalSellerCat = sellerCat;
-        cmsBtProductGroupModels.forEach(item -> {
+        for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
+            CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
             try {
-                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i[0], cnt));
+                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
                 doSetProduct(shopBean, item, finalSellerCat);
-                i[0]++;
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+
+        }
+        ;
     }
+
     /**
      * 将TM店铺自定义分类Model转换成CmsBtSellerCatModel
      */
@@ -166,16 +172,16 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
     }
 
 
-
     private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, List<CmsBtSellerCatModel> sellerCat) throws Exception {
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
         Map<String, Object> fieldMap = new HashMap<>();
         if (PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id())) {
             // 只有天猫系才会更新fields字段
             fieldMap.putAll(getPlatformProduct(cmsBtProductGroup.getPlatformPid(), shopBean));
             fieldMap.putAll(getPlatformWareInfoItem(cmsBtProductGroup.getNumIId(), shopBean));
         }
-        List<Map<String, Object>> sellerCats = doSetSeller(shopBean,Long.parseLong(cmsBtProductGroup.getNumIId()),sellerCat);
-        upProductPlatform(fieldMap,cmsBtProductGroup,sellerCats);
+        List<Map<String, Object>> sellerCats = doSetSeller(shopBean, Long.parseLong(cmsBtProductGroup.getNumIId()), sellerCat);
+        upProductPlatform(fieldMap, cmsBtProductGroup, sellerCats);
     }
 
     private void upProductPlatform(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, List<Map<String, Object>> sellerCats) {
@@ -187,7 +193,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
             fieldMap.forEach((s1, o) -> {
-                updateMap.put("platforms.P23.fields."+s1, o);
+                updateMap.put("platforms.P23.fields." + s1, o);
             });
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
@@ -200,6 +206,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     private Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
+        if(StringUtils.isEmpty(productId)) return fieldMap;
         String schema = tbProductService.getProductSchema(Long.parseLong(productId), shopBean);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -249,7 +256,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                 break;
             case COMPLEX:
                 ComplexField complexField = (ComplexField) field;
-                Map<String, Object> values = new HashMap<>();
+                fieldHashMap values = new fieldHashMap();
                 if (complexField.getDefaultComplexValue() != null) {
                     for (String fieldId : complexField.getDefaultComplexValue().getFieldKeySet()) {
                         values.put(fieldId, getFieldValue(complexField.getDefaultComplexValue().getValueField(fieldId)));
@@ -262,7 +269,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                 List<Map<String, Object>> multiComplexValues = new ArrayList<>();
                 if (multiComplexField.getDefaultComplexValues() != null) {
                     for (ComplexValue item : multiComplexField.getDefaultComplexValues()) {
-                        Map<String, Object> obj = new HashMap<>();
+                        fieldHashMap obj = new fieldHashMap();
                         for (String fieldId : item.getFieldKeySet()) {
                             obj.put(fieldId, getFieldValue(item.getValueField(fieldId)));
                         }
@@ -300,7 +307,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             case COMPLEX:
                 ComplexField complexField = (ComplexField) field;
                 Map<String, Field> fieldMap = complexField.getFieldMap();
-                Map<String, Object> complexValues = new HashMap<>();
+                fieldHashMap complexValues = new fieldHashMap();
                 for (String key : fieldMap.keySet()) {
                     complexValues.put(key, getFieldValue(fieldMap.get(key)));
                 }

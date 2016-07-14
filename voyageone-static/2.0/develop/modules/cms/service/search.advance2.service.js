@@ -400,6 +400,11 @@ define([
                 }
                 productInfo.carts = cartArr;
                 if (productInfo.carts) {
+                    if (productInfo.carts.length > 1) {
+                        productInfo.carts = productInfo.carts.sort(function (a, b) {
+                            return a.cartId > b.cartId;
+                        });
+                    }
                     _.forEach(productInfo.carts, function (data) {
                         var cartInfo = Carts.valueOf(data.cartId);
                         if (cartInfo == null || cartInfo == undefined) {
@@ -464,7 +469,12 @@ define([
                     if (skuTxt == undefined || skuTxt == null) {
                         skuTxt = '';
                     }
-                    result.push(cartInfoObj.name + ": " + skuTxt);
+                    if (cartInfoObj == undefined) {
+                        skuTxt = platformObj.cartId + ": " + skuTxt
+                    } else {
+                        skuTxt = cartInfoObj.name + ": " + skuTxt
+                    }
+                    result.push(skuTxt);
                 }
             });
             return result;

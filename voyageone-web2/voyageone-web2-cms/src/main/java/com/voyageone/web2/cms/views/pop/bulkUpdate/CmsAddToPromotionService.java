@@ -86,7 +86,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         queryStr.append(MongoUtils.splicingValue("tags", tagList.toArray(new String[tagList.size()]), "$in"));
         queryStr.append("}");
         queryObject.setQuery(queryStr.toString());
-        queryObject.setProjection("{'fields.code':1,'_id':0}");
+        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         List<CmsBtProductModel> prodInfoList = productService.getList(channelId, queryObject);
         if (prodInfoList.isEmpty()) {
             result.put("hasTags", false);
