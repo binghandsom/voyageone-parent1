@@ -758,8 +758,10 @@ define(function () {
         "TXT_EXPORT_REQUEST_TIME": "导出申请时间",
         "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
         "TXT_EXPORT_REQUESTER": "导出申请者",
-
-
-        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:"
+        
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
+        "TXT_ACTION_TIME":"操作时间",
+        "TXT_ACTION_USER":"操作者",
+        "TXT_ACTION_COMMENT":"说明"
     };
 });
