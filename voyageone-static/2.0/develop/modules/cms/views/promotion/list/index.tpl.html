@@ -139,7 +139,7 @@
 					</td>
 					<td class="text-center" ng-controller="popupCtrl">
 						<button ng-if="promotion.cartId != '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
-								ng-click="openPromotion('md',vm.platformTypeList,promotion,search)"><i class="fa fa-pencil"></i>
+								ng-click="openPromotion('md',vm.platformTypeList,{id:promotion.id},search)"><i class="fa fa-pencil"></i>
 						</button>
 						<button ng-if = "promotion.cartId == '27'" title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
 								ng-click="openJmPromotionDetail({id:promotion.promotionId,search:search},search)"><i class="fa fa-pencil"></i>
