@@ -49,54 +49,53 @@ define([
             this.data = [];
 
             this.orderInfoService.init().then(function (data) {
+                var self = this;
                 // 获取当前shipment
-                this.currentShipment = data.currentShipment;
+                self.currentShipment = data.currentShipment;
 
                 // 获取可选的订单状态
-                this.searchOrderStatus = data.searchOrderStatus;
+                self.searchOrderStatus = data.searchOrderStatus;
 
                 // 记录用户的操作方式(sku/order)
-                this.channelConfigs = data.channelConfigs;
+                self.channelConfigs = data.channelConfigs;
 
-                this.search();
+                self.search();
             });
         }
 
         OrderInfoController.prototype.search = function () {
-            if (this.orderDateFrom === undefined || this.orderDateTo === undefined) {
-                this.alert("'TXT_PLEASE_INPUT_A_VALID_DATE'");
+            var self = this;
+            if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
+                self.alert("'TXT_PLEASE_INPUT_A_VALID_DATE'");
                 return;
-            } else if (this.orderDateFrom)
-                this.searchInfo.orderDateFrom = this.orderDateFrom.getTime();
-            else this.searchInfo.orderDateFrom = undefined;
-            if (this.orderDateTo) {
-                var date = angular.copy(this.orderDateTo);
+            } else if (self.orderDateFrom)
+                self.searchInfo.orderDateFrom = self.orderDateFrom.getTime();
+            else self.searchInfo.orderDateFrom = undefined;
+            if (self.orderDateTo) {
+                var date = angular.copy(self.orderDateTo);
                 date.setDate(date.getDate() + 1);
-                this.searchInfo.orderDateTo = date.getTime();
+                self.searchInfo.orderDateTo = date.getTime();
             } else {
-                this.searchInfo.orderDateTo = undefined;
+                self.searchInfo.orderDateTo = undefined;
             }
-            this.searchInfo.curr = this.pageInfo.curr;
-            this.searchInfo.size = this.pageInfo.size;
-            this.orderInfoService.search(this.searchInfo).then(function (data) {
-                this.pageInfo.total = data.orderInfo.total;
-                this.data = data.orderInfo.orderList.map(function (item) {
+            self.searchInfo.curr = self.pageInfo.curr;
+            self.searchInfo.size = self.pageInfo.size;
+            self.orderInfoService.search(self.searchInfo).then(function (data) {
+                self.pageInfo.total = data.orderInfo.total;
+                self.data = data.orderInfo.orderList.map(function (item) {
                         item.className = '';
                         var date = new Date();
-                        if (item.status == '7')
-                            item.className = 'bg-gainsboro';
+                        if (item.status == '7') item.className = 'bg-gainsboro';
                         else if (item.status == '1') {
-                            if (this.channelConfigs.vendorOperateType == 'ORDER') {
+                            if (self.channelConfigs.vendorOperateType == 'ORDER') {
                                 date = new Date(item.orderDateTime);
-                            } else if (this.channelConfigs.vendorOperateType == 'SKU') {
+                            } else if (self.channelConfigs.vendorOperateType == 'SKU') {
                                 date = new Date(item.orderDateTimestamp);
                             } else {
-                                this.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
+                                self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }
-                            if ((new Date().getTime() - date) >= this.threeDay)
-                                item.className = 'bg-danger';
-                            else if ((new Date().getTime() - date) >= this.twoDay)
-                                item.className = 'bg-warning';
+                            if ((new Date().getTime() - date) >= self.threeDay) item.className = 'bg-danger';
+                            else if ((new Date().getTime() - date) >= self.twoDay) item.className = 'bg-warning';
                         }
                         return item;
                     }
