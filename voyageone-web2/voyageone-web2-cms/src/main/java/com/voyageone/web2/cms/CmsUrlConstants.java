@@ -138,6 +138,8 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/index";
                 String INIT = "init";
                 String InitByPromotionId="initByPromotionId";
+                String GetPage="getPage";
+                String GetCount="getCount";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
@@ -508,7 +510,6 @@ public interface CmsUrlConstants {
     interface PRODUCT{
 
         interface DETAIL {
-
             String ROOT = "/cms/product/detail";
 
             String GET_PRODUCT_INFO = "getProductInfo";
@@ -540,9 +541,14 @@ public interface CmsUrlConstants {
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
             String CHECK_CATEGORY = "checkCategory";
-
         }
 
+        interface HISTORY {
+            String ROOT = "/cms/product/history";
+            String GET_PUTONOFF_LOG_LIST = "getPutOnOffLogList";
+
+
+        }
     }
 
     // 商品编辑

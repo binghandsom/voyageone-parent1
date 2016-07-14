@@ -159,7 +159,9 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage:"getPage",
+                    getCount:"getCount"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",

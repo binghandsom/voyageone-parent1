@@ -127,45 +127,34 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     }
 
     private TaskControlEnums.Status process(Message message) {
-        TaskControlEnums.Status status = TaskControlEnums.Status.START;
+        String messageStr = "";
         try {
-            String messageStr = new String(message.getBody(), "UTF-8");
+            messageStr = new String(message.getBody());
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
             onStartup(messageMap);
-            status = TaskControlEnums.Status.SUCCESS;
         } catch (BusinessException be) {
-            status = TaskControlEnums.Status.ERROR;
-            logIssue(be, be.getInfo());
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
         } catch (MQIgnoreException me) {
-            status = TaskControlEnums.Status.ERROR;
-            logIssue(me, me.getMessage());
             $error("MQIgnoreException，任务退出", me);
             throw new MQIgnoreException(me);
         } catch (Exception ex) {
-            status = TaskControlEnums.Status.ERROR;
             if (isOutRetryTimes(message)) {
-                logIssue(ex, ex.getMessage());
+                logIssue(ex, ex.getMessage() + messageStr);
             }
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
         }
-//        finally {
-//            // 任务监控历史记录添加:结束
-//            taskDao.insertTaskHistory(taskID, status.getIs());
-//        }
-        return status;
+        return TaskControlEnums.Status.SUCCESS;
     }
 
     private boolean isOutRetryTimes(Message message) {
         MessageProperties messageProperties = message.getMessageProperties();
         Map<String, Object> headers = messageProperties.getHeaders();
-        String retryKey = VOExceptionStrategy.CONSUMER_RETRY_KEY;
         // RETRY>3 return
         return !MapUtils.isEmpty(headers) && //headers非空
-                !StringUtils.isEmpty(headers.get(retryKey)) && //CONSUMER_RETRY_KEY非空
-                (int) headers.get(retryKey) > VOExceptionStrategy.MAX_RETRY_TIMES;
+                !StringUtils.isEmpty(headers.get(VOExceptionStrategy.CONSUMER_RETRY_KEY)) && //CONSUMER_RETRY_KEY非空
+                (int) headers.get(VOExceptionStrategy.CONSUMER_RETRY_KEY) >= VOExceptionStrategy.MAX_RETRY_TIMES;
     }
 
 

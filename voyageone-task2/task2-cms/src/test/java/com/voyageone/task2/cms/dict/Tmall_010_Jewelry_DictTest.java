@@ -342,7 +342,10 @@ public class Tmall_010_Jewelry_DictTest {
 //						}
 					}
 
-					CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
+					RuleExpression useCmsBtImageTemplate = new RuleExpression();
+					useCmsBtImageTemplate.addRuleWord(new TextWord("true"));
+
+					CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, useCmsBtImageTemplate);
 					ruleRoot.addRuleWord(new CustomWord(word));
 
 					{

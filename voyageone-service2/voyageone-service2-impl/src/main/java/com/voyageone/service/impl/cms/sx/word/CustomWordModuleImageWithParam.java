@@ -37,6 +37,10 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 
         RuleExpression imageTemplateExpression = customModuleUserParamImageWithParam.getImageTemplate();
         List<RuleExpression> imageParamExpressions = customModuleUserParamImageWithParam.getImageParams();
+        // added by morse.lu 2016/07/13 start
+        RuleExpression useCmsBtImageTemplateExpression = customModuleUserParamImageWithParam.getUseCmsBtImageTemplate();
+        String useCmsBtImageTemplate = expressionParser.parse(useCmsBtImageTemplateExpression, shopBean, user, extParameter);
+        // added by morse.lu 2016/07/13 end
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
@@ -75,7 +79,23 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         }
 
         // 20160513 tom 图片服务器切换 START
-        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        // modified by morse.lu 2016/07/13 start
+//        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        String parseResult;
+        if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
+            // 用图片管理模板
+            parseResult = sxProductService.getImageTemplate(sxData.getChannelId(),
+                                                            sxData.getCartId(),
+                                                            4, // 4：参数模版
+                                                            1, // PC端
+                                                            sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                                            sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                                            sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                                                            imageParams.toArray(new String[imageParams.size()]));
+        } else {
+            parseResult = String.format(imageTemplate, imageParams.toArray());
+        }
+        // modified by morse.lu 2016/07/13 end
 //        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.get(0));
 //        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.toArray(new String[imageParams.size()]));
         // 20160513 tom 图片服务器切换 END

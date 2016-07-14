@@ -74,6 +74,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer status;
 
+    /**
+     * 0：未恢复  1:已恢复  团购价变回【中国最终售价】
+     */
+    protected Integer recoveryStatus;
+
     public String getChannelId() {
         return channelId;
     }
@@ -192,5 +197,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getRecoveryStatus() {
+        return recoveryStatus;
+    }
+
+    public void setRecoveryStatus(Integer recoveryStatus) {
+        this.recoveryStatus = recoveryStatus;
     }
 }
