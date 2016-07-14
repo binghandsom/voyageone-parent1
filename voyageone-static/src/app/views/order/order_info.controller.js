@@ -48,7 +48,7 @@ define([
             this.searchOrderStatus = [];
             this.data = [];
 
-            this.orderInfoService.init().then(function(data){
+            this.orderInfoService.init().then(function (data) {
                 // 获取当前shipment
                 this.currentShipment = data.currentShipment;
 
@@ -97,7 +97,6 @@ define([
                                 item.className = 'bg-danger';
                             else if ((new Date().getTime() - date) >= this.twoDay)
                                 item.className = 'bg-warning';
-
                         }
                         return item;
                     }
