@@ -10,10 +10,13 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExt;
@@ -21,6 +24,8 @@ import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
@@ -58,6 +63,8 @@ public class PromotionService extends BaseService {
     private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
 @Autowired
     CmsBtPromotionDao dao;
+    @Autowired
+    CmsBtJmPromotionDao daoCmsBtJMPromotion;
     @Autowired
     private TagService serviceTag;
     //分页 begin
@@ -110,6 +117,7 @@ public class PromotionService extends BaseService {
                 }
             });
         } else {
+            editModel.getPromotionModel().setPromotionStatus(1);
             Map<String, Object> param = new HashMap<>();
             param.put("channelId", cmsBtPromotionBean.getChannelId());
             param.put("cartId", cmsBtPromotionBean.getCartId());
@@ -156,6 +164,42 @@ public class PromotionService extends BaseService {
             cmsBtTagDao.update(cmsBtTagModel);
         });
         return editModel;
+    }
+
+
+    /**
+     * 删除
+     */
+    @VOTransactional
+    public CallResult deleteByPromotionId(int promotionId ) {
+        CallResult result=new CallResult();
+        CmsBtPromotionModel model = dao.select(promotionId);
+        if (model.getCartId() == CartEnums.Cart.JM.getValue()) {
+            CmsBtJmPromotionModel jmModel = daoCmsBtJMPromotion.select(model.getPromotionId());
+            if(jmModel.getStatus()==1)
+            {
+                result.setResult(false);
+                result.setMsg("已有商品上新,不允许删除！");
+                return  result;
+            }
+        }
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        param.put("modifier", model.getModifier());
+        // 删除对应的tag
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setParentTagId(model.getRefTagId());
+        cmsBtTagModel.setId(model.getRefTagId());
+        cmsBtTagDaoExt.deleteCmsBtTagByParentTagId(cmsBtTagModel);
+        cmsBtTagDaoExt.deleteCmsBtTagByTagId(cmsBtTagModel);
+         cmsBtPromotionDaoExt.deleteById(param);
+        return  result;
+    }
+
+    public int setPromotionStatus(SetPromotionStatusParameter parameter) {
+        CmsBtPromotionModel model = dao.select(parameter.getPromotionId());
+        model.setPromotionStatus(parameter.getPromotionStatus());
+      return   dao.update(model);
     }
     //分页 end
 

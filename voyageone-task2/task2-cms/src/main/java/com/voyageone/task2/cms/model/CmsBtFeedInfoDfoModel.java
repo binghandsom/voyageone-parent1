@@ -8,14 +8,80 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
  */
 public class CmsBtFeedInfoDfoModel extends CmsBtFeedInfoModel {
 
+    private String sku;
+    private String upc;
+    private String classification;
+    private String model;
+    private String manufacturerColor;
+    private String generalColor;
+    private String size;
     private String lensSize;
-    private String bridge_size;
+    private String bridgeSize;
     private String templeSize;
     private String verticalSize;
-    private String lens_color;
+    private String gender;
+    private String countryOfOrigin;
+    private String lensColor;
     private String lensTechnology;
     private String frameType;
     private String style;
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+    public String getUpc() {
+        return upc;
+    }
+
+    public void setUpc(String upc) {
+        this.upc = upc;
+    }
+
+    public String getClassification() {
+        return classification;
+    }
+
+    public void setClassification(String classification) {
+        this.classification = classification;
+    }
+
+    @Override
+    public String getModel() {
+        return model;
+    }
+
+    @Override
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getManufacturerColor() {
+        return manufacturerColor;
+    }
+
+    public void setManufacturerColor(String manufacturerColor) {
+        this.manufacturerColor = manufacturerColor;
+    }
+
+    public String getGeneralColor() {
+        return generalColor;
+    }
+
+    public void setGeneralColor(String generalColor) {
+        this.generalColor = generalColor;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     public String getLensSize() {
         return lensSize;
@@ -25,12 +91,12 @@ public class CmsBtFeedInfoDfoModel extends CmsBtFeedInfoModel {
         this.lensSize = lensSize;
     }
 
-    public String getBridge_size() {
-        return bridge_size;
+    public String getBridgeSize() {
+        return bridgeSize;
     }
 
-    public void setBridge_size(String bridge_size) {
-        this.bridge_size = bridge_size;
+    public void setBridgeSize(String bridgeSize) {
+        this.bridgeSize = bridgeSize;
     }
 
     public String getTempleSize() {
@@ -49,12 +115,28 @@ public class CmsBtFeedInfoDfoModel extends CmsBtFeedInfoModel {
         this.verticalSize = verticalSize;
     }
 
-    public String getLens_color() {
-        return lens_color;
+    public String getGender() {
+        return gender;
     }
 
-    public void setLens_color(String lens_color) {
-        this.lens_color = lens_color;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getCountryOfOrigin() {
+        return countryOfOrigin;
+    }
+
+    public void setCountryOfOrigin(String countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
+    }
+
+    public String getLensColor() {
+        return lensColor;
+    }
+
+    public void setLensColor(String lensColor) {
+        this.lensColor = lensColor;
     }
 
     public String getLensTechnology() {

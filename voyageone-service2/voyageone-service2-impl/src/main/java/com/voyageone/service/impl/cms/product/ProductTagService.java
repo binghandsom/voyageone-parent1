@@ -127,7 +127,7 @@ public class ProductTagService extends BaseService {
                 queryStr.append(MongoUtils.splicingValue(tagsKey, curPathList.toArray(new String[curPathList.size()]), "$in"));
                 queryStr.append("}");
                 queryObject.setQuery(queryStr.toString());
-                queryObject.setProjection("{'fields.code':1,'_id':0}");
+                queryObject.setProjection("{'common.fields.code':1,'_id':0}");
                 List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
                 if (prodInfoList.isEmpty()) {
                     // 若不存在，则删除关联的上级tag
@@ -153,7 +153,7 @@ public class ProductTagService extends BaseService {
                         queryStr.append(MongoUtils.splicingValue(tagsKey, curPathList.toArray(new String[curPathList.size()]), "$in"));
                         queryStr.append("}");
                         queryObject.setQuery(queryStr.toString());
-                        queryObject.setProjection("{'fields.code':1,'_id':0}");
+                        queryObject.setProjection("{'common.fields.code':1,'_id':0}");
                         prodInfoList = cmsBtProductDao.select(queryObject, channelId);
                         if (prodInfoList.isEmpty()) {
                             // 若不存在，则删除关联的上级tag
@@ -189,7 +189,7 @@ public class ProductTagService extends BaseService {
                 queryStr.append(MongoUtils.splicingValue(tagsKey, (String[]) curPathList.toArray(new String[curPathList.size()]), "$in"));
                 queryStr.append("}");
                 queryObject.setQuery(queryStr.toString());
-                queryObject.setProjection("{'fields.code':1,'_id':0}");
+                queryObject.setProjection("{'common.fields.code':1,'_id':0}");
                 List<CmsBtProductModel> prodInfoList = cmsBtProductDao.select(queryObject, channelId);
                 if (prodInfoList.isEmpty()) {
                     // 若不存在，则删除关联的上级tag

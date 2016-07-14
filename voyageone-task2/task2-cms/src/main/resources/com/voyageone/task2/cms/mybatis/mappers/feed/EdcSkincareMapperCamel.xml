@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.EdcSkincareFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    <id column="sku" property="sku" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="msrp" property="msrp" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" extends="BaseResultMap" >
+    <result column="parentid" property="parentid" jdbcType="LONGVARCHAR" />
+    <result column="title" property="title" jdbcType="LONGVARCHAR" />
+    <result column="productid" property="productid" jdbcType="LONGVARCHAR" />
+    <result column="images" property="images" jdbcType="LONGVARCHAR" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="shortdescription" property="shortdescription" jdbcType="LONGVARCHAR" />
+    <result column="productorigin" property="productorigin" jdbcType="LONGVARCHAR" />
+    <result column="weight" property="weight" jdbcType="LONGVARCHAR" />
+    <result column="Brand" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="attributekey1" property="attributekey1" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue1" property="attributevalue1" jdbcType="LONGVARCHAR" />
+    <result column="attributekey2" property="attributekey2" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue2" property="attributevalue2" jdbcType="LONGVARCHAR" />
+    <result column="attributekey3" property="attributekey3" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue3" property="attributevalue3" jdbcType="LONGVARCHAR" />
+    <result column="attributekey4" property="attributekey4" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue4" property="attributevalue4" jdbcType="LONGVARCHAR" />
+    <result column="attributekey5" property="attributekey5" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue5" property="attributevalue5" jdbcType="LONGVARCHAR" />
+    <result column="attributekey6" property="attributekey6" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue6" property="attributevalue6" jdbcType="LONGVARCHAR" />
+    <result column="attributekey7" property="attributekey7" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue7" property="attributevalue7" jdbcType="LONGVARCHAR" />
+    <result column="attributekey8" property="attributekey8" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue8" property="attributevalue8" jdbcType="LONGVARCHAR" />
+    <result column="attributekey9" property="attributekey9" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue9" property="attributevalue9" jdbcType="LONGVARCHAR" />
+    <result column="attributekey10" property="attributekey10" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue10" property="attributevalue10" jdbcType="LONGVARCHAR" />
+    <result column="attributekey11" property="attributekey11" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue11" property="attributevalue11" jdbcType="LONGVARCHAR" />
+    <result column="attributekey12" property="attributekey12" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue12" property="attributevalue12" jdbcType="LONGVARCHAR" />
+    <result column="attributekey13" property="attributekey13" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue13" property="attributevalue13" jdbcType="LONGVARCHAR" />
+    <result column="attributekey14" property="attributekey14" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue14" property="attributevalue14" jdbcType="LONGVARCHAR" />
+    <result column="attributekey15" property="attributekey15" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue15" property="attributevalue15" jdbcType="LONGVARCHAR" />
+    <result column="attributekey16" property="attributekey16" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue16" property="attributevalue16" jdbcType="LONGVARCHAR" />
+    <result column="attributekey17" property="attributekey17" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue17" property="attributevalue17" jdbcType="LONGVARCHAR" />
+    <result column="attributekey18" property="attributekey18" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue18" property="attributevalue18" jdbcType="LONGVARCHAR" />
+    <result column="attributekey19" property="attributekey19" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue19" property="attributevalue19" jdbcType="LONGVARCHAR" />
+    <result column="attributekey20" property="attributekey20" jdbcType="LONGVARCHAR" />
+    <result column="attributevalue20" property="attributevalue20" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "sku", "price", "msrp", "quantity", "category", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "parentid", "title", "productid", "images", "description", "shortdescription", "productorigin",
+    "weight", "Brand", "attributekey1", "attributevalue1", "attributekey2", "attributevalue2",
+    "attributekey3", "attributevalue3", "attributekey4", "attributevalue4", "attributekey5",
+    "attributevalue5", "attributekey6", "attributevalue6", "attributekey7", "attributevalue7",
+    "attributekey8", "attributevalue8", "attributekey9", "attributevalue9", "attributekey10",
+    "attributevalue10", "attributekey11", "attributevalue11", "attributekey12", "attributevalue12",
+    "attributekey13", "attributevalue13", "attributekey14", "attributevalue14", "attributekey15",
+    "attributevalue15", "attributekey16", "attributevalue16", "attributekey17", "attributevalue17",
+    "attributekey18", "attributevalue18", "attributekey19", "attributevalue19", "attributekey20",
+    "attributevalue20"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_edcskincare_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_edcskincare_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    insert into cms_zz_feed_edcskincare_product_temp ("sku", "price", "msrp",
+    "quantity", "category", "md5",
+    "updateFlag", "parentid", "title",
+    "productid", "images", "description",
+    "shortdescription", "productorigin",
+    "weight", "Brand", "attributekey1",
+    "attributevalue1", "attributekey2",
+    "attributevalue2", "attributekey3",
+    "attributevalue3", "attributekey4",
+    "attributevalue4", "attributekey5",
+    "attributevalue5", "attributekey6",
+    "attributevalue6", "attributekey7",
+    "attributevalue7", "attributekey8",
+    "attributevalue8", "attributekey9",
+    "attributevalue9", "attributekey10",
+    "attributevalue10", "attributekey11",
+    "attributevalue11", "attributekey12",
+    "attributevalue12", "attributekey13",
+    "attributevalue13", "attributekey14",
+    "attributevalue14", "attributekey15",
+    "attributevalue15", "attributekey16",
+    "attributevalue16", "attributekey17",
+    "attributevalue17", "attributekey18",
+    "attributevalue18", "attributekey19",
+    "attributevalue19", "attributekey20",
+    "attributevalue20")
+    values (#{sku,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR}, #{msrp,jdbcType=VARCHAR},
+    #{quantity,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
+    #{updateflag,jdbcType=INTEGER}, #{parentid,jdbcType=LONGVARCHAR}, #{title,jdbcType=LONGVARCHAR},
+    #{productid,jdbcType=LONGVARCHAR}, #{images,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR},
+    #{shortdescription,jdbcType=LONGVARCHAR}, #{productorigin,jdbcType=LONGVARCHAR},
+    #{weight,jdbcType=LONGVARCHAR}, #{brand,jdbcType=LONGVARCHAR}, #{attributekey1,jdbcType=LONGVARCHAR},
+    #{attributevalue1,jdbcType=LONGVARCHAR}, #{attributekey2,jdbcType=LONGVARCHAR},
+    #{attributevalue2,jdbcType=LONGVARCHAR}, #{attributekey3,jdbcType=LONGVARCHAR},
+    #{attributevalue3,jdbcType=LONGVARCHAR}, #{attributekey4,jdbcType=LONGVARCHAR},
+    #{attributevalue4,jdbcType=LONGVARCHAR}, #{attributekey5,jdbcType=LONGVARCHAR},
+    #{attributevalue5,jdbcType=LONGVARCHAR}, #{attributekey6,jdbcType=LONGVARCHAR},
+    #{attributevalue6,jdbcType=LONGVARCHAR}, #{attributekey7,jdbcType=LONGVARCHAR},
+    #{attributevalue7,jdbcType=LONGVARCHAR}, #{attributekey8,jdbcType=LONGVARCHAR},
+    #{attributevalue8,jdbcType=LONGVARCHAR}, #{attributekey9,jdbcType=LONGVARCHAR},
+    #{attributevalue9,jdbcType=LONGVARCHAR}, #{attributekey10,jdbcType=LONGVARCHAR},
+    #{attributevalue10,jdbcType=LONGVARCHAR}, #{attributekey11,jdbcType=LONGVARCHAR},
+    #{attributevalue11,jdbcType=LONGVARCHAR}, #{attributekey12,jdbcType=LONGVARCHAR},
+    #{attributevalue12,jdbcType=LONGVARCHAR}, #{attributekey13,jdbcType=LONGVARCHAR},
+    #{attributevalue13,jdbcType=LONGVARCHAR}, #{attributekey14,jdbcType=LONGVARCHAR},
+    #{attributevalue14,jdbcType=LONGVARCHAR}, #{attributekey15,jdbcType=LONGVARCHAR},
+    #{attributevalue15,jdbcType=LONGVARCHAR}, #{attributekey16,jdbcType=LONGVARCHAR},
+    #{attributevalue16,jdbcType=LONGVARCHAR}, #{attributekey17,jdbcType=LONGVARCHAR},
+    #{attributevalue17,jdbcType=LONGVARCHAR}, #{attributekey18,jdbcType=LONGVARCHAR},
+    #{attributevalue18,jdbcType=LONGVARCHAR}, #{attributekey19,jdbcType=LONGVARCHAR},
+    #{attributevalue19,jdbcType=LONGVARCHAR}, #{attributekey20,jdbcType=LONGVARCHAR},
+    #{attributevalue20,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    insert into cms_zz_feed_edcskincare_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        sku,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="msrp != null" >
+        msrp,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="productid != null" >
+        productid,
+      </if>
+      <if test="images != null" >
+        images,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="shortdescription != null" >
+        shortdescription,
+      </if>
+      <if test="productorigin != null" >
+        productorigin,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="brand != null" >
+        Brand,
+      </if>
+      <if test="attributekey1 != null" >
+        attributekey1,
+      </if>
+      <if test="attributevalue1 != null" >
+        attributevalue1,
+      </if>
+      <if test="attributekey2 != null" >
+        attributekey2,
+      </if>
+      <if test="attributevalue2 != null" >
+        attributevalue2,
+      </if>
+      <if test="attributekey3 != null" >
+        attributekey3,
+      </if>
+      <if test="attributevalue3 != null" >
+        attributevalue3,
+      </if>
+      <if test="attributekey4 != null" >
+        attributekey4,
+      </if>
+      <if test="attributevalue4 != null" >
+        attributevalue4,
+      </if>
+      <if test="attributekey5 != null" >
+        attributekey5,
+      </if>
+      <if test="attributevalue5 != null" >
+        attributevalue5,
+      </if>
+      <if test="attributekey6 != null" >
+        attributekey6,
+      </if>
+      <if test="attributevalue6 != null" >
+        attributevalue6,
+      </if>
+      <if test="attributekey7 != null" >
+        attributekey7,
+      </if>
+      <if test="attributevalue7 != null" >
+        attributevalue7,
+      </if>
+      <if test="attributekey8 != null" >
+        attributekey8,
+      </if>
+      <if test="attributevalue8 != null" >
+        attributevalue8,
+      </if>
+      <if test="attributekey9 != null" >
+        attributekey9,
+      </if>
+      <if test="attributevalue9 != null" >
+        attributevalue9,
+      </if>
+      <if test="attributekey10 != null" >
+        attributekey10,
+      </if>
+      <if test="attributevalue10 != null" >
+        attributevalue10,
+      </if>
+      <if test="attributekey11 != null" >
+        attributekey11,
+      </if>
+      <if test="attributevalue11 != null" >
+        attributevalue11,
+      </if>
+      <if test="attributekey12 != null" >
+        attributekey12,
+      </if>
+      <if test="attributevalue12 != null" >
+        attributevalue12,
+      </if>
+      <if test="attributekey13 != null" >
+        attributekey13,
+      </if>
+      <if test="attributevalue13 != null" >
+        attributevalue13,
+      </if>
+      <if test="attributekey14 != null" >
+        attributekey14,
+      </if>
+      <if test="attributevalue14 != null" >
+        attributevalue14,
+      </if>
+      <if test="attributekey15 != null" >
+        attributekey15,
+      </if>
+      <if test="attributevalue15 != null" >
+        attributevalue15,
+      </if>
+      <if test="attributekey16 != null" >
+        attributekey16,
+      </if>
+      <if test="attributevalue16 != null" >
+        attributevalue16,
+      </if>
+      <if test="attributekey17 != null" >
+        attributekey17,
+      </if>
+      <if test="attributevalue17 != null" >
+        attributevalue17,
+      </if>
+      <if test="attributekey18 != null" >
+        attributekey18,
+      </if>
+      <if test="attributevalue18 != null" >
+        attributevalue18,
+      </if>
+      <if test="attributekey19 != null" >
+        attributekey19,
+      </if>
+      <if test="attributevalue19 != null" >
+        attributevalue19,
+      </if>
+      <if test="attributekey20 != null" >
+        attributekey20,
+      </if>
+      <if test="attributevalue20 != null" >
+        attributevalue20,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productid != null" >
+        #{productid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="images != null" >
+        #{images,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortdescription != null" >
+        #{shortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productorigin != null" >
+        #{productorigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey1 != null" >
+        #{attributekey1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue1 != null" >
+        #{attributevalue1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey2 != null" >
+        #{attributekey2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue2 != null" >
+        #{attributevalue2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey3 != null" >
+        #{attributekey3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue3 != null" >
+        #{attributevalue3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey4 != null" >
+        #{attributekey4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue4 != null" >
+        #{attributevalue4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey5 != null" >
+        #{attributekey5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue5 != null" >
+        #{attributevalue5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey6 != null" >
+        #{attributekey6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue6 != null" >
+        #{attributevalue6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey7 != null" >
+        #{attributekey7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue7 != null" >
+        #{attributevalue7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey8 != null" >
+        #{attributekey8,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue8 != null" >
+        #{attributevalue8,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey9 != null" >
+        #{attributekey9,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue9 != null" >
+        #{attributevalue9,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey10 != null" >
+        #{attributekey10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue10 != null" >
+        #{attributevalue10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey11 != null" >
+        #{attributekey11,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue11 != null" >
+        #{attributevalue11,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey12 != null" >
+        #{attributekey12,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue12 != null" >
+        #{attributevalue12,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey13 != null" >
+        #{attributekey13,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue13 != null" >
+        #{attributevalue13,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey14 != null" >
+        #{attributekey14,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue14 != null" >
+        #{attributevalue14,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey15 != null" >
+        #{attributekey15,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue15 != null" >
+        #{attributevalue15,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey16 != null" >
+        #{attributekey16,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue16 != null" >
+        #{attributevalue16,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey17 != null" >
+        #{attributekey17,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue17 != null" >
+        #{attributevalue17,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey18 != null" >
+        #{attributekey18,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue18 != null" >
+        #{attributevalue18,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey19 != null" >
+        #{attributekey19,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue19 != null" >
+        #{attributevalue19,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey20 != null" >
+        #{attributekey20,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue20 != null" >
+        #{attributevalue20,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    update cms_zz_feed_edcskincare_product_temp
+    <set >
+      <if test="price != null" >
+        "price" = #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        "msrp" = #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        "quantity" = #{quantity,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        "category" = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        "parentid" = #{parentid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="title != null" >
+        "title" = #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productid != null" >
+        "productid" = #{productid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="images != null" >
+        "images" = #{images,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortdescription != null" >
+        "shortdescription" = #{shortdescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productorigin != null" >
+        "productorigin" = #{productorigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        "weight" = #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        "Brand" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey1 != null" >
+        "attributekey1" = #{attributekey1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue1 != null" >
+        "attributevalue1" = #{attributevalue1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey2 != null" >
+        "attributekey2" = #{attributekey2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue2 != null" >
+        "attributevalue2" = #{attributevalue2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey3 != null" >
+        "attributekey3" = #{attributekey3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue3 != null" >
+        "attributevalue3" = #{attributevalue3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey4 != null" >
+        "attributekey4" = #{attributekey4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue4 != null" >
+        "attributevalue4" = #{attributevalue4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey5 != null" >
+        "attributekey5" = #{attributekey5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue5 != null" >
+        "attributevalue5" = #{attributevalue5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey6 != null" >
+        "attributekey6" = #{attributekey6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue6 != null" >
+        "attributevalue6" = #{attributevalue6,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey7 != null" >
+        "attributekey7" = #{attributekey7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue7 != null" >
+        "attributevalue7" = #{attributevalue7,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey8 != null" >
+        "attributekey8" = #{attributekey8,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue8 != null" >
+        "attributevalue8" = #{attributevalue8,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey9 != null" >
+        "attributekey9" = #{attributekey9,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue9 != null" >
+        "attributevalue9" = #{attributevalue9,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey10 != null" >
+        "attributekey10" = #{attributekey10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue10 != null" >
+        "attributevalue10" = #{attributevalue10,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey11 != null" >
+        "attributekey11" = #{attributekey11,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue11 != null" >
+        "attributevalue11" = #{attributevalue11,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey12 != null" >
+        "attributekey12" = #{attributekey12,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue12 != null" >
+        "attributevalue12" = #{attributevalue12,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey13 != null" >
+        "attributekey13" = #{attributekey13,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue13 != null" >
+        "attributevalue13" = #{attributevalue13,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey14 != null" >
+        "attributekey14" = #{attributekey14,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue14 != null" >
+        "attributevalue14" = #{attributevalue14,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey15 != null" >
+        "attributekey15" = #{attributekey15,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue15 != null" >
+        "attributevalue15" = #{attributevalue15,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey16 != null" >
+        "attributekey16" = #{attributekey16,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue16 != null" >
+        "attributevalue16" = #{attributevalue16,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey17 != null" >
+        "attributekey17" = #{attributekey17,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue17 != null" >
+        "attributevalue17" = #{attributevalue17,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey18 != null" >
+        "attributekey18" = #{attributekey18,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue18 != null" >
+        "attributevalue18" = #{attributevalue18,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey19 != null" >
+        "attributekey19" = #{attributekey19,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue19 != null" >
+        "attributevalue19" = #{attributevalue19,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributekey20 != null" >
+        "attributekey20" = #{attributekey20,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributevalue20 != null" >
+        "attributevalue20" = #{attributevalue20,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    update cms_zz_feed_edcskincare_product_temp
+    set "price" = #{price,jdbcType=VARCHAR},
+    "msrp" = #{msrp,jdbcType=VARCHAR},
+    "quantity" = #{quantity,jdbcType=VARCHAR},
+    "category" = #{category,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "parentid" = #{parentid,jdbcType=LONGVARCHAR},
+    "title" = #{title,jdbcType=LONGVARCHAR},
+    "productid" = #{productid,jdbcType=LONGVARCHAR},
+    "images" = #{images,jdbcType=LONGVARCHAR},
+    "description" = #{description,jdbcType=LONGVARCHAR},
+    "shortdescription" = #{shortdescription,jdbcType=LONGVARCHAR},
+    "productorigin" = #{productorigin,jdbcType=LONGVARCHAR},
+    "weight" = #{weight,jdbcType=LONGVARCHAR},
+    "Brand" = #{brand,jdbcType=LONGVARCHAR},
+    "attributekey1" = #{attributekey1,jdbcType=LONGVARCHAR},
+    "attributevalue1" = #{attributevalue1,jdbcType=LONGVARCHAR},
+    "attributekey2" = #{attributekey2,jdbcType=LONGVARCHAR},
+    "attributevalue2" = #{attributevalue2,jdbcType=LONGVARCHAR},
+    "attributekey3" = #{attributekey3,jdbcType=LONGVARCHAR},
+    "attributevalue3" = #{attributevalue3,jdbcType=LONGVARCHAR},
+    "attributekey4" = #{attributekey4,jdbcType=LONGVARCHAR},
+    "attributevalue4" = #{attributevalue4,jdbcType=LONGVARCHAR},
+    "attributekey5" = #{attributekey5,jdbcType=LONGVARCHAR},
+    "attributevalue5" = #{attributevalue5,jdbcType=LONGVARCHAR},
+    "attributekey6" = #{attributekey6,jdbcType=LONGVARCHAR},
+    "attributevalue6" = #{attributevalue6,jdbcType=LONGVARCHAR},
+    "attributekey7" = #{attributekey7,jdbcType=LONGVARCHAR},
+    "attributevalue7" = #{attributevalue7,jdbcType=LONGVARCHAR},
+    "attributekey8" = #{attributekey8,jdbcType=LONGVARCHAR},
+    "attributevalue8" = #{attributevalue8,jdbcType=LONGVARCHAR},
+    "attributekey9" = #{attributekey9,jdbcType=LONGVARCHAR},
+    "attributevalue9" = #{attributevalue9,jdbcType=LONGVARCHAR},
+    "attributekey10" = #{attributekey10,jdbcType=LONGVARCHAR},
+    "attributevalue10" = #{attributevalue10,jdbcType=LONGVARCHAR},
+    "attributekey11" = #{attributekey11,jdbcType=LONGVARCHAR},
+    "attributevalue11" = #{attributevalue11,jdbcType=LONGVARCHAR},
+    "attributekey12" = #{attributekey12,jdbcType=LONGVARCHAR},
+    "attributevalue12" = #{attributevalue12,jdbcType=LONGVARCHAR},
+    "attributekey13" = #{attributekey13,jdbcType=LONGVARCHAR},
+    "attributevalue13" = #{attributevalue13,jdbcType=LONGVARCHAR},
+    "attributekey14" = #{attributekey14,jdbcType=LONGVARCHAR},
+    "attributevalue14" = #{attributevalue14,jdbcType=LONGVARCHAR},
+    "attributekey15" = #{attributekey15,jdbcType=LONGVARCHAR},
+    "attributevalue15" = #{attributevalue15,jdbcType=LONGVARCHAR},
+    "attributekey16" = #{attributekey16,jdbcType=LONGVARCHAR},
+    "attributevalue16" = #{attributevalue16,jdbcType=LONGVARCHAR},
+    "attributekey17" = #{attributekey17,jdbcType=LONGVARCHAR},
+    "attributevalue17" = #{attributevalue17,jdbcType=LONGVARCHAR},
+    "attributekey18" = #{attributekey18,jdbcType=LONGVARCHAR},
+    "attributevalue18" = #{attributevalue18,jdbcType=LONGVARCHAR},
+    "attributekey19" = #{attributekey19,jdbcType=LONGVARCHAR},
+    "attributevalue19" = #{attributevalue19,jdbcType=LONGVARCHAR},
+    "attributekey20" = #{attributekey20,jdbcType=LONGVARCHAR},
+    "attributevalue20" = #{attributevalue20,jdbcType=LONGVARCHAR}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedEdcSkincareBean" >
+    update cms_zz_feed_edcskincare_product_temp
+    set "price" = #{price,jdbcType=VARCHAR},
+    "msrp" = #{msrp,jdbcType=VARCHAR},
+    "quantity" = #{quantity,jdbcType=VARCHAR},
+    "category" = #{category,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_edcskincare_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoEdcSkincareModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_edcskincare_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_edcskincare_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_edcskincare_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_edcskincare_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>

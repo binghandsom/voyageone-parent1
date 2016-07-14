@@ -32,7 +32,7 @@ public class CmsPlatformProductImport2ServiceTest {
         taskControlBean.setCfg_val1("010");
         taskControlList.add(taskControlBean);
         Map<String,Object> parma= new HashMap<>();
-        parma.put("channelId","010");
+        parma.put("channelId","018");
         cmsPlatformProductImport2Service.onStartup(parma);
     }
 }

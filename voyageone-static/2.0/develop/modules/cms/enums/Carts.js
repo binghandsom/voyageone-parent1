@@ -63,22 +63,22 @@ define(['underscore'], function (_) {
         /**
          * 京东匠心界
          */
-        JGJ: new Cart('JGJ', 28, '京东匠心界', ''),
+        USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
          * 京东悦境
          */
-        JGY: new Cart('JGY', 29, '京东悦境', ''),
+        USJGY: new Cart('USJGY', 929, 'USJOI悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
          * 京东匠心界
          */
-        JGJ: new Cart('JGJ', 928, '京东匠心界', ''),
+        JGJ: new Cart('JGJ', 28, '京东匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
          * 京东悦境
          */
-        JGY: new Cart('JGY', 929, '京东悦境', ''),
+        JGY: new Cart('JGY', 29, '京东悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
          * Mini Mall

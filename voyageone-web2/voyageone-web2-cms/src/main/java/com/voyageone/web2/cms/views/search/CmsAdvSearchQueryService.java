@@ -439,7 +439,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (cartId > 1) {
             // 获取按销量排序字段
             if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
+                result.append(MongoUtils.splicingValue("sales.codeSum" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
                 result.append(",");
             }
         }
@@ -479,7 +479,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         for (CmsBtProductBean groupObj : groupsList) {
             String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
             if (prodCode == null) {
-                $warn("高级检索 getGroupExtraInfo 无产品code OBJ=:" + groupObj.toString());
+                $warn("高级检索 getGroupExtraInfo 无产品code ObjId=:" + groupObj.get_id());
                 continue;
             }
             // 从group表合并platforms信息
