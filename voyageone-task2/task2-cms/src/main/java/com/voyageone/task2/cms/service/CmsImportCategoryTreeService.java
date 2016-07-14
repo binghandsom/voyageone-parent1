@@ -408,7 +408,11 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             modelParent.getChildren().add(findCategoryTree);
         }
 
-        findCategoryTree.setSkuSplit(tryGetSkuSplit(row, index));
+        Integer parentSkuSplit = modelParent.getSkuSplit();
+
+        Integer skuSplit = tryGetSkuSplit(row, index);
+
+        findCategoryTree.setSkuSplit(skuSplit.equals(0) ? parentSkuSplit : skuSplit);
 
         return findCategoryTree;
     }
