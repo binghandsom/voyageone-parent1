@@ -14,8 +14,8 @@
 
         <!-- vms batch add    -->
         <!-- 扫描Vendor通过ftp上传的Csv文件 1分钟运行一次 -->
-        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>-->
-        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/1 * * * ?"/>
+        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/1 * * * ?"/>-->
+        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>
 
 
     </task:scheduled-tasks>

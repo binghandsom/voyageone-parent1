@@ -4,7 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtFeedFileModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `client_file_name`, `file_name`, `upload_type`, `status`, `error_file_name`, 
-        `error_msg`, `created`, `creater`, `modified`, `modifier`
+        `error_msg`, `updated_code_num`, `updated_sku_num`, `created`, `creater`, `modified`, 
+        `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,6 +38,12 @@
             </if>
             <if test="errorMsg != null" >
                 `error_msg`,
+            </if>
+            <if test="updatedCodeNum != null" >
+                `updated_code_num`,
+            </if>
+            <if test="updatedSkuNum != null" >
+                `updated_sku_num`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -71,6 +78,12 @@
             </if>
             <if test="errorMsg != null" >
                 #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedCodeNum != null" >
+                #{updatedCodeNum,jdbcType=INTEGER},
+            </if>
+            <if test="updatedSkuNum != null" >
+                #{updatedSkuNum,jdbcType=INTEGER},
             </if>
             <if test="created == null" >
                 now(),
@@ -119,6 +132,12 @@
             </if>
             <if test="errorMsg != null" >
                 `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedCodeNum != null" >
+                `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER},
+            </if>
+            <if test="updatedSkuNum != null" >
+                `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -170,6 +189,12 @@
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -212,6 +237,12 @@
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
             </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -250,6 +281,12 @@
             </if>
             <if test="errorMsg != null" >
                 and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

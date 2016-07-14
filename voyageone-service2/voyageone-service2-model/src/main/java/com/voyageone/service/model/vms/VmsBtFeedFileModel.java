@@ -48,6 +48,16 @@ public class VmsBtFeedFileModel extends BaseModel {
      */
     protected String errorMsg;
 
+    /**
+     *  更新Code数量
+     */
+    protected Integer updatedCodeNum;
+
+    /**
+     *  更新Sku数量
+     */
+    protected Integer updatedSkuNum;
+
     public String getChannelId() {
         return channelId;
     }
@@ -102,5 +112,21 @@ public class VmsBtFeedFileModel extends BaseModel {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg == null ? null : errorMsg.trim();
+    }
+
+    public Integer getUpdatedCodeNum() {
+        return updatedCodeNum;
+    }
+
+    public void setUpdatedCodeNum(Integer updatedCodeNum) {
+        this.updatedCodeNum = updatedCodeNum;
+    }
+
+    public Integer getUpdatedSkuNum() {
+        return updatedSkuNum;
+    }
+
+    public void setUpdatedSkuNum(Integer updatedSkuNum) {
+        this.updatedSkuNum = updatedSkuNum;
     }
 }
