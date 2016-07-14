@@ -28,6 +28,14 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
         return orderDateTime;
     }
 
+    public long getOrderDateTimestamp() {
+        return orderDateTime.getTime();
+    }
+
+    public void setOrderDateTimestamp(long orderDateTimestamp) {
+        this.orderDateTime = new Date(orderDateTimestamp);
+    }
+
     public void setOrderDateTime(Date orderDateTime) {
         this.orderDateTime = orderDateTime;
     }

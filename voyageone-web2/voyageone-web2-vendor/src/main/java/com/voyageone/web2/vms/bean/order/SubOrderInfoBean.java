@@ -10,7 +10,7 @@ import java.util.Date;
 public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String reservationId;
     private String orderId;
-    private long orderDateTimestamp;
+    private Date orderDateTime;
     private String sku;
     private String desc;
     private String status;
@@ -33,15 +33,15 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     }
 
     public long getOrderDateTimestamp() {
-        return orderDateTimestamp;
+        return orderDateTime.getTime();
     }
 
     public void setOrderDateTimestamp(long orderDateTimestamp) {
-        this.orderDateTimestamp = orderDateTimestamp;
+        this.orderDateTime = new Date(orderDateTimestamp);
     }
 
     public void setOrderDateTime(Date orderDateTime) {
-        this.orderDateTimestamp = orderDateTime.getTime();
+        this.orderDateTime = orderDateTime;
     }
 
     public String getSku() {

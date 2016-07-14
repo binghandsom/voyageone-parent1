@@ -47,13 +47,11 @@ define([
             };
             this.searchOrderStatus = [];
             this.data = [];
-            this.isIE = false;
         }
 
         OrderInfoController.prototype.init = function () {
             var self = this;
             self.orderInfoService.init().then(function (data) {
-                if (!!window.ActiveXObject || "ActiveXObject" in window) self.isIE = true;
                 // 获取当前shipment
                 self.currentShipment = data.currentShipment;
 
@@ -62,6 +60,7 @@ define([
 
                 // 记录用户的操作方式(sku/order)
                 self.channelConfigs = data.channelConfigs;
+
                 self.search();
             });
         };
@@ -91,14 +90,14 @@ define([
                         if (item.status == '7') item.className = 'bg-gainsboro';
                         else if (item.status == '1') {
                             if (self.channelConfigs.vendorOperateType == 'ORDER') {
-                                date = new Date(item.orderDateTime);
+                                date = new Date(item.orderDateTimestamp);
                             } else if (self.channelConfigs.vendorOperateType == 'SKU') {
                                 date = new Date(item.orderDateTimestamp);
                             } else {
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }
-                            if ((new Date().getTime() - date) >= self.threeDay) item.className = 'bg-danger';
-                            else if ((new Date().getTime() - date) >= self.twoDay) item.className = 'bg-warning';
+                            if ((new Date().getTime() - date.getTime()) >= self.threeDay) item.className = 'bg-danger';
+                            else if ((new Date().getTime() - date.getTime()) >= self.twoDay) item.className = 'bg-warning';
                         }
                         return item;
                     }
@@ -136,13 +135,15 @@ define([
         };
 
         OrderInfoController.prototype.getStatusName = function (statusValue) {
-            // var self=this;
-            // self.currentStatus = self.searchOrderStatus.find(function (status) {
-            //     return status.value == statusValue;
-            // });
-            // if (!self.currentStatus) return statusValue;
-            // return currentStatus.name;
-            return 11;
+            var self = this;
+            for (var i = 0; i < self.searchOrderStatus.length; i++) {
+                if (self.searchOrderStatus[i].value == statusValue) {
+                    var currentStatus = self.searchOrderStatus[i];
+                    break;
+                }
+            }
+            if (!currentStatus) return statusValue;
+            return currentStatus.name;
         };
 
         OrderInfoController.prototype.popNewShipment = function () {
