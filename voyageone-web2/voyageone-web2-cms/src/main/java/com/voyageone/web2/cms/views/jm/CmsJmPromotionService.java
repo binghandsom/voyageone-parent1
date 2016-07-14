@@ -44,7 +44,6 @@ public class CmsJmPromotionService extends BaseService {
     /**
      * 新增产品列表到聚美的产品项目中
      *
-     * @param channelId
      * @param creater   创建人
      */
     public Map<String, Object> addProductionToPromotion(List<Long> productIds, CmsBtJmPromotionModel promotion, String channelId,
@@ -71,7 +70,7 @@ public class CmsJmPromotionService extends BaseService {
         List<CmsBtProductModel> products = new ArrayList<>();
 
         // 检查之前有没有上新到聚美上面
-        List<String> errCodes = new ArrayList();
+        List<String> errCodes = new ArrayList<>();
         List<String> productCodes = new ArrayList<>();
         orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
         List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
@@ -84,11 +83,13 @@ public class CmsJmPromotionService extends BaseService {
                 }
 
                 boolean flg =false;
-                for(CmsBtJmProductModel cmsBtJmProductModel :cmsBtJmProductModels){
-                    if(orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())){
-                        flg = true;
-                        products.add(orginProduct);
-                        break;
+                if (cmsBtJmProductModels != null) {
+                    for (CmsBtJmProductModel cmsBtJmProductModel : cmsBtJmProductModels) {
+                        if (orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())) {
+                            flg = true;
+                            products.add(orginProduct);
+                            break;
+                        }
                     }
                 }
                 if(!flg){
@@ -155,10 +156,12 @@ public class CmsJmPromotionService extends BaseService {
     }
 
     /**
-     * @param model
+     * buildSkusFrom
+     *
+     * @param model CmsBtProductModel
      * @param discount  折扣,这里是正折扣,即直接计算而不是用减法,如 10元,discount为0.7那么 就是7元,而不是3元
      * @param priceType 1 表示用官方价(Msrp)打折,2表示用销售价(Sale Price)
-     * @return
+     * @return List
      */
     private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
         final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
@@ -187,10 +190,6 @@ public class CmsJmPromotionService extends BaseService {
 
     /**
      * 设置批量更新product的tags标签
-     * @param model
-     * @param tagId
-     * @param creater
-     * @return
      */
     private BulkUpdateModel buildBulkUpdateTag(CmsBtProductModel model, String tagId, String creater) {
         HashMap<String, Object> bulkQueryMap = new HashMap<>();
