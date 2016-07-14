@@ -168,7 +168,8 @@ define(function () {
                     getCount: "getCount",
                     getEditModel: "getEditModel",
                     saveEditModel: "saveEditModel",
-                    deleteByPromotionId: "deleteByPromotionId"
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus:"setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",

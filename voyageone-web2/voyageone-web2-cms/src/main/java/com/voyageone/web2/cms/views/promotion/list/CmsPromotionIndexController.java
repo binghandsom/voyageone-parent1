@@ -4,6 +4,7 @@ import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -78,6 +79,10 @@ public class CmsPromotionIndexController extends CmsController {
     @RequestMapping(PROMOTION.LIST.INDEX.DeleteByPromotionId)
     public AjaxResponse deleteByPromotionId(@RequestBody int promotionId ) {
      return success(promotionService.deleteByPromotionId(promotionId));
+    }
+    @RequestMapping(PROMOTION.LIST.INDEX.SetPromotionStatus)
+    public  AjaxResponse  setPromotionStatus(@RequestBody SetPromotionStatusParameter parameter) {
+        return  success(promotionService.setPromotionStatus(parameter));
     }
     //重构 end
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)

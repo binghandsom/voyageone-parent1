@@ -100,7 +100,22 @@ define([
                 //})
             })
         };
-
+        $scope.setOpenPromotionStatus=function(data)
+        {
+            confirm($translate.instant("是否打开活动%s").replace("%s",data.promotionName)).result.then(function () {
+                promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:1}).then(function(res){
+                    data.promotionStatus=1;
+                });
+            });
+        }
+        $scope.setClosePromotionStatus=function(data)
+        {
+            confirm($translate.instant("是否关闭活动%s").replace("%s",data.promotionName)).result.then(function () {
+                promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:0}).then(function(res){
+                    data.promotionStatus=0;
+                });
+            });
+        }
         $scope.teJiaBaoInit = function(promotionId){
             promotionDetailService.teJiaBaoInit(promotionId).then(function () {
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

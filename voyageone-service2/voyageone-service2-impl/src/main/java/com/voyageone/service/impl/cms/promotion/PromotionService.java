@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -116,6 +117,7 @@ public class PromotionService extends BaseService {
                 }
             });
         } else {
+            editModel.getPromotionModel().setPromotionStatus(1);
             Map<String, Object> param = new HashMap<>();
             param.put("channelId", cmsBtPromotionBean.getChannelId());
             param.put("cartId", cmsBtPromotionBean.getCartId());
@@ -192,6 +194,12 @@ public class PromotionService extends BaseService {
         cmsBtTagDaoExt.deleteCmsBtTagByTagId(cmsBtTagModel);
          cmsBtPromotionDaoExt.deleteById(param);
         return  result;
+    }
+
+    public int setPromotionStatus(SetPromotionStatusParameter parameter) {
+        CmsBtPromotionModel model = dao.select(parameter.getPromotionId());
+        model.setPromotionStatus(parameter.getPromotionStatus());
+      return   dao.update(model);
     }
     //分页 end
 
