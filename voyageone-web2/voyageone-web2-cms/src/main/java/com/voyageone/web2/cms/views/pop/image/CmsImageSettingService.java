@@ -100,7 +100,7 @@ public class CmsImageSettingService extends BaseAppService {
 //                productService.insertSxWorkLoad(orderChannelId, cmsBtProductModel, user.getUserName());
 
             // 更新产品数据
-            productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);
+            response = productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);
 
             List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
             cmsMtCommonFields = cmsMtCommonFields.stream().filter(field -> field.getId().equalsIgnoreCase(imageType.replace("image","images"))).collect(Collectors.toList());

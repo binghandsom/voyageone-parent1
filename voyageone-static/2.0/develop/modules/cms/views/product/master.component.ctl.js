@@ -112,6 +112,8 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
+                        //更新时间
+                        scope.vm.productComm.modified = context.modified;
                         scope.vm.tempImage[context.imageType].push(context.base64);
                         _.map(scope.vm.productComm.schemaFields, function(item){
                             if(item.id == context.imageType){
