@@ -1274,6 +1274,7 @@ define([
                 var modalInstance = $uibModal.open({
                     templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
                     controller: popActions.jumei.jmPromotionDetail.detail.controller,
+                    size:'md',
                     resolve: {
                         context: function () {
                             return context;

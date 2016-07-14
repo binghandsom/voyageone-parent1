@@ -736,6 +736,11 @@ s-field textarea.s-html {
 /* 属性翻译页面的定制样式 End */
 
 /**图片上传样式*/
+.img-upload .drop-zone{
+    border-style: dashed;
+    background: #d9eff7;
+}
+
 .img-upload input[type='text']{
     display: none;
 }

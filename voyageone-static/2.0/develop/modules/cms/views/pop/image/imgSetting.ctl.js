@@ -11,10 +11,11 @@ define([
 
 	angularAMD.controller('popImgSettingCtl', (function(){
 
-		function PopImgSettingCtl($uibModalInstance,FileUploader,context,blockUI){
+		function PopImgSettingCtl($uibModalInstance,FileUploader,context,blockUI,alert){
 			this.$uibModalInstance = $uibModalInstance;
 			this.FileUploader = FileUploader;
 			this.blockUI = blockUI.instances.get('imgUpload');
+			this.alert = alert;
 			this.context = context;
 			this.vm = {};
 			this.uploader = null;
@@ -32,7 +33,8 @@ define([
 
 					if(response.data){
 
-						response.data.imageType = self.context.imageType;
+						response.data.imageType = self.context.imageType.replace("image","images");
+						fileItem.message = null;
 						self.files.push(response.data);
 
 					}else{
@@ -45,11 +47,19 @@ define([
 				};
 
 				upLoader.onBeforeUploadItem = function(fileItem){
-					console.log(fileItem);
+
+					if(fileItem._file.size > 5*1024*1024){
+						self.alert(fileItem._file.name + "的图片大小大于5M");
+						self.blockUI.stop();
+						throw "图片过大错误!";
+					}
+
 					var _idx =  fileItem._idx;
 					if(_idx > 0){
-						if(self.uploader.queue[_idx-1].message != null){
+						var preItem = self.uploader.queue[_idx-1];
+						if(preItem.message != null || preItem._file.size > 5*1024*1024){
 							self.blockUI.stop();
+							fileItem.message = "出现异常图片,等待上传!";
 							throw "上一张图片上传错误!";
 						}
 					}

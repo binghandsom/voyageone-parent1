@@ -163,6 +163,7 @@ define([
         this.logout = logout;
         this.getCategoryInfo = getCategoryInfo;
         this.getPlatformType = getPlatformType;
+        this.getCmsConfig = getCmsConfig;
 
         /**
          * get the system info.
@@ -278,6 +279,13 @@ define([
                 "cTypeId": cType.add_name2,
                 "cartId": parseInt(cType.value)
             }).then(function (res) {
+                return res.data;
+            });
+        }
+
+        /**cms配置信息，基于session缓存*/
+        function getCmsConfig(){
+            return $menuService.getCmsConfig().then(function(res){
                 return res.data;
             });
         }
