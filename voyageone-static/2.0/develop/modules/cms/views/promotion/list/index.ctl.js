@@ -4,7 +4,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_) {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
+    function indexController($scope, promotionService, promotionDetailService,alert, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":0},{"name":"Close","value":1}],"promotionIdList": [],status: {open: true}};
         $scope.searchInfo = {};
@@ -84,12 +84,21 @@ define([
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.promotionName)).result.then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
-                promotionService.delPromotion(data).then(function () {
-                    $scope.vm.promotionList.splice(index, 1);
-                    $scope.groupPageOption.total = $scope.vm.promotionList.size;
-                })
+                promotionService.deleteByPromotionId(data.id).then(function(res){
+                        if(res.data.result) {
+                            $scope.vm.promotionList.splice(index, 1);
+                            $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                        }
+                        else
+                        {
+                          alert(res.data.msg);
+                        }
+                });
+                //promotionService.delPromotion(data.id).then(function (res) {
+                //    $scope.vm.promotionList.splice(index, 1);
+                //    $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                //})
             })
-
         };
 
         $scope.teJiaBaoInit = function(promotionId){
@@ -100,7 +109,7 @@ define([
         };
     };
 
-    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService'];
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService',"alert", 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService'];
 
     return indexController;
 });
