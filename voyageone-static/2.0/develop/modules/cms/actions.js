@@ -103,6 +103,10 @@ define(function () {
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
                     "checkCategory":"checkCategory"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
@@ -161,7 +165,9 @@ define(function () {
                     "delPromotion": "delPromotion",
                     "exportPromotion": "exportPromotion",
                     getPage:"getPage",
-                    getCount:"getCount"
+                    getCount:"getCount",
+                    getEditModel:"getEditModel",
+                    saveEditModel:"saveEditModel"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",

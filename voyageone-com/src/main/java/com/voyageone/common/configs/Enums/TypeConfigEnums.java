@@ -174,7 +174,7 @@ public class TypeConfigEnums {
 		/**
 		 * 发布状态:cms2
 		 */
-		platFormStatus(45),
+		platformStatus(45),
 
 		/**
 		 * 标签:cms2
@@ -217,6 +217,11 @@ public class TypeConfigEnums {
 		promotionStatus(56),
 
 		/**
+		 * 上下架操作指令
+		 */
+		platformActicve(65),
+
+		/**
 		 * 获取任务的优先顺序:cms2
 		 */
 		translateTask(66),
@@ -234,7 +239,13 @@ public class TypeConfigEnums {
 		/**
 		 * 税号设置状态
 		 */
-		hsCodeStatus(77);
+		hsCodeStatus(77),
+
+		/**
+		 * 商品上下架操作结果
+		 */
+		putOnOffStatus(86);
+
 
     	private int id;
 

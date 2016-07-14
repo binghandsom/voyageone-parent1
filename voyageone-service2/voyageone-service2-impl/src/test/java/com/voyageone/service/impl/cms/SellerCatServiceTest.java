@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ethan Shi on 2016/5/26.

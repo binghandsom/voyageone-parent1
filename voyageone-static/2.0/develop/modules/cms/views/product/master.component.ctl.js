@@ -112,6 +112,9 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
+                        //更新时间
+                        scope.vm.productComm.modified = context.modified;
+                        scope.vm.tempImage[context.imageType].push(context.base64);
                         console.log("imgList",context);
                         angular.forEach(context,function(item){
                             scope.vm.tempImage[item.imageType].push(item.base64);

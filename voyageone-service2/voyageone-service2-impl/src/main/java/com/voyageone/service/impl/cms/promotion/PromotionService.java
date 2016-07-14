@@ -10,6 +10,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -55,6 +56,10 @@ public class PromotionService extends BaseService {
     private CmsBtPromotionDao promotionDao;
     @Autowired
     private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
+@Autowired
+    CmsBtPromotionDao dao;
+    @Autowired
+    private TagService serviceTag;
     //分页 begin
     public List<MapModel> getPage(PageQueryParameters parameters) {
 
@@ -72,6 +77,85 @@ public class PromotionService extends BaseService {
     }
     public long getCount(PageQueryParameters parameters) {
        return  daoExtCamelCmsBtPromotionDaoExtCamel.selectCount(parameters.getSqlMapParameter());
+    }
+    public EditCmsBtPromotionBean getEditModel(int PromotionId) {
+        EditCmsBtPromotionBean promotionBean = new EditCmsBtPromotionBean();
+        promotionBean.setPromotionModel(getByPromotionId(PromotionId));
+        List<CmsBtTagModel> listTagModel = serviceTag.getListByParentTagId(promotionBean.getPromotionModel().getRefTagId());
+        promotionBean.setTagList(listTagModel);
+        return promotionBean;
+    }
+    /**
+     * 添加或者修改
+     */
+    @VOTransactional
+    public int saveEditModel(EditCmsBtPromotionBean editModel) {
+        CmsBtPromotionModel cmsBtPromotionBean = editModel.getPromotionModel();
+        int result;
+        if (cmsBtPromotionBean.getId() != null && cmsBtPromotionBean.getId() != 0) {
+            result = dao.update(cmsBtPromotionBean);
+            editModel.getTagList().forEach(cmsBtTagModel -> {
+                cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
+                    cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
+                    cmsBtTagModel.setParentTagId(cmsBtPromotionBean.getRefTagId());
+                    cmsBtTagModel.setTagType(2);
+                    cmsBtTagModel.setTagStatus(0);
+                    cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
+                    cmsBtTagModel.setTagPath("");
+                    cmsBtTagModel.setCreater(cmsBtPromotionBean.getModifier());
+                    cmsBtTagDao.insert(cmsBtTagModel);
+                    cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
+                    cmsBtTagDao.update(cmsBtTagModel);
+                }
+            });
+        } else {
+            Map<String, Object> param = new HashMap<>();
+            param.put("channelId", cmsBtPromotionBean.getChannelId());
+            param.put("cartId", cmsBtPromotionBean.getCartId());
+            param.put("promotionName", cmsBtPromotionBean.getPromotionName());
+            List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
+            if (promotions == null || promotions.isEmpty()) {
+                result = dao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
+            } else {
+                throw new BusinessException("4000093");
+            }
+
+        }
+        return result;
+    }
+    /**
+     * insertTagsAndGetNewModel
+     */
+    private EditCmsBtPromotionBean insertTagsAndGetNewModel(EditCmsBtPromotionBean editModel) {
+        CmsBtPromotionModel cmsBtPromotionBean = editModel.getPromotionModel();
+        CmsTagInfoBean requestModel = new CmsTagInfoBean();
+        requestModel.setChannelId(cmsBtPromotionBean.getChannelId());
+        requestModel.setTagName(cmsBtPromotionBean.getPromotionName());
+        requestModel.setTagType(2);
+        requestModel.setTagStatus(0);
+        requestModel.setParentTagId(0);
+        requestModel.setSortOrder(0);
+        requestModel.setModifier(cmsBtPromotionBean.getModifier());
+        //Tag追加
+        int refTagId = tagService.addTag(requestModel);
+        cmsBtPromotionBean.setRefTagId(refTagId);
+
+        // 子TAG追加
+        editModel.getTagList().forEach(cmsBtTagModel -> {
+            cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
+            cmsBtTagModel.setParentTagId(refTagId);
+            cmsBtTagModel.setTagType(2);
+            cmsBtTagModel.setTagStatus(0);
+            cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
+            cmsBtTagModel.setTagPath("");
+            cmsBtTagModel.setCreater(cmsBtPromotionBean.getCreater());
+            cmsBtTagModel.setModifier(cmsBtPromotionBean.getCreater());
+            cmsBtTagDao.insert(cmsBtTagModel);
+            cmsBtTagModel.setTagPath(String.format("-%s-%s-", refTagId, cmsBtTagModel.getId()));
+            cmsBtTagDao.update(cmsBtTagModel);
+        });
+        return editModel;
     }
     //分页 end
 

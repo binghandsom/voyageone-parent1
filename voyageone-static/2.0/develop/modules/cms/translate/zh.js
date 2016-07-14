@@ -721,6 +721,7 @@ define(function () {
         "TXT_NO_PRODUCT_CHOOSED": "未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
         "TXT_CONFIRM_ALL_STORE_PUT_ON": "此操作将会导致全店铺商品上下架，确认无误",
+        "TXT_CONFIRM_NOW_STORE_PUT_ON": "此操作将会导致本店铺商品上下架，确认无误",
 
         /** 翻译页面相关 **/
         "TXT_TRANSLATION_STATUS": "商品翻译状态",
@@ -758,7 +759,9 @@ define(function () {
         "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
         "TXT_EXPORT_REQUESTER": "导出申请者",
 
-
-        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:"
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
+        "TXT_ACTION_TIME":"操作时间",
+        "TXT_ACTION_USER":"操作者",
+        "TXT_ACTION_COMMENT":"说明"
     };
 });
