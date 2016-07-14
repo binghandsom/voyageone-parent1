@@ -87,7 +87,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
-        result.setIsUpdateJM(!(hour >= 9 && hour <= 12));//是否可以更新聚美
+        result.setIsUpdateJM(!(hour >= 10 && hour <= 11));//是否可以更新聚美
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;

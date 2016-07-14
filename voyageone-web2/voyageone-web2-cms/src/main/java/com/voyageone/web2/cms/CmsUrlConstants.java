@@ -140,6 +140,8 @@ public interface CmsUrlConstants {
                 String InitByPromotionId="initByPromotionId";
                 String GetPage="getPage";
                 String GetCount="getCount";
+                String GetEditModel="getEditModel";
+                String SaveEditModel="saveEditModel";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
