@@ -79,8 +79,8 @@ public class PriceService extends BaseService {
         }
 
         CmsBtProductModel_Platform_Cart cart =  product.getPlatform(cartId);
-        //产品级佣金比例
-        Double productCommission = cart.getpCommissionRate();
+        //产品级VO佣金比例
+        Double productCommission = product.getCommon().getFields().getCommissionRate();
         //JM平台是按照品牌收取佣金
         String catId = cartId.intValue() == JM_CART ? cart.getpBrandId() : cart.getpCatId();
 
@@ -94,14 +94,24 @@ public class PriceService extends BaseService {
 
         String shippingType = cmsChannelConfigBean.getConfigValue1();
 
+
+        Double exchangeRate = getExchangeRate("USD");
+        Double voCommission =productCommission > 0 ? productCommission :  getVOCommission(channelId, platformId, cartId);
+        Double pfCommission =getPFCommission(channelId, platformId, cartId, catId);
+        Double returnRate = getReturn(channelId, platformId, cartId);
+        Double taxRate = getTaxRate(shippingType, hsCode);
+        Double otherFee = getOtherFee();
+
+
         List<CmsBtProductModel_Sku> commonSkus =  product.getCommon().getSkus();
         List<BaseMongoMap<String, Object>> platformSkus =  cart.getSkus();
         for(CmsBtProductModel_Sku commonSku: commonSkus)
         {
             Double clientNetPrice = commonSku.getClientNetPrice();
             Double weight = commonSku.getWeight();
+            Double shippingFee = getShippingFee(shippingType, weight);
 
-            Double retailPrice = getRetailPrice(clientNetPrice, channelId, platformId, cartId, catId, shippingType, weight, hsCode , productCommission);
+            Double retailPrice = getRetailPrice(clientNetPrice, shippingFee, exchangeRate, voCommission, pfCommission, returnRate, taxRate, otherFee);
 
             BaseMongoMap<String, Object> platformSku =  platformSkus.stream().filter(w -> commonSku.getSkuCode().equals(w.getStringAttribute("skuCode"))).findFirst().get();
 
@@ -166,31 +176,23 @@ public class PriceService extends BaseService {
     }
 
 
+
     /**
      * 计算retailPrice
      *
      * @param clientNetPrice
-     * @param channelId
-     * @param platformId
-     * @param cartId
-     * @param catId
-     * @param shippingType
-     * @param weight
-     * @param hsCode
-     * @param productCommission
+     * @param shippingFee
+     * @param exchangeRate
+     * @param voCommission
+     * @param pfCommission
+     * @param returnRate
+     * @param taxRate
+     * @param otherFee
      * @return
      */
-    private Double getRetailPrice(Double clientNetPrice, String channelId, Integer platformId, Integer cartId,
-                                 String catId, String shippingType, Double weight, String hsCode, Double productCommission) {
 
-        Double shippingFee = getShippingFee(shippingType, weight);
-        Double exchangeRate = getExchangeRate("USD");
-        Double voCommission = getVOCommission(channelId, platformId, cartId);
-        Double pfCommission = productCommission > 0 ? productCommission : getPFCommission(channelId, platformId, cartId, catId);
-        Double returnRate = getReturn(channelId, platformId, cartId);
-        Double taxRate = getTaxRate(shippingType, hsCode);
-        Double otherFee = getOtherFee();
-
+    private Double getRetailPrice(Double clientNetPrice, Double shippingFee, Double exchangeRate,
+                                  Double voCommission, Double pfCommission, Double returnRate, Double taxRate, Double otherFee) {
         List<String> msgs = new ArrayList<>();
 
         if (shippingFee == null || shippingFee == 0) {
