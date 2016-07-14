@@ -9,13 +9,21 @@
                 <div class="col-sm-5">
                     <label class="col-sm-4 control-label">Product Code&nbsp;</label>
                     <div class="col-sm-7">
-                        <select class="form-control" ng-model="vm.selected"></select>
+                        <input type="text" class="form-control" ng-model="vm.context.code" readonly>
                     </div>
                 </div>
                 <div class="col-sm-5">
                     <label class="col-sm-4 control-label">店铺渠道名称&nbsp;</label>
-                    <div class="col-sm-7">
-                        <select class="form-control" ng-model="vm.selected"></select>
+                    <div class="col-sm-7" ng-if="vm.context.cartId!=0">
+                        <select class="form-control" disabled>
+                            <option value="1">{{vm.cartName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-7" ng-if="vm.context.cartId==0">
+                        <select class="form-control" ng-model="vm.cartId"
+                                ng-options="cartObj.cartId as cartObj.cartName for cartObj in vm.context.cartList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-sm-2 text-right">
@@ -34,8 +42,11 @@
                             <th class="text-center" translate="TXT_ACTION_TIME"></th>
                             <th class="text-center" translate="TXT_ACTION_USER"></th>
                             <th class="text-center" translate="TXT_CART_NAME"></th>
-                            <th class="text-center" translate="TXT_STATUS"></th>
-                            <th class="text-center" translate="TXT_ACTION_COMMENT"></th>
+                            <th class="text-center">操作指令</th>
+                            <th class="text-center">原始商品平台状态</th>
+                            <th class="text-center">处理时间</th>
+                            <th class="text-center">操作结果</th>
+                            <th class="text-center">原因</th>
                         </tr>
                         </thead>
                         <tbody>

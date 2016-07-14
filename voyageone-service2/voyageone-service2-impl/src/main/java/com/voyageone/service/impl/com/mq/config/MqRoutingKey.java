@@ -50,6 +50,6 @@ public class MqRoutingKey {
     /**
      * 记录上下架操作历史
      */
-    public static final String CMS_TASK_PlatformActiceLogJob = "voyageone_cms_task_PlatformActiceLogJob_queue";
+    public static final String CMS_TASK_PlatformActiveLogJob = "voyageone_cms_task_PlatformActiveLogJob_queue";
 
 }

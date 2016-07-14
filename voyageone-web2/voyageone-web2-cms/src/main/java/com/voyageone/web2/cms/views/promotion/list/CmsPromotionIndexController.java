@@ -2,7 +2,9 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -73,6 +75,15 @@ public class CmsPromotionIndexController extends CmsController {
         promotionService.saveEditModel(editModel);
         return success(null);
     }
+    //删除
+    @RequestMapping(PROMOTION.LIST.INDEX.DeleteByPromotionId)
+    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId ) {
+     return success(promotionService.deleteByPromotionId(promotionId));
+    }
+    @RequestMapping(PROMOTION.LIST.INDEX.SetPromotionStatus)
+    public  AjaxResponse  setPromotionStatus(@RequestBody SetPromotionStatusParameter parameter) {
+        return  success(promotionService.setPromotionStatus(parameter));
+    }
     //重构 end
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map<String, Object> params) {
@@ -87,14 +98,14 @@ public class CmsPromotionIndexController extends CmsController {
 //        cmsBtPromotionBean.setModifier(getUser().getUserName());
 //        return success(cmsPromotionService.addOrUpdate(cmsBtPromotionBean));
 //    }
-    @RequestMapping(PROMOTION.LIST.INDEX.DEL_PROMOTION)
-    public AjaxResponse delPromotion(@RequestBody CmsBtPromotionBean cmsBtPromotionBean) {
-        String channelId = getUser().getSelChannelId();
-        cmsBtPromotionBean.setChannelId(channelId);
-        cmsBtPromotionBean.setCreater(getUser().getUserName());
-        cmsBtPromotionBean.setModifier(getUser().getUserName());
-        return success(cmsPromotionService.delete(cmsBtPromotionBean));
-    }
+//    @RequestMapping(PROMOTION.LIST.INDEX.DEL_PROMOTION)
+//    public AjaxResponse delPromotion(@RequestBody CmsBtPromotionBean cmsBtPromotionBean) {
+//        String channelId = getUser().getSelChannelId();
+//        cmsBtPromotionBean.setChannelId(channelId);
+//        cmsBtPromotionBean.setCreater(getUser().getUserName());
+//        cmsBtPromotionBean.setModifier(getUser().getUserName());
+//        return success(cmsPromotionService.delete(cmsBtPromotionBean));
+//    }
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
     public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {

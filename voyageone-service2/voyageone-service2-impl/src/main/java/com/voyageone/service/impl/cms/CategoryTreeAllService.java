@@ -7,6 +7,7 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeAllDao;
+import com.voyageone.service.enums.SkuSplit;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -72,6 +73,7 @@ public class CategoryTreeAllService extends BaseService {
         bean.setIsParent(model.getIsParent());
         bean.setParentCatId(model.getParentCatId());
         bean.setSingleSku(model.getSingleSku());
+        bean.setSkuSplit(SkuSplit.valueOf(model.getSkuSplit()));
 
         // 取得这个主类目对应的平台类目信息，Map<platformId，CmsMtCategoryTreeAllModel_Platform>
         List<CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformList = model.getPlatformCategory();
