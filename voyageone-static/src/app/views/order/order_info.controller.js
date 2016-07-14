@@ -47,10 +47,13 @@ define([
             };
             this.searchOrderStatus = [];
             this.data = [];
+            this.isIE = false;
         }
+
         OrderInfoController.prototype.init = function () {
             var self = this;
             self.orderInfoService.init().then(function (data) {
+                if (!!window.ActiveXObject || "ActiveXObject" in window) self.isIE = true;
                 // 获取当前shipment
                 self.currentShipment = data.currentShipment;
 
@@ -59,7 +62,6 @@ define([
 
                 // 记录用户的操作方式(sku/order)
                 self.channelConfigs = data.channelConfigs;
-
                 self.search();
             });
         };
