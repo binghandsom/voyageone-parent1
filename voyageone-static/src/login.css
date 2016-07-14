@@ -46,19 +46,18 @@ html, body {
     position: relative;
     top: 50px;
 }
-.footer-wrap {
+.footer-wrap_footer {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
 }
-
-.headline {
+.headline_footer {
     display: block;
     margin: 4px 0 25px 0;
     border-bottom: 1px dotted #e4e9f0;
 }
-.headline h2 {
+.headline_footer h2 {
     border-bottom: 2px solid #72c02c;
     margin: 0 0 -2px 0;
     padding-bottom: 1px;
@@ -66,57 +65,56 @@ html, body {
     font-size: 22px;
     font-family: 'Microsoft Yahei', sans-serif;
 }
-.copyright {
+.copyright_footer {
     font-size: 12px;
     padding: 0;
     background: #3e4753;
     border-top: solid 1px #777;
     height: 42px;
 }
-.copyright p {
+.copyright_footer p {
     color: #dadada;
     margin-top: 12px;
 }
-.footer {
+.footer_footer {
     color: #dadada;
     background: #585f69;
     padding: 21px 0 35px;
     height: 182px;
 }
-.footer h2 {
+.footer_footer h2 {
     color: #e4e4e4;
     background: none;
     text-shadow: none;
 }
-.container {
+.container_footer {
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
 }
 @media (min-width: 768px) {
-    .container {
+    .container_footer {
         width: 464px;
     }
 }
-
 @media (min-width: 992px) {
-    .container {
+    .container_footer {
         width: 1000px;
     }
 }
 @media (min-width: 1024px) {
-    .container {
+    .container_footer {
         width: 1021px;
     }
 }
 @media (min-width: 1200px) {
-    .container {
+    .container_footer {
         width: 1200px;
     }
 }
 @media (min-width: 1400px) {
-    .container {
+    .container_footer {
         width: 1389px;
     }
 }
