@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.vms.VmsBtShipmentDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `shipment_name`, `shipped_date`, `expressCompany`, `tracking_no`, 
+        `id`, `channel_id`, `shipment_name`, `shipped_date`, `express_company`, `tracking_no`, 
         `comment`, `status`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`, 
         `creater`, `modified`, `modifier`
     </sql>
@@ -27,8 +27,8 @@
             <if test="shippedDate != null" >
                 `shipped_date`,
             </if>
-            <if test="expresscompany != null" >
-                `expressCompany`,
+            <if test="expressCompany != null" >
+                `express_company`,
             </if>
             <if test="trackingNo != null" >
                 `tracking_no`,
@@ -73,8 +73,8 @@
             <if test="shippedDate != null" >
                 #{shippedDate,jdbcType=TIMESTAMP},
             </if>
-            <if test="expresscompany != null" >
-                #{expresscompany,jdbcType=VARCHAR},
+            <if test="expressCompany != null" >
+                #{expressCompany,jdbcType=VARCHAR},
             </if>
             <if test="trackingNo != null" >
                 #{trackingNo,jdbcType=VARCHAR},
@@ -133,8 +133,8 @@
             <if test="shippedDate != null" >
                 `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
             </if>
-            <if test="expresscompany != null" >
-                `expressCompany` = #{expresscompany,jdbcType=VARCHAR},
+            <if test="expressCompany != null" >
+                `express_company` = #{expressCompany,jdbcType=VARCHAR},
             </if>
             <if test="trackingNo != null" >
                 `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
@@ -195,8 +195,8 @@
             <if test="shippedDate != null" >
                 and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
-            <if test="expresscompany != null" >
-                and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
+            <if test="expressCompany != null" >
+                and `express_company` = #{expressCompany,jdbcType=VARCHAR}
             </if>
             <if test="trackingNo != null" >
                 and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
@@ -249,8 +249,8 @@
             <if test="shippedDate != null" >
                 and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
-            <if test="expresscompany != null" >
-                and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
+            <if test="expressCompany != null" >
+                and `express_company` = #{expressCompany,jdbcType=VARCHAR}
             </if>
             <if test="trackingNo != null" >
                 and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
@@ -300,8 +300,8 @@
             <if test="shippedDate != null" >
                 and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
             </if>
-            <if test="expresscompany != null" >
-                and `expressCompany` = #{expresscompany,jdbcType=VARCHAR}
+            <if test="expressCompany != null" >
+                and `express_company` = #{expressCompany,jdbcType=VARCHAR}
             </if>
             <if test="trackingNo != null" >
                 and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}

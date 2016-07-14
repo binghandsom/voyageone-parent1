@@ -30,7 +30,7 @@ define(function () {
                 "hash": "/feed/feed_info_search",
                 "templateUrl": "./views/feed/feedSearch/index.html",
                 "controllerUrl": "./views/feed/feedSearch/index.controller",
-                "controller": "FeedInFoSearchController as ctrl"
+                "controller": "FeedInfoSearchController as ctrl"
             },
             {
                 "hash": "/shipment/shipment_info",

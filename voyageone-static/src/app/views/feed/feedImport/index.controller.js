@@ -32,7 +32,7 @@ define([
             getFeedImportResultList: function () {
                 var main = this;
                 if (this.uploadDateStart === undefined || this.uploadDateEnd === undefined) {
-                    this.alert("Please input a valid date");
+                    this.alert('TXT_PLEASE_INPUT_A_VALID_DATE');
                     return;
                 }
                 var uploadDateStart1 = "";
