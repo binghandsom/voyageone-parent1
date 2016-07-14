@@ -85,7 +85,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(language));
 
         // 获取publish status
-        masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
+        masterData.put("platformStatusList", TypeConfigEnums.MastType.platformStatus.getList(language));
 
         // 获取自定义标签列表
         Map<String, Object> param = new HashMap<>(2);

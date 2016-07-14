@@ -103,6 +103,10 @@ define(function () {
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
                     "checkCategory":"checkCategory"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
