@@ -11,7 +11,7 @@ define(function () {
         "TXT_CURRENT_SHIPMENT": "Current Shipment",
         "TXT_DESCRIPTION": "Description",
         "TXT_EXPORT_ERROR_FILE": "Export Error File",
-        "TXT_EXPRESS_COMPANY": "Express Company",
+        "TXT_EXPRESS_COMPANY": "Express",
         "TXT_FEED": "Feed",
         "TXT_FEED_INFO_SEARCH": "Feed Info Search",
         "TXT_FEED_INFO_UPLOAD": "Feed File Upload",
@@ -50,6 +50,11 @@ define(function () {
         "TXT_OPEN": "Open",
         "TXT_NAME": "Name",
         "TXT_SHIPPED_DATE": "Shipped Date",
+        "TXT_NEW_SHIPMENT": "New Shipment",
+        "TXT_TRACKING_NO": "Tracking No.",
+        "TXT_COMMENTS": "Comments",
+        "TXT_SHIPPED": "Shipped",
+        "TXT_SELECT_EXPRESS_COMPANY": "Express Company",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -60,6 +65,7 @@ define(function () {
         "BTN_NEW_SHIPMENT": "NEW SHIPMENT",
         "BTN_OK": "OK",
         "BTN_SEARCH": "SEARCH",
-        "BTN_UPLOAD": "UPLOAD"
+        "BTN_UPLOAD": "UPLOAD",
+        "BTN_CLOSE": "Close"
     }
 });
