@@ -30,7 +30,7 @@ public class VmsFeedSearchController extends BaseController {
     /**
      *  检索
      *
-     * @param param 客户端参数
+     * @param params 客户端参数
      * @return 结果
      */
     @RequestMapping(VmsUrlConstants.FEED.FEED_SEARCH.SEARCH)
@@ -39,10 +39,10 @@ public class VmsFeedSearchController extends BaseController {
         UserSessionBean userInfo = getUser();
 
         // 获取feed列表
-        List<CmsBtFeedInfoModel> feedList = vmsFeedSearchService.getFeedList(params, userInfo);
-        resultBean.put("feedList", feedList);
-        long feedListTotal = vmsFeedSearchService.getFeedCnt(params, userInfo);
-        resultBean.put("feedListTotal", feedListTotal);
+        List<CmsBtFeedInfoModel> feedInfoList = vmsFeedSearchService.getFeedList(params, userInfo);
+        resultBean.put("feedInfoList", feedInfoList);
+        long total = vmsFeedSearchService.getFeedCnt(params, userInfo);
+        resultBean.put("total", total);
 
         // 返回feed信息
         return success(resultBean);

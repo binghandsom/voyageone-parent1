@@ -31,8 +31,8 @@ define([
                     "code": main.parentSku,
                     "name": main.name,
                     "category": main.category,
-                    "priceStart": priceStart,
-                    "priceEnd": priceEnd,
+                    "priceStart": main.priceStart,
+                    "priceEnd": main.priceEnd,
                     "curr": main.pageOption.curr,
                     "size": main.pageOption.size
                 }).then(function (res) {
@@ -43,6 +43,9 @@ define([
 
             search: function () {
                 this.pageOption.curr = 1;
+                if (this.pageOption.size == undefined) {
+                    this.pageOption.size = 10;
+                }
                 this.getFeedInfoList();
             }
         }

@@ -31,7 +31,7 @@ public interface VmsUrlConstants {
             String DOWN_FEED_ERROR_FILE = "downloadFeedErrorFile";
         }
         interface FEED_SEARCH {
-            String ROOT = "/vms/feed/file_search/";
+            String ROOT = "/vms/feed/feed_info_search/";
             String SEARCH = "search";
         }
     }

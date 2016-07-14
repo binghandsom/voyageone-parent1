@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +44,21 @@ public class FeedInfoService extends BaseService {
     }
 
     /**
+     * getListForVendor
+     */
+    public List<CmsBtFeedInfoModel> getListForVendor(String channelId, JomgoQuery queryObject) {
+        return cmsBtFeedInfoDao.select(queryObject, channelId);
+    }
+
+    /**
+     * getCntForVendor
+     */
+    public long getCntForVendor(String channelId, Map<String, Object> searchValue) {
+        String queryStr = getSearchQueryForVendor(searchValue);
+        return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
+    }
+
+    /**
      * getProductByCode
      */
     public CmsBtFeedInfoModel getProductByCode(String channelId, String productCode) {
@@ -66,6 +82,83 @@ public class FeedInfoService extends BaseService {
         Map<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("$set", rsMap);
         return cmsBtFeedInfoDao.update(channelId, paraMap, valueMap);
+    }
+
+    /**
+     * 返回页面端的检索条件拼装成mongo使用的条件
+     */
+    public String getSearchQueryForVendor(Map<String, Object> searchValue) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取code
+        String code = (String) searchValue.get("code");
+        if (!StringUtils.isEmpty(code)) {
+            result.append("{").append(MongoUtils.splicingValue("code", code));
+            result.append("},");
+        }
+
+        // 获取product name
+        String name = (String) searchValue.get("name");
+        if (!StringUtils.isEmpty(name)) {
+            name = Matcher.quoteReplacement(name);
+            result.append("{").append(MongoUtils.splicingValue("name", name, "$regex"));
+            result.append("},");
+        }
+
+        // 获取category
+        String category = (String) searchValue.get("category");
+        if (!StringUtils.isEmpty(category)) {
+            result.append("{").append(MongoUtils.splicingValue("category", category));
+            result.append("},");
+        }
+
+        // 获取价格
+        // 获取查询的价格区间下限
+        float priceSta = -1;
+        float priceEnd = -1;
+        if(!StringUtils.isEmpty((String) searchValue.get("priceStart"))){
+            priceSta = Float.parseFloat((String) searchValue.get("priceStart"));
+        }
+        if(!StringUtils.isEmpty((String) searchValue.get("priceEnd"))){
+            priceEnd = Float.parseFloat((String) searchValue.get("priceEnd"));
+        }
+//        if (priceSta > -1 && priceEnd > -1 && priceEnd < priceSta) {
+//            throw new BusinessException("设置的查询价格区间不正确");
+//        }
+        if (priceSta > -1 || priceEnd > -1) {
+            result.append("{\"skus.priceClientRetail\":{");
+            if (priceSta > -1) {
+                result.append(MongoUtils.splicingValue("$gte", priceSta));
+            }
+            if (priceEnd > -1) {
+                if (priceSta > -1) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", priceEnd));
+            }
+            result.append("}},");
+        }
+
+        if (!StringUtils.isEmpty(result.toString())) {
+            return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 转义正则表达式保留字
+     */
+    private String replaceRegexReservedChar(String regStr) {
+        // 替换保留字 * . ? + $ ^ [ ] ( ) { } | \
+        return regStr.replaceAll("\\\\", "\\\\\\\\")
+                .replaceAll("\\(", "\\\\\\\\(").replaceAll("\\)", "\\\\\\\\)")
+                .replaceAll("\\{", "\\\\\\\\{").replaceAll("\\}", "\\\\\\\\}")
+                .replaceAll("\\[", "\\\\\\\\[").replaceAll("\\]", "\\\\\\\\]")
+                .replaceAll("\\*", "\\\\\\\\*").replaceAll("\\.", "\\\\\\\\.")
+                .replaceAll("\\?", "\\\\\\\\?").replaceAll("\\+", "\\\\\\\\+")
+                .replaceAll("\\^", "\\\\\\\\^").replaceAll("\\$", "\\\\\\\\$")
+                .replaceAll("\\|", "\\\\\\\\|");
     }
 
     /**

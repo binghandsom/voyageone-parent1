@@ -25,7 +25,7 @@ public class VmsFeedSearchService extends BaseAppService {
     private final String searchItems = "{'category':1,'code':1,'name':1,'image':1,'skus':1}";
 
     // 查询产品信息时的缺省排序条件
-    private final String sortItems = "{'category':1,'code':1}";
+    private final String sortItems = "{'code':1}";
 
     /**
      * 获取当前页的FEED信息
@@ -35,14 +35,14 @@ public class VmsFeedSearchService extends BaseAppService {
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
+        queryObject.setQuery(feedInfoService.getSearchQueryForVendor(searchValue));
         queryObject.setProjection(searchItems);
         queryObject.setSort(sortItems);
         int pageNum = (Integer) searchValue.get("curr");
         int pageSize = (Integer) searchValue.get("size");
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
-        return feedInfoService.getList(userInfo.getSelChannelId(), queryObject);
+        return feedInfoService.getListForVendor(userInfo.getSelChannelId(), queryObject);
     }
 
     /**
@@ -52,6 +52,6 @@ public class VmsFeedSearchService extends BaseAppService {
      * @return
      */
     public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
+        return feedInfoService.getCntForVendor(userInfo.getSelChannelId(), searchValue);
     }
 }

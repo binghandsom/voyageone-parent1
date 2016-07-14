@@ -8,7 +8,7 @@
         </ul>
     </div>
 </div>
-<div class="container content">
+<div class="container content" ng-init="ctrl.init()">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h5 class="panel-title">{{'TXT_SEARCH' | translate}}</h5>
@@ -45,25 +45,28 @@
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
                     <tr>
-                        <th class="td-2">{{'TXT_IMAGE' | translate}}</th>
-                        <th class="td-2 text-center">{{'TXT_PARENT_SKU' | translate}}</th>
-                        <th class="td-3 text-center">{{'TXT_NAME' | translate}}</th>
-                        <th class="td-2 text-center">{{'TXT_CATEGORY' | translate}}</th>
-                        <th class="td-1 text-center">{{'TXT_PRICE' | translate}}</th>
+                        <th class="td-1">{{'TXT_IMAGE' | translate}}</th>
+                        <th class="td-1 text-left">{{'TXT_PARENT_SKU' | translate}}</th>
+                        <th class="td-3 text-left">{{'TXT_NAME' | translate}}</th>
+                        <th class="td-3 text-left">{{'TXT_CATEGORY' | translate}}</th>
+                        <th class="td-1 text-left">{{'TXT_PRICE' | translate}}</th>
                         <th class="td-1 text-center">{{'TXT_SKU_NUMBER' | translate}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedInfo in ctrl.feedInfoList">
-                        <td><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ></td>
-                        <td class="text-center">{{feedInfo.code}}</td>
-                        <td class="text-center">{{feedInfo.name}}</td>
-                        <td class="text-center">{{feedInfo.category}}</td>
-                        <td class="text-center">${{feedInfo.price}}</td>
-                        <td class="text-center">{{feedInfo.skusCnt}}</td>
+                        <td><img class="thumb-md" ng-src="{{feedInfo.image[0]}}" ></td>
+                        <td class="text-left">{{feedInfo.code}}</td>
+                        <td class="text-left">{{feedInfo.name}}</td>
+                        <td class="text-left">{{feedInfo.category}}</td>
+                        <td class="text-left">{{feedInfo.skus[0].priceClientRetail | currency:'$':2}}</td>
+                        <td class="text-center">{{feedInfo.skus.length}}</td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="col-sm-12 m-t-lg m-b-lg no-padding">
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
             </div>
         </div>
     </div>
