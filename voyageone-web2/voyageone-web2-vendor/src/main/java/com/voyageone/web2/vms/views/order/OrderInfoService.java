@@ -21,6 +21,7 @@ import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
 import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -136,9 +137,6 @@ public class OrderInfoService extends BaseService {
      */
     public int cancelOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
 
-        /**
-         * 检测当前订单的状态
-         */
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
@@ -146,14 +144,20 @@ public class OrderInfoService extends BaseService {
             put("modifier", user.getUserName());
         }};
 
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("orderId", item.getOrderId());
+        }};
+
         // TODO: 16-7-12 订单当前状态测试 vantis
-        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(cancelOrderParam)
+        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
                 .stream()
                 .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(String.valueOf(STATUS_VALUE
                         .PRODUCT_STATUS.OPEN)))
                 .collect(Collectors.toList());
 
-        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0) throw new BusinessException("8000020");
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
         cancelOrderParam.put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
@@ -175,6 +179,21 @@ public class OrderInfoService extends BaseService {
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
             put("modifier", user.getUserName());
         }};
+
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("orderId", item.getOrderId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
+                .stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(String.valueOf(STATUS_VALUE
+                        .PRODUCT_STATUS.OPEN)))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000020");
+
         return vmsOrderDetailService.updateOrderStatus(cancelSkuParam);
     }
 
