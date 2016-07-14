@@ -273,6 +273,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 }
 
                 int codeCnt = 0;
+                int skuCnt = 0;
                 int i=1;
                 // 取得需要处理的Code级别的数据,每次取得固定件数(100件)
                 while (true) {
@@ -322,11 +323,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName());
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
+                        skuCnt += succeed.stream().mapToInt((model) -> model.getSkus().size()).summaryStatistics().getSum();
                     }
                     $info("point-mongo-end" + ",channel：" + channel.getFull_name());
                     i++;
                 }
-                $info("插入MongoDb表,成功Code数: " + codeCnt + ",channel：" + channel.getFull_name());
+                $info("插入MongoDb表,成功Code数: " + codeCnt + ", Sku数:" + skuCnt + ",channel：" + channel.getFull_name());
 
                 // 处理剩余的Sku件数（没有匹配上parent-id）
                 i=1;
@@ -372,6 +374,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setFileName(feedFileName);
                     // 更新内容
                     feedFileModel.setErrorFileName(feedErrorFileName);
+                    feedFileModel.setUpdatedCodeNum(codeCnt);
+                    feedFileModel.setUpdatedSkuNum(skuCnt);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
@@ -386,6 +390,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setFileName(feedFileName);
                     // 更新内容
                     feedFileModel.setErrorFileName("");
+                    feedFileModel.setUpdatedCodeNum(codeCnt);
+                    feedFileModel.setUpdatedSkuNum(skuCnt);
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
