@@ -1,6 +1,8 @@
 package com.voyageone.service.bean.cms;
 
 
+import com.voyageone.service.enums.SkuSplit;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ public class CmsMtCategoryTreeAllBean {
     private String parentCatId;
     private Integer isParent;
     private String singleSku;
+    private SkuSplit skuSplit;
     private List<CmsMtCategoryTreeAllBean> children = new ArrayList<>();
     private List<Map> platformCategory = new ArrayList<>();
 
@@ -61,6 +64,14 @@ public class CmsMtCategoryTreeAllBean {
 
     public void setSingleSku(String singleSku) {
         this.singleSku = singleSku;
+    }
+
+    public SkuSplit getSkuSplit() {
+        return skuSplit;
+    }
+
+    public void setSkuSplit(SkuSplit skuSplit) {
+        this.skuSplit = skuSplit;
     }
 
     public List<CmsMtCategoryTreeAllBean> getChildren() {
