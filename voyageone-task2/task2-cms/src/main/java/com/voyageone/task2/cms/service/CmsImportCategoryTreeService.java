@@ -346,13 +346,13 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
                     categoryTree.setIsParent(1);
                 }
 
-                categoryTree.setSkuSplit(tryGetSkuSplit(row, 1));
-
                 categoryTree.setCreater(getTaskName());
                 categoryTree.setModifier(getTaskName());
 
                 insertFlg = true;
             }
+
+            categoryTree.setSkuSplit(tryGetSkuSplit(row, 1));
 
             CmsMtCategoryTreeAllModel levelModel = categoryTree;
 
@@ -441,7 +441,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
     private Integer tryGetSkuSplit(Row row, int categoryLevel) {
         Integer skuSplitFlag = 0;
-        String skuSplitFlagString = row.getCell(SKU_SPLIT_START_INDEX + categoryLevel - 1).getStringCellValue();
+        String skuSplitFlagString = ExcelUtils.getString(row, SKU_SPLIT_START_INDEX + categoryLevel - 1, "#");
 
         if (!StringUtils.isEmpty(skuSplitFlagString) && StringUtils.isNumeric(skuSplitFlagString))
             skuSplitFlag = Integer.valueOf(skuSplitFlagString);
