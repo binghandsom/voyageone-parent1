@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MD5;
@@ -23,7 +24,10 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +86,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 取得导入文件
-        String filePath = com.voyageone.common.configs.Properties.readValue("CmsImportCategoryTreeService_import_file_path");
+        String filePath = Properties.readValue("CmsImportCategoryTreeService_import_file_path");
 
         if (StringUtils.isEmpty(filePath)) {
             filePath = "/usr/category";
