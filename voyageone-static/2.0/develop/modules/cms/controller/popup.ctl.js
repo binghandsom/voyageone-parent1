@@ -454,7 +454,8 @@ define([
             "upload": {
                 "templateUrl": "views/pop/image/imgSetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
-                "controller": 'popImgSettingCtl'
+                "controller": 'popImgSettingCtl as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {

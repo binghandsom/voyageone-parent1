@@ -112,10 +112,14 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
-                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        console.log("imgList",context);
+                        angular.forEach(context,function(item){
+                            scope.vm.tempImage[item.imageType].push(item.base64);
+                        });
+
                         _.map(scope.vm.productComm.schemaFields, function(item){
                             if(item.id == context.imageType){
-                                item.complexValues = context.imageSchema[0].complexValues;
+                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
                             }
                         });
                         constructSchema(scope, $compile);
