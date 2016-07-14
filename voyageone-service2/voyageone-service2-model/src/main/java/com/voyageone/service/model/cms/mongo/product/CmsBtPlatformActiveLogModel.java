@@ -15,18 +15,18 @@ public class CmsBtPlatformActiveLogModel extends ChannelPartitionModel {
 
     private Long groupId;
     private Integer cartId;
-    private String prodCode = "";
-    private int result = 0;
-    private String comment = "";
-    private String platformStatus = "";
-    private String activeStatus = "";
-    private String mainProdCode = "";
+    private String prodCode = null;
+    private String result = null;
+    private String comment = null;
+    private String platformStatus = null;
+    private String activeStatus = null;
+    private String mainProdCode = null;
 
-    public int getResult() {
+    public String getResult() {
         return result;
     }
 
-    public void setResult(int result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
