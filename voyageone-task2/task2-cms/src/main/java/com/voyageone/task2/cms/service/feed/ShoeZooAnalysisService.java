@@ -73,7 +73,7 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
             // Head读入
             reader.readHeaders();
             String[] head = reader.getHeaders();
-            if(!"VoyageOnePurchasePrice".equalsIgnoreCase(head[60])){
+            if(!"VoyageOnePurchasePrice".equalsIgnoreCase(head[54])){
                 issueLog.log("shoeZoo文件格式发生变化","", ErrorType.BatchJob,SubSystem.CMS);
                 return 0;
             }
@@ -90,23 +90,17 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
                 superFeedShoeZooBean.setManufacturer(reader.get(i++));
                 superFeedShoeZooBean.setBrand(reader.get(i++));
                 superFeedShoeZooBean.setCondition(reader.get(i++));
-                superFeedShoeZooBean.setBuyItNowPrice(reader.get(i++));
                 superFeedShoeZooBean.setRetailPrice(reader.get(i++));
                 superFeedShoeZooBean.setPictureUrls(reader.get(i++));
                 superFeedShoeZooBean.setTaxproductcode(reader.get(i++));
                 superFeedShoeZooBean.setRelationshipName(reader.get(i++));
                 superFeedShoeZooBean.setVariationParentSku(reader.get(i++));
-                superFeedShoeZooBean.setAmzrepricerautoprice(reader.get(i++));
                 superFeedShoeZooBean.setBrandname(reader.get(i++));
                 superFeedShoeZooBean.setCategories(reader.get(i++));
                 superFeedShoeZooBean.setClosuretype(reader.get(i++));
                 superFeedShoeZooBean.setColormap(reader.get(i++));
                 superFeedShoeZooBean.setColorname(reader.get(i++));
                 superFeedShoeZooBean.setDepartmentname(reader.get(i++));
-                superFeedShoeZooBean.setEbaymaincolor(reader.get(i++));
-                superFeedShoeZooBean.setEbaystorecategorytext(reader.get(i++));
-                superFeedShoeZooBean.setExternalproductid(reader.get(i++));
-                superFeedShoeZooBean.setExternalproductidtype(reader.get(i++));
                 superFeedShoeZooBean.setFeedproducttype(reader.get(i++));
                 superFeedShoeZooBean.setGender(reader.get(i++));
                 superFeedShoeZooBean.setGenerickeywords(reader.get(i++));

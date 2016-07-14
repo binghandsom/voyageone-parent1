@@ -11,6 +11,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.cms.dao.ProductPublishDao;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +50,9 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
         Map<String, Set<String>> prodCodeChannelMap = new HashMap<>();
 
         JomgoQuery prodQryObj = new JomgoQuery();
-        prodQryObj.setQuery("{'skus.skuCode':#}");
-        prodQryObj.setProjection("{'fields.code':1,'_id':0}");
+        prodQryObj.setQuery("{'common.skus.skuCode':#}");
+        prodQryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        boolean hasdata = false;
         do {
             rs = productDao.selectProductOrderCount(oIdx * PAGE_LIMIT, PAGE_LIMIT);
             oIdx ++;
@@ -59,45 +61,56 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             }
 
             BulkWriteOperation bbulkOpe = coll.initializeUnorderedBulkOperation();
-
+            hasdata = false;
             for (Map orderObj : rs) {
-                BasicDBObject queryObj = new BasicDBObject();
-                String channelId = (String)orderObj.get("channel_id");
-                queryObj.put("cart_id", orderObj.get("cart_id"));
-                queryObj.put("channel_id", channelId);
-                queryObj.put("sku", orderObj.get("sku"));
-                queryObj.put("date", orderObj.get("date"));
-
-                BasicDBObject updateValue = new BasicDBObject();
-                updateValue.putAll(orderObj);
-                updateValue.put("modifier", modifier);
-                updateValue.put("modified", DateTimeUtil.getNow());
+                String channelId = (String) orderObj.get("channel_id");
+                String skuCode = (String) orderObj.get("sku");
 
                 // 根据sku找出其产品code（暂不考虑sku重复的情况）
-                prodQryObj.setParameters(orderObj.get("sku"));
-                CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, (String) orderObj.get("channel_id"));
+                prodQryObj.setParameters(skuCode);
+                CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, channelId);
                 if (prodModel != null) {
-                    String productCode = prodModel.getCommon().getFields().getCode();
+                    if (prodModel.getCommon() == null || prodModel.getCommon().getFields() == null) {
+                        $warn("CmsCopyOrdersInfoService 产品数据不正确 channelId=%s, sku=%s", channelId, skuCode);
+                        continue;
+                    }
+                    BasicDBObject queryObj = new BasicDBObject();
+                    queryObj.put("cart_id", orderObj.get("cart_id"));
+                    queryObj.put("channel_id", channelId);
+                    queryObj.put("sku", skuCode);
+                    queryObj.put("date", orderObj.get("date"));
+
+                    BasicDBObject updateValue = new BasicDBObject();
+                    updateValue.putAll(orderObj);
+                    updateValue.put("modifier", modifier);
+                    updateValue.put("modified", DateTimeUtil.getNow());
+                    String productCode = StringUtils.trimToNull(prodModel.getCommon().getFields().getCode());
+                    if (productCode == null) {
+                        $warn("CmsCopyOrdersInfoService 产品数据不正确 没有code channelId=%s, sku=%s", channelId, skuCode);
+                        continue;
+                    }
                     updateValue.put("prodCode", productCode);
-                    // add prodCode
+
+                    BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
+                    hasdata = true;
+                    bbulkOpe.find(queryObj).upsert().update(updateObj);
+
+                    // add prodCode 添加code和channelId到缓存
                     if (!prodCodeChannelMap.containsKey(channelId)) {
                         prodCodeChannelMap.put(channelId, new HashSet<>());
                     }
                     prodCodeChannelMap.get(channelId).add(productCode);
+                } else {
+                    $warn(String.format("CmsCopyOrdersInfoService 产品不存在 channelId=%s, sku=%s", channelId, skuCode));
                 }
-                BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
-
-                bbulkOpe.find(queryObj).upsert().update(updateObj);
             }
-            if (!rs.isEmpty()) {
+            if (hasdata) {
                 BulkWriteResult rslt = bbulkOpe.execute();
                 $debug(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
                 $info(String.format("copyOrdersInfo excute rows:%s", oIdx * PAGE_LIMIT));
             }
         } while (rs.size() == PAGE_LIMIT);
-
         $info("copyOrdersInfo end");
-
         return prodCodeChannelMap;
     }
 
