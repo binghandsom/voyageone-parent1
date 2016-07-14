@@ -165,7 +165,9 @@ define(function () {
                     "delPromotion": "delPromotion",
                     "exportPromotion": "exportPromotion",
                     getPage:"getPage",
-                    getCount:"getCount"
+                    getCount:"getCount",
+                    getEditModel:"getEditModel",
+                    saveEditModel:"saveEditModel"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
