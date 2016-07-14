@@ -36,7 +36,7 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
                                             </a>
                                         </li>
-                                        <li>
+                                        <li ng-if="cartInfo.value!=27">
                                             <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(vm.mastData.productCode,cartInfo.value)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                             </a>
