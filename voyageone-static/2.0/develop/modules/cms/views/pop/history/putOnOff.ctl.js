@@ -4,32 +4,45 @@
 define([
     'angularAMD',
     'underscore',
-    'modules/cms/controller/popup.ctl',
     'modules/cms/enums/Carts'
 ], function (angularAMD, _, Carts) {
     angularAMD.controller('PutOnOffController', function ($scope, context, productHistoryLogService) {
 
         $scope.vm = {
             logList : [],
+            cartId: '',
             context: context,
             pageOption: {curr: 1, total: 0, size: 10, fetch: search}
         };
 
         $scope.initialize = function () {
-            search();
+            if ($scope.vm.context.cartId == 0) {
+                $scope.vm.context.cartList = $scope.vm.context.cartList.sort(function (a, b) {
+                    return a.cartId > b.cartId;
+                });
+            } else {
+                $scope.vm.cartId = parseInt($scope.vm.context.cartId);
+                var cartInfo = Carts.valueOf($scope.vm.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    $scope.vm.cartName = '';
+                } else {
+                    $scope.vm.cartName = cartInfo.name;
+                }
+            }
+            search($scope.vm.context.cartId);
         };
 
         $scope.refreshData = function () {
-            search();
+            search($scope.vm.cartId);
         };
 
         /**
          * 查询数据
          */
-        function search () {
+        function search (selCartId) {
             var data = {};
-            data.prodCode = '51A0HC13E1-00LCNB0';//self.params.code;
-            data.cartId = 0;
+            data.prodCode = $scope.vm.context.code;
+            data.cartId = parseInt(selCartId);
             data.pageNum = $scope.vm.pageOption.curr;
             data.pageSize = $scope.vm.pageOption.size;
 
@@ -39,6 +52,13 @@ define([
                         $scope.vm.logList = res.data.logList;
                         $scope.vm.pageOption.total = res.data.total;
                         _.forEach($scope.vm.logList, function (logItem) {
+                            var updTime = logItem.modified;
+                            if (updTime && updTime.length > 19) {
+                                logItem.modified = updTime.substring(0, 19);
+                            }
+                            if (logItem.result == '等待执行' || logItem.result == '' || logItem.result == undefined || logItem.result == null) {
+                                logItem.modified = '';
+                            }
                             var cartInfo = Carts.valueOf(logItem.cartId);
                             if (cartInfo == null || cartInfo == undefined) {
                                 logItem.cartName = '';
@@ -46,6 +66,9 @@ define([
                                 logItem.cartName = cartInfo.name;
                             }
                         });
+                    } else {
+                        $scope.vm.logList = [];
+                        $scope.vm.pageOption.total = 0;
                     }
                 });
         }
