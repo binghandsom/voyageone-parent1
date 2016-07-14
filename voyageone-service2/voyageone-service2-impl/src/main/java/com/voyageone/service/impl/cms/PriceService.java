@@ -79,6 +79,7 @@ public class PriceService extends BaseService {
         }
 
         CmsBtProductModel_Platform_Cart cart =  product.getPlatform(cartId);
+        //产品级佣金比例
         Double productCommission = cart.getpCommissionRate();
         //JM平台是按照品牌收取佣金
         String catId = cartId.intValue() == JM_CART ? cart.getpBrandId() : cart.getpCatId();
@@ -330,6 +331,16 @@ public class PriceService extends BaseService {
             return cmsMtFeeCommissionModel.getCommissonRate();
         }
 
+        //渠道级默认值
+        queryMap.clear();
+        queryMap.put("commissionType", COMMISSION_TYPE_VO);
+        queryMap.put("platformId", platformId);
+        cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
+
+        if (cmsMtFeeCommissionModel != null) {
+            return cmsMtFeeCommissionModel.getCommissonRate();
+        }
+
         //系统级默认值
         queryMap.clear();
         queryMap.put("commissionType", COMMISSION_TYPE_VO);
@@ -451,7 +462,7 @@ public class PriceService extends BaseService {
             return cmsMtFeeCommissionModel.getCommissonRate();
         }
 
-        //渠道级
+        //渠道级默认值
         queryMap.clear();
         queryMap.put("channelId", channelId);
         queryMap.put("commissionType", COMMISSION_TYPE_RT);
