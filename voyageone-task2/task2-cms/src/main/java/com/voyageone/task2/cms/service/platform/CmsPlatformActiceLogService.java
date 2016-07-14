@@ -89,7 +89,7 @@ public class CmsPlatformActiceLogService extends BaseMQCmsService {
         model.setComment((String) messageMap.get("comment"));
         model.setGroupId(grpObj.getGroupId());
         model.setMainProdCode(grpObj.getMainProductCode());
-        model.setResult(0);
+        model.setResult("0");
         model.setCreater((String) messageMap.get("creater"));
         model.setCreated(DateTimeUtil.getNow());
 

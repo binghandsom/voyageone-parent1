@@ -108,6 +108,7 @@
     * pPriceSaleEd  ->(double)
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
     * modified -> 最终更新时间
+    * commissionRate ->20160713,平台佣金费率,商品级
     * fields
       * 平台特有fields属性
     * skus[]
@@ -149,6 +150,7 @@
     * pPriceSaleEd
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
     * modified ->最终更新时间
+    * commissionRate ->20160713,平台佣金费率,商品级
 	* fields
 	  * productNameCn
 	  * productNameEn
