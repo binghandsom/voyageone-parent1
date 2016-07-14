@@ -48,8 +48,7 @@ define([
             this.searchOrderStatus = [];
             this.data = [];
 
-            this.orderInfoService.init().then((data) => {
-
+            this.orderInfoService.init().then(function(data){
                 // 获取当前shipment
                 this.currentShipment = data.currentShipment;
 
@@ -79,29 +78,30 @@ define([
             }
             this.searchInfo.curr = this.pageInfo.curr;
             this.searchInfo.size = this.pageInfo.size;
-            this.orderInfoService.search(this.searchInfo).then((data) => {
+            this.orderInfoService.search(this.searchInfo).then(function (data) {
                 this.pageInfo.total = data.orderInfo.total;
-                this.data = data.orderInfo.orderList.map((item) => {
-                    item.className = '';
-                    var date = new Date();
-                    if (item.status == '7')
-                        item.className = 'bg-gainsboro';
-                    else if (item.status == '1') {
-                        if (this.channelConfigs.vendorOperateType == 'ORDER') {
-                            date = new Date(item.orderDateTime);
-                        } else if (this.channelConfigs.vendorOperateType == 'SKU') {
-                            date = new Date(item.orderDateTimestamp);
-                        } else {
-                            this.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
-                        }
-                        if ((new Date().getTime() - date) >= this.threeDay)
-                            item.className = 'bg-danger';
-                        else if ((new Date().getTime() - date) >= this.twoDay)
-                            item.className = 'bg-warning';
+                this.data = data.orderInfo.orderList.map(function (item) {
+                        item.className = '';
+                        var date = new Date();
+                        if (item.status == '7')
+                            item.className = 'bg-gainsboro';
+                        else if (item.status == '1') {
+                            if (this.channelConfigs.vendorOperateType == 'ORDER') {
+                                date = new Date(item.orderDateTime);
+                            } else if (this.channelConfigs.vendorOperateType == 'SKU') {
+                                date = new Date(item.orderDateTimestamp);
+                            } else {
+                                this.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
+                            }
+                            if ((new Date().getTime() - date) >= this.threeDay)
+                                item.className = 'bg-danger';
+                            else if ((new Date().getTime() - date) >= this.twoDay)
+                                item.className = 'bg-warning';
 
+                        }
+                        return item;
                     }
-                    return item;
-                })
+                )
             })
         };
 
