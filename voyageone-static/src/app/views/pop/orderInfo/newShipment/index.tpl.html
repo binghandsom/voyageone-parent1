@@ -1,4 +1,4 @@
-<div class="modal-content modal-blue">
+<div class="modal-content modal-blue" ng-init="ctrl.init()">
     <div class="modal-header">
         <h4 class="modal-title" id="newShipmentTitle" ng-if="!ctrl.shipmentExisted">
             <i class="fa fa-tasks"></i>{{'TXT_NEW_SHIPMENT' | translate}}<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
