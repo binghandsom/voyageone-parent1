@@ -37,7 +37,8 @@ define([
                 checkFlag:null,
                 masterCategory:null,
                 lockStatus:null,
-                feedInfo:null
+                feedInfo:null,
+                autoApprovePrice:null
             };
         }
 
@@ -51,6 +52,10 @@ define([
                     self.platformTypes.forEach(function(element){
                         self.cartData["_"+element.value] = element;
                     });
+                });
+
+                self.menuService.getCmsConfig().then(function(resp){
+                    console.log("resp",resp);
                 });
 
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;

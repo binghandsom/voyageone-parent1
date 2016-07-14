@@ -486,6 +486,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("appSwitch", appSwitch == null ? 0 : appSwitch);
     }
 
+    //VO佣金费率,商品级
+    public Double getCommissionRate() {
+        return getDoubleAttribute("commissionRate");
+    }
+    public void setCommissionRate(Double commissionRate) {
+        setAttribute("commissionRate", commissionRate);
+    }
+
+
     @Override
     public Object put(String key, Object value) {
         if (key != null && key.startsWith("images")) {

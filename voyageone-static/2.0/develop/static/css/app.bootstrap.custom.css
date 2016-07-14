@@ -28,3 +28,7 @@ small,
 .panel-dark .panel-body {
     background-color: #F8F8F8;
 }
+
+.label.label-xs {
+    padding: 0 5px;
+}

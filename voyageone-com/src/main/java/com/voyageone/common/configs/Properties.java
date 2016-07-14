@@ -39,6 +39,7 @@ public class Properties {
     }
 
     private static void loadProps(Resource resource) throws IOException {
+
         java.util.Properties props = new java.util.Properties();
 
         try (InputStream stream = resource.getInputStream();
@@ -55,16 +56,23 @@ public class Properties {
                     logger.warn("读入 Properties 时，发现了重复的元素：" + name);
                 }
 
-                keyValueMap.put(name, props.getProperty(name));
+                putValue(name, props.getProperty(name));
             }
         }
+    }
+
+    /**
+     * 修改配置的值, 请尽量不要手动
+     */
+    static void putValue(String key, String value) {
+        keyValueMap.put(key, value);
     }
 
     /**
      * 读取配置值
      */
     public static String readValue(String key) {
-        if(keyValueMap == null) {
+        if (keyValueMap == null) {
             try {
                 init();
             } catch (IOException e) {
