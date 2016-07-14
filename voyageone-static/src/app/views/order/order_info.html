@@ -1,4 +1,4 @@
-<div class="breadcrumbs">
+<div class="breadcrumbs" ng-init="ctrl.init()">
     <div class="container">
         <h4 class="pull-left">Order Info</h4>
         <ul class="pull-right breadcrumb">
@@ -99,11 +99,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
+                    <tr ng-repeat-start="item in ctrl.data" ng-class="{'bg-warning':item.className==bg-warning,'bg-danger':item.className==bg-danger}">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderId}}</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        </td>
+
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
@@ -115,7 +115,7 @@
                             </button>
                         </td>
                     </tr>
-                    <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
+                    <tr ng-show="!item.collapse" ng-class="{'bg-warning':item.className==bg-warning,'bg-danger':item.className==bg-danger}" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
                         <td></td>
                         <td></td>
                         <td>{{detail.orderDate}}</td>

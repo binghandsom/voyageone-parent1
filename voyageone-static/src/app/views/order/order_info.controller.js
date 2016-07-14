@@ -47,9 +47,10 @@ define([
             };
             this.searchOrderStatus = [];
             this.data = [];
-
-            this.orderInfoService.init().then(function (data) {
-                var self = this;
+        }
+        OrderInfoController.prototype.init = function () {
+            var self = this;
+            self.orderInfoService.init().then(function (data) {
                 // 获取当前shipment
                 self.currentShipment = data.currentShipment;
 
@@ -61,7 +62,7 @@ define([
 
                 self.search();
             });
-        }
+        };
 
         OrderInfoController.prototype.search = function () {
             var self = this;
@@ -122,10 +123,6 @@ define([
         };
 
         OrderInfoController.prototype.downloadPickingList = function () {
-
-            // this.orderInfoService.downloadPickingList().then(function (res) {
-            //     console.info(res);
-            // });
             $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": this.downloadInfo.orderType});
         };
 
@@ -137,11 +134,13 @@ define([
         };
 
         OrderInfoController.prototype.getStatusName = function (statusValue) {
-            var currentStatus = this.searchOrderStatus.find(function (status) {
-                return status.value == statusValue;
-            });
-            if (!currentStatus) return statusValue;
-            return currentStatus.name;
+            // var self=this;
+            // self.currentStatus = self.searchOrderStatus.find(function (status) {
+            //     return status.value == statusValue;
+            // });
+            // if (!self.currentStatus) return statusValue;
+            // return currentStatus.name;
+            return 11;
         };
 
         OrderInfoController.prototype.popNewShipment = function () {
