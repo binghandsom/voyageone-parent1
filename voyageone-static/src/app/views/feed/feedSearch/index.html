@@ -1,75 +1,66 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left">Feed Info Search</h4>
+        <h4 class="pull-left">{{'TXT_FEED_INFO_SEARCH' | translate}}</h4>
         <ul class="pull-right breadcrumb">
-            <li><a href="#/home">Home</a></li>
-            <li><a href="javascript:void(0)">Feed</a></li>
-            <li class="active selecte">Feed Info Search</li>
+            <li><a href="#/home">{{'TXT_HOME' | translate}}</a></li>
+            <li><a href="javascript:void(0)">{{'TXT_FEED' | translate}}</a></li>
+            <li class="active selecte">{{'TXT_FEED_INFO_SEARCH' | translate}}</li>
         </ul>
     </div>
 </div>
 <div class="container content">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5 class="panel-title">Search</h5>
+            <h5 class="panel-title">{{'TXT_SEARCH' | translate}}</h5>
         </div>
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">Category</label>
-                    <input id="Category" type="text" class="form-control input-sm" placeholder="Category">
+                    <label class="control-label">{{'TXT_PARENT_SKU' | translate}}</label>
+                    <input id="Parent SKU" type="text" class="form-control input-sm" ng-model="ctrl.parentSku">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Brand</label>
-                    <input id="Brand" type="text" class="form-control input-sm" placeholder="Brand">
+                    <label class="control-label">{{'TXT_NAME' | translate}}</label>
+                    <input id="Brand" type="text" class="form-control input-sm" ng-model="ctrl.name">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Parent SKU</label>
-                    <input id="Parent SKU" type="text" class="form-control input-sm" placeholder="Parent SKU">
+                    <label class="control-label">{{'TXT_CATEGORY' | translate}}</label>
+                    <input id="Category" type="text" class="form-control input-sm" ng-model="ctrl.category">
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Price</label>
-                    <input id="startPrice" type="text" class="form-control input-sm" placeholder="startPrice">
+                    <label class="control-label">{{'TXT_PRICE' | translate}}</label>
+                    <input id="startPrice" type="text" class="form-control input-sm" ng-model="ctrl.priceStart">
                     <span>~</span>
-                    <input id="endPrice" type="text" class="form-control input-sm" placeholder="endPrice">
+                    <input id="endPrice" type="text" class="form-control input-sm" ng-model="ctrl.priceEnd">
                 </div>
                 <div class="form-group pull-right">
-                    <button class="btn btn-default btn-sm">CLEAR</button>
-                    <button class="btn btn-primary btn-sm">SEARCH</button>
+                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">{{'BTN_SEARCH' | translate}}</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="panel panel-vo">
         <div class="panel-body">
-            <div class="table-responsive">
+            <div class="table-responsive" if-no-rows="ctrl.feedInfoList.length">
                 <table class="table table-fixed table-vo table-striped table-hover">
                     <thead>
                     <tr>
-                        <th class="td-2">Image</th>
-                        <th class="td-2 text-center">Category</th>
-                        <th class="td-2 text-center">Parent SKU</th>
-                        <th class="td-3 text-center">Name</th>
-                        <th class="td-1 text-center">Price</th>
-                        <th class="td-1 text-center">SKU Number</th>
+                        <th class="td-2">{{'TXT_IMAGE' | translate}}</th>
+                        <th class="td-2 text-center">{{'TXT_PARENT_SKU' | translate}}</th>
+                        <th class="td-3 text-center">{{'TXT_NAME' | translate}}</th>
+                        <th class="td-2 text-center">{{'TXT_CATEGORY' | translate}}</th>
+                        <th class="td-1 text-center">{{'TXT_PRICE' | translate}}</th>
+                        <th class="td-1 text-center">{{'TXT_SKU_NUMBER' | translate}}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td></td>
-                        <td class="text-center"> Bracelets-Anklets-No Stone</td>
-                        <td class="text-center">16001</td>
-                        <td class="text-center">Moonstone & Agate Six-Stone Bangle</td>
-                        <td class="text-center">$1000</td>
-                        <td class="text-center">1</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td class="text-center"> Bracelets-Anklets-No Stone</td>
-                        <td class="text-center">16001</td>
-                        <td class="text-center">Moonstone & Agate Six-Stone Bangle</td>
-                        <td class="text-center">$1000</td>
-                        <td class="text-center">1</td>
+                    <tr ng-repeat="feedInfo in ctrl.feedInfoList">
+                        <td><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ></td>
+                        <td class="text-center">{{feedInfo.code}}</td>
+                        <td class="text-center">{{feedInfo.name}}</td>
+                        <td class="text-center">{{feedInfo.category}}</td>
+                        <td class="text-center">${{feedInfo.price}}</td>
+                        <td class="text-center">{{feedInfo.skusCnt}}</td>
                     </tr>
                     </tbody>
                 </table>

@@ -32,7 +32,7 @@ public class VmsBtShipmentModel extends BaseModel {
     /**
      * 物流公司id
      */
-    protected String expresscompany;
+    protected String expressCompany;
 
     /**
      * 物流订单号
@@ -93,12 +93,12 @@ public class VmsBtShipmentModel extends BaseModel {
         this.shippedDate = shippedDate;
     }
 
-    public String getExpresscompany() {
-        return expresscompany;
+    public String getExpressCompany() {
+        return expressCompany;
     }
 
-    public void setExpresscompany(String expresscompany) {
-        this.expresscompany = expresscompany == null ? null : expresscompany.trim();
+    public void setExpressCompany(String expressCompany) {
+        this.expressCompany = expressCompany == null ? null : expressCompany.trim();
     }
 
     public String getTrackingNo() {

@@ -160,6 +160,9 @@ define(function (require) {
             init: "init",
             search: "search"
         }),
+        feedInfoSearchService: new CommonDataService('/vms/feed/feed_info_search', {
+            search: "search"
+        }),
 
         orderInfoService: new CommonDataService('/vms/order/order_info', {
             init: "init",
