@@ -9,6 +9,7 @@ import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class MqSender extends BaseService {
             }
 
             final int finalRetryTimes = retryTimes;
-            Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(), new MessageProperties() {{
+            Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(StandardCharsets.UTF_8), new MessageProperties() {{
                 setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
             }});
 
