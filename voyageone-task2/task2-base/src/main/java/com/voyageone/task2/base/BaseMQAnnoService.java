@@ -21,6 +21,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     private TaskControlEnums.Status process(Message message) {
         String messageStr = "";
         try {
-            messageStr = new String(message.getBody());
+            messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
             Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
             onStartup(messageMap);
         } catch (BusinessException be) {
