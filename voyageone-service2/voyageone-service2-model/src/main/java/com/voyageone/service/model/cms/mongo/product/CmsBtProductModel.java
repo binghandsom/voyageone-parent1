@@ -127,7 +127,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
             return null;
         }
         CmsBtProductModel_Platform_Cart platform = platforms.get(PLATFORM_CART_PRE + cartId);
-        if (platform != null) {
+        if (platform != null && platform.getSkus() != null) {
             platform.getSkus().forEach(sku -> {
                 Object isSale = sku.get(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
                 if (isSale != null) {
