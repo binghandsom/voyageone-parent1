@@ -23,7 +23,6 @@ public class ProductStatusHistoryService extends BaseService {
     CmsBtProductStatusHistoryDaoExt daoExt;
 
     public List<MapModel> getPage(PageQueryParameters parameters) {
-
         List<MapModel> list = daoExt.selectPage(parameters.getSqlMapParameter());
         for (MapModel model : list) {
             loadMap(model);
