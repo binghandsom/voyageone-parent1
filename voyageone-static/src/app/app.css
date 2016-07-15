@@ -381,6 +381,44 @@ vpagination {
   display: block;
   margin: 5px auto;
 }
+.info-blocks {
+  margin-bottom: 15px;
+}
+.info-blocks:hover .icon-info-blocks {
+  color: #72c02c;
+}
+.info-blocks i.icon-info-blocks {
+  float: left;
+  color: #777;
+  font-size: 28px;
+  min-width: 50px;
+  margin-top: 10px;
+  text-align: center;
+}
+.info-blocks .info-blocks-in {
+  padding: 0 10px;
+  overflow: hidden;
+}
+.info-blocks .info-blocks-in h3 {
+  color: #555;
+  font-size: 20px;
+  line-height: 28px;
+  margin-top: 5px;
+  text-shadow: none;
+  font-weight: normal;
+  font-family: 'Open Sans', sans-serif;
+}
+.info-blocks .info-blocks-in p,
+.info-blocks .info-blocks-in li {
+  font-size: 13px;
+}
+.info-blocks .info-blocks-in p i,
+.info-blocks .info-blocks-in li i {
+  padding-right: 5px;
+}
+.color-green {
+  color: #72c02c;
+}
 .margin-bottom-10 {
   margin-bottom: 10px;
 }
