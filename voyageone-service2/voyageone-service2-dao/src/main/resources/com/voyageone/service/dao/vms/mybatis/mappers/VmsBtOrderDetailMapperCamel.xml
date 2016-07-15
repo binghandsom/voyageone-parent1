@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtOrderDetailModel" />
     <sql id="Base_Column_List" >
         `id`, `reservation_id`, `channel_id`, `consolidation_order_id`, `consolidation_order_time`, 
-        `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `decription`, `status`, 
+        `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `description`, `status`, 
         `shipment_id`, `shipment_time`, `containerizing_time`, `containerizer`, `received_time`, 
         `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`, `client_promotion_price`, 
         `created`, `creater`, `modified`, `modifier`
@@ -47,8 +47,8 @@
             <if test="barcode != null" >
                 `barcode`,
             </if>
-            <if test="decription != null" >
-                `decription`,
+            <if test="description != null" >
+                `description`,
             </if>
             <if test="status != null" >
                 `status`,
@@ -123,8 +123,8 @@
             <if test="barcode != null" >
                 #{barcode,jdbcType=VARCHAR},
             </if>
-            <if test="decription != null" >
-                #{decription,jdbcType=VARCHAR},
+            <if test="description != null" >
+                #{description,jdbcType=VARCHAR},
             </if>
             <if test="status != null" >
                 #{status,jdbcType=VARCHAR},
@@ -213,8 +213,8 @@
             <if test="barcode != null" >
                 `barcode` = #{barcode,jdbcType=VARCHAR},
             </if>
-            <if test="decription != null" >
-                `decription` = #{decription,jdbcType=VARCHAR},
+            <if test="description != null" >
+                `description` = #{description,jdbcType=VARCHAR},
             </if>
             <if test="status != null" >
                 `status` = #{status,jdbcType=VARCHAR},
@@ -305,8 +305,8 @@
             <if test="barcode != null" >
                 and `barcode` = #{barcode,jdbcType=VARCHAR}
             </if>
-            <if test="decription != null" >
-                and `decription` = #{decription,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
@@ -389,8 +389,8 @@
             <if test="barcode != null" >
                 and `barcode` = #{barcode,jdbcType=VARCHAR}
             </if>
-            <if test="decription != null" >
-                and `decription` = #{decription,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
@@ -470,8 +470,8 @@
             <if test="barcode != null" >
                 and `barcode` = #{barcode,jdbcType=VARCHAR}
             </if>
-            <if test="decription != null" >
-                and `decription` = #{decription,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=VARCHAR}
