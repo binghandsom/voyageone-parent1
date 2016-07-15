@@ -316,7 +316,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             updateData = new HtDeal_UpdateDealStockBatch_UpdateData();
             list.add(updateData);
             updateData.setJumei_sku_no(skuPriceBean.getJmSkuNo());
-            Integer stock = skuLogicQtyMap.get(skuPriceBean.getSkuCode());
+            Integer stock = skuLogicQtyMap.get(skuPriceBean.getSkuCode());//获取库存
             if(stock!=null) {
                 updateData.setStock(stock);
             }
