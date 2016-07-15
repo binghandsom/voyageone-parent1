@@ -300,10 +300,12 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
             // Secattributes属性值解析
             if (!StringUtil.isEmpty(vtmModelBean.getSecattributes())) {
-                List<String> keyValue = java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]"));
+                List<String> keyValue = new ArrayList<>();
+                keyValue.addAll(java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]")));
                 if (keyValue.size() % 2 != 0) {
-                    $error("sku:" + vtmModelBean.getSkus() + "Secattributes属性值错误");
-                    continue;
+                    keyValue.add("");
+//                    $error("sku:" + vtmModelBean.getSkus() + "Secattributes属性值错误");
+//                    continue;
                 }
                 for (int i = 0; i < keyValue.size(); i++) {
                     if (!StringUtil.isEmpty(keyValue.get(i))) {
