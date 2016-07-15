@@ -75,14 +75,14 @@
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <select id="select1" class="form-control" ng-model="ctrl.downloadInfo.orderType">
+            <select id="select_order" class="form-control" ng-model="ctrl.downloadInfo.orderType">
                 <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
                 <option value="order_id" translate="TXT_ORDER_BY_ORDER"></option>
             </select>
             <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
-    <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+    <div class="panel panel-vo sssss" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
                 <table class="table table-fixed table-vo">
@@ -130,9 +130,9 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="col-sm-12 m-t-lg no-padding">
-                    <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
-                </div>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
             </div>
         </div>
     </div>
