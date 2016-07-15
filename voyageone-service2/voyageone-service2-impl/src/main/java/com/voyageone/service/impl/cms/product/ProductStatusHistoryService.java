@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 @Service
 public class ProductStatusHistoryService extends BaseService {
     @Autowired
@@ -29,7 +28,6 @@ public class ProductStatusHistoryService extends BaseService {
         }
         return list;
     }
-
     void loadMap(MapModel map) {
         CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(map.get("cartId").toString());
         if (cartEnum != null) {
@@ -37,11 +35,9 @@ public class ProductStatusHistoryService extends BaseService {
         }
         map.put("operationTypeName", EnumProductOperationType.getNameById(map.get("operationType")));
     }
-
     public long getCount(PageQueryParameters parameters) {
         return daoExt.selectCount(parameters.getSqlMapParameter());
     }
-
     @VOTransactional
     public void insert(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
@@ -55,12 +51,10 @@ public class ProductStatusHistoryService extends BaseService {
             daoExt.insertList(page);
         }
     }
-
     public void insert(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, modifier);
         dao.insert(productStatusHistory);
     }
-
     private CmsBtProductStatusHistoryModel get(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = new CmsBtProductStatusHistoryModel();
         productStatusHistory.setChannelId(channelId);
