@@ -117,6 +117,9 @@
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsDataAmountJob" method="run" cron="1 20 0/1 * * ?"/>
 
+        <!-- 自动维护Mongodb索引（每天执行一次） -->
+        <task:scheduled ref="CmsMongoOptimizeIndexJob" method="run" cron="0 0 3 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
