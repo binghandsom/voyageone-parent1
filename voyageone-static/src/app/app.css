@@ -721,22 +721,10 @@ vpagination {
   min-width: 0;
   font-size: 10px;
 }
-select {
-  border: solid 1px #ccc;
-  /*将默认的select选择框样式清除*/
-  appearance: none;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  background: url(http://ourjs.github.io/static/2015/arrow.png) no-repeat scroll right center transparent;
-  padding-right: 14px;
-}
 select::-ms-expand {
-  display: none;
-}
-#select,
-#select_order {
-  background: url(http://ourjs.github.io/static/2015/arrow.png) no-repeat scroll right center transparent;
-  padding-right: 14px;
+  width: 12px;
+  border: none;
+  background: #fff;
 }
 .btn-vo {
   border: 0;
