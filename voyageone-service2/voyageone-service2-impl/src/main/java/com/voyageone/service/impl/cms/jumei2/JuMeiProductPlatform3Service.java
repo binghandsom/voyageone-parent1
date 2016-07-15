@@ -321,14 +321,16 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 updateData.setStock(stock);
             }
         }
-        request.setUpdate_data(list);
 
         try {
-            HtDealUpdateDealStockBatchResponse response= serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
-            if(!response.is_Success())
-            {
-                model.setStockStatus(3);
-                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+            List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,20);
+            for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
+                request.setUpdate_data(page);
+                HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
+                if (!response.is_Success()) {
+                    model.setStockStatus(3);
+                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                }
             }
         }
         catch (Exception ex)
