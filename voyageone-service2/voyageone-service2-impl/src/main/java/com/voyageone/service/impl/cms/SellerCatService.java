@@ -63,9 +63,6 @@ public class SellerCatService extends BaseService {
     private TbItemService tbItemService;
 
     @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
-
-    @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
 
@@ -180,6 +177,13 @@ public class SellerCatService extends BaseService {
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
 
+
+        List<CmsBtSellerCatModel>  sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
+        if(isDuplicateNode(sellerCats,cName,parentCId))
+        {
+            throw  new BusinessException("重复的店铺内分类名!");
+        }
+
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         String cId = "";
         String shopCartId = shopBean.getCart_id();
@@ -203,6 +207,16 @@ public class SellerCatService extends BaseService {
      * updateSellerCat
      */
     public void updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
+
+
+        List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+        CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
+        currentNode.getParentCatId();
+
+        if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId()))
+        {
+            throw  new BusinessException("重复的店铺内分类!");
+        }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
@@ -301,11 +315,11 @@ public class SellerCatService extends BaseService {
     public void refeshAllProduct(String channelId, int cartId, String creator) {
 
         ShopBean shopBean = Shops.getShop(channelId, 23);
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopBean.setAppKey("21008948");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        shopBean.setShop_name("Jewelry海外旗舰店");
+//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setShop_name("Jewelry海外旗舰店");
 
         String shopCartId = shopBean.getCart_id();
 
@@ -519,6 +533,24 @@ public class SellerCatService extends BaseService {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
                 shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TMM.getId())) {
             return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 判断是否是重复的节点，同一层的节点名不能重复
+     * @param sellerCats
+     * @param name
+     * @param parentCId
+     * @return
+     */
+    public boolean isDuplicateNode(List<CmsBtSellerCatModel>  sellerCats, String name , String parentCId)
+    {
+        if(sellerCats != null && sellerCats.size() > 0) {
+            if (sellerCats.stream().filter(w -> w.getParentCatId().equals(parentCId) && w.getCatName().equals(name)).count() > 0) {
+                return true;
+            }
         }
         return false;
     }
