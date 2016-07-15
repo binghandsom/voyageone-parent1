@@ -17,7 +17,7 @@
             <div class="form-inline">
                 <div class="form-group">
                     <label for="SKU_STATUS" class="control-label" translate="TXT_STATUS"></label>
-                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control select" ng-model="ctrl.searchInfo.status"
+                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control" ng-model="ctrl.searchInfo.status"
                             ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
                         <option value="" translate="TXT_ALL"></option>
                     </select>
@@ -75,7 +75,7 @@
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <select class="form-control input-sm" ng-model="ctrl.downloadInfo.orderType">
+            <select class="form-control" ng-model="ctrl.downloadInfo.orderType">
                 <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
                 <option value="order_id" translate="TXT_ORDER_BY_ORDER"></option>
             </select>

@@ -258,7 +258,6 @@ input::-webkit-clear-button {
 .table {
   margin-bottom: 10px;
   min-width: 1000px;
-  background: #F8F8F8;
 }
 .table thead th {
   font-size: 14px;

@@ -29,9 +29,9 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">{{'TXT_PRICE' | translate}}</label>
-                    <input id="startPrice" type="text" class="form-control input-sm" ng-model="ctrl.priceStart">
+                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart">
                     <span>~</span>
-                    <input id="endPrice" type="text" class="form-control input-sm" ng-model="ctrl.priceEnd">
+                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd">
                 </div>
                 <div class="form-group pull-right">
                     <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">{{'BTN_SEARCH' | translate}}</button>
