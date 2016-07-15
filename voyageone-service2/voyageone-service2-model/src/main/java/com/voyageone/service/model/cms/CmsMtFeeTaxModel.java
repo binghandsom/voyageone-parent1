@@ -34,9 +34,14 @@ public class CmsMtFeeTaxModel extends BaseModel {
     protected String shippingType;
 
     /**
-     * 税率
+     * 增值税率
      */
-    protected Double taxRate;
+    protected Double vaTaxRate;
+
+    /**
+     * 消费税率
+     */
+    protected Double consumptionTaxRate;
 
     public String getHsCode() {
         return hsCode;
@@ -70,11 +75,19 @@ public class CmsMtFeeTaxModel extends BaseModel {
         this.shippingType = shippingType == null ? null : shippingType.trim();
     }
 
-    public Double getTaxRate() {
-        return taxRate;
+    public Double getVaTaxRate() {
+        return vaTaxRate;
     }
 
-    public void setTaxRate(Double taxRate) {
-        this.taxRate = taxRate;
+    public void setVaTaxRate(Double vaTaxRate) {
+        this.vaTaxRate = vaTaxRate;
+    }
+
+    public Double getConsumptionTaxRate() {
+        return consumptionTaxRate;
+    }
+
+    public void setConsumptionTaxRate(Double consumptionTaxRate) {
+        this.consumptionTaxRate = consumptionTaxRate;
     }
 }

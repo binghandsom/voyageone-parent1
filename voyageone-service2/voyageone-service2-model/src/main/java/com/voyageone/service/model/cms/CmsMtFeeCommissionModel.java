@@ -48,6 +48,8 @@ public class CmsMtFeeCommissionModel extends BaseModel {
      */
     protected Double commissonRate;
 
+    protected String comment;
+
     public String getChannelId() {
         return channelId;
     }
@@ -102,5 +104,13 @@ public class CmsMtFeeCommissionModel extends BaseModel {
 
     public void setCommissonRate(Double commissonRate) {
         this.commissonRate = commissonRate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment == null ? null : comment.trim();
     }
 }

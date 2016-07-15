@@ -301,11 +301,11 @@ public class SellerCatService extends BaseService {
     public void refeshAllProduct(String channelId, int cartId, String creator) {
 
         ShopBean shopBean = Shops.getShop(channelId, 23);
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopBean.setAppKey("21008948");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        shopBean.setShop_name("Jewelry海外旗舰店");
+//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setShop_name("Jewelry海外旗舰店");
 
         String shopCartId = shopBean.getCart_id();
 
