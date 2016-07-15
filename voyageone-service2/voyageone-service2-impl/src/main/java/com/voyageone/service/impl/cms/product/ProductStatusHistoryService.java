@@ -21,6 +21,7 @@ public class ProductStatusHistoryService extends BaseService {
     CmsBtProductStatusHistoryDao dao;
     @Autowired
     CmsBtProductStatusHistoryDaoExt daoExt;
+
     public List<MapModel> getPage(PageQueryParameters parameters) {
 
         List<MapModel> list = daoExt.selectPage(parameters.getSqlMapParameter());
@@ -29,16 +30,19 @@ public class ProductStatusHistoryService extends BaseService {
         }
         return list;
     }
-    void  loadMap(MapModel map) {
+
+    void loadMap(MapModel map) {
         CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(map.get("cartId").toString());
         if (cartEnum != null) {
             map.put("cartName", cartEnum.name());
         }
         map.put("operationTypeName", EnumProductOperationType.getNameById(map.get("operationType")));
     }
+
     public long getCount(PageQueryParameters parameters) {
-        return  daoExt.selectCount(parameters.getSqlMapParameter());
+        return daoExt.selectCount(parameters.getSqlMapParameter());
     }
+
     @VOTransactional
     public void insert(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
@@ -52,10 +56,12 @@ public class ProductStatusHistoryService extends BaseService {
             daoExt.insertList(page);
         }
     }
+
     public void insert(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, modifier);
         dao.insert(productStatusHistory);
     }
+
     private CmsBtProductStatusHistoryModel get(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = new CmsBtProductStatusHistoryModel();
         productStatusHistory.setChannelId(channelId);
