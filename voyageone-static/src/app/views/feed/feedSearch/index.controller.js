@@ -6,7 +6,7 @@ define([
 ], function (vms) {
     vms.controller('FeedInfoSearchController', (function () {
 
-        function FeedInfoSearchController(feedInfoSearchService) {
+        function FeedInfoSearchController(feedInfoSearchService,popups) {
             this.feedInfoSearchService = feedInfoSearchService;
             this.feedInfoList = [];
             this.parentSku = "";
@@ -19,6 +19,7 @@ define([
                 total: 0,
                 fetch: this.getFeedInfoList.bind(this)
             };
+            this.popups = popups;
         }
 
         FeedInfoSearchController.prototype = {
@@ -47,8 +48,11 @@ define([
                     this.pageOption.size = 10;
                 }
                 this.getFeedInfoList();
+            },
+            open: function (context) {
+                this.popups.openImagePreview(context);
             }
-        }
+        };
 
 
         return FeedInfoSearchController;

@@ -68,6 +68,7 @@ define(function () {
         "BTN_UPLOAD": "UPLOAD",
         "BTN_CLOSE": "CLOSE",
         "BTN_SUBMIT": "SUBMIT",
-        "BTN_CREATE": "CREATE"
+        "BTN_CREATE": "CREATE",
+        "TXT_IMAGE_PREVIOUS":"图片预览"
     }
 });

@@ -55,7 +55,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedInfo in ctrl.feedInfoList">
-                        <td class="v-middle text-center"><img class="thumb-md" ng-src="{{feedInfo.image[0]}}" ></td>
+                        <td class="v-middle text-center"><img class="thumb-md" ng-src="{{feedInfo.image[0]}}" ng-click="ctrl.open(feedInfo.image[0])"></td>
                         <td class="v-middle text-left">{{feedInfo.code}}</td>
                         <td class="v-middle text-left">{{feedInfo.name}}</td>
                         <td class="v-middle text-left">{{feedInfo.category}}</td>
