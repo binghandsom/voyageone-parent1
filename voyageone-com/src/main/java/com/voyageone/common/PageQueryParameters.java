@@ -99,15 +99,15 @@ public class PageQueryParameters implements Serializable {
     }
 
     public void setMinValue(String minValue) {
-        minValue = minValue;
+        this.minValue = minValue;
     }
 
-    public String getmaxValue() {
+    public String getMaxValue() {
         return maxValue;
     }
 
-    public void setmaxValue(String maxValue) {
-        maxValue = maxValue;
+    public void setMaxValue(String maxValue) {
+       this.maxValue = maxValue;
     }
 
 
@@ -165,7 +165,7 @@ public class PageQueryParameters implements Serializable {
         return mapResult;
     }
 
-    public Map<String, Object> FilerParameter(Map<String, Object> pMap) {
+    private Map<String, Object> FilerParameter(Map<String, Object> pMap) {
         Map<String, Object> reseltMap = new HashMap<String, Object>();
         for (String key : pMap.keySet()) {
             Object value = pMap.get(key);
