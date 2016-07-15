@@ -279,15 +279,16 @@ public class JuMeiProductPlatform3Service extends BaseService {
             updateData.setDeal_price(skuPriceBean.getDealPrice());
             updateData.setMarket_price(skuPriceBean.getMarketPrice());
         }
-        request.setUpdate_data(list);
 
         try {
-
-            HtDealUpdateDealPriceBatchResponse response= serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
-            if(!response.is_Success())
-            {
-                model.setPriceStatus(3);
-                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+            List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,20);
+            for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
+                request.setUpdate_data(page);
+                HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
+                if (!response.is_Success()) {
+                    model.setPriceStatus(3);
+                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                }
             }
         }
         catch (Exception ex)
