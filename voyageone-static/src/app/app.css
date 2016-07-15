@@ -759,3 +759,8 @@ vpagination {
 .v-bottom {
   vertical-align: bottom !important;
 }
+.thumb-md {
+  max-width: 64px;
+  max-height: 75px;
+  display: inline-block;
+}
