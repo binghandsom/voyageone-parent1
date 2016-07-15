@@ -13,7 +13,7 @@ import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
  * Created by vantis on 16-7-7.
  */
 public class OrderSearchInfo {
-    private Integer status = VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN;
+    private String status = VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN;
     private String orderId;
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;
@@ -25,11 +25,11 @@ public class OrderSearchInfo {
     @DateTimeFormat
     private Date orderDateTo = null;
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

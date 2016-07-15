@@ -68,7 +68,7 @@ define([
         OrderInfoController.prototype.search = function () {
             var self = this;
             if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
-                self.alert("'TXT_PLEASE_INPUT_A_VALID_DATE'");
+                self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
                 return;
             } else if (self.orderDateFrom)
                 self.searchInfo.orderDateFrom = self.orderDateFrom.getTime();
@@ -147,11 +147,14 @@ define([
         };
 
         OrderInfoController.prototype.popNewShipment = function () {
+            var self = this;
             var shipmentInfo = {
                 shipment: this.currentShipment,
                 searchOrderStatus: this.searchOrderStatus
             };
-            this.popups.openShipment(shipmentInfo);
+            this.popups.openShipment(shipmentInfo).then(function (shipment) {
+                self.currentShipment = shipment;
+            });
         };
         OrderInfoController.prototype.popAddToShipment = function () {
             this.popups.openAddShipment();

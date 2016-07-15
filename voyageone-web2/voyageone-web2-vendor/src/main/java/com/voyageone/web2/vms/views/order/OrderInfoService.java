@@ -12,7 +12,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.VmsOrderDetailService;
 import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
-import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsConstants.ChannelConfig;
@@ -21,7 +20,6 @@ import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
 import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -32,10 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -76,20 +71,7 @@ public class OrderInfoService extends BaseService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 获取当前用户/Channel已建立的shipment
-     *
-     * @param user 当前用户
-     * @return shipmentBean
-     */
-    public VmsBtShipmentModel getCurrentShipment(UserSessionBean user) {
 
-        Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel().getId());
-            put("status", STATUS_VALUE.SHIPMENT_STATUS.OPEN);
-        }};
-        return vmsShipmentService.select(shipmentSearchParams);
-    }
 
     /**
      * 读取channel相应配置
@@ -120,8 +102,8 @@ public class OrderInfoService extends BaseService {
         SortParam sortParam = new SortParam();
         sortParam.setColumnName(VmsConstants.CONSOLIDATION_ORDER_TIME);
         sortParam.setDirection((null != orderSearchInfo.getStatus()
-                && orderSearchInfo.getStatus() == STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
-                Order.Direction.ASC : Order.Direction.DESC);
+                && orderSearchInfo.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
+                Order.Direction.ASC : Order.Direction.DESC));
         OrderInfoBean orderInfoBean = new OrderInfoBean();
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfo, sortParam));
         orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfo, sortParam));
@@ -140,20 +122,19 @@ public class OrderInfoService extends BaseService {
         Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
-            put("orderId", item.getOrderId());
+            put("consolidationOrderId", item.getOrderId());
             put("modifier", user.getUserName());
         }};
 
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
-            put("orderId", item.getOrderId());
+            put("consolidationOrderId", item.getOrderId());
         }};
 
-        // TODO: 16-7-12 订单当前状态测试 vantis
         List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
                 .stream()
-                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(String.valueOf(STATUS_VALUE
-                        .PRODUCT_STATUS.OPEN)))
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .collect(Collectors.toList());
 
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
@@ -182,13 +163,13 @@ public class OrderInfoService extends BaseService {
 
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
-            put("orderId", item.getOrderId());
+            put("consolidationOrderId", item.getOrderId());
         }};
 
         List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
                 .stream()
-                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(String.valueOf(STATUS_VALUE
-                        .PRODUCT_STATUS.OPEN)))
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .collect(Collectors.toList());
 
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
@@ -295,7 +276,7 @@ public class OrderInfoService extends BaseService {
             descriptionCell.setCellStyle(defaultRowCellStyle);
 
             Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
-            orderIdCell.setCellValue(vmsBtOrderDetailModel.getOrderId());
+            orderIdCell.setCellValue(vmsBtOrderDetailModel.getConsolidationOrderId());
             orderIdCell.setCellStyle(defaultRowCellStyle);
         }
 
@@ -327,8 +308,9 @@ public class OrderInfoService extends BaseService {
             sortParam) {
 
         List<AbstractSubOrderInfoBean> orderList = new ArrayList<>();
-        Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo, sortParam);
-        /**
+        Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo,
+                sortParam);
+        /*
          * 根据渠道配置设置
          */
         switch (this.getChannelConfigs(user).getVendorOperateType()) {
@@ -353,19 +335,21 @@ public class OrderInfoService extends BaseService {
      * @param orderSearchParamsWithLimitAndSort 搜索条件
      * @return 订单列表
      */
-    private List<AbstractSubOrderInfoBean> getPlatformOrderInfoBeen(Map<String, Object> orderSearchParamsWithLimitAndSort) {
-        return vmsOrderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).stream()
-                .map(orderId -> {
+    private List<AbstractSubOrderInfoBean> getPlatformOrderInfoBeen(Map<String, Object>
+                                                                            orderSearchParamsWithLimitAndSort) {
+        return vmsOrderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
+                .map(consolidationOrderId -> {
 
                     // 获取平台订单id下的所有的sku
                     List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService
                             .selectOrderList(new HashMap<String, Object>() {{
-                                put("orderId", orderId);
+                                put("channelId", orderSearchParamsWithLimitAndSort.get("channelId"));
+                                put("consolidationOrderId", consolidationOrderId);
                             }});
 
                     // 按照第一个sku初始化平台订单id内容
                     PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
-                    platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getOrderId());
+                    platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getConsolidationOrderId());
                     platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
                     platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
@@ -375,7 +359,7 @@ public class OrderInfoService extends BaseService {
 
                                 // 整理格式
                                 setReservationId(vmsBtOrderDetailModel.getReservationId());
-                                setOrderId(vmsBtOrderDetailModel.getOrderId());
+                                setOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
                                 setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                                 setDesc(vmsBtOrderDetailModel.getDescription());
                                 setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
@@ -402,7 +386,7 @@ public class OrderInfoService extends BaseService {
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
                     orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
-                    orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
+                    orderInfoBean.setOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
                     orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
                     orderInfoBean.setDesc(vmsBtOrderDetailModel.getDescription());
                     orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());

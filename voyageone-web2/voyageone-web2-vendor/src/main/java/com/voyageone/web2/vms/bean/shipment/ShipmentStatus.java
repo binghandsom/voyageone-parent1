@@ -5,8 +5,8 @@ package com.voyageone.web2.vms.bean.shipment;
  * Created by vantis on 16-7-14.
  */
 public class ShipmentStatus {
-    String name;
-    String value;
+    private String name;
+    private String value;
 
     public String getName() {
         return name;

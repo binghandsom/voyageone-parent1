@@ -42,7 +42,7 @@ public class VmsOrderDetailService extends BaseService {
      */
     public List<VmsBtOrderDetailModel> selectOrderList(Map<String, Object> orderSearchParams) {
 
-        return vmsBtOrderDetailDaoExt.selectListLimitedByTime(orderSearchParams);
+        return vmsBtOrderDetailDaoExt.orderDetailselectList(orderSearchParams);
     }
 
     /**
@@ -53,7 +53,7 @@ public class VmsOrderDetailService extends BaseService {
      */
     public List<String> selectPlatformOrderIdList(Map<String, Object> orderSearchParams) {
 
-        return vmsBtOrderDetailDaoExt.selectList(orderSearchParams);
+        return vmsBtOrderDetailDaoExt.orderIdselectList(orderSearchParams);
 
     }
 

@@ -40,6 +40,8 @@ public interface VmsUrlConstants {
         interface SHIPMENT {
             String ROOT = "/vms/popup/shipment";
             String INIT = "init";
+            String SUBMIT = "submit";
+            String CREATE = "create";
         }
     }
 }

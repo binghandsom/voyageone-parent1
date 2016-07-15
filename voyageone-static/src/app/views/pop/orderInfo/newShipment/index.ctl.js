@@ -20,7 +20,9 @@ define([
                 ];
                 this.shipment = angular.copy(context.shipment);
                 if (!this.shipment) {
-                    this.shipment = {status: "1"}
+                    this.shipment = {
+                        status: "1"
+                    }
                 } else this.shipmentExisted = true;
             }
 
@@ -32,11 +34,18 @@ define([
                 })
             };
 
+            NewShipmentController.prototype.create = function() {
+                var self = this;
+
+                this.shipmentPopupService.create(this.shipment).then(function (data) {
+                    self.close(data.currentShipment);
+                })
+            };
 
             NewShipmentController.prototype.submit = function () {
-                // this.shipmentPopupService.submit(this.shipment).then(function (res) {
-                console.info("sdfassa");
-                // })
+                this.shipmentPopupService.submit(this.shipment).then(function (data) {
+                    this.close(data.currentShipment);
+                })
             };
 
             return NewShipmentController;

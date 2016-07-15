@@ -11,7 +11,7 @@
     </sql>
 
     <!-- select -->
-    <select id="selectListLimitedByTime" parameterType="HashMap" resultMap="BaseResultMap">
+    <select id="orderDetailselectList" parameterType="HashMap" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from vms_bt_order_detail
@@ -91,15 +91,18 @@
             <if test="creater != null">
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="orderDateFrom !=null &amp;&amp; orderDateTo != null">
-                and `order_time` > #{orderDateFrom} and #{orderDateTo} >= #{orderDateTo}
+            <if test="orderDateFrom !=null">
+                and `consolidation_order_time` >= #{orderDateFrom}
+            </if>
+            <if test="orderDateTo != null">
+                and #{orderDateTo} > `consolidation_order_time`
             </if>
         </where>
     </select>
 
-    <select id="selectList" parameterType="HashMap" resultType="java.lang.String">
+    <select id="orderIdselectList" parameterType="HashMap" resultType="java.lang.String">
         select distinct
-        `order_id`
+        `consolidation_order_id`
         from vms_bt_order_detail
         <where>
             <if test="reservationId != null">
@@ -178,16 +181,16 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="orderDateFrom !=null">
-                and `order_time` >= #{orderDateFrom}
+                and `consolidation_order_time` >= #{orderDateFrom}
             </if>
             <if test="orderDateTo != null">
-                and #{orderDateTo} > `order_time`
+                and #{orderDateTo} > `consolidation_order_time`
             </if>
         </where>
     </select>
 
     <select id="selectPlatformOrderListNumLimitedByTime" parameterType="HashMap" resultType="java.lang.Long">
-        select count(distinct order_id)
+        select count(distinct consolidation_order_id)
         from vms_bt_order_detail
         <where>
             <if test="reservationId != null">
@@ -266,10 +269,10 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="orderDateFrom !=null">
-                and `order_time` >= #{orderDateFrom}
+                and `consolidation_order_time` >= #{orderDateFrom}
             </if>
             <if test="orderDateTo != null">
-                and #{orderDateTo} > `order_time`
+                and #{orderDateTo} > `consolidation_order_time`
             </if>
         </where>
     </select>
@@ -354,10 +357,10 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="orderDateFrom !=null">
-                and `order_time` >= #{orderDateFrom}
+                and `consolidation_order_time` >= #{orderDateFrom}
             </if>
             <if test="orderDateTo != null">
-                and #{orderDateTo} > `order_time`
+                and #{orderDateTo} > `consolidation_order_time`
             </if>
         </where>
     </select>
@@ -368,14 +371,15 @@
         <if test="modifier != null">
             , `modifier` = #{modifier, jdbcType=VARCHAR}
         </if>
+        , `modified` = now()
         where
         <choose>
-        <when test="orderId != null">
-            `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
-        </when>
-        <when test="reservationId != null">
-            `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
-        </when>
+            <when test="orderId != null">
+                `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
+            </when>
+            <when test="reservationId != null">
+                `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
+            </when>
         </choose>
     </update>
 </mapper>

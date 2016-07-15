@@ -66,6 +66,8 @@ define(function () {
         "BTN_OK": "OK",
         "BTN_SEARCH": "SEARCH",
         "BTN_UPLOAD": "UPLOAD",
-        "BTN_CLOSE": "Close"
+        "BTN_CLOSE": "CLOSE",
+        "BTN_SUBMIT": "SUBMIT",
+        "BTN_CREATE": "CREATE"
     }
 });

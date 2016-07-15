@@ -57,20 +57,20 @@ public class VmsConstants {
 
         // 物品状态（vms系统用）
         interface PRODUCT_STATUS {
-            int OPEN = 1;
-            int PACKAGE = 2;
-            int SHIPPED = 3;
-            int RECEIVED = 5;
-            int RECEIVE_WITH_ERROR = 6;
-            int CANCEL = 7;
+            String OPEN = "1";
+            String PACKAGE = "2";
+            String SHIPPED = "3";
+            String RECEIVED = "5";
+            String RECEIVE_WITH_ERROR = "6";
+            String CANCEL = "7";
         }
 
         interface SHIPMENT_STATUS {
-            int OPEN = 1;
-            int SHIPPED = 3;
-            int ARRIVED = 4;
-            int RECEIVED = 5;
-            int RECEIVE_WITH_ERROR = 6;
+            String OPEN = "1";
+            String SHIPPED = "3";
+            String ARRIVED = "4";
+            String RECEIVED = "5";
+            String RECEIVE_WITH_ERROR = "6";
         }
 
 

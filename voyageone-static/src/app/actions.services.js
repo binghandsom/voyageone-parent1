@@ -173,7 +173,8 @@ define(function (require) {
         }),
 
         shipmentPopupService: new CommonDataService('/vms/popup/shipment', {
-            init: "init"
+            init: "init",
+            submit: "submit"
         })
     }
 });

@@ -2,12 +2,11 @@ package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.VmsUrlConstants;
 import com.voyageone.web2.vms.bean.order.DownloadInfo;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
 import com.voyageone.web2.vms.bean.order.PlatformSubOrderInfoBean;
 import com.voyageone.web2.vms.bean.order.SubOrderInfoBean;
-import com.voyageone.web2.vms.views.order.OrderInfoService;
+import com.voyageone.web2.vms.views.shipment.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +29,12 @@ import static com.voyageone.web2.vms.VmsUrlConstants.ORDER;
 public class OrderInfoController extends BaseController {
 
     private OrderInfoService orderInfoService;
+    private ShipmentService shipmentService;
 
     @Autowired
-    public OrderInfoController(OrderInfoService orderInfoService) {
+    public OrderInfoController(OrderInfoService orderInfoService, ShipmentService shipmentService) {
         this.orderInfoService = orderInfoService;
+        this.shipmentService = shipmentService;
     }
 
     // 页面初始化部分
@@ -42,14 +43,16 @@ public class OrderInfoController extends BaseController {
         Map<String, Object> initialInfo = new HashMap<>();
         initialInfo.put("channelConfigs", orderInfoService.getChannelConfigs(this.getUser()));
         initialInfo.put("searchOrderStatus", orderInfoService.getAllOrderStatusesList());
-        initialInfo.put("currentShipment", orderInfoService.getCurrentShipment(this.getUser()));
+        initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(initialInfo);
     }
 
     @RequestMapping(ORDER.ORDER_INFO.SEARCH)
     public AjaxResponse search(@RequestBody OrderSearchInfo orderSearchInfo) {
         Map<String, Object> orderInfo = new HashMap<>();
+        Date date = new Date();
         orderInfo.put("orderInfo", orderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
+        $debug (String.valueOf(new Date().getTime() - date.getTime()));
         return success(orderInfo);
     }
 

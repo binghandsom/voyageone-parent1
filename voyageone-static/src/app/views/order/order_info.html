@@ -75,7 +75,7 @@
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <select class="form-control" ng-model="ctrl.downloadInfo.orderType">
+            <select id="select1" class="form-control" ng-model="ctrl.downloadInfo.orderType">
                 <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
                 <option value="order_id" translate="TXT_ORDER_BY_ORDER"></option>
             </select>
@@ -84,7 +84,7 @@
     </div>
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
         <div class="panel-body">
-            <div class="table-responsive">
+            <div class="table-responsive" if-no-rows="ctrl.data">
                 <table class="table table-fixed table-vo">
                     <thead>
                     <tr>
@@ -102,7 +102,8 @@
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderId}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTimestamp | date:
+                            'yyyy-MM-dd HH:mm:ss'}}</strong></td>
 
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
@@ -137,7 +138,7 @@
     </div>
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
         <div class="panel-body">
-            <div class="table-responsive">
+            <div class="table-responsive" if-no-rows="ctrl.data">
                 <table class="table table-fixed table-vo">
                     <thead>
                     <tr>

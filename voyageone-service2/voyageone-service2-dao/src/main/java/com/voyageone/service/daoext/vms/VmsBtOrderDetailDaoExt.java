@@ -1,6 +1,5 @@
 package com.voyageone.service.daoext.vms;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import org.springframework.stereotype.Repository;
 
@@ -15,9 +14,9 @@ import java.util.Map;
 @Repository
 public interface VmsBtOrderDetailDaoExt {
 
-    List<VmsBtOrderDetailModel> selectListLimitedByTime(Map<String, Object> orderSearchParams);
+    List<VmsBtOrderDetailModel> orderDetailselectList(Map<String, Object> orderSearchParams);
 
-    List<String> selectList(Map<String, Object> orderSearchParams);
+    List<String> orderIdselectList(Map<String, Object> orderSearchParams);
 
     long selectPlatformOrderListNumLimitedByTime(Map<String, Object> orderSearchParamsWithLimitAndSort);
 
