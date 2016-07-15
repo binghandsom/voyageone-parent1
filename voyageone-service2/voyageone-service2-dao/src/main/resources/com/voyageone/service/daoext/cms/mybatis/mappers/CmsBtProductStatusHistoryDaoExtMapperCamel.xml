@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtProductStatusHistoryDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel" />
+    <select id="selectPage" resultType="MapModel">
+        select *
+        from cms_bt_product_status_history
+        inner join (select Id from cms_bt_product_status_history
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="operationType != null" >
+                and `Operation_type` = #{operationType,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by ${orderByColumn}  limit #{offset},#{pageRowCount}) as a on a.Id=cms_bt_product_status_history.Id
+    </select>
+    <select id="selectCount" resultType="Long">
+        select count(*) from cms_bt_product_status_history
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="operationType != null" >
+                and `Operation_type` = #{operationType,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+
+
+    <insert id="insertList">
+        INSERT INTO cms_bt_product_status_history
+        (
+        `channel_id`,
+        `cart_id`,
+        `code`,
+        `status`,
+        `comment`,
+        `created`,
+        `creater`,
+        `modifier`,
+        `Operation_type`
+        )
+        VALUES
+        <foreach item="item" index="i" collection="list"
+                 open="" separator="," close="">
+            (#{item.channel_id},
+            #{item.cart_id},
+            #{item.code},
+            #{item.comment},
+            #{item.created},
+            #{item.creater},
+            #{item.modifier},
+            #{item.Operation_type})
+        </foreach>
+    </insert>
+</mapper>

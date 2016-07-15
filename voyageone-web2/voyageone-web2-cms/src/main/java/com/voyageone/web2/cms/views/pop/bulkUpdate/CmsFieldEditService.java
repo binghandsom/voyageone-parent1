@@ -208,7 +208,7 @@ public class CmsFieldEditService extends BaseAppService {
 
         // 更新产品的信息
         JomgoUpdate updObj = new JomgoUpdate();
-        updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#},'platformActive':{$ne:#}}");
+        updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#}}");
         updObj.setUpdate("{$set:{'platformActive':#,'modified':#,'modifier':#}}");
 
         // 设置platformActive的状态
@@ -219,7 +219,7 @@ public class CmsFieldEditService extends BaseAppService {
             statusVal = com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
         }
 
-        updObj.setQueryParameters(productCodes, userInfo.getSelChannelId(), cartList, statusVal);
+        updObj.setQueryParameters(productCodes, userInfo.getSelChannelId(), cartList);
         updObj.setUpdateParameters(statusVal, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
         WriteResult rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
@@ -417,10 +417,7 @@ public class CmsFieldEditService extends BaseAppService {
             List<String> strList = new ArrayList<>();
             List<Integer> updCartList = new ArrayList<>();
             for (Integer cartIdVal : cartList) {
-                // 如果该产品以前就是approved,则不做处理
-                if (CmsConstants.ProductStatus.Approved.name().equals(productModel.getPlatformNotNull(cartIdVal).getStatus())) {
-                    break;
-                }
+                // 如果该产品以前就是approved,也要做处理(因为要考虑platformsStatus==WaitingPublish)
                 updCartList.add(cartIdVal);
                 strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
             }
