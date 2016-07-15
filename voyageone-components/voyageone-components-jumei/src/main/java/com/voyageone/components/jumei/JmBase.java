@@ -101,7 +101,7 @@ public class JmBase extends ComponentBase {
             parm_url.delete(0, 1);
         }
 
-
+        logger.info(String.format("[post_url:%s]: %s", post_url.toString(), parm_url.toString()));
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         logger.info("result：" + result);
 //        result = " {\"error\":{\"code\":\"501\"}}";
@@ -134,8 +134,8 @@ public class JmBase extends ComponentBase {
                     }
                 }
 
-                if (!("0".equals(code) || "109902".contains(code) || "103087".contains(code) ||
-                        "0".equals(codes) || "109902".contains(codes) || "103087".contains(codes))) {
+                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") ||
+                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087"))) {
                     throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                 }
             } else if (map.containsKey("error_code")) {

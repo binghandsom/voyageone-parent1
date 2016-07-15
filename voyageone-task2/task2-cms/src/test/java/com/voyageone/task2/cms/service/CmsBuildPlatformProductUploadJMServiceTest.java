@@ -92,16 +92,23 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Test
     public void testUpdateProduct() throws Exception {
 
-        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(1, "017", 27);
+//        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(1, "010", 27);
+//
+//        for (CmsBtSxWorkloadModel work : workloadList) {
+////            work.setGroupId(27214L);
+////            work.setGroupId(39342L);
+//            work.setGroupId(30222L);
+//
+//
+//            cmsBuildPlatformProductUploadJMService.updateProduct(work);
+//        }
 
-        for (CmsBtSxWorkloadModel work : workloadList) {
-//            work.setGroupId(27214L);
-//            work.setGroupId(39342L);
-            work.setGroupId(389786L);
-
-
-            cmsBuildPlatformProductUploadJMService.updateProduct(work);
-        }
+        CmsBtSxWorkloadModel work = new CmsBtSxWorkloadModel();
+        work.setGroupId(30222L);
+        work.setChannelId("010");
+        work.setCartId(27);
+        work.setPublishStatus(0);
+        cmsBuildPlatformProductUploadJMService.updateProduct(work);
 
     }
 
