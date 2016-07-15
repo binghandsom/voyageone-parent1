@@ -239,7 +239,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
         //初始化
         ProductSaveInfo saveInfo = null;
+        $info("初始化开始");
         for (ProductImportBean product : listProductImport) {
+            $info("into"+ product.getProductCode());
             List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
             saveInfo = loadSaveInfo(model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product,modelPromotion, userName);
@@ -247,9 +249,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 listSaveInfo.add(saveInfo);
             }
         }
+        $info("初始化结束");
         //保存
+        $info("保存开始");
         for (ProductSaveInfo info : listSaveInfo) {
             try {
+                $info("into"+ info.jmProductModel.getProductCode());
                 serviceCmsBtJmPromotionImportSave3.saveProductSaveInfo(info);
             } catch (Exception ex) {
                 long requestId = FactoryIdWorker.nextId();
@@ -258,6 +263,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 listProducctErrorMap.add(MapUtil.toMap(info._importProduct));
             }
         }
+        $info("保存结束");
     }
     public CmsBtPromotionModel  getCmsBtPromotionModel(int jmPromotionId)
     {
