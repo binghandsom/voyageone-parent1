@@ -9,26 +9,40 @@
     </div>
 </div>
 <div class="container content blank-content">
-    <div class="col-sm-6 col-sm-offset-3">
-        Please use the <a href="javascript:void(0)" ng-click="ctrl.download()">VoyageOneFeedTemplate</a> to upload
-        Inventory file。
-    </div>
     <div class="col-md-6 col-md-offset-3">
         <div class="form-group">
             <h2>Choose File</h2>
         </div>
         <div class="form-group">
             <div class="col-sm-12 input-group">
-                <input type="file" file-style data-icon="false" data-button-text="BROWSER..."
+                <input type="file" id="file" file-style data-icon="false" data-button-text="BROWSER"
                        data-buttonName="btn btn-success" nv-file-select="" uploader="ctrl.uploader" accept=".csv">
                 <span class="input-group-btn">
                     <button class="btn btn-success" ng-click="ctrl.upload()">{{'BTN_UPLOAD' | translate}}</button>
                 </span>
             </div>
         </div>
-        <div class="form-group">
-            Allowed file extensions: .xlsx
-            Maximum allowed file size is 20MB.
+    </div>
+    <div class="col-sm-6 col-sm-offset-3 m-t-lg">
+        <div class="col-sm-6 info-blocks">
+            <i class="fa fa-bell-o icon-info-blocks"></i>
+            <div class="info-blocks-in">
+                <h3>Notice</h3>
+                <p>Please use the <a href="javascript:void(0)" ng-click="ctrl.download()"><strong>&nbsp;VoyageOneFeedTemplate&nbsp;</strong></a>
+                    to upload Inventory file .</p>
+                <p>To check the status of your upload, visit the <a href="#/feed/feed_import_result"><strong>Feed Import
+                    Result</strong></a> .</p>
+            </div>
+        </div>
+        <div class="col-sm-6 info-blocks">
+            <i class="fa fa-thumbs-o-up icon-info-blocks"></i>
+            <div class="info-blocks-in">
+                <h3>Allowances</h3>
+                <ul class="list-unstyled">
+                    <li class="m-b-xs"><i class="color-green fa fa-star-o"></i>Allowed file extensions: .xlsx</li>
+                    <li class="m-b-xs"><i class="color-green fa fa-star-o"></i>Maximum allowed file size is 20MB</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
