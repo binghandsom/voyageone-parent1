@@ -5,7 +5,6 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('NewShipmentController', (function () {
-
         function NewShipmentController(alert, notify, confirm, shipmentPopupService, context) {
             this.alert = alert;
             this.notify = notify;
@@ -26,7 +25,7 @@ define([
             } else {
                 this.shipmentExisted = true;
                 if (this.shipment.shippedDateTimestamp)
-                this.shipment.shippedDate = new Date(this.shipment.shippedDateTimestamp);
+                    this.shipment.shippedDate = new Date(this.shipment.shippedDateTimestamp);
             }
         }
 
@@ -42,19 +41,28 @@ define([
             var self = this;
 
             this.shipmentPopupService.create(this.shipment).then(function (data) {
-                self.close(data.currentShipment);
+                console.info("finished");
+                self.modal.$close();
             })
         };
 
         NewShipmentController.prototype.submit = function () {
+            var self = this;
             var req = angular.copy(this.shipment);
             if (req.shippedDate) {
                 req.shippedDateTimestamp = req.shippedDate.getTime();
                 req.shippedDate = undefined;
             }
             this.shipmentPopupService.submit(req).then(function (data) {
-                this.close(data.currentShipment);
-            })
+                self.shipment = data.currentShipment;
+                if (self.shipment) {
+                    this.shipmentExisted = true;
+                    if (self.shipment.shippedDateTimestamp)
+                        self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
+                }
+                self.modal.close(self.shipment);
+            });
+
         };
 
         return NewShipmentController;

@@ -40,7 +40,6 @@ define([
     return angular.module('vms.popups', []).factory('popups', function PopupsService($uibModal, $q) {
 
         function open(config, context) {
-
             // if (context)
             config.resolve = {
                 context: function () {
@@ -58,7 +57,7 @@ define([
 
         return {
             openShipment: function (searchOrderStatus) {
-                open(popups.orderInfo.newShipment, searchOrderStatus);
+                return open(popups.orderInfo.newShipment, searchOrderStatus);
             },
             openAddShipment: function () {
                 open(popups.orderInfo.addShipment);

@@ -43,11 +43,12 @@ public class ShipmentPopupController extends BaseController {
     public AjaxResponse submit(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
         result.put("success", shipmentService.submit(this.getUser(), shipmentBean));
+        result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }
 
     @RequestMapping(POPUP.SHIPMENT.CREATE)
-    public AjaxResponse reate(@RequestBody ShipmentBean shipmentBean) {
+    public AjaxResponse create(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
 
         // TODO: 2016/7/15 创建shipment vantis
