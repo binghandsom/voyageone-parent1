@@ -6,7 +6,7 @@
         `id`, `channel_id`, `name`, `activity_pc_id`, `activity_app_id`, `cms_bt_jm_master_brand_Id`, 
         `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
         `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`, 
-        `status`
+        `status`, `recovery_status`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -74,6 +74,9 @@
             </if>
             <if test="status != null" >
                 `status`,
+            </if>
+            <if test="recoveryStatus != null" >
+                `recovery_status`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -143,6 +146,9 @@
             <if test="status != null" >
                 #{status,jdbcType=INTEGER},
             </if>
+            <if test="recoveryStatus != null" >
+                #{recoveryStatus,jdbcType=INTEGER},
+            </if>
         </trim>
     </insert>
 
@@ -208,6 +214,9 @@
             </if>
             <if test="status != null" >
                 `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="recoveryStatus != null" >
+                `recovery_status` = #{recoveryStatus,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -280,6 +289,9 @@
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
             </if>
+            <if test="recoveryStatus != null" >
+                and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
+            </if>
         </where>
         limit 1
     </select>
@@ -346,6 +358,9 @@
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
             </if>
+            <if test="recoveryStatus != null" >
+                and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -408,6 +423,9 @@
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="recoveryStatus != null" >
+                and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
         </where>
     </select>

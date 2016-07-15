@@ -174,7 +174,15 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (!StringUtils.isEmpty(entry.getValue())) {
                     parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                } else { // add by desmond 2016/07/13 start
+                    // 如果未能取得平台url(源图片去的失败或者上传到平台失败)时，删除原图片url
+                    if (htmlTemplate != null) {
+                        parseResult = parseResult.replace(String.format(htmlTemplate, entry.getKey()), "");
+                    } else {
+                        parseResult = parseResult.replace(entry.getKey(), "");
+                    }
                 }
+                // add by desmond 2016/07/13 end
             }
         }
 

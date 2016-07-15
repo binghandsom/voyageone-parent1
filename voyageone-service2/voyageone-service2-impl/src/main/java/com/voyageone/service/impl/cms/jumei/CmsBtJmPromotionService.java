@@ -52,6 +52,7 @@ public class CmsBtJmPromotionService {
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
+
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
@@ -138,7 +139,7 @@ public class CmsBtJmPromotionService {
         promotion.setPromotionName(model.getName());
         promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
         promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
-        promotion.setPromotionStatus(0);
+        promotion.setPromotionStatus(1);
         promotion.setTejiabaoId("");
         promotion.setIsAllPromotion(0);
         promotion.setActive(model.getActive());

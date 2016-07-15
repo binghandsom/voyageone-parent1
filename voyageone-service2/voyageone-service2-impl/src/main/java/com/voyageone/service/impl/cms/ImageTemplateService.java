@@ -39,6 +39,25 @@ public class ImageTemplateService extends BaseService {
     @Autowired
     private LiquidFireImageService serviceLiquidFireImage;
 
+    // added by morse.lu 2016/07/13 start
+    public List<CmsBtImageTemplateModel> getCmsBtImageTemplateModelList(String channelId, int cartId, int imageTemplateType, int viewType, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+        ImageTempateParameter param = new ImageTempateParameter();
+        param.setChannelId(channelId);
+        param.setCartIdList(new ArrayList<Integer>(){{this.add(cartId);}});
+        param.setImageTemplateType(imageTemplateType);
+        param.setViewType(viewType);
+        param.setBrandName(brandNameList);
+        param.setProductType(productTypeList);
+        param.setSizeType(sizeTypeList);
+
+        String query = getSearchQuery(param, channelId);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(query);
+
+        return dao.select(queryObject);
+    }
+    // added by morse.lu 2016/07/13 end
+
     public List<CmsBtImageTemplateBean> getPage(ImageTempateParameter param, String channelId, String lang) {
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();

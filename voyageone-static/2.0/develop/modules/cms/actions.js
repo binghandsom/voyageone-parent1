@@ -103,6 +103,10 @@ define(function () {
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
                     "checkCategory":"checkCategory"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
@@ -159,7 +163,13 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage: "getPage",
+                    getCount: "getCount",
+                    getEditModel: "getEditModel",
+                    saveEditModel: "saveEditModel",
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus:"setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",

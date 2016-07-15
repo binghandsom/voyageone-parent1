@@ -228,6 +228,12 @@ public class TranslationTaskService extends BaseService {
         String mainCode = bean.getProductCode();
         String queryStr = String.format("{'mainProductCode' : '%s', 'cartId':0}", mainCode);
         CmsBtProductGroupModel group = CmsBtProductGroupDao.selectOneWithQuery(queryStr, channelId);
+
+        if(group == null)
+        {
+            throw  new BusinessException("无法找打主产品为["+ mainCode+ "]的产品组!");
+        }
+
         if (group != null) {
             TranslationTaskBean_CommonFields cnFields = bean.getCommonFields();
 

@@ -20,7 +20,7 @@
     * code
     * originalCode ->原始code
     * brand
-    * isMasterMain    ->是否为默认主商品
+    * isMasterMain    ->是否为默认主商品("1", "0")
     * sizeChart       ->选择的尺码对照
     * productNameEn
     * originalTitleCn
@@ -36,7 +36,7 @@
     * sizeType
     * hsCodeCrop
     * hsCodePrivate
-    * quantity
+    * quantity  ->(Int)
     * clientProductUrl
     * images1
     * images2
@@ -46,17 +46,17 @@
     * images6
     * images7
     * images8
-    * priceMsrpSt
-    * priceMsrpEd
-    * priceRetailSt
-    * priceRetailEd
-    * categoryStatus
+    * priceMsrpSt ->(double)
+    * priceMsrpEd ->(double)
+    * priceRetailSt ->(double)
+    * priceRetailEd ->(double)
+    * categoryStatus ->("1", "0")
     * categorySetter
     * categorySetTime
-    * translateStatus
+    * translateStatus ->("1", "0")
     * translator
     * translateTime
-    * hsCodeStatus
+    * hsCodeStatus ->("1", "0")
     * hsCodeSetter
     * hsCodeSetTime
     * codeDiff ->20160627,商品特质英文（颜色/口味/香型等）
@@ -64,6 +64,7 @@
     * usageEn ->20160627,使用说明英语
     * usageCn ->20160627,使用说明中文
     * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
+    * commissionRate ->20160713,VO佣金费率,商品级
   * skus[]
     * skuCode
     * barcode
@@ -72,22 +73,24 @@
     * size
     * sizeNick  ->20160627,售卖用尺码别名
     * sizeSx    ->20160707,只给上新用(getSxProductDataByGroupId生成这个字段的数据, 上新的地方直接用这个就行了)
-    * clientMsrpPrice     ->客户建议零售价
-    * clientRetailPrice   ->客户指导价
-    * clientNetPrice      ->客户成本价
-    * priceMsrp           ->中国建议零售价
-    * priceRetail         ->中国指导价
+    * clientMsrpPrice     ->客户建议零售价(double)
+    * clientRetailPrice   ->客户指导价(double)
+    * clientNetPrice      ->客户成本价(double)
+    * priceMsrp           ->中国建议零售价(double)
+    * priceRetail         ->中国指导价(double)
+    * weight              ->20160713,重量
+    * weightUnit          ->20160713,重量单位
 * platforms    ->平台属性
   * P0  ->主数据
     * cartId
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
   * P23  ->天猫国际
     * cartId
-    * status
+    * status ->("Pending", "Ready", "Approved")
     * pCatId
     * pCatPath
     * pCatStatus
-    * pIsMain   ->是否是该平台主商品
+    * pIsMain   ->是否是该平台主商品("1", "0")
     * pProductId
     * pNumIId
     * pStatus
@@ -95,15 +98,15 @@
     * pBrandId      ->平台品牌Id
     * pBrandName    ->平台品牌名称
     * pPublishTime
-    * pAttributeStatus
+    * pAttributeStatus ->("1", "0")
     * pAttributeSetter
     * pAttributeSetTime
-    * pPriceMsrpSt
-    * pPriceMsrpEd
-    * pPriceRetailSt
-    * pPriceRetailEd
-    * pPriceSaleSt
-    * pPriceSaleEd
+    * pPriceMsrpSt  ->(double)
+    * pPriceMsrpEd  ->(double)
+    * pPriceRetailSt  ->(double)
+    * pPriceRetailEd  ->(double)
+    * pPriceSaleSt  ->(double)
+    * pPriceSaleEd  ->(double)
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
     * modified -> 最终更新时间
     * fields
@@ -111,12 +114,12 @@
     * skus[]
       * 平台特有sku属性
       * skuCode
-      * priceMsrp   ->各平台的MSRP售价
-      * priceRetail ->各平台的销售指导价
-      * priceSale   ->各平台的最终售价
+      * priceMsrp   ->各平台的MSRP售价(double)
+      * priceRetail ->各平台的销售指导价(double)
+      * priceSale   ->各平台的最终售价(double)
       * priceChgFlg ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
       * priceDiffFlg ->最终售价变化状态（比指导价低:2，比指导价高:3，等于指导价:1，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
-      * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
+      * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)
     * sellerCats[]  ->店铺内分类
       * cId
       * cIds

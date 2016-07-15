@@ -649,7 +649,7 @@
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a ng-click="$parent.openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit,cartBean.value)">{{'TXT_TAG_STORE_CLASSIFY'|translate}}</a>
                                 </li>
-                                <li>
+                                <li ng-if="vm.masterData.autoApprovePrice!=1">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
@@ -704,7 +704,7 @@
                             <div class="col-sm-12 box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
                                 <!----------------------------------------------------tab2's table datas------------------------------------------------------------------------------->
                                 <table class="table-hover vo_table vo_models" ng-if="vm.productList.length"
-                                       style="min-width: 100%" width="{{vm.tblWidth2}}" ng-controller="popupCtrl">
+                                       style="min-width: 100%;margin-bottom:10px;" width="{{vm.tblWidth2}}" ng-controller="popupCtrl">
                                     <tbody ng-repeat="productInfo in vm.productList">
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}"
                                         class="table_bg_gray">
@@ -872,7 +872,7 @@
                             <!------------------------------------------------display table datas---------------------------------------------------------->
                             <div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
                                 <table class="table-hover vo_table vo_models" ng-if="vm.groupList.length"
-                                       style="min-width: 100%" width="{{vm.tblWidth}}" ng-controller="popupCtrl">
+                                       style="min-width: 100%;margin-bottom: 10px;" width="{{vm.tblWidth}}" ng-controller="popupCtrl">
                                     <tbody ng-repeat="groupInfo in vm.groupList">
                                     <tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}"
                                         class="table_bg_gray">

@@ -1,9 +1,6 @@
 package com.voyageone.service.model.cms.mongo.meta;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
-import com.voyageone.base.dao.mysql.BaseModel;
-import com.voyageone.service.model.cms.mongo.product.*;
 
 import java.util.ArrayList;
 import java.util.List;

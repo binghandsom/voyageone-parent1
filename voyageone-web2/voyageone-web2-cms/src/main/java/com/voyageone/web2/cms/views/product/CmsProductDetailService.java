@@ -574,6 +574,9 @@ public class CmsProductDetailService extends BaseAppService {
         List<Map<String, Object>> platformList = new ArrayList<>();
         if (cmsBtProduct.getPlatforms() != null) {
             cmsBtProduct.getPlatforms().forEach((s, platformInfo) -> {
+                if (platformInfo.getCartId() == null || platformInfo.getCartId() == 0) {
+                    return;
+                }
                 Map<String, Object> platformStatus = new HashMap<String, Object>();
                 platformStatus.put("cartId", platformInfo.getCartId());
                 platformStatus.put("pStatus", platformInfo.getpStatus());
