@@ -281,7 +281,7 @@ public class CmsFieldEditService extends BaseAppService {
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
-                qryStr.append("{'platforms.P" + cartIdVal + ".status':{$ne:'Ready'}},");
+                qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
             }
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
