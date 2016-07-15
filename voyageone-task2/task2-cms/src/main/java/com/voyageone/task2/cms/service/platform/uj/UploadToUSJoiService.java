@@ -136,11 +136,11 @@ public class UploadToUSJoiService extends BaseTaskService {
                         cartIds.forEach(cart -> finalProductModel.setPlatform(cart, platform));
                     }
 
-                    CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
+                    CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
                     CmsBtProductModel_Platform_Cart p0 = new CmsBtProductModel_Platform_Cart();
-                    p0.put("cartId",0);
-                    p0.put("mainProductCode",groupModel.getMainProductCode());
-                    productModel.getPlatforms().put("P0",p0);
+                    p0.put("cartId", 0);
+                    p0.put("mainProductCode", groupModel.getMainProductCode());
+                    productModel.getPlatforms().put("P0", p0);
 
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());

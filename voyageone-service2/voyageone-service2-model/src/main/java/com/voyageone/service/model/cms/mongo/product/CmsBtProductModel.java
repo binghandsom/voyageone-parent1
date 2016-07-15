@@ -12,15 +12,16 @@ import java.util.stream.Collectors;
  * {@link CmsBtProductModel} 的商品Model
  *
  * @author linanbin on 6/29/2016
- * @version 2.2.0
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.2.0
  */
 public class CmsBtProductModel extends ChannelPartitionModel {
 
-    /** 定义platforms的固定文字 **/
-    private final static String  PLATFORM_CART_PRE = "P";
+    /**
+     * 定义platforms的固定文字
+     **/
+    private final static String PLATFORM_CART_PRE = "P";
 
     // 原始channelId
     private String orgChannelId;
@@ -54,6 +55,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public String getOrgChannelId() {
         return StringUtils.isEmpty(orgChannelId) ? this.channelId : orgChannelId;
     }
+
     public void setOrgChannelId(String orgChannelId) {
         this.orgChannelId = orgChannelId;
     }
@@ -62,6 +64,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public Long getProdId() {
         return prodId;
     }
+
     public void setProdId(Long prodId) {
         this.prodId = prodId;
     }
@@ -70,6 +73,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public String getLock() {
         return lock;
     }
+
     public void setLock(String lock) {
         this.lock = lock;
     }
@@ -78,6 +82,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public String getComment() {
         return comment;
     }
+
     public void setComment(String comment) {
         this.comment = comment;
     }
@@ -86,6 +91,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public CmsBtProductModel_Common getCommon() {
         return common;
     }
+
     /**
      * 返回非空CmsBtProductModel_Common对象，
      */
@@ -95,6 +101,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         }
         return common;
     }
+
     public void setCommon(CmsBtProductModel_Common common) {
         this.common = common;
     }
@@ -103,12 +110,15 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public Map<String, CmsBtProductModel_Platform_Cart> getPlatforms() {
         return platforms;
     }
+
     public void setPlatforms(Map<String, CmsBtProductModel_Platform_Cart> platforms) {
         this.platforms = platforms;
     }
     //platform
+
     /**
      * 根据cartId返回对应的platforms.Pxx数据
+     *
      * @param cartId 平台Id
      * @return CmsBtProductModel_Platform_Cart
      */
@@ -116,60 +126,77 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         if (platforms == null) {
             return null;
         }
-        return platforms.get(PLATFORM_CART_PRE + cartId);
+        CmsBtProductModel_Platform_Cart platform = platforms.get(PLATFORM_CART_PRE + cartId);
+        if (platform != null) {
+            platform.getSkus().forEach(sku -> {
+                Object isSale = sku.get(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+                if (isSale != null) {
+                    if (isSale.toString().equalsIgnoreCase("true") || isSale.toString().equalsIgnoreCase("1")) {
+                        sku.setAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), true);
+                    } else {
+                        sku.setAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), false);
+                    }
+                }
+            });
+        }
+        return platform;
     }
+
     /**
      * 根据平台Id设置对应的平台数据信息
+     *
      * @param cartId 平台Id
-     * @param cart CmsBtProductModel_Platform_Cart
+     * @param cart   CmsBtProductModel_Platform_Cart
      */
     public void setPlatform(Integer cartId, CmsBtProductModel_Platform_Cart cart) {
         cart.setCartId(cartId);
         platforms.put(PLATFORM_CART_PRE + cartId, cart);
     }
+
     /**
      * 根据cartType返回对应的platforms.Pxx数据
+     *
      * @param cartType 平台类型
      * @return CmsBtProductModel_Platform_Cart
      */
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
-        if (platforms == null) {
-            return null;
-        }
-        return platforms.get(PLATFORM_CART_PRE + cartType.getId());
+        return getPlatform(cartType.getValue());
     }
+
     /**
      * 根据平台类型设置对应的平台数据信息
+     *
      * @param cartType 平台类型
-     * @param cart CmsBtProductModel_Platform_Cart
+     * @param cart     CmsBtProductModel_Platform_Cart
      */
     public void setPlatform(CartEnums.Cart cartType, CmsBtProductModel_Platform_Cart cart) {
         platforms.put(PLATFORM_CART_PRE + cartType.getId(), cart);
     }
+
     /**
      * 清空所有的平台信息
      */
-    public void platformsClear(){
+    public void platformsClear() {
         this.platforms = new HashMap<>();
     }
+
     /**
      * 根据平台Id清空该平台的platforms数据
+     *
      * @param cartId 平台Id
      */
-    public void platformClearByCartId (Integer cartId) {
+    public void platformClearByCartId(Integer cartId) {
         platforms.put(PLATFORM_CART_PRE + cartId, new CmsBtProductModel_Platform_Cart());
     }
 
     /**
      * 如果对应的平台数据存在则返回平台数据,否则返回一个空的平台数据对象
+     *
      * @param cartId 平台Id
      * @return
      */
     public CmsBtProductModel_Platform_Cart getPlatformNotNull(int cartId) {
-        if (platforms == null) {
-            return new CmsBtProductModel_Platform_Cart();
-        }
-        CmsBtProductModel_Platform_Cart pcObj = platforms.get(PLATFORM_CART_PRE + cartId);
+        CmsBtProductModel_Platform_Cart pcObj = getPlatform(cartId);
         if (pcObj == null) {
             return new CmsBtProductModel_Platform_Cart();
         }
@@ -181,6 +208,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public CmsBtProductModel_Feed getFeed() {
         return feed;
     }
+
     public void setFeed(CmsBtProductModel_Feed feed) {
         this.feed = feed;
     }
@@ -189,6 +217,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public CmsBtProductModel_Sales getSales() {
         return sales;
     }
+
     public void setSales(CmsBtProductModel_Sales sales) {
         this.sales = sales;
     }
@@ -197,6 +226,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public List<String> getTags() {
         return tags;
     }
+
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
@@ -205,6 +235,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     public List<String> getFreeTags() {
         return freeTags;
     }
+
     public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
     }

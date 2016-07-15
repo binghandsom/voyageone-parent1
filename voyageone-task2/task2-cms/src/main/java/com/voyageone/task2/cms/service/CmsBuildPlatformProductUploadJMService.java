@@ -764,7 +764,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
             newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
             newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
-            newSku.setStringAttribute("isSale", sku.getStringAttribute("isSale"));
+            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
             newSku.setStringAttribute("property", sku.getStringAttribute("property"));
