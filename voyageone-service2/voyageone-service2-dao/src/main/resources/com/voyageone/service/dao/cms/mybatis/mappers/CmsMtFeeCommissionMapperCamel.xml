@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtFeeCommissionModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `platform_id`, `cart_id`, `commission_type`, `cat_id`, `cat_path`, 
-        `commisson_rate`, `created`, `creater`, `modified`, `modifier`
+        `commisson_rate`, `comment`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,6 +37,9 @@
             </if>
             <if test="commissonRate != null" >
                 `commisson_rate`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -71,6 +74,9 @@
             </if>
             <if test="commissonRate != null" >
                 #{commissonRate,jdbcType=DOUBLE},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
             </if>
             <if test="created == null" >
                 now(),
@@ -119,6 +125,9 @@
             </if>
             <if test="commissonRate != null" >
                 `commisson_rate` = #{commissonRate,jdbcType=DOUBLE},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -170,6 +179,9 @@
             <if test="commissonRate != null" >
                 and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
             </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -212,6 +224,9 @@
             <if test="commissonRate != null" >
                 and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
             </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -250,6 +265,9 @@
             </if>
             <if test="commissonRate != null" >
                 and `commisson_rate` = #{commissonRate,jdbcType=DOUBLE}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

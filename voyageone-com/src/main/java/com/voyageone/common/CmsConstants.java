@@ -110,6 +110,7 @@ public class CmsConstants {
 
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
+
     }
 
     public interface DataAmount {
