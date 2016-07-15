@@ -15,9 +15,11 @@ public class CmsBtPlatformActiveLogModel extends ChannelPartitionModel {
 
     private Long groupId;
     private Integer cartId;
+    private String numIId = null;
     private String prodCode = null;
     private String result = null;
     private String comment = null;
+    private String failedComment = null;
     private String platformStatus = null;
     private String activeStatus = null;
     private String mainProdCode = null;
@@ -38,12 +40,28 @@ public class CmsBtPlatformActiveLogModel extends ChannelPartitionModel {
         this.prodCode = prodCode;
     }
 
+    public String getNumIId() {
+        return numIId;
+    }
+
+    public void setNumIId(String numIId) {
+        this.numIId = numIId;
+    }
+
     public String getComment() {
         return comment;
     }
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getFailedComment() {
+        return failedComment;
+    }
+
+    public void setFailedComment(String failedComment) {
+        this.failedComment = failedComment;
     }
 
     public String getActiveStatus() {

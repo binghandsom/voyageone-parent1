@@ -52,6 +52,7 @@ define([
                         $scope.vm.logList = res.data.logList;
                         $scope.vm.pageOption.total = res.data.total;
                         _.forEach($scope.vm.logList, function (logItem) {
+                            // 日期格式转换
                             var updTime = logItem.modified;
                             if (updTime && updTime.length > 19) {
                                 logItem.modified = updTime.substring(0, 19);
@@ -59,6 +60,7 @@ define([
                             if (logItem.result == '等待执行' || logItem.result == '' || logItem.result == undefined || logItem.result == null) {
                                 logItem.modified = '';
                             }
+                            // 设置平台名
                             var cartInfo = Carts.valueOf(logItem.cartId);
                             if (cartInfo == null || cartInfo == undefined) {
                                 logItem.cartName = '';
