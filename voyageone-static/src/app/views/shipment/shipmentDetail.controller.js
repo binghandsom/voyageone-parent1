@@ -9,8 +9,10 @@ define([
 
         }
 
-        ShipmentDetailController.prototype = function () {
-
+        ShipmentDetailController.prototype = {
+            back: function () {
+                window.location.href = "#/shipment/shipment_info";
+            }
         };
         return ShipmentDetailController;
     })());

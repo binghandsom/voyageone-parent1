@@ -17,7 +17,7 @@
             <div class="form-inline">
                 <div class="form-group">
                     <label for="SKU_STATUS" class="control-label" translate="TXT_STATUS"></label>
-                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
+                    <select name="SKU_STATUS" id="SKU_STATUS" class="form-control select" ng-model="ctrl.searchInfo.status"
                             ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
                         <option value="" translate="TXT_ALL"></option>
                     </select>
