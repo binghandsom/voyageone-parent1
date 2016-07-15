@@ -324,7 +324,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 List<String> names = java.util.Arrays.asList(vtmModelBean.getAttributeNames().split("[|]"));
                 List<String> values = java.util.Arrays.asList(vtmModelBean.getAttributeValues().split("[|]"));
                 if (names.size() != values.size()) {
-                    $error("sku:" + vtmModelBean.getSkus() + "属性值错误");
+                    $error("code:" + vtmModelBean.getCode() + "属性值错误");
+                    issueLog.log("target feed导入 属性值错误","code:"+vtmModelBean.getCode(), ErrorType.BatchJob, SubSystem.CMS);
                     continue;
                 }
 
