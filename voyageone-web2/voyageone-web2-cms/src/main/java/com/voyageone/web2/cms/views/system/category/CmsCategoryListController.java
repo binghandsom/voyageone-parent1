@@ -34,27 +34,26 @@ public class CmsCategoryListController extends CmsController {
     CategoryTreeAllService categoryTreeAllService;
 
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_LIST)
-    public AjaxResponse getCategoryList(@RequestBody Map params) {
+    public AjaxResponse getCategoryList(@RequestBody Map<String, Object> params) {
 
         Long total = cmsCategoryListService.getCategoryCount(params);
         List<JSONObject> resultData = cmsCategoryListService.getCategoryList(params);
-        Map<String,Object> resultBean = new HashMap<>();
-        resultBean.put("total",total);
-        resultBean.put("resultData",resultData);
+        Map<String, Object> resultBean = new HashMap<>();
+        resultBean.put("total", total);
+        resultBean.put("resultData", resultData);
 
         // 返回用户信息
         return success(resultBean);
     }
 
     @RequestMapping(SYSTEM.CATEGORY.GET_NEW_CATEGORY_LIST)
-    public AjaxResponse getNewCategoryList(@RequestBody Map params) {
-
+    public AjaxResponse getNewCategoryList() {
         // 返回用户信息
         return success(categoryTreeAllService.getCategoriesByChannelId(getUser().getSelChannelId(), getLang()));
     }
 
     @RequestMapping(SYSTEM.CATEGORY.GET_CATEGORY_DETAIL)
-    public AjaxResponse getCategoryById(@RequestBody Map<String ,String> id) {
+    public AjaxResponse getCategoryById(@RequestBody Map<String, String> id) {
         String categoryId = StringUtils.trimToNull(id.get("id"));
         if (categoryId == null) {
             $warn("getCategoryById 缺少参数");
@@ -69,7 +68,7 @@ public class CmsCategoryListController extends CmsController {
     }
 
     @RequestMapping(SYSTEM.CATEGORY.UPDATE_CATEGORY_SCHEMA)
-    public  AjaxResponse updateCategorySchema(@RequestBody Map categorySchema) {
+    public AjaxResponse updateCategorySchema(@RequestBody Map<String, Object> categorySchema) {
 
         CmsMtCategorySchemaModel resultBean = cmsCategoryListService.updateCategorySchema(categorySchema, getUser().getUserName());
         // 返回用户信息

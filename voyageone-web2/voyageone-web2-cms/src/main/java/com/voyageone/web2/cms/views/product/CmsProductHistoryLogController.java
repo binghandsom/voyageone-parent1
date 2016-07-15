@@ -37,7 +37,7 @@ public class CmsProductHistoryLogController extends CmsController {
         if (rsList != null) {
             count = rsList.size();
         }
-        result.put("loglist", rsList);
+        result.put("logList", rsList);
         result.put("total", count);
         return success(result);
     }

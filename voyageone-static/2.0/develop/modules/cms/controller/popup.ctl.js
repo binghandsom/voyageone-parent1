@@ -460,7 +460,8 @@ define([
             "upload": {
                 "templateUrl": "views/pop/image/imgSetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
-                "controller": 'popImgSettingCtl'
+                "controller": 'popImgSettingCtl as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -868,8 +869,8 @@ define([
         }
 
         //产品详情页，弹出历史纪录的上下架历史纪录
-        $scope.openHistoryPutOnOff = function () {
-            return openModel(popActions.history.putOnOff);
+        $scope.openHistoryPutOnOff = function (code, cartId, cartList) {
+            return openModel(popActions.history.putOnOff, { code:code, cartId:cartId, cartList:cartList });
         };
 
         //全店操作页面中，操作按钮弹出
@@ -1273,6 +1274,7 @@ define([
                 var modalInstance = $uibModal.open({
                     templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
                     controller: popActions.jumei.jmPromotionDetail.detail.controller,
+                    size:'md',
                     resolve: {
                         context: function () {
                             return context;

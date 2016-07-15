@@ -15,7 +15,6 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -30,6 +29,8 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -77,6 +78,8 @@ public class CmsFieldEditService extends BaseAppService {
     private SxProductService sxProductService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private MqSender sender;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -220,6 +223,22 @@ public class CmsFieldEditService extends BaseAppService {
         updObj.setUpdateParameters(statusVal, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
         WriteResult rs = productGroupService.updateMulti(updObj, userInfo.getSelChannelId());
         $debug("批量修改属性.(商品上下架) 结果1=：" + rs.toString());
+
+        // 发送请求到MQ,插入操作历史记录
+        Map<String, Object> logParams = new HashMap<>(6);
+        logParams.put("channelId", userInfo.getSelChannelId());
+        logParams.put("cartIdList", cartList);
+        logParams.put("activeStatus", statusVal.name());
+        logParams.put("creater", userInfo.getUserName());
+        if (cartId == null || cartId == 0) {
+            logParams.put("comment", "高级检索 批量上下架(全店铺操作)");
+        } else {
+            logParams.put("comment", "高级检索 批量上下架");
+        }
+        for (String prodCode : productCodes) {
+            logParams.put("prodCode", prodCode);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        }
 
         for (Integer cartIdVal : cartList) {
             if (productCodes.size() > 0) {

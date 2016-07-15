@@ -31,7 +31,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPutOnOff()">
+                                    <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(vm.productComm.fields.code,0,vm.mastData.platformList)">
                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                     </a>
                                 </li>
@@ -162,7 +162,7 @@
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image6)+ ')'}">
 
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images6 track by image| limitTo: 10"
+                                                        <div  ng-repeat="image in vm.tempImage.images6 | limitTo: 10"
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>
@@ -186,7 +186,7 @@
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image7)+ ')'}">
 
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images7 track by image| limitTo: 10"
+                                                        <div  ng-repeat="image in vm.tempImage.images7 | limitTo: 10"
                                                               class="thumbnail">
                                                             <img ng-click="vm.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                         </div>

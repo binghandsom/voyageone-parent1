@@ -231,15 +231,6 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute("pPriceSaleEd", priceSaleEd);
     }
 
-
-    //平台佣金费率,商品级
-    public Double getpCommissionRate() {
-        return getDoubleAttribute("commissionRate");
-    }
-    public void setpCommissionRate(Double commissionRate) {
-        setAttribute("commissionRate", commissionRate);
-    }
-
     //fields
     public BaseMongoMap<String, Object> getFields() {
         return getAttribute(FIELDS);
