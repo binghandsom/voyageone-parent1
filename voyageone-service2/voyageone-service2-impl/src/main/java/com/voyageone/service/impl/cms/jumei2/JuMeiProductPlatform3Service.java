@@ -201,7 +201,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
                     getDealByHashIDRequest.setJumei_hash_id(response.getSell_hash_id());
                     HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(shopBean, getDealByHashIDRequest);
-                    if (getDealByHashIDResponse.getEnd_time().getTime() > modelCmsBtJmPromotion.getActivityStart().getTime()) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
+                    if (getDealByHashIDResponse.getEnd_time().getTime() >= modelCmsBtJmPromotion.getActivityStart().getTime()) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
                         model.setJmHashId(response.getSell_hash_id());
                         if (modelCmsBtJmPromotion.getActivityEnd().getTime() > getDealByHashIDResponse.getEnd_time().getTime()) {//if true then 本次活动时间大于deal的结束时间 延期
                             model.setDealEndTimeStatus(1);
@@ -281,7 +281,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
-            List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,20);
+            List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
                 HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
@@ -324,7 +324,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
-            List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,20);
+            List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
                 HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
