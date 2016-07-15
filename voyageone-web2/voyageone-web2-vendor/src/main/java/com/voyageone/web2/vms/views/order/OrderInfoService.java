@@ -118,7 +118,7 @@ public class OrderInfoService extends BaseService {
      */
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
         SortParam sortParam = new SortParam();
-        sortParam.setColumnName(VmsConstants.ORDER_TIME);
+        sortParam.setColumnName(VmsConstants.CONSOLIDATION_ORDER_TIME);
         sortParam.setDirection((null != orderSearchInfo.getStatus()
                 && orderSearchInfo.getStatus() == STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
                 Order.Direction.ASC : Order.Direction.DESC);
@@ -291,7 +291,7 @@ public class OrderInfoService extends BaseService {
             skuCell.setCellStyle(defaultRowCellStyle);
 
             Cell descriptionCell = dataRow.createCell(descriptionCellNumber);
-            descriptionCell.setCellValue(vmsBtOrderDetailModel.getDecription());
+            descriptionCell.setCellValue(vmsBtOrderDetailModel.getDescription());
             descriptionCell.setCellStyle(defaultRowCellStyle);
 
             Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
@@ -377,7 +377,7 @@ public class OrderInfoService extends BaseService {
                                 setReservationId(vmsBtOrderDetailModel.getReservationId());
                                 setOrderId(vmsBtOrderDetailModel.getOrderId());
                                 setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
-                                setDesc(vmsBtOrderDetailModel.getDecription());
+                                setDesc(vmsBtOrderDetailModel.getDescription());
                                 setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
                                 setSku(vmsBtOrderDetailModel.getClientSku());
                                 setStatus(vmsBtOrderDetailModel.getStatus());
@@ -404,7 +404,7 @@ public class OrderInfoService extends BaseService {
                     orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
                     orderInfoBean.setOrderId(vmsBtOrderDetailModel.getOrderId());
                     orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
-                    orderInfoBean.setDesc(vmsBtOrderDetailModel.getDecription());
+                    orderInfoBean.setDesc(vmsBtOrderDetailModel.getDescription());
                     orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                     orderInfoBean.setPrice(vmsBtOrderDetailModel.getClientRetailPrice());
                     orderInfoBean.setStatus(vmsBtOrderDetailModel.getStatus());
