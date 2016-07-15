@@ -24,6 +24,15 @@ define([
                 backdrop: 'static',
                 size: 'lg'
             }
+        },
+        feed:{
+            imagePreview:{
+                templateUrl: "views/pop/feed/image/index.tpl.html",
+                controllerUrl: "views/pop/feed/image/index.ctl",
+                controller: 'ImagePreviewController',
+                backdrop: 'static',
+                size: 'md'
+            }
         }
         // 在这里增加你的 popup 配置
     };
@@ -53,6 +62,9 @@ define([
             },
             openAddShipment: function () {
                 open(popups.orderInfo.addShipment);
+            },
+            openImagePreview: function (context) {
+                open(popups.feed.imagePreview,context);
             }
             // 在这里增加你的打开函数
         };
