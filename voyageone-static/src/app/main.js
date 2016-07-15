@@ -57,7 +57,8 @@ require.config({
             'md5',
             'notify',
             'angular-file-upload',
-            'vo-libs'
+            'vo-libs',
+            'filestyle'
         ]
     },
     deps: ['vms']
