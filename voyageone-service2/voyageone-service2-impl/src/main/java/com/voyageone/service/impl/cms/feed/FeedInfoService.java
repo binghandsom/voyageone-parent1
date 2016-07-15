@@ -100,8 +100,7 @@ public class FeedInfoService extends BaseService {
         // 获取product name
         String name = (String) searchValue.get("name");
         if (!StringUtils.isEmpty(name)) {
-            name = Matcher.quoteReplacement(name);
-            result.append("{").append(MongoUtils.splicingValue("name", name, "$regex"));
+            result.append("{").append(MongoUtils.splicingValue("name", replaceRegexReservedChar(name), "$regex"));
             result.append("},");
         }
 
@@ -150,15 +149,35 @@ public class FeedInfoService extends BaseService {
      * 转义正则表达式保留字
      */
     private String replaceRegexReservedChar(String regStr) {
-        // 替换保留字 * . ? + $ ^ [ ] ( ) { } | \
-        return regStr.replaceAll("\\\\", "\\\\\\\\")
-                .replaceAll("\\(", "\\\\\\\\(").replaceAll("\\)", "\\\\\\\\)")
-                .replaceAll("\\{", "\\\\\\\\{").replaceAll("\\}", "\\\\\\\\}")
-                .replaceAll("\\[", "\\\\\\\\[").replaceAll("\\]", "\\\\\\\\]")
-                .replaceAll("\\*", "\\\\\\\\*").replaceAll("\\.", "\\\\\\\\.")
-                .replaceAll("\\?", "\\\\\\\\?").replaceAll("\\+", "\\\\\\\\+")
-                .replaceAll("\\^", "\\\\\\\\^").replaceAll("\\$", "\\\\\\\\$")
-                .replaceAll("\\|", "\\\\\\\\|");
+        // 替换保留字   \ * . ? + $ ^ [ ] ( ) { } |
+        char reservedChars[] = {'\\','*','.','?','+','$','^','[',']','(',')','{','}','|'};
+        for (char reservedChar : reservedChars) {
+            regStr = replace(regStr, reservedChar);
+        }
+
+        return regStr;
+    }
+
+    /**
+     * 替换转义字符
+     */
+    private String replace(String regStr, char replaceChar) {
+        if (regStr.indexOf(replaceChar) == -1) {
+            return regStr;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i< regStr.length(); i++) {
+            char c = regStr.charAt(i);
+            if (c == replaceChar) {
+                if (c != '\\') {
+                    sb.append("\\\\");
+                } else {
+                    sb.append("\\\\\\");
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 
     /**
