@@ -52,7 +52,7 @@ public class OrderInfoController extends BaseController {
         Map<String, Object> orderInfo = new HashMap<>();
         Date date = new Date();
         orderInfo.put("orderInfo", orderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
-        $debug (String.valueOf(new Date().getTime() - date.getTime()));
+        $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(orderInfo);
     }
 

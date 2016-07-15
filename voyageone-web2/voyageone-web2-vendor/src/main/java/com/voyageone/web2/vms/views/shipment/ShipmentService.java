@@ -57,9 +57,7 @@ public class ShipmentService {
 
     public Object submit(UserSessionBean user, VmsBtShipmentModel vmsBtShipmentModel) {
 
-        if (!user.getSelChannel().getId().equals(vmsBtShipmentModel.getChannelId()))
-            throw new BusinessException("8000022");
-
+        vmsBtShipmentModel.setChannelId(user.getSelChannelId());
         boolean correct = null != vmsBtShipmentModel.getChannelId();
         correct = correct && (null != vmsBtShipmentModel.getStatus());
         correct = correct && (null != vmsBtShipmentModel.getShipmentName());

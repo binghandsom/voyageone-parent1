@@ -10,6 +10,10 @@ import java.util.Date;
  */
 public class ShipmentBean extends VmsBtShipmentModel {
 
+    public ShipmentBean() {
+        
+    }
+
     public ShipmentBean(VmsBtShipmentModel vmsBtShipmentModel) {
         if (null != vmsBtShipmentModel) {
             this.setId(vmsBtShipmentModel.getId());
