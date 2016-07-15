@@ -1135,7 +1135,7 @@
                                     // 没有填值, 并且有默认值, 那么就使用默认值
                                     // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
                                     // 所以这里要单独判断
-                                    if (!exists(field.value) && exists(field.defaultValue)) {
+                                    if (!(field.value) && exists(field.defaultValue)) {
                                         _value = field.defaultValue;
                                         field.value = getInputValue(_value, field, valueTypeRule);
                                     }

@@ -226,7 +226,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      */
-    private void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -843,7 +843,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
-        String propsItem = jdCommonSchema.getPropsItem();
+        String propsItem = jdCommonSchema.getPropsProduct();
         List<Field> itemFieldList =null;
         if (!StringUtils.isEmpty(propsItem)) {
             // 将取出的propsItem转换为字段列表
