@@ -284,6 +284,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
+                $info("jmHtDealUpdateDealPriceBatch:"+ model.getProductCode()+JacksonUtil.bean2Json(request.getUpdate_data()));
                 HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setPriceStatus(3);
@@ -327,6 +328,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
+                $info("jmHtDealUpdateDealStockBatch:"+ model.getProductCode()+JacksonUtil.bean2Json(request.getUpdate_data()));
                 HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setStockStatus(3);
