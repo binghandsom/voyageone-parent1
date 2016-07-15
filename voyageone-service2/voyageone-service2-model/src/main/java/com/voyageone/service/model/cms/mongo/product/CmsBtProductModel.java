@@ -160,10 +160,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
      * @return CmsBtProductModel_Platform_Cart
      */
     public CmsBtProductModel_Platform_Cart getPlatform(CartEnums.Cart cartType) {
-        if (platforms == null) {
-            return null;
-        }
-        return platforms.get(PLATFORM_CART_PRE + cartType.getId());
+        return getPlatform(cartType.getValue());
     }
 
     /**
@@ -199,10 +196,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
      * @return
      */
     public CmsBtProductModel_Platform_Cart getPlatformNotNull(int cartId) {
-        if (platforms == null) {
-            return new CmsBtProductModel_Platform_Cart();
-        }
-        CmsBtProductModel_Platform_Cart pcObj = platforms.get(PLATFORM_CART_PRE + cartId);
+        CmsBtProductModel_Platform_Cart pcObj = getPlatform(cartId);
         if (pcObj == null) {
             return new CmsBtProductModel_Platform_Cart();
         }
