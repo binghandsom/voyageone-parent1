@@ -38,6 +38,7 @@ define([
                 masterCategory:null,
                 lockStatus:null,
                 feedInfo:null,
+                autoApprovePrice:null,
                 autoApprovePrice:null
             };
         }
@@ -55,7 +56,7 @@ define([
                 });
 
                 self.menuService.getCmsConfig().then(function(resp){
-                    console.log("resp",resp);
+                    self.product.autoApprovePrice = resp.autoApprovePrice[0];
                 });
 
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
