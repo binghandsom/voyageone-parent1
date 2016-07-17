@@ -58,23 +58,26 @@ public abstract class CustomWordModule extends VOAbsLoggable {
         String completeImageOriUrl = "";
 
         try {
-            String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", imageName);
-            $info("[" + moduleName + "]取得图片大小url:" + url);
-            String result = HttpUtils.get(url, null);
-            result = result.substring(result.indexOf("image"));
-            String[] args = result.split("image\\.");
-            Map<String, String> picSizeMap = new HashMap<>();
-            for (String param : args) {
-                if (param.indexOf("=") > 0) {
-                    String[] keyVal = param.split("=");
-                    if (keyVal.length > 1) {
-                        picSizeMap.put(keyVal[0], keyVal[1]);
-                    } else {
-                        picSizeMap.put(keyVal[0], "");
-                    }
-                }
-            }
-            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", imageName, picSizeMap.get("width"), picSizeMap.get("height"));
+            // 20160717 tom 换一种方法 START
+//            String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", imageName);
+//            $info("[" + moduleName + "]取得图片大小url:" + url);
+//            String result = HttpUtils.get(url, null);
+//            result = result.substring(result.indexOf("image"));
+//            String[] args = result.split("image\\.");
+//            Map<String, String> picSizeMap = new HashMap<>();
+//            for (String param : args) {
+//                if (param.indexOf("=") > 0) {
+//                    String[] keyVal = param.split("=");
+//                    if (keyVal.length > 1) {
+//                        picSizeMap.put(keyVal[0], keyVal[1]);
+//                    } else {
+//                        picSizeMap.put(keyVal[0], "");
+//                    }
+//                }
+//            }
+//            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", imageName, picSizeMap.get("width"), picSizeMap.get("height"));
+            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", imageName);
+            // 20160717 tom 换一种方法 END
             $info("[" + moduleName + "]取得原始图片url:" + completeImageOriUrl);
         } catch (Exception e) {
             throw new BusinessException("[\" + moduleName + \"]取得原始图片url失败!(imageName:" + imageName + ")");

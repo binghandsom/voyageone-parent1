@@ -89,23 +89,26 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                     // 使用原图
                     // start
                     try {
-                        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", cmsBtProductModelFieldImage.getName());
-                        $info("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
-                        String result = HttpUtils.get(url, null);
-                        result = result.substring(result.indexOf("image"));
-                        String[] args = result.split("image\\.");
-                        Map<String, String> responseMap = new HashMap<>();
-                        for (String param : args) {
-                            if (param.indexOf("=") > 0) {
-                                String[] keyVal = param.split("=");
-                                if (keyVal.length > 1) {
-                                    responseMap.put(keyVal[0], keyVal[1]);
-                                } else {
-                                    responseMap.put(keyVal[0], "");
-                                }
-                            }
-                        }
-                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
+                        // 20160717 tom 换一种方法 START
+//                        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", cmsBtProductModelFieldImage.getName());
+//                        $info("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
+//                        String result = HttpUtils.get(url, null);
+//                        result = result.substring(result.indexOf("image"));
+//                        String[] args = result.split("image\\.");
+//                        Map<String, String> responseMap = new HashMap<>();
+//                        for (String param : args) {
+//                            if (param.indexOf("=") > 0) {
+//                                String[] keyVal = param.split("=");
+//                                if (keyVal.length > 1) {
+//                                    responseMap.put(keyVal[0], keyVal[1]);
+//                                } else {
+//                                    responseMap.put(keyVal[0], "");
+//                                }
+//                            }
+//                        }
+//                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
+                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", cmsBtProductModelFieldImage.getName());
+                        // 20160717 tom 换一种方法 END
                         $info("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
                     } catch (Exception e) {
                         throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
