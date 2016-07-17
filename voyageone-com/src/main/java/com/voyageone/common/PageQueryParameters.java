@@ -12,10 +12,10 @@ public class PageQueryParameters implements Serializable {
     private static final long serialVersionUID = -6121501427655885029L;
     private int pageIndex;
     private int pageRowCount;
-    private String MinValue;
-    private String MaxValue;
-    private EnumPaginationType PainationType;
-    private String[] QueryColumn;
+    private String minValue;
+    private String maxValue;
+    private EnumPaginationType painationType;
+    private String[] queryColumn;
 
     public String getParameterValue(String key) {
         if (!containsKey(key)) {
@@ -95,36 +95,36 @@ public class PageQueryParameters implements Serializable {
     }
 
     public String getMinValue() {
-        return MinValue;
+        return minValue;
     }
 
     public void setMinValue(String minValue) {
-        MinValue = minValue;
+        this.minValue = minValue;
     }
 
-    public String getmaxValue() {
-        return MaxValue;
+    public String getMaxValue() {
+        return maxValue;
     }
 
-    public void setmaxValue(String maxValue) {
-        MaxValue = maxValue;
+    public void setMaxValue(String maxValue) {
+       this.maxValue = maxValue;
     }
 
 
     public EnumPaginationType getPainationType() {
-        return PainationType;
+        return painationType;
     }
 
     public void setPainationType(EnumPaginationType painationType) {
-        PainationType = painationType;
+        this.painationType = painationType;
     }
 
     public String[] getQueryColumn() {
-        return QueryColumn;
+        return queryColumn;
     }
 
     public void setQueryColumn(String[] queryColumn) {
-        QueryColumn = queryColumn;
+        queryColumn = queryColumn;
     }
 
     public String GetValue(String key) {
@@ -165,7 +165,7 @@ public class PageQueryParameters implements Serializable {
         return mapResult;
     }
 
-    public Map<String, Object> FilerParameter(Map<String, Object> pMap) {
+    private Map<String, Object> FilerParameter(Map<String, Object> pMap) {
         Map<String, Object> reseltMap = new HashMap<String, Object>();
         for (String key : pMap.keySet()) {
             Object value = pMap.get(key);

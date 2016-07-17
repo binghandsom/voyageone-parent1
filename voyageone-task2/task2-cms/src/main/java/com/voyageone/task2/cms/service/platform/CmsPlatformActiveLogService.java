@@ -70,7 +70,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             queryObj = new JomgoQuery();
             queryObj.setQuery("{'productCodes':#,'cartId':#}");
             queryObj.setParameters(prodCode, cartId);
-            queryObj.setProjectionExt("mainProductCode", "groupId");
+            queryObj.setProjectionExt("mainProductCode", "groupId", "numIId");
             CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, queryObj);
             if (grpObj == null) {
                 $error("CmsPlatformActiceLogService 产品对应的group不存在 参数=" + messageMap.toString());
@@ -90,6 +90,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             model.setComment((String) messageMap.get("comment"));
             model.setGroupId(grpObj.getGroupId());
             model.setMainProdCode(grpObj.getMainProductCode());
+            model.setNumIId(grpObj.getNumIId());
             model.setResult("0");
             model.setCreater((String) messageMap.get("creater"));
             model.setCreated(DateTimeUtil.getNow());

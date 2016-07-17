@@ -73,10 +73,10 @@
 						<div class="form-inline">
 							<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-							<!--活动按钮组-->
-							<button class="btn btn-success" ng-click="openJmPromotionDetail({search:search},search)"><i class="fa fa-plus"></i>&nbsp;新建聚美专场</button>
-							<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;新建其他平台活动</button>
-							<button class="btn btn-primary" ng-click="openMrbStock('lg',vm.groupSelList)"><i class="fa fa-plus"></i>&nbsp;{{'TXT_SEPARATE_NEW_TASK'|translate}}</button>
+							<!--&lt;!&ndash;活动按钮组&ndash;&gt;-->
+							<!--<button class="btn btn-success" ng-click="openJmPromotionDetail({search:search},search)"><i class="fa fa-plus"></i>&nbsp;新建聚美专场</button>-->
+							<!--<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;新建其他平台活动</button>-->
+							<!--<button class="btn btn-primary" ng-click="openMrbStock('lg',vm.groupSelList)"><i class="fa fa-plus"></i>&nbsp;{{'TXT_SEPARATE_NEW_TASK'|translate}}</button>-->
 						</div><!-- .form-inline -->
 					</div>
 				</div>
@@ -87,6 +87,22 @@
 	<!-- .accordion -->
 	<div class="box">
 		<div class="box-body-new">
+			<div class="btn-group" uib-dropdown ng-controller="popupCtrl">
+				<button  type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
+					<i class="fa fa-exchange"></i>&nbsp;{{'BTN_NEW_PROMOTION'| translate}}&nbsp;<span class="caret"></span>
+				</button>
+				<ul uib-dropdown-menu>
+					<li>
+						<a href="javascript:void(0)" ng-click="openJmPromotionDetail({search:search},search)">新建聚美专场</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" ng-click="openPromotion('md',vm.platformTypeList,null,search)">新建其他平台活动</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" ng-click="openMrbStock('lg',vm.groupSelList)">{{'TXT_SEPARATE_NEW_TASK'|translate}}</a>
+					</li>
+				</ul>
+			</div>
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
