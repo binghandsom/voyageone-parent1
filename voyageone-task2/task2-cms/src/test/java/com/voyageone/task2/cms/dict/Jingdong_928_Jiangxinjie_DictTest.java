@@ -114,7 +114,7 @@ public class Jingdong_928_Jiangxinjie_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -163,7 +163,7 @@ public class Jingdong_928_Jiangxinjie_DictTest {
 
                     RuleExpression useOriUrl = null;
 
-                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
                     ruleRoot.addRuleWord(new CustomWord(word));
                 }
             }
