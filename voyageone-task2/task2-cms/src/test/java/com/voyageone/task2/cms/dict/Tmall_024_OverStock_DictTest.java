@@ -42,7 +42,8 @@ public class Tmall_024_OverStock_DictTest {
 
 	@Test
 	public void dictTest() {
-		SxData sxData = sxProductService.getSxProductDataByGroupId("024", 890844L);
+//		SxData sxData = sxProductService.getSxProductDataByGroupId("024", 890844L);
+		SxData sxData = sxProductService.getSxProductDataByGroupId("024", 890914L);
 		sxData.setCartId(23);
 		ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 		ShopBean shopProp = Shops.getShop("024", 23);
