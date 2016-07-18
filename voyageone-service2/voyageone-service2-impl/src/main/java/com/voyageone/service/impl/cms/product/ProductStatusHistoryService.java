@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 @Service
 public class ProductStatusHistoryService extends BaseService {
     @Autowired
@@ -39,7 +40,7 @@ public class ProductStatusHistoryService extends BaseService {
         return daoExt.selectCount(parameters.getSqlMapParameter());
     }
     @VOTransactional
-    public void insert(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
+    public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory = null;
         for (String code : codes) {
@@ -65,6 +66,7 @@ public class ProductStatusHistoryService extends BaseService {
         productStatusHistory.setModifier(modifier);
         productStatusHistory.setCreater(modifier);
         productStatusHistory.setCreated(new Date());
+        productStatusHistory.setComment("");
         return productStatusHistory;
     }
 }

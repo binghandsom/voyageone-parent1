@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import org.junit.Test;
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -20,8 +23,15 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
 
     @Test
     public void testSendMessage() throws Exception {
+        List<Integer> list=new ArrayList<>();
+        for (int i=0;i<40;i++)
+        {
+            list.add(i);
+        }
+       List<List<Integer>> pageList= CommonUtil.splitList(list,20);
         Map<String,Object> message=new HashMap<>();
         message.put("test","111");
         sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob, message);
     }
+
 }

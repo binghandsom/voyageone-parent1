@@ -37,6 +37,7 @@ define([
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
+                scope.limitNumber = limitNumber;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -340,6 +341,14 @@ define([
                         return element.isSale === true;
                     });
                 }
+
+                function limitNumber(event,price){
+                    var patten = /[\d]/;
+                    console.log(price)
+                    if(!patten.test(event.key) || price > Math.pow(10,14))
+                        event.preventDefault();
+                }
+
             }
         };
     });
