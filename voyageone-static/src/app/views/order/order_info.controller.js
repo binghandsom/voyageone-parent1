@@ -54,7 +54,6 @@ define([
             self.orderInfoService.init().then(function (data) {
                 // 获取当前shipment
                 self.currentShipment = data.currentShipment;
-
                 // 获取可选的订单状态
                 self.searchOrderStatus = data.searchOrderStatus;
 
@@ -169,8 +168,13 @@ define([
             });
         };
 
-        OrderInfoController.prototype.popAddToShipment = function () {
-            this.popups.openAddShipment();
+        OrderInfoController.prototype.popAddToShipment = function (item) {
+            var self = this;
+            var items = {
+                shipmentName: self.currentShipment.shipmentName,
+                orderId: item.orderId
+            };
+            this.popups.openAddShipment(items);
         };
         return OrderInfoController;
 

@@ -59,8 +59,8 @@ define([
             openShipment: function (searchOrderStatus) {
                 return open(popups.orderInfo.newShipment, searchOrderStatus);
             },
-            openAddShipment: function () {
-                open(popups.orderInfo.addShipment);
+            openAddShipment: function (item) {
+                open(popups.orderInfo.addShipment,item);
             },
             openImagePreview: function (context) {
                 open(popups.feed.imagePreview,context);
