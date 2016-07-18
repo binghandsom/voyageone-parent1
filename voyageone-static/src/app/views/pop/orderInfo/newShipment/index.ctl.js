@@ -5,12 +5,13 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('NewShipmentController', (function () {
-        function NewShipmentController(alert, notify, confirm, shipmentPopupService, context) {
+        function NewShipmentController(alert, notify, confirm, shipmentPopupService, context, $uibModalInstance) {
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
             this.shipmentPopupService = shipmentPopupService;
             this.shipmentExisted = false;
+            this.$uibModalInstance = $uibModalInstance;
             this.expressCompanies = [
                 {
                     name: "test",
@@ -60,7 +61,7 @@ define([
                     if (self.shipment.shippedDateTimestamp)
                         self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
                 }
-                self.modal.close(self.shipment);
+                self.$uibModalInstance.close(self.shipment);
             });
 
         };
