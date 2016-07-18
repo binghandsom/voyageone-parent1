@@ -62,6 +62,10 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
+            clear: function () {
+                var self = this;
+                self.searchInfo.searchCondition = "";
+            },
             save: function (list) {
                 var self = this;
                 if (list.common.fields.hsCodePrivate) {
@@ -77,7 +81,10 @@ define([
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
             },
-
+            clear:function(){
+var self=this;
+                self.searchInfo.searchCondition="";
+            },
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) return;
                 var picList = [];
