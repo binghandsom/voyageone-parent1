@@ -3,6 +3,7 @@ package com.voyageone.web2.vms.views.shipment;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
@@ -23,14 +24,10 @@ import java.util.stream.Collectors;
  * Created by vantis on 16-7-14.
  */
 @Service
-public class ShipmentService {
-
-    private ShipmentService vmsShipmentService;
+public class VmsShipmentService {
 
     @Autowired
-    public ShipmentService(ShipmentService vmsShipmentService) {
-        this.vmsShipmentService = vmsShipmentService;
-    }
+    private ShipmentService shipmentService;
 
     public List<ShipmentStatus> getAllStatus() {
         List<TypeBean> shipmentStatusList = Types.getTypeList(VmsConstants.TYPE_ID.SHIPMENT_STATUS);
@@ -70,7 +67,7 @@ public class ShipmentService {
 
         vmsBtShipmentModel.setModifier(user.getUserName());
 
-        return vmsShipmentService.save(vmsBtShipmentModel);
+        return shipmentService.save(vmsBtShipmentModel);
     }
 
     /**
@@ -85,7 +82,7 @@ public class ShipmentService {
             put("channelId", user.getSelChannel().getId());
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
         }};
-        VmsBtShipmentModel vmsBtShipmentModel = vmsShipmentService.select(shipmentSearchParams);
+        VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModel) return null;
         return new ShipmentBean(vmsBtShipmentModel);
     }

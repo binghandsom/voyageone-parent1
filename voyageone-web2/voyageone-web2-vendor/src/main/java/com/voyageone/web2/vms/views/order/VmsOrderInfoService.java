@@ -39,15 +39,15 @@ import java.util.stream.Collectors;
  * Created by vantis on 16-7-6.
  */
 @Service
-public class OrderInfoService extends BaseService {
+public class VmsOrderInfoService extends BaseService {
 
-    private OrderDetailService vmsOrderDetailService;
-    private ShipmentService vmsShipmentService;
+    private OrderDetailService orderDetailService;
+    private ShipmentService shipmentService;
 
     @Autowired
-    public OrderInfoService(OrderDetailService vmsOrderDetailService, ShipmentService vmsShipmentService) {
-        this.vmsOrderDetailService = vmsOrderDetailService;
-        this.vmsShipmentService = vmsShipmentService;
+    public VmsOrderInfoService(OrderDetailService orderDetailService, ShipmentService shipmentService) {
+        this.orderDetailService = orderDetailService;
+        this.shipmentService = shipmentService;
     }
 
     /**
@@ -131,7 +131,7 @@ public class OrderInfoService extends BaseService {
             put("consolidationOrderId", item.getOrderId());
         }};
 
-        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
                 .stream()
                 .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
                         .equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
@@ -142,7 +142,7 @@ public class OrderInfoService extends BaseService {
 
         // 检测通过 进行状态变更
         cancelOrderParam.put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
-        return vmsOrderDetailService.updateOrderStatus(cancelOrderParam);
+        return orderDetailService.updateOrderStatus(cancelOrderParam);
     }
 
     /**
@@ -166,7 +166,7 @@ public class OrderInfoService extends BaseService {
             put("consolidationOrderId", item.getOrderId());
         }};
 
-        List<VmsBtOrderDetailModel> invalidOrderModelList = vmsOrderDetailService.selectOrderList(checkParam)
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
                 .stream()
                 .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
                         .equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
@@ -175,7 +175,7 @@ public class OrderInfoService extends BaseService {
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
             throw new BusinessException("8000020");
 
-        return vmsOrderDetailService.updateOrderStatus(cancelSkuParam);
+        return orderDetailService.updateOrderStatus(cancelSkuParam);
     }
 
     /**
@@ -201,7 +201,7 @@ public class OrderInfoService extends BaseService {
 
         // 获取订单信息
         List<VmsBtOrderDetailModel> orderDetailList =
-                vmsOrderDetailService.select(sortedSelectParams);
+                orderDetailService.select(sortedSelectParams);
         $debug("pickingList data: " + orderDetailList.size() + " in total.");
 
         // 生成Excel
@@ -337,11 +337,11 @@ public class OrderInfoService extends BaseService {
      */
     private List<AbstractSubOrderInfoBean> getPlatformOrderInfoBeen(Map<String, Object>
                                                                             orderSearchParamsWithLimitAndSort) {
-        return vmsOrderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
+        return orderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
                 .map(consolidationOrderId -> {
 
                     // 获取平台订单id下的所有的sku
-                    List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService
+                    List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = orderDetailService
                             .selectOrderList(new HashMap<String, Object>() {{
                                 put("channelId", orderSearchParamsWithLimitAndSort.get("channelId"));
                                 put("consolidationOrderId", consolidationOrderId);
@@ -380,7 +380,7 @@ public class OrderInfoService extends BaseService {
      * @return 订单列表
      */
     private List<AbstractSubOrderInfoBean> getSkuOrderInfoBean(Map<String, Object> orderSearchParamsWithLimitAndSort) {
-        List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsOrderDetailService.selectOrderList
+        List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = orderDetailService.selectOrderList
                 (orderSearchParamsWithLimitAndSort);
         return vmsBtOrderDetailModelList.stream()
                 .map(vmsBtOrderDetailModel -> {
@@ -438,12 +438,12 @@ public class OrderInfoService extends BaseService {
             // 平台订单
             Map<String, Object> orderSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfo, sortParam);
-            return vmsOrderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
+            return orderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
         } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(this.getChannelConfigs(user).getVendorOperateType())) {
             // 大订单sku
             Map<String, Object> skuSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfo, sortParam);
-            return vmsOrderDetailService.getTotalSkuNum(skuSearchParamsWithLimitAndSort);
+            return orderDetailService.getTotalSkuNum(skuSearchParamsWithLimitAndSort);
         } else return 0;
     }
 }

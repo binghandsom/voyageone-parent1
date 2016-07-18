@@ -6,7 +6,7 @@ import com.voyageone.web2.vms.bean.order.DownloadInfo;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
 import com.voyageone.web2.vms.bean.order.PlatformSubOrderInfoBean;
 import com.voyageone.web2.vms.bean.order.SubOrderInfoBean;
-import com.voyageone.web2.vms.views.shipment.ShipmentService;
+import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +26,13 @@ import static com.voyageone.web2.vms.VmsUrlConstants.ORDER;
  */
 @RestController
 @RequestMapping(value = ORDER.ORDER_INFO.ROOT, method = RequestMethod.POST)
-public class OrderInfoController extends BaseController {
+public class VmsOrderInfoController extends BaseController {
 
-    private OrderInfoService orderInfoService;
-    private ShipmentService shipmentService;
+    private VmsOrderInfoService orderInfoService;
+    private VmsShipmentService shipmentService;
 
     @Autowired
-    public OrderInfoController(OrderInfoService orderInfoService, ShipmentService shipmentService) {
+    public VmsOrderInfoController(VmsOrderInfoService orderInfoService, VmsShipmentService shipmentService) {
         this.orderInfoService = orderInfoService;
         this.shipmentService = shipmentService;
     }

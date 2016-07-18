@@ -1,6 +1,6 @@
 package com.voyageone.web2.vms.views.order.order_info;
 
-import com.voyageone.web2.vms.views.order.OrderInfoController;
+import com.voyageone.web2.vms.views.order.VmsOrderInfoController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class OrderInfoControllerTest {
 
     @Autowired
-    OrderInfoController orderInfoController;
+    VmsOrderInfoController orderInfoController;
 
     @Test
     public void init() throws Exception {
