@@ -295,7 +295,7 @@ public class CmsHsCodeService extends BaseService {
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'1'," +
                 "'common.fields.translateStatus':'1'," +
-                "'common.fields.hsCodePrivate':'%s'}", userName);
+                "'common.fields.hsCodeSetter':'%s'}", userName);
         //个人设置税号商品译数:当前用户税号设置总数
         taskSummary.put("setPersonalTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
 
