@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @WebAppConfiguration
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
-public class OrderInfoServiceTest extends VOAbsLoggable {
+public class VmsOrderInfoServiceTest extends VOAbsLoggable {
     @Test
     public void getAllSkuStatusesList() throws Exception {
 

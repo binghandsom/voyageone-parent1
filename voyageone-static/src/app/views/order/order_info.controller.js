@@ -107,7 +107,7 @@ define([
 
         OrderInfoController.prototype.cancelOrder = function (item) {
             var self = this;
-            this.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
+            self.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
                 self.orderInfoService.cancelOrder(item).then(function () {
                     self.search()
                 })
@@ -116,7 +116,7 @@ define([
 
         OrderInfoController.prototype.cancelSku = function (item) {
             var self = this;
-            this.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
+            self.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
                 self.orderInfoService.cancelSku(item).then(function () {
                     self.search();
                 })
@@ -124,12 +124,14 @@ define([
         };
 
         OrderInfoController.prototype.downloadPickingList = function () {
-            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": this.downloadInfo.orderType});
+            var self = this;
+            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType});
         };
 
         OrderInfoController.prototype.toggleAll = function () {
-            var collapse = (this.collapse = !this.collapse);
-            this.data.forEach(function (item) {
+            var self = this;
+            var collapse = (self.collapse = !self.collapse);
+            self.data.forEach(function (item) {
                 item.collapse = collapse;
             });
         };
@@ -146,16 +148,27 @@ define([
             return currentStatus.name;
         };
 
-        OrderInfoController.prototype.popNewShipment = function () {
+        OrderInfoController.prototype.popNewShipment = function (type) {
             var self = this;
+            //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
+            var pendingShipmentStatus = "1";
+            if (type == "edit") {
+                pendingShipmentStatus = self.currentShipment.status;
+            } else if (type == "end") {
+                pendingShipmentStatus = "3";
+            }
             var shipmentInfo = {
-                shipment: this.currentShipment,
+                shipment: self.currentShipment,
+                type: type,
+                pendingShipmentStatus: pendingShipmentStatus,
                 searchOrderStatus: this.searchOrderStatus
             };
+
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
                 self.currentShipment = shipment;
             });
         };
+
         OrderInfoController.prototype.popAddToShipment = function () {
             this.popups.openAddShipment();
         };

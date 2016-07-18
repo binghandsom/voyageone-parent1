@@ -39,13 +39,13 @@ import java.util.stream.Collectors;
  * Created by vantis on 16-7-6.
  */
 @Service
-public class OrderInfoService extends BaseService {
+public class VmsOrderInfoService extends BaseService {
 
     private OrderDetailService vmsOrderDetailService;
     private ShipmentService vmsShipmentService;
 
     @Autowired
-    public OrderInfoService(OrderDetailService vmsOrderDetailService, ShipmentService vmsShipmentService) {
+    public VmsOrderInfoService(OrderDetailService vmsOrderDetailService, ShipmentService vmsShipmentService) {
         this.vmsOrderDetailService = vmsOrderDetailService;
         this.vmsShipmentService = vmsShipmentService;
     }

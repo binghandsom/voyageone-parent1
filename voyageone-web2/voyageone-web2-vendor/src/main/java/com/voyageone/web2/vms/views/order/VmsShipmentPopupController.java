@@ -3,7 +3,7 @@ package com.voyageone.web2.vms.views.order;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
-import com.voyageone.web2.vms.views.shipment.ShipmentService;
+import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +21,12 @@ import static com.voyageone.web2.vms.VmsUrlConstants.POPUP;
  */
 @RestController
 @RequestMapping(value = POPUP.SHIPMENT.ROOT, method = RequestMethod.POST)
-public class ShipmentPopupController extends BaseController {
+public class VmsShipmentPopupController extends BaseController {
 
-    private ShipmentService shipmentService;
+    private VmsShipmentService shipmentService;
 
     @Autowired
-    public ShipmentPopupController(ShipmentService shipmentService) {
+    public VmsShipmentPopupController(VmsShipmentService shipmentService) {
         this.shipmentService = shipmentService;
     }
 
@@ -34,8 +34,15 @@ public class ShipmentPopupController extends BaseController {
     public AjaxResponse init() {
         Map<String, Object> result = new HashMap<>();
         result.put("searchStatuses", shipmentService.getAllStatus());
-        result.put("expressCompanies", shipmentService.getAllExpressCompines());
+        result.put("expressCompanies", shipmentService.getAllExpressCompanies());
 
+        return success(result);
+    }
+
+    @RequestMapping(POPUP.SHIPMENT.GET)
+    public AjaxResponse get() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }
 
@@ -50,9 +57,7 @@ public class ShipmentPopupController extends BaseController {
     @RequestMapping(POPUP.SHIPMENT.CREATE)
     public AjaxResponse create(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
-
-        // TODO: 2016/7/15 创建shipment vantis
-//        result.put("success", shipmentService.create(shipmentBean));
+        result.put("success", shipmentService.create(this.getUser(), shipmentBean));
         result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }

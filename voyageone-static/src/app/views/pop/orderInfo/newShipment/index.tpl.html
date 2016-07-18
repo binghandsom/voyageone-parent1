@@ -22,7 +22,7 @@
                         <select id="shipmentStatus" class="form-control" name="shipmentStatus" ng-model="ctrl.shipment.status" required>
                             <option value="" translate="TXT_STATUS" disabled></option>
                             <option value="1" translate="TXT_OPEN" selected></option>
-                            <option value="3" translate="TXT_SHIPPED" ng-if="ctrl.shipmentExisted"></option>
+                            <option value="3" translate="TXT_SHIPPED" ng-if="ctrl.type != 'new'"></option>
                         </select>
                     </div>
                 </div>
@@ -69,8 +69,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" ng-if="!ctrl.shipmentExisted" class="btn btn-primary btn-sm" ng-click="ctrl.create()" ng-disabled="!shipmentForm.$valid" translate="BTN_CREATE"></button>
-        <button type="button" ng-if="ctrl.shipmentExisted" class="btn btn-primary btn-sm" ng-click="ctrl.submit()" ng-disabled="!shipmentForm.$valid" translate="BTN_SUBMIT"></button>
+        <button type="button" ng-if="ctrl.type == 'new'" class="btn btn-primary btn-sm" ng-click="ctrl.create()" ng-disabled="!shipmentForm.$valid" translate="BTN_CREATE"></button>
+        <button type="button" ng-if="ctrl.type != 'new'" class="btn btn-primary btn-sm" ng-click="ctrl.submit()" ng-disabled="!shipmentForm.$valid" translate="BTN_SUBMIT"></button>
         <button type="button" class="btn btn-default btn-sm" ng-click="$dismiss()" translate="BTN_CLOSE"></button>
     </div>
 </div>
