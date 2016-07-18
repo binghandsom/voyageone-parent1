@@ -12,12 +12,15 @@ define([
 	angularAMD.controller('popImgSettingCtl', (function(){
 
 		function PopImgSettingCtl($uibModalInstance,FileUploader,context,blockUI,alert){
-			this.$uibModalInstance = $uibModalInstance;
+			this.uibModalInstance = $uibModalInstance;
 			this.FileUploader = FileUploader;
 			this.blockUI = blockUI.instances.get('imgUpload');
 			this.alert = alert;
 			this.context = context;
-			this.vm = {};
+			this.vm = {
+				total:null,
+				reUpload:false
+			};
 			this.uploader = null;
 			this.files = [];
 		}
@@ -32,17 +35,19 @@ define([
 				upLoader.onSuccessItem = function(fileItem, response) {
 
 					if(response.data){
-
 						response.data.imageType = self.context.imageType.replace("image","images");
-						fileItem.message = null;
+						fileItem.uploaded = true;
 						self.files.push(response.data);
-
 					}else{
-						fileItem.message =  response;
+						fileItem.message =  "可能由于网络原因上传异常，请再试";
+						fileItem.uploaded = true;
 					}
 
-					if(self.files.length == self.vm.total)
+					if(self.files.length == self.vm.total){
 						self.blockUI.stop();
+						self.uibModalInstance.close(self.files);
+					}
+
 
 				};
 
@@ -50,16 +55,22 @@ define([
 
 					if(fileItem._file.size > 5*1024*1024){
 						self.alert(fileItem._file.name + "的图片大小大于5M");
+						fileItem.message = fileItem._file.name + "的图片大小大于5M";
+						self.vm.reUpload = true;
 						self.blockUI.stop();
 						throw "图片过大错误!";
 					}
 
+					if(fileItem.uploaded)
+						throw "已上传!";
+
 					var _idx =  fileItem._idx;
 					if(_idx > 0){
 						var preItem = self.uploader.queue[_idx-1];
-						if(preItem.message != null || preItem._file.size > 5*1024*1024){
+						if(preItem.message != null){
 							self.blockUI.stop();
-							fileItem.message = "出现异常图片,等待上传!";
+							self.vm.reUpload = true;
+							fileItem.message = "等待上传！";
 							throw "上一张图片上传错误!";
 						}
 					}
