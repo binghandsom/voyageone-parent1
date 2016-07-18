@@ -840,6 +840,10 @@ select::-ms-expand {
   padding: 7px 15px;
   min-height: 32px;
   border-bottom: solid 1px #ddd;
+  cursor: pointer;
+}
+.home_data li:hover {
+  color: #74C52C;
 }
 .v-middle {
   vertical-align: middle !important;
