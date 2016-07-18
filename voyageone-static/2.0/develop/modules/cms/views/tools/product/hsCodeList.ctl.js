@@ -81,10 +81,6 @@ define([
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
             },
-            clear:function(){
-var self=this;
-                self.searchInfo.searchCondition="";
-            },
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) return;
                 var picList = [];
