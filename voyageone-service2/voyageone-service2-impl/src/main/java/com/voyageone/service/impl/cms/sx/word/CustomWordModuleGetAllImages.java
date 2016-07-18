@@ -51,6 +51,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
         String useOriUrlStr = expressionParser.parse(useOriUrlExpression, shopBean, user, extParameter);
 
+        // added by morse.lu 2016/07/18 start
+        RuleExpression useCmsBtImageTemplateExpression = customModuleUserParamGetAllImages.getUseCmsBtImageTemplate();
+        String useCmsBtImageTemplate = expressionParser.parse(useCmsBtImageTemplateExpression, shopBean, user, extParameter);
+        // added by morse.lu 2016/07/18 end
+
         //system param
         List<CmsBtProductModel> sxProducts = sxData.getProductList();
 
@@ -85,6 +90,19 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
                 String completeImageUrl;
+                // added by morse.lu 2016/07/18 start
+                if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
+                    // 用图片管理模板
+                    completeImageUrl = sxProductService.getImageTemplate(sxData.getChannelId(),
+                                                    sxData.getCartId(),
+                                                    3, // 3：详情细节模版
+                                                    1, // PC端
+                                                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                                                    cmsBtProductModelFieldImage.getName());
+                } else
+                // added by morse.lu 2016/07/18 end
                 if ("1".equals(useOriUrlStr)) {
                     // 使用原图
                     // start

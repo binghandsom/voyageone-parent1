@@ -2938,6 +2938,8 @@ public class SxProductService extends BaseService {
     private enum ImageProp {
         PRODUCT_IMAGES("product_images", "产品图片-"), // 产品图片
         ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
+        VERTICAL_IMAGE("vertical_image", "竖图-"), // 商品竖图
+        ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
         ;
 
         private final String propId;
