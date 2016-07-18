@@ -559,6 +559,12 @@ public class CmsProductDetailService extends BaseAppService {
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
         this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
+
+        String productType =  productComm.getFields().getProductType();
+        productComm.getFields().setProductType(StringUtil.isEmpty(productType)?"":productType.trim());
+        String sizeType =  productComm.getFields().getSizeType();
+        productComm.getFields().setSizeType(StringUtil.isEmpty(sizeType) ? "" : sizeType.trim());
+
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
             productComm.put("schemaFields", cmsMtCommonFields);

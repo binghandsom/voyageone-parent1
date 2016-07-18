@@ -311,7 +311,7 @@
                                         </td>
                                         <td class="text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
-                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" required></td>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" ng-keypress="limitNumber($event,entity.priceSale)" required></td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                     </tr>
                                 </tbody>
