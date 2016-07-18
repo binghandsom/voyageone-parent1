@@ -75,11 +75,17 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
                 }
             }
         } else {
+            // 取得指定图片index(从0开始)对应的图片
             int intImageIndex = Integer.parseInt(imageIndex);
             if (intImageIndex >= urls.size()) {
                 parseResult = "";
             } else {
-                parseResult = urls.get(intImageIndex);
+                String url = urls.get(intImageIndex);
+                if (htmlTemplate != null) {
+                    parseResult = String.format(htmlTemplate, url);
+                } else {
+                    parseResult = url;
+                }
             }
         }
 
