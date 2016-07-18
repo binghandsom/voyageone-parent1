@@ -69,29 +69,73 @@ public class OrderDetailService extends BaseService {
     }
 
     /**
-     * 更新订单状态
+     * 记录orderInfo状态的变更
      *
-     * @param changeStatusParam 更新条件
-     * @return 更新条数
+     * @param changeStatusParams 更新条件
      */
-    @VOTransactional
-    public int updateOrderStatus(Map<String, Object> changeStatusParam) {
-
-        Map<String, Object> logParams = new HashMap<String, Object>() {{
-            putAll(changeStatusParam);
-        }};
-        logParams.remove("status");
-        this.select(logParams).stream()
+    private void logOrderDetails(Map<String, Object> changeStatusParams) {
+        List<VmsBtOrderDetailModel> originalOrderModelList = this.select(changeStatusParams);
+        originalOrderModelList.stream()
                 .map(vmsBtOrderDetailModel -> new VmsBtOrderLogModel() {{
                     setChannelId(vmsBtOrderDetailModel.getChannelId());
-                    setStatus(vmsBtOrderDetailModel.getStatus());
                     setReservationId(vmsBtOrderDetailModel.getReservationId());
-                    setCreater(changeStatusParam.get("modifier").toString());
+                    setStatus(vmsBtOrderDetailModel.getStatus());
+                    setCreater(vmsBtOrderDetailModel.getModifier());
                 }})
-                .forEach(vmsBtOrderLogModel -> vmsBtOrderLogDao.insert(vmsBtOrderLogModel));
-        return vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParam);
+                .forEach(vmsBtOrderLogDao::insert);
     }
 
+    /**
+     * 更新订单状态
+     *
+     * @param channelId            channelId
+     * @param consolidationOrderId 订单号
+     * @param status               待更新状态
+     * @return 更新涉及条数
+     */
+    @VOTransactional
+    public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier) {
+
+        // 记录订单变更状态
+        Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("consolidationOrderId", consolidationOrderId);
+            put("status", status);
+            put("modifier", modifier);
+        }};
+
+        int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+
+        this.logOrderDetails(changeStatusParams);
+
+        return count;
+    }
+
+    /**
+     * 更新订单状态
+     *
+     * @param channelId     channelId
+     * @param reservationId 订单号
+     * @param status        待更新状态
+     * @return 更新涉及条数
+     */
+    @VOTransactional
+    public int updateReservationStatus(String channelId, String reservationId, String status, String modifier) {
+
+        // 记录订单变更状态
+        Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("reservationId", reservationId);
+            put("status", status);
+            put("modifier", modifier);
+        }};
+
+        int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+
+        this.logOrderDetails(changeStatusParams);
+
+        return count;
+    }
 
     /**
      * 条件查询sku总数

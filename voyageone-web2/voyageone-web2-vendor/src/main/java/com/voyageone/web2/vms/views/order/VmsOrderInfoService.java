@@ -72,7 +72,6 @@ public class VmsOrderInfoService extends BaseService {
     }
 
 
-
     /**
      * 读取channel相应配置
      *
@@ -119,13 +118,6 @@ public class VmsOrderInfoService extends BaseService {
      */
     public int cancelOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
 
-        Map<String, Object> cancelOrderParam = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel().getId());
-            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
-            put("consolidationOrderId", item.getOrderId());
-            put("modifier", user.getUserName());
-        }};
-
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("consolidationOrderId", item.getOrderId());
@@ -141,8 +133,8 @@ public class VmsOrderInfoService extends BaseService {
             throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
-        cancelOrderParam.put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
-        return orderDetailService.updateOrderStatus(cancelOrderParam);
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), item.getStatus(),
+                user.getUserName());
     }
 
     /**
@@ -154,13 +146,7 @@ public class VmsOrderInfoService extends BaseService {
      */
     public int cancelSku(UserSessionBean user, SubOrderInfoBean item) {
 
-        Map<String, Object> cancelSkuParam = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel().getId());
-            put("reservationId", item.getReservationId());
-            put("status", STATUS_VALUE.PRODUCT_STATUS.CANCEL);
-            put("modifier", user.getUserName());
-        }};
-
+        // 检查sku状态
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("consolidationOrderId", item.getOrderId());
@@ -175,7 +161,8 @@ public class VmsOrderInfoService extends BaseService {
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
             throw new BusinessException("8000020");
 
-        return orderDetailService.updateOrderStatus(cancelSkuParam);
+        return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
+                item.getStatus(), user.getUserName());
     }
 
     /**

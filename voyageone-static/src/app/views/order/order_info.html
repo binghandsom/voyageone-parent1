@@ -85,7 +85,7 @@
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
-                <table class="table table-fixed table-vo">
+                <table class="table table-vo">
                     <thead>
                     <tr>
                         <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>
@@ -115,7 +115,7 @@
                             </button>
                         </td>
                     </tr>
-                    <tr ng-show="!item.collapse" ng-class="::item.className" ng-repeat="detail in item.orderInfoBeanList"
+                    <tr ng-show="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList"
                         ng-repeat-end>
                         <td></td>
                         <td></td>
@@ -138,7 +138,7 @@
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
-                <table class="table table-fixed table-vo">
+                <table class="table table-fixed table-vo table-hover">
                     <thead>
                     <tr>
                         <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->

@@ -8,8 +8,8 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
  */
 public class SortParam {
 
-    String columnName;
-    Order.Direction direction;
+    private String columnName;
+    private Order.Direction direction;
 
     public String getColumnName() {
         return columnName;
