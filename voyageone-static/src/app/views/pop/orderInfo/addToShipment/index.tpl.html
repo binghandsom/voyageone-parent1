@@ -23,8 +23,8 @@
             <div class="col-sm-12 pop-table">
                 <div class="col-sm-4 headline"><h2>SKU list</h2></div>
                 <div class="input-group">
-                    <input name="barcodeInputBar" type="text" class="form-control" placeholder="Please Scan Barcode" ng-model="barcode">
-                    <span class="input-group-btn"><button class="btn btn-info" type="button" ng-click="ctrl.scan(barcode)">Scan</button></span>
+                    <input name="barcodeInputBar" type="text" class="form-control" placeholder="Please Scan Barcode" ng-model="ctrl.barcode" autofocus enter-click="#scanBarcodeButton">
+                    <span class="input-group-btn"><button id="scanBarcodeButton" class="btn btn-info" type="button" ng-click="ctrl.scan(ctrl.barcode)">Scan</button></span>
                 </div>
                 <table class="table table-striped table-hover">
                     <thead>
