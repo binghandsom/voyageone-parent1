@@ -52,12 +52,12 @@ public class CmsBtPriceLogDaoExtTest {
         cmsBtPriceLogModel.setProductId(1);
         cmsBtPriceLogModel.setCode("1");
         cmsBtPriceLogModel.setSku("1");
-        cmsBtPriceLogModel.setSalePrice("555");
-        cmsBtPriceLogModel.setMsrpPrice("11111");
-        cmsBtPriceLogModel.setRetailPrice("2222");
-        cmsBtPriceLogModel.setClientMsrpPrice("333");
-        cmsBtPriceLogModel.setClientRetailPrice("44");
-        cmsBtPriceLogModel.setClientNetPrice("4444");
+//        cmsBtPriceLogModel.setSalePrice("555");
+//        cmsBtPriceLogModel.setMsrpPrice("11111");
+//        cmsBtPriceLogModel.setRetailPrice("2222");
+//        cmsBtPriceLogModel.setClientMsrpPrice("333");
+//        cmsBtPriceLogModel.setClientRetailPrice("44");
+//        cmsBtPriceLogModel.setClientNetPrice("4444");
         cmsBtPriceLogModel.setComment("5555555");
         cmsBtPriceLogModel.setCreated(new Date());
         cmsBtPriceLogModel.setCreater("testuser");

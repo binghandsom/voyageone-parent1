@@ -679,18 +679,18 @@ public class CmsFieldEditService extends BaseAppService {
                 cmsBtPriceLogModel.setCode(prodCode);
                 cmsBtPriceLogModel.setCartId(cartId);
                 cmsBtPriceLogModel.setSku(skuCode);
-                cmsBtPriceLogModel.setSalePrice(rs.toString());
-                cmsBtPriceLogModel.setMsrpPrice(com.voyageone.common.util.StringUtils.toString(skuObj.getStringAttribute("priceMsrp")));
-                cmsBtPriceLogModel.setRetailPrice(result.toString());
+                cmsBtPriceLogModel.setSalePrice(rs);
+                cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
+                cmsBtPriceLogModel.setRetailPrice(result);
                 CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
                 if (comSku == null) {
-                    cmsBtPriceLogModel.setClientMsrpPrice("0");
-                    cmsBtPriceLogModel.setClientRetailPrice("0");
-                    cmsBtPriceLogModel.setClientNetPrice("0");
+                    cmsBtPriceLogModel.setClientMsrpPrice(0D);
+                    cmsBtPriceLogModel.setClientRetailPrice(0D);
+                    cmsBtPriceLogModel.setClientNetPrice(0D);
                 } else {
-                    cmsBtPriceLogModel.setClientMsrpPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientMsrpPrice()));
-                    cmsBtPriceLogModel.setClientRetailPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientRetailPrice()));
-                    cmsBtPriceLogModel.setClientNetPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientNetPrice()));
+                    cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
+                    cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
+                    cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                 }
                 cmsBtPriceLogModel.setComment("高级检索批量更新");
                 cmsBtPriceLogModel.setCreated(new Date());

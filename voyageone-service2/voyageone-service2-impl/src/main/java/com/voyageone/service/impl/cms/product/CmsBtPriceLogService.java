@@ -166,12 +166,12 @@ public class CmsBtPriceLogService extends BaseService {
         logModel.setSku(sku);
         logModel.setCartId(cartId);
         logModel.setChannelId(channelId);
-        logModel.setClientMsrpPrice(String.valueOf(commonSku.getClientMsrpPrice()));
-        logModel.setClientNetPrice(String.valueOf(commonSku.getClientNetPrice()));
-        logModel.setClientRetailPrice(String.valueOf(commonSku.getClientRetailPrice()));
-        logModel.setMsrpPrice(platformSku.getStringAttribute("priceMsrp"));
-        logModel.setRetailPrice(platformSku.getStringAttribute("priceRetail"));
-        logModel.setSalePrice(platformSku.getStringAttribute("priceSale"));
+        logModel.setClientMsrpPrice(commonSku.getClientMsrpPrice());
+        logModel.setClientNetPrice(commonSku.getClientNetPrice());
+        logModel.setClientRetailPrice(commonSku.getClientRetailPrice());
+        logModel.setMsrpPrice(platformSku.getDoubleAttribute("priceMsrp"));
+        logModel.setRetailPrice(platformSku.getDoubleAttribute("priceRetail"));
+        logModel.setSalePrice(platformSku.getDoubleAttribute("priceSale"));
         logModel.setComment(comment);
         Date now = new Date();
         logModel.setCreated(now);
