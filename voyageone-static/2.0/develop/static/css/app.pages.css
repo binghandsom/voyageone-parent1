@@ -766,3 +766,15 @@ s-field textarea.s-html {
     overflow-y: scroll;
     border: 2px solid #e26666;
 }
+
+.img-upload .fix-img{
+    max-width: 125px;
+    max-height: 125px;
+    width: auto;
+    height: auto;
+}
+
+.img-upload .fix-progress{
+    width: 125px;
+    margin: 0px auto;
+}
