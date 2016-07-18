@@ -463,6 +463,14 @@ define([
                 "controller": 'popImgSettingCtl as ctrl',
                 "size": 'lg'
             }
+        },
+        "product":{
+            "switchMain":{
+                "templateUrl": "views/pop/product/switchMain.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/switchMain.ctl",
+                "controller": 'SwitchMainController as ctrl',
+                "size": 'lg'
+            }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1339,6 +1347,11 @@ define([
         //打开高级查询页的共通设置，上新审批
         $scope.openUpdateApproval = function (context) {
             return openModel(popActions.bulkUpdate.updateProductApproval, context);
+        };
+
+        //切换主类目
+        $scope.openSwitchMain = function (context) {
+            return openModel(popActions.product.switchMain, context);
         };
 
 
