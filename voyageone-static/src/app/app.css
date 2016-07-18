@@ -264,7 +264,7 @@ input::-webkit-clear-button {
 }
 #noData {
   color: #999;
-  background: silver;
+  background: #ddd;
 }
 #noData .text-vo {
   color: lightcoral;
