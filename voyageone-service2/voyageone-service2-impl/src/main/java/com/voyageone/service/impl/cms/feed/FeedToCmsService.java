@@ -205,10 +205,22 @@ public class FeedToCmsService extends BaseService {
         return response;
     }
 
-    private Boolean checkProduct(CmsBtFeedInfoModel product){
+    public Boolean checkProduct(CmsBtFeedInfoModel product){
         if(product.getImage() == null || product.getImage().size() == 0){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }else if(product.getImage().stream().filter(str->!StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有图片");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+
+        if(product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有品牌");
             $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }

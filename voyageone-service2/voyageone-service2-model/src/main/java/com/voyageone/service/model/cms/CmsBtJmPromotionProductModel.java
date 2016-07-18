@@ -110,7 +110,7 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer dealEndTimeStatus;
 
     /**
-     * 库存同步状态 0:库存未同步 1：库存待同步 2库存已同步 3：库存同步失败
+     * 库存同步状态 0:库存未同步 1:待同步  2：库存已同步 3：同步失败
      */
     protected Integer stockStatus;
 

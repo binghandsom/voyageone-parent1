@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.LightHouseFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    <id column="SKU" property="sku" jdbcType="VARCHAR" />
+    <result column="MSRP" property="msrp" jdbcType="VARCHAR" />
+    <result column="Category" property="category" jdbcType="VARCHAR" />
+    <result column="UPC" property="upc" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" extends="BaseResultMap" >
+    <result column="Title" property="title" jdbcType="LONGVARCHAR" />
+    <result column="Brand" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="Manufacturer" property="manufacturer" jdbcType="LONGVARCHAR" />
+    <result column="Description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="Bulletpoint1" property="bulletpoint1" jdbcType="LONGVARCHAR" />
+    <result column="Bulletpoint2" property="bulletpoint2" jdbcType="LONGVARCHAR" />
+    <result column="Bulletpoint3" property="bulletpoint3" jdbcType="LONGVARCHAR" />
+    <result column="Bulletpoint4" property="bulletpoint4" jdbcType="LONGVARCHAR" />
+    <result column="Bulletpoint5" property="bulletpoint5" jdbcType="LONGVARCHAR" />
+    <result column="Mainimage" property="mainimage" jdbcType="LONGVARCHAR" />
+    <result column="Image2" property="image2" jdbcType="LONGVARCHAR" />
+    <result column="Image3" property="image3" jdbcType="LONGVARCHAR" />
+    <result column="Image4" property="image4" jdbcType="LONGVARCHAR" />
+    <result column="Unitcount" property="unitcount" jdbcType="LONGVARCHAR" />
+    <result column="Color" property="color" jdbcType="LONGVARCHAR" />
+    <result column="Directions" property="directions" jdbcType="LONGVARCHAR" />
+    <result column="HairType" property="hairtype" jdbcType="LONGVARCHAR" />
+    <result column="Indications" property="indications" jdbcType="LONGVARCHAR" />
+    <result column="Ingredients" property="ingredients" jdbcType="LONGVARCHAR" />
+    <result column="SkinTone" property="skintone" jdbcType="LONGVARCHAR" />
+    <result column="SkinType" property="skintype" jdbcType="LONGVARCHAR" />
+    <result column="TargetGender" property="targetgender" jdbcType="LONGVARCHAR" />
+    <result column="VoyageOnePrice" property="voyageoneprice" jdbcType="LONGVARCHAR" />
+    <result column="Countryoforigin" property="countryoforigin" jdbcType="LONGVARCHAR" />
+    <result column="Weight" property="weight" jdbcType="LONGVARCHAR" />
+    <result column="NJTotalInventory" property="njtotalinventory" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "SKU", "MSRP", "Category", "UPC", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "Title", "Brand", "Manufacturer", "Description", "Bulletpoint1", "Bulletpoint2",
+    "Bulletpoint3", "Bulletpoint4", "Bulletpoint5", "Mainimage", "Image2", "Image3",
+    "Image4", "Unitcount", "Color", "Directions", "HairType", "Indications", "Ingredients",
+    "SkinTone", "SkinType", "TargetGender", "VoyageOnePrice", "Countryoforigin", "Weight",
+    "NJTotalInventory"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_lighthouse_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_lighthouse_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    insert into cms_zz_feed_lighthouse_product_temp ("SKU", "MSRP", "Category",
+    "UPC", "md5", "updateFlag",
+    "Title", "Brand", "Manufacturer",
+    "Description", "Bulletpoint1", "Bulletpoint2",
+    "Bulletpoint3", "Bulletpoint4", "Bulletpoint5",
+    "Mainimage", "Image2", "Image3",
+    "Image4", "Unitcount", "Color",
+    "Directions", "HairType", "Indications",
+    "Ingredients", "SkinTone", "SkinType",
+    "TargetGender", "VoyageOnePrice", "Countryoforigin",
+    "Weight", "NJTotalInventory")
+    values (#{sku,jdbcType=VARCHAR}, #{msrp,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
+    #{upc,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
+    #{title,jdbcType=LONGVARCHAR}, #{brand,jdbcType=LONGVARCHAR}, #{manufacturer,jdbcType=LONGVARCHAR},
+    #{description,jdbcType=LONGVARCHAR}, #{bulletpoint1,jdbcType=LONGVARCHAR}, #{bulletpoint2,jdbcType=LONGVARCHAR},
+    #{bulletpoint3,jdbcType=LONGVARCHAR}, #{bulletpoint4,jdbcType=LONGVARCHAR}, #{bulletpoint5,jdbcType=LONGVARCHAR},
+    #{mainimage,jdbcType=LONGVARCHAR}, #{image2,jdbcType=LONGVARCHAR}, #{image3,jdbcType=LONGVARCHAR},
+    #{image4,jdbcType=LONGVARCHAR}, #{unitcount,jdbcType=LONGVARCHAR}, #{color,jdbcType=LONGVARCHAR},
+    #{directions,jdbcType=LONGVARCHAR}, #{hairtype,jdbcType=LONGVARCHAR}, #{indications,jdbcType=LONGVARCHAR},
+    #{ingredients,jdbcType=LONGVARCHAR}, #{skintone,jdbcType=LONGVARCHAR}, #{skintype,jdbcType=LONGVARCHAR},
+    #{targetgender,jdbcType=LONGVARCHAR}, #{voyageoneprice,jdbcType=LONGVARCHAR}, #{countryoforigin,jdbcType=LONGVARCHAR},
+    #{weight,jdbcType=LONGVARCHAR}, #{njtotalinventory,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    insert into cms_zz_feed_lighthouse_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        SKU,
+      </if>
+      <if test="msrp != null" >
+        MSRP,
+      </if>
+      <if test="category != null" >
+        Category,
+      </if>
+      <if test="upc != null" >
+        UPC,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="title != null" >
+        Title,
+      </if>
+      <if test="brand != null" >
+        Brand,
+      </if>
+      <if test="manufacturer != null" >
+        Manufacturer,
+      </if>
+      <if test="description != null" >
+        Description,
+      </if>
+      <if test="bulletpoint1 != null" >
+        Bulletpoint1,
+      </if>
+      <if test="bulletpoint2 != null" >
+        Bulletpoint2,
+      </if>
+      <if test="bulletpoint3 != null" >
+        Bulletpoint3,
+      </if>
+      <if test="bulletpoint4 != null" >
+        Bulletpoint4,
+      </if>
+      <if test="bulletpoint5 != null" >
+        Bulletpoint5,
+      </if>
+      <if test="mainimage != null" >
+        Mainimage,
+      </if>
+      <if test="image2 != null" >
+        Image2,
+      </if>
+      <if test="image3 != null" >
+        Image3,
+      </if>
+      <if test="image4 != null" >
+        Image4,
+      </if>
+      <if test="unitcount != null" >
+        Unitcount,
+      </if>
+      <if test="color != null" >
+        Color,
+      </if>
+      <if test="directions != null" >
+        Directions,
+      </if>
+      <if test="hairtype != null" >
+        HairType,
+      </if>
+      <if test="indications != null" >
+        Indications,
+      </if>
+      <if test="ingredients != null" >
+        Ingredients,
+      </if>
+      <if test="skintone != null" >
+        SkinTone,
+      </if>
+      <if test="skintype != null" >
+        SkinType,
+      </if>
+      <if test="targetgender != null" >
+        TargetGender,
+      </if>
+      <if test="voyageoneprice != null" >
+        VoyageOnePrice,
+      </if>
+      <if test="countryoforigin != null" >
+        Countryoforigin,
+      </if>
+      <if test="weight != null" >
+        Weight,
+      </if>
+      <if test="njtotalinventory != null" >
+        NJTotalInventory,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint1 != null" >
+        #{bulletpoint1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint2 != null" >
+        #{bulletpoint2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint3 != null" >
+        #{bulletpoint3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint4 != null" >
+        #{bulletpoint4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint5 != null" >
+        #{bulletpoint5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainimage != null" >
+        #{mainimage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image2 != null" >
+        #{image2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image3 != null" >
+        #{image3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image4 != null" >
+        #{image4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="unitcount != null" >
+        #{unitcount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="directions != null" >
+        #{directions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hairtype != null" >
+        #{hairtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="indications != null" >
+        #{indications,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ingredients != null" >
+        #{ingredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skintone != null" >
+        #{skintone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skintype != null" >
+        #{skintype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="targetgender != null" >
+        #{targetgender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="voyageoneprice != null" >
+        #{voyageoneprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="njtotalinventory != null" >
+        #{njtotalinventory,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    update cms_zz_feed_lighthouse_product_temp
+    <set >
+      <if test="msrp != null" >
+        "MSRP" = #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        "Category" = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="upc != null" >
+        "UPC" = #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        "Title" = #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        "Brand" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturer != null" >
+        "Manufacturer" = #{manufacturer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "Description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint1 != null" >
+        "Bulletpoint1" = #{bulletpoint1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint2 != null" >
+        "Bulletpoint2" = #{bulletpoint2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint3 != null" >
+        "Bulletpoint3" = #{bulletpoint3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint4 != null" >
+        "Bulletpoint4" = #{bulletpoint4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bulletpoint5 != null" >
+        "Bulletpoint5" = #{bulletpoint5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainimage != null" >
+        "Mainimage" = #{mainimage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image2 != null" >
+        "Image2" = #{image2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image3 != null" >
+        "Image3" = #{image3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image4 != null" >
+        "Image4" = #{image4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="unitcount != null" >
+        "Unitcount" = #{unitcount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        "Color" = #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="directions != null" >
+        "Directions" = #{directions,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hairtype != null" >
+        "HairType" = #{hairtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="indications != null" >
+        "Indications" = #{indications,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ingredients != null" >
+        "Ingredients" = #{ingredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skintone != null" >
+        "SkinTone" = #{skintone,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="skintype != null" >
+        "SkinType" = #{skintype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="targetgender != null" >
+        "TargetGender" = #{targetgender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="voyageoneprice != null" >
+        "VoyageOnePrice" = #{voyageoneprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        "Countryoforigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        "Weight" = #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="njtotalinventory != null" >
+        "NJTotalInventory" = #{njtotalinventory,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    update cms_zz_feed_lighthouse_product_temp
+    set "MSRP" = #{msrp,jdbcType=VARCHAR},
+    "Category" = #{category,jdbcType=VARCHAR},
+    "UPC" = #{upc,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "Title" = #{title,jdbcType=LONGVARCHAR},
+    "Brand" = #{brand,jdbcType=LONGVARCHAR},
+    "Manufacturer" = #{manufacturer,jdbcType=LONGVARCHAR},
+    "Description" = #{description,jdbcType=LONGVARCHAR},
+    "Bulletpoint1" = #{bulletpoint1,jdbcType=LONGVARCHAR},
+    "Bulletpoint2" = #{bulletpoint2,jdbcType=LONGVARCHAR},
+    "Bulletpoint3" = #{bulletpoint3,jdbcType=LONGVARCHAR},
+    "Bulletpoint4" = #{bulletpoint4,jdbcType=LONGVARCHAR},
+    "Bulletpoint5" = #{bulletpoint5,jdbcType=LONGVARCHAR},
+    "Mainimage" = #{mainimage,jdbcType=LONGVARCHAR},
+    "Image2" = #{image2,jdbcType=LONGVARCHAR},
+    "Image3" = #{image3,jdbcType=LONGVARCHAR},
+    "Image4" = #{image4,jdbcType=LONGVARCHAR},
+    "Unitcount" = #{unitcount,jdbcType=LONGVARCHAR},
+    "Color" = #{color,jdbcType=LONGVARCHAR},
+    "Directions" = #{directions,jdbcType=LONGVARCHAR},
+    "HairType" = #{hairtype,jdbcType=LONGVARCHAR},
+    "Indications" = #{indications,jdbcType=LONGVARCHAR},
+    "Ingredients" = #{ingredients,jdbcType=LONGVARCHAR},
+    "SkinTone" = #{skintone,jdbcType=LONGVARCHAR},
+    "SkinType" = #{skintype,jdbcType=LONGVARCHAR},
+    "TargetGender" = #{targetgender,jdbcType=LONGVARCHAR},
+    "VoyageOnePrice" = #{voyageoneprice,jdbcType=LONGVARCHAR},
+    "Countryoforigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+    "Weight" = #{weight,jdbcType=LONGVARCHAR},
+    "NJTotalInventory" = #{njtotalinventory,jdbcType=LONGVARCHAR}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedLightHouseBean" >
+    update cms_zz_feed_lighthouse_product_temp
+    set "MSRP" = #{msrp,jdbcType=VARCHAR},
+    "Category" = #{category,jdbcType=VARCHAR},
+    "UPC" = #{upc,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+
+
+
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_lighthouse_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoLightHouseModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_lighthouse_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_lighthouse_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_lighthouse_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_lighthouse_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>

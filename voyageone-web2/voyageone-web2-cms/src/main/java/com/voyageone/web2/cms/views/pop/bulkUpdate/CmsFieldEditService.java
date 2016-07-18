@@ -679,18 +679,18 @@ public class CmsFieldEditService extends BaseAppService {
                 cmsBtPriceLogModel.setCode(prodCode);
                 cmsBtPriceLogModel.setCartId(cartId);
                 cmsBtPriceLogModel.setSku(skuCode);
-                cmsBtPriceLogModel.setSalePrice(rs.toString());
-                cmsBtPriceLogModel.setMsrpPrice(com.voyageone.common.util.StringUtils.toString(skuObj.getStringAttribute("priceMsrp")));
-                cmsBtPriceLogModel.setRetailPrice(result.toString());
+                cmsBtPriceLogModel.setSalePrice(rs);
+                cmsBtPriceLogModel.setMsrpPrice(skuObj.getDoubleAttribute("priceMsrp"));
+                cmsBtPriceLogModel.setRetailPrice(result);
                 CmsBtProductModel_Sku comSku = prodObj.getCommonNotNull().getSku(skuCode);
                 if (comSku == null) {
-                    cmsBtPriceLogModel.setClientMsrpPrice("0");
-                    cmsBtPriceLogModel.setClientRetailPrice("0");
-                    cmsBtPriceLogModel.setClientNetPrice("0");
+                    cmsBtPriceLogModel.setClientMsrpPrice(0d);
+                    cmsBtPriceLogModel.setClientRetailPrice(0d);
+                    cmsBtPriceLogModel.setClientNetPrice(0d);
                 } else {
-                    cmsBtPriceLogModel.setClientMsrpPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientMsrpPrice()));
-                    cmsBtPriceLogModel.setClientRetailPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientRetailPrice()));
-                    cmsBtPriceLogModel.setClientNetPrice(com.voyageone.common.util.StringUtils.toString(comSku.getClientNetPrice()));
+                    cmsBtPriceLogModel.setClientMsrpPrice(comSku.getClientMsrpPrice());
+                    cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
+                    cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                 }
                 cmsBtPriceLogModel.setComment("高级检索批量更新");
                 cmsBtPriceLogModel.setCreated(new Date());
@@ -719,7 +719,7 @@ public class CmsFieldEditService extends BaseAppService {
         // 需要记录价格变更履历
         $debug("批量修改商品价格 开始记入价格变更履历");
         long sta = System.currentTimeMillis();
-        int cnt = cmsBtPriceLogService.insertCmsBtPriceLogList(priceLogList);
+        int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
         // 插入上新程序

@@ -94,7 +94,7 @@ public class Tmall_018_Target_DictTest {
 //					RuleExpression useOriUrl = new RuleExpression();
 //					useOriUrl.addRuleWord(new TextWord("1"));
 
-					CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+					CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 
 					// 测试用写死url start
@@ -243,152 +243,152 @@ public class Tmall_018_Target_DictTest {
 		return ruleRoot;
 	}
 
-    private RuleExpression doDict_无线描述() {
-        // 根字典
-        RuleExpression ruleRoot = new RuleExpression();
-        {
-            // start
-            String kv = "{\"wireless_desc\":{";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
+//    private RuleExpression doDict_无线描述() {
+//        // 根字典
+//        RuleExpression ruleRoot = new RuleExpression();
 //        {
-//            // K-V 模板
-//            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
+//            // start
+//            String kv = "{\"wireless_desc\":{";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+////        {
+////            // K-V 模板
+////            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
+////            TextWord word = new TextWord(kv);
+////            ruleRoot.addRuleWord(word);
+////
+////            <field id="xxx_enable" name="是否启用" type="singleCheck">
+////                <options>
+////                <option displayName="启用" value="true"/>
+////                <option displayName="不启用" value="false"/>
+////                </options>
+////            </field>
+////        }
+//
+//        {
+//            // item_info 商品信息
+//            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // coupon 优惠
+//            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"xxx\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // hot_recommanded 同店推荐
+////            <field id="hot_recommanded_id" name="选择模板" type="singleCheck">
+////                <options>
+////                <option displayName="商品推荐" value="520277"/>
+////                </options>
+////            </field>
+//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"520277\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // shop_discount 店铺活动
+//            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"xxx\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // user_define 自定义
+//            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        {
+//            // item_picture 商品图片
+//            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
 //            TextWord word = new TextWord(kv);
 //            ruleRoot.addRuleWord(word);
 //
-//            <field id="xxx_enable" name="是否启用" type="singleCheck">
-//                <options>
-//                <option displayName="启用" value="true"/>
-//                <option displayName="不启用" value="false"/>
-//                </options>
-//            </field>
+//            for (int i = 0; i < 5; i++) {
+//                // 5张产品图片
+//                int j = i + 1;
+//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+//                TextWord imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//
+//                DictWord dictRoot = new DictWord();
+//                dictRoot.setName("产品图片-" + j);
+//                ruleRoot.addRuleWord(dictRoot);
+//
+//                imageStr = "\"}";
+//                imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//            }
+//            for (int i = 5; i < 10; i++) {
+//                // 5张商品图片
+//                int j = i - 4;
+//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+//                TextWord imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//
+//                DictWord dictRoot = new DictWord();
+//                dictRoot.setName("商品图片-" + j);
+//                ruleRoot.addRuleWord(dictRoot);
+//
+//                imageStr = "\"}";
+//                imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//            }
+//            for (int i = 10; i < 15; i++) {
+//                // 5张无线商品图片
+//                int j = i - 9;
+//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+//                TextWord imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//
+//                DictWord dictRoot = new DictWord();
+//                dictRoot.setName("无线商品图片-" + j);
+//                ruleRoot.addRuleWord(dictRoot);
+//
+//                imageStr = "\"}";
+//                imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//            }
+//            for (int i = 15; i < 20; i++) {
+//                // 5张无线自定义图片
+//                int j = i - 14;
+//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+//                TextWord imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//
+//                DictWord dictRoot = new DictWord();
+//                dictRoot.setName("无线自定义图片-" + j);
+//                ruleRoot.addRuleWord(dictRoot);
+//
+//                imageStr = "\"}";
+//                imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//            }
+//
+//            // end
+//            String endStr = "}";
+//            TextWord endWord = new TextWord(endStr);
+//            ruleRoot.addRuleWord(endWord);
 //        }
-
-        {
-            // item_info 商品信息
-            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // coupon 优惠
-            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"xxx\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // hot_recommanded 同店推荐
-//            <field id="hot_recommanded_id" name="选择模板" type="singleCheck">
-//                <options>
-//                <option displayName="商品推荐" value="520277"/>
-//                </options>
-//            </field>
-            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"520277\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // shop_discount 店铺活动
-            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"xxx\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // user_define 自定义
-            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // item_picture 商品图片
-            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-
-            for (int i = 0; i < 5; i++) {
-                // 5张产品图片
-                int j = i + 1;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("产品图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-            }
-            for (int i = 5; i < 10; i++) {
-                // 5张商品图片
-                int j = i - 4;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("商品图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-            }
-            for (int i = 10; i < 15; i++) {
-                // 5张无线商品图片
-                int j = i - 9;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("无线商品图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-            }
-            for (int i = 15; i < 20; i++) {
-                // 5张无线自定义图片
-                int j = i - 14;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("无线自定义图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-            }
-
-            // end
-            String endStr = "}";
-            TextWord endWord = new TextWord(endStr);
-            ruleRoot.addRuleWord(endWord);
-        }
-
-        {
-            // end
-            String kv = "}}";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        return ruleRoot;
-    }
+//
+//        {
+//            // end
+//            String kv = "}}";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+//
+//        return ruleRoot;
+//    }
 
     private RuleExpression doDict_无线描述2() {
         // 根字典
@@ -416,7 +416,7 @@ public class Tmall_018_Target_DictTest {
 
         {
             // item_info 商品信息
-            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
+            String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
@@ -484,7 +484,7 @@ public class Tmall_018_Target_DictTest {
 
                 // 店铺图
                 RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("\"%s\""));
+                htmlTemplate.addRuleWord(new TextWord("%s"));
 
                 RuleExpression imageType = new RuleExpression();
                 imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
@@ -494,7 +494,7 @@ public class Tmall_018_Target_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
 
                 imageStr = "\"}";
@@ -521,7 +521,7 @@ public class Tmall_018_Target_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
 
                 imageStr = "\"}";
@@ -602,24 +602,6 @@ public class Tmall_018_Target_DictTest {
                 dictRoot.setName("无线自定义图片-" + j);   // 1~10
                 ruleRoot.addRuleWord(dictRoot);
 
-//                // 商品自定义图(GetMainProductImages)
-//                CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-//                RuleExpression imageIndex = new RuleExpression();
-//                imageIndex.addRuleWord(new TextWord(String.valueOf(j)));   // 自定义图片index(0~9)
-//                userParam.setImageIndex(imageIndex);
-//                RuleExpression img_imageType = new RuleExpression();
-//                img_imageType.addRuleWord(new TextWord(C_自定义图片));
-//                userParam.setImageType(img_imageType);
-//
-//                RuleExpression useOriUrl = new RuleExpression();
-//                // 自定义图因为长宽不确定，所以只能使用原图
-//                useOriUrl.addRuleWord(new TextWord("1"));  // 使用原图
-//                userParam.setUseOriUrl(useOriUrl);
-//
-//                CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-//                wordValueGetMainProductImages.setUserParam(userParam);
-//                ruleRoot.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-
                 imageStr = "\"}";
                 imageWord = new TextWord(imageStr);
                 ruleRoot.addRuleWord(imageWord);
@@ -638,25 +620,6 @@ public class Tmall_018_Target_DictTest {
                 dictRoot.setName("无线商品图片-" + j);   // 1~5
                 ruleRoot.addRuleWord(dictRoot);
 
-                // 商品图（图2~图6）
-//                CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-//                RuleExpression htmlTemplate = new RuleExpression();
-//                htmlTemplate.addRuleWord(new TextWord("\"%s\""));
-//                userParam.setHtmlTemplate(htmlTemplate);
-//                RuleExpression imageTemplate = new RuleExpression();
-//                imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target%5F20160527%5Fx790%5F500x?$790%5F500$&$product=%s"));
-//                userParam.setImageTemplate(imageTemplate);
-//                RuleExpression imageIndex = new RuleExpression();
-//                imageIndex.addRuleWord(new TextWord(String.valueOf(j)));   // 商品图片(图2~图6)index(1~5)
-//                userParam.setImageIndex(imageIndex);
-//                RuleExpression img_imageType = new RuleExpression();
-//                img_imageType.addRuleWord(new TextWord(C_商品图片));
-//                userParam.setImageType(img_imageType);
-//
-//                CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-//                wordValueGetMainProductImages.setUserParam(userParam);
-//                ruleRoot.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-
                 imageStr = "\"}";
                 imageWord = new TextWord(imageStr);
                 ruleRoot.addRuleWord(imageWord);
@@ -664,6 +627,7 @@ public class Tmall_018_Target_DictTest {
 
             // No.19~20 共通图片-物流图  (2张无线图片)
             for (int i = 18; i < 20; i++) {
+                int j = i - 18;
                 String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
                 TextWord imageWord = new TextWord(imageStr);
                 ruleRoot.addRuleWord(imageWord);
@@ -675,79 +639,21 @@ public class Tmall_018_Target_DictTest {
                 RuleExpression imageType = new RuleExpression();
                 imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
 
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord(String.valueOf(j)));   // 图片index(0,1)
+
                 RuleExpression viewType = new RuleExpression();
                 viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
                 ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
 
                 imageStr = "\"}";
                 imageWord = new TextWord(imageStr);
                 ruleRoot.addRuleWord(imageWord);
             }
-
-//            for (int i = 0; i < 5; i++) {
-//                // 5张产品图片
-//                int j = i + 1;
-//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-//                TextWord imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//
-//                DictWord dictRoot = new DictWord();
-//                dictRoot.setName("产品图片-" + j);
-//                ruleRoot.addRuleWord(dictRoot);
-//
-//                imageStr = "\"}";
-//                imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//            }
-//            for (int i = 5; i < 10; i++) {
-//                // 5张商品图片
-//                int j = i - 4;
-//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-//                TextWord imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//
-//                DictWord dictRoot = new DictWord();
-//                dictRoot.setName("商品图片-" + j);
-//                ruleRoot.addRuleWord(dictRoot);
-//
-//                imageStr = "\"}";
-//                imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//            }
-//            for (int i = 10; i < 15; i++) {
-//                // 5张无线商品图片
-//                int j = i - 9;
-//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-//                TextWord imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//
-//                DictWord dictRoot = new DictWord();
-//                dictRoot.setName("无线商品图片-" + j);
-//                ruleRoot.addRuleWord(dictRoot);
-//
-//                imageStr = "\"}";
-//                imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//            }
-//            for (int i = 15; i < 20; i++) {
-//                // 5张无线自定义图片
-//                int j = i - 14;
-//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-//                TextWord imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//
-//                DictWord dictRoot = new DictWord();
-//                dictRoot.setName("无线自定义图片-" + j);
-//                ruleRoot.addRuleWord(dictRoot);
-//
-//                imageStr = "\"}";
-//                imageWord = new TextWord(imageStr);
-//                ruleRoot.addRuleWord(imageWord);
-//            }
 
             // end
             String endStr = "}";
