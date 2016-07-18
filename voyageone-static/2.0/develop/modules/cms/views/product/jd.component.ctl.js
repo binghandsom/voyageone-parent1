@@ -249,11 +249,11 @@ define([
                      });
 
                     if(scope.vm.status == "Approved"){
-                        confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").result.then(function(){
+                        confirm("您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止").then(function(){
                             if(scope.vm.platform.cartId != 27){
                                 productDetailService.checkCategory({cartId:scope.vm.platform.cartId,pCatPath:scope.vm.platform.pCatPath}).then(function(resp){
                                     if(resp.data === false){
-                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").result.then(function(){
+                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function(){
                                             scope.vm.platform.status = scope.vm.status = "Pending";
                                             callSave();
                                         });
@@ -284,7 +284,7 @@ define([
                             return;
                         }
 
-                        confirm(resp.message + ",是否强制保存").result.then(function () {
+                        confirm(resp.message + ",是否强制保存").then(function () {
                             productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                 scope.vm.platform.modified = resp.data.modified;
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

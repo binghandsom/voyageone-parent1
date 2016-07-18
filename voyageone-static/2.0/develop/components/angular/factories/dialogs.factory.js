@@ -54,6 +54,6 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
             title: title || "TXT_CONFIRM",
             content: content,
             isAlert: false
-        });
+        }).result;
     };
 });

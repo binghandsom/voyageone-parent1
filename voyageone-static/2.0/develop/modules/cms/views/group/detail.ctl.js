@@ -45,7 +45,7 @@ define([
          */
         function setMainProduct (code) {
 
-            confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT'))
                 .then(function () {
                     groupDetailService.setMainProduct({groupId: $scope.vm.groupInfo.groupId, mainProductCode: code}).then(function () {
                         notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -83,7 +83,7 @@ define([
 
         function bindCategory (context) {
 
-            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                 .then(function () {
                     var productIds = [];
                     _.forEach($scope.vm.productIds, function (object) {

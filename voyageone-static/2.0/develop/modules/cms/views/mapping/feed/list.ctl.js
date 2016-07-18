@@ -256,7 +256,6 @@ define([
                 var ttt = this;
 
                 ttt.confirm('TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY')
-                    .result
                     .then(function () {
                         return ttt.feedMappingService.extendsMapping({
                             from: feedCategory.path

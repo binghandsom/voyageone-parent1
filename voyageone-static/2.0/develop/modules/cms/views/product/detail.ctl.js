@@ -70,7 +70,7 @@ define([
             lockProduct: function (domId) {
                 var self = this;
                 var message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
-                this.confirm(message).result.then(function () {
+                this.confirm(message).then(function () {
                     var lock = self.product.lockStatus ? "1" : "0";
                     self.productDetailService.updateLock({
                         prodId: self.product.productId,

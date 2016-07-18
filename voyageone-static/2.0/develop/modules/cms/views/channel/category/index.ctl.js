@@ -125,7 +125,7 @@ define([
             },
             delete:function(node){
                 var self = this;
-                self.confirm(this.translate.instant("TXT_MSG_DELETE_ITEM")).result.then(function () {
+                self.confirm(this.translate.instant("TXT_MSG_DELETE_ITEM")).then(function () {
                     self.sellerCatService.delCat({"cartId":+self.cartInfo.cart,"catId":node.catId,"parentCatId":node.parentCatId}).then(function(res) {
                         self.source = res.data.catTree;
                         self.search(0);

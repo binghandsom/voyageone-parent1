@@ -103,7 +103,7 @@ define([
                 scope.bindCategory = bindCategory;
                 function bindCategory (context) {
 
-                    confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+                    confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                         .then(function () {
                             var data = {
                                 prodIds: [scope.vm.productDetails.productId],

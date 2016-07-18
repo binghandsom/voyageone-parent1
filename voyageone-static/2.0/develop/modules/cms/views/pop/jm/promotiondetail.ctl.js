@@ -47,7 +47,7 @@ define([
             return tagList||[];
         }
         $scope.delTag = function (tag) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                   tag.active=0;
                 });

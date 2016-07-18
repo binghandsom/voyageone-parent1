@@ -81,7 +81,7 @@ define([
                     uploadIt();
                     return;
                 }
-                self.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
+                self.confirm('TXT_MSG_REIMPORT_BEAT').then(uploadIt);
             },
 
             getData: function () {
@@ -138,7 +138,7 @@ define([
                     changeIt();
                     return;
                 }
-                ttt.confirm('TXT_MSG_ERROR_BEAT_ITEM').result.then(changeIt);
+                ttt.confirm('TXT_MSG_ERROR_BEAT_ITEM').then(changeIt);
             },
 
             controlAll: function (flag) {
@@ -154,7 +154,6 @@ define([
                 // 就需要人为来确定是否要强制处理这些任务
                 if (errorSummary && errorSummary.count) {
                     self.confirm('是否同时处理那些 Promotion 信息不协同的任务?')
-                        .result
                         .then(function () {
                             self.$controlAll(true, flag);
                         }, function () {
