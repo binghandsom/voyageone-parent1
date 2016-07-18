@@ -102,7 +102,9 @@ define(function () {
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory"
+                    "checkCategory":"checkCategory",
+                    getChangeMastProductInfo:"getChangeMastProductInfo",
+                    setMastProduct:"setMastProduct"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

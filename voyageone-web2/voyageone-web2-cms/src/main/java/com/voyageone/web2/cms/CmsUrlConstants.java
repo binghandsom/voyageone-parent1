@@ -545,6 +545,8 @@ public interface CmsUrlConstants {
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
             String CHECK_CATEGORY = "checkCategory";
+            String GetChangeMastProductInfo="getChangeMastProductInfo";
+            String SetMastProduct="setMastProduct";
         }
 
         interface HISTORY {
