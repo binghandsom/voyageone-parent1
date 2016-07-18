@@ -113,19 +113,19 @@ public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> 
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" reservationId", reservationId);
 		RequestUtils.checkNotEmpty(" consolidationOrderId", consolidationOrderId);
+		RequestUtils.checkNotEmpty(" consolidationOrderTime", consolidationOrderTime);
 		RequestUtils.checkNotEmpty(" orderId", orderId);
+		RequestUtils.checkNotEmpty(" orderTime", orderTime);
+		RequestUtils.checkNotEmpty(" cartId", cartId);
 		RequestUtils.checkNotEmpty(" clientSku", clientSku);
 		RequestUtils.checkNotEmpty(" barcode", barcode);
-		RequestUtils.checkNotEmpty(" description", description);
-		RequestUtils.checkNotEmpty(" consolidationOrderTime", consolidationOrderTime);
-		RequestUtils.checkNotEmpty(" orderTime", orderTime);
 		RequestUtils.checkNotEmpty(" cartId", cartId);
 		RequestUtils.checkNotEmpty(" clientMsrp", clientMsrp);
 		RequestUtils.checkNotEmpty(" clientNetPrice", clientNetPrice);
-		RequestUtils.checkNotEmpty(" clientNetPrice", clientRetailPrice);
-		RequestUtils.checkNotEmpty(" clientNetPrice", msrp);
-		RequestUtils.checkNotEmpty(" clientNetPrice", retailPrice);
-		RequestUtils.checkNotEmpty(" clientNetPrice", salePrice);
+		RequestUtils.checkNotEmpty(" clientRetailPrice", clientRetailPrice);
+		RequestUtils.checkNotEmpty(" msrp", msrp);
+		RequestUtils.checkNotEmpty(" retailPrice", retailPrice);
+		RequestUtils.checkNotEmpty(" salePrice", salePrice);
 	}
 
 	public String getChannelId() {

@@ -113,4 +113,25 @@ public class OrderDetailService extends BaseService {
     public List<VmsBtOrderDetailModel> select(Map<String, Object> searchParam) {
         return vmsBtOrderDetailDao.selectList(searchParam);
     }
+
+    /**
+     * 新加一条OrderInfo
+     *
+     * @param model VmsBtOrderDetailModel
+     * @return 增加件数
+     */
+    @VOTransactional
+    public int insertOrderInfo(VmsBtOrderDetailModel model) {
+        int count = vmsBtOrderDetailDao.insert(model);
+        if (count == 1) {
+            VmsBtOrderLogModel logModel = new VmsBtOrderLogModel();
+            logModel.setChannelId(model.getChannelId());
+            logModel.setStatus(model.getStatus());
+            logModel.setReservationId(model.getReservationId());
+            logModel.setCreater(model.getCreater());
+            logModel.setModifier(model.getModifier());
+            vmsBtOrderLogDao.insert(logModel);
+        }
+        return count;
+    }
 }
