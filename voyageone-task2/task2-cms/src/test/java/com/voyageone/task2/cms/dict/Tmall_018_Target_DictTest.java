@@ -416,7 +416,7 @@ public class Tmall_018_Target_DictTest {
 
         {
             // item_info 商品信息
-            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
+            String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
