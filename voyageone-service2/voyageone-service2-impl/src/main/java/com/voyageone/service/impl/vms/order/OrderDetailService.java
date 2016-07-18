@@ -20,14 +20,14 @@ import java.util.Map;
  */
 @Service
 @VOTransactional
-public class VmsOrderDetailService extends BaseService {
+public class OrderDetailService extends BaseService {
 
     private VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;
     private VmsBtOrderDetailDao vmsBtOrderDetailDao;
     private VmsBtOrderLogDao vmsBtOrderLogDao;
 
     @Autowired
-    public VmsOrderDetailService(VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao
+    public OrderDetailService(VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao
             vmsBtOrderDetailDao, VmsBtOrderLogDao vmsBtOrderLogDao) {
         this.vmsBtOrderDetailDaoExt = vmsBtOrderDetailDaoExt;
         this.vmsBtOrderDetailDao = vmsBtOrderDetailDao;

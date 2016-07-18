@@ -9,8 +9,8 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.vms.order.VmsOrderDetailService;
-import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
+import com.voyageone.service.impl.vms.order.OrderDetailService;
+import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
@@ -41,11 +41,11 @@ import java.util.stream.Collectors;
 @Service
 public class OrderInfoService extends BaseService {
 
-    private VmsOrderDetailService vmsOrderDetailService;
-    private VmsShipmentService vmsShipmentService;
+    private OrderDetailService vmsOrderDetailService;
+    private ShipmentService vmsShipmentService;
 
     @Autowired
-    public OrderInfoService(VmsOrderDetailService vmsOrderDetailService, VmsShipmentService vmsShipmentService) {
+    public OrderInfoService(OrderDetailService vmsOrderDetailService, ShipmentService vmsShipmentService) {
         this.vmsOrderDetailService = vmsOrderDetailService;
         this.vmsShipmentService = vmsShipmentService;
     }

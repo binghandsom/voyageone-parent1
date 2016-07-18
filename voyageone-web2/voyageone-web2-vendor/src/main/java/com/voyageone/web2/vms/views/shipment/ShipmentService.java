@@ -3,7 +3,6 @@ package com.voyageone.web2.vms.views.shipment;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.service.impl.vms.shipment.VmsShipmentService;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
@@ -26,10 +25,10 @@ import java.util.stream.Collectors;
 @Service
 public class ShipmentService {
 
-    private VmsShipmentService vmsShipmentService;
+    private ShipmentService vmsShipmentService;
 
     @Autowired
-    public ShipmentService(VmsShipmentService vmsShipmentService) {
+    public ShipmentService(ShipmentService vmsShipmentService) {
         this.vmsShipmentService = vmsShipmentService;
     }
 

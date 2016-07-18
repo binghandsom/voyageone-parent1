@@ -13,14 +13,14 @@ import java.util.Map;
  * Created by vantis on 16-7-6.
  */
 @Service
-public class VmsShipmentService {
+public class ShipmentService {
 
     private VmsBtShipmentDao vmsBtShipmentDao;
 
     private VmsBtShipmentDaoExt vmsBtShipmentDaoExt;
 
     @Autowired
-    public VmsShipmentService(VmsBtShipmentDao vmsBtShipmentDao, VmsBtShipmentDaoExt vmsBtShipmentDaoExt) {
+    public ShipmentService(VmsBtShipmentDao vmsBtShipmentDao, VmsBtShipmentDaoExt vmsBtShipmentDaoExt) {
         this.vmsBtShipmentDao = vmsBtShipmentDao;
         this.vmsBtShipmentDaoExt = vmsBtShipmentDaoExt;
     }
