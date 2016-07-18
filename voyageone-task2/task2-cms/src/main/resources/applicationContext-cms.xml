@@ -8,16 +8,12 @@
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="cms-job-scheduler">
 
-        <!-- mq resume task 每5分钟运行一次 -->
-        <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
-        <!--<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>-->
+        <!-- 消息队列恢复 task 每5分钟运行一次 -->
+        <task:scheduled ref="mqResumeJob" method="run" cron="0 0/1 * * * ?"/>
 
         <!-- cms2 batch add    -->
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!--&lt;!&ndash; 旧版天猫上新CMS2中已废弃 &ndash;&gt;-->
-        <!--<task:scheduled ref="UploadProductJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
 
         <!-- 天猫上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
@@ -71,10 +67,16 @@
         <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
         <!-- OverStock feed 导入 cms2 -->
-        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0/16 * * * ?"/>
 
         <!-- LightHouse 导入 cms2 -->
-        <task:scheduled ref="CmsLightHouseAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsLightHouseAnalysisJob" method="run" cron="0 0/15 * * * ?"/>
+
+        <!-- FragranceNet feed 导入 cms2 -->
+        <task:scheduled ref="CmsFragranceNetAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
+
+        <!-- EdcSkincare feed 导入 cms2 -->
+        <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 0/14 * * * ?"/>
 
         <!-- Target feed 导入 cms2 -->
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
@@ -112,6 +114,11 @@
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/5 * * * ?"/>
 
+        <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
+        <task:scheduled ref="CmsDataAmountJob" method="run" cron="1 20 0/1 * * ?"/>
+
+        <!-- 自动维护Mongodb索引（每天执行一次） -->
+        <task:scheduled ref="CmsMongoOptimizeIndexJob" method="run" cron="0 0 3 * * ?"/>
 
     </task:scheduled-tasks>
 
