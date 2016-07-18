@@ -94,14 +94,15 @@
         VALUES
         <foreach item="item" index="i" collection="list"
                  open="" separator="," close="">
-            (#{item.channel_id},
-            #{item.cart_id},
+            (#{item.channelId},
+            #{item.cartId},
             #{item.code},
+            #{item.status},
             #{item.comment},
             #{item.created},
             #{item.creater},
             #{item.modifier},
-            #{item.Operation_type})
+            #{item.operationType})
         </foreach>
     </insert>
 </mapper>

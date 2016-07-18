@@ -577,6 +577,7 @@ define(function () {
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
         "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
@@ -631,7 +632,7 @@ define(function () {
         /**店铺分类*/
         "TXT_STORE_CATEGORY_NAME": "店铺",
         "MAX_SELLER_CAT_DEPTH": "最大层数",
-        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于",
+        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于等于",
         "TXT_STORE_CATEGORY_SELECT": "请选择一个店铺",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH": "当前店铺路径下操作无效",
         "CATEGORY_EDIT": "分类类目编辑",

@@ -169,8 +169,10 @@ public class BackDoorController extends CmsController {
         final String productNewStatusName = CmsConstants.ProductStatus.New.name();
 
         List<String> codes = new ArrayList<>();
-        if (!StringUtils.isEmpty(code))
-            codes.add(code);
+        if (!StringUtils.isEmpty(code)) {
+            codes = java.util.Arrays.asList(code.split(";"));
+        }
+        System.out.print(codes.toArray() + ":" + codes.size());
 
         List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, codes);
 
@@ -1011,6 +1013,49 @@ public class BackDoorController extends CmsController {
             Collections.addAll(skus, skuIncludes.split(","));
             return JacksonUtil.bean2Json(productService.getOmsProductsInfo(channelId, null, skus, nameIncludes, descriptionIncludes, cartId, null));
         }
+    }
+
+    /**
+     * 测试getOmsProductsInfo方法
+     *
+     * @param channelId           店铺Id
+     * @param cartId              平台Id
+     * @return List<ProductForOmsBean>对象
+     */
+    @RequestMapping(value = "updateProductPlatformIsSale", method = RequestMethod.GET)
+    public Object updateProductPlatformIsSale(@RequestParam("channelId") String channelId
+            , @RequestParam("code") String code
+            , @RequestParam("cartId") String cartId) {{
+
+        List<CmsBtProductModel> productInfo = new ArrayList<>();
+        if (StringUtils.isEmpty(code))
+            productInfo = cmsBtProductDao.select("{\"platforms.P27.skus.isSale\": {$in: [\"true\", \"false\"]}}", channelId);
+        else
+            productInfo = cmsBtProductDao.select("{\"common.fields.code\": \"" + code + "\"}", channelId);
+
+
+        productInfo.parallelStream().forEach(product -> {
+
+            product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(sku ->
+                sku.setAttribute("isSale", "true".equals(sku.getStringAttribute("isSale")))
+            );
+
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", product.getProdId());
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+//                platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+            updateMap.put("platforms.P" + cartId, product.getPlatform(Integer.valueOf(cartId)));
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "updateProductPlatformIsSale", "$set");
+        });
+        return code;
+    }
+
+
     }
 
 }

@@ -572,6 +572,12 @@ public class ChannelConfigEnums {
          */
         FragranceNet("025"),
 
+
+        /**
+         * LightHouse
+         */
+        LightHouse("026"),
+
         /**
          * US匠心界
          */
@@ -639,6 +645,8 @@ public class ChannelConfigEnums {
                 case "022": return DFO;
                 case "023": return ShoeZoo;
                 case "024": return OverStock;
+                case "025": return FragranceNet;
+                case "026": return LightHouse;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;

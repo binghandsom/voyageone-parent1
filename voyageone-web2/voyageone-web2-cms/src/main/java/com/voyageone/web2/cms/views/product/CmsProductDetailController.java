@@ -3,6 +3,8 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
+import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
+import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -46,7 +48,7 @@ public class CmsProductDetailController extends CmsController {
         Map<String, Object> result = new HashMap<>();
 
         Map<String, Object> productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
-        CmsProductInfoBean productModel = (CmsProductInfoBean)productInfo.get("productInfo");
+        CmsProductInfoBean productModel = (CmsProductInfoBean) productInfo.get("productInfo");
         List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(productModel.getChannelId(), productId);
         result.put("inventoryList", inventoryList);
         result.put("productInfo", productInfo.get("productInfo"));
@@ -124,7 +126,7 @@ public class CmsProductDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        return success(productPropsEditService.getMastProductInfo(channelId,prodId,getLang()));
+        return success(productPropsEditService.getMastProductInfo(channelId, prodId, getLang()));
 
     }
 
@@ -142,22 +144,34 @@ public class CmsProductDetailController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_LOCK)
-    public AjaxResponse doLock(@RequestBody Map requestMap){
+    public AjaxResponse doLock(@RequestBody Map requestMap) {
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
 
         String lock = (String) requestMap.get("lock");
-        productService.updateProductLock(getUser().getSelChannelId(),prodId,lock,getUser().getUserName());
+        productService.updateProductLock(getUser().getSelChannelId(), prodId, lock, getUser().getUserName());
 
         return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_FEED_ATTS)
-    public AjaxResponse updateProductAtts(@RequestBody Map requestMap){
+    public AjaxResponse updateProductAtts(@RequestBody Map requestMap) {
         Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
-        if(requestMap.get("feedInfo") != null){
-            List<CustomPropBean> cnProps =  JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
+        if (requestMap.get("feedInfo") != null) {
+            List<CustomPropBean> cnProps = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(requestMap.get("feedInfo")), CustomPropBean.class);
             productService.updateProductAtts(getUser().getSelChannelId(), prodId, cnProps, getUser().getUserName());
         }
+        return success(null);
+    }
+
+    //获取切换主商品  的显示信息
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetChangeMastProductInfo)
+    public AjaxResponse getChangeMastProductInfo(@RequestBody GetChangeMastProductInfoParameter parameter) {
+        return success(productPropsEditService.getChangeMastProductInfo(parameter));
+    }
+    //设置主商品
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetMastProduct)
+    public AjaxResponse setMastProduct(SetMastProductParameter parameter) {
+        productPropsEditService.setMastProduct(parameter);
         return success(null);
     }
 }
