@@ -13,7 +13,7 @@ define([
             var task_id = parseInt($routeParams['task_id']);
             if (_.isNaN(task_id)) {
                 this.init = null;
-                alert('TXT_MSG_UNVALID_URL').result.then(function () {
+                alert('TXT_MSG_UNVALID_URL').then(function () {
                     $location.path('/promotion/task');
                 });
             }
