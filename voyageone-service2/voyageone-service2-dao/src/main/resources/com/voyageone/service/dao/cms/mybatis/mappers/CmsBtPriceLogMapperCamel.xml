@@ -92,13 +92,13 @@
                 #{salePrice,jdbcType=DOUBLE},
             </if>
             <if test="clientMsrpPrice != null" >
-                #{clientMsrpPrice,jdbcType=VARCHAR},
+                #{clientMsrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientRetailPrice != null" >
-                #{clientRetailPrice,jdbcType=VARCHAR},
+                #{clientRetailPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientNetPrice != null" >
-                #{clientNetPrice,jdbcType=VARCHAR},
+                #{clientNetPrice,jdbcType=DOUBLE},
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
@@ -155,13 +155,13 @@
                 `sale_price` = #{salePrice,jdbcType=DOUBLE},
             </if>
             <if test="clientMsrpPrice != null" >
-                `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR},
+                `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientRetailPrice != null" >
-                `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR},
+                `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientNetPrice != null" >
-                `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR},
+                `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE},
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
@@ -220,13 +220,13 @@
                 and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
@@ -277,13 +277,13 @@
                 and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
@@ -331,13 +331,13 @@
                 and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
