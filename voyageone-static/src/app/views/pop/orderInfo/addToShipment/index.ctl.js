@@ -5,10 +5,19 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
-        function AddToShipmentController() {
+        function AddToShipmentController(context) {
+            this.context = context;
         }
 
-        AddToShipmentController.prototype = function () {
+        AddToShipmentController.prototype = {
+            init: function () {
+                var self = this;
+                self.summary = self.context;
+            },
+            scan: function (barcode) {
+                var self = this;
+
+            }
 
         };
         return AddToShipmentController;

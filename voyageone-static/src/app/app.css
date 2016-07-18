@@ -264,14 +264,12 @@ input::-webkit-clear-button {
 }
 #noData {
   color: #999;
+  background: silver;
 }
 #noData .text-vo {
   color: lightcoral;
-}
-.table-responsive {
-  min-height: .01%;
-  overflow-x: auto;
-  background: #e6e6e6;
+  margin-top: 0;
+  padding-top: 16px;
 }
 .dropdown-toggle-arr:after {
   font-family: FontAwesome;
