@@ -23,11 +23,11 @@ public class CmsBtPriceLogModel extends BaseModel {
 
     protected String sku;
 
-    protected String msrpPrice;
+    protected Double msrpPrice;
 
-    protected String retailPrice;
+    protected Double retailPrice;
 
-    protected String salePrice;
+    protected Double salePrice;
 
     protected String clientMsrpPrice;
 
@@ -77,28 +77,28 @@ public class CmsBtPriceLogModel extends BaseModel {
         this.sku = sku == null ? null : sku.trim();
     }
 
-    public String getMsrpPrice() {
+    public Double getMsrpPrice() {
         return msrpPrice;
     }
 
-    public void setMsrpPrice(String msrpPrice) {
-        this.msrpPrice = msrpPrice == null ? null : msrpPrice.trim();
+    public void setMsrpPrice(Double msrpPrice) {
+        this.msrpPrice = msrpPrice;
     }
 
-    public String getRetailPrice() {
+    public Double getRetailPrice() {
         return retailPrice;
     }
 
-    public void setRetailPrice(String retailPrice) {
-        this.retailPrice = retailPrice == null ? null : retailPrice.trim();
+    public void setRetailPrice(Double retailPrice) {
+        this.retailPrice = retailPrice;
     }
 
-    public String getSalePrice() {
+    public Double getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(String salePrice) {
-        this.salePrice = salePrice == null ? null : salePrice.trim();
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
     }
 
     public String getClientMsrpPrice() {

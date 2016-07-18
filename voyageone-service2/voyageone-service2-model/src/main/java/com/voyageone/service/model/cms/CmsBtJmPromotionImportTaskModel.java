@@ -64,9 +64,6 @@ public class CmsBtJmPromotionImportTaskModel extends BaseModel {
      */
     protected Date endTime;
 
-    /**
-     * 源文件名
-     */
     protected String originFileName;
 
     public Integer getCmsBtJmPromotionId() {

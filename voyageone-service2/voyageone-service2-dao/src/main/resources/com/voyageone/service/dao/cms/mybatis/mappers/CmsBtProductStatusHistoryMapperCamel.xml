@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `cart_id`, `code`, `status`, `comment`, `created`, `creater`, 
-        `modified`, `modifier`, `Operation_type`
+        `modified`, `modifier`, `operation_type`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -44,7 +44,7 @@
                 `modifier`,
             </if>
             <if test="operationType != null" >
-                `Operation_type`,
+                `operation_type`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -124,7 +124,7 @@
                 `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="operationType != null" >
-                `Operation_type` = #{operationType,jdbcType=INTEGER},
+                `operation_type` = #{operationType,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -168,7 +168,7 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="operationType != null" >
-                and `Operation_type` = #{operationType,jdbcType=INTEGER}
+                and `operation_type` = #{operationType,jdbcType=INTEGER}
             </if>
         </where>
         limit 1
@@ -207,7 +207,7 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="operationType != null" >
-                and `Operation_type` = #{operationType,jdbcType=INTEGER}
+                and `operation_type` = #{operationType,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -243,7 +243,7 @@
                 and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="operationType != null" >
-                and `Operation_type` = #{operationType,jdbcType=INTEGER}
+                and `operation_type` = #{operationType,jdbcType=INTEGER}
             </if>
         </where>
     </select>
