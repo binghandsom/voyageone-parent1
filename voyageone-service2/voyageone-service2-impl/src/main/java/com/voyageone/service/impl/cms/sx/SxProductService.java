@@ -1804,6 +1804,11 @@ public class SxProductService extends BaseService {
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
+                        // added by morse.lu 2016/07/18 start
+                    } catch (BusinessException e) {
+                        sxData.setErrorMessage(e.getMessage());
+                        throw new BusinessException(e.getMessage());
+                        // added by morse.lu 2016/07/18 end
                     } catch (Exception e) {
                         $warn(e.getMessage());
                         sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
