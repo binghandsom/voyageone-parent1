@@ -230,7 +230,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
     /**
      * 设置京东类目schema共通信息
-     * 将京东平台上新时用到一些平台相关的输入项目转换成XML设置到mongoDB的schema表中的propsItem字段
+     * 将京东平台上新时用到一些平台相关的输入项目转换成XML设置到mongoDB的schema表中的propsProduct字段
      *
      * @param shop ShopBean  店铺信息
      * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
@@ -293,7 +293,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         String schemaCommonXmlContent = null;
         if (productFieldsList.size() > 0) {
             schemaCommonXmlContent = SchemaWriter.writeRuleXmlString(productFieldsList);
-            schemaCommonModel.setPropsItem(schemaCommonXmlContent);
+            schemaCommonModel.setPropsProduct(schemaCommonXmlContent);
         }
 
         // 把schema共通信息插进入到MangoDB中

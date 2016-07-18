@@ -52,6 +52,12 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         String numIId = sxData.getPlatform().getNumIId();
 //        Long categoryCode = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());
         Long categoryCode = Long.parseLong(sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatId());
+        // added by morse.lu 2016/07/14 start
+        // 无产品只有商品
+        if (StringUtils.isEmpty(platformProductId)) {
+            platformProductId = "0";
+        }
+        // added by morse.lu 2016/07/14 end
 
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
         $debug("itemSchema:" + itemSchema);

@@ -772,7 +772,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                   .map(CmsBtProductModel_Sku::getSkuCode)
                                   .collect(Collectors.toList());
                     // 记录商品价格变动履历
-                    cmsBtPriceLogService.logAll(skuCodeList, cmsProductBean.getChannelId(), null, getTaskName(), "feed->master导入");
+                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProductBean.getChannelId(), null, getTaskName(), "feed->master导入");
                 }
                 // add by desmond 2016/07/05 end
 
@@ -2518,7 +2518,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private int getIsMasterMain(CmsBtFeedInfoModel feed) {
             long cnt = productService.getCnt(feed.getChannelId(),
-                    String.format("{\"feed.orgAtts.modelCode\":\"%s\", \"common.fields.isMasterMain\":1}", feed.getModel()));
+                    String.format("{\"common.fields.model\":\"%s\", \"common.fields.isMasterMain\":1}", feed.getModel()));
             if (cnt < 1) {
                 return 1;
             }

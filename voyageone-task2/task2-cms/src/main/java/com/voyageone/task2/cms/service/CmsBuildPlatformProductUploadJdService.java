@@ -181,7 +181,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param channelId String 渠道ID
      * @param cartId String 平台ID
      */
-    private void doProductUpload(String channelId, int cartId) throws Exception {
+    public void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
         int threadPoolCnt = 5;
@@ -226,7 +226,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      */
-    private void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -843,7 +843,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
-        String propsItem = jdCommonSchema.getPropsItem();
+        String propsItem = jdCommonSchema.getPropsProduct();
         List<Field> itemFieldList =null;
         if (!StringUtils.isEmpty(propsItem)) {
             // 将取出的propsItem转换为字段列表
