@@ -5,10 +5,8 @@
         </button>
         <h5 class="modal-title" ng-bind-html="title"></h5>
     </div>
-    <div class="modal-body wrapper-lg">
-        <div class="row">
-            <h5 class="text-center text-hs"><span class="text-left" ng-bind-html="content"></span></h5>
-        </div>
+    <div class="modal-body">
+        <div class="text-left" ng-bind-html="content"></div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>
