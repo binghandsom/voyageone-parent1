@@ -6,6 +6,7 @@ import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.field.*;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -29,11 +30,11 @@ import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -45,7 +46,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2016/7/11.
@@ -57,9 +62,6 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     @Autowired
     private ProductGroupService productGroupService;
-
-    @Autowired
-    private ProductService productService;
 
     @Autowired
     private TbProductService tbProductService;
@@ -103,14 +105,12 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
             try {
                 $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
-                doSetProduct(shopBean, item, finalSellerCat);
+                doSetProduct(shopBean, item, channelId, finalSellerCat);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-        ;
     }
 
     /**
@@ -171,9 +171,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
         return sellerCats;
     }
 
-
-    private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, List<CmsBtSellerCatModel> sellerCat) throws Exception {
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
+    private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, String channelId, List<CmsBtSellerCatModel> sellerCat) throws Exception {
         Map<String, Object> fieldMap = new HashMap<>();
         if (PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id())) {
             // 只有天猫系才会更新fields字段
@@ -181,19 +179,36 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             fieldMap.putAll(getPlatformWareInfoItem(cmsBtProductGroup.getNumIId(), shopBean));
         }
         List<Map<String, Object>> sellerCats = doSetSeller(shopBean, Long.parseLong(cmsBtProductGroup.getNumIId()), sellerCat);
-        upProductPlatform(fieldMap, cmsBtProductGroup, sellerCats);
+        upProductPlatform(fieldMap, cmsBtProductGroup, channelId, sellerCats);
     }
 
-    private void upProductPlatform(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, List<Map<String, Object>> sellerCats) {
+    private void upProductPlatform(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, List<Map<String, Object>> sellerCats) {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(s -> {
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", s);
+            // added by morse.lu 2016/07/18 start
+            CmsBtProductModel product = cmsBtProductDao.selectByCode(s, channelId);
+            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+            // added by morse.lu 2016/07/18 end
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
             fieldMap.forEach((s1, o) -> {
-                updateMap.put("platforms.P23.fields." + s1, o);
+                // added by morse.lu 2016/07/18 start
+                if ("sku".equals(s1)) {
+                    List<Map<String, Object>> upValSku = new ArrayList<>();
+                    List<Map<String, Object>> listVal = (List) o;
+                    listVal.forEach(skuVal -> {
+                        if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
+                            upValSku.add(skuVal);
+                        }
+                    });
+                    updateMap.put("platforms.P23.fields." + s1, upValSku);
+                } else {
+                    // added by morse.lu 2016/07/18 end
+                    updateMap.put("platforms.P23.fields." + s1, o);
+                }
             });
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
@@ -202,6 +217,20 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
         });
 
         cmsBtProductDao.bulkUpdateWithMap(cmsBtProductGroup.getChannelId(), bulkList, getTaskName(), "$set");
+
+        // added by morse.lu 2016/07/18 start
+        String item_status = (String) fieldMap.get("item_status"); // 商品状态
+        if ("0".equals(item_status)) {
+            // 出售中
+            cmsBtProductGroup.setPlatformStatus(CmsConstants.PlatformStatus.OnSale);
+            cmsBtProductGroup.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
+        } else {
+            // 仓库中
+            cmsBtProductGroup.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+            cmsBtProductGroup.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+        }
+        productGroupService.update(cmsBtProductGroup);
+        // added by morse.lu 2016/07/18 end
     }
 
     private Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
