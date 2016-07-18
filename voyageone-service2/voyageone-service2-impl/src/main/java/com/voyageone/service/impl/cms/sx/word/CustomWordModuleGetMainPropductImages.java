@@ -112,7 +112,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                     completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
                     imageUrlList.add(completeImageUrl);
                 }
-            // add by desmond 2016/07/15 end
+                // add by desmond 2016/07/15 end
             } else {
                 // 不使用原图时
                 if (imageTemplate != null) {
@@ -149,7 +149,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 使用原图(不使用image模板，不用判断是否有image模板)
                 paddingImage = getPicOriUrl(paddingImageKey.trim(), moduleName);
                 imageUrlList.add(paddingImage);
-            // add by desmond 2016/07/15 end
+                // add by desmond 2016/07/15 end
             } else {
                 if (imageTemplate != null) {
                     // 20160513 tom 图片服务器切换 START
@@ -173,7 +173,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 使用原图(不使用image模板，不用判断是否有image模板)
                 completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
                 imageUrlList.add(completeImageUrl);
-            // add by desmond 2016/07/15 end
+                // add by desmond 2016/07/15 end
             } else {
                 if (imageTemplate != null) {
                     // 20160513 tom 图片服务器切换 START

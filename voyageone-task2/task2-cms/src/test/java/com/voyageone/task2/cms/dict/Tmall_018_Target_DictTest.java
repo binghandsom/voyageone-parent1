@@ -94,7 +94,7 @@ public class Tmall_018_Target_DictTest {
 //					RuleExpression useOriUrl = new RuleExpression();
 //					useOriUrl.addRuleWord(new TextWord("1"));
 
-					CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+					CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 
 					// 测试用写死url start

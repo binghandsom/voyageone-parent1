@@ -716,8 +716,16 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
-                    .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).forEach(skuInfo -> {
+            List<BaseMongoMap<String, Object>> skus;
+            if(!StringUtils.isEmpty(skuIncludes)){
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
+            }else{
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+            }
+            if(skus == null || skus.size() == 0) return resultInfo;
+            skus.forEach(skuInfo -> {
                 ProductForOmsBean bean = new ProductForOmsBean();
                 // 设置商品的原始channelId
                 bean.setChannelId(product.getOrgChannelId());

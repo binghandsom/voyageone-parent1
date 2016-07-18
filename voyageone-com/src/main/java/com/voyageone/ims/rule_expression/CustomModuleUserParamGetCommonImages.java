@@ -8,6 +8,7 @@ package com.voyageone.ims.rule_expression;
  * @imageType  图片类型, 1:商品图 2:尺码图 3:品牌故事图 4:物流介绍图 5:店铺图
  * @viewType  1:PC端 2:APP端
  * @useOriUrl 1:使用原图 其它或者未设置，使用天猫平台图
+ * @imageIndex 如果是null, 那么就获取全部, index从0开始, 指定但不存在的场合返回""
  *
  * @since 2016/06/02 morse.lu
  */
@@ -17,14 +18,16 @@ public class CustomModuleUserParamGetCommonImages extends CustomModuleUserParam 
     private RuleExpression imageType;
     private RuleExpression viewType;
     private RuleExpression useOriUrl;
+    private RuleExpression imageIndex;
 
     public CustomModuleUserParamGetCommonImages() {}
 
-    public CustomModuleUserParamGetCommonImages(RuleExpression htmlTemplate, RuleExpression imageType, RuleExpression viewType, RuleExpression useOriUrl) {
+    public CustomModuleUserParamGetCommonImages(RuleExpression htmlTemplate, RuleExpression imageType, RuleExpression viewType, RuleExpression useOriUrl, RuleExpression imageIndex) {
         this.htmlTemplate = htmlTemplate;
         this.imageType = imageType;
         this.viewType = viewType;
         this.useOriUrl = useOriUrl;
+        this.imageIndex = imageIndex;
     }
 
     public RuleExpression getHtmlTemplate() {
@@ -57,5 +60,13 @@ public class CustomModuleUserParamGetCommonImages extends CustomModuleUserParam 
 
     public void setUseOriUrl(RuleExpression useOriUrl) {
         this.useOriUrl = useOriUrl;
+    }
+
+    public RuleExpression getImageIndex() {
+        return imageIndex;
+    }
+
+    public void setImageIndex(RuleExpression imageIndex) {
+        this.imageIndex = imageIndex;
     }
 }
