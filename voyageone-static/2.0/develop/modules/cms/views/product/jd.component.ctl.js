@@ -37,6 +37,7 @@ define([
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
+                scope.limitNumber = limitNumber;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -78,13 +79,23 @@ define([
                     });
 
                     switch(+scope.cartInfo.value){
+                        case 23:
+                            scope.vm.productUrl = "http://detail.tmall.hk/hk/item.htm?id=";
+                            break;
                         case 26:
                             scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
                             break;
                         case 27:
                             scope.vm.productUrl = "http://item.jumeiglobal.com/";
                             break;
+                        case 28:
+                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
+                            break;
+                        case 29:
+                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
+                            break;
                     }
+
                 }
 
                 var itemScope;
@@ -330,6 +341,14 @@ define([
                         return element.isSale === true;
                     });
                 }
+
+                function limitNumber(event,price){
+                    var patten = /[\d]/;
+                    console.log(price)
+                    if(!patten.test(event.key) || price > Math.pow(10,14))
+                        event.preventDefault();
+                }
+
             }
         };
     });

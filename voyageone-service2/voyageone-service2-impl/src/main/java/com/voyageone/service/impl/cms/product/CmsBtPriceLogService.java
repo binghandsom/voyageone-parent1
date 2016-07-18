@@ -32,14 +32,18 @@ import java.util.Map;
 @Service
 public class CmsBtPriceLogService extends BaseService {
 
+    private final CmsBtPriceLogDao priceLogDao;
+    private final CmsBtPriceLogDaoExt priceLogDaoExt;
+    private final CmsBtProductDao productDao;
+    private final MqSender sender;
+
     @Autowired
-    private CmsBtPriceLogDao priceLogDao;
-    @Autowired
-    private CmsBtPriceLogDaoExt priceLogDaoExt;
-    @Autowired
-    private CmsBtProductDao productDao;
-    @Autowired
-    private MqSender sender;
+    public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt, CmsBtProductDao productDao, MqSender sender) {
+        this.priceLogDao = priceLogDao;
+        this.priceLogDaoExt = priceLogDaoExt;
+        this.productDao = productDao;
+        this.sender = sender;
+    }
 
     public List<CmsBtPriceLogModel> getList(String sku, String code, String cartId, String channelId) {
         return priceLogDaoExt.selectListBySkuOnCart(sku, code, cartId, channelId);
@@ -53,17 +57,13 @@ public class CmsBtPriceLogService extends BaseService {
         return priceLogDaoExt.selectCountBySkuOnCart(sku, code, cartId, channelId);
     }
 
-    public void forceLog(CmsBtPriceLogModel logModel) {
-        priceLogDao.insert(logModel);
-    }
-
     /**
-     * 批量插入价格变更履历（高级搜索->中国最终售价设置专用，只更新了sku的中国最终售价）
-     *
-     * @param paramList
-     * @return
+     * 高级搜索专用日志记录方法, 中国最终售价设置专用, 只更新了sku的中国最终售价
+     * <p>
+     * 日志记录后, 会调用 MQ 发送价格同步请求
+     * create by jiangjusheng
      */
-    public int insertCmsBtPriceLogList(List<CmsBtPriceLogModel> paramList) {
+    public int addLogListAndCallSyncPriceJob(List<CmsBtPriceLogModel> paramList) {
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
         // 向Mq发送消息同步sku,code,group价格范围
@@ -84,12 +84,12 @@ public class CmsBtPriceLogService extends BaseService {
      * @param username  变动人 / 检查人
      * @param comment   变动备注 / 检查备注
      */
-    public void logAll(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
+    public void addLogForSkuListAndCallSyncPriceJob(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
         for (String sku : skuList)
-            log(sku, channelId, cartId, username, comment);
+            addLogAndCallSyncPriceJob(sku, channelId, cartId, username, comment);
     }
 
-    private void log(String sku, String channelId, Integer cartId, String username, String comment) {
+    private void addLogAndCallSyncPriceJob(String sku, String channelId, Integer cartId, String username, String comment) {
 
         CmsBtProductModel productModel = getProduct(sku, channelId);
 
@@ -113,7 +113,7 @@ public class CmsBtPriceLogService extends BaseService {
                 $error(String.format("价格变更历史 产品platform数据不存在 sku=%s, channelid=%s, cartid=%d", sku, channelId, cartId));
                 return;
             }
-            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
+            addLogAndCallSyncPriceJob(sku, cartProduct, channelId, commonSku, productModel, username, comment);
             return;
         }
 
@@ -131,11 +131,11 @@ public class CmsBtPriceLogService extends BaseService {
             if (iCartId < CmsConstants.ACTIVE_CARTID_MIN)
                 continue;
 
-            log(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
+            addLogAndCallSyncPriceJob(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
         }
     }
 
-    private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
+    private void addLogAndCallSyncPriceJob(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
 
         BaseMongoMap<String, Object> cartSku = cartProduct.getSkus().stream().filter(i -> i.getStringAttribute("skuCode").equals(sku)).findFirst().orElseGet(null);
 
@@ -166,12 +166,12 @@ public class CmsBtPriceLogService extends BaseService {
         logModel.setSku(sku);
         logModel.setCartId(cartId);
         logModel.setChannelId(channelId);
-        logModel.setClientMsrpPrice(String.valueOf(commonSku.getClientMsrpPrice()));
-        logModel.setClientNetPrice(String.valueOf(commonSku.getClientNetPrice()));
-        logModel.setClientRetailPrice(String.valueOf(commonSku.getClientRetailPrice()));
-        logModel.setMsrpPrice(platformSku.getStringAttribute("priceMsrp"));
-        logModel.setRetailPrice(platformSku.getStringAttribute("priceRetail"));
-        logModel.setSalePrice(platformSku.getStringAttribute("priceSale"));
+        logModel.setClientMsrpPrice(tryGetPrice(commonSku.getClientMsrpPrice()));
+        logModel.setClientNetPrice(tryGetPrice(commonSku.getClientNetPrice()));
+        logModel.setClientRetailPrice(tryGetPrice(commonSku.getClientRetailPrice()));
+        logModel.setMsrpPrice(platformSku.getDoubleAttribute("priceMsrp"));
+        logModel.setRetailPrice(platformSku.getDoubleAttribute("priceRetail"));
+        logModel.setSalePrice(platformSku.getDoubleAttribute("priceSale"));
         logModel.setComment(comment);
         Date now = new Date();
         logModel.setCreated(now);
@@ -219,10 +219,6 @@ public class CmsBtPriceLogService extends BaseService {
 
     private Double tryGetPrice(Double fromPrice) {
         return fromPrice == null ? 0d : fromPrice;
-    }
-
-    private Double tryGetPrice(String fromPrice) {
-        return StringUtils.isEmpty(fromPrice) ? 0d : Double.valueOf(fromPrice);
     }
 
     private CmsBtProductModel getProduct(String sku, String channelId) {

@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
+import com.voyageone.base.dao.mongodb.model.BulkModelUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.util.DateTimeUtil;
@@ -47,11 +48,11 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
      * 统计group级(各个cart)的销售数据，直接从[cms_mt_prod_sales_his]统计
      */
     public void sumPerCartGroupOrders(List<CmsBtProductGroupModel> list, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        BulkModelUpdateList bulkList = new BulkModelUpdateList(PAGE_LIMIT, cmsBtProductGroupDao, channelId);
         for (CmsBtProductGroupModel grpObj : list) {
             List<String> codeList = grpObj.getProductCodes();
             if (codeList == null || codeList.isEmpty()) {
-                $warn(String.format("CmsFindProdOrdersInfoService 该group无产品code数据！ channel_id=%s groupId=%d", channelId, grpObj.getGroupId()));
+                $warn(String.format("CmsSumGroupOrdersService:sumPerCartGroupOrders 该group无产品code数据！ channel_id=%s groupId=%d", channelId, grpObj.getGroupId()));
                 continue;
             }
 
@@ -98,20 +99,17 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
             BulkUpdateModel updModel = new BulkUpdateModel();
             updModel.setQueryMap(queryMap);
             updModel.setUpdateMap(updateMap);
-            bulkList.add(updModel);
-
             // 批量更新
-            if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
-                BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set", false);
-                $debug(String.format("更新group 店铺%s 执行数 %d, 执行结果 %s", channelId, bulkList.size(), rs.toString()));
-                bulkList = new ArrayList<>();
+            BulkWriteResult rs = bulkList.addBulkModel(updModel);
+            if (rs != null) {
+                $debug(String.format("更新group 店铺%s 执行结果1 %s", channelId, rs.toString()));
             }
         } // end for group list
 
         // 批量更新
-        if (!bulkList.isEmpty()) {
-            BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set", false);
-            $debug(String.format("更新group 店铺%s 执行数 %d, 执行结果 %s", channelId, bulkList.size(), rs.toString()));
+        BulkWriteResult rs = bulkList.execute();
+        if (rs != null) {
+            $debug(String.format("更新group 店铺%s 执行结果2 %s", channelId, rs.toString()));
         }
     }
 
@@ -119,10 +117,11 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
      * 统计group级(cart合计)的销售数据，直接从[cms_mt_prod_sales_his]统计
      */
     public void sumAllCartGroupOrders(List<CmsBtProductGroupModel> list, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        BulkModelUpdateList bulkList = new BulkModelUpdateList(PAGE_LIMIT, cmsBtProductGroupDao, channelId);
         for (CmsBtProductGroupModel grpObj : list) {
             List<String> codeList = grpObj.getProductCodes();
             if (codeList == null || codeList.isEmpty()) {
+                $warn(String.format("CmsSumGroupOrdersService:sumAllCartGroupOrders 该group无产品code数据！ channel_id=%s groupId=%d", channelId, grpObj.getGroupId()));
                 continue;
             }
 
@@ -169,20 +168,17 @@ public class CmsSumGroupOrdersService extends VOAbsIssueLoggable {
             BulkUpdateModel updModel = new BulkUpdateModel();
             updModel.setQueryMap(queryMap);
             updModel.setUpdateMap(updateMap);
-            bulkList.add(updModel);
-
             // 批量更新
-            if (!bulkList.isEmpty() && bulkList.size() % PAGE_LIMIT == 0) {
-                BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set",false);
-                $debug(String.format("更新group(合计) 店铺%s 执行数 %d, 执行结果 %s", channelId, bulkList.size(), rs.toString()));
-                bulkList = new ArrayList<>();
+            BulkWriteResult rs = bulkList.addBulkModel(updModel);
+            if (rs != null) {
+                $debug(String.format("更新group(合计) 店铺%s 执行结果1 %s", channelId, rs.toString()));
             }
         } // end for group list
 
         // 批量更新
-        if (!bulkList.isEmpty()) {
-            BulkWriteResult rs = cmsBtProductGroupDao.bulkUpdateWithMap(channelId, bulkList, taskName, "$set",false);
-            $debug(String.format("更新group(合计) 店铺%s 执行数 %d, 执行结果 %s", channelId, bulkList.size(), rs.toString()));
+        BulkWriteResult rs = bulkList.execute();
+        if (rs != null) {
+            $debug(String.format("更新group(合计) 店铺%s 执行结果2 %s", channelId, rs.toString()));
         }
     }
 }

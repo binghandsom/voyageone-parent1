@@ -113,7 +113,7 @@ public class ProductService extends BaseService {
     }
 
     /**
-     * 获取商品 根据Code
+     * 获取商品 根据Code&OriginalCode
      */
     public CmsBtProductModel getProductSingleSku(String channelId, String code, String originalCode) {
         String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
@@ -126,6 +126,20 @@ public class ProductService extends BaseService {
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
         String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
+    }
+
+    /**
+     * 根据Id返回多条产品数据
+     */
+    public List<CmsBtProductModel> getListByIds(List<Long> ids, String channelId) {
+        return cmsBtProductDao.selectProductByIds(ids, channelId);
+    }
+
+    /**
+     * 根据codes返回多条产品数据
+     */
+    public List<CmsBtProductModel> getListByCodes(List<String> codes, String channelId) {
+        return cmsBtProductDao.selectProductByCodes(codes, channelId);
     }
 
     /**
@@ -702,7 +716,16 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            product.getPlatform(Integer.parseInt(cartId)).getSkus().forEach(skuInfo -> {
+            List<BaseMongoMap<String, Object>> skus;
+            if(!StringUtils.isEmpty(skuIncludes)){
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
+            }else{
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+            }
+            if(skus == null || skus.size() == 0) return resultInfo;
+            skus.forEach(skuInfo -> {
                 ProductForOmsBean bean = new ProductForOmsBean();
                 // 设置商品的原始channelId
                 bean.setChannelId(product.getOrgChannelId());
@@ -717,7 +740,10 @@ public class ProductService extends BaseService {
                 param.put("channelId", product.getOrgChannelId());
                 param.put("sku", skuCode);
                 WmsBtInventoryCenterLogicModel skuInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-                bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+
+                if(skuInventory != null) {
+                    bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+                }
                 String imagePath = "";
                 if (!product.getCommon().getFields().getImages1().isEmpty()) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
@@ -849,7 +875,7 @@ public class ProductService extends BaseService {
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.logAll(skus, channelId, platformModel.getCartId(), modifier, "页面编辑");
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, "页面编辑");
 
         return platformModel.getModified();
     }
@@ -1044,7 +1070,7 @@ public class ProductService extends BaseService {
         List<CustomPropBean> props = new ArrayList<>();
 
         //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getOriginalCode());
+        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
         Map<String, List<String>> feedAttr = feedInfo.getAttribute();
 
         //读cms_mt_feed_custom_prop

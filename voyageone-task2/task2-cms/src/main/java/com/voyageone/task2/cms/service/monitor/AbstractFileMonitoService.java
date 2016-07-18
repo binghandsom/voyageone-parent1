@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.monitor;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.net.ftp.FTPClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 抽象文件监控服务，文件监控服务的父类
@@ -27,15 +30,15 @@ import java.util.concurrent.TimeUnit;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class AbstractFileMonitoService implements ApplicationListener {
+public abstract class AbstractFileMonitoService {
 
     /* 监控 */
-    protected final static String INOTIFY_WAIT_CMD = "/usr/bin/inotifywait";
+    private final static String INOTIFY_WAIT_CMD = "/usr/bin/inotifywait";
 
     /* 日志 */
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
-
+    // 锁
+    private Lock lock = new ReentrantLock();
     @Autowired
     protected TaskDao taskDao;
 
@@ -44,7 +47,6 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
      *
      * @param applicationEvent ApplicationEvent
      */
-    @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
             new Thread(this::run).start();
@@ -114,11 +116,13 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {
+                    Thread.sleep(5000);
                     continue;
                 }
 
                 String[] result = line.split(":");
                 if (result.length != 3) {
+                    Thread.sleep(5000);
                     continue;
                 }
                 //LOG.info(result[0] + "->" + result[1] + "->" + result[2]);
@@ -157,6 +161,8 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
 
     private boolean processKill(String cmdPath) {
         try {
+            //获得锁
+            lock.lock();
             String cmd = String.format("ps -ef|grep %s |grep -v grep|cut -c 9-15|xargs kill -9", cmdPath);
             LOG.info("AbstractFileMonitoService.processKill cmd:=" + cmd);
             Process process = Runtime.getRuntime().exec(cmd);
@@ -167,6 +173,9 @@ public abstract class AbstractFileMonitoService implements ApplicationListener {
             }
         } catch (Exception e) {
             LOG.error("AbstractFileMonitoService.executeKill error:" + e.getMessage());
+        } finally {
+            //释放锁
+            lock.unlock();
         }
         return false;
     }

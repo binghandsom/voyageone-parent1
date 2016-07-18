@@ -102,6 +102,17 @@ public class BackDoorController extends CmsController {
     }
 
     /**
+     * 将老的聚美数据导入都cms(/cms/backdoor/importJM/015)
+     *
+     * @param channelId 渠道Id
+     * @return
+     */
+    @RequestMapping(value = "importJMOne", method = RequestMethod.GET)
+    public Object importJmOne(@RequestParam("channelId") String channelId, @RequestParam("code") String code) {
+        return serviceJmBtDealImport.importJMOne(channelId,code);
+    }
+
+    /**
      * 创建996的测试数据(/cms/backdoor/createTestData)
      *
      * @return
@@ -168,7 +179,13 @@ public class BackDoorController extends CmsController {
 
         final String productNewStatusName = CmsConstants.ProductStatus.New.name();
 
-        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, code);
+        List<String> codes = new ArrayList<>();
+        if (!StringUtils.isEmpty(code)) {
+            codes = java.util.Arrays.asList(code.split(";"));
+        }
+        System.out.print(codes.toArray() + ":" + codes.size());
+
+        List<OldCmsBtProductModel> oldProductInfo = cmsBtProductDao.selectOldProduct(channelId, codes);
 
         List<String> errorCode = new ArrayList<>();
 
@@ -599,7 +616,7 @@ public class BackDoorController extends CmsController {
             }
         });
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
+//        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
 
         StringBuilder builder = new StringBuilder("<body>");
 
@@ -612,7 +629,7 @@ public class BackDoorController extends CmsController {
         builder.append("<hr>");
         builder.append("<h2>Group 信息列表</h2>");
         builder.append("<ul>");
-        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+//        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
         builder.append("</ul>");
         builder.append("</body>");
 
@@ -633,55 +650,68 @@ public class BackDoorController extends CmsController {
 
                 CmsBtProductModel_Platform_Cart platformInfo = product.getPlatform(Integer.valueOf(cartId));
 
-                if (StringUtils.isEmpty(platformInfo.getpNumIId()))
+                if (StringUtils.isEmpty(platformInfo.getpNumIId())) {
                     platformInfo.setStatus(CmsConstants.ProductStatus.Pending);
+                    platformInfo.setAttribute("pStatus", "");
+                    platformInfo.setpAttributeStatus("0");
+                    platformInfo.setpAttributeSetter("");
+                }
+
                 else {
 
                     platformInfo.setStatus(CmsConstants.ProductStatus.Approved);
+//                    platformInfo.setAttribute("pStatus", "");
+                    if (!StringUtils.isEmpty(platformInfo.getpCatPath())) {
+                        platformInfo.setpCatStatus("1");
+                    } else {
+                        platformInfo.setpCatStatus("0");
+                    }
+                    platformInfo.setpAttributeStatus("1");
+                    platformInfo.setpAttributeSetter("数据移行设置");
                     if (CmsConstants.PlatformStatus.WaitingPublish.name().equals(platformInfo.getpStatus().name()))
                         platformInfo.setpStatus(CmsConstants.PlatformStatus.InStock);
                 }
 
-                final Double[] priceMsrpSt = {0.00};
-                final Double[] priceMsrpEd = {0.00};
-                final Double[] priceRetailSt = {0.00};
-                final Double[] priceRetailEd = {0.00};
-                final Double[] priceSaleSt = {0.00};
-                final Double[] priceSaleEd = {0.00};
-
-                platformInfo.getSkus().forEach(sku -> {
-
-                    double priceMsrp = sku.getDoubleAttribute("priceMsrp");
-                    double priceRetail = sku.getDoubleAttribute("priceRetail");
-                    double priceSale = sku.getDoubleAttribute("priceSale");
-
-                    if (priceMsrpSt[0].compareTo(0D) == 0 || priceMsrpSt[0].compareTo(priceMsrp) >= 0)
-                        priceMsrpSt[0] = priceMsrp;
-                    if (priceMsrpEd[0].compareTo(priceMsrp) <= 0)
-                        priceMsrpEd[0] = priceMsrp;
-                    if (priceRetailSt[0].compareTo(0D) == 0 || priceRetailSt[0].compareTo(priceRetail) >= 0)
-                        priceRetailSt[0] = priceRetail;
-                    if (priceRetailEd[0].compareTo(priceRetail) <= 0)
-                        priceRetailEd[0] = priceRetail;
-                    if (priceSaleSt[0].compareTo(0D) == 0 || priceSaleSt[0].compareTo(priceSale) >= 0)
-                        priceSaleSt[0] = priceSale;
-                    if (priceSaleEd[0].compareTo(priceSale) <= 0)
-                        priceSaleEd[0] = priceSale;
-                });
-
-                platformInfo.setpPriceMsrpSt(priceMsrpSt[0]);
-                platformInfo.setpPriceMsrpEd(priceMsrpEd[0]);
-                platformInfo.setpPriceRetailSt(priceRetailSt[0]);
-                platformInfo.setpPriceRetailEd(priceRetailEd[0]);
-                platformInfo.setpPriceSaleSt(priceSaleSt[0]);
-                platformInfo.setpPriceSaleEd(priceSaleEd[0]);
-
-                platformInfo.getSkus().forEach(sku -> {
-                    if (sku.containsKey("PriceSale")) {
-                        sku.put("priceSale",sku.getDoubleAttribute("PriceSale"));
-                        sku.remove("PriceSale");
-                    }
-                });
+//                final Double[] priceMsrpSt = {0.00};
+//                final Double[] priceMsrpEd = {0.00};
+//                final Double[] priceRetailSt = {0.00};
+//                final Double[] priceRetailEd = {0.00};
+//                final Double[] priceSaleSt = {0.00};
+//                final Double[] priceSaleEd = {0.00};
+//
+//                platformInfo.getSkus().forEach(sku -> {
+//
+//                    double priceMsrp = sku.getDoubleAttribute("priceMsrp");
+//                    double priceRetail = sku.getDoubleAttribute("priceRetail");
+//                    double priceSale = sku.getDoubleAttribute("priceSale");
+//
+//                    if (priceMsrpSt[0].compareTo(0D) == 0 || priceMsrpSt[0].compareTo(priceMsrp) >= 0)
+//                        priceMsrpSt[0] = priceMsrp;
+//                    if (priceMsrpEd[0].compareTo(priceMsrp) <= 0)
+//                        priceMsrpEd[0] = priceMsrp;
+//                    if (priceRetailSt[0].compareTo(0D) == 0 || priceRetailSt[0].compareTo(priceRetail) >= 0)
+//                        priceRetailSt[0] = priceRetail;
+//                    if (priceRetailEd[0].compareTo(priceRetail) <= 0)
+//                        priceRetailEd[0] = priceRetail;
+//                    if (priceSaleSt[0].compareTo(0D) == 0 || priceSaleSt[0].compareTo(priceSale) >= 0)
+//                        priceSaleSt[0] = priceSale;
+//                    if (priceSaleEd[0].compareTo(priceSale) <= 0)
+//                        priceSaleEd[0] = priceSale;
+//                });
+//
+//                platformInfo.setpPriceMsrpSt(priceMsrpSt[0]);
+//                platformInfo.setpPriceMsrpEd(priceMsrpEd[0]);
+//                platformInfo.setpPriceRetailSt(priceRetailSt[0]);
+//                platformInfo.setpPriceRetailEd(priceRetailEd[0]);
+//                platformInfo.setpPriceSaleSt(priceSaleSt[0]);
+//                platformInfo.setpPriceSaleEd(priceSaleEd[0]);
+//
+//                platformInfo.getSkus().forEach(sku -> {
+//                    if (sku.containsKey("PriceSale")) {
+//                        sku.put("priceSale",sku.getDoubleAttribute("PriceSale"));
+//                        sku.remove("PriceSale");
+//                    }
+//                });
 
 
                 HashMap<String, Object> queryMap = new HashMap<>();
@@ -703,7 +733,7 @@ public class BackDoorController extends CmsController {
     @RequestMapping(value = "changeDataByNewGroup", method = RequestMethod.GET)
     public Object changeDataBy20160708Group(@RequestParam("channelId") String channelId) {
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId);
+        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, null);
 
         StringBuilder builder = new StringBuilder("<body>");
         builder.append("<h2>Group 信息列表</h2>");
@@ -810,7 +840,7 @@ public class BackDoorController extends CmsController {
     }
 
 
-    private List<String> checkGroupTransformOn20160708(String channelId) {
+    private List<String> checkGroupTransformOn20160708(String channelId, String code) {
 
         List<String> messageList = new ArrayList<>();
 
@@ -856,60 +886,63 @@ public class BackDoorController extends CmsController {
             if (groupModel.getProductCodes().size() == existedCodeList.size())
                 return;
 
-            String oldMainProductCode = groupModel.getMainProductCode();
-
-            if (existedCodeList.contains(oldMainProductCode)) {
-                // 如果存在, 说明还没有删除
-                // 那么维持老的数据即可
-                // 只需要扔掉那些删除掉得 code
+            System.out.println(existedCodeList.toArray());
                 groupModel.setProductCodes(existedCodeList);
-            } else {
-                // 如果 group 现在使用的 main product 不在过滤后的集合里
-                // 说明这个 code 已经被上一步删除了
-                // 那么
-                // 除了切换 group 的 main product code 外
-                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
-                String newMainProductCode = existedCodeList.get(0);
-                groupModel.setMainProductCode(newMainProductCode);
-                existedCodeList.forEach(existedCode -> {
-                    // 更新每一个 code
-                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
-                    // 不过 P0 只有 mainProductCode
-                    // 同时还要更新 common fields 里的 isMasterMain 属性
-                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
-                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
-                    boolean isMain = existedCode.equals(newMainProductCode);
-                    Map<String, Object> productSetParams = new HashMap<>(3);
 
-                    // 因为有可能并行 (parallelStream) 执行
-                    // 也就是有可能并发更新同一个商品
-                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
-                    // common 下的属性交给 P0 平台更新
-
-                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
-
-                    if (currentGroupProductPlatform == null) {
-                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
-                        return;
-                    }
-
-                    if (isMain) {
-                        if (groupCartId.equals(0))
-                            productSetParams.put("common.fields.isMasterMain", 1);
-                        else
-                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
-                    }
-
-                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
-
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("$set", productSetParams);
-
-                    Map<String, Object> productQueryParams = new HashMap<>();
-                    productQueryParams.put("_id", productModel.get_id());
-                    productService.updateProduct(channelId, productQueryParams, updateMap);
-                });
-            }
+//            String oldMainProductCode = groupModel.getMainProductCode();
+//
+//            if (existedCodeList.contains(oldMainProductCode)) {
+//                // 如果存在, 说明还没有删除
+//                // 那么维持老的数据即可
+//                // 只需要扔掉那些删除掉得 code
+//                groupModel.setProductCodes(existedCodeList);
+//            } else {
+//                // 如果 group 现在使用的 main product 不在过滤后的集合里
+//                // 说明这个 code 已经被上一步删除了
+//                // 那么
+//                // 除了切换 group 的 main product code 外
+//                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
+//                String newMainProductCode = existedCodeList.get(0);
+//                groupModel.setMainProductCode(newMainProductCode);
+//                existedCodeList.forEach(existedCode -> {
+//                    // 更新每一个 code
+//                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
+//                    // 不过 P0 只有 mainProductCode
+//                    // 同时还要更新 common fields 里的 isMasterMain 属性
+//                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
+//                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
+//                    boolean isMain = existedCode.equals(newMainProductCode);
+//                    Map<String, Object> productSetParams = new HashMap<>(3);
+//
+//                    // 因为有可能并行 (parallelStream) 执行
+//                    // 也就是有可能并发更新同一个商品
+//                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
+//                    // common 下的属性交给 P0 平台更新
+//
+//                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
+//
+//                    if (currentGroupProductPlatform == null) {
+//                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
+//                        return;
+//                    }
+//
+//                    if (isMain) {
+//                        if (groupCartId.equals(0))
+//                            productSetParams.put("common.fields.isMasterMain", 1);
+//                        else
+//                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
+//                    }
+//
+//                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
+//
+//                    HashMap<String, Object> updateMap = new HashMap<>();
+//                    updateMap.put("$set", productSetParams);
+//
+//                    Map<String, Object> productQueryParams = new HashMap<>();
+//                    productQueryParams.put("_id", productModel.get_id());
+//                    productService.updateProduct(channelId, productQueryParams, updateMap);
+//                });
+//            }
 
             productGroupService.update(groupModel);
         });
@@ -994,6 +1027,49 @@ public class BackDoorController extends CmsController {
             Collections.addAll(skus, skuIncludes.split(","));
             return JacksonUtil.bean2Json(productService.getOmsProductsInfo(channelId, null, skus, nameIncludes, descriptionIncludes, cartId, null));
         }
+    }
+
+    /**
+     * 测试getOmsProductsInfo方法
+     *
+     * @param channelId           店铺Id
+     * @param cartId              平台Id
+     * @return List<ProductForOmsBean>对象
+     */
+    @RequestMapping(value = "updateProductPlatformIsSale", method = RequestMethod.GET)
+    public Object updateProductPlatformIsSale(@RequestParam("channelId") String channelId
+            , @RequestParam("code") String code
+            , @RequestParam("cartId") String cartId) {{
+
+        List<CmsBtProductModel> productInfo = new ArrayList<>();
+        if (StringUtils.isEmpty(code))
+            productInfo = cmsBtProductDao.select("{\"platforms.P27.skus.isSale\": {$in: [\"true\", \"false\"]}}", channelId);
+        else
+            productInfo = cmsBtProductDao.select("{\"common.fields.code\": \"" + code + "\"}", channelId);
+
+
+        productInfo.parallelStream().forEach(product -> {
+
+            product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(sku ->
+                sku.setAttribute("isSale", "true".equals(sku.getStringAttribute("isSale")))
+            );
+
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", product.getProdId());
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+//                platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+            updateMap.put("platforms.P" + cartId, product.getPlatform(Integer.valueOf(cartId)));
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "updateProductPlatformIsSale", "$set");
+        });
+        return code;
+    }
+
+
     }
 
 }

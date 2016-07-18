@@ -13,8 +13,8 @@ public class CustomWordValueGetCommonImages extends CustomWordValue {
     public CustomWordValueGetCommonImages() {
     }
 
-    public CustomWordValueGetCommonImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl) {
-        this.userParam = new CustomModuleUserParamGetCommonImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+    public CustomWordValueGetCommonImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression imageIndex) {
+        this.userParam = new CustomModuleUserParamGetCommonImages(htmlTemplate, imageTemplate, imageType, useOriUrl, imageIndex);
     }
 
     public CustomModuleUserParamGetCommonImages getUserParam() {

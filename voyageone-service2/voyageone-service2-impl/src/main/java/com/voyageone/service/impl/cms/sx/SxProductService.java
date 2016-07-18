@@ -15,6 +15,8 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
@@ -1568,7 +1570,11 @@ public class SxProductService extends BaseService {
             }
             case COMPLEX: {
                 retMap = new HashMap<>();
-                String fieldId = field.getId();
+                // modified by morse.lu 2016/07/13 start
+                // 把field_id中的【.】替换成【->】
+//                String fieldId = field.getId();
+                String fieldId = StringUtil.replaceDot(field.getId());
+                // modified by morse.lu 2016/07/13 end
                 Map<String, Object> masterWordEvaluationContext;
                 try {
                     masterWordEvaluationContext = expressionParser.getLastMasterPropContext();
@@ -1615,7 +1621,11 @@ public class SxProductService extends BaseService {
             }
             case MULTICOMPLEX: {
                 retMap = new HashMap<>();
-                String fieldId = field.getId();
+                // modified by morse.lu 2016/07/13 start
+                // 把field_id中的【.】替换成【->】
+//                String fieldId = field.getId();
+                String fieldId = StringUtil.replaceDot(field.getId());
+                // modified by morse.lu 2016/07/13 end
                 List<Map<String, Object>> masterWordEvaluationContexts = null;
                 try {
                     Map<String, Object> masterWordEvaluationContext = expressionParser.getLastMasterPropContext();
@@ -1682,7 +1692,11 @@ public class SxProductService extends BaseService {
      */
     public String getProductValueByMasterMapping(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         RuleExpression rule = new RuleExpression();
-        MasterWord masterWord = new MasterWord(field.getId());
+        // modified by morse.lu 2016/07/13 start
+        // 把field_id中的【.】替换成【->】
+//        MasterWord masterWord = new MasterWord(field.getId());
+        MasterWord masterWord = new MasterWord(StringUtil.replaceDot(field.getId()));
+        // modified by morse.lu 2016/07/13 end
         rule.addRuleWord(masterWord);
         return expressionParser.parse(rule, shopBean, user, null);
     }

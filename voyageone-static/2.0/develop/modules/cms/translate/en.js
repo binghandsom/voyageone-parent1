@@ -577,6 +577,7 @@ define(function () {
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
         "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
@@ -631,7 +632,7 @@ define(function () {
         /**店铺分类*/
         "TXT_STORE_CATEGORY_NAME": "店铺",
         "MAX_SELLER_CAT_DEPTH": "最大层数",
-        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于",
+        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于等于",
         "TXT_STORE_CATEGORY_SELECT": "请选择一个店铺",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH": "当前店铺路径下操作无效",
         "CATEGORY_EDIT": "分类类目编辑",
@@ -721,6 +722,7 @@ define(function () {
         "TXT_NO_PRODUCT_CHOOSED": "未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
         "TXT_CONFIRM_ALL_STORE_PUT_ON": "此操作将会导致全店铺商品上下架，确认无误",
+        "TXT_CONFIRM_NOW_STORE_PUT_ON": "此操作将会导致本店铺商品上下架，确认无误",
         "TXT_ITEM_CODE": "商品Code",
 
         /** 翻译页面相关 **/
@@ -758,8 +760,10 @@ define(function () {
         "TXT_EXPORT_REQUEST_TIME": "导出申请时间",
         "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
         "TXT_EXPORT_REQUESTER": "导出申请者",
-
-
-        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:"
+        
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
+        "TXT_ACTION_TIME":"操作时间",
+        "TXT_ACTION_USER":"操作者",
+        "TXT_ACTION_COMMENT":"说明"
     };
 });

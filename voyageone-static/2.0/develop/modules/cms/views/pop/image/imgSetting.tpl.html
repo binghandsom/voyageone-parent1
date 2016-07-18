@@ -1,28 +1,48 @@
-<div class="vo_modal" ng-controller="popupCtrl">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
-                aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>
-            <span translate="TXT_FILE_IMPORT"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h4 class="modal-title">
+            <i class="fa fa-cloud-upload"></i>&nbsp;
+            <span class="ng-scope">产品图片上传</span>
+        </h4>
     </div>
-    <div class="modal-body wrapper">
+    <div class="modal-body wrapper img-upload" block-ui="imgUpload">
+        <div nv-file-drop="" uploader="ctrl.uploader">
+            <div nv-file-over="" uploader="ctrl.uploader" over-class="another-file-over-class" class="well drop-zone">
+               如果您想按照指定顺序上传，打开【浏览文件】后，按照指定顺序拖动图片到这里。
+            </div>
+        </div>
+
         <form role="form" class="form-horizontal" id="uploadForm">
-            <div class="form-group">
-                <label class="col-sm-3 control-label" translate="TXT_FILE_WITH_COLON"></label>
-                <div class="col-sm-8">
-                    <input type="file" file-style nv-file-select="" uploader="uploader" accept=".jpg">
+            <div class="row form-group">
+               <div class="col-sm-2 smacot ng-scope" ng-repeat="item in ctrl.uploader.queue">
+                    <img  flow-img="file" class="img-thumbnail img-thumbnails center-block fix-img" ng-thumb="{ file: item._file, height: 100 }" title="{{item._file.size/1024/1024 | number:4}}M">
+                    <div class="progress fix-progress">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }" style="width: 0%;" ng-if="!item.uploaded"></div>
+                        <div class="progress-bar" role="progressbar" style="width: 100%;" ng-if="item.uploaded"></div>
+                    </div>
+                    <p class="error-msg" ng-if="item.message">{{item.message}}</p>
+                    <button class="btn btn-dangerdel btn-xs imagepopup" ng-click="item.remove()"><i class="fa fa-trash-o "></i></button>
                 </div>
-            </div><!-- .form-group -->
-            <div class="form-group">
-                <label class="col-sm-3 control-label"></label>
-                <div class="col-sm-8">
-                    <p class="text-vo"><i class="icon fa"></i>{{vm.messager}}</p>
+            </div>
+            <div class="form-group" ng-if="ctrl.uploader.queue.length == 0">
+                <div class="text-center">
+                    <input type="file" file-style = "{buttonText:' &nbsp;浏览文件'}" nv-file-select="" uploader="ctrl.uploader" Multiple accept="image/png,image/jpeg" file-length = "{{ctrl.uploader.queue.length}}">
                 </div>
+            </div>
+            <div class="text-warnings" style="padding-left:0px">
+                <i class="icon fa fa-bell-o"></i>&nbsp;图片最多可以上传10张，没张图片大小不许大于5M（鼠标悬浮在图片上时，会显示图片的大小），选择后不可再选，需要的话请重新打开！
             </div>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
-        <button class="btn btn-vo" ng-click="upload()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_UPLOAD_FILE' | translate}}</button>
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length > 10">
+            <i class="glyphicon glyphicon-share-alt"></i>&nbsp;
+            <span ng-if="!ctrl.vm.reUpload">{{'BTN_UPLOAD_FILE' | translate}}</span>
+            <span ng-if="ctrl.vm.reUpload">{{'BTN_REUPLOAD_FILE' | translate}}</span>
+        </button>
     </div>
-</div><!-- .vo_modal -->
+</div>

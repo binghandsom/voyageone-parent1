@@ -20,20 +20,14 @@
     <result column="Manufacturer" property="manufacturer" jdbcType="LONGVARCHAR" />
     <result column="Brand" property="brand" jdbcType="LONGVARCHAR" />
     <result column="Condition" property="condition" jdbcType="LONGVARCHAR" />
-    <result column="Buy_It_Now_Price" property="buyItNowPrice" jdbcType="LONGVARCHAR" />
     <result column="Retail_Price" property="retailPrice" jdbcType="LONGVARCHAR" />
     <result column="TaxProductCode" property="taxproductcode" jdbcType="LONGVARCHAR" />
     <result column="Relationship_Name" property="relationshipName" jdbcType="LONGVARCHAR" />
-    <result column="AmzRepricerAutoPrice" property="amzrepricerautoprice" jdbcType="LONGVARCHAR" />
     <result column="categories" property="categories" jdbcType="LONGVARCHAR" />
     <result column="closuretype" property="closuretype" jdbcType="LONGVARCHAR" />
     <result column="colormap" property="colormap" jdbcType="LONGVARCHAR" />
     <result column="colorname" property="colorname" jdbcType="LONGVARCHAR" />
     <result column="departmentname" property="departmentname" jdbcType="LONGVARCHAR" />
-    <result column="ebaymaincolor" property="ebaymaincolor" jdbcType="LONGVARCHAR" />
-    <result column="ebaystorecategorytext" property="ebaystorecategorytext" jdbcType="LONGVARCHAR" />
-    <result column="externalproductid" property="externalproductid" jdbcType="LONGVARCHAR" />
-    <result column="externalproductidtype" property="externalproductidtype" jdbcType="LONGVARCHAR" />
     <result column="feedproducttype" property="feedproducttype" jdbcType="LONGVARCHAR" />
     <result column="gender" property="gender" jdbcType="LONGVARCHAR" />
     <result column="generickeywords" property="generickeywords" jdbcType="LONGVARCHAR" />
@@ -74,9 +68,8 @@
   </sql>
   <sql id="Blob_Column_List" >
     "Inventory_Number", "UPC1", "MPN", "Description", "Manufacturer", "Brand", "Condition",
-    "Buy_It_Now_Price", "Retail_Price", "TaxProductCode", "Relationship_Name", "AmzRepricerAutoPrice",
-    "categories", "closuretype", "colormap", "colorname", "departmentname", "ebaymaincolor",
-    "ebaystorecategorytext", "externalproductid", "externalproductidtype", "feedproducttype",
+    "Retail_Price", "TaxProductCode", "Relationship_Name",
+    "categories", "closuretype", "colormap", "colorname", "departmentname","feedproducttype",
     "gender", "generickeywords", "ItemClassDisplayPath", "itemname", "itemtype", "itemtypekeyword",
     "listprice", "materialtype", "model", "numberofitems", "productdescription", "recommendedbrowsenodes",
     "relationshiptype", "shoesizedisplay", "shoesizeinfants", "shoesizekids", "shoesizemen",
@@ -102,13 +95,10 @@
     "swatchimageurl", "Feature_Bullets", "md5",
     "updateFlag", "Inventory_Number", "UPC1",
     "MPN", "Description", "Manufacturer",
-    "Brand", "Condition", "Buy_It_Now_Price",
-    "Retail_Price", "TaxProductCode", "Relationship_Name",
-    "AmzRepricerAutoPrice", "categories",
+    "Brand", "Condition",
+    "Retail_Price", "TaxProductCode", "Relationship_Name", "categories",
     "closuretype", "colormap", "colorname",
-    "departmentname", "ebaymaincolor",
-    "ebaystorecategorytext", "externalproductid",
-    "externalproductidtype", "feedproducttype",
+    "departmentname","feedproducttype",
     "gender", "generickeywords", "ItemClassDisplayPath",
     "itemname", "itemtype", "itemtypekeyword",
     "listprice", "materialtype", "model",
@@ -130,13 +120,10 @@
     #{swatchimageurl,jdbcType=VARCHAR}, #{featureBullets,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
     #{updateflag,jdbcType=INTEGER}, #{inventoryNumber,jdbcType=LONGVARCHAR}, #{upc1,jdbcType=LONGVARCHAR},
     #{mpn,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{manufacturer,jdbcType=LONGVARCHAR},
-    #{brand,jdbcType=LONGVARCHAR}, #{condition,jdbcType=LONGVARCHAR}, #{buyItNowPrice,jdbcType=LONGVARCHAR},
-    #{retailPrice,jdbcType=LONGVARCHAR}, #{taxproductcode,jdbcType=LONGVARCHAR}, #{relationshipName,jdbcType=LONGVARCHAR},
-    #{amzrepricerautoprice,jdbcType=LONGVARCHAR}, #{categories,jdbcType=LONGVARCHAR},
-    #{closuretype,jdbcType=LONGVARCHAR}, #{colormap,jdbcType=LONGVARCHAR}, #{colorname,jdbcType=LONGVARCHAR},
-    #{departmentname,jdbcType=LONGVARCHAR}, #{ebaymaincolor,jdbcType=LONGVARCHAR},
-    #{ebaystorecategorytext,jdbcType=LONGVARCHAR}, #{externalproductid,jdbcType=LONGVARCHAR},
-    #{externalproductidtype,jdbcType=LONGVARCHAR}, #{feedproducttype,jdbcType=LONGVARCHAR},
+    #{brand,jdbcType=LONGVARCHAR}, #{condition,jdbcType=LONGVARCHAR},#{retailPrice,jdbcType=LONGVARCHAR},
+    #{taxproductcode,jdbcType=LONGVARCHAR}, #{relationshipName,jdbcType=LONGVARCHAR},
+    #{categories,jdbcType=LONGVARCHAR},#{closuretype,jdbcType=LONGVARCHAR}, #{colormap,jdbcType=LONGVARCHAR}, #{colorname,jdbcType=LONGVARCHAR},
+    #{departmentname,jdbcType=LONGVARCHAR}, #{feedproducttype,jdbcType=LONGVARCHAR},
     #{gender,jdbcType=LONGVARCHAR}, #{generickeywords,jdbcType=LONGVARCHAR}, #{itemclassdisplaypath,jdbcType=LONGVARCHAR},
     #{itemname,jdbcType=LONGVARCHAR}, #{itemtype,jdbcType=LONGVARCHAR}, #{itemtypekeyword,jdbcType=LONGVARCHAR},
     #{listprice,jdbcType=LONGVARCHAR}, #{materialtype,jdbcType=LONGVARCHAR}, #{model,jdbcType=LONGVARCHAR},
@@ -203,9 +190,6 @@
       <if test="condition != null" >
         `Condition`,
       </if>
-      <if test="buyItNowPrice != null" >
-        Buy_It_Now_Price,
-      </if>
       <if test="retailPrice != null" >
         Retail_Price,
       </if>
@@ -214,9 +198,6 @@
       </if>
       <if test="relationshipName != null" >
         Relationship_Name,
-      </if>
-      <if test="amzrepricerautoprice != null" >
-        AmzRepricerAutoPrice,
       </if>
       <if test="categories != null" >
         categories,
@@ -232,18 +213,6 @@
       </if>
       <if test="departmentname != null" >
         departmentname,
-      </if>
-      <if test="ebaymaincolor != null" >
-        ebaymaincolor,
-      </if>
-      <if test="ebaystorecategorytext != null" >
-        ebaystorecategorytext,
-      </if>
-      <if test="externalproductid != null" >
-        externalproductid,
-      </if>
-      <if test="externalproductidtype != null" >
-        externalproductidtype,
       </if>
       <if test="feedproducttype != null" >
         feedproducttype,
@@ -394,9 +363,6 @@
       <if test="condition != null" >
         #{condition,jdbcType=LONGVARCHAR},
       </if>
-      <if test="buyItNowPrice != null" >
-        #{buyItNowPrice,jdbcType=LONGVARCHAR},
-      </if>
       <if test="retailPrice != null" >
         #{retailPrice,jdbcType=LONGVARCHAR},
       </if>
@@ -405,9 +371,6 @@
       </if>
       <if test="relationshipName != null" >
         #{relationshipName,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="amzrepricerautoprice != null" >
-        #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
       </if>
       <if test="categories != null" >
         #{categories,jdbcType=LONGVARCHAR},
@@ -423,18 +386,6 @@
       </if>
       <if test="departmentname != null" >
         #{departmentname,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="ebaymaincolor != null" >
-        #{ebaymaincolor,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="ebaystorecategorytext != null" >
-        #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="externalproductid != null" >
-        #{externalproductid,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="externalproductidtype != null" >
-        #{externalproductidtype,jdbcType=LONGVARCHAR},
       </if>
       <if test="feedproducttype != null" >
         #{feedproducttype,jdbcType=LONGVARCHAR},
@@ -585,9 +536,6 @@
       <if test="condition != null" >
         "Condition" = #{condition,jdbcType=LONGVARCHAR},
       </if>
-      <if test="buyItNowPrice != null" >
-        "Buy_It_Now_Price" = #{buyItNowPrice,jdbcType=LONGVARCHAR},
-      </if>
       <if test="retailPrice != null" >
         "Retail_Price" = #{retailPrice,jdbcType=LONGVARCHAR},
       </if>
@@ -596,9 +544,6 @@
       </if>
       <if test="relationshipName != null" >
         "Relationship_Name" = #{relationshipName,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="amzrepricerautoprice != null" >
-        "AmzRepricerAutoPrice" = #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
       </if>
       <if test="categories != null" >
         "categories" = #{categories,jdbcType=LONGVARCHAR},
@@ -614,18 +559,6 @@
       </if>
       <if test="departmentname != null" >
         "departmentname" = #{departmentname,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="ebaymaincolor != null" >
-        "ebaymaincolor" = #{ebaymaincolor,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="ebaystorecategorytext != null" >
-        "ebaystorecategorytext" = #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="externalproductid != null" >
-        "externalproductid" = #{externalproductid,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="externalproductidtype != null" >
-        "externalproductidtype" = #{externalproductidtype,jdbcType=LONGVARCHAR},
       </if>
       <if test="feedproducttype != null" >
         "feedproducttype" = #{feedproducttype,jdbcType=LONGVARCHAR},
@@ -746,20 +679,14 @@
     "Manufacturer" = #{manufacturer,jdbcType=LONGVARCHAR},
     "Brand" = #{brand,jdbcType=LONGVARCHAR},
     "Condition" = #{condition,jdbcType=LONGVARCHAR},
-    "Buy_It_Now_Price" = #{buyItNowPrice,jdbcType=LONGVARCHAR},
     "Retail_Price" = #{retailPrice,jdbcType=LONGVARCHAR},
     "TaxProductCode" = #{taxproductcode,jdbcType=LONGVARCHAR},
     "Relationship_Name" = #{relationshipName,jdbcType=LONGVARCHAR},
-    "AmzRepricerAutoPrice" = #{amzrepricerautoprice,jdbcType=LONGVARCHAR},
     "categories" = #{categories,jdbcType=LONGVARCHAR},
     "closuretype" = #{closuretype,jdbcType=LONGVARCHAR},
     "colormap" = #{colormap,jdbcType=LONGVARCHAR},
     "colorname" = #{colorname,jdbcType=LONGVARCHAR},
     "departmentname" = #{departmentname,jdbcType=LONGVARCHAR},
-    "ebaymaincolor" = #{ebaymaincolor,jdbcType=LONGVARCHAR},
-    "ebaystorecategorytext" = #{ebaystorecategorytext,jdbcType=LONGVARCHAR},
-    "externalproductid" = #{externalproductid,jdbcType=LONGVARCHAR},
-    "externalproductidtype" = #{externalproductidtype,jdbcType=LONGVARCHAR},
     "feedproducttype" = #{feedproducttype,jdbcType=LONGVARCHAR},
     "gender" = #{gender,jdbcType=LONGVARCHAR},
     "generickeywords" = #{generickeywords,jdbcType=LONGVARCHAR},

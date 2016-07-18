@@ -112,12 +112,26 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
-                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        if(context == null)
+                            return;
+
+                        if(context.length == 0)
+                            return;
+
+                        scope.vm.productComm.modified = context.modified;
+
+                        var imgType = null;
+                        angular.forEach(context,function(item){
+                            imgType = item.imageType;
+                            scope.vm.tempImage[item.imageType].push(item.base64);
+                        });
+
                         _.map(scope.vm.productComm.schemaFields, function(item){
-                            if(item.id == context.imageType){
-                                item.complexValues = context.imageSchema[0].complexValues;
+                            if(item.id == imgType){
+                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
                             }
                         });
+
                         constructSchema(scope, $compile);
                     });
                 }

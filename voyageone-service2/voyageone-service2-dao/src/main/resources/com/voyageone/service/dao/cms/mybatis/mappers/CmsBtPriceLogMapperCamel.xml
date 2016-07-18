@@ -83,22 +83,22 @@
                 #{sku,jdbcType=VARCHAR},
             </if>
             <if test="msrpPrice != null" >
-                #{msrpPrice,jdbcType=VARCHAR},
+                #{msrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="retailPrice != null" >
-                #{retailPrice,jdbcType=VARCHAR},
+                #{retailPrice,jdbcType=DOUBLE},
             </if>
             <if test="salePrice != null" >
-                #{salePrice,jdbcType=VARCHAR},
+                #{salePrice,jdbcType=DOUBLE},
             </if>
             <if test="clientMsrpPrice != null" >
-                #{clientMsrpPrice,jdbcType=VARCHAR},
+                #{clientMsrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientRetailPrice != null" >
-                #{clientRetailPrice,jdbcType=VARCHAR},
+                #{clientRetailPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientNetPrice != null" >
-                #{clientNetPrice,jdbcType=VARCHAR},
+                #{clientNetPrice,jdbcType=DOUBLE},
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
@@ -146,22 +146,22 @@
                 `sku` = #{sku,jdbcType=VARCHAR},
             </if>
             <if test="msrpPrice != null" >
-                `msrp_price` = #{msrpPrice,jdbcType=VARCHAR},
+                `msrp_price` = #{msrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="retailPrice != null" >
-                `retail_price` = #{retailPrice,jdbcType=VARCHAR},
+                `retail_price` = #{retailPrice,jdbcType=DOUBLE},
             </if>
             <if test="salePrice != null" >
-                `sale_price` = #{salePrice,jdbcType=VARCHAR},
+                `sale_price` = #{salePrice,jdbcType=DOUBLE},
             </if>
             <if test="clientMsrpPrice != null" >
-                `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR},
+                `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientRetailPrice != null" >
-                `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR},
+                `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE},
             </if>
             <if test="clientNetPrice != null" >
-                `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR},
+                `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE},
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
@@ -211,22 +211,22 @@
                 and `sku` = #{sku,jdbcType=VARCHAR}
             </if>
             <if test="msrpPrice != null" >
-                and `msrp_price` = #{msrpPrice,jdbcType=VARCHAR}
+                and `msrp_price` = #{msrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=VARCHAR}
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
             </if>
             <if test="salePrice != null" >
-                and `sale_price` = #{salePrice,jdbcType=VARCHAR}
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
@@ -268,22 +268,22 @@
                 and `sku` = #{sku,jdbcType=VARCHAR}
             </if>
             <if test="msrpPrice != null" >
-                and `msrp_price` = #{msrpPrice,jdbcType=VARCHAR}
+                and `msrp_price` = #{msrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=VARCHAR}
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
             </if>
             <if test="salePrice != null" >
-                and `sale_price` = #{salePrice,jdbcType=VARCHAR}
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
@@ -322,22 +322,22 @@
                 and `sku` = #{sku,jdbcType=VARCHAR}
             </if>
             <if test="msrpPrice != null" >
-                and `msrp_price` = #{msrpPrice,jdbcType=VARCHAR}
+                and `msrp_price` = #{msrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="retailPrice != null" >
-                and `retail_price` = #{retailPrice,jdbcType=VARCHAR}
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
             </if>
             <if test="salePrice != null" >
-                and `sale_price` = #{salePrice,jdbcType=VARCHAR}
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
             </if>
             <if test="clientMsrpPrice != null" >
-                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=VARCHAR}
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientRetailPrice != null" >
-                and `client_retail_price` = #{clientRetailPrice,jdbcType=VARCHAR}
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
             </if>
             <if test="clientNetPrice != null" >
-                and `client_net_price` = #{clientNetPrice,jdbcType=VARCHAR}
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}

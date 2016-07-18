@@ -3,13 +3,16 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
@@ -85,7 +88,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(language));
 
         // 获取publish status
-        masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
+        masterData.put("platformStatusList", TypeConfigEnums.MastType.platformStatus.getList(language));
 
         // 获取自定义标签列表
         Map<String, Object> param = new HashMap<>(2);
@@ -142,6 +145,16 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         // 获取店铺列表
         masterData.put("cartList", cartList);
+
+        // 是否自动最终售价同步指导价格
+        List<CmsChannelConfigBean> chCfgList = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        String autoApprovePrice = "0"; // 缺省不自动同步
+        if (chCfgList != null && chCfgList.size() > 0) {
+            if ("1".equals(chCfgList.get(0).getConfigValue1())) {
+                autoApprovePrice = "1"; // 自动同步
+            }
+        }
+        masterData.put("autoApprovePrice", autoApprovePrice);
 
         return masterData;
     }
@@ -395,7 +408,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<Long> prodIdList = null;
+        List<Long> prodIdList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             prodIdList = getProductIdList(channelId, cmsSession);

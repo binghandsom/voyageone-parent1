@@ -66,6 +66,10 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         String imageTypeStr = expressionParser.parse(imageTypeExpression, shopBean, user, extParameter);
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
 
+        RuleExpression useOriUrlExpression = customModuleUserParamGetMainPrductImages.getUseOriUrl();
+        // 使用原图flg(1:使用原图)
+        String useOriUrlStr = expressionParser.parse(useOriUrlExpression, shopBean, user, extParameter);
+
         //system param
         CmsBtProductModel mainProduct = sxData.getMainProduct();
 
@@ -99,21 +103,34 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
         List<String> imageUrlList = new ArrayList<>();
         //获取所有图片
         if (imageIndex == -1) {
-            if (imageTemplate != null) {
+            // add by desmond 2016/07/15 start
+            String completeImageUrl = "";
+            // 看是否使用原图
+            if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
                 for (CmsBtProductModel_Field_Image productImage : productImages) {
-                    // 20160513 tom 图片服务器切换 START
-                    String completeImageUrl = String.format(imageTemplate, productImage.getName());
-
-//                    String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
-                    // 20160513 tom 图片服务器切换 END
-//                    completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
+                    // 使用原图(不使用image模板，不用判断是否有image模板)
+                    completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
                     imageUrlList.add(completeImageUrl);
                 }
+                // add by desmond 2016/07/15 end
             } else {
-                for (CmsBtProductModel_Field_Image productImage : productImages) {
-                    parseResult += productImage.getName();
+                // 不使用原图时
+                if (imageTemplate != null) {
+                    for (CmsBtProductModel_Field_Image productImage : productImages) {
+                        // 20160513 tom 图片服务器切换 START
+                        completeImageUrl = String.format(imageTemplate, productImage.getName());
+
+//                    String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
+                        // 20160513 tom 图片服务器切换 END
+//                    completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
+                        imageUrlList.add(completeImageUrl);
+                    }
+                } else {
+                    for (CmsBtProductModel_Field_Image productImage : productImages) {
+                        parseResult += productImage.getName();
+                    }
+                    return parseResult;
                 }
-                return parseResult;
             }
         } //padding图片
         else if (imageIndex >= productImages.size() || StringUtils.isEmpty(productImages.get(imageIndex).getName())) {
@@ -126,37 +143,56 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // 20160618 tom 如果padding没有内容, 不返回空, 因为返回空的话, 整个wordList都为空了 END
             }
             String paddingImage;
-            // modified by morse.lu 2016/07/18 start
-            // 吊牌图和耐久性标签padding直接写死空白图片的url
+            // add by desmond 2016/07/15 start
+            // 看是否使用原图
+            if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
+                // 使用原图(不使用image模板，不用判断是否有image模板)
+                paddingImage = getPicOriUrl(paddingImageKey.trim(), moduleName);
+                imageUrlList.add(paddingImage);
+                // add by desmond 2016/07/15 end
+            } else {
+                // modified by morse.lu 2016/07/18 start
+                // 吊牌图和耐久性标签padding直接写死空白图片的url
 //            if(imageTemplate != null){
-            if(imageType != CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE && imageTemplate != null){
-                // modified by morse.lu 2016/07/18 end
-                // 20160513 tom 图片服务器切换 START
-                paddingImage = String.format(imageTemplate, paddingImageKey.trim());
+                if(imageType != CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE && imageTemplate != null){
+                    // modified by morse.lu 2016/07/18 end
+                    // 20160513 tom 图片服务器切换 START
+                    paddingImage = String.format(imageTemplate, paddingImageKey.trim());
 
 //                paddingImage = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), imageTemplate, paddingImageKey.trim());
-                // 20160513 tom 图片服务器切换 END
+                    // 20160513 tom 图片服务器切换 END
 //                paddingImage = sxProductService.encodeImageUrl(paddingImage);
-                // modified 2016/07/15 start
-                // 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
+                    // modified 2016/07/15 start
+                    // 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
 //                imageUrlList.add(String.format(imageTemplate, paddingImage));
-                imageUrlList.add(paddingImage);
-                // modified 016/07/15 end
-            }else {
-                return paddingImageKey.trim();
+                    imageUrlList.add(paddingImage);
+                    // modified 016/07/15 end
+                } else {
+                    return paddingImageKey.trim();
+                }
             }
         } else {
             CmsBtProductModel_Field_Image productImage = productImages.get(imageIndex);
-            if(imageTemplate != null){
-                // 20160513 tom 图片服务器切换 START
-                String completeImageUrl = String.format(imageTemplate, productImage.getName());
+            // add by desmond 2016/07/15 start
+            String completeImageUrl = "";
+            // 看是否使用原图
+            if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
+                // 使用原图(不使用image模板，不用判断是否有image模板)
+                completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
+                imageUrlList.add(completeImageUrl);
+                // add by desmond 2016/07/15 end
+            } else {
+                if (imageTemplate != null) {
+                    // 20160513 tom 图片服务器切换 START
+                    completeImageUrl = String.format(imageTemplate, productImage.getName());
 
 //                String completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, productImage.getName());
-                // 20160513 tom 图片服务器切换 END
+                    // 20160513 tom 图片服务器切换 END
 //                completeImageUrl = sxProductService.encodeImageUrl(completeImageUrl);
-                imageUrlList.add(completeImageUrl);
-            }else {
-                return productImage.getName();
+                    imageUrlList.add(completeImageUrl);
+                } else {
+                    return productImage.getName();
+                }
             }
         }
         for (String imageUrl : imageUrlList) {

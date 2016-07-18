@@ -4,9 +4,9 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_) {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
+    function indexController($scope, promotionService, promotionDetailService,alert, confirm, $translate, cActions, notify, $location, cRoutes, cookieService) {
 
-        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":0},{"name":"Close","value":1}],"promotionIdList": [],status: {open: true}};
+        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":1},{"name":"Close","value":0}],"promotionIdList": [],status: {open: true}};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 0, fetch: $scope.search};
         $scope.datePicker = [];
@@ -84,14 +84,38 @@ define([
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.promotionName)).result.then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
-                promotionService.delPromotion(data).then(function () {
-                    $scope.vm.promotionList.splice(index, 1);
-                    $scope.groupPageOption.total = $scope.vm.promotionList.size;
-                })
+                promotionService.deleteByPromotionId(data.id).then(function(res){
+                        if(res.data.result) {
+                            $scope.vm.promotionList.splice(index, 1);
+                            $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                        }
+                        else
+                        {
+                          alert(res.data.msg);
+                        }
+                });
+                //promotionService.delPromotion(data.id).then(function (res) {
+                //    $scope.vm.promotionList.splice(index, 1);
+                //    $scope.groupPageOption.total = $scope.vm.promotionList.size;
+                //})
             })
-
         };
-
+        $scope.setOpenPromotionStatus=function(data)
+        {
+            confirm($translate.instant("是否打开活动%s").replace("%s",data.promotionName)).result.then(function () {
+                promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:1}).then(function(res){
+                    data.promotionStatus=1;
+                });
+            });
+        }
+        $scope.setClosePromotionStatus=function(data)
+        {
+            confirm($translate.instant("是否关闭活动%s").replace("%s",data.promotionName)).result.then(function () {
+                promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:0}).then(function(res){
+                    data.promotionStatus=0;
+                });
+            });
+        }
         $scope.teJiaBaoInit = function(promotionId){
             promotionDetailService.teJiaBaoInit(promotionId).then(function () {
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -100,7 +124,7 @@ define([
         };
     };
 
-    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService'];
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService',"alert", 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService'];
 
     return indexController;
 });

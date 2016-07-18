@@ -734,3 +734,47 @@ s-field textarea.s-html {
 }
 
 /* 属性翻译页面的定制样式 End */
+
+/**图片上传样式*/
+.img-upload .drop-zone{
+    border-style: dashed;
+    background: #d9eff7;
+}
+
+.img-upload input[type='text']{
+    display: none;
+}
+
+.img-upload .img-thumbnail {
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+}
+
+.img-upload .error-msg{
+    max-width: 100%;
+    word-break: break-all;
+    max-height: 50px;
+    overflow-y: scroll;
+    border: 2px solid #e26666;
+}
+
+.img-upload .fix-img{
+    max-width: 125px;
+    max-height: 125px;
+    width: auto;
+    height: auto;
+}
+
+.img-upload .fix-progress{
+    width: 125px;
+    margin: 0px auto;
+}

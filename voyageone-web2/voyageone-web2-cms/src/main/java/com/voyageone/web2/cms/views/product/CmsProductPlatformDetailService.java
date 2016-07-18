@@ -60,7 +60,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
 
         // platform 品牌名
-        if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+        if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
             if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
@@ -162,7 +162,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, cartId));
             platformCart.setpCatId(catId);
             // platform 品牌名
-            if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+            if (StringUtil.isEmpty(platformCart.getpBrandId())  || StringUtil.isEmpty(platformCart.getpBrandName())) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
