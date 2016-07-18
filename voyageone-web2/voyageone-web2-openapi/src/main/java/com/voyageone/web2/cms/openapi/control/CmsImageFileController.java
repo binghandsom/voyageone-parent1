@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.openapi.control;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.openapi.image.*;
 import com.voyageone.service.impl.cms.imagecreate.ImageConfig;
-import com.voyageone.web2.cms.openapi.OpenAipBaseController;
+import com.voyageone.web2.cms.openapi.OpenAipCmsBaseController;
 import com.voyageone.web2.cms.openapi.service.CmsImageFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(
-        value = "/rest/product/image"
+        value = "/rest/cms/product/image"
 )
-public class CmsImageFileController extends OpenAipBaseController {
+public class CmsImageFileController extends OpenAipCmsBaseController {
     private static final String CREATE_USER = "SystemCreateImage";
 
     @Autowired

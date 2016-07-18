@@ -20,7 +20,7 @@ define([
             addShipment: {
                 templateUrl: "views/pop/orderInfo/addToShipment/index.tpl.html",
                 controllerUrl: "views/pop/orderInfo/addToShipment/index.ctl",
-                controller: 'AddToShipmentController',
+                controller: 'AddToShipmentController as ctrl',
                 backdrop: 'static',
                 size: 'lg'
             }
@@ -29,7 +29,7 @@ define([
             imagePreview:{
                 templateUrl: "views/pop/feed/image/index.tpl.html",
                 controllerUrl: "views/pop/feed/image/index.ctl",
-                controller: 'ImagePreviewController',
+                controller: 'ImagePreviewController as ctrl',
                 backdrop: 'static',
                 size: 'md'
             }

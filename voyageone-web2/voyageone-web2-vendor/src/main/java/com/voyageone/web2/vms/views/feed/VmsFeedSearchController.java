@@ -8,6 +8,7 @@ import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -21,7 +22,8 @@ import java.util.Map;
  * @version 1.0
  */
 @RestController
-@RequestMapping( value = VmsUrlConstants.FEED.FEED_SEARCH.ROOT )
+@RequestMapping( value = VmsUrlConstants.FEED.FEED_SEARCH.ROOT,
+        method = RequestMethod.POST)
 public class VmsFeedSearchController extends BaseController {
 
     @Autowired

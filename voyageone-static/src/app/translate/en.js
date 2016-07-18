@@ -20,6 +20,7 @@ define(function () {
         "TXT_FROM": "From",
         "TXT_HOME": "Home",
         "TXT_IMAGE": "Image",
+        "TXT_IMAGE_PREVIEW":"Image Preview",
         "TXT_ITEMS": "Items",
         "TXT_MISSING_REQUIRED_CHANNEL_CONFIG": "Missing required configures for this channel, please contact with the system administrator for help.",
         "TXT_MSG_NO_DATA": "No Data...",
@@ -68,7 +69,7 @@ define(function () {
         "BTN_UPLOAD": "UPLOAD",
         "BTN_CLOSE": "CLOSE",
         "BTN_SUBMIT": "SUBMIT",
-        "BTN_CREATE": "CREATE",
-        "TXT_IMAGE_PREVIOUS":"图片预览"
+        "BTN_CREATE": "CREATE"
+
     }
 });

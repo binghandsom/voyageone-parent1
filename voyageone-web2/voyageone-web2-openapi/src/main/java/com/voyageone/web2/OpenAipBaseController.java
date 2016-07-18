@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.openapi;
+package com.voyageone.web2;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;

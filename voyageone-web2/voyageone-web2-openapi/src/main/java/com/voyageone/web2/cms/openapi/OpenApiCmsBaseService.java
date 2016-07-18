@@ -2,13 +2,11 @@ package com.voyageone.web2.cms.openapi;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.OpenApiBaseService;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
-import com.voyageone.web2.sdk.api.exception.ApiException;
 
 
 /**
@@ -16,28 +14,7 @@ import com.voyageone.web2.sdk.api.exception.ApiException;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class OpenApiBaseService extends VOAbsLoggable {
-    /**
-     * Check Request
-     * @param request Request
-     */
-    protected void checkCommRequest(VoApiRequest request) {
-        if (request == null) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-    }
-
-    /**
-     * check Request ChannelId
-     * @param channelId channel ID
-     */
-    protected void checkRequestChannelId(String channelId) {
-        if (StringUtils.isEmpty(channelId)) {
-            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
-            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-        }
-    }
+public abstract class OpenApiCmsBaseService extends OpenApiBaseService {
 
     /**
      * buildProjection
