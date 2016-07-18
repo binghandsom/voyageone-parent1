@@ -29,7 +29,6 @@ public class ProductStatusHistoryService extends BaseService {
         }
         return list;
     }
-
     void loadMap(MapModel map) {
         CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(map.get("cartId").toString());
         if (cartEnum != null) {
@@ -37,13 +36,11 @@ public class ProductStatusHistoryService extends BaseService {
         }
         map.put("operationTypeName", EnumProductOperationType.getNameById(map.get("operationType")));
     }
-
     public long getCount(PageQueryParameters parameters) {
         return daoExt.selectCount(parameters.getSqlMapParameter());
     }
-
     @VOTransactional
-    public void insert(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
+    public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory = null;
         for (String code : codes) {
@@ -55,12 +52,10 @@ public class ProductStatusHistoryService extends BaseService {
             daoExt.insertList(page);
         }
     }
-
     public void insert(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, modifier);
         dao.insert(productStatusHistory);
     }
-
     private CmsBtProductStatusHistoryModel get(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = new CmsBtProductStatusHistoryModel();
         productStatusHistory.setChannelId(channelId);
@@ -71,6 +66,7 @@ public class ProductStatusHistoryService extends BaseService {
         productStatusHistory.setModifier(modifier);
         productStatusHistory.setCreater(modifier);
         productStatusHistory.setCreated(new Date());
+        productStatusHistory.setComment("");
         return productStatusHistory;
     }
 }

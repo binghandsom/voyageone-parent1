@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.junit.Test;
@@ -74,4 +75,15 @@ public class SellerCatServiceTest {
     public void testRefeshAllProduct() throws Exception {
         sellerCatService.refeshAllProduct("010", 23, "ethan");
     }
+
+//    @Test
+//    public void testIsDuplicateNode() throws Exception {
+//        List<CmsBtSellerCatModel>  sellerCats = sellerCatService.getSellerCatsByChannelCart("010", 23, false);
+//        CmsBtSellerCatModel node = sellerCats.stream().filter(w-> w.getCatId().equals("201")).findFirst().get();
+//        System.out.println(JsonUtil.bean2Json(sellerCats));
+//        System.out.println(sellerCatService.isDuplicateNode(sellerCats,"运动鞋","0"));
+//        System.out.println(sellerCatService.isDuplicateNode(sellerCats,"足球鞋",node.getParentCatId()));
+//
+//
+//    }
 }

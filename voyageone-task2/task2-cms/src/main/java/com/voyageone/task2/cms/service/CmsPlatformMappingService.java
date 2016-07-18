@@ -498,7 +498,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
             RuleExpression imageTypeExpression = new RuleExpression();
             imageTypeExpression.addRuleWord(new TextWord(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE.toString()));
 
-            CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null));
+            CustomWord productImageWord = new CustomWord(new CustomWordValueGetMainProductImages(null, imageTemplateExpression, imageIndexExpression, imageTypeExpression, null, null));
             RuleExpression productImageExpression = new RuleExpression();
             productImageExpression.addRuleWord(productImageWord);
 

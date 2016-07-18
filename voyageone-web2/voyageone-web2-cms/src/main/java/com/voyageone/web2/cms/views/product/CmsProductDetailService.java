@@ -24,7 +24,9 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
+import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
@@ -535,7 +537,36 @@ public class CmsProductDetailService extends BaseAppService {
         resultMap.put("isChangeCategory", true);
         return resultMap;
     }
-
+   //获取切换主商品  的显示信息
+    public Map<String,Object> getChangeMastProductInfo(GetChangeMastProductInfoParameter parameter) {
+        Map<String, Object> result = new HashMap<>();
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
+        List<Map<String, Object>> productInList = new ArrayList<>();
+        cmsBtProductGroup.getProductCodes().forEach(s1 -> {
+            CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(), s1);
+            if (product != null) {
+                Map<String, Object> productInfo = new HashMap<String, Object>();
+                productInfo.put("productCode", s1);
+                productInfo.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
+                productInfo.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));//common.fields.quantity   platforms.pXX.status
+                productInfo.put("quantity", product.getCommon().getFields().getQuantity());
+                CmsBtProductModel_Platform_Cart platForm = product.getPlatform(parameter.getCartId());
+                if (platForm != null) {
+                    productInfo.put("platForm", platForm.getStatus());
+                }
+                productInList.add(productInfo);
+            }
+        });
+        result.put("productInList", productInList);
+        return result;
+    }
+    //设置主商品
+    public void  setMastProduct(SetMastProductParameter parameter) {
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
+        if (cmsBtProductGroup.getMainProductCode().equals(parameter.getProductCode())) return;
+        cmsBtProductGroup.setMainProductCode(parameter.getProductCode());
+        productGroupService.update(cmsBtProductGroup);
+    }
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId, String lang) {
         Map<String, Object> result = new HashMap<>();
 
@@ -559,6 +590,12 @@ public class CmsProductDetailService extends BaseAppService {
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
         this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
+
+        String productType =  productComm.getFields().getProductType();
+        productComm.getFields().setProductType(StringUtil.isEmpty(productType)?"":productType.trim());
+        String sizeType =  productComm.getFields().getSizeType();
+        productComm.getFields().setSizeType(StringUtil.isEmpty(sizeType) ? "" : sizeType.trim());
+
         if (productComm != null) {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
             productComm.put("schemaFields", cmsMtCommonFields);

@@ -181,7 +181,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param channelId String 渠道ID
      * @param cartId String 平台ID
      */
-    private void doProductUpload(String channelId, int cartId) throws Exception {
+    public void doProductUpload(String channelId, int cartId) throws Exception {
 
         // 默认线程池最大线程数
         int threadPoolCnt = 5;

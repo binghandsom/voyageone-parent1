@@ -46,7 +46,7 @@ define(function () {
             "home": {
                 "$menuService": {
                     "root": "/cms/home/menu/",
-                    "getCategoryInfo": session('getCategoryInfo'),
+                    "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
                     "getHomeSumData":"getHomeSumData",
@@ -102,7 +102,9 @@ define(function () {
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory"
+                    "checkCategory":"checkCategory",
+                    getChangeMastProductInfo:"getChangeMastProductInfo",
+                    setMastProduct:"setMastProduct"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

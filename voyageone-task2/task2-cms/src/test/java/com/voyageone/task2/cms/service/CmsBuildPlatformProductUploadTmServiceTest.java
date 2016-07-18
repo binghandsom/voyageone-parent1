@@ -18,35 +18,35 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsBuildPlatformProductUploadJdServiceTest {
+public class CmsBuildPlatformProductUploadTmServiceTest {
 
     @Autowired
-    CmsBuildPlatformProductUploadJdService uploadJdService;
+    CmsBuildPlatformProductUploadTmService uploadTmService;
 
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean tcb = new TaskControlBean();
-        tcb.setTask_id("CmsBuildPlatformProductUploadJdJob");
+        tcb.setTask_id("CmsBuildPlatformProductUploadTmJob");
         tcb.setCfg_name("order_channel_id");
-        tcb.setCfg_val1("929");
-        tcb.setTask_comment("京东国际悦境店上新允许运行的渠道");
+        tcb.setCfg_val1("017");
+        tcb.setTask_comment("天猫国际PortAmerican海外专营店上新允许运行的渠道");
         taskControlList.add(tcb);
-        uploadJdService.onStartup(taskControlList);
+        uploadTmService.onStartup(taskControlList);
     }
 
     @Test
     public void testUploadProduct() throws Exception {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
-        workload.setId(762584);
-        workload.setChannelId("929");
-        workload.setCartId(29);
-        workload.setGroupId(Long.parseLong("887632"));
+        workload.setId(247);
+        workload.setChannelId("017");
+        workload.setCartId(23);
+        workload.setGroupId(Long.parseLong("389857"));
         workload.setPublishStatus(0);
 
-        ShopBean shopProp = Shops.getShop("929", "29");
+        ShopBean shopProp = Shops.getShop("017", "23");
 
-        uploadJdService.uploadProduct(workload, shopProp);
+        uploadTmService.uploadProduct(workload, shopProp);
     }
 }
