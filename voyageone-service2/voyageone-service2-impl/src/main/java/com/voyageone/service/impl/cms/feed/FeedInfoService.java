@@ -115,15 +115,18 @@ public class FeedInfoService extends BaseService {
         // 获取查询的价格区间下限
         float priceSta = -1;
         float priceEnd = -1;
-        if(!StringUtils.isEmpty((String) searchValue.get("priceStart"))){
-            priceSta = Float.parseFloat((String) searchValue.get("priceStart"));
+       if(searchValue.get("priceStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceStart")))) {
+                priceSta = Float.parseFloat(String.valueOf(searchValue.get("priceStart")));
+            }
         }
-        if(!StringUtils.isEmpty((String) searchValue.get("priceEnd"))){
-            priceEnd = Float.parseFloat((String) searchValue.get("priceEnd"));
+
+        if(searchValue.get("priceEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceEnd")))) {
+                priceEnd = Float.parseFloat(String.valueOf(searchValue.get("priceEnd")));
+            }
         }
-//        if (priceSta > -1 && priceEnd > -1 && priceEnd < priceSta) {
-//            throw new BusinessException("设置的查询价格区间不正确");
-//        }
+
         if (priceSta > -1 || priceEnd > -1) {
             result.append("{\"skus.priceClientRetail\":{");
             if (priceSta > -1) {
