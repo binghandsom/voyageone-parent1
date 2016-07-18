@@ -28,12 +28,12 @@ import static com.voyageone.web2.vms.VmsUrlConstants.ORDER;
 @RequestMapping(value = ORDER.ORDER_INFO.ROOT, method = RequestMethod.POST)
 public class VmsOrderInfoController extends BaseController {
 
-    private VmsOrderInfoService orderInfoService;
+    private VmsOrderInfoService vmsOrderInfoService;
     private VmsShipmentService shipmentService;
 
     @Autowired
-    public VmsOrderInfoController(VmsOrderInfoService orderInfoService, VmsShipmentService shipmentService) {
-        this.orderInfoService = orderInfoService;
+    public VmsOrderInfoController(VmsOrderInfoService vmsOrderInfoService, VmsShipmentService shipmentService) {
+        this.vmsOrderInfoService = vmsOrderInfoService;
         this.shipmentService = shipmentService;
     }
 
@@ -41,8 +41,8 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> initialInfo = new HashMap<>();
-        initialInfo.put("channelConfigs", orderInfoService.getChannelConfigs(this.getUser()));
-        initialInfo.put("searchOrderStatus", orderInfoService.getAllOrderStatusesList());
+        initialInfo.put("channelConfigs", vmsOrderInfoService.getChannelConfigs(this.getUser()));
+        initialInfo.put("searchOrderStatus", vmsOrderInfoService.getAllOrderStatusesList());
         initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(initialInfo);
     }
@@ -51,7 +51,7 @@ public class VmsOrderInfoController extends BaseController {
     public AjaxResponse search(@RequestBody OrderSearchInfo orderSearchInfo) {
         Map<String, Object> orderInfo = new HashMap<>();
         Date date = new Date();
-        orderInfo.put("orderInfo", orderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
+        orderInfo.put("orderInfo", vmsOrderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
         $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(orderInfo);
     }
@@ -60,7 +60,7 @@ public class VmsOrderInfoController extends BaseController {
     public AjaxResponse cancelOrder(@RequestBody PlatformSubOrderInfoBean item) {
         Map<String, Object> result = new HashMap<>();
 
-        result.put("success", orderInfoService.cancelOrder(this.getUser(), item));
+        result.put("success", vmsOrderInfoService.cancelOrder(this.getUser(), item));
 
         return success(result);
     }
@@ -69,7 +69,7 @@ public class VmsOrderInfoController extends BaseController {
     public AjaxResponse cancelSku(@RequestBody SubOrderInfoBean item) {
         Map<String, Object> result = new HashMap<>();
         // TODO: 16-7-11 对于取消订单前的状态检查尚未考虑完善 vantis
-        result.put("success", orderInfoService.cancelSku(this.getUser(), item));
+        result.put("success", vmsOrderInfoService.cancelSku(this.getUser(), item));
 
         return success(result);
     }
@@ -80,6 +80,6 @@ public class VmsOrderInfoController extends BaseController {
         DownloadInfo downloadInfo = new DownloadInfo();
         downloadInfo.setOrderType(downloadParams.get("orderType").toString());
         return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
-                orderInfoService.getExcelBytes(this.getUser(), downloadInfo));
+                vmsOrderInfoService.getExcelBytes(this.getUser(), downloadInfo));
     }
 }

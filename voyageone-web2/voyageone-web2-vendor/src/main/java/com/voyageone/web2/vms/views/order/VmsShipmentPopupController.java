@@ -34,8 +34,15 @@ public class VmsShipmentPopupController extends BaseController {
     public AjaxResponse init() {
         Map<String, Object> result = new HashMap<>();
         result.put("searchStatuses", shipmentService.getAllStatus());
-        result.put("expressCompanies", shipmentService.getAllExpressCompines());
+        result.put("expressCompanies", shipmentService.getAllExpressCompanies());
 
+        return success(result);
+    }
+
+    @RequestMapping(POPUP.SHIPMENT.GET)
+    public AjaxResponse get() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }
 
@@ -50,9 +57,7 @@ public class VmsShipmentPopupController extends BaseController {
     @RequestMapping(POPUP.SHIPMENT.CREATE)
     public AjaxResponse create(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
-
-        // TODO: 2016/7/15 创建shipment vantis
-//        result.put("success", shipmentService.create(shipmentBean));
+        result.put("success", shipmentService.create(this.getUser(), shipmentBean));
         result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }

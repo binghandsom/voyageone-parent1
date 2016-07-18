@@ -42,6 +42,7 @@ public interface VmsUrlConstants {
             String INIT = "init";
             String SUBMIT = "submit";
             String CREATE = "create";
+            String GET = "get";
         }
     }
 }

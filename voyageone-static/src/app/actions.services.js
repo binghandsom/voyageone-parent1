@@ -174,6 +174,8 @@ define(function (require) {
 
         shipmentPopupService: new CommonDataService('/vms/popup/shipment', {
             init: "init",
+            get: "get",
+            create: "create",
             submit: "submit"
         })
     }

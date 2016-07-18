@@ -26,9 +26,18 @@ import java.util.stream.Collectors;
 @Service
 public class VmsShipmentService {
 
-    @Autowired
     private ShipmentService shipmentService;
 
+    @Autowired
+    public VmsShipmentService(ShipmentService shipmentService) {
+        this.shipmentService = shipmentService;
+    }
+
+    /**
+     * 获取shipment与定义的属性列表
+     *
+     * @return shipment与定义的属性列表
+     */
     public List<ShipmentStatus> getAllStatus() {
         List<TypeBean> shipmentStatusList = Types.getTypeList(VmsConstants.TYPE_ID.SHIPMENT_STATUS);
         if (null == shipmentStatusList) return new ArrayList<>();
@@ -40,7 +49,12 @@ public class VmsShipmentService {
                 .collect(Collectors.toList());
     }
 
-    public List<ExpressCompany> getAllExpressCompines() {
+    /**
+     * 获取预定义的物流公司列表
+     *
+     * @return 获取预定义的物流公司列表
+     */
+    public List<ExpressCompany> getAllExpressCompanies() {
         List<TypeBean> expressCompanyList = Types.getTypeList(VmsConstants.TYPE_ID.EXPRESS_COMPANY);
         if (null == expressCompanyList) return new ArrayList<>();
         return expressCompanyList.stream()
@@ -51,7 +65,14 @@ public class VmsShipmentService {
                 .collect(Collectors.toList());
     }
 
-    public Object submit(UserSessionBean user, VmsBtShipmentModel vmsBtShipmentModel) {
+    /**
+     * 提交shipment修改
+     *
+     * @param user               当前用户
+     * @param vmsBtShipmentModel 待修改shipment
+     * @return 修改影响条数
+     */
+    public int submit(UserSessionBean user, VmsBtShipmentModel vmsBtShipmentModel) {
 
         vmsBtShipmentModel.setChannelId(user.getSelChannelId());
         boolean correct = null != vmsBtShipmentModel.getChannelId();
@@ -85,5 +106,30 @@ public class VmsShipmentService {
         VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModel) return null;
         return new ShipmentBean(vmsBtShipmentModel);
+    }
+
+    /**
+     * 创建Shipment
+     *
+     * @param user         当前用户
+     * @param shipmentBean 待保存shipment
+     * @return 保存后的shipment
+     */
+    public ShipmentBean create(UserSessionBean user, ShipmentBean shipmentBean) {
+        // 确认现在没有已存在的open shipment
+        if (null != this.getCurrentShipment(user)) throw new BusinessException("");
+
+        VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{
+            setChannelId(user.getSelChannelId());
+            setCreater(user.getUserName());
+            setShipmentName(shipmentBean.getShipmentName());
+            setShippedDate(shipmentBean.getShippedDate());
+            setComment(shipmentBean.getComment());
+            setExpressCompany(shipmentBean.getExpressCompany());
+            setTrackingNo(shipmentBean.getTrackingNo());
+            setStatus(shipmentBean.getStatus());
+        }};
+        shipmentService.insert(vmsBtShipmentModel);
+        return null;
     }
 }

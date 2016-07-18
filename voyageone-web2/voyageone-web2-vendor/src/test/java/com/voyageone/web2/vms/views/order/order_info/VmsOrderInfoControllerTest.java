@@ -13,14 +13,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
-public class OrderInfoControllerTest {
+public class VmsOrderInfoControllerTest {
 
     @Autowired
-    VmsOrderInfoController orderInfoController;
+    VmsOrderInfoController vmsOrderInfoController;
 
     @Test
     public void init() throws Exception {
-        orderInfoController.init();
+        vmsOrderInfoController.init();
     }
 
 }
