@@ -168,15 +168,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 if (searchValue.getSalesStart() != null) {
                     // 获取销量上限
                     if (searchValue.getSalesEnd() != null) {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$gte:#,$lte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$gte:#,$lte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesStart(), searchValue.getSalesEnd());
                     } else {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$gte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$gte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesStart());
                     }
                 } else {
                     if (searchValue.getSalesEnd() != null) {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$lte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$lte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesEnd());
                     }
                 }

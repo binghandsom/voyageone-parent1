@@ -64,6 +64,10 @@ public class CmsBtPriceLogService extends BaseService {
      * create by jiangjusheng
      */
     public int addLogListAndCallSyncPriceJob(List<CmsBtPriceLogModel> paramList) {
+        if (paramList == null || paramList.isEmpty()) {
+            $warn("CmsBtPriceLogService:addLogListAndCallSyncPriceJob 输入为空");
+            return 0;
+        }
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
         // 向Mq发送消息同步sku,code,group价格范围

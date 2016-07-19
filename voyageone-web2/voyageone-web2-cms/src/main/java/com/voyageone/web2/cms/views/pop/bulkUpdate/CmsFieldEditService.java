@@ -560,6 +560,11 @@ public class CmsFieldEditService extends BaseAppService {
             rsMap.put("ecd", 1);
             return rsMap;
         }
+        // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
+        Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
+        if (notChkPriceFlg == null) {
+            notChkPriceFlg = 0;
+        }
 
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
@@ -589,6 +594,14 @@ public class CmsFieldEditService extends BaseAppService {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
             for (BaseMongoMap skuObj : skuList) {
+                skuCode = skuObj.getStringAttribute("skuCode");
+                if (StringUtils.isEmpty(skuCode)) {
+                    $warn(String.format("setProductSalePrice: 缺少数据 code=%s, para=%s", prodCode, skuCode, params.toString()));
+                    rsMap.put("ecd", 6);
+                    rsMap.put("prodCode", prodCode);
+                    return rsMap;
+                }
+
                 // 修改后的最终售价
                 Double rs = null;
                 if (StringUtils.isEmpty(priceType)) {
@@ -599,17 +612,11 @@ public class CmsFieldEditService extends BaseAppService {
                         return rsMap;
                     }
                     rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
-                    if (rs != null) {
-                        skuObj.setAttribute("priceSale", rs);
-                    }
                 } else {
                     Object basePrice = skuObj.getAttribute(priceType);
                     if (basePrice != null) {
                         BigDecimal baseVal = new BigDecimal(basePrice.toString());
                         rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
-                        if (rs != null) {
-                            skuObj.setAttribute("priceSale", rs);
-                        }
                     } else {
                         $warn(String.format("setProductSalePrice: 缺少数据 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         rsMap.put("ecd", 9);
@@ -619,10 +626,17 @@ public class CmsFieldEditService extends BaseAppService {
                         return rsMap;
                     }
                 }
-                skuCode = skuObj.getStringAttribute("skuCode");
+
                 if (rs == null) {
                     $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     rsMap.put("ecd", 8);
+                    rsMap.put("prodCode", prodCode);
+                    rsMap.put("skuCode", skuCode);
+                    return rsMap;
+                }
+                if (rs < 0) {
+                    $warn(String.format("setProductSalePrice: 数据错误 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    rsMap.put("ecd", 10);
                     rsMap.put("prodCode", prodCode);
                     rsMap.put("skuCode", skuCode);
                     return rsMap;
@@ -654,23 +668,27 @@ public class CmsFieldEditService extends BaseAppService {
                 }
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
                 if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
-                    $warn(String.format("setProductSalePrice: 输入数据错误 低于指导价 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    rsMap.put("ecd", 2);
-                    rsMap.put("prodCode", prodCode);
-                    rsMap.put("skuCode", skuCode);
-                    rsMap.put("priceSale", rs);
-                    rsMap.put("priceLimit", result);
-                    return rsMap;
+                    $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    continue;
                 } else if ("4".equals(diffFlg)) {
-                    $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    rsMap.put("ecd", 3);
-                    rsMap.put("prodCode", prodCode);
-                    rsMap.put("skuCode", skuCode);
-                    rsMap.put("priceSale", rs);
-                    rsMap.put("priceLimit", result * (breakThreshold + 1));
-                    return rsMap;
+                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    continue;
+                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
+//                    if (notChkPriceFlg == 1) {
+//                        // 忽略检查
+//                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                    } else {
+//                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                        rsMap.put("ecd", 3);
+//                        rsMap.put("prodCode", prodCode);
+//                        rsMap.put("skuCode", skuCode);
+//                        rsMap.put("priceSale", rs);
+//                        rsMap.put("priceLimit", result * (breakThreshold + 1));
+//                        return rsMap;
+//                    }
                 }
                 skuCodeList.add(skuCode);
+                skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
                 CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();

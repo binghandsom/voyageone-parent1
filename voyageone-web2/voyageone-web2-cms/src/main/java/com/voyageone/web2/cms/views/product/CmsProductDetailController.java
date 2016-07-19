@@ -173,7 +173,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetMastProduct)
     public AjaxResponse setMastProduct(@RequestBody SetMastProductParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
-        productPropsEditService.setMastProduct(parameter);
+        productPropsEditService.setMastProduct(parameter,getUser().getUserName());
         return success(null);
     }
 }
