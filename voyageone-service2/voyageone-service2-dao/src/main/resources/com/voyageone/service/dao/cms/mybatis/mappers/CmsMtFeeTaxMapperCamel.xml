@@ -14,6 +14,164 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtFeeTaxModel" >
+        update cms_mt_fee_tax
+        <set >
+            <if test="hsCode != null" >
+                `hs_code` = #{hsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null" >
+                `product_name` = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="unit != null" >
+                `unit` = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingType != null" >
+                `shipping_type` = #{shippingType,jdbcType=VARCHAR},
+            </if>
+            <if test="vaTaxRate != null" >
+                `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE},
+            </if>
+            <if test="consumptionTaxRate != null" >
+                `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_fee_tax
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_fee_tax
+        <where >
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="unit != null" >
+                and `unit` = #{unit,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingType != null" >
+                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
+            </if>
+            <if test="vaTaxRate != null" >
+                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="consumptionTaxRate != null" >
+                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_fee_tax
+        <where >
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="unit != null" >
+                and `unit` = #{unit,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingType != null" >
+                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
+            </if>
+            <if test="vaTaxRate != null" >
+                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="consumptionTaxRate != null" >
+                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_fee_tax
+        <where >
+            <if test="hsCode != null" >
+                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="unit != null" >
+                and `unit` = #{unit,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingType != null" >
+                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
+            </if>
+            <if test="vaTaxRate != null" >
+                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="consumptionTaxRate != null" >
+                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtFeeTaxModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_fee_tax
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -89,163 +247,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtFeeTaxModel" >
-        update cms_mt_fee_tax
-        <set >
-            <if test="hsCode != null" >
-                `hs_code` = #{hsCode,jdbcType=VARCHAR},
-            </if>
-            <if test="productName != null" >
-                `product_name` = #{productName,jdbcType=VARCHAR},
-            </if>
-            <if test="unit != null" >
-                `unit` = #{unit,jdbcType=VARCHAR},
-            </if>
-            <if test="shippingType != null" >
-                `shipping_type` = #{shippingType,jdbcType=VARCHAR},
-            </if>
-            <if test="vaTaxRate != null" >
-                `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE},
-            </if>
-            <if test="consumptionTaxRate != null" >
-                `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_mt_fee_tax
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_fee_tax
-        <where >
-            <if test="hsCode != null" >
-                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="unit != null" >
-                and `unit` = #{unit,jdbcType=VARCHAR}
-            </if>
-            <if test="shippingType != null" >
-                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
-            </if>
-            <if test="vaTaxRate != null" >
-                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="consumptionTaxRate != null" >
-                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_fee_tax
-        <where >
-            <if test="hsCode != null" >
-                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="unit != null" >
-                and `unit` = #{unit,jdbcType=VARCHAR}
-            </if>
-            <if test="shippingType != null" >
-                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
-            </if>
-            <if test="vaTaxRate != null" >
-                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="consumptionTaxRate != null" >
-                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_mt_fee_tax
-        <where >
-            <if test="hsCode != null" >
-                and `hs_code` = #{hsCode,jdbcType=VARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="unit != null" >
-                and `unit` = #{unit,jdbcType=VARCHAR}
-            </if>
-            <if test="shippingType != null" >
-                and `shipping_type` = #{shippingType,jdbcType=VARCHAR}
-            </if>
-            <if test="vaTaxRate != null" >
-                and `va_tax_rate` = #{vaTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="consumptionTaxRate != null" >
-                and `consumption_tax_rate` = #{consumptionTaxRate,jdbcType=DOUBLE}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>

@@ -25,6 +25,7 @@ public class ProductStatusHistoryServiceTest {
 
     @Autowired
     ProductStatusHistoryService service;
+
     @Test
     public void testGetPage() {
         PageQueryParameters pageQueryParameters = new PageQueryParameters();
@@ -32,27 +33,28 @@ public class ProductStatusHistoryServiceTest {
         pageQueryParameters.setPageRowCount(50);
         pageQueryParameters.put("channelId", "010");
         pageQueryParameters.put("cartId", "27");
-        pageQueryParameters.put("code", "b1301");
+        pageQueryParameters.put("code", "DIBRHCRST/RHGAR8.5");
         List<MapModel> list = service.getPage(pageQueryParameters);
-                long count= service.getCount(pageQueryParameters);
+        long count = service.getCount(pageQueryParameters);
     }
+
     @Test
     public void InsertList() {
-       service. insertList("010", getCodeList("b"), "status", 27, EnumProductOperationType.Add, "system");
+        service.insertList("010", getCodeList("b"), "status", 27, EnumProductOperationType.Add, "测试", "system");
         testGetPage();
     }
-     public List<String> getCodeList(String pre)
-     {
-         List<String> list=new ArrayList<>();
-         for(int i=1;i<=301;i++)
-         {
-             list.add(pre+(1000+i));
-         }
-         return list;
-     }
+
+    public List<String> getCodeList(String pre) {
+        List<String> list = new ArrayList<>();
+        for (int i = 1; i <= 301; i++) {
+            list.add(pre + (1000 + i));
+        }
+        return list;
+    }
+
     @Test
     public void testInsert() {
-        service.insert("010", "123", "status", 27, EnumProductOperationType.Add, "system");
+        service.insert("010", "123", "status", 27, EnumProductOperationType.Add, "测试", "system");
         testGetPage();
     }
 }

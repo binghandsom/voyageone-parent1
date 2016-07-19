@@ -14,6 +14,128 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmMasterBrandModel" >
+        update cms_bt_jm_master_brand
+        <set >
+            <if test="name != null" >
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="jmMasterBrandId != null" >
+                `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER},
+            </if>
+            <if test="enName != null" >
+                `en_name` = #{enName,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_master_brand
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_master_brand
+        <where >
+            <if test="name != null" >
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="jmMasterBrandId != null" >
+                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
+            </if>
+            <if test="enName != null" >
+                and `en_name` = #{enName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_master_brand
+        <where >
+            <if test="name != null" >
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="jmMasterBrandId != null" >
+                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
+            </if>
+            <if test="enName != null" >
+                and `en_name` = #{enName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_jm_master_brand
+        <where >
+            <if test="name != null" >
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="jmMasterBrandId != null" >
+                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
+            </if>
+            <if test="enName != null" >
+                and `en_name` = #{enName,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmMasterBrandModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_jm_master_brand
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -71,127 +193,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmMasterBrandModel" >
-        update cms_bt_jm_master_brand
-        <set >
-            <if test="name != null" >
-                `name` = #{name,jdbcType=VARCHAR},
-            </if>
-            <if test="jmMasterBrandId != null" >
-                `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER},
-            </if>
-            <if test="enName != null" >
-                `en_name` = #{enName,jdbcType=VARCHAR},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_bt_jm_master_brand
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_jm_master_brand
-        <where >
-            <if test="name != null" >
-                and `name` = #{name,jdbcType=VARCHAR}
-            </if>
-            <if test="jmMasterBrandId != null" >
-                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
-            </if>
-            <if test="enName != null" >
-                and `en_name` = #{enName,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_jm_master_brand
-        <where >
-            <if test="name != null" >
-                and `name` = #{name,jdbcType=VARCHAR}
-            </if>
-            <if test="jmMasterBrandId != null" >
-                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
-            </if>
-            <if test="enName != null" >
-                and `en_name` = #{enName,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_bt_jm_master_brand
-        <where >
-            <if test="name != null" >
-                and `name` = #{name,jdbcType=VARCHAR}
-            </if>
-            <if test="jmMasterBrandId != null" >
-                and `jm_master_brand_id` = #{jmMasterBrandId,jdbcType=INTEGER}
-            </if>
-            <if test="enName != null" >
-                and `en_name` = #{enName,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>
