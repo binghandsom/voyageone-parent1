@@ -32,9 +32,9 @@ public class CmsHsCodeService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     //获取任务数量Id
-    private static int hsCodeTaskCntTypeId = 0;
+    private static int hsCodeTaskCntTypeId = 87;
     //获取任务数量名称
-    private static String hsCodeTaskCntTypeName = "";
+    private static String hsCodeTaskCntTypeName = "GetTheN0umberOfTasks";
     /**
      * 设定返回值.
      */
@@ -83,7 +83,7 @@ public class CmsHsCodeService extends BaseService {
         //税号个人
         data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
         //获取任务数量
-        data.put("hsCodeTaskCnt", Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName));
+        data.put("hsCodeTaskCnt", Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang));
         //返回数据类型
         return data;
     }
@@ -271,14 +271,14 @@ public class CmsHsCodeService extends BaseService {
                 "'common.fields.hsCodeSetter':'%s'}", userName);
         Long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
         if (cnt > 0) {
-            // 类目选择check
-            throw new BusinessException("已有获取任务,不能在获取");
+            // 商品税号任务已存在不能获取
+            throw new BusinessException("7000091");
         }
-        //选择个数判断
-        String maxCnt = Types.getValue(69, "20");
+        //获取任务
+        String maxCnt = Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang);
         if (hsCodeTaskCnt > Integer.parseInt(maxCnt)) {
-            // 类目选择check
-            throw new BusinessException("获取任务最好是加上最大值check，默认为10，最大不能超过50", maxCnt);
+            // 获取任务数量不能超过maxCnt
+            throw new BusinessException("7000092", maxCnt);
         }
     }
 
