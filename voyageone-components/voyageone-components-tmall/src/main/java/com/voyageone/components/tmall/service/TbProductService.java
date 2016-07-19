@@ -3,6 +3,7 @@ package com.voyageone.components.tmall.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.request.*;
 import com.taobao.api.response.*;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
@@ -150,5 +151,15 @@ public class TbProductService extends TbBase {
             return null;
         }
         return response.getBrandCatMetaData().getIsDarwin();
+    }
+
+    public Boolean delTmallItem(ShopBean config, String numId) throws ApiException {
+        ItemDeleteRequest req = new ItemDeleteRequest();
+        req.setNumIid(Long.parseLong(numId));
+        ItemDeleteResponse response = reqTaobaoApi(config,req);
+        if (response.getErrorCode() != null) {
+            throw new BusinessException("天猫删除商品失败：" + response.getErrorCode());
+        }
+        return true;
     }
 }
