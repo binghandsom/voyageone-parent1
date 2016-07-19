@@ -2,6 +2,7 @@ package com.voyageone.service.impl.vms.shipment;
 
 import com.voyageone.service.dao.vms.VmsBtShipmentDao;
 import com.voyageone.service.daoext.vms.VmsBtShipmentDaoExt;
+import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,10 @@ public class ShipmentService {
     public ShipmentService(VmsBtShipmentDao vmsBtShipmentDao, VmsBtShipmentDaoExt vmsBtShipmentDaoExt) {
         this.vmsBtShipmentDao = vmsBtShipmentDao;
         this.vmsBtShipmentDaoExt = vmsBtShipmentDaoExt;
+    }
+
+    public VmsBtShipmentModel select(int shipmentId) {
+        return vmsBtShipmentDao.select(shipmentId);
     }
 
     public VmsBtShipmentModel select(Map<String, Object> shipmentSelectParams) {

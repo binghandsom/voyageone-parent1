@@ -12,6 +12,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
+import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsConstants.ChannelConfig;
@@ -436,18 +437,13 @@ public class VmsOrderInfoService extends BaseService {
         } else return 0;
     }
 
-    public List<VmsBtOrderDetailModelWithTimestamp> getScannedSkuList(UserSessionBean user,
-                                                                      ScanPopupInitialInfo scanPopupInitialInfo) {
-
-        ShipmentBean shipment = scanPopupInitialInfo.getShipment();
-        String orderId = scanPopupInitialInfo.getOrderId();
-        int curr = scanPopupInitialInfo.getCurr();
-        int size = scanPopupInitialInfo.getSize();
+    public List<VmsBtOrderDetailModelWithTimestamp> getScannedSkuList(UserSessionBean user, ShipmentBean shipment,
+                                                                      String orderId) {
 
         // 查找对应OrderId中 是否有已经扫描的SKU不在此shipment下
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanPopupInitialInfo.getOrderId());
+            put("consolidationOrderId", orderId);
         }};
 
         List<VmsBtOrderDetailModel> orderDetailList = orderDetailService.select(checkParams);
@@ -461,8 +457,58 @@ public class VmsOrderInfoService extends BaseService {
         //
         if (invalidSkuCount > 0) throw new BusinessException("8000023");
 
-        return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId, curr, size).stream()
+        return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId).stream()
                 .map(VmsBtOrderDetailModelWithTimestamp::getInstance)
                 .collect(Collectors.toList());
+    }
+
+    public int scanBarcodeInOrder(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+
+        ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
+        String barcode = scanPopupCheckBarcodeInfo.getBarcode();
+        String orderId = scanPopupCheckBarcodeInfo.getOrderId();
+
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getOrderId());
+        }};
+
+        long invalidCount = orderDetailService.select(checkParams).stream()
+                .filter(vmsBtOrderDetailModel -> (null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId()))
+
+                        || (!vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN)))
+                .count();
+
+        if (invalidCount > 0) throw new BusinessException("8000024");
+
+        // 检查shipment状态
+        VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
+        if (!dbShipment.getStatus().equals(STATUS_VALUE.SHIPMENT_STATUS.OPEN)) throw new BusinessException("8000025");
+
+        return orderDetailService.scanIn(user.getSelChannelId(), user.getUserName(),
+                barcode, orderId, shipment.getId());
+    }
+
+    public boolean finishedOrderScan(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+
+        ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
+
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getOrderId());
+        }};
+
+        // 检查当前订单是否全部扫描完毕
+        List<VmsBtOrderDetailModel> currentOrderInfo = orderDetailService.select(checkParams);
+        long scannedCount = currentOrderInfo.stream()
+                .filter(vmsBtOrderDetailModel -> null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
+                        && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
+                .count();
+
+        return scannedCount == currentOrderInfo.size();
     }
 }

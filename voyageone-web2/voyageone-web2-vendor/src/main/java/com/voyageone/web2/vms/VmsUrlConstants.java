@@ -48,7 +48,7 @@ public interface VmsUrlConstants {
         interface SCAN {
             String ROOT = "vms/popup/scan";
             String INIT = "init";
-            String CHECK_BARCODE = "checkBarcode";
+            String SCAN_BARCODE = "scanBarcode";
         }
     }
 }

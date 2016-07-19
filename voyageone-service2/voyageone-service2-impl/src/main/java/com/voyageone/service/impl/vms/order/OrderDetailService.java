@@ -204,12 +204,12 @@ public class OrderDetailService extends BaseService {
     }
 
     public List<VmsBtOrderDetailModel> getScannedSku(String channeldId, String shipmentId) {
-
+        // TODO: 16-7-19 根据shipmentId查找对应的内容 vantis
         return null;
     }
 
-    public List<VmsBtOrderDetailModel> getScannedSku(String channelId, int shipmentId, String consolidationOrderId,
-                                                     int curr, int size) {
+    public List<VmsBtOrderDetailModel> getScannedSku(String channelId, int shipmentId, String
+            consolidationOrderId) {
 
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
@@ -218,10 +218,26 @@ public class OrderDetailService extends BaseService {
         }};
 
         Map<String, Object> modifiedParams = MySqlPageHelper.build(params)
-                .addSort("modified", Order.Direction.DESC)
-                .limit(size)
-                .page(curr)
+                .addSort("containerizing_time", Order.Direction.DESC)
                 .toMap();
         return vmsBtOrderDetailDao.selectList(modifiedParams);
+    }
+
+    public int scanIn(String channelId, String userName, String barcode, String orderId, int shipmentId) {
+
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("barcode", barcode);
+            put("consolidationOrderId", orderId);
+            put("status", 1);// Open
+            put("containerizer", userName);
+            put("shipmentId", shipmentId);
+        }};
+
+        Map<String, Object> sortedParams = MySqlPageHelper.build(params)
+                .addSort("created", Order.Direction.ASC)
+                .toMap();
+
+        return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(sortedParams);
     }
 }
