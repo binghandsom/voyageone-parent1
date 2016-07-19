@@ -11,11 +11,17 @@ define([
             this.shipmentScanPopupService = shipmentScanPopupService;
         }
 
-
         AddToShipmentController.prototype.scan = function (barcode) {
             var self = this;
+            var scanPopupCheckBarcodeInfo = {
+                "barcode": barcode,
+                "shipment": self.shipmentDetails.shipment,
+                "orderId": self.shipmentDetails.orderId
+            };
             self.barcode = null;
-
+            self.shipmentScanPopupService.checkBarcode(scanPopupCheckBarcodeInfo).then(function (res) {
+                console.log(res)
+            })
         };
         return AddToShipmentController;
     })());
