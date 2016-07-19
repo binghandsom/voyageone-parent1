@@ -182,9 +182,7 @@ define([
             var self = this;
             self.ScanPopupInitialInfo = {
                 "shipment": self.currentShipment,
-                "orderId": item.orderId,
-                "curr": self.pageInfo.curr,
-                "size": self.pageInfo.size
+                "orderId": item.orderId
             };
             self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (shipmentDetails) {
                 shipmentDetails.ScanPopupInitialInfo = self.ScanPopupInitialInfo;
