@@ -23,7 +23,9 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
@@ -35,6 +37,7 @@ import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -84,6 +87,8 @@ public class CmsProductDetailService extends BaseAppService {
     private ImageTemplateService imageTemplateService;
     @Autowired
     private CategoryTreeAllService categoryTreeAllService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -228,7 +233,7 @@ public class CmsProductDetailService extends BaseAppService {
         prodObj.getCommon().getSkus().forEach(sku -> {
             Map<String, Object> result = new HashMap<>();
             result.put("skucode", sku.getSkuCode());
-            result.put("skyqty", skuList.get(sku.getSkuCode()) != null?skuList.get(sku.getSkuCode()) : 0);
+            result.put("skyqty", skuList.get(sku.getSkuCode()) != null ? skuList.get(sku.getSkuCode()) : 0);
             inventoryList.add(result);
         });
 
@@ -562,9 +567,9 @@ public class CmsProductDetailService extends BaseAppService {
         this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
 
-        String productType =  productComm.getFields().getProductType();
-        productComm.getFields().setProductType(StringUtil.isEmpty(productType)?"":productType.trim());
-        String sizeType =  productComm.getFields().getSizeType();
+        String productType = productComm.getFields().getProductType();
+        productComm.getFields().setProductType(StringUtil.isEmpty(productType) ? "" : productType.trim());
+        String sizeType = productComm.getFields().getSizeType();
         productComm.getFields().setSizeType(StringUtil.isEmpty(sizeType) ? "" : sizeType.trim());
 
         if (productComm != null) {
@@ -1124,11 +1129,12 @@ public class CmsProductDetailService extends BaseAppService {
 
         return result;
     }
+
     //获取切换主商品  的显示信息
-    public Map<String,Object> getChangeMastProductInfo(GetChangeMastProductInfoParameter parameter) {
+    public Map<String, Object> getChangeMastProductInfo(GetChangeMastProductInfoParameter parameter) {
         Map<String, Object> result = new HashMap<>();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
-        if(cmsBtProductGroup==null) return  result;
+        if (cmsBtProductGroup == null) return result;
         List<Map<String, Object>> productInList = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
             CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(), s1);
@@ -1148,13 +1154,51 @@ public class CmsProductDetailService extends BaseAppService {
         result.put("productInList", productInList);
         return result;
     }
+
     //设置主商品
-    public void  setMastProduct(SetMastProductParameter parameter) {
+    public CallResult setMastProduct(SetMastProductParameter parameter,String modifier) {
+        CallResult result=new CallResult();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
-        if (cmsBtProductGroup.getMainProductCode().equals(parameter.getProductCode())) return;
-        cmsBtProductGroup.setMainProductCode(parameter.getProductCode());
+        if (cmsBtProductGroup.getMainProductCode().equals(parameter.getProductCode())) return result;
+        CmsBtProductModel cmsBtProductModel=productService.getProductByCode(parameter.getChannelId(),cmsBtProductGroup.getMainProductCode());
+        CmsBtProductModel newCmsBtProductModel=productService.getProductByCode(parameter.getChannelId(),parameter.getProductCode());
+
+        CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
+        CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
+        if(platForm.getStatus().equals("Approve")&&!newPlatForm.equals("Approve"))// 1.2.2.1.1 【status】= Approve时 productCode的状态必须也是Approve
+        {
+            result.setMsg("只能设置状态为Approve的商品");
+            result.setResult(false);
+            return  result;
+        }
+        platForm.setpIsMain(0);// 把mainProduct的所对应的product表中对应的平台的pIsMain设0
+        newPlatForm.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
+        cmsBtProductGroup.setMainProductCode(parameter.getProductCode());//把group表中的mainProduct替换成productCode
+        productService.updateProductPlatform(parameter.getChannelId(),cmsBtProductModel.getProdId(),platForm,modifier);
+        productService.updateProductPlatform(parameter.getChannelId(),newCmsBtProductModel.getProdId(),newPlatForm,modifier);
         productGroupService.update(cmsBtProductGroup);
-//        productService.getProductByCode();
+
+        String comment=String.format("取消主商品,pIsMain设为0");
+        productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,comment,modifier);
+
+        String newComment=String.format("设置为主商品,pIsMain设为1");
+        productStatusHistoryService.insert(parameter.getChannelId(),newCmsBtProductModel.getCommon().getFields().getCode(),newPlatForm.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,newComment,modifier);
+        return  result;
 //        productService.updateProductPlatform()
+//        1.1 根据 cartId和productCode找到对应的group
+//        1.2 检查mainProduct和productCode是否一致
+//        1.2.1 一致的场合 return
+//                1.2.2 不一致的场合
+//        1.2.2.1 判断 mainProduct的状态【status】
+//        1.2.2.1.1 【status】= Approve时 productCode的状态必须也是Approve
+//        1.2.2.1.2 【status】 != Approve时 productCode的状态不受限制
+//        1.2.2.2 把mainProduct的所对应的product表中对应的平台的pIsMain设0 把productCode的所对应的product表中对应的平台的pIsMain设1
+//        1.2.3 把group表中的mainProduct替换成productCode
+//        1.2.4 调用插入workload表的共同方法
+//
+//        common.fields.image1
+//        common.fields.quantity
+//        platforms.pXX.status
+
     }
 }
