@@ -1135,7 +1135,7 @@ public class CmsProductDetailService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
         if (cmsBtProductGroup == null) return result;
-        List<Map<String, Object>> productInList = new ArrayList<>();
+        List<Map<String, Object>> productInfoList = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
             CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(), s1);
             if (product != null) {
@@ -1148,10 +1148,10 @@ public class CmsProductDetailService extends BaseAppService {
                 if (platForm != null) {
                     productInfo.put("platForm", platForm.getStatus());
                 }
-                productInList.add(productInfo);
+                productInfoList.add(productInfo);
             }
         });
-        result.put("productInList", productInList);
+        result.put("productInfoList", productInfoList);
         return result;
     }
 
