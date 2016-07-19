@@ -1224,7 +1224,13 @@
                                     // 非必填, 就创建空选项
                                     // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
                                     // 所以要克隆新的出来使用
-                                    options = angular.copy(options);
+                                    options = options.map(function (option) {
+                                        var newOption = {};
+                                        newOption.__proto__ = option;
+                                        newOption.value = getInputValue(option.value, field);
+                                        return newOption;
+                                    });
+
                                     options.unshift(nullValueObj = {
                                         displayName: '',
                                         value: null

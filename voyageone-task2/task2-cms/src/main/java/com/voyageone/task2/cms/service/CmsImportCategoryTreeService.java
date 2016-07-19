@@ -91,6 +91,7 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
         String directoryPath = Properties.readValue("CmsImportCategoryTreeService_import_file_path");
 
         if (StringUtils.isEmpty(directoryPath)) {
+            $debug("StringUtils.isEmpty(directoryPath): true");
             directoryPath = "/usr/category";
         }
 
