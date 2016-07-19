@@ -199,6 +199,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
+            final boolean[] hasPublishSku = {false};
             fieldMap.forEach((s1, o) -> {
                 // added by morse.lu 2016/07/18 start
                 if ("sku".equals(s1)) {
@@ -207,6 +208,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                     listVal.forEach(skuVal -> {
                         if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
                             upValSku.add(skuVal);
+                            hasPublishSku[0] = true;
                             {
                                 // TODO:size 和 price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
 
@@ -231,13 +233,15 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
             updateMap.put("platforms.P23.pProductId", cmsBtProductGroup.getPlatformPid());
             updateMap.put("platforms.P23.pNumIId", cmsBtProductGroup.getNumIId());
-            String item_status = (String) fieldMap.get("item_status"); // 商品状态
-            if ("0".equals(item_status)) {
-                // 出售中
-                updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.OnSale.name());
-            } else {
-                // 仓库中
-                updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.InStock.name());
+            if (hasPublishSku[0]) {
+                String item_status = (String) fieldMap.get("item_status"); // 商品状态
+                if ("0".equals(item_status)) {
+                    // 出售中
+                    updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.OnSale.name());
+                } else {
+                    // 仓库中
+                    updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.InStock.name());
+                }
             }
             {
                 // TODO: 货号，回写进主商品common.fields.model
