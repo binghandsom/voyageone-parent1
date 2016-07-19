@@ -9,7 +9,7 @@ define([
         function HsCodeController(hsCodeInfoService, notify, popups, $feedSearchService) {
             this.hsCodeInfoService = hsCodeInfoService;
             this.$feedSearchService = $feedSearchService;
-            this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
+            this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)};
             this.hsCodeList = [];
             this.hsCodeValue = [];
             this.status = false;
@@ -20,8 +20,7 @@ define([
                 size: this.prodPageOption.size,
                 qty: "1",
                 order: "-1",
-                code: "",
-                hsCodeTaskCnt: 10
+                code: ""
             };
             this.searchInfo = {
                 curr: this.prodPageOption.curr,
@@ -45,7 +44,7 @@ define([
             get: function () {
                 var self = this;
                 if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
-                if (self.getTaskInfo.hsCodeTaskCnt == undefined) self.getTaskInfo.hsCodeTaskCnt = null;
+                self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
                 self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
@@ -54,8 +53,9 @@ define([
             },
             search: function (page) {
                 var self = this;
-                self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                self.searchInfo.curr = !page ? self.searchInfo.curr : page;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
+                    self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
                     self.prodPageOption.total = res.data.total;
@@ -73,8 +73,8 @@ define([
                     self.hsCodeInfoService.save({
                         "code": list.common.fields.code,
                         "hsCodePrivate": list.common.fields.hsCodePrivate
-                    }).then(function () {
-
+                    }).then(function (res) {
+                        self.hsSettedData = res.data.taskSummary;
                     })
                 }
                 else {

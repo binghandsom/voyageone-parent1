@@ -480,7 +480,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-2" ng-if="option.display==1">
-                                                <input type="text" class="form-control" ng-model="option.inputVal" ng-disabled="option.inputOpts==4||option.inputOpts==5">
+                                                <input type="text" class="form-control" ng-model="option.inputVal" ng-disabled="option.inputOpts==4||option.inputOpts==5||option.inputOpts==''||option.inputOpts==null">
                                             </div>
                                             <button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
                                             <button ng-if="$last && $index < 4" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i>

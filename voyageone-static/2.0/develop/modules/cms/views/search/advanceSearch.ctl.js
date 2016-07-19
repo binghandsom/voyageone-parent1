@@ -452,16 +452,15 @@ define([
         // 当选择搜索时设置输入框
         $scope.setSelValue = function (option, custAtts, typeVal) {
             if (typeVal && typeVal == 2) {
-                if (option.inputOpts == 4 || option.inputOpts == 5) {
-                    option.inputVal = '';
-                }
+                // 项目条件切换
+                option.inputVal = '';
                 return;
             }
-            if (custAtts == null || custAtts == undefined) {
-                option.inputType = '';
-                option.inputOptsKey = '';
-                return;
-            }
+
+            // 搜索项目切换
+            option.inputOpts = null;
+            option.inputVal = '';
+
             option.inputType = custAtts.valType;
             if (option.inputType == undefined) {
                 option.inputType = 'string';
