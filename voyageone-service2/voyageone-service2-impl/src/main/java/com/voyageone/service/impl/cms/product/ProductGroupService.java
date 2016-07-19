@@ -219,13 +219,12 @@ public class ProductGroupService extends BaseService {
                 // 设置第一次上新的时候需要更新的值
                 if (unPublishedProducts.contains(code)) {
                     bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishTime", DateTimeUtil.getNowTimeStamp());
-                    if (!StringUtils.isEmpty(model.getNumIId())) {
-                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
-                    }
-                    if (!StringUtils.isEmpty(model.getPlatformPid())) {
-                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
-                    }
                 }
+
+                // 有可能会变更numIId(比如天猫平台)，所以不能只在第一次上新的时候设置pNumIId,每次都要设置成跟group一样的值
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pNumIId", model.getNumIId());
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pProductId", model.getPlatformPid());
+
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
