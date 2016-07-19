@@ -76,6 +76,14 @@ define([
 					}
 				};
 
+				upLoader.filters.push({name:'filterName', fn:function(fileItem) {
+
+					return !_.any(upLoader.queue, function (addedFileItem) {
+						return addedFileItem._file.name === fileItem.name;
+					});
+
+				}});
+
 				this.uploader = upLoader;
 
 			},

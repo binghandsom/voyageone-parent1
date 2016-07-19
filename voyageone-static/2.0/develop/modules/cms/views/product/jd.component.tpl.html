@@ -50,6 +50,9 @@
                                     <ul uib-dropdown-menu>
                                         <li>
                                             <a href="javascript:void(0)">
+
+
+
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
                                             </a>
                                         </li>
@@ -59,7 +62,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0)" ng-click="openSwitchMain()">
+                                            <a href="javascript:void(0)" ng-click="openSwitchMain(cartInfo.value,vm.mastData.productCode)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
                                             </a>
                                         </li>
@@ -168,7 +171,12 @@
                                 <div class="col-md-8">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                           <span class="label label-info" ng-repeat="item in vm.sellerCats" style="margin-left: 10px;">{{item.cName}}</span>
+                                            <ul>
+                                                <li ng-repeat="item in vm.sellerCats">
+                                                    <span class="label label-info" style="margin-left: 10px;">{{item.cName}}</span>
+                                                </li>
+                                            </ul>
+                                           <!--<span class="label label-info"  style="margin-left: 10px;">{{item.cName}}</span>-->
                                         </div>
                                     </div>
                                     <div class="text-warnings" style="padding-left:0px">
@@ -311,7 +319,7 @@
                                         </td>
                                         <td class="text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
-                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" ng-keypress="limitNumber($event,entity.priceSale)" required></td>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'"  scale="2" required></td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                     </tr>
                                 </tbody>

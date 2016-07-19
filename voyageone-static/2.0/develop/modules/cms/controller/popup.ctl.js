@@ -1350,8 +1350,11 @@ define([
         };
 
         //切换主类目
-        $scope.openSwitchMain = function (context) {
-            return openModel(popActions.product.switchMain, context);
+        $scope.openSwitchMain = function (cartId,productCode) {
+            return openModel(popActions.product.switchMain, {
+                cartId : cartId,
+                productCode : productCode
+            });
         };
 
 
