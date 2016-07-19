@@ -436,13 +436,18 @@ public class VmsOrderInfoService extends BaseService {
         } else return 0;
     }
 
-    public List<VmsBtOrderDetailModel> getScannedSkuList(UserSessionBean user, ShipmentBean shipmentBean,
-                                                         String orderId) {
+    public List<VmsBtOrderDetailModelWithTimestamp> getScannedSkuList(UserSessionBean user,
+                                                                      ScanPopupInitialInfo scanPopupInitialInfo) {
+
+        ShipmentBean shipment = scanPopupInitialInfo.getShipment();
+        String orderId = scanPopupInitialInfo.getOrderId();
+        int curr = scanPopupInitialInfo.getCurr();
+        int size = scanPopupInitialInfo.getSize();
 
         // 查找对应OrderId中 是否有已经扫描的SKU不在此shipment下
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", orderId);
+            put("consolidationOrderId", scanPopupInitialInfo.getOrderId());
         }};
 
         List<VmsBtOrderDetailModel> orderDetailList = orderDetailService.select(checkParams);
@@ -450,12 +455,14 @@ public class VmsOrderInfoService extends BaseService {
         long invalidSkuCount = orderDetailList.stream()
                 .filter(vmsBtOrderDetailModel ->
                         null != vmsBtOrderDetailModel.getShipmentId()
-                                && !shipmentBean.getId().equals(vmsBtOrderDetailModel.getShipmentId()))
+                                && !shipment.getId().equals(vmsBtOrderDetailModel.getShipmentId()))
                 .count();
 
         //
         if (invalidSkuCount > 0) throw new BusinessException("8000023");
 
-        return orderDetailService.getScannedSku(user.getSelChannelId(), shipmentBean.getId(), orderId);
+        return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId, curr, size).stream()
+                .map(VmsBtOrderDetailModelWithTimestamp::getInstance)
+                .collect(Collectors.toList());
     }
 }

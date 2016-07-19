@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.vms.order;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.vms.VmsBtOrderDetailDao;
 import com.voyageone.service.dao.vms.VmsBtOrderLogDao;
@@ -189,13 +191,20 @@ public class OrderDetailService extends BaseService {
         return null;
     }
 
-    public List<VmsBtOrderDetailModel> getScannedSku(String channeldId, int shipmentId, String consolidationOrderId) {
+    public List<VmsBtOrderDetailModel> getScannedSku(String channelId, int shipmentId, String consolidationOrderId,
+                                                     int curr, int size) {
 
         Map<String, Object> params = new HashMap<String, Object>() {{
-            put("channelId", channeldId);
+            put("channelId", channelId);
             put("shipmentId", shipmentId);
             put("consolidationOrderId", consolidationOrderId);
         }};
-        return vmsBtOrderDetailDao.selectList(params);
+
+        Map<String, Object> modifiedParams = MySqlPageHelper.build(params)
+                .addSort("modified", Order.Direction.DESC)
+                .limit(size)
+                .page(curr)
+                .toMap();
+        return vmsBtOrderDetailDao.selectList(modifiedParams);
     }
 }
