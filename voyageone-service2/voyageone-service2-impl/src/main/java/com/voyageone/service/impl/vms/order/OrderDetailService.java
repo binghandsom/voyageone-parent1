@@ -22,6 +22,8 @@ import java.util.Map;
 @VOTransactional
 public class OrderDetailService extends BaseService {
 
+    public final static String STATUS_CANCEL = "7";
+
     private VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;
     private VmsBtOrderDetailDao vmsBtOrderDetailDao;
     private VmsBtOrderLogDao vmsBtOrderLogDao;
@@ -101,6 +103,11 @@ public class OrderDetailService extends BaseService {
             put("consolidationOrderId", consolidationOrderId);
             put("status", status);
             put("modifier", modifier);
+            if (STATUS_CANCEL.equals(status)) {
+                put("containerizingTimeNull", "1");
+                put("containerizerNull", "1");
+                put("shipmentIdNull", "1");
+            }
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
@@ -161,6 +168,16 @@ public class OrderDetailService extends BaseService {
      */
     public List<VmsBtOrderDetailModel> select(Map<String, Object> searchParam) {
         return vmsBtOrderDetailDao.selectList(searchParam);
+    }
+
+    /**
+     * 查找OrderInfo
+     *
+     * @param searchParam 搜索条件
+     * @return 订单列表
+     */
+    public List<Map<String, Object>> getOrderInfo(Map<String, Object> searchParam) {
+        return vmsBtOrderDetailDaoExt.selectListByShipmentTime(searchParam);
     }
 
     /**

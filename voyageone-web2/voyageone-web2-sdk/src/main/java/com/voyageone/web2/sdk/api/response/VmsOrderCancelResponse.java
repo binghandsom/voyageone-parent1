@@ -12,7 +12,7 @@ import java.util.List;
  * @author jeff.duan
  * @version 1.0
  */
-public class VmsOrderCancelGetResponse extends VoApiResponse {
+public class VmsOrderCancelResponse extends VoApiResponse {
 
 	/**
 	 * 取消成功的reservationId列表

@@ -3,14 +3,17 @@ package com.voyageone.web2.vms.openapi.service;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.web2.cms.openapi.OpenApiCmsBaseService;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.VmsOrderAddGetRequest;
-import com.voyageone.web2.sdk.api.request.VmsOrderCancelGetRequest;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelGetResponse;
+import com.voyageone.web2.sdk.api.request.VmsOrderAddRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderCancelRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderInfoGetRequest;
+import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
 import com.voyageone.web2.vms.openapi.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,12 +40,12 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
     /**
      * 增加一条OrderDetail信息
-     * @param request VmsOrderAddGetRequest
-     * @return VmsOrderAddGetResponse
+     * @param request VmsOrderAddRequest
+     * @return VmsOrderAddResponse
      *
      */
-    public VmsOrderAddGetResponse addOrderInfo(VmsOrderAddGetRequest request) {
-        VmsOrderAddGetResponse response = new VmsOrderAddGetResponse();
+    public VmsOrderAddResponse addOrderInfo(VmsOrderAddRequest request) {
+        VmsOrderAddResponse response = new VmsOrderAddResponse();
 
         checkCommRequest(request);
         //ChannelId
@@ -86,13 +89,13 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
     /**
      * 取消物品/订单
-     * @param request VmsOrderCancelGetRequest
-     * @return VmsOrderCancelGetResponse
+     * @param request VmsOrderCancelRequest
+     * @return VmsOrderCancelResponse
      *
      */
     @VOTransactional
-    public VmsOrderCancelGetResponse cancelOrder(VmsOrderCancelGetRequest request) {
-        VmsOrderCancelGetResponse response = new VmsOrderCancelGetResponse();
+    public VmsOrderCancelResponse cancelOrder(VmsOrderCancelRequest request) {
+        VmsOrderCancelResponse response = new VmsOrderCancelResponse();
         List<String> successReservationIdList = new ArrayList<>();
         response.setSuccessReservationIdList(successReservationIdList);
         List<String> failReservationIdList = new ArrayList<>();
@@ -142,7 +145,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                     param1.put("consolidationOrderId", models.get(0).getConsolidationOrderId());
                     List<VmsBtOrderDetailModel> modelsInOrder = orderDetailService.select(param1);
 
-                    List<VmsBtOrderDetailModel> modelsInOrderNotOpen =  modelsInOrder.stream()
+                    List<VmsBtOrderDetailModel> modelsInOrderNotOpen = modelsInOrder.stream()
                             .filter(vmsBtOrderDetailModel -> !VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN
                                     .equals(vmsBtOrderDetailModel.getStatus())).collect(Collectors.toList());
                     // 物品对应的Order下面有状态为1：Open以外的物品
@@ -152,9 +155,9 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                         boolean allExist = true;
                         // 确认找到Order下面的每个物品是否都在提供的物品列表中
                         for (VmsBtOrderDetailModel model : modelsInOrder) {
-                              if (!reservationIdList.contains(model.getReservationId())) {
-                                  allExist = false;
-                              }
+                            if (!reservationIdList.contains(model.getReservationId())) {
+                                allExist = false;
+                            }
                         }
                         // Order下面物品列表在提供的物品列表中都存在，那么可以取消
                         if (allExist) {
@@ -174,8 +177,61 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 }
             }
         }
+        return response;
+    }
 
+        /**
+         * 取得OrderInfo信息
+         * @param request VmsOrderAddRequest
+         * @return VmsOrderAddResponse
+         *
+         */
+    public VmsOrderInfoGetResponse getOrderInfo(VmsOrderInfoGetRequest request) {
+        VmsOrderInfoGetResponse response = new VmsOrderInfoGetResponse();
+        List<Map<String, Object>> itemList = new ArrayList<>();
+        response.setItemList(itemList);
 
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        String reservationId = request.getReservationId();
+        Long shipmentTimeFrom = request.getShipmentTimeFrom();
+        Long shipmentTimeTo = request.getShipmentTimeTo();
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        // 按照shipmentTime取数据
+        if (StringUtils.isEmpty(reservationId)) {
+            if (shipmentTimeFrom != null) {
+                param.put("shipmentTimeFrom", shipmentTimeFrom);
+            }
+            if (shipmentTimeTo != null) {
+                param.put("shipmentTimeTo", shipmentTimeTo);
+            }
+
+        } else {
+            // 按照reservationId取数据
+            param.put("reservationId", reservationId);
+        }
+        // 有条件不为空白才执行
+        if (param.get("reservationId") != null || param.get("shipmentTimeFrom") != null || param.get("shipmentTimeTo") != null) {
+            List<Map<String, Object>> items = orderDetailService.getOrderInfo(param);
+            for (Map item : items) {
+                Map<String, Object> newItem = new HashMap<>();
+                newItem.put("channelId", item.get("channel_id"));
+                newItem.put("reservationId", item.get("reservation_id"));
+                if (item.get("shipment_id") != null) {
+                    newItem.put("shipmentId", String.valueOf(item.get("shipment_id")));
+                }
+                newItem.put("trackingType", item.get("tracking_type"));
+                newItem.put("trackingNo", item.get("tracking_no"));
+                itemList.add(newItem);
+            }
+        }
         return response;
     }
 }

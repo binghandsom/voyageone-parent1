@@ -2,12 +2,8 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  *
@@ -17,7 +13,7 @@ import java.util.Date;
  * @author jeff.duan
  * @version 1.0
  */
-public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> {
+public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 
 	@Override
 	public String getApiURLPath() {

@@ -1,10 +1,12 @@
 package com.voyageone.web2.vms.openapi.control;
 
 import com.voyageone.web2.cms.openapi.OpenAipCmsBaseController;
-import com.voyageone.web2.sdk.api.request.VmsOrderAddGetRequest;
-import com.voyageone.web2.sdk.api.request.VmsOrderCancelGetRequest;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelGetResponse;
+import com.voyageone.web2.sdk.api.request.VmsOrderAddRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderCancelRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderInfoGetRequest;
+import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
 import com.voyageone.web2.vms.openapi.service.VmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,12 +33,17 @@ public class VmsOrderController extends OpenAipCmsBaseController {
     private VmsOrderService vmsOrderService;
 
     @RequestMapping("addOrderInfo")
-    public VmsOrderAddGetResponse addOrderInfo(@RequestBody VmsOrderAddGetRequest request) {
+    public VmsOrderAddResponse addOrderInfo(@RequestBody VmsOrderAddRequest request) {
         return vmsOrderService.addOrderInfo(request);
     }
 
     @RequestMapping("cancelOrder")
-    public VmsOrderCancelGetResponse cancelOrder(@RequestBody VmsOrderCancelGetRequest request) {
+    public VmsOrderCancelResponse cancelOrder(@RequestBody VmsOrderCancelRequest request) {
         return vmsOrderService.cancelOrder(request);
+    }
+
+    @RequestMapping("getOrderInfo")
+    public VmsOrderInfoGetResponse getOrderInfo(@RequestBody VmsOrderInfoGetRequest request) {
+        return vmsOrderService.getOrderInfo(request);
     }
 }

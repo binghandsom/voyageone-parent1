@@ -11,7 +11,7 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
  * @author jeff.duan
  * @version 1.0
  */
-public class VmsOrderAddGetResponse extends VoApiResponse {
+public class VmsOrderAddResponse extends VoApiResponse {
 
 	// true/false
 	private boolean result;

@@ -2,8 +2,7 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @author jeff.duan
  * @version 1.0
  */
-public class VmsOrderCancelGetRequest extends VoApiRequest<VmsOrderCancelGetResponse> {
+public class VmsOrderCancelRequest extends VoApiRequest<VmsOrderCancelResponse> {
 
 	@Override
 	public String getApiURLPath() {

@@ -2,19 +2,15 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelGetResponse;
-import org.apache.avro.generic.GenericData;
+import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * @author Edward
@@ -32,7 +28,7 @@ public class VmsOrderGetRequestTest {
     public void testAddOrderInfo() {
         long now =  DateTimeUtil.getNowTimeStampLong();
 
-        VmsOrderAddGetRequest request = new VmsOrderAddGetRequest();
+        VmsOrderAddRequest request = new VmsOrderAddRequest();
         request.setChannelId("088");
         request.setReservationId("10001");
         request.setConsolidationOrderId("cons_order_10001");
@@ -52,7 +48,7 @@ public class VmsOrderGetRequestTest {
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
-        VmsOrderAddGetResponse response = voApiDefaultClient.execute(request);
+        VmsOrderAddResponse response = voApiDefaultClient.execute(request);
 
         System.out.println(response);
     }
@@ -60,13 +56,13 @@ public class VmsOrderGetRequestTest {
     @Test
     public void testCancelOrderInfo() {
 
-        VmsOrderCancelGetRequest request = new VmsOrderCancelGetRequest();
+        VmsOrderCancelRequest request = new VmsOrderCancelRequest();
         request.setChannelId("088");
         request.setReservationIdList(new ArrayList<String>(){{add("101");add("102");add("103");}});
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
-        VmsOrderCancelGetResponse response = voApiDefaultClient.execute(request);
+        VmsOrderCancelResponse response = voApiDefaultClient.execute(request);
 
         System.out.println(response);
     }
