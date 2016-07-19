@@ -1154,5 +1154,7 @@ public class CmsProductDetailService extends BaseAppService {
         if (cmsBtProductGroup.getMainProductCode().equals(parameter.getProductCode())) return;
         cmsBtProductGroup.setMainProductCode(parameter.getProductCode());
         productGroupService.update(cmsBtProductGroup);
+//        productService.getProductByCode();
+//        productService.updateProductPlatform()
     }
 }
