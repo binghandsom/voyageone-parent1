@@ -113,7 +113,12 @@
                                 <div class="col-md-8">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                           <span class="label label-info" ng-repeat="item in vm.sellerCats" style="margin-left: 10px;">{{item.cName}}</span>
+                                            <ul>
+                                                <li ng-repeat="item in vm.sellerCats">
+                                                    <span class="label label-info" style="margin-left: 10px;">{{item.cName}}</span>
+                                                </li>
+                                            </ul>
+                                           <!--<span class="label label-info" ng-repeat="item in vm.sellerCats" style="margin-left: 10px;">{{item.cName}}</span>-->
                                         </div>
                                     </div>
                                     <div class="text-warnings" style="padding-left:0px">
@@ -256,7 +261,7 @@
                                         </td>
                                         <td class="text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
-                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-keypress="limitNumber($event,entity.priceSale)" required>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" required>
                                         </td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                     </tr>
