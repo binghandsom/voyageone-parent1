@@ -41,7 +41,7 @@ public class CmsProductDetailServiceTest {
         SetMastProductParameter parameter=new SetMastProductParameter();
         parameter.setProductCode("DIBRHCRST/RHGAR8.5");
         parameter.setChannelId("010");
-        parameter.setCartId(0);
+        parameter.setCartId(27);
        CallResult result= cmsProductDetailService.setMastProduct(parameter,"syste");
     }
 }
