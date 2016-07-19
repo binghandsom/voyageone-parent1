@@ -27,12 +27,14 @@ import java.util.*;
 public class CmsHsCodeService extends BaseService {
 
     private static final int EXPIRE_HOURS = -48;
-
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
+    //获取任务数量Id
+    private static int hsCodeTaskCntTypeId = 0;
+    //获取任务数量名称
+    private static String hsCodeTaskCntTypeName = "";
     /**
      * 设定返回值.
      */
@@ -52,11 +54,6 @@ public class CmsHsCodeService extends BaseService {
             "common.fields.hsCodeSetTime",
             "common.fields.quantity",
     };
-    //获取任务数量Id
-    private static int hsCodeTaskCntTypeId = 0;
-    //获取任务数量名称
-    private static String hsCodeTaskCntTypeName = "";
-
     /**
      * HsCode信息检索
      *
