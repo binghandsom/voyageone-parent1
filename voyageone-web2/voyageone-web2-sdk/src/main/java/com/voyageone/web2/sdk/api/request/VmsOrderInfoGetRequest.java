@@ -76,7 +76,7 @@ public class VmsOrderInfoGetRequest extends VoApiRequest<VmsOrderInfoGetResponse
 		return shipmentTimeTo;
 	}
 
-	public void setShipmentTimeTo(Long shipmentTimeEnd) {
+	public void setShipmentTimeTo(Long shipmentTimeTo) {
 		this.shipmentTimeTo = shipmentTimeTo;
 	}
 }

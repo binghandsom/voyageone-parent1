@@ -207,10 +207,10 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         // 按照shipmentTime取数据
         if (StringUtils.isEmpty(reservationId)) {
             if (shipmentTimeFrom != null) {
-                param.put("shipmentTimeFrom", shipmentTimeFrom);
+                param.put("shipmentTimeFrom", new Date(shipmentTimeFrom));
             }
             if (shipmentTimeTo != null) {
-                param.put("shipmentTimeTo", shipmentTimeTo);
+                param.put("shipmentTimeTo", new Date(shipmentTimeTo));
             }
 
         } else {
@@ -224,11 +224,16 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 Map<String, Object> newItem = new HashMap<>();
                 newItem.put("channelId", item.get("channel_id"));
                 newItem.put("reservationId", item.get("reservation_id"));
+                newItem.put("status", item.get("status"));
                 if (item.get("shipment_id") != null) {
                     newItem.put("shipmentId", String.valueOf(item.get("shipment_id")));
                 }
-                newItem.put("trackingType", item.get("tracking_type"));
-                newItem.put("trackingNo", item.get("tracking_no"));
+                if (item.get("express_company") != null) {
+                    newItem.put("expressCompany", item.get("express_company"));
+                }
+                if (item.get("tracking_no") != null) {
+                    newItem.put("trackingNo", item.get("tracking_no"));
+                }
                 itemList.add(newItem);
             }
         }
