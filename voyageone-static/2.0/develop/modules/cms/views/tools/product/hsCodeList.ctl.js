@@ -73,8 +73,8 @@ define([
                     self.hsCodeInfoService.save({
                         "code": list.common.fields.code,
                         "hsCodePrivate": list.common.fields.hsCodePrivate
-                    }).then(function () {
-
+                    }).then(function (res) {
+                        self.hsSettedData = res.data.taskSummary;
                     })
                 }
                 else {
