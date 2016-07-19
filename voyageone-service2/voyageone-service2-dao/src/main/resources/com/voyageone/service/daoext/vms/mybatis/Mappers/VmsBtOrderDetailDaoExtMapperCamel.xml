@@ -371,7 +371,7 @@
         </where>
     </select>
 
-    <select id="selectListByShipmentTime" parameterType="HashMap" resultMap="HashMap">
+    <select id="selectListByShipmentTime" parameterType="HashMap" resultType="HashMap">
         select
             channel_id,reservation_id,shipment_id,status,tracking_type,tracking_no
         from vms_bt_order_detail t1
