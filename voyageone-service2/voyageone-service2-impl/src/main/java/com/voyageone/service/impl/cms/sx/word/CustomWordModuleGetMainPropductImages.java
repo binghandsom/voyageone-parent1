@@ -151,15 +151,22 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 imageUrlList.add(paddingImage);
                 // add by desmond 2016/07/15 end
             } else {
-                if (imageTemplate != null) {
+                // modified by morse.lu 2016/07/18 start
+                // 吊牌图和耐久性标签padding直接写死空白图片的url
+//            if(imageTemplate != null){
+                if(imageType != CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE && imageTemplate != null){
+                    // modified by morse.lu 2016/07/18 end
                     // 20160513 tom 图片服务器切换 START
                     paddingImage = String.format(imageTemplate, paddingImageKey.trim());
 
 //                paddingImage = expressionParser.getSxProductService().getImageByTemplateId(sxData.getChannelId(), imageTemplate, paddingImageKey.trim());
                     // 20160513 tom 图片服务器切换 END
 //                paddingImage = sxProductService.encodeImageUrl(paddingImage);
-                    imageUrlList.add(String.format(imageTemplate, paddingImage)); // TODO: 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
-
+                    // modified 2016/07/15 start
+                    // 这里是不是写错了? 疑似应该是add paddingImage tom   // morse：好像是错了，task2下面也要改
+//                imageUrlList.add(String.format(imageTemplate, paddingImage));
+                    imageUrlList.add(paddingImage);
+                    // modified 016/07/15 end
                 } else {
                     return paddingImageKey.trim();
                 }

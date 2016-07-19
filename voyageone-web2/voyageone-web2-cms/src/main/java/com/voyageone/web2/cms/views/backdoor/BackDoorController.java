@@ -102,6 +102,17 @@ public class BackDoorController extends CmsController {
     }
 
     /**
+     * 将老的聚美数据导入都cms(/cms/backdoor/importJM/015)
+     *
+     * @param channelId 渠道Id
+     * @return
+     */
+    @RequestMapping(value = "importJMOne", method = RequestMethod.GET)
+    public Object importJmOne(@RequestParam("channelId") String channelId, @RequestParam("code") String code) {
+        return serviceJmBtDealImport.importJMOne(channelId,code);
+    }
+
+    /**
      * 创建996的测试数据(/cms/backdoor/createTestData)
      *
      * @return
@@ -605,7 +616,7 @@ public class BackDoorController extends CmsController {
             }
         });
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
+//        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
 
         StringBuilder builder = new StringBuilder("<body>");
 
@@ -618,7 +629,7 @@ public class BackDoorController extends CmsController {
         builder.append("<hr>");
         builder.append("<h2>Group 信息列表</h2>");
         builder.append("<ul>");
-        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+//        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
         builder.append("</ul>");
         builder.append("</body>");
 
@@ -875,60 +886,63 @@ public class BackDoorController extends CmsController {
             if (groupModel.getProductCodes().size() == existedCodeList.size())
                 return;
 
-            String oldMainProductCode = groupModel.getMainProductCode();
-
-            if (existedCodeList.contains(oldMainProductCode)) {
-                // 如果存在, 说明还没有删除
-                // 那么维持老的数据即可
-                // 只需要扔掉那些删除掉得 code
+            System.out.println(existedCodeList.toArray());
                 groupModel.setProductCodes(existedCodeList);
-            } else {
-                // 如果 group 现在使用的 main product 不在过滤后的集合里
-                // 说明这个 code 已经被上一步删除了
-                // 那么
-                // 除了切换 group 的 main product code 外
-                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
-                String newMainProductCode = existedCodeList.get(0);
-                groupModel.setMainProductCode(newMainProductCode);
-                existedCodeList.forEach(existedCode -> {
-                    // 更新每一个 code
-                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
-                    // 不过 P0 只有 mainProductCode
-                    // 同时还要更新 common fields 里的 isMasterMain 属性
-                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
-                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
-                    boolean isMain = existedCode.equals(newMainProductCode);
-                    Map<String, Object> productSetParams = new HashMap<>(3);
 
-                    // 因为有可能并行 (parallelStream) 执行
-                    // 也就是有可能并发更新同一个商品
-                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
-                    // common 下的属性交给 P0 平台更新
-
-                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
-
-                    if (currentGroupProductPlatform == null) {
-                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
-                        return;
-                    }
-
-                    if (isMain) {
-                        if (groupCartId.equals(0))
-                            productSetParams.put("common.fields.isMasterMain", 1);
-                        else
-                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
-                    }
-
-                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
-
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("$set", productSetParams);
-
-                    Map<String, Object> productQueryParams = new HashMap<>();
-                    productQueryParams.put("_id", productModel.get_id());
-                    productService.updateProduct(channelId, productQueryParams, updateMap);
-                });
-            }
+//            String oldMainProductCode = groupModel.getMainProductCode();
+//
+//            if (existedCodeList.contains(oldMainProductCode)) {
+//                // 如果存在, 说明还没有删除
+//                // 那么维持老的数据即可
+//                // 只需要扔掉那些删除掉得 code
+//                groupModel.setProductCodes(existedCodeList);
+//            } else {
+//                // 如果 group 现在使用的 main product 不在过滤后的集合里
+//                // 说明这个 code 已经被上一步删除了
+//                // 那么
+//                // 除了切换 group 的 main product code 外
+//                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
+//                String newMainProductCode = existedCodeList.get(0);
+//                groupModel.setMainProductCode(newMainProductCode);
+//                existedCodeList.forEach(existedCode -> {
+//                    // 更新每一个 code
+//                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
+//                    // 不过 P0 只有 mainProductCode
+//                    // 同时还要更新 common fields 里的 isMasterMain 属性
+//                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
+//                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
+//                    boolean isMain = existedCode.equals(newMainProductCode);
+//                    Map<String, Object> productSetParams = new HashMap<>(3);
+//
+//                    // 因为有可能并行 (parallelStream) 执行
+//                    // 也就是有可能并发更新同一个商品
+//                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
+//                    // common 下的属性交给 P0 平台更新
+//
+//                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
+//
+//                    if (currentGroupProductPlatform == null) {
+//                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
+//                        return;
+//                    }
+//
+//                    if (isMain) {
+//                        if (groupCartId.equals(0))
+//                            productSetParams.put("common.fields.isMasterMain", 1);
+//                        else
+//                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
+//                    }
+//
+//                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
+//
+//                    HashMap<String, Object> updateMap = new HashMap<>();
+//                    updateMap.put("$set", productSetParams);
+//
+//                    Map<String, Object> productQueryParams = new HashMap<>();
+//                    productQueryParams.put("_id", productModel.get_id());
+//                    productService.updateProduct(channelId, productQueryParams, updateMap);
+//                });
+//            }
 
             productGroupService.update(groupModel);
         });

@@ -344,3 +344,20 @@ vpagination button.btn-default {
     margin-bottom: 5px;
 }
 /* v-pagination end */
+
+/* dialogs.factory start */
+.vo-dialogs .modal-header .modal-title {
+    font-size: 18px;
+}
+.vo-dialogs .modal-body {
+    font-size: 18px;
+    padding: 32px 23px;
+}
+.vo-dialogs .modal-footer .btn {
+    font-size: 16px;
+}
+.modal-backdrop.in {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+/* dialogs.factory end */

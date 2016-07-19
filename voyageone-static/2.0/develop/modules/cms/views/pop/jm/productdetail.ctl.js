@@ -78,7 +78,7 @@ define([
             },
             deleteSku: function (promotionSkuInfo, index) {
                 var self = this;
-                self.confirm(this.translate.instant('TXT_MSG_DELETE_ITEM')).result
+                self.confirm(this.translate.instant('TXT_MSG_DELETE_ITEM'))
                     .then(function () {
                         self.jmPromotionDetailService.deletePromotionSku(promotionSkuInfo).then(function () {
                             self.skuList[index].cmsBtJmPromotionSkuModel = {};

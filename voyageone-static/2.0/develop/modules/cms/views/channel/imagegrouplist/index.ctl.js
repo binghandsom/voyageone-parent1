@@ -79,7 +79,7 @@ define([
             },
             delete: function (imageGroupId) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_DELETE').then(function () {
                     main.imageGroupService.delete({
                         "imageGroupId" : imageGroupId
                     }).then(function (res) {

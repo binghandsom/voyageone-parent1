@@ -53,7 +53,7 @@ define([
             },
             delete: function(task){
                 var ttt = this;
-                ttt.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                ttt.confirm('TXT_MSG_DO_DELETE').then(function () {
                     // 库存隔离
                     if (task.taskType == '2') {
                         ttt.taskStockService.delTask({

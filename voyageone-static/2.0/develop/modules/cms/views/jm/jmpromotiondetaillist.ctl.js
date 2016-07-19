@@ -91,7 +91,7 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            confirm($translate.instant('TXT_Do_You_Want_To_Selected')).result.then(function () {
+            confirm($translate.instant('TXT_Do_You_Want_To_Selected')).then(function () {
                 jmPromotionDetailService.jmNewByProductIdListInfo(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
                         if ($scope.vm.modelList[i].isChecked) {
@@ -104,7 +104,7 @@ define([
             });
         };
         $scope.jmNewUpdateAll = function () {
-            confirm($translate.instant('TXT_Do_You_Want_To_Update_ All')).result.then(function () {
+            confirm($translate.instant('TXT_Do_You_Want_To_Update_ All')).then(function () {
                 jmPromotionDetailService.jmNewUpdateAll($scope.vm.promotionId).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
 
@@ -125,7 +125,7 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteByProductIdList(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
                         if ($scope.vm.modelList[i].isChecked) {
@@ -137,7 +137,7 @@ define([
             });
         }
         $scope.deleteByPromotionId = function () {
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteByPromotionId($scope.vm.promotionId).then(function () {
                     $scope.vm.modelList = [];
                 }, function (res) {
@@ -145,7 +145,7 @@ define([
             })
         }
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
                 if (data.synchStatus == 2) {
                     alert("该商品已上传，禁止删除!");
@@ -280,7 +280,7 @@ define([
             return listPromotionProductCode;
         }
         $scope.updateJM = function (promotionProductId) {
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 var listPromotionProductId = [promotionProductId];
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
@@ -304,7 +304,7 @@ define([
                 alert("请选择同步价格的商品!");
                 return;
             }
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
@@ -322,7 +322,7 @@ define([
             });
         };
         $scope.synchAllPrice = function () {
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
@@ -342,7 +342,7 @@ define([
                 alert("请选择上传的商品!");
                 return;
             }
-            confirm("选中的商品是否全部上传?").result.then(function () {
+            confirm("选中的商品是否全部上传?").then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
@@ -360,7 +360,7 @@ define([
             });
         }
         $scope.copyDealAll = function () {
-            confirm("是否全部上传?").result.then(function () {
+            confirm("是否全部上传?").then(function () {
 
                 jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
@@ -394,7 +394,7 @@ define([
                     return;
                 }
             }
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
@@ -416,7 +416,7 @@ define([
                     return;
                 }
             }
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
                         $scope.search();

@@ -170,7 +170,7 @@ define([
             }
             var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>"+$scope.vm.feedPageOption.total + "</span></h3>" :
                                                       "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
-            confirm(notice).result.then(function () {
+            confirm(notice).then(function () {
                 $feedSearchService.updateFeedStatus({
                     'selList': selList,
                     'isAll': $scope.vm.searchInfo.isAll,

@@ -71,7 +71,7 @@ define([
             $scope.searchInfo = {brandName:[],sizeType:[],productType:[]};
         };
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.imageTemplateName).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.imageTemplateName).then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
                 data.active = 0;
                 imageTemplateService.delete(data.imageTemplateId).then(function () {

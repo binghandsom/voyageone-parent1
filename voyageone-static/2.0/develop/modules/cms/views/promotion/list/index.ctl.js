@@ -82,7 +82,7 @@ define([
         //};
 
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.promotionName)).result.then(function () {
+            confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.promotionName)).then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
                 promotionService.deleteByPromotionId(data.id).then(function(res){
                         if(res.data.result) {
@@ -102,7 +102,7 @@ define([
         };
         $scope.setOpenPromotionStatus=function(data)
         {
-            confirm($translate.instant("是否打开活动%s").replace("%s",data.promotionName)).result.then(function () {
+            confirm($translate.instant("是否打开活动%s").replace("%s",data.promotionName)).then(function () {
                 promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:1}).then(function(res){
                     data.promotionStatus=1;
                 });
@@ -110,7 +110,7 @@ define([
         }
         $scope.setClosePromotionStatus=function(data)
         {
-            confirm($translate.instant("是否关闭活动%s").replace("%s",data.promotionName)).result.then(function () {
+            confirm($translate.instant("是否关闭活动%s").replace("%s",data.promotionName)).then(function () {
                 promotionService.setPromotionStatus({promotionId:data.id,promotionStatus:0}).then(function(res){
                     data.promotionStatus=0;
                 });
