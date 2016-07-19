@@ -451,7 +451,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                             // update by desmond 2016/07/08 end
                             htSpuUpdateRequest.setSize(sizeStr);
-                            htSpuUpdateRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
+                            htSpuUpdateRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId));
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                             HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
@@ -521,7 +521,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //新SPU需要增加
                         else {
                             HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
-                            htSpuAddRequest.setUpc_code(skuMap.getStringAttribute("barcode")+"vo");
+                            htSpuAddRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId));
                             // update by desmond 2016/07/08 start
 //                                    String sizeStr = skuMap.getStringAttribute("size");
 //                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
@@ -764,7 +764,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             newSku.setAttribute("priceSale", sku.getDoubleAttribute("priceSale"));
             newSku.setStringAttribute("priceChgFlg", sku.getStringAttribute("priceChgFlg"));
             newSku.setStringAttribute("priceDiffFlg", sku.getStringAttribute("priceDiffFlg"));
-            newSku.setStringAttribute("isSale", sku.getStringAttribute("isSale"));
+            newSku.setAttribute("isSale", sku.getAttribute("isSale"));
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
             newSku.setStringAttribute("property", sku.getStringAttribute("property"));
@@ -949,7 +949,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
-            spu.setUpc_code(jmSku.getStringAttribute("barcode")+"vo");
+            spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId));
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             // update by desmond 2016/07/08 start
@@ -1214,5 +1214,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         }
 
         return jmSkus;
+    }
+
+    /**
+     * 在barcode的后面拼接vo+channelId
+     * @param barcode
+     * @param channelId
+     * @return
+     */
+    private String addVoToBarcode (String barcode, String channelId) {
+        if (StringUtils.isEmpty(barcode))
+            return "";
+        return barcode + "vo" + channelId;
     }
 }

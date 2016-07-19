@@ -250,7 +250,7 @@ public class TypeChannels {
                 }
             }
         }
-
+        resultList = resultList.stream().sorted(Comparator.comparing(TypeChannelBean::getValue)).collect(Collectors.toList());
         return resultList;
     }
 

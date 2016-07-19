@@ -104,10 +104,11 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 //        }
 
         CmsBtSxWorkloadModel work = new CmsBtSxWorkloadModel();
-        work.setGroupId(30222L);
-        work.setChannelId("010");
         work.setCartId(27);
+        work.setChannelId("010");
+        work.setGroupId(30222L);
         work.setPublishStatus(0);
+
         cmsBuildPlatformProductUploadJMService.updateProduct(work);
 
     }
