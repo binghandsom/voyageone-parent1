@@ -12,11 +12,17 @@ define([
             this.context = context;
             this.uibModalInstance = $uibModalInstance;
             this.productDetailService = productDetailService;
+            this.data = {
+                productInList:null
+            }
         }
 
         SwitchMain.prototype = {
           init:function(){
-              alert("a");
+              var self = this;
+              self.productDetailService.getChangeMastProductInfo({cartId:self.context.cartId,productCode:self.context.productCode}).then(function(res){
+                  self.data.productInList = res.data.productInList;
+              });
           }
         };
 
