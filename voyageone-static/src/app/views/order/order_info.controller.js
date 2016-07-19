@@ -3,12 +3,13 @@ define([
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
-        function OrderInfoController(alert, notify, confirm, popups, orderInfoService) {
+        function OrderInfoController(alert, notify, confirm, popups, orderInfoService, shipmentScanPopupService) {
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
             this.orderInfoService = orderInfoService;
             this.popups = popups;
+            this.shipmentScanPopupService = shipmentScanPopupService;
 
             this.oneDay = 24 * 60 * 60 * 1000;
             this.twoDay = 2 * this.oneDay;
@@ -180,10 +181,14 @@ define([
         OrderInfoController.prototype.popAddToShipment = function (item) {
             var self = this;
             var items = {
-                shipmentName: self.currentShipment.shipmentName,
+                shipment: self.currentShipment,
                 orderId: item.orderId
             };
-            this.popups.openAddShipment(items);
+            self.shipmentScanPopupService.init(items).then(function (res) {
+                console.log(res);
+                self.popups.openAddShipment(items);
+            });
+
         };
         return OrderInfoController;
 

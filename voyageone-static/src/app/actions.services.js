@@ -177,6 +177,9 @@ define(function (require) {
             get: "get",
             create: "create",
             submit: "submit"
+        }),
+        shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
+            init: "init"
         })
     }
 });
