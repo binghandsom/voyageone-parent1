@@ -11,6 +11,7 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -2376,7 +2377,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             Double priceCurrent = feedSkuInfo.getPriceCurrent();
 
             if (StringUtils.isEmpty(formula)) {
-                return 0.00;
+                // update by desmond 2016/07/19 start
+//                return 0.00;
+                // 如果传入的价格计算公式为空，则中止feed导入，抛出异常
+                String errMsg = "feed->master导入:calculatePriceByFormula()方法中传入的价格计算公式为空( formula:null )";
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+                // update by desmond 2016/07/19 end
             }
 
             // 根据公式计算价格
@@ -2802,14 +2809,57 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 店铺级别MSRP价格计算公式
             String priceMsrpCalcFormula = "";
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
+            // update by desmond 2016/07/19 start
+//            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
+            CmsChannelConfigBean cmsChannelConfigBean = null;
+            // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
+            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
+                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
+                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+                cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getCategory());
+
+                // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
+                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                    throwNotFoundPriceFormulaException(channelId, feed.getCategory(), CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getModel());
+                }
+            } else {
+                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
+
+                // 如果没有取到channel对应的价格计算公式，则中止feed导入，抛出异常
+                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                    throwNotFoundPriceFormulaException(channelId, null, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getModel());
+                }
+            }
+            // update by desmond 2016/07/19 end
             if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
                 priceMsrpCalcFormula = cmsChannelConfigBean.getConfigValue1();
             }
 
             // 店铺级别指导价格计算公式
             String priceRetailCalcFormula = "";
-            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
+            // update by desmond 2016/07/19 start
+//            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
+            cmsChannelConfigBean = null;
+            // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
+            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
+                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
+                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+                cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getCategory());
+
+                // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
+                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                    throwNotFoundPriceFormulaException(channelId, feed.getCategory(), CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getModel());
+                }
+
+            } else {
+                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
+
+                // 如果没有取到channel对应的价格计算公式，则中止feed导入，抛出异常
+                if (cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                    throwNotFoundPriceFormulaException(channelId, null, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getModel());
+                }
+            }
+            // update by desmond 2016/07/19 end
             if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
                 priceRetailCalcFormula = cmsChannelConfigBean.getConfigValue1();
             }
@@ -3242,6 +3292,33 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         businessLogModel.setModifier(modifier);
 
         businessLogService.insertBusinessLog(businessLogModel);
+    }
+
+    /**
+     * 如果没有取到feed类目对应的价格计算公式时抛出异常处理
+     *
+     * @param channelId String 渠道id
+     * @param feedCategory String 平台id
+     * @param formulakey String 价格公式
+     * @param feedModel String feed model
+     */
+    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formulakey, String feedModel){
+        String errMsg = "";
+
+        if (!StringUtils.isEmpty(feedCategory)) {
+            // 根据feed类目未取到相应的价格计算公式时
+            errMsg = String.format("feed->master导入:在cms_mt_channel_config表中没有找到该feed类目对应的" +
+                            "价格计算公式( channel: [%s], feedcategory: [%s], formulakey: [%s], feedModel: [%s] )",
+                    channelId, feedCategory, formulakey, feedModel);
+        } else {
+            // 不根据feed类目未取到相应的价格计算公式时
+            errMsg = String.format("feed->master导入:在cms_mt_channel_config表中没有找到该channel对应的" +
+                            "价格计算公式( channel: [%s], formulakey: [%s], feedModel: [%s] )",
+                    channelId, formulakey, feedModel);
+        }
+
+        $error(errMsg);
+        throw new BusinessException(errMsg);
     }
 
 }

@@ -431,7 +431,8 @@ s-field textarea.s-html {
 
 .product-shema-detail .panel-body li{
     float: left;
-    margin-top: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     list-style: none;
 }
 
