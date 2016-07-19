@@ -33,7 +33,7 @@ public class VmsScanPopupController extends BaseController {
     public AjaxResponse init(@RequestBody ScanPopupInitialInfo scanPopupInitialInfo) {
         Map<String, Object> result = new HashMap<>();
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
-                scanPopupInitialInfo.getShipment(), scanPopupInitialInfo.getOrderId()));
+                scanPopupInitialInfo));
 
         return success(result);
     }

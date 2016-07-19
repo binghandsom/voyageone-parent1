@@ -180,12 +180,13 @@ define([
 
         OrderInfoController.prototype.popAddToShipment = function (item) {
             var self = this;
-            var items = {
-                shipment: self.currentShipment,
-                orderId: item.orderId
+            self.ScanPopupInitialInfo = {
+                "shipment": self.currentShipment,
+                "orderId": item.orderId
             };
-            self.shipmentScanPopupService.init(items).then(function () {
-                self.popups.openAddShipment(items);
+            self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (shipmentDetails) {
+                shipmentDetails.ScanPopupInitialInfo = self.ScanPopupInitialInfo;
+                self.popups.openAddShipment(shipmentDetails);
             });
 
         };
