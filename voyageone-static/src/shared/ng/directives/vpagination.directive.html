@@ -11,7 +11,7 @@
         <span>&nbsp;</span>
         <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>
     </div>
-    <div class="col-sm-4 text-center">
+    <form class="col-sm-4 text-center form-inline">
         <span translate="TXT_PAGER_SIZE"></span>
         <span>&nbsp;</span>
         <select class="form-control input-sm" ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions" ng-model="perpages.selectedOption" style="max-width: 65px;max-height: 26px;"></select>
@@ -29,7 +29,7 @@
         <span ng-bind="totalItems"></span>
         <span>&nbsp;</span>
         <span translate="TXT_ITEMS"></span>
-    </div>
+    </form>
     <div class="col-sm-5 text-right">
         <ul class="pagination" style="margin: 0">
             <li ng-class="{disabled: curr.isFirst}">
