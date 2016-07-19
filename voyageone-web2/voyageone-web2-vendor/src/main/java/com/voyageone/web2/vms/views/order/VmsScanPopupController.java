@@ -2,6 +2,7 @@ package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.bean.order.ScanPopupCheckBarcodeInfo;
 import com.voyageone.web2.vms.bean.order.ScanPopupInitialInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,8 +39,10 @@ public class VmsScanPopupController extends BaseController {
     }
 
     @RequestMapping(POPUP.SCAN.CHECK_BARCODE)
-    public AjaxResponse checkBarcode() {
-        // TODO: 16-7-19 扫码检查和返回 vantis
-        return success(new HashMap<>());
+    public AjaxResponse checkBarcode(@RequestBody ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+        Map<String, Object> result = new HashMap<String, Object>() {{
+
+        }};
+        return success(result);
     }
 }
