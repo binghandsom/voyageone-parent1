@@ -62,12 +62,12 @@ public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> 
 	/**
 	 * consolidationOrderTime
 	 */
-	private Date consolidationOrderTime;
+	private Long consolidationOrderTime;
 
 	/**
 	 * orderTime
 	 */
-	private Date orderTime;
+	private Long orderTime;
 
 	/**
 	 * cartId
@@ -77,36 +77,32 @@ public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> 
 	/**
 	 * clientMsrp
 	 */
-	private BigDecimal clientMsrp;
+	private Double clientMsrp;
 
 	/**
 	 * clientNetPrice
 	 */
-	private BigDecimal clientNetPrice;
+	private Double clientNetPrice;
 
 	/**
 	 * clientRetailPrice
 	 */
-	private BigDecimal clientRetailPrice;
+	private Double clientRetailPrice;
 
 	/**
 	 * msrp
 	 */
-	private BigDecimal msrp;
+	private Double msrp;
 
 	/**
 	 * retailPrice
 	 */
-	private BigDecimal retailPrice;
+	private Double retailPrice;
 
 	/**
 	 * salePrice
 	 */
-	private BigDecimal salePrice;
-
-	public VmsOrderAddGetRequest() {
-
-	}
+	private Double salePrice;
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
@@ -184,19 +180,19 @@ public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> 
 		this.description = description;
 	}
 
-	public Date getConsolidationOrderTime() {
+	public Long getConsolidationOrderTime() {
 		return consolidationOrderTime;
 	}
 
-	public void setConsolidationOrderTime(Date consolidationOrderTime) {
+	public void setConsolidationOrderTime(Long consolidationOrderTime) {
 		this.consolidationOrderTime = consolidationOrderTime;
 	}
 
-	public Date getOrderTime() {
+	public Long getOrderTime() {
 		return orderTime;
 	}
 
-	public void setOrderTime(Date orderTime) {
+	public void setOrderTime(Long orderTime) {
 		this.orderTime = orderTime;
 	}
 
@@ -208,51 +204,51 @@ public class VmsOrderAddGetRequest extends VoApiRequest<VmsOrderAddGetResponse> 
 		this.cartId = cartId;
 	}
 
-	public BigDecimal getClientMsrp() {
+	public Double getClientMsrp() {
 		return clientMsrp;
 	}
 
-	public void setClientMsrp(BigDecimal clientMsrp) {
+	public void setClientMsrp(Double clientMsrp) {
 		this.clientMsrp = clientMsrp;
 	}
 
-	public BigDecimal getClientNetPrice() {
+	public Double getClientNetPrice() {
 		return clientNetPrice;
 	}
 
-	public void setClientNetPrice(BigDecimal clientNetPrice) {
+	public void setClientNetPrice(Double clientNetPrice) {
 		this.clientNetPrice = clientNetPrice;
 	}
 
-	public BigDecimal getClientRetailPrice() {
+	public Double getClientRetailPrice() {
 		return clientRetailPrice;
 	}
 
-	public void setClientRetailPrice(BigDecimal clientRetailPrice) {
+	public void setClientRetailPrice(Double clientRetailPrice) {
 		this.clientRetailPrice = clientRetailPrice;
 	}
 
-	public BigDecimal getMsrp() {
+	public Double getMsrp() {
 		return msrp;
 	}
 
-	public void setMsrp(BigDecimal msrp) {
+	public void setMsrp(Double msrp) {
 		this.msrp = msrp;
 	}
 
-	public BigDecimal getRetailPrice() {
+	public Double getRetailPrice() {
 		return retailPrice;
 	}
 
-	public void setRetailPrice(BigDecimal retailPrice) {
+	public void setRetailPrice(Double retailPrice) {
 		this.retailPrice = retailPrice;
 	}
 
-	public BigDecimal getSalePrice() {
+	public Double getSalePrice() {
 		return salePrice;
 	}
 
-	public void setSalePrice(BigDecimal salePrice) {
+	public void setSalePrice(Double salePrice) {
 		this.salePrice = salePrice;
 	}
 }

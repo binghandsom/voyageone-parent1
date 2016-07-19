@@ -374,8 +374,8 @@
         , `modified` = now()
         where
         <choose>
-            <when test="orderId != null">
-                `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{orderId, jdbcType=VARCHAR}
+            <when test="consolidationOrderId != null">
+                `channel_id` = #{channelId, jdbcType=VARCHAR} and `order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
             </when>
             <when test="reservationId != null">
                 `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}

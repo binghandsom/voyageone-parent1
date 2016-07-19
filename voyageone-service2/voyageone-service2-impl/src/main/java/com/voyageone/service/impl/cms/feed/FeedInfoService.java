@@ -113,17 +113,17 @@ public class FeedInfoService extends BaseService {
 
         // 获取价格
         // 获取查询的价格区间下限
-        float priceSta = -1;
-        float priceEnd = -1;
+        double priceSta = -1;
+        double priceEnd = -1;
        if(searchValue.get("priceStart") != null){
             if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceStart")))) {
-                priceSta = Float.parseFloat(String.valueOf(searchValue.get("priceStart")));
+                priceSta = Double.parseDouble(String.valueOf(searchValue.get("priceStart")));
             }
         }
 
         if(searchValue.get("priceEnd") != null){
             if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceEnd")))) {
-                priceEnd = Float.parseFloat(String.valueOf(searchValue.get("priceEnd")));
+                priceEnd = Double.parseDouble(String.valueOf(searchValue.get("priceEnd")));
             }
         }
 
