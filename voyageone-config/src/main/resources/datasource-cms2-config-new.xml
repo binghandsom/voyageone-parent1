@@ -5,6 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
+    <!-- Cms2 -->
     <!-- sqlSessionFactoryMasterCms2 -->
     <bean id="sqlSessionFactoryMasterCms2" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!-- SqlSessionFactory的数据源 -->
@@ -16,7 +17,13 @@
         <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
         <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
         <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
-        <property name="mapperLocations" value="classpath*:com/voyageone/**/*MapperCamel.xml"/>
+        <property name="mapperLocations" >
+            <list>
+                <value>classpath*:com/voyageone/service/dao/cms/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/cms/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/task2/cms/**/*MapperCamel.xml</value>
+            </list>
+        </property>
         <!-- 配置Mybatis的插件plugin-->
         <property name="plugins">
             <array>
@@ -44,7 +51,47 @@
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCms2"/>
         <property name="basePackage" value="com.voyageone.service.dao.cms,
                                           com.voyageone.service.daoext.cms,
-                                          com.voyageone.task2.cms.dao.feed,
+                                          com.voyageone.task2.cms.dao.feed"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+
+    <!-- Com -->
+    <!-- sqlSessionFactoryMasterCom -->
+    <bean id="sqlSessionFactoryMasterCom" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- SqlSessionFactory的数据源 -->
+        <property name="dataSource" ref="dataSourceMaster"/>
+        <!-- 配置typeAliasesPackage -->
+        <!-- typeAliasesPackage包路径配置 -->
+        <property name="typeAliasesPackage" value="com.voyageone.service.model.com"/>
+        <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
+        <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
+        <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:com/voyageone/service/dao/com/**/*MapperCamel.xml</value>
+            </list>
+        </property>
+        <!-- 配置Mybatis的插件plugin-->
+        <property name="plugins">
+            <array>
+                <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
+                    <property name="properties">
+                        <value>database_schema=synship</value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--updateTemplateCom-->
+    <bean id="updateTemplateCom" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactoryMasterCom"/>
+    </bean>
+
+    <!--mybatis的dao接口和mapper的扫描-->
+    <bean id="updateTemplateDaoScanCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionTemplateBeanName" value="updateTemplateCom"/>
+        <property name="basePackage" value="com.voyageone.service.dao.com,
                                           com.voyageone.service.daoext.synship"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
