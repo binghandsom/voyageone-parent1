@@ -1,8 +1,11 @@
 package com.voyageone.web2.sdk.api.request;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderCancelGetResponse;
+import org.apache.avro.generic.GenericData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -26,7 +30,8 @@ public class VmsOrderGetRequestTest {
 
     @Test
     public void testAddOrderInfo() {
-        Date date = new Date();
+        long now =  DateTimeUtil.getNowTimeStampLong();
+
         VmsOrderAddGetRequest request = new VmsOrderAddGetRequest();
         request.setChannelId("088");
         request.setReservationId("10001");
@@ -34,20 +39,34 @@ public class VmsOrderGetRequestTest {
         request.setOrderId("order_10001");
         request.setClientSku("sku10001");
         request.setBarcode("barcode10001");
-        request.setConsolidationOrderTime(date);
+        request.setConsolidationOrderTime(now);
         request.setDescription("description10001");
-        request.setOrderTime(date);
+        request.setOrderTime(now);
         request.setCartId(23);
-        request.setClientMsrp(new BigDecimal(70.00));
-        request.setClientNetPrice(new BigDecimal(70.00));
-        request.setClientRetailPrice(new BigDecimal(70.00));
-        request.setMsrp(new BigDecimal(70.00));
-        request.setRetailPrice(new BigDecimal(70.00));
-        request.setSalePrice(new BigDecimal(70.00));
+        request.setClientMsrp(70.00);
+        request.setClientNetPrice(70.00);
+        request.setClientRetailPrice(70.00);
+        request.setMsrp(70.00);
+        request.setRetailPrice(70.00);
+        request.setSalePrice(70.00);
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
         VmsOrderAddGetResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testCancelOrderInfo() {
+
+        VmsOrderCancelGetRequest request = new VmsOrderCancelGetRequest();
+        request.setChannelId("088");
+        request.setReservationIdList(new ArrayList<String>(){{add("101");add("102");add("103");}});
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderCancelGetResponse response = voApiDefaultClient.execute(request);
 
         System.out.println(response);
     }

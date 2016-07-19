@@ -706,8 +706,6 @@ vpagination {
   border-width: 1px;
   border-color: #3498db;
   border-top-style: dashed;
-  max-height: 350px;
-  overflow: auto;
 }
 .pop-table .headline {
   margin: 10px 0 8px 0;

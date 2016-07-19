@@ -6,10 +6,10 @@ define([
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
         function AddToShipmentController(context, shipmentScanPopupService) {
-            this.shipmentDetails = context;
+            this.shipmentDetails = context.ScanPopupInitialInfo;
+            this.shipmentSkuList = context.scannedSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.shipmentPageOption = {curr: 1, total: 0, size: 10};
-            this.barcode = null;
         }
 
 
