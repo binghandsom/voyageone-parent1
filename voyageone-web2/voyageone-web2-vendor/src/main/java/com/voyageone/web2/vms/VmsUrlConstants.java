@@ -44,5 +44,10 @@ public interface VmsUrlConstants {
             String CREATE = "create";
             String GET = "get";
         }
+
+        interface SCAN {
+            String ROOT = "vms/popup/scan";
+            String INIT = "init";
+        }
     }
 }

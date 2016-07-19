@@ -116,8 +116,9 @@ public class VmsShipmentService {
      * @return 保存后的shipment
      */
     public ShipmentBean create(UserSessionBean user, ShipmentBean shipmentBean) {
+
         // 确认现在没有已存在的open shipment
-        if (null != this.getCurrentShipment(user)) throw new BusinessException("");
+        if (null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{
             setChannelId(user.getSelChannelId());

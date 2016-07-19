@@ -96,7 +96,6 @@ public class OrderDetailService extends BaseService {
     @VOTransactional
     public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier) {
 
-        // 记录订单变更状态
         Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("consolidationOrderId", consolidationOrderId);
@@ -105,6 +104,8 @@ public class OrderDetailService extends BaseService {
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+
+        // 记录订单变更状态
         if (count > 0) {
             this.logOrderDetails(changeStatusParams);
         }
@@ -123,7 +124,6 @@ public class OrderDetailService extends BaseService {
     @VOTransactional
     public int updateReservationStatus(String channelId, String reservationId, String status, String modifier) {
 
-        // 记录订单变更状态
         Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("reservationId", reservationId);
@@ -132,6 +132,8 @@ public class OrderDetailService extends BaseService {
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+
+        // 记录订单变更状态
         if (count > 0) {
             this.logOrderDetails(changeStatusParams);
 
@@ -180,5 +182,20 @@ public class OrderDetailService extends BaseService {
             vmsBtOrderLogDao.insert(logModel);
         }
         return count;
+    }
+
+    public List<VmsBtOrderDetailModel> getScannedSku(String channeldId, String shipmentId) {
+
+        return null;
+    }
+
+    public List<VmsBtOrderDetailModel> getScannedSku(String channeldId, int shipmentId, String consolidationOrderId) {
+
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channeldId);
+            put("shipmentId", shipmentId);
+            put("consolidationOrderId", consolidationOrderId);
+        }};
+        return vmsBtOrderDetailDao.selectList(params);
     }
 }

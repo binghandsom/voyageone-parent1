@@ -20,6 +20,7 @@ import com.voyageone.web2.vms.VmsConstants.TYPE_ID;
 import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
+import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -118,6 +119,7 @@ public class VmsOrderInfoService extends BaseService {
      */
     public int cancelOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
 
+        // 检查订单状态
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("consolidationOrderId", item.getOrderId());
@@ -133,8 +135,8 @@ public class VmsOrderInfoService extends BaseService {
             throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
-        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), STATUS_VALUE.PRODUCT_STATUS.CANCEL,
-                user.getUserName());
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), STATUS_VALUE
+                .PRODUCT_STATUS.CANCEL, user.getUserName());
     }
 
     /**
@@ -149,11 +151,10 @@ public class VmsOrderInfoService extends BaseService {
         // 检查sku状态
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
-            put("consolidationOrderId", item.getOrderId());
+            put("reservationId", item.getReservationId());
         }};
 
-        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
-                .stream()
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam).stream()
                 .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
                         .equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .collect(Collectors.toList());
@@ -161,6 +162,7 @@ public class VmsOrderInfoService extends BaseService {
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
             throw new BusinessException("8000020");
 
+        // 检测通过 进行状态变更
         return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
                 STATUS_VALUE.PRODUCT_STATUS.CANCEL, user.getUserName());
     }
@@ -432,5 +434,28 @@ public class VmsOrderInfoService extends BaseService {
                     organizeOrderSearchParams(user, orderSearchInfo, sortParam);
             return orderDetailService.getTotalSkuNum(skuSearchParamsWithLimitAndSort);
         } else return 0;
+    }
+
+    public List<VmsBtOrderDetailModel> getScannedSkuList(UserSessionBean user, ShipmentBean shipmentBean,
+                                                         String orderId) {
+
+        // 查找对应OrderId中 是否有已经扫描的SKU不在此shipment下
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", orderId);
+        }};
+
+        List<VmsBtOrderDetailModel> orderDetailList = orderDetailService.select(checkParams);
+
+        long invalidSkuCount = orderDetailList.stream()
+                .filter(vmsBtOrderDetailModel ->
+                        null != vmsBtOrderDetailModel.getShipmentId()
+                                && !vmsBtOrderDetailModel.getShipmentId().equals(shipmentBean.getId()))
+                .count();
+
+        //
+        if (invalidSkuCount > 0) throw new BusinessException("8000023");
+
+        return orderDetailService.getScannedSku(user.getSelChannelId(), shipmentBean.getId(), orderId);
     }
 }
