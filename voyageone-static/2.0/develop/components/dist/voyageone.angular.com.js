@@ -17,7 +17,6 @@ define(function (require) {
   require('components/angular/directives/popoverText.directive');
   require('components/angular/directives/schema.directive');
   require('components/angular/directives/tabInTextarea.directive');
-  require('components/angular/directives/voption.directive');
   require('components/angular/directives/vpagination.directive');
   require('components/angular/directives/vvalidator.directive');
   require('components/angular/factories/dialogs.factory');
