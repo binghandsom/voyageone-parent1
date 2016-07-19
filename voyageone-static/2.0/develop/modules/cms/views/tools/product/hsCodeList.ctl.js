@@ -62,20 +62,25 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
+            clear: function () {
+                var self = this;
+                self.searchInfo.searchCondition = "";
+            },
             save: function (list) {
                 var self = this;
-                if (list.common.fields.hsCodePrivate) self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                if (list.common.fields.hsCodePrivate) {
+                    self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    self.hsCodeInfoService.save({
+                        "code": list.common.fields.code,
+                        "hsCodePrivate": list.common.fields.hsCodePrivate
+                    }).then(function () {
+
+                    })
+                }
                 else {
                     self.notify.warning('TXT_CARRY_ON_THE_CURRENT_SETTING');
                 }
-                self.hsCodeInfoService.save({
-                    "code": list.common.fields.code,
-                    "hsCodePrivate": list.common.fields.hsCodePrivate
-                }).then(function () {
-
-                })
             },
-
             openHsCodeImagedetail: function (item) {
                 if (item.common == undefined || item.common.fields == undefined) return;
                 var picList = [];

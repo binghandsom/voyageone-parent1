@@ -15,15 +15,17 @@ public class CustomModuleUserParamGetMainPrductImages extends CustomModuleUserPa
     private RuleExpression imageIndex;
     private RuleExpression imageType;
     private RuleExpression paddingExpression;
+    private RuleExpression useOriUrl;
 
     public CustomModuleUserParamGetMainPrductImages() { }
 
-    public CustomModuleUserParamGetMainPrductImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageIndex, RuleExpression imageType, RuleExpression paddingExpression) {
+    public CustomModuleUserParamGetMainPrductImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageIndex, RuleExpression imageType, RuleExpression paddingExpression, RuleExpression useOriUrl) {
         this.htmlTemplate = htmlTemplate;
         this.imageTemplate = imageTemplate;
         this.imageIndex = imageIndex;
         this.imageType = imageType;
         this.paddingExpression = paddingExpression;
+        this.useOriUrl = useOriUrl;
     }
 
     public RuleExpression getPaddingExpression() {
@@ -64,5 +66,13 @@ public class CustomModuleUserParamGetMainPrductImages extends CustomModuleUserPa
 
     public void setImageIndex(RuleExpression imageIndex) {
         this.imageIndex = imageIndex;
+    }
+
+    public RuleExpression getUseOriUrl() {
+        return useOriUrl;
+    }
+
+    public void setUseOriUrl(RuleExpression useOriUrl) {
+        this.useOriUrl = useOriUrl;
     }
 }

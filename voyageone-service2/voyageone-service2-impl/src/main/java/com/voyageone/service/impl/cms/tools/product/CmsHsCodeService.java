@@ -264,13 +264,14 @@ public class CmsHsCodeService extends BaseService {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String hsCodeTimeStr = DateTimeUtil.format(date, null);
         //未分配的任务
-        String queryStr = String.format("{'common.fields.translateStatus':'1'," +
+        String queryStr = String.format("{'$and':[ {'common.fields.translateStatus':'1'," +
                 "'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'0'," +
-                " '$or': [{'common.fields.hsCodeSetter':''} ,  " +
-                "{'common.fields.hsCodeSetTime':{'$lte':'%s'}} , " +
-                "{'common.fields.hsCodePrivate':{'$exists' : false}}, " +
-                "{'common.fields.hsCodeSetTime':{'$exists' : false}}]}", hsCodeTimeStr);
+                " '$or': [{'common.fields.hsCodeSetter':''}," +
+                "{'common.fields.hsCodeSetter':null}," +
+                "{'common.fields.hsCodeSetTime':{'$lte':'%s'}}," +
+                "{'common.fields.hsCodeSetTime':''}," +
+                "{'common.fields.hsCodeSetTime':null}]}]}", hsCodeTimeStr);
         //未设置总数:等待设置税号的商品总数（包含 未分配+已分配但是已过期）
         taskSummary.put("notAssignedTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
 
@@ -278,8 +279,7 @@ public class CmsHsCodeService extends BaseService {
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'1'," +
                 "'common.fields.hsCodeStatus':'0'," +
-                "'common.fields.hsCodeSetTime':{'$exists' : true}," +
-                "'common.fields.hsCodePrivate':{'$ne' : ''}," +
+                "'common.fields.hsCodeSetter':{'$ne' : ''}," +
                 "'common.fields.hsCodeSetTime':{'$gt':'%s'}}", hsCodeTimeStr);
         //已分配但未完成总数:已经被分配，但是未过期（无法释放）的商品总数
         taskSummary.put("alreadyAssignedTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
@@ -295,7 +295,7 @@ public class CmsHsCodeService extends BaseService {
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'1'," +
                 "'common.fields.translateStatus':'1'," +
-                "'common.fields.hsCodePrivate':'%s'}", userName);
+                "'common.fields.hsCodeSetter':'%s'}", userName);
         //个人设置税号商品译数:当前用户税号设置总数
         taskSummary.put("setPersonalTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
 
@@ -310,7 +310,7 @@ public class CmsHsCodeService extends BaseService {
         StringBuilder sbQuery = new StringBuilder();
         //hsCodePrivate
         if (!StringUtils.isEmpty(userName)) {
-            sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodePrivate", userName));
+            sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", userName));
             sbQuery.append(",");
         }
         //hsCodeStatus
