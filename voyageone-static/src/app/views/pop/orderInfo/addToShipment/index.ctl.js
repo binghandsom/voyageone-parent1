@@ -12,20 +12,6 @@ define([
             this.barcode = null;
         }
 
-        AddToShipmentController.prototype.init = function () {
-            var self = this;
-            self.summary = self.shipmentDetails;
-            self.ScanPopupInitialInfo = {
-                "shipmentBean": self.summary.shipment,
-                "orderId": self.summary.orderId,
-                "curr": self.shipmentPageOption.curr,
-                "size": self.shipmentPageOption.size
-            };
-            self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (res) {
-                console.log(res);
-            })
-        };
-
         AddToShipmentController.prototype.scan = function (barcode) {
             var self = this;
             self.barcode = null;
