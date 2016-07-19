@@ -12,10 +12,14 @@ define(['components/dist/voyageone.angular.com'], function () {
         'ngStorage',
         'voyageone.angular'
     ]).controller('loginController', function ($scope, $ajax, $localStorage, $sessionStorage) {
+
         $scope.username = '';
         $scope.password = '';
         $scope.isSavePwd = false;
         $scope.errorMessage = '';
+
+        $localStorage.$reset();
+        $sessionStorage.$reset();
 
         $scope.login = function () {
             if (!$scope.username || !$scope.username.length) {
@@ -32,8 +36,6 @@ define(['components/dist/voyageone.angular.com'], function () {
                 password: $scope.password,
                 timezone: -(new Date().getTimezoneOffset() / 60)
             }).then(function () {
-                $localStorage.$reset();
-                $sessionStorage.$reset();
                 // 2016-07-08 11:28:17
                 // 为了便于封装的缓存逻辑, 这里在登录成功后, 记录用户名, 用户在缓存时, 作为关键字
                 // 如果后续其他功能需要追加额外信息, 可以在此追加

@@ -204,7 +204,7 @@ public class Tmall_024_OverStock_DictTest {
 
 				RuleExpression useOriUrl = null;
 
-				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 		}

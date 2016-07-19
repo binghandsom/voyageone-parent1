@@ -42,7 +42,7 @@ define([
          * @param item
          */
         function remove (item, inx){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     // 删除被选中的一条数据
                     $scope.vm.valList.splice(inx,1);

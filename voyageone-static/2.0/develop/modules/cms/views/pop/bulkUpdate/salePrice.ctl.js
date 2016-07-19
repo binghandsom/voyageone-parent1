@@ -51,7 +51,7 @@ define([
                 $scope.vm.property.isRoundUp = '0';
             }
 
-            confirm($translate.instant('TXT_BULK_SETSALEPRICE')).result.then(function () {
+            confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function () {
                 $fieldEditService.setProductFields($scope.vm.property).then(function (res) {
                     if (res.data.ecd == null || res.data.ecd == undefined) {
                         alert($translate.instant('TXT_COMMIT_ERROR'));

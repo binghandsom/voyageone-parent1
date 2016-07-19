@@ -82,7 +82,7 @@ define([
             // 删除的单个图片
             deleteImage: function (imageData) {
                 var self = this;
-                self.confirm(self.translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
+                self.confirm(self.translate.instant('TXT_MSG_DELETE_ITEM')).then(function () {
                     self.cmsMtMasterInfoService.deleteImage(imageData).then(function () {
                         self.search();
                         self.notify.success(self.translate.instant('TXT_MSG_DELETE_SUCCESS'));

@@ -178,7 +178,7 @@ public class Jumei_010_Jewelry_DictTest {
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1"));
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -363,7 +363,7 @@ public class Jumei_010_Jewelry_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }

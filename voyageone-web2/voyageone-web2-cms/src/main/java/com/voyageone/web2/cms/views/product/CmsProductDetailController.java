@@ -166,11 +166,13 @@ public class CmsProductDetailController extends CmsController {
     //获取切换主商品  的显示信息
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetChangeMastProductInfo)
     public AjaxResponse getChangeMastProductInfo(@RequestBody GetChangeMastProductInfoParameter parameter) {
+        parameter.setChannelId(getUser().getSelChannelId());
         return success(productPropsEditService.getChangeMastProductInfo(parameter));
     }
     //设置主商品
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetMastProduct)
-    public AjaxResponse setMastProduct(SetMastProductParameter parameter) {
+    public AjaxResponse setMastProduct(@RequestBody SetMastProductParameter parameter) {
+        parameter.setChannelId(getUser().getSelChannelId());
         productPropsEditService.setMastProduct(parameter);
         return success(null);
     }

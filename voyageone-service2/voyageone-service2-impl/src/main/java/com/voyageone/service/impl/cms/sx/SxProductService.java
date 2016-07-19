@@ -1804,6 +1804,11 @@ public class SxProductService extends BaseService {
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
                         skuInfoFields.forEach(field -> retMap.put(field.getId(), field)); // TODO：暂时只存放最大的field（即sku，颜色扩展，size扩展）以后再改
+                        // added by morse.lu 2016/07/18 start
+                    } catch (BusinessException e) {
+                        sxData.setErrorMessage(e.getMessage());
+                        throw new BusinessException(e.getMessage());
+                        // added by morse.lu 2016/07/18 end
                     } catch (Exception e) {
                         $warn(e.getMessage());
                         sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
@@ -2952,6 +2957,8 @@ public class SxProductService extends BaseService {
     private enum ImageProp {
         PRODUCT_IMAGES("product_images", "产品图片-"), // 产品图片
         ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
+        VERTICAL_IMAGE("vertical_image", "竖图-"), // 商品竖图
+        ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
         ;
 
         private final String propId;
