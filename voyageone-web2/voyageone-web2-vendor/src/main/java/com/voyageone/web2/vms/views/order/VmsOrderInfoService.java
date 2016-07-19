@@ -133,7 +133,7 @@ public class VmsOrderInfoService extends BaseService {
             throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
-        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), item.getStatus(),
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), STATUS_VALUE.PRODUCT_STATUS.CANCEL,
                 user.getUserName());
     }
 
@@ -162,7 +162,7 @@ public class VmsOrderInfoService extends BaseService {
             throw new BusinessException("8000020");
 
         return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
-                item.getStatus(), user.getUserName());
+                STATUS_VALUE.PRODUCT_STATUS.CANCEL, user.getUserName());
     }
 
     /**

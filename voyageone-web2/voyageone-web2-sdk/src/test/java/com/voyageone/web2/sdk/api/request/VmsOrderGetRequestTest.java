@@ -28,7 +28,7 @@ public class VmsOrderGetRequestTest {
     public void testAddOrderInfo() {
         Date date = new Date();
         VmsOrderAddGetRequest request = new VmsOrderAddGetRequest();
-//        request.setChannelId("088");
+        request.setChannelId("088");
         request.setReservationId("10001");
         request.setConsolidationOrderId("cons_order_10001");
         request.setOrderId("order_10001");

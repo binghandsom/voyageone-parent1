@@ -105,8 +105,9 @@ public class OrderDetailService extends BaseService {
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
-
-        this.logOrderDetails(changeStatusParams);
+        if (count > 0) {
+            this.logOrderDetails(changeStatusParams);
+        }
 
         return count;
     }
@@ -131,8 +132,10 @@ public class OrderDetailService extends BaseService {
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+        if (count > 0) {
+            this.logOrderDetails(changeStatusParams);
 
-        this.logOrderDetails(changeStatusParams);
+        }
 
         return count;
     }
