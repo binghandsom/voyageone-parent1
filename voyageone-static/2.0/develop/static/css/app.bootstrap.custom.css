@@ -15,3 +15,20 @@ small,
 .small {
     font-size: 12px;
 }
+
+.panel-dark {
+
+}
+
+.panel-dark .panel-heading {
+    background-color: #666666;
+    color: #ffffff;
+}
+
+.panel-dark .panel-body {
+    background-color: #F8F8F8;
+}
+
+.label.label-xs {
+    padding: 0 5px;
+}

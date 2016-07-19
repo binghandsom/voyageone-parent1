@@ -4,7 +4,18 @@
 define([
     'cms'
 ], function (cms) {
-    return cms.controller('popFreeTagCtl', (function () {
+
+    function flatTrees(categories, parent) {
+        return categories.reduce(function (map, curr) {
+            curr.parent = parent;
+            map[curr.id] = curr;
+            if (curr.children && curr.children.length)
+                map = angular.extend(map, flatTrees(curr.children, curr));
+            return map;
+        }, {});
+    }
+
+    cms.controller('popFreeTagCtl', (function () {
         function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
@@ -18,8 +29,7 @@ define([
             this.tree = [];
             this.key = [];
             this.selected = [];
-            this.count = 0;
-            this.selectdTagList = [];
+            this.taglist = {selList: []};
         }
 
         popFreeTagCtl.prototype = {
@@ -28,7 +38,10 @@ define([
              */
             init: function () {
                 var self = this;
-                self.channelTagService.init({tagTypeSelectValue: self.tagTypeSelectValue, 'cartId':self.cartId}).then(function (res) {
+                self.channelTagService.init({
+                    tagTypeSelectValue: self.tagTypeSelectValue,
+                    'cartId': self.cartId
+                }).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
                     self.tagTypeList = res.data.tagTypeList[3];
                     self.search(0);
@@ -62,70 +75,35 @@ define([
                             tree[index] = self.byTagChildrenName(prev.children, index);
                         else {
                             tree[index] = [];
-                            continue;
                         }
                     }
-                    if (!selected[index]) {
-                        selected[index] = tree[index][0];
-                    } else if (_.isString(selected[index])) {
-                        selected[index] = tree[index].find(function (item) {
-                            return item.tagChildrenName === selected[index];
-                        });
-                    } else if (tree[index].indexOf(selected[index]) < 0) {
-                        var indexSelected = tree[index].find(function (item) {
-                            return item.id === selected[index].id;
-                        });
-                        if (indexSelected)
-                            selected[index] = indexSelected;
-                        else
-                            selected[index] = tree[index][0];
-                    }
+                    break;
                 }
-                if (selected[1] == undefined) selected[2] = undefined;
-                for (var i = 2; i >= 0; i--) {
-                    var selectedVal = self.selected[i];
-                    if (selectedVal !== undefined) {
-                        self.tagPathName = selectedVal.tagPathName;
-                        self.list = {
-                            "id": selectedVal.id,
-                            "tagPathName": selectedVal.tagPathName,
-                            "tagPath": selectedVal.tagPath
-                        };
-                        break;
-                    }
-                }
+                if (index == 1) tree[2] = [];
             },
 
-            /**
-             * 点击确认添加的搜索条件
-             */
-            confirm: function () {
-                var self = this;
-                if (!self.selectdTagList || self.selectdTagList.length == 0) self.selectdTagList.push(self.list);
-
-                // 校验选择的是否有重复值
-                var hasData = false;
-                for (var i = 0; i < self.selectdTagList.length; i++) {
-                    if (self.selectdTagList[i].id == self.list.id) {
-                        hasData = true;
-                        break;
-                    }
-                }
-                if (!hasData) {
-                    self.selectdTagList.push(self.list);
-                }
-            },
-            clear: function () {
-                var self = this;
-                self.count = self.count - 1;
-                self.selectdTagList.pop();
-            },
             /**
              * 点击保存
              */
             save: function () {
                 var self = this;
-                self.context = {"selectdTagList": self.selectdTagList};
+                var map = flatTrees(self.source);
+                var selectdTagList = [];
+                _.map(self.taglist.selFlag, function (value, key) {
+                    return {selectedIds: key, selected: value};
+                }).filter(function (item) {
+                    return item.selected;
+                }).forEach(function (item) {
+                    var selTagList = map[item.selectedIds];
+                    var self = this;
+                    self.list = {
+                        "id": selTagList.id,
+                        "tagPathName": selTagList.tagPathName,
+                        "tagPath": selTagList.tagPath
+                    };
+                    selectdTagList.push(self.list);
+                });
+                self.context = {"selectdTagList": selectdTagList};
                 self.$uibModalInstance.close(self.context);
             }
         };

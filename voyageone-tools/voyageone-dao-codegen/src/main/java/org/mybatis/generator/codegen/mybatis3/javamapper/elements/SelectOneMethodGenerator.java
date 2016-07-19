@@ -44,17 +44,14 @@ public class SelectOneMethodGenerator extends AbstractJavaMapperMethodGenerator 
 
         addMapperAnnotations(interfaze, method);
 
-        context.getCommentGenerator().addGeneralMethodComment(method,
-                introspectedTable);
+        context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
 
-        if (context.getPlugins().clientSelectByPrimaryKeyMethodGenerated(
-                method, interfaze, introspectedTable)) {
+        if (context.getPlugins().clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable)) {
             interfaze.addImportedTypes(importedTypes);
             interfaze.addMethod(method);
         }
     }
 
     public void addMapperAnnotations(Interface interfaze, Method method) {
-        return;
     }
 }

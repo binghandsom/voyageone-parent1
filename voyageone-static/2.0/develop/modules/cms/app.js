@@ -6,7 +6,7 @@ define([
     'modules/cms/actions',
     'modules/cms/translate/en',
     'modules/cms/translate/zh'
-], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
         'ngRoute',
@@ -24,12 +24,8 @@ define([
         'localytics.directives',
         'angular-md5',
         'angular-drag'
-    ])
-
-    // define
-        .constant('$actions', cActions)
-        .constant('cActions', cActions)
-        .constant('cRoutes', cRoutes)
+    ]).constant('cActions', actions)
+        .constant('cRoutes', routes)
         .constant('cLanguageType', {
             en: {
                 name: "en",
@@ -54,17 +50,28 @@ define([
         })
 
         // router config.
-        .config(function ($routeProvider) {
-            return _.each(cRoutes, function (module) {
+        // translate config.
+        .config(function ($routeProvider, $translateProvider, cLanguageType) {
+
+            _.each(cLanguageType, function (type) {
+                $translateProvider.translations(type.name, type.value);
+            });
+
+            _.each(routes, function (module) {
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
         })
 
-        // translate config.
-        .config(function ($translateProvider, cLanguageType) {
-            _.forEach(cLanguageType, function (type) {
-                $translateProvider.translations(type.name, type.value);
-            });
+        .run(function ($vresources, $localStorage) {
+            // 从会话中取出登录和选择渠道存储的数据
+            var userInfo = $localStorage.user;
+            if (userInfo) {
+                // 传入 register 作为额外的缓存关键字
+                $vresources.register(null, actions, {
+                    username: userInfo.name,
+                    channel: userInfo.channel
+                });
+            }
         })
 
         // menu service.
@@ -158,6 +165,7 @@ define([
         this.logout = logout;
         this.getCategoryInfo = getCategoryInfo;
         this.getPlatformType = getPlatformType;
+        this.getCmsConfig = getCmsConfig;
 
         /**
          * get the system info.
@@ -276,6 +284,13 @@ define([
                 return res.data;
             });
         }
+
+        /**cms配置信息，基于session缓存*/
+        function getCmsConfig(){
+            return $menuService.getCmsConfig().then(function(res){
+                return res.data;
+            });
+        }
     }
 
     function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
@@ -342,7 +357,7 @@ define([
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
-                $location.path(cRoutes.search_advance_param.url + "2/" + value + "/0");
+                $location.path(cRoutes.search_advance_param.url + "2/" + encodeURIComponent(value) + '/0/0');
             }
         }
 
@@ -419,20 +434,19 @@ define([
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
-         *
          */
         function goSearchPage(catPath, catId) {
             var catPath = encodeURIComponent(catPath);
             switch ($rootScope.platformType.cTypeId) {
-                case "MT":
+                case "MT": // 已不使用
                     $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
                     break;
                 case "TH":
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
                     break;
                 default:
-                    $location.path(cRoutes.search_advance_param.url + "3/" + catId + "/" + $rootScope.platformType.cTypeId);
-
+                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
+                    break;
             }
         }
     }

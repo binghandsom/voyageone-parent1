@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ethan Shi on 2016/5/26.
@@ -28,7 +26,7 @@ public class SellerCatServiceTest {
     @Test
     public void testGetSellerCatsByChannelCart() throws Exception {
 
-        List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("010", 23, false);
+        List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("017", 23, false);
         System.out.println(JsonUtil.bean2Json(result));
 
     }
@@ -53,8 +51,9 @@ public class SellerCatServiceTest {
     @Test
     public void testRefreshSellerCat() throws Exception {
 
-//        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 23, "ethan");
-        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("010", 26, "ethan");
+
+        List<CmsBtSellerCatModel> result =  sellerCatService.refreshSellerCat("017", 23, "ethan");
+
         System.out.println(JsonUtil.bean2Json(result));
 
         sellerCatService.save(result);
@@ -76,4 +75,15 @@ public class SellerCatServiceTest {
     public void testRefeshAllProduct() throws Exception {
         sellerCatService.refeshAllProduct("010", 23, "ethan");
     }
+
+//    @Test
+//    public void testIsDuplicateNode() throws Exception {
+//        List<CmsBtSellerCatModel>  sellerCats = sellerCatService.getSellerCatsByChannelCart("010", 23, false);
+//        CmsBtSellerCatModel node = sellerCats.stream().filter(w-> w.getCatId().equals("201")).findFirst().get();
+//        System.out.println(JsonUtil.bean2Json(sellerCats));
+//        System.out.println(sellerCatService.isDuplicateNode(sellerCats,"运动鞋","0"));
+//        System.out.println(sellerCatService.isDuplicateNode(sellerCats,"足球鞋",node.getParentCatId()));
+//
+//
+//    }
 }

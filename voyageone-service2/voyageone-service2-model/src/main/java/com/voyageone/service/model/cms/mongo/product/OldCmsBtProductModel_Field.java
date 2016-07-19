@@ -318,8 +318,8 @@ public class OldCmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //商品图片
-    public List<OldCmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
-        List<OldCmsBtProductModel_Field_Image> result = null;
+    public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
+        List<CmsBtProductModel_Field_Image> result = null;
         if (imageType != null) {
             switch(imageType) {
                 case PRODUCT_IMAGE:
@@ -350,7 +350,7 @@ public class OldCmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         }
         return result;
     }
-    public void setImages(CmsBtProductConstants.FieldImageType imageType, List<OldCmsBtProductModel_Field_Image> images) {
+    public void setImages(CmsBtProductConstants.FieldImageType imageType, List<CmsBtProductModel_Field_Image> images) {
         if (imageType != null) {
             switch(imageType) {
                 case PRODUCT_IMAGE:
@@ -382,90 +382,90 @@ public class OldCmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //商品图片
-    public List<OldCmsBtProductModel_Field_Image> getImages1() {
+    public List<CmsBtProductModel_Field_Image> getImages1() {
         if (!this.containsKey("images1") || getAttribute("images1") == null) {
-            setAttribute("images1", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images1");
     }
-    public void setImages1(List<OldCmsBtProductModel_Field_Image> images1) {
+    public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
         setAttribute("images1", images1);
     }
 
     //包装图片
-    public List<OldCmsBtProductModel_Field_Image> getImages2() {
+    public List<CmsBtProductModel_Field_Image> getImages2() {
         if (!this.containsKey("images2") || getAttribute("images2") == null) {
-            setAttribute("images2", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images2", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images2");
     }
-    public void setImages2(List<OldCmsBtProductModel_Field_Image> images2) {
+    public void setImages2(List<CmsBtProductModel_Field_Image> images2) {
         setAttribute("images2", images2);
     }
 
     //带角度图片
-    public List<OldCmsBtProductModel_Field_Image> getImages3() {
+    public List<CmsBtProductModel_Field_Image> getImages3() {
         if (!this.containsKey("images3") || getAttribute("images3") == null) {
-            setAttribute("images3", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images3", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images3");
     }
-    public void setImages3(List<OldCmsBtProductModel_Field_Image> images3) {
+    public void setImages3(List<CmsBtProductModel_Field_Image> images3) {
         setAttribute("images3", images3);
     }
 
     //自定义图片
-    public List<OldCmsBtProductModel_Field_Image> getImages4() {
+    public List<CmsBtProductModel_Field_Image> getImages4() {
         if (!this.containsKey("images4") || getAttribute("images4") == null) {
-            setAttribute("images4", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images4", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images4");
     }
-    public void setImages4(List<OldCmsBtProductModel_Field_Image> images4) {
+    public void setImages4(List<CmsBtProductModel_Field_Image> images4) {
         setAttribute("images4", images4);
     }
 
     //手机端自定义图片
-    public List<OldCmsBtProductModel_Field_Image> getImages5() {
+    public List<CmsBtProductModel_Field_Image> getImages5() {
         if (!this.containsKey("images5") || getAttribute("images5") == null) {
-            setAttribute("images5", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images5", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images5");
     }
-    public void setImages5(List<OldCmsBtProductModel_Field_Image> images5) {
+    public void setImages5(List<CmsBtProductModel_Field_Image> images5) {
         setAttribute("images5", images5);
     }
 
     //商品自定义图片
-    public List<OldCmsBtProductModel_Field_Image> getImages6() {
+    public List<CmsBtProductModel_Field_Image> getImages6() {
         if (!this.containsKey("images6") || getAttribute("images6") == null) {
-            setAttribute("images6", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images6", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images6");
     }
-    public void setImages6(List<OldCmsBtProductModel_Field_Image> images6) {
+    public void setImages6(List<CmsBtProductModel_Field_Image> images6) {
         setAttribute("images6", images6);
     }
 
     //商品自定义M_CUSTOM_PRODUCT_IMAGE
-    public List<OldCmsBtProductModel_Field_Image> getImages7() {
+    public List<CmsBtProductModel_Field_Image> getImages7() {
         if (!this.containsKey("images7") || getAttribute("images7") == null) {
-            setAttribute("images7", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images7", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images7");
     }
-    public void setImages7(List<OldCmsBtProductModel_Field_Image> images7) {
+    public void setImages7(List<CmsBtProductModel_Field_Image> images7) {
         setAttribute("images7", images7);
     }
 
     //商品自定义HANG_TAG_IMAGE
-    public List<OldCmsBtProductModel_Field_Image> getImages8() {
+    public List<CmsBtProductModel_Field_Image> getImages8() {
         if (!this.containsKey("images8") || getAttribute("images8") == null) {
-            setAttribute("images8", new ArrayList<OldCmsBtProductModel_Field_Image>());
+            setAttribute("images8", new ArrayList<CmsBtProductModel_Field_Image>());
         }
         return getAttribute("images8");
     }
-    public void setImages8(List<OldCmsBtProductModel_Field_Image> images8) {
+    public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
         setAttribute("images8", images8);
     }
 
@@ -595,10 +595,10 @@ public class OldCmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         if (key != null && key.startsWith("images")) {
             if (value != null) {
                 List<Map> imageMaps = (List<Map>) value;
-                List<OldCmsBtProductModel_Field_Image> images = new ArrayList<>();
+                List<CmsBtProductModel_Field_Image> images = new ArrayList<>();
                 for (Map map : imageMaps) {
                     if (map != null) {
-                        OldCmsBtProductModel_Field_Image image = new OldCmsBtProductModel_Field_Image(map);
+                        CmsBtProductModel_Field_Image image = new CmsBtProductModel_Field_Image(map);
                         images.add(image);
                     }
                 }

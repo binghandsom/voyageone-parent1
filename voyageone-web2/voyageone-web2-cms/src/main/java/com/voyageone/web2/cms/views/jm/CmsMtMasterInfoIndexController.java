@@ -3,7 +3,6 @@ import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterBrandService;
 import com.voyageone.service.impl.cms.jumei.CmsMtMasterInfoService;
-import com.voyageone.service.impl.cms.jumei.platform.JuMeiUploadImageService;
 import com.voyageone.service.model.cms.CmsMtMasterInfoModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -24,8 +23,8 @@ import java.util.Map;
 public class CmsMtMasterInfoIndexController extends CmsController {
     @Autowired
     private CmsMtMasterInfoService service;
-    @Autowired
-    private JuMeiUploadImageService serviceJuMeiUploadImage;
+//    @Autowired
+//    private JuMeiUploadImageService serviceJuMeiUploadImage;
     @Autowired
     CmsBtJmMasterBrandService serviceCmsBtJmMasterBrand;
     private static final Logger LOG = LoggerFactory.getLogger(CmsMtMasterInfoIndexController.class);
@@ -75,25 +74,25 @@ public class CmsMtMasterInfoIndexController extends CmsController {
         return success(service.select(params.getId()));
     }
 
-    @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.UPDATEJMIMG)
-    public Object updateJMImg(@RequestBody CmsMtMasterInfoModel params) {
-        // 先更新一次再刷新图片
-        CallResult result = new CallResult();
-        String channelId = getUser().getSelChannelId();
-        params.setChannelId(channelId);
-        params.setModifier(getUser().getUserName());
-        service.update(params);
-        try {
-            serviceJuMeiUploadImage.uploadImage(params);
-        } catch (Exception ex) {
-            params.setErrorMessage(ExceptionUtil.getErrorMsg(ex));
-            params.setSynFlg(3);
-            service.update(params);
-            result.setMsg("上传图片失败!");
-            result.setResult(false);
-        }
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.UPDATEJMIMG)
+//    public Object updateJMImg(@RequestBody CmsMtMasterInfoModel params) {
+//        // 先更新一次再刷新图片
+//        CallResult result = new CallResult();
+//        String channelId = getUser().getSelChannelId();
+//        params.setChannelId(channelId);
+//        params.setModifier(getUser().getUserName());
+//        service.update(params);
+//        try {
+//            serviceJuMeiUploadImage.uploadImage(params);
+//        } catch (Exception ex) {
+//            params.setErrorMessage(ExceptionUtil.getErrorMsg(ex));
+//            params.setSynFlg(3);
+//            service.update(params);
+//            result.setMsg("上传图片失败!");
+//            result.setResult(false);
+//        }
+//        return success(result);
+//    }
     @RequestMapping(CmsUrlConstants.CMSMTMASTERINFO.LIST.INDEX.LoadJmMasterBrand)
     public AjaxResponse  loadJmMasterBrand() {
         CallResult result = new CallResult();

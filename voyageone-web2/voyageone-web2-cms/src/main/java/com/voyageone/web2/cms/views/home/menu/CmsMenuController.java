@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.home.menu;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.CmsBtDataAmountService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.model.cms.enums.CartType;
@@ -38,7 +41,8 @@ public class CmsMenuController extends CmsController {
     ImageTemplateService imageTemplateService;
     @Autowired
     PlatformService platformService;
-
+    @Autowired
+    CmsBtDataAmountService serviceCmsBtDataAmount;
     /**
      * 返回categoryType, categoryList, categoryTreeList
      */
@@ -119,4 +123,17 @@ public class CmsMenuController extends CmsController {
         return getCategoryInfo();
     }
 
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GetHomeSumData)
+    public AjaxResponse getHomeSumData()
+    {
+        return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
+    }
+
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)
+    public AjaxResponse getCmsConfig()
+    {
+        Map<String,Object> response = new HashMap<>();
+        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE));
+        return success(response);
+    }
 }

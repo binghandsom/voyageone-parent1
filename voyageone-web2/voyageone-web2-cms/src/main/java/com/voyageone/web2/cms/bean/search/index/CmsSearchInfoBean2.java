@@ -20,6 +20,7 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // ** 共通搜索条件 **
     private String mCatId;
+    private String mCatPath;
     private String fCatId;
 
     private String mCatStatus;
@@ -32,20 +33,24 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String createTimeTo;
 
     private String brand;
-    private String[] freeTags;
+    private List<String> freeTags;
     private int freeTagType = 0;
+    private String lockFlg;
+
+    private String[] codeList;
+    private String fuzzyStr;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
-    private String[] productStatus;
-    private String[] platformStatus;
+    private List<String> productStatus;
+    private List<String> platformStatus;
 
     private String publishTimeStart;
     private String publishTimeTo;
 
     private String priceType;
-    private BigDecimal priceStart;
-    private BigDecimal priceEnd;
+    private Double priceStart;
+    private Double priceEnd;
 
     private String pCatId;
     private int pCatStatus = 0;
@@ -65,8 +70,8 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private String salesSortType = null;
     private String salesType = null;
-    private BigDecimal salesStart = null;
-    private BigDecimal salesEnd = null;
+    private Double salesStart = null;
+    private Double salesEnd = null;
 
     // ** 自定义搜索条件 **
     private String sortOneName;
@@ -80,7 +85,6 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // 自定义查询条件
     private List<Map<String, Object>> custAttrMap;
-    private String[] codeList;
 
     // 文件下载类型
     private int fileType = 0;
@@ -140,11 +144,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.custAttrMap = custAttrMap;
     }
 
-    public String[] getProductStatus() {
+    public List<String> getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String[] productStatus) {
+    public void setProductStatus(List<String> productStatus) {
         this.productStatus = productStatus;
     }
 
@@ -156,11 +160,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.cartId = cartId;
     }
 
-    public String[] getPlatformStatus() {
+    public List<String> getPlatformStatus() {
         return platformStatus;
     }
 
-    public void setPlatformStatus(String[] platformStatus) {
+    public void setPlatformStatus(List<String> platformStatus) {
         this.platformStatus = platformStatus;
     }
 
@@ -172,19 +176,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.priceType = priceType;
     }
 
-    public BigDecimal getPriceStart() {
+    public Double getPriceStart() {
         return priceStart;
     }
 
-    public void setPriceStart(BigDecimal priceStart) {
+    public void setPriceStart(Double priceStart) {
         this.priceStart = priceStart;
     }
 
-    public BigDecimal getPriceEnd() {
+    public Double getPriceEnd() {
         return priceEnd;
     }
 
-    public void setPriceEnd(BigDecimal priceEnd) {
+    public void setPriceEnd(Double priceEnd) {
         this.priceEnd = priceEnd;
     }
 
@@ -250,6 +254,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setCodeList(String[] codeList) {
         this.codeList = codeList;
+    }
+
+    public String getFuzzyStr() {
+        return fuzzyStr;
+    }
+
+    public void setFuzzyStr(String fuzzyStr) {
+        this.fuzzyStr = fuzzyStr;
     }
 
     public String getSortOneName() {
@@ -348,11 +360,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.taxNoStatus = taxNoStatus;
     }
 
-    public String[] getFreeTags() {
+    public List<String> getFreeTags() {
         return freeTags;
     }
 
-    public void setFreeTags(String[] freeTags) {
+    public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
     }
 
@@ -412,19 +424,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.salesType = salesType;
     }
 
-    public BigDecimal getSalesStart() {
+    public Double getSalesStart() {
         return salesStart;
     }
 
-    public void setSalesStart(BigDecimal salesStart) {
+    public void setSalesStart(Double salesStart) {
         this.salesStart = salesStart;
     }
 
-    public BigDecimal getSalesEnd() {
+    public Double getSalesEnd() {
         return salesEnd;
     }
 
-    public void setSalesEnd(BigDecimal salesEnd) {
+    public void setSalesEnd(Double salesEnd) {
         this.salesEnd = salesEnd;
     }
 
@@ -460,6 +472,14 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.mCatId = mCatId;
     }
 
+    public String getmCatPath() {
+        return mCatPath;
+    }
+
+    public void setmCatPath(String mCatPath) {
+        this.mCatPath = mCatPath;
+    }
+
     public String getfCatId() {
         return fCatId;
     }
@@ -482,6 +502,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setpCatStatus(int pCatStatus) {
         this.pCatStatus = pCatStatus;
+    }
+
+    public String getLockFlg() {
+        return lockFlg;
+    }
+
+    public void setLockFlg(String lockFlg) {
+        this.lockFlg = lockFlg;
     }
 
     @Override

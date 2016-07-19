@@ -22,9 +22,11 @@ import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,10 +38,14 @@ import java.util.*;
  * Created by Ethan Shi on 2016/5/23.
  *
  * @author Ethan Shi
+ * @version 2.2.0
  * @version 2.1.0
  */
 @Service
 public class SellerCatService extends BaseService {
+
+    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
+    private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
@@ -57,18 +63,11 @@ public class SellerCatService extends BaseService {
     private TbItemService tbItemService;
 
     @Autowired
-    private CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
-
-    @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
+
     @Autowired
-    private ProductService productService;
-
-
-    private static final String DEFAULT_SELLER_CAT_DEPTH = "2";
-
-    private static final String DEFAULT_SELLER_CAT_CNT = "10";
+    private SxProductService sxProductService;
 
 
     /**
@@ -102,7 +101,6 @@ public class SellerCatService extends BaseService {
      * 取得Category 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
-
         return getSellerCatsByChannelCart(channelId, cartId, true);
     }
 
@@ -179,6 +177,13 @@ public class SellerCatService extends BaseService {
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
 
+
+        List<CmsBtSellerCatModel>  sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
+        if(isDuplicateNode(sellerCats,cName,parentCId))
+        {
+            throw  new BusinessException("重复的店铺内分类名!");
+        }
+
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         String cId = "";
         String shopCartId = shopBean.getCart_id();
@@ -203,6 +208,16 @@ public class SellerCatService extends BaseService {
      */
     public void updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
 
+
+        List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+        CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
+        currentNode.getParentCatId();
+
+        if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId()))
+        {
+            throw  new BusinessException("重复的店铺内分类!");
+        }
+
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String shopCartId = shopBean.getCart_id();
@@ -216,7 +231,7 @@ public class SellerCatService extends BaseService {
 
         //更新product表中所有的店铺内分类
         if (changedList != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.updateSellerCat(channelId, changedList, cartId, modifier);
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
         }
@@ -234,14 +249,20 @@ public class SellerCatService extends BaseService {
         if (isJDPlatform(shopCartId)) {
             jdShopService.deleteShopCategory(shopBean, cId);
         } else if (isTMPlatform(shopCartId)) {
-            throw new BusinessException(shopBean.getShop_name() + ":阿里系没有删除店铺内分类的API");
+            //去TM平台取店铺分类
+            List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
+            if(sellerCatList != null) {
+                if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId).longValue()).count() > 0) {
+                    throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
+                }
+            }
         }
 
 
         CmsBtSellerCatModel deleted = cmsBtSellerCatDao.delete(channelId, cartId, parentCId, cId);
         //删除product表中所有的店铺内分类
         if (deleted != null) {
-            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId);
+            List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId, modifier);
 
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
@@ -255,8 +276,7 @@ public class SellerCatService extends BaseService {
     private void insert2SxWorkload(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
         if (list != null) {
             for (CmsBtProductModel product : list) {
-
-                productService.insertSxWorkLoad(channelId, product, modifier);
+                sxProductService.insertSxWorkLoad(channelId, product.getCommon().getFields().getCode(), cartId, modifier);
             }
         }
     }
@@ -292,9 +312,14 @@ public class SellerCatService extends BaseService {
 
     }
 
-    @Deprecated
     public void refeshAllProduct(String channelId, int cartId, String creator) {
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        ShopBean shopBean = Shops.getShop(channelId, 23);
+//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+//        shopBean.setShop_name("Jewelry海外旗舰店");
 
         String shopCartId = shopBean.getCart_id();
 
@@ -303,25 +328,9 @@ public class SellerCatService extends BaseService {
         if (isTMPlatform(shopCartId)) {
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
+            convert2Tree(sellerCat);
         }
 
-        List<CmsBtSellerCatModel> treeList = convert2Tree(sellerCat);
-
-
-        List<CmsBtSellerCatModel> result = new ArrayList<>();
-
-        for (CmsBtSellerCatModel node : treeList) {
-            CmsBtSellerCatModel copyRoot = copyCmsBtSellerCatModel(node);
-            result.add(copyRoot);
-
-            result.addAll(findAllChildren(node));
-        }
-
-        //只支持2层结构
-        Map<String, CmsBtSellerCatModel> sellerCatMap = new HashMap<>();
-        for (CmsBtSellerCatModel model : result) {
-            sellerCatMap.put(model.getCatId(), model);
-        }
 
         //得到所有的product_group
         String query = "{\"numIId\": {\"$ne\": \"\"} }";
@@ -344,7 +353,7 @@ public class SellerCatService extends BaseService {
                     List<String> cIds = new ArrayList<>();
 
                     for (Field field : fields) {
-                        if (field.getId().equals("seller_cids")) {
+                        if ("seller_cids".equals(field.getId())) {
                             List<String> values = ((MultiCheckField) field).getDefaultValues();
 
                             for (String value : values) {
@@ -355,41 +364,28 @@ public class SellerCatService extends BaseService {
 
                     for (CmsBtProductModel product : productList) {
 
-                        Set<String> catIds = new HashSet<>();
-                        Set<String> catNames = new HashSet<>();
-                        Set<String> fullCatNames = new HashSet<>();
-                        Set<String> fullIds = new HashSet<>();
+                        List<Map<String, Object>> sellerCats = new ArrayList<>();
 
-                        for (String cId : cIds) {
-                            CmsBtSellerCatModel leaf = sellerCatMap.get(cId);
-                            catIds.add(cId);
-                            catNames.add(leaf.getCatName());
-                            fullCatNames.add(leaf.getCatPath());
-                            fullIds.add(leaf.getFullCatId());
+                        for (String pCId : cIds) {
+                            CmsBtSellerCatModel leaf = sellerCat.stream().filter(w -> pCId.equals(w.getCatId())).findFirst().get();
+                            Map<String, Object> model =  new HashMap<>();
+                            model.put("cId", leaf.getCatId());
+                            model.put("cName", leaf.getCatPath());
+                            model.put("cIds", leaf.getFullCatId().split("-"));
+                            model.put("cNames", leaf.getCatPath().split(">"));
 
-                            if (!leaf.getParentCatId().equals("0")) {
-                                CmsBtSellerCatModel parent = sellerCatMap.get(leaf.getParentCatId());
-                                catIds.add(parent.getCatId());
-                                catNames.add(parent.getCatName());
-                                fullCatNames.add(parent.getCatPath());
-                                fullIds.add(parent.getFullCatId());
-                            }
+                            sellerCats.add(model);
                         }
 
-                        HashMap<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("sellerCats.cIds", catIds);
-                        updateMap.put("sellerCats.cNames", catNames);
-                        updateMap.put("sellerCats.fullCIds", fullIds);
-                        updateMap.put("sellerCats.fullCNames", fullCatNames);
-
-
-                        HashMap<String, Object> queryMap = new HashMap<>();
+                        Map<String, Object> updateMap = new HashMap<>();
+                        updateMap.put("platform.P"+cartId+".sellerCats" , sellerCats);
+                        Map<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", product.getProdId());
 
-                        BulkUpdateModel model = new BulkUpdateModel();
-                        model.setUpdateMap(updateMap);
-                        model.setQueryMap(queryMap);
-                        bulkList.add(model);
+                        BulkUpdateModel bulk = new BulkUpdateModel();
+                        bulk.setUpdateMap(updateMap);
+                        bulk.setQueryMap(queryMap);
+                        bulkList.add(bulk);
                     }
                 }
 
@@ -485,7 +481,7 @@ public class SellerCatService extends BaseService {
             }
         }
         root.setChildren(children);
-        if (children.size() > 0) {
+        if (!children.isEmpty()) {
             root.setIsParent(1);
         } else {
             root.setIsParent(0);
@@ -508,7 +504,7 @@ public class SellerCatService extends BaseService {
     private List<CmsBtSellerCatModel> findRoots(List<CmsBtSellerCatModel> allNodes) {
         List<CmsBtSellerCatModel> results = new ArrayList<>();
         for (CmsBtSellerCatModel node : allNodes) {
-            if (node.getParentCatId().equals("0")) {
+            if ("0".equals(node.getParentCatId())) {
                 results.add(node);
                 node.setCatPath(node.getCatName());
                 node.setFullCatId(node.getCatId());
@@ -531,12 +527,30 @@ public class SellerCatService extends BaseService {
 
 
     /**
-     * 是天猫品台
+     * 是天猫平台
      */
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
                 shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TMM.getId())) {
             return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 判断是否是重复的节点，同一层的节点名不能重复
+     * @param sellerCats
+     * @param name
+     * @param parentCId
+     * @return
+     */
+    public boolean isDuplicateNode(List<CmsBtSellerCatModel>  sellerCats, String name , String parentCId)
+    {
+        if(sellerCats != null && sellerCats.size() > 0) {
+            if (sellerCats.stream().filter(w -> w.getParentCatId().equals(parentCId) && w.getCatName().equals(name)).count() > 0) {
+                return true;
+            }
         }
         return false;
     }

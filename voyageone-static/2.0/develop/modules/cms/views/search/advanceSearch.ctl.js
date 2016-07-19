@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, feedMappingService, productDetailService, channelTagService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage) {
 
         $scope.vm = {
             searchInfo: {
@@ -44,7 +44,8 @@ define([
             platform: {catPath: null},
             masterCat: {catPath: null},
             feedCat: {catPath: null},
-            channelInner: {catPath: null}
+            channelInner: {catPath: null},
+            _cart_tab_act: false
         };
 
         $scope.initialize = initialize;
@@ -52,6 +53,7 @@ define([
         $scope.search = function () {
             //$scope.vm.status.open = false;//收缩搜索栏
             search();
+            $scope.vm._selall = false;
         };
         $scope.exportFile = exportFile;
         $scope.getGroupList = getGroupList;
@@ -67,45 +69,77 @@ define([
         $scope.openAddChannelCategoryFromAdSearch = openAddChannelCategoryFromAdSearch;
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
-        //$scope.getTagList = getTagList;
         $scope.getCat = getCat;
         $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
+        $scope.dismiss = dismiss;
         /**
          * 初始化数据.
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
-
             if ($routeParams.type == "1") {
+                // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
             } else if ($routeParams.type == "2") {
-                $scope.vm.searchInfo.codeList = $routeParams.value;
+                // 从header部的全局搜索而来
+                $scope.vm.searchInfo.codeList = decodeURIComponent($routeParams.value1);
             }
             searchAdvanceService2.init().then(function (res) {
-                    $scope.vm.masterData = res.data;
-                    $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
-                    $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
-                    $scope.vm.cartList = res.data.cartList;
-                })
-                .then(function () {
-                    // 如果来至category 或者header search 则默认检索
-                    $scope.vm.tblWidth = '100%'; // group tab的原始宽度
-                    $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
-                    if ($routeParams.type == "3") {
+                $scope.vm.masterData = res.data;
+                $scope.vm.promotionList = _.where(res.data.promotionList, {isAllPromotion: 0});
+                $scope.vm.custAttrList.push({inputVal: "", inputOpts: "", inputOptsKey: ""});
+                $scope.vm.cartList = res.data.cartList;
+                if ($scope.vm.cartList.length == 1) {
+                    $scope.vm._cartType_ = $scope.vm.cartList[0];
+                    getCat($scope.vm._cartType_);
+                }
+
+                // 如果来至category 或者header search 则默认检索
+                $scope.vm.tblWidth = '100%'; // group tab的原始宽度
+                $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
+                if ($routeParams.type == "3") {
+                    // 从菜单栏而来，检索店铺内分类
+                    var catObj = _.find($scope.vm.masterData.cartList, function (item) {
+                        return item.value == $routeParams.value1;
+                    });
+                    $scope.vm.searchInfo.cartId = $routeParams.value1;
+                    // 打开平台搜索tab栏
+                    $scope.vm._cart_tab_act = true;
+                    // 设置渠道名称
+                    $scope.vm._cartType_ = catObj;
+                    getCat($scope.vm._cartType_);
+                    // 设置查询值后检索
+                    $scope.vm._shopCatValues = [decodeURIComponent($routeParams.value3)];
+                    $scope.vm.searchInfo.cidValue = [$routeParams.value2];
+                    search();
+                    return;
+                }
+                if ($routeParams.type == "1" || $routeParams.type == "2") {
+                    search();
+                    return;
+                }
+                if ($routeParams.type == '4' && $sessionStorage.feedSearch) {
+                    // 从主页而来的检索
+                    if ($routeParams.value1 > 10) {
+                        $scope.vm._cart_tab_act = true;
                         var catObj = _.find($scope.vm.masterData.cartList, function (item) {
-                            return item.add_name2 == $routeParams.catType;
+                            return item.value == $sessionStorage.feedSearch.cartId;
                         });
-                        $scope.vm.searchInfo.cartId = catObj.value;
-                        getCat();
+                        $scope.vm._cartType_ = catObj;
+                        getCat($scope.vm._cartType_);
                     }
-                    if ($routeParams.type != undefined) {
-                        search();
+                    $scope.vm.searchInfo = angular.copy($sessionStorage.feedSearch);
+                    if ($scope.vm.searchInfo == undefined) {
+                        $scope.vm.searchInfo = {};
                     }
-                })
+                    search();
+                    if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
+                }
+            })
         }
 
         /**
@@ -123,6 +157,16 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 shopCatStatus: null,
+                inventory: '',
+                salesStart: null,
+                salesEnd: null,
+                priceStart: null,
+                priceEnd: null,
+                publishTimeStart: null,
+                publishTimeTo: null,
+                createTimeStart: null,
+                createTimeTo: null,
+                fCatPath: null
             };
             $scope.vm._selall = false;
             $scope.vm._cartType_ = '';
@@ -143,6 +187,43 @@ define([
          * 检索
          */
         function search() {
+            // 检查输入数据 库存/金额
+            var intVal = $scope.vm.searchInfo.inventory;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("库存必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.priceStart;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.priceEnd;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.salesStart;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("销量范围必须是数字");
+                    return;
+                }
+            }
+            intVal = $scope.vm.searchInfo.salesEnd;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("销量范围必须是数字");
+                    return;
+                }
+            }
+
             // 默认设置成第一页
             $scope.vm.groupPageOption.curr = 1;
             $scope.vm.productPageOption.curr = 1;
@@ -152,8 +233,8 @@ define([
                 $scope.vm.customProps = res.data.customProps;
                 var sumCustomProps = [];
                 _.forEach($scope.vm.customProps, function (data) {
-                    sumCustomProps.push(data.feed_prop_translation)
-                    sumCustomProps.push(data.feed_prop_original)
+                    sumCustomProps.push({'name': data.feed_prop_translation});
+                    sumCustomProps.push({'name': data.feed_prop_original});
                 });
                 $scope.vm.sumCustomProps = sumCustomProps;
                 $scope.vm.commonProps = res.data.commonProps;
@@ -197,7 +278,7 @@ define([
             } else if (fileType == 3) {
                 msg = '即将导出SKU级的搜索结果，请确认。';
             }
-            confirm(msg).result
+            confirm(msg)
                 .then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceService2.exportFile($scope.vm.searchInfo);
@@ -213,6 +294,7 @@ define([
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
                     $scope.vm.groupSelList = res.data.groupSelList;
+                    $scope.vm._selall = false;
                 });
         }
 
@@ -225,6 +307,7 @@ define([
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
+                    $scope.vm._selall = false;
                     for (idx in res.data.freeTagsList) {
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
@@ -237,37 +320,16 @@ define([
          * @param promotion
          * @param openAddToPromotion
          */
-        function openAddPromotion(promotion, openAddToPromotion) {
+        function openAddPromotion(promotion, cartObj, openAddToPromotionFnc) {
+            promotion.cartId = cartObj.value;
+            promotion.cartName = cartObj.name;
             _chkProductSel(null, _openAddPromotion, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openAddPromotion(cartId, selList, context) {
-                openAddToPromotion(context.promotion, selList, context).then(function () {
+                openAddToPromotionFnc(context.promotion, selList, context).then(function () {
                     searchAdvanceService2.clearSelList();
                     getGroupList();
                     getProductList();
-                })
-            }
-        }
-
-        /**
-         * popup出添加店铺内分类的对话框（批量追加用）
-         * @param openCategoryEdit
-         */
-        function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
-            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0});
-
-            function _openAddChannelCategory(cartId, selList, context) {
-                openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
-                    var productIds = [];
-                    _.forEach(selList, function (object) {
-                        productIds.push(object.code);
-                    });
-                    var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
-                    params.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(params).then(function (context) {
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        $scope.search();
-                    });
                 })
             }
         }
@@ -277,11 +339,13 @@ define([
          * @param promotion
          * @param openJMActivity
          */
-        function openJMActivity(promotion, openJMActivity) {
+        function openJMActivity(promotion, cartObj, openAddJMActivityFnc) {
+            promotion.cartId = cartObj.value;
+            promotion.cartName = cartObj.name;
             _chkProductSel(null, _openJMActivity, {'isSelAll': $scope.vm._selall ? 1 : 0, 'promotion': promotion});
 
             function _openJMActivity(cartId, selList, context) {
-                openJMActivity(context.promotion, selList, context).then(function () {
+                openAddJMActivityFnc(context.promotion, selList, context).then(function () {
                     $scope.search();
                 })
             }
@@ -308,11 +372,6 @@ define([
                         alert("未设置变更项目，请设置后再操作。");
                         return;
                     }
-                    if (res.data.ecd == 4) {
-                        alert("下列商品不在 " + res.data.cartStr + " 上销售，无法继续操作，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
-                        return;
-                    }
-
                     $scope.search();
                 })
             }
@@ -326,24 +385,21 @@ define([
             _chkProductSel(null, _openCategoryMapping);
 
             function _openCategoryMapping(cartId, selList) {
-                feedMappingService.getMainCategories()
-                    .then(function (res) {
-                        popupNewCategoryFnc({
-                            categories: res.data,
-                            from: null
-                        }).then(function (res) {
-                                bindCategory(res, selList)
-                            }
-                        );
+                systemCategoryService.getNewsCategoryList().then(function (res) {
+                    popupNewCategoryFnc({
+                        categories: res.data
+                    }).then(function (context) {
+                        bindCategory(context.selected, selList);
                     });
+                });
             }
         }
 
         /**
          * 类目变更
          */
-        function bindCategory(context, selList) {
-            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+        function bindCategory(selectedCat, selList) {
+            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                 .then(function () {
                     var productIds = [];
                     if (selList) {
@@ -351,12 +407,15 @@ define([
                             productIds.push(object.code);
                         });
                     }
+                    var pCatList = selectedCat.platformCategory;
+                    if (pCatList == undefined || pCatList == null || pCatList == '') {
+                        pCatList = [];
+                    }
                     var data = {
                         prodIds: productIds,
-                        catId: context.selected.catId,
-                        catPath: context.selected.catPath,
-                        pCatId: context.selected.catId,
-                        pCatPath: context.selected.catPath,
+                        catId: selectedCat.catId,
+                        catPath: selectedCat.catPath,
+                        pCatList: pCatList,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
@@ -380,6 +439,7 @@ define([
                 alert("最多只能添加5项")
             }
         }
+
         // 删除自定义查询选项
         function delCustAttribute(idx) {
             if ($scope.vm.custAttrList.length > 1) {
@@ -390,7 +450,13 @@ define([
         }
 
         // 当选择搜索时设置输入框
-        $scope.setSelValue = function (option, custAtts) {
+        $scope.setSelValue = function (option, custAtts, typeVal) {
+            if (typeVal && typeVal == 2) {
+                if (option.inputOpts == 4 || option.inputOpts == 5) {
+                    option.inputVal = '';
+                }
+                return;
+            }
             if (custAtts == null || custAtts == undefined) {
                 option.inputType = '';
                 option.inputOptsKey = '';
@@ -462,20 +528,6 @@ define([
             return selList;
         }
 
-        ///**
-        // * 查询指定标签类型下的所有标签(list形式)
-        // */
-        //function getTagList() {
-        //    if ($scope.vm.searchInfo.tagTypeSelectValue == '0' || $scope.vm.searchInfo.tagTypeSelectValue == '' || $scope.vm.searchInfo.tagTypeSelectValue == undefined) {
-        //        $scope.vm.masterData.tagList = [];
-        //        return;
-        //    }
-        //    channelTagService.getTagList({'tagTypeSelectValue': $scope.vm.searchInfo.tagTypeSelectValue})
-        //        .then(function (res) {
-        //            $scope.vm.masterData.tagList = res.data;
-        //        });
-        //}
-
         /**
          * 查询指定店铺cart类型下的所有类目(list形式)
          */
@@ -533,7 +585,7 @@ define([
                     $scope.vm.masterData.catList = resp.data.catTree;
                 }).then(function () {
                 if ($routeParams.type == 3)
-                    $scope.vm.searchInfo.cidValue = $routeParams.value.split("|");
+                    $scope.vm.searchInfo.cidValue = $routeParams.value2.split("|");
             });
         }
 
@@ -561,7 +613,7 @@ define([
                     });
                 }
 
-                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
+                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName)
                     .then(function () {
                         searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -611,7 +663,7 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm('即将对检索结果全量进行处理，总共商品数为 ' + $scope.vm.productPageOption.total).result.then(function () {
+                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>").then(function () {
                     callback(cartId, null, context);
                 });
             }
@@ -642,7 +694,7 @@ define([
             _chkProductSel(parseInt(cartId), __openApproval);
 
             function __openApproval(cartId, _selProdList) {
-                confirm($translate.instant('TXT_BULK_APPROVAL')).result
+                confirm($translate.instant('TXT_BULK_APPROVAL'))
                     .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
@@ -668,7 +720,13 @@ define([
                             }
                             if (res.data.ecd == 2) {
                                 // 存在未ready状态
-                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + res.data.codeList.join('， '));
+                                var errMsg = '';
+                                if (res.data.codeList.length > 10) {
+                                    errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
+                                } else {
+                                    errMsg = res.data.codeList.join('， ');
+                                }
+                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
                                 return;
                             }
                             if (res.data.ecd == 3) {
@@ -703,10 +761,10 @@ define([
                 var property = {'cartId': cartId, '_option': 'saleprice', 'productIds': productIds};
                 property.isSelAll = $scope.vm._selall ? 1 : 0;
 
-                openSalePriceFnc({'property':property, 'cartList':$scope.vm.cartList}).then(
-                function () {
-                    $scope.search();
-                });
+                openSalePriceFnc({'property': property, 'cartList': $scope.vm.cartList}).then(
+                    function () {
+                        $scope.search();
+                    });
             }
         }
 
@@ -722,10 +780,11 @@ define([
                         return null;
                     }
                     return popupNewCategory({
-                        from: "",
+                        from: $scope.vm.searchInfo.pCatPath,
                         categories: res.data
                     });
-                }).then(function (context) {
+                })
+                .then(function (context) {
                     $scope.vm.searchInfo.pCatPath = context.selected.catPath;
                     $scope.vm.searchInfo.pCatId = context.selected.catId;
                 });
@@ -735,12 +794,12 @@ define([
          * popup弹出选择主类目数据
          * @param popupNewCategory
          */
-        function openMasterCategoryMapping(popupNewCategory) {
-            feedMappingService.getMainCategories()
+        function openMasterCategoryMapping(popupCategoryFnc) {
+            systemCategoryService.getNewsCategoryList()
                 .then(function (res) {
-                    popupNewCategory({
+                    popupCategoryFnc({
                         categories: res.data,
-                        from: null
+                        from: $scope.vm.searchInfo.mCatPath
                     }).then(function (res) {
                         $scope.vm.searchInfo.mCatPath = res.selected.catPath;
                         $scope.vm.searchInfo.mCatId = res.selected.catId;
@@ -761,7 +820,8 @@ define([
                     }
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: ""
+                        from: $scope.vm.searchInfo.fCatPath,
+                        divType:"-"
                     }).then(function (context) {
                             $scope.vm.searchInfo.fCatPath = context.selected.catPath;
                             $scope.vm.searchInfo.fCatId = context.selected.catId;
@@ -775,20 +835,12 @@ define([
          * @param openCategoryEdit
          */
         function openChannelInnerCategory(openAddChannelCategoryEdit) {
-            var selList = getSelProductList();
-            if ($scope.vm.currTab === 'group') {
-                selList = $scope.vm.groupSelList.selList;
-            } else {
-                selList = $scope.vm.productSelList.selList;
-            }
-            openAddChannelCategoryEdit(selList, $scope.vm.searchInfo.cartId).then(function (context) {
+            openAddChannelCategoryEdit([], $scope.vm.searchInfo.cartId, {'isQuery': true}).then(function (context) {
                 if (_.isArray(context.sellerCats)) {
                     // 设置画面显示用的值
                     var shopCatValues = [];
                     _.forEach(context.sellerCats, function (catObj) {
-                        if (_.isArray(catObj.cNames)) {
-                            shopCatValues.push(catObj.cNames.join('>'));
-                        }
+                        shopCatValues.push(catObj.cName);
                     });
                     $scope.vm._shopCatValues = shopCatValues;
 
@@ -800,6 +852,29 @@ define([
                     $scope.vm.searchInfo.cidValue = cidValue;
                 }
             })
+        }
+
+        /**
+         * popup出添加店铺内分类的对话框（批量追加用）
+         * @param openCategoryEdit
+         */
+        function openAddChannelCategoryFromAdSearch(openAddChannelCategoryEdit, cartId) {
+            _chkProductSel(cartId, _openAddChannelCategory, {'isSelAll': $scope.vm._selall ? 1 : 0});
+
+            function _openAddChannelCategory(cartId, selList, context) {
+                openAddChannelCategoryEdit(selList, cartId, context).then(function (res) {
+                    var productIds = [];
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                    var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
+                    params.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $addChannelCategoryService.save(params).then(function (context) {
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        $scope.search();
+                    });
+                })
+            }
         }
 
         /**
@@ -833,8 +908,36 @@ define([
             }
         };
 
+        // 清空所填项目
+        function dismiss(item) {
+            if (item == 'mCatPath') {
+                $scope.vm.searchInfo.mCatPath = null;
+                $scope.vm.searchInfo.mCatId = null;
+
+            } else if (item == 'fCatPath') {
+                $scope.vm.searchInfo.fCatPath = null;
+                $scope.vm.searchInfo.fCatId = null;
+
+            } else if (item == 'freeTag') {
+                $scope.vm._freeTags = null;
+                $scope.vm.searchInfo.freeTags = null;
+
+            } else if (item == 'pCatStatus') {
+                $scope.vm.searchInfo.pCatPath = null;
+                $scope.vm.searchInfo.pCatId = null;
+
+            } else if (item == 'shopCat') {
+                $scope.vm._shopCatValues = null;
+                $scope.vm.searchInfo.cidValue = null;
+
+            } else if (item == 'promotionTag') {
+                $scope.vm._promotionTags = null;
+                $scope.vm.searchInfo.promotionTags = null;
+            }
+        }
+
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', 'feedMappingService', '$productDetailService', 'channelTagService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage'];
     return searchIndex;
 });

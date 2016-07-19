@@ -8,35 +8,35 @@
       <div class="row m-l-md m-r-md">
         <div class="col-sm-4">
             <h4 class="m-l-sm text-vo">
-                <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+                <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
                     <input type="checkbox" ng-model="cus.all_commonData" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                 </label>
                 {{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
                 <div ng-repeat="commonData in cus.commonProps" class="m-t-xs">
                     <label class="checkbox-inline c-checkbox">
-                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk" >
+                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk" ng-change="chkItemStatus(1)">
                     <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
             <h4 class="m-l-sm text-vo">
-                <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+                <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
                     <input type="checkbox" ng-model="cus.all_customData" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                 </label>
                 {{'TXT_CUST_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow">
                 <div ng-repeat="customData in cus.customProps" class="m-t-xs">
                     <label class="checkbox-inline c-checkbox">
-                    <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk" >
+                    <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk" ng-change="chkItemStatus(2)">
                     <span class="fa fa-check"></span>&nbsp;{{customData.feed_prop_translation}}</label>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
           <h4 class="m-l-sm text-vo">
-              <label class="checkbox-inline c-checkbox" style="margin-left: 0px;">
+              <label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
                   <input type="checkbox" ng-model="cus.all_salesType" ng-change="chkSelStatus(3)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
               </label>
               销量显示选择
@@ -44,7 +44,7 @@
           <div class="column_overflow">
               <div ng-repeat="salesType in cus.salesTypeList" class="m-t-xs">
                   <label class="checkbox-inline c-checkbox">
-                  <input type="checkbox" name="salesTypeSels" value="{{salesType.value}}" ng-model="salesType.isChk" >
+                  <input type="checkbox" name="salesTypeSels" value="{{salesType.value}}" ng-model="salesType.isChk" ng-change="chkItemStatus(3)">
                   <span class="fa fa-check"></span>&nbsp;{{salesType.name}}</label>
               </div>
           </div>

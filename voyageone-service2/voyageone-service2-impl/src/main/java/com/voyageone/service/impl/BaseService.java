@@ -1,8 +1,6 @@
 package com.voyageone.service.impl;
 
 import com.voyageone.common.logger.VOAbsIssueLoggable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Rest webservice Service 层提供基类

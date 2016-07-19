@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class CmsAdvanceSearchController extends CmsController {
     @Autowired
     private CmsAdvSearchExportFileService advSearchExportFileService;
     @Autowired
-    PlatformService platformService;
+    private PlatformService platformService;
 
     /**
      * 初始化,获取master数据
@@ -65,6 +66,13 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
     public AjaxResponse search(@RequestBody CmsSearchInfoBean2 params) {
+        if ($isDebugEnabled()) {
+            try {
+                $debug("高级检索 请求参数: " + JacksonUtil.bean2JsonNotNull(params));
+            } catch (Exception e) {
+                $error("转换输入参数时出错", e);
+            }
+        }
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();
@@ -110,6 +118,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("grpProdChgInfoList", infoArr[0]);
         // 获取该组商品的prodId
         resultBean.put("grpProdIdList", infoArr[2]);
+        resultBean.put("grpPriceInfoList", infoArr[3]);
 
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
@@ -153,6 +162,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("grpProdChgInfoList", infoArr[0]);
         // 获取该组商品的prodId
         resultBean.put("grpProdIdList", infoArr[2]);
+        resultBean.put("grpPriceInfoList", infoArr[3]);
 
         // 返回用户信息
         return success(resultBean);
@@ -193,7 +203,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
     public ResponseEntity<byte[]> doExport(@RequestParam String params) {
-        CmsSearchInfoBean2 p = null;
+        CmsSearchInfoBean2 p;
         try {
             p = JacksonUtil.json2Bean(params, CmsSearchInfoBean2.class);
         } catch (Exception exp) {

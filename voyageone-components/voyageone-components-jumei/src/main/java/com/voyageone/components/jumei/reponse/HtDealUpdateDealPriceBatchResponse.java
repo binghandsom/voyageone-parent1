@@ -138,6 +138,7 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
                 this.setErrorMsg(UnicodeUtil.decodeUnicode(this.body));
             }
         } catch (Exception ex) {
+            logger.error("setBody ",ex);
             this.setIs_Success(false);
             this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }

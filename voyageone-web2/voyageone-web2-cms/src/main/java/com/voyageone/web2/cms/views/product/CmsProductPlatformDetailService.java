@@ -60,7 +60,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
 
         // platform 品牌名
-        if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+        if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
             if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
@@ -78,6 +78,18 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
 
         if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+            // 非主商品的平台类目跟这个主商品走
+            if(platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()){
+                CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(),cartId);
+                CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
+                CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
+                if(mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())){
+                    throw new BusinessException("该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
+                }
+                platformCart.setpCatPath(mainPlatform.getpCatPath());
+                platformCart.setpCatId(mainPlatform.getpCatId());
+            }
+
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), cartId));
         }
         return platformCart;
@@ -125,10 +137,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, cmsBtProduct.getCommon().getFields().getCode());
         cmsBtProduct.getCommon().getSkus().forEach(cmsBtProductModel_sku -> cmsBtProductModel_sku.setQty(skuInventoryList.get(cmsBtProductModel_sku.getSkuCode()) == null ? 0 : skuInventoryList.get(cmsBtProductModel_sku.getSkuCode())));
 
-        if (cmsBtProduct.getCommon().getFields() != null) {
-            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
-            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
-        }
+//        if (cmsBtProduct.getCommon().getFields() != null) {
+//            mastData.put("translateStatus", cmsBtProduct.getCommon().getFields().getTranslateStatus());
+//            mastData.put("hsCodeStatus", StringUtil.isEmpty(cmsBtProduct.getCommon().getFields().getHsCodePrivate()) ? 0 : 1);
+//        }
         mastData.put("images", images);
         return mastData;
     }
@@ -150,7 +162,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, cartId));
             platformCart.setpCatId(catId);
             // platform 品牌名
-            if (StringUtil.isEmpty(platformCart.getpBrandId())) {
+            if (StringUtil.isEmpty(platformCart.getpBrandId())  || StringUtil.isEmpty(platformCart.getpBrandName())) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
@@ -313,10 +325,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     }
 
     private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, Integer cartId) {
-        Map<String, List<Field>> fields;
+        Map<String, List<Field>> fields = null;
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-            fields = platformSchemaService.getFieldForProductImage("1", cartId);
+            if(!StringUtil.isEmpty(catId)) {
+                fields = platformSchemaService.getFieldForProductImage("1", cartId);
+            }
         } else {
             fields = platformSchemaService.getFieldForProductImage(catId, cartId);
         }

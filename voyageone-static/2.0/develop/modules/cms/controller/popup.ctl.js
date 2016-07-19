@@ -265,12 +265,19 @@ define([
             "price": {
                 "templateUrl": "views/pop/history/price.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/history/price.ctl",
-                "controller": "popPriceHistoryCtl"
+                "controller": "PriceLogPopupController as ctrl",
+                "size": "lg"
             },
             "promotion": {
                 "templateUrl": "views/pop/history/promotion.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/history/promotion.ctl",
                 "controller": "popPromotionHistoryCtl"
+            },
+            "putOnOff": {
+                "templateUrl": "views/pop/history/putOnOff.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/history/putOnOff.ctl",
+                "controller": "PutOnOffController as ctrl",
+                "size": "lg"
             }
         },
         "promotion": {
@@ -453,7 +460,16 @@ define([
             "upload": {
                 "templateUrl": "views/pop/image/imgSetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/image/imgSetting.ctl",
-                "controller": 'popImgSettingCtl'
+                "controller": 'popImgSettingCtl as ctrl',
+                "size": 'lg'
+            }
+        },
+        "product":{
+            "switchMain":{
+                "templateUrl": "views/pop/product/switchMain.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/switchMain.ctl",
+                "controller": 'SwitchMainController as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -595,36 +611,6 @@ define([
             return openModel(popActions.bulkUpdate.fieldEdit, params);
         };
 
-        //$scope.openBulkUpdate = openBulkUpdate;
-        //function openBulkUpdate(selList, fnInitial) {
-        //    require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
-        //        if (selList && selList.length) {
-        //            var modalInstance = $uibModal.open({
-        //                templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
-        //                controller: popActions.bulkUpdate.fieldEdit.controller,
-        //                size: 'md',
-        //                resolve: {
-        //                    productIds: function () {
-        //                        var productIds = [];
-        //                        _.forEach(selList, function (object) {
-        //                            productIds.push(object.id);
-        //                        });
-        //                        return productIds;
-        //                    }
-        //                }
-        //            });
-        //
-        //            // 回调主页面的刷新操作
-        //            modalInstance.result.then(function () {
-        //                fnInitial();
-        //            })
-        //
-        //        } else {
-        //            alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-        //        }
-        //    });
-        //}
-
         /**
          * 打开类目选择页面
          * @param context
@@ -662,37 +648,6 @@ define([
             return openModel(popActions.custom.newAttribute, context);
         };
 
-        // function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
-        //    require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
-        //        if (selList && selList.length) {
-        //            var modalInstance = $uibModal.open({
-        //                templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
-        //                controller: popActions.bulkUpdate.addToPromotion.controller,
-        //                size: viewSize,
-        //                resolve: {
-        //                    promotion: function () {
-        //                        //var productIds = [];
-        //                        //_.forEach(selList, function (object) {
-        //                        //    productIds.push(object);
-        //                        //});
-        //                        var productIds = [];
-        //                        _.forEach(selList, function (object) {
-        //                            productIds.push(object.id);
-        //                        });
-        //                        return {"promotion": promotion, "productIds": productIds, "products": selList};
-        //                    }
-        //                }
-        //            });
-        //
-        //            // 回调主页面的刷新操作
-        //            modalInstance.result.then(function () {
-        //                fnInitial();
-        //            })
-        //        } else {
-        //            alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-        //        }
-        //    });
-        //}
 
         /**
          * 新增advance查询页,参加聚美活动弹出
@@ -903,7 +858,7 @@ define([
          * @type {openHistoryPromotion}
          */
         $scope.openHistoryPromotion = openHistoryPromotion;
-        function openHistoryPromotion(viewSize, data) {
+        function openHistoryPromotion(viewSize, code, selectedCart) {
             require([popActions.history.promotion.controllerUrl], function () {
                 $uibModal.open({
                     templateUrl: popActions.history.promotion.templateUrl,
@@ -911,43 +866,44 @@ define([
                     size: viewSize,
                     resolve: {
                         data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-
-        //全店操作页面中，操作按钮弹出
-        $scope.openNewOpp = function (header, upLoadFlag) {
-            return openModel(popActions.custom.storeoperation, {header: header, upLoadFlag: upLoadFlag});
-        };
-        //全店操作页面中，确认操作按钮弹出
-        $scope.openConfirmOpp = function (header, upLoadFlag) {
-            return openModel(popActions.custom.confirmstoreopp, {header: header, upLoadFlag: upLoadFlag});
-        };
-        /**
-         * 打开price历史页面
-         * @type {openHistoryPrice}
-         */
-        $scope.openHistoryPrice = openHistoryPrice;
-        function openHistoryPrice(viewSize, data, type) {
-            require([popActions.history.price.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.history.price.templateUrl,
-                    controller: popActions.history.price.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
                             return {
-                                code: data,
-                                type: type
+                                code: code,
+                                cartId: selectedCart
                             };
                         }
                     }
                 });
             });
         }
+
+        //产品详情页，弹出历史纪录的上下架历史纪录
+        $scope.openHistoryPutOnOff = function (code, cartId, cartList) {
+            return openModel(popActions.history.putOnOff, { code:code, cartId:cartId, cartList:cartList });
+        };
+
+        //全店操作页面中，操作按钮弹出
+        $scope.openNewOpp = function (header, upLoadFlag) {
+            return openModel(popActions.custom.storeoperation, {header: header, upLoadFlag: upLoadFlag});
+        };
+
+        //全店操作页面中，确认操作按钮弹出
+        $scope.openConfirmOpp = function (header, upLoadFlag) {
+            return openModel(popActions.custom.confirmstoreopp, {header: header, upLoadFlag: upLoadFlag});
+        };
+
+        /**
+         * 打开price历史页面
+         */
+        $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
+            return openModel(popActions.history.price, {
+                skuList: skuList,
+                code: code,
+                selected: {
+                    sku: selectedSku,
+                    cart: selectedCart
+                }
+            });
+        };
 
         /**
          * 打开promotion页面
@@ -1147,7 +1103,7 @@ define([
                 productIds.push(object.code);
             });
             if (context && context.isSelAll) {
-                data = {"productIds": [], "cartId": cartId};
+                data = {"productIds": [], "cartId": cartId, 'isSelAll': context.isSelAll};
             } else if (selList.length > 0 && selList[0].plateSchema) {
                 data = {
                     "productIds": productIds,
@@ -1158,6 +1114,13 @@ define([
             } else {
                 data = {"productIds": productIds, "cartId": cartId};
             }
+
+            if (context && context.isQuery) {
+                data.isQuery = "1";
+            } else {
+                data.isQuery = "0";
+            }
+
             return openModel(popActions.bulkUpdate.addChannelCategory, data);
         };
 
@@ -1225,7 +1188,6 @@ define([
                 });
             });
         }
-
 
         /**
          * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
@@ -1314,8 +1276,27 @@ define([
             return openModel(popActions.jumei.jmProductDetail.detail, context);
         };
 
-        $scope.openJmPromotionDetail = function (context) {
-            return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        $scope.openJmPromotionDetail = openJmPromotionDetail;
+        function openJmPromotionDetail(context, fnInitial) {
+            require([popActions.jumei.jmPromotionDetail.detail.controllerUrl], function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
+                    controller: popActions.jumei.jmPromotionDetail.detail.controller,
+                    size:'md',
+                    resolve: {
+                        context: function () {
+                            return context;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
         };
 
         $scope.openJmPromotionProductImport = openJmPromotionProductImport;
@@ -1368,19 +1349,12 @@ define([
             return openModel(popActions.bulkUpdate.updateProductApproval, context);
         };
 
-        //$scope.openJmPromotionProductImport = function (context,fnInitial) {
-        //   var  promise=openModel(popActions.jumei.jmPromotionDetail.import, context);
-        //    promise.then(function success(data) {
-        //        data.then(function () {
-        //            if (fnInitial) {
-        //                fnInitial();
-        //            }
-        //        })
-        //    }, function error(msg) {
-        //        console.error(msg);
-        //    });
-        //
-        //};
+        //切换主类目
+        $scope.openSwitchMain = function (context) {
+            return openModel(popActions.product.switchMain, context);
+        };
+
+
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();

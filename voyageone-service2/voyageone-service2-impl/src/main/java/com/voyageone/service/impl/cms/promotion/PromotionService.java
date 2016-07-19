@@ -5,24 +5,34 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.BeanUtil;
+import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +59,149 @@ public class PromotionService extends BaseService {
 
     @Autowired
     private CmsBtPromotionDao promotionDao;
+    @Autowired
+    private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
+@Autowired
+    CmsBtPromotionDao dao;
+    @Autowired
+    CmsBtJmPromotionDao daoCmsBtJMPromotion;
+    @Autowired
+    private TagService serviceTag;
+    //分页 begin
+    public List<MapModel> getPage(PageQueryParameters parameters) {
+
+        List<MapModel> list = daoExtCamelCmsBtPromotionDaoExtCamel.selectPage(parameters.getSqlMapParameter());
+        for (MapModel model : list) {
+            loadMap(model);
+        }
+        return list;
+    }
+    void  loadMap(MapModel map) {
+        CartEnums.Cart cartEnum=CartEnums.Cart.getValueByID(map.get("cartId").toString());
+        if(cartEnum!=null) {
+            map.put("cartName",cartEnum.name() );
+        }
+    }
+    public long getCount(PageQueryParameters parameters) {
+       return  daoExtCamelCmsBtPromotionDaoExtCamel.selectCount(parameters.getSqlMapParameter());
+    }
+    public EditCmsBtPromotionBean getEditModel(int PromotionId) {
+        EditCmsBtPromotionBean promotionBean = new EditCmsBtPromotionBean();
+        promotionBean.setPromotionModel(getByPromotionId(PromotionId));
+        List<CmsBtTagModel> listTagModel = serviceTag.getListByParentTagId(promotionBean.getPromotionModel().getRefTagId());
+        promotionBean.setTagList(listTagModel);
+        return promotionBean;
+    }
+    /**
+     * 添加或者修改
+     */
+    @VOTransactional
+    public int saveEditModel(EditCmsBtPromotionBean editModel) {
+        CmsBtPromotionModel cmsBtPromotionBean = editModel.getPromotionModel();
+        int result;
+        if (cmsBtPromotionBean.getId() != null && cmsBtPromotionBean.getId() != 0) {
+            result = dao.update(cmsBtPromotionBean);
+            editModel.getTagList().forEach(cmsBtTagModel -> {
+                cmsBtTagModel.setModifier(cmsBtPromotionBean.getModifier());
+                if (cmsBtTagDao.update(cmsBtTagModel) == 0) {
+                    cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
+                    cmsBtTagModel.setParentTagId(cmsBtPromotionBean.getRefTagId());
+                    cmsBtTagModel.setTagType(2);
+                    cmsBtTagModel.setTagStatus(0);
+                    cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
+                    cmsBtTagModel.setTagPath("");
+                    cmsBtTagModel.setCreater(cmsBtPromotionBean.getModifier());
+                    cmsBtTagDao.insert(cmsBtTagModel);
+                    cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
+                    cmsBtTagDao.update(cmsBtTagModel);
+                }
+            });
+        } else {
+            editModel.getPromotionModel().setPromotionStatus(1);
+            Map<String, Object> param = new HashMap<>();
+            param.put("channelId", cmsBtPromotionBean.getChannelId());
+            param.put("cartId", cmsBtPromotionBean.getCartId());
+            param.put("promotionName", cmsBtPromotionBean.getPromotionName());
+            List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
+            if (promotions == null || promotions.isEmpty()) {
+                result = dao.insert(insertTagsAndGetNewModel(editModel).getPromotionModel());
+            } else {
+                throw new BusinessException("4000093");
+            }
+
+        }
+        return result;
+    }
+    /**
+     * insertTagsAndGetNewModel
+     */
+    private EditCmsBtPromotionBean insertTagsAndGetNewModel(EditCmsBtPromotionBean editModel) {
+        CmsBtPromotionModel cmsBtPromotionBean = editModel.getPromotionModel();
+        CmsTagInfoBean requestModel = new CmsTagInfoBean();
+        requestModel.setChannelId(cmsBtPromotionBean.getChannelId());
+        requestModel.setTagName(cmsBtPromotionBean.getPromotionName());
+        requestModel.setTagType(2);
+        requestModel.setTagStatus(0);
+        requestModel.setParentTagId(0);
+        requestModel.setSortOrder(0);
+        requestModel.setModifier(cmsBtPromotionBean.getModifier());
+        //Tag追加
+        int refTagId = tagService.addTag(requestModel);
+        cmsBtPromotionBean.setRefTagId(refTagId);
+
+        // 子TAG追加
+        editModel.getTagList().forEach(cmsBtTagModel -> {
+            cmsBtTagModel.setChannelId(cmsBtPromotionBean.getChannelId());
+            cmsBtTagModel.setParentTagId(refTagId);
+            cmsBtTagModel.setTagType(2);
+            cmsBtTagModel.setTagStatus(0);
+            cmsBtTagModel.setTagPathName(String.format("-%s-%s-", cmsBtPromotionBean.getPromotionName(), cmsBtTagModel.getTagName()));
+            cmsBtTagModel.setTagPath("");
+            cmsBtTagModel.setCreater(cmsBtPromotionBean.getCreater());
+            cmsBtTagModel.setModifier(cmsBtPromotionBean.getCreater());
+            cmsBtTagDao.insert(cmsBtTagModel);
+            cmsBtTagModel.setTagPath(String.format("-%s-%s-", refTagId, cmsBtTagModel.getId()));
+            cmsBtTagDao.update(cmsBtTagModel);
+        });
+        return editModel;
+    }
+
+
+    /**
+     * 删除
+     */
+    @VOTransactional
+    public CallResult deleteByPromotionId(int promotionId ) {
+        CallResult result=new CallResult();
+        CmsBtPromotionModel model = dao.select(promotionId);
+        if (model.getCartId() == CartEnums.Cart.JM.getValue()) {
+            CmsBtJmPromotionModel jmModel = daoCmsBtJMPromotion.select(model.getPromotionId());
+            if(jmModel.getStatus()==1)
+            {
+                result.setResult(false);
+                result.setMsg("已有商品上新,不允许删除！");
+                return  result;
+            }
+        }
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
+        param.put("modifier", model.getModifier());
+        // 删除对应的tag
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setParentTagId(model.getRefTagId());
+        cmsBtTagModel.setId(model.getRefTagId());
+        cmsBtTagDaoExt.deleteCmsBtTagByParentTagId(cmsBtTagModel);
+        cmsBtTagDaoExt.deleteCmsBtTagByTagId(cmsBtTagModel);
+         cmsBtPromotionDaoExt.deleteById(param);
+        return  result;
+    }
+
+    public int setPromotionStatus(SetPromotionStatusParameter parameter) {
+        CmsBtPromotionModel model = dao.select(parameter.getPromotionId());
+        model.setPromotionStatus(parameter.getPromotionStatus());
+      return   dao.update(model);
+    }
+    //分页 end
 
     /**
      * 根据PromotionId查询
@@ -91,28 +244,28 @@ public class PromotionService extends BaseService {
 
     /**
      * 根据channelId获取promotion列表
-     * @param channelId
-     * @return
      */
     public List<CmsBtPromotionBean> getPromotionsByChannelId(String channelId, Map<String, Object> params) {
-//        Map<String, Object> params = new HashMap<>();
-        params = params == null ? new HashMap<>() : params;
-        if(Channels.isUsJoi(channelId)){
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
+        Map<String, Object> paramsTmp =  params;
+        if (paramsTmp == null) {
+            paramsTmp = new HashMap<>();
         }
-        return this.getByCondition(params);
+        if(Channels.isUsJoi(channelId)){
+            paramsTmp.put("orgChannelId", channelId);
+            paramsTmp.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            paramsTmp.put("channelId", channelId);
+        }
+        return this.getByCondition(paramsTmp);
     }
 
     /**
      * 根据channelId获取promotion列表，只查询有效的活动信息(除了状态外，必须要有tag信息)
-     * @param channelId
-     * @return
      */
     public List<CmsBtPromotionBean> getPromotions4AdvSearch(String channelId, Map<String, Object> params) {
-        params = params == null ? new HashMap<>() : params;
+        if (params == null) {
+            params = new HashMap<>();
+        }
         if (Channels.isUsJoi(channelId)) {
             params.put("orgChannelId", channelId);
             params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
@@ -164,7 +317,7 @@ public class PromotionService extends BaseService {
             param.put("cartId",cmsBtPromotionBean.getCartId());
             param.put("promotionName",cmsBtPromotionBean.getPromotionName());
             List<CmsBtPromotionBean> promotions = cmsBtPromotionDaoExt.selectByCondition(param);
-            if(promotions == null || promotions.size() == 0){
+            if(promotions == null || promotions.isEmpty()){
                 result = cmsBtPromotionDaoExt.insert(insertTagsAndGetNewModel(cmsBtPromotionBean));
             }else{
                 throw new BusinessException("4000093");

@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
+import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,29 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/context-web2.xml")
 public class CmsProductDetailServiceTest {
-
     @Autowired
     CmsProductDetailService cmsProductDetailService;
     @Test
     public void testGetMastProductInfo() throws Exception {
-        Map<String, Object> result =  cmsProductDetailService.getMastProductInfo("010", 5938L, "cn");
+        Map<String, Object> result = cmsProductDetailService.getMastProductInfo("010", 5938L, "cn");
         System.out.println(JacksonUtil.bean2Json(result));
+    }
+    @Test
+    public void testGetChangeMastProductInfo() {
+        GetChangeMastProductInfoParameter parameter = new GetChangeMastProductInfoParameter();
+        parameter.setProductCode("CRBT0003SP-");
+        parameter.setChannelId("010");
+        parameter.setCartId(27);
+        //{cartId:27,channelId:"010",productCode:"CRBT0003SP-"}
+        Map<String, Object> result = cmsProductDetailService.getChangeMastProductInfo(parameter);
+    }
+    @Test
+    public void  testSetMastProduct()
+    {
+        SetMastProductParameter parameter=new SetMastProductParameter();
+        parameter.setProductCode("DIBRHCRST/RHGAR8.5");
+        parameter.setChannelId("010");
+        parameter.setCartId(27);
+       CallResult result= cmsProductDetailService.setMastProduct(parameter,"syste");
     }
 }

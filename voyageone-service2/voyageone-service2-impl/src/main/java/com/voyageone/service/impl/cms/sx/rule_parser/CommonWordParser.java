@@ -60,8 +60,8 @@ public class CommonWordParser extends VOAbsLoggable {
                 return null;
             }
             if (extra == null || extra.size() == 0) {
-                if (plainPropValueObj instanceof  ArrayList) {
-                    if (((ArrayList) plainPropValueObj).size() == 0) {
+                if (plainPropValueObj instanceof List) {
+                    if (((List) plainPropValueObj).isEmpty()) {
                         // 检查一下, 如果没有值的话, 后面的也不用做了
                         return null;
                     }
@@ -72,9 +72,9 @@ public class CommonWordParser extends VOAbsLoggable {
             } else {
                 if (plainPropValueObj instanceof String) {
                     return extra.get(plainPropValueObj);
-                } else if (plainPropValueObj instanceof  ArrayList) {
+                } else if (plainPropValueObj instanceof List) {
                     // 20160120 tom ims1->ims2升级导致的问题, 增加检查 START
-                    if (((ArrayList) plainPropValueObj).size() == 0) {
+                    if (((List) plainPropValueObj).isEmpty()) {
                         // 检查一下, 如果没有值的话, 后面的也不用做了
                         return null;
                     }

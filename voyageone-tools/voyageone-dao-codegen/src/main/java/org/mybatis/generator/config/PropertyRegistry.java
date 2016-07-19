@@ -64,4 +64,8 @@ public class PropertyRegistry {
 
     public static final String COMMENT_GENERATOR_SUPPRESS_DATE = "suppressDate"; //$NON-NLS-1$
     public static final String COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS = "suppressAllComments"; //$NON-NLS-1$
+
+    public static final String TABLE_SELECT_ORDER_BY_CLAUSE = "selectOrderByClause"; //$NON-NLS-1$
+    public static final String TABLE_SELECT_LIMIT_CLAUSE = "selectLimitClause"; //$NON-NLS-1$
+
 }

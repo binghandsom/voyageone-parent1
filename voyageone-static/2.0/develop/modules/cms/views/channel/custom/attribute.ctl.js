@@ -42,7 +42,7 @@ define([
          * @param item
          */
         function remove (item, inx){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     // 删除被选中的一条数据
                     $scope.vm.valList.splice(inx,1);
@@ -82,7 +82,7 @@ define([
          * 跳转到自定义属性页面
          */
         function goValuePage (){
-            $location.path(cRoutes.channel_custom_value.url + $scope.vm.cat_path);
+            $location.path(cRoutes.marketing_setting_common_custom_value_list.url + $scope.vm.cat_path);
         }
 
         /**
@@ -111,7 +111,7 @@ define([
          * @param catPath
          */
         function goAttributePage (catPath) {
-            $location.path(cRoutes.channel_custom_attribute.url + catPath);
+            $location.path(cRoutes.marketing_setting_common_custom_attribute_list.url + catPath);
         }
 
         /**

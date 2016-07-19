@@ -17,6 +17,16 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
         this.getTotal = function () {
             return config.total;
         };
+
+
+        /**
+         * 获取每页数量
+         * @returns {*}
+         */
+        this.getSize = function () {
+            return config.size;
+        };
+
         /**
          * 返回当前页的开始和结束号
          * @returns {{start: number, end: number}}

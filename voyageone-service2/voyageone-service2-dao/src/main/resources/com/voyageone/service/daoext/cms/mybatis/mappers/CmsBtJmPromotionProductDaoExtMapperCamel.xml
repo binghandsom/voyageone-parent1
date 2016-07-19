@@ -19,9 +19,6 @@
         <if test="cmsBtJmPromotionId != null">
             AND cms_bt_jm_promotion_id = #{cmsBtJmPromotionId}
         </if>
-        <if test="cmsBtJmProductId != null">
-            AND cms_bt_jm_product_id = #{cmsBtJmProductId}
-        </if>
         <if test="productCode != null">
             AND product_code = #{productCode}
         </if>
@@ -72,26 +69,26 @@
         </if>
     </where>
 </select>
-<select id="selectExportInfoListByPromotionId" resultType="MapModel">
-    SELECT a.`jm_hash_id`,a.`product_code`,a.`deal_price`,a.`market_price`,a.`discount`,a.`sku_count`,a.`quantity`,b.`product_name_cn`,`app_id`,`pc_id`
+<!--<select id="selectExportInfoListByPromotionId" resultType="MapModel">-->
+    <!--SELECT a.`jm_hash_id`,a.`product_code`,a.`deal_price`,a.`market_price`,a.`discount`,a.`sku_count`,a.`quantity`,b.`product_name_cn`,`app_id`,`pc_id`-->
 
-    FROM `cms_bt_jm_promotion_product`  AS a
-    JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
-    WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
-    ORDER by b.`product_code`,b.`vo_category_name`
-</select>
-<select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">
-    SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`
-    FROM `cms_bt_jm_promotion_product`  AS a
-    JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`
-    WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
-</select>
+    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
+    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
+    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
+    <!--ORDER by b.`product_code`,b.`vo_category_name`-->
+<!--</select>-->
+<!--<select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">-->
+    <!--SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`-->
+    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
+    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
+    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
+<!--</select>-->
 <delete id="deleteByPromotionId">
     DELETE FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
 </delete>
 <delete id="deleteByProductIdListInfo">
-    DELETE  FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
-    and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"
+    DELETE  FROM `cms_bt_jm_promotion_product`
+    WHERE  `id` in  <foreach item="item" index="i" collection="productIdList"
                                              open="(" separator="," close=")">
     #{item}
 </foreach>
@@ -100,13 +97,13 @@
 <update id="updateDealEndTimeAll">
     update cms_bt_jm_promotion_product set deal_end_time_status=1 where cms_bt_jm_promotion_id=#{promotionId}
 </update>
-<update id="updateDealEndTime">
-    UPDATE  `cms_bt_jm_promotion_product` set deal_end_time_state=1 WHERE `cms_bt_jm_promotion_id`=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)
-    and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"
-                                             open="(" separator="," close=")">
-    #{item}
-</foreach>
-</update>
+<!--<update id="updateDealEndTime">-->
+    <!--UPDATE  `cms_bt_jm_promotion_product` set deal_end_time_state=1 WHERE `cms_bt_jm_promotion_id`=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)-->
+    <!--and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"-->
+                                             <!--open="(" separator="," close=")">-->
+    <!--#{item}-->
+<!--</foreach>-->
+<!--</update>-->
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
@@ -170,11 +167,11 @@
                     #{item}
                 </foreach>
                     <if test="errorStatus!=null">
-                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3
+                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
                     </if> )
                 </when>
                 <when test="errorStatus!=null">
-                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)
+                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3)
                 </when>
                 <otherwise>
                 </otherwise>
@@ -351,7 +348,7 @@
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
         JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
-        SET a.deal_Price=${dealPrice},a.discount=a.deal_Price/a.market_price,a.update_state=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
+        SET a.deal_Price=${dealPrice},a.discount=${dealPrice}/a.market_price,a.update_status=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
@@ -390,23 +387,26 @@
         </foreach>;
     </update>
     <update id="batchCopyDealUpdatePrice">
-        UPDATE cms_bt_jm_promotion_product set update_status=1,error_msg=''
+        UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
         WHERE    id in  <foreach item="item" index="i" collection="listPromotionProductId"
                                  open="(" separator="," close=")">#{item}</foreach>
         and synch_status=2;
     </update>
-    <update id="copyDealAll">
-        UPDATE cms_bt_jm_promotion_product set synch_status=1
-        ,error_msg=''
-        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+    <update id="copyDealAll_UpdatePriceStatus">
 
         UPDATE cms_bt_jm_promotion_product set price_status=1
         ,error_msg=''
         WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (2);
     </update>
+    <update id="copyDealAll_UpdateSynchStatus">
+        UPDATE cms_bt_jm_promotion_product set synch_status=1
+        ,error_msg=''
+        WHERE    cms_bt_jm_promotion_id=#{promotionId} and synch_status in (0,3);
+
+    </update>
     <delete id="batchDeleteProduct">
         delete from  cms_bt_jm_promotion_product
-        WHERE synch_status=0 and   id in
+        WHERE synch_status!=2 and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
@@ -424,16 +424,16 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  NOW() &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
+        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  #{nowDate} &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
     </select>
 
     <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
-  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   NOW() &lt;=`activity_end`  AND   NOW()>=`activity_start` AND `synch_status`=2 limit 1
+  SELECT * FROM `cms_bt_jm_promotion_product`  WHERE channel_id=#{channelId} and   product_code=#{productCode}  AND   #{nowDate} &lt;=`activity_end`  AND  #{nowDate}>=`activity_start` AND `synch_status`=2 limit 1
     </select>
     <select id="selectOnSaleByNoPromotionId" resultType="CmsBtJmPromotionProductModel">
         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a
        JOIN cms_bt_jm_promotion_product AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code`  and b.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
-        WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND   NOW() &lt;=a.`activity_end`  AND   NOW()>=a.`activity_start` AND a.`synch_status`=2 limit 1
+        WHERE a.channel_id=#{channelId} and a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   AND  #{nowDate} &lt;=a.`activity_end`  AND   #{nowDate}>=a.`activity_start` AND a.`synch_status`=2 limit 1
     </select>
     <select id="selectChangeCountByPromotionId" resultType="int">
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`

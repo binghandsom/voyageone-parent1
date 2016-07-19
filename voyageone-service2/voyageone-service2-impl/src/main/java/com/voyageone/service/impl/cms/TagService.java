@@ -68,7 +68,7 @@ public class TagService extends BaseService {
         if (request.getParentTagId() == 0) {
             // TagName 对应Tag存在检查
             List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
-            if (cmsBtTagModelList.size() > 0) {
+            if (!cmsBtTagModelList.isEmpty()) {
                 throw new RuntimeException("tag name is exist");
             }
             // 子Tag追加的场合
@@ -81,7 +81,7 @@ public class TagService extends BaseService {
 
             // TagName 对应Tag存在检查
             List<CmsBtTagModel> cmsBtTagModelList = cmsBtTagDaoExt.selectListByParentTagId(request.getChannelId(), request.getParentTagId(), request.getTagName());
-            if (cmsBtTagModelList.size() > 0) {
+            if (!cmsBtTagModelList.isEmpty()) {
                 throw new RuntimeException("tag name is exist");
             }
         }
@@ -194,7 +194,7 @@ public class TagService extends BaseService {
             // 再查询一遍，检查是否有子节点
             params.put("tagList", categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
             List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(params);
-            if (categoryList2 != null && categoryList2.size() > 0) {
+            if (categoryList2 != null && !categoryList2.isEmpty()) {
                 for (CmsBtTagBean tagBean : categoryList2) {
                     if (categoryList.indexOf(tagBean) >= 0) {
                         continue;

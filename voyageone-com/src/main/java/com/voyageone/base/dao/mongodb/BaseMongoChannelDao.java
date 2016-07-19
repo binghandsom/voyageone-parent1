@@ -126,6 +126,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
      * @return WriteResult
      */
+    @Deprecated // 推荐使用 updateFirst(JomgoUpdate updObj, String channelId) 或 updateMulti(JomgoUpdate updObj, String channelId)
     public WriteResult update(String channelId, Map paraMap, Map rsMap) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
@@ -201,7 +202,33 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @param bulkList  更新条件
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithMap(String channelId, List<JomgoUpdate> bulkList) {
+    public BulkWriteResult bulkUpdateWithModel(String channelId, List<BulkUpdateModel> bulkList) {
+        //获取集合名
+        DBCollection coll = getDBCollection(channelId);
+        BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
+
+        for (BulkUpdateModel model: bulkList) {
+            //生成更新对象
+            BasicDBObject updateObj = new BasicDBObject();
+            BasicDBObject updateContent = setDBObjectWithMap(model.getUpdateMap());
+            updateObj.append("$set", updateContent);
+
+            //生成查询对象
+            BasicDBObject queryObj = setDBObjectWithMap(model.getQueryMap());
+
+            bwo.find(queryObj).update(updateObj);
+        }
+        //最终批量运行
+        return bwo.execute();
+    }
+
+    /**
+     * 批量更新记录 (此方法只支持更新操作，不支持upsert)
+     * @param channelId 渠道ID
+     * @param bulkList  更新条件
+     * @return 运行结果
+     */
+    public BulkWriteResult bulkUpdateWithJomgo(String channelId, List<JomgoUpdate> bulkList) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();

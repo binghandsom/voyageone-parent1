@@ -1,5 +1,6 @@
 define(function () {
 
+    // 缓存作用域
     var CACHE = {
         NONE: 0,
         ONCE: 1,
@@ -7,17 +8,23 @@ define(function () {
         LOCAL: 3
     };
 
-    function once(action) {
-        return {
-            url: action,
-            cache: CACHE.ONCE
-        };
-    }
+    // 作为额外缓存关键字的关键字名称
+    var KEY = {
+        USERNAME: 'username',
+        CHANNEL: 'channel'
+    };
 
-    function session(action) {
+    /**
+     * 生产一个配置好的 action 配置对象
+     * @param {string} action Action 名称
+     * @param {Array} [cacheWith] 缓存时, 额外追加的缓存关键字, 参见 KEY 对象提供的字段
+     * @returns {{url: *, cache: number, cacheWith: *}}
+     */
+    function session(action, cacheWith) {
         return {
             url: action,
-            cache: CACHE.SESSION
+            cache: CACHE.SESSION,
+            cacheWith: cacheWith
         };
     }
 
@@ -39,9 +46,11 @@ define(function () {
             "home": {
                 "$menuService": {
                     "root": "/cms/home/menu/",
-                    "getCategoryInfo": session('getCategoryInfo'),
-                    "getPlatformType": "getPlatformType",
-                    "setPlatformType": "setPlatformType"
+                    "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
+                    "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
+                    "setPlatformType": "setPlatformType",
+                    "getHomeSumData":"getHomeSumData",
+                    "getCmsConfig":session('getCmsConfig',[KEY.CHANNEL])
                 }
             },
             "search": {
@@ -92,7 +101,14 @@ define(function () {
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts"
+                    "updateProductAtts":"updateProductAtts",
+                    "checkCategory":"checkCategory",
+                    getChangeMastProductInfo:"getChangeMastProductInfo",
+                    setMastProduct:"setMastProduct"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
@@ -149,7 +165,13 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage: "getPage",
+                    getCount: "getCount",
+                    getEditModel: "getEditModel",
+                    saveEditModel: "saveEditModel",
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus:"setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -181,6 +203,7 @@ define(function () {
                 },
                 "jmPromotionDetailService": {
                     "root": "/cms/jmpromotion/detail",
+                    "init": "init",
                     "getPromotionProductInfoListByWhere": "getPromotionProductInfoListByWhere",
                     "getPromotionProductInfoCountByWhere": "getPromotionProductInfoCountByWhere",
                     "delete": "delete",
@@ -205,7 +228,9 @@ define(function () {
                     "batchDeleteProduct": "batchDeleteProduct",
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
-                    "updateDealPrice": "updateDealPrice"
+                    "updateDealPrice": "updateDealPrice",
+                    updatePromotionProduct:"updatePromotionProduct",
+                    updatePromotionProductTag:"updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
@@ -315,7 +340,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": "getNewsCategoryList"
+                        "getNewsCategoryList": session("getNewsCategoryList")
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",
@@ -369,10 +394,10 @@ define(function () {
                     "root": "/cms/pop/history_promotion",
                     "getPromotionHistory": "getPromotionHistory"
                 },
-                "$priceHistoryService": {
-                    "root": "/cms/pop/history_price",
-                    "init": "getChannelCategory2",
-                    "getPriceHistory": "getPriceHistory"
+                priceLogService: {
+                    root: '/cms/price/log',
+                    page: 'page',
+                    export: 'export'
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",
@@ -405,7 +430,7 @@ define(function () {
                     "attributeService": {
                         "root": "/cms/channel/custom/prop",
                         "init": "get",
-                        "getCatTree": "getCatTree",
+                        "getCatTree": session("getCatTree"),
                         "save": "update",
                         "getCatList": "getCatList"
                     }

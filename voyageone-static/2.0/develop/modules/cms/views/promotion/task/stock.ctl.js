@@ -276,7 +276,7 @@ define([
 
             delRecord: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_DELETE').then(function () {
                     main.taskStockService.delRecord({
                         "taskId": main.taskId,
                         "sku": sku
@@ -293,7 +293,7 @@ define([
 
             executeStockSeparation: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_SEPARATE').result.then(function () {
+                main.confirm('TXT_MSG_DO_SEPARATE').then(function () {
                     main.taskStockService.executeStockSeparation({
                         "taskId": main.taskId,
                         "model" : main.model,
@@ -317,7 +317,7 @@ define([
 
             executeStockRevert: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_REVERT').result.then(function () {
+                main.confirm('TXT_MSG_DO_REVERT').then(function () {
                     main.taskStockService.executeStockRevert({
                         "taskId": main.taskId,
                         "model" : main.model,

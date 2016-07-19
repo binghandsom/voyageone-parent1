@@ -99,19 +99,19 @@ public class SizeChartService extends BaseService {
             sbQuery.append("},");
         }
         //BrandName
-        if (brandNameList.size() > 0) {
+        if (!brandNameList.isEmpty()) {
             brandNameList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("brandName", brandNameList.toArray(new String[brandNameList.size()])));
             sbQuery.append(",");
         }
         //ProductType
-        if (productTypeList.size() > 0) {
+        if (!productTypeList.isEmpty()) {
             productTypeList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("productType", productTypeList.toArray(new String[productTypeList.size()])));
             sbQuery.append(",");
         }
         //SizeType
-        if (sizeTypeList.size() > 0) {
+        if (!sizeTypeList.isEmpty()) {
             sizeTypeList.add(VALUE_ALL);
             sbQuery.append(MongoUtils.splicingValue("sizeType", sizeTypeList.toArray(new String[sizeTypeList.size()])));
             sbQuery.append(",");
@@ -162,7 +162,7 @@ public class SizeChartService extends BaseService {
         //是否编辑
         cmsBtSizeChartModel.setFinish("0");
         //产品品牌
-        if (brandNameList.size() == 0) {
+        if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
@@ -170,7 +170,7 @@ public class SizeChartService extends BaseService {
             cmsBtSizeChartModel.setBrandName(brandNameList);
         }
         //产品类型
-        if (productTypeList.size() == 0) {
+        if (productTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
@@ -178,7 +178,7 @@ public class SizeChartService extends BaseService {
             cmsBtSizeChartModel.setProductType(productTypeList);
         }
         //产品性别
-        if (sizeTypeList.size() == 0) {
+        if (sizeTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);
@@ -208,7 +208,7 @@ public class SizeChartService extends BaseService {
         //是否编辑
         cmsBtSizeChartModel.setFinish(finishFlag);
         //产品品牌
-        if (brandNameList.size() == 0) {
+        if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setBrandName(lst);
@@ -216,7 +216,7 @@ public class SizeChartService extends BaseService {
             cmsBtSizeChartModel.setBrandName(brandNameList);
         }
         //产品类型
-        if (productTypeList.size() == 0) {
+        if (productTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setProductType(lst);
@@ -224,7 +224,7 @@ public class SizeChartService extends BaseService {
             cmsBtSizeChartModel.setProductType(productTypeList);
         }
         //产品性别
-        if (sizeTypeList.size() == 0) {
+        if (sizeTypeList.isEmpty()) {
             List<String> lst = new ArrayList<>();
             lst.add(VALUE_ALL);
             cmsBtSizeChartModel.setSizeType(lst);

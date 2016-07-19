@@ -18,6 +18,8 @@ public interface CmsMtPlatformConfigDao {
 
     CmsMtPlatformConfigModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtPlatformConfigModel select(Integer id);
 
     int insert(CmsMtPlatformConfigModel record);

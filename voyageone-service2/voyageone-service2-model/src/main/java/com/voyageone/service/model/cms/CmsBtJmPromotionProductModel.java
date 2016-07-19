@@ -109,6 +109,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected Integer dealEndTimeStatus;
 
+    /**
+     * 库存同步状态 0:库存未同步 1:待同步  2：库存已同步 3：同步失败
+     */
+    protected Integer stockStatus;
+
     public String getChannelId() {
         return channelId;
     }
@@ -267,5 +272,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setDealEndTimeStatus(Integer dealEndTimeStatus) {
         this.dealEndTimeStatus = dealEndTimeStatus;
+    }
+
+    public Integer getStockStatus() {
+        return stockStatus;
+    }
+
+    public void setStockStatus(Integer stockStatus) {
+        this.stockStatus = stockStatus;
     }
 }

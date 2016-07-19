@@ -28,7 +28,7 @@ public class FeedCategoryTreeServiceTest {
     }
 
     @Test
-    public void testGetFeedCategoryByCategoryList() throws Exception {
+    public void testGetFeedCategoryByCategoryList() {
         List<CmsMtFeedCategoryTreeModel> list = feedCategoryTreeService.getFeedAllCategoryList("010");
         System.out.println(JacksonUtil.bean2JsonNotNull(list));
     }

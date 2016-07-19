@@ -8,15 +8,19 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.OldCmsBtProductModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,6 +45,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+    /**
+     * 根据Id返回多条产品数据
+     */
     public List<CmsBtProductModel> selectProductByIds(List<Long> ids, String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -62,20 +69,20 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < codes.size(); i++) {
             if (i == 0) {
-                sb.append("'").append(codes.get(i)).append("'");
+                sb.append("\"").append(codes.get(i)).append("\"");
             } else {
-                sb.append(", '").append(codes.get(i)).append("'");
+                sb.append(", \"").append(codes.get(i)).append("\"");
             }
         }
 
-        String query = "{'fields.code':{'$in':[" + sb.toString() + "]}}";
+        String query = "{\"common.fields.code\":{\"$in\":[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
     /**
      * 根据codes返回多条产品数据
      */
     public CmsBtProductModel selectByCode(String code, String channelId) {
-        String query = "{\"fields.code\":\"" + code + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
     public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
@@ -122,30 +129,27 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     //执行大小写不敏感的匹配
     public static final String FieldStatusEqArrpoved = "{'fields.status':{ $regex: '^approved$', $options: 'i' }}";
 
+    @Deprecated
     public long countByFieldStatusEqualApproved(String channelId) {
-        return countByQuery(FieldStatusEqArrpoved, channelId);
+        throw new BusinessException("not used");
+//        return countByQuery(FieldStatusEqArrpoved, channelId);
     }
-
-    public List<CmsBtProductModel> selectByFieldStatusEqualApproved(String channelId) {
-
-        return select(FieldStatusEqArrpoved, channelId);
-    }
-
-    private static final String PriceNotEqualQuery =
-            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
-
-    /**
-     * 查询priceSale和priceRetail不相等的products
-     */
-    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
-        return select(PriceNotEqualQuery, channelId);
-    }
+//
+//    private static final String PriceNotEqualQuery =
+//            "{$where: 'function() {return (this.skus||[]).some(function(obj){return obj.priceRetail != obj.priceSale; }) }'}";
+//
+//    /**
+//     * 查询priceSale和priceRetail不相等的products
+//     */
+//    public List<CmsBtProductModel> selectByRetailSalePriceNonEqual(String channelId) {
+//        return select(PriceNotEqualQuery, channelId);
+//    }
 
 
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId ) {
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId, String modifier ) {
         String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
@@ -168,6 +172,8 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             HashMap<String, Object> rsMap = new HashMap<>();
             rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+            rsMap.put("modifier", modifier);
+            rsMap.put("modified", DateTimeUtil.getNow());
 
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -187,7 +193,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param product
      * @param catModel
      */
-    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel, int cartId) {
+    private void updateSellerCat(CmsBtProductModel product, CmsBtSellerCatModel catModel, int cartId, String modifier) {
 
         List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
 
@@ -205,12 +211,14 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
                         break;
                     }
                 }
-               cat.setcName(Joiner.on(">").join(cNames));
+                cat.setcName(Joiner.on(">").join(cNames));
             }
         }
 
         HashMap<String, Object> rsMap = new HashMap<>();
         rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+        rsMap.put("modifier", modifier);
+        rsMap.put("modified", DateTimeUtil.getNow());
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", product.getProdId());
@@ -229,7 +237,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param catList
      * @return
      */
-    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList, int cartId) {
+    public List<CmsBtProductModel> updateSellerCat(String channelId, List<CmsBtSellerCatModel> catList, int cartId, String userName) {
         if (catList != null) {
             StringBuilder sb = new StringBuilder();
 
@@ -248,11 +256,25 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             for (CmsBtProductModel model : allProduct) {
                 for (CmsBtSellerCatModel sellerCat : catList) {
-                    updateSellerCat(model, sellerCat, cartId);
+                    updateSellerCat(model, sellerCat, cartId, userName);
                 }
             }
             return allProduct;
         }
         return null;
+    }
+
+    /**
+     * 移行数据使用,取得老的product数据
+     * @return
+     */
+    public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes){
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        if (codes.size() > 0) {
+            jomgoQuery.setQuery("{\"fields.code\" : { $in : #}}");
+            jomgoQuery.setParameters(codes);
+        }
+        return mongoTemplate.find(jomgoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
     }
 }

@@ -14,7 +14,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -35,7 +34,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.feed.FeedMappingService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -84,9 +83,6 @@ public class ProductService extends BaseService {
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     @Autowired
-    private FeedMappingService feedMappingService;
-
-    @Autowired
     private ImageTemplateService imageTemplateService;
 
     @Autowired
@@ -95,6 +91,10 @@ public class ProductService extends BaseService {
     @Autowired
     private FeedCustomPropService customPropService;
 
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private SxProductService sxProductService;
 
     /**
      * 获取商品 根据ID获
@@ -108,15 +108,15 @@ public class ProductService extends BaseService {
      * 获取商品 根据Code
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
-        String query = "{\"fields.code\":\"" + code + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
     /**
-     * 获取商品 根据Code
+     * 获取商品 根据Code&OriginalCode
      */
     public CmsBtProductModel getProductSingleSku(String channelId, String code, String originalCode) {
-        String query = "{\"fields.code\":\"" + code + "\", \"fields.originalCode\":\"" + originalCode + "\"}";
+        String query = "{\"common.fields.code\":\"" + code + "\", \"common.fields.originalCode\":\"" + originalCode + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -124,15 +124,29 @@ public class ProductService extends BaseService {
      * 获取商品 根据OriginalCode
      */
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
-        String query = "{\"fields.originalCode\":\"" + code + "\"}";
+        String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
         return cmsBtProductDao.select(query, channelId);
+    }
+
+    /**
+     * 根据Id返回多条产品数据
+     */
+    public List<CmsBtProductModel> getListByIds(List<Long> ids, String channelId) {
+        return cmsBtProductDao.selectProductByIds(ids, channelId);
+    }
+
+    /**
+     * 根据codes返回多条产品数据
+     */
+    public List<CmsBtProductModel> getListByCodes(List<String> codes, String channelId) {
+        return cmsBtProductDao.selectProductByCodes(codes, channelId);
     }
 
     /**
      * 获取商品 Sku
      */
     public CmsBtProductModel getProductBySku(String channelId, String sku) {
-        String query = "{\"skus.skuCode\":\"" + sku + "\"}";
+        String query = "{\"common.skus.skuCode\":\"" + sku + "\"}";
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -173,7 +187,7 @@ public class ProductService extends BaseService {
 
         String[] codeArr = new String[codeList.size()];
         codeArr = codeList.toArray(codeArr);
-        queryObject.setQuery("{" + MongoUtils.splicingValue("fields.code", codeArr, "$in") + "}");
+        queryObject.setQuery("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}");
 
         List<CmsBtProductBean> rst = cmsBtProductDao.selectBean(queryObject, channelId);
         rst.forEach(prodObj -> prodObj.setGroupBean(grpObj));
@@ -212,7 +226,7 @@ public class ProductService extends BaseService {
     }
 
     // 查询产品信息(合并该产品的组信息)
-    // queryObject中必须包含输出项:"fields.code"，否则将查询不到组信息
+    // queryObject中必须包含输出项:"common.fields.code"，否则将查询不到组信息
     public List<CmsBtProductBean> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
         List<CmsBtProductBean> prodList = cmsBtProductDao.selectBean(queryObject, channelId);
         if (prodList == null || prodList.isEmpty()) {
@@ -308,10 +322,10 @@ public class ProductService extends BaseService {
             throw new RuntimeException("prodId has existed, not add!");
         }
 
-        String prodCodeQuery = String.format("{ \"fields.code\" : \"%s\" }", product.getCommon().getFields().getCode());
+        String prodCodeQuery = String.format("{ \"common.fields.code\" : \"%s\" }", product.getCommon().getFields().getCode());
         count = cmsBtProductDao.countByQuery(prodCodeQuery, channelId);
         if (count > 0) {
-            throw new RuntimeException("fields.code has existed, not add!");
+            throw new RuntimeException("common.fields.code has existed, not add!");
         }
 
         //update channel and modifier
@@ -348,8 +362,8 @@ public class ProductService extends BaseService {
             queryStr = String.format("{\"prodId\" : %s}", prodId);
             queryMap.put("prodId", prodId);
         } else if (!StringUtils.isEmpty(productCode)) {
-            queryStr = String.format("{\"fields.code\" : \"%s\" }", productCode);
-            queryMap.put("fields.code", productCode);
+            queryStr = String.format("{\"common.fields.code\" : \"%s\" }", productCode);
+            queryMap.put("common.fields.code", productCode);
         }
 
         if (StringUtils.isEmpty(queryStr)) {
@@ -358,7 +372,7 @@ public class ProductService extends BaseService {
 
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(queryStr);
-        queryObject.setProjectionExt("prodId", "modified", "fields.status"); // TODO--这里不应该再从fields取status
+        queryObject.setProjectionExt("prodId", "modified"); // TODO--这里不应该再从fields取status
 
         CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
         if (findModel == null) {
@@ -380,11 +394,11 @@ public class ProductService extends BaseService {
          */
         String catId = productModel.getCommon().getCatId();
         if (catId != null) {
-            updateMap.put("catId", catId);
+            updateMap.put("common.catId", catId);
         }
         String catPath = productModel.getCommon().getCatPath();
         if (catPath != null) {
-            updateMap.put("catPath", catPath);
+            updateMap.put("common.catPath", catPath);
         }
 
         String modified = DateTimeUtil.getNowTimeStamp();
@@ -398,8 +412,8 @@ public class ProductService extends BaseService {
          * Fields
          */
         CmsBtProductModel_Field fields = productModel.getCommon().getFields();
-        if (fields != null && fields.size() > 0) {
-            BasicDBObject fieldObj = fields.toUpdateBasicDBObject("fields.");
+        if (fields != null && !fields.isEmpty()) {
+            BasicDBObject fieldObj = fields.toUpdateBasicDBObject("common.fields.");
             updateMap.putAll(fieldObj);
         }
 
@@ -408,18 +422,24 @@ public class ProductService extends BaseService {
          */
         CmsBtProductModel_Feed feed = productModel.getFeed();
         if (feed != null) {
-            if (feed.getOrgAtts() != null && feed.getOrgAtts().size() > 0) {
+            if (!StringUtils.isEmpty(feed.getCatId())) {
+                updateMap.put("feed.catId", feed.getCatId());
+            }
+            if (!StringUtils.isEmpty(feed.getCatPath())) {
+                updateMap.put("feed.catPath", feed.getCatPath());
+            }
+            if (feed.getOrgAtts() != null && !feed.getOrgAtts().isEmpty()) {
                 BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
                 updateMap.putAll(orgAttsObj);
             }
-            if (feed.getCnAtts() != null && feed.getCnAtts().size() > 0) {
+            if (feed.getCnAtts() != null && !feed.getCnAtts().isEmpty()) {
                 BasicDBObject cnAttsObj = feed.getCnAtts().toUpdateBasicDBObject("feed.cnAtts.");
                 updateMap.putAll(cnAttsObj);
             }
-            if (feed.getCustomIds() != null && feed.getCustomIds().size() > 0) {
+            if (feed.getCustomIds() != null && !feed.getCustomIds().isEmpty()) {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
-            if (feed.getCustomIdsCn() != null && feed.getCustomIdsCn().size() > 0) {
+            if (feed.getCustomIdsCn() != null && !feed.getCustomIdsCn().isEmpty()) {
                 updateMap.put("feed.customIdsCn", feed.getCustomIdsCn());
             }
         }
@@ -428,7 +448,7 @@ public class ProductService extends BaseService {
         /**
          * set update model
          */
-        if (updateMap.size() > 0) {
+        if (!updateMap.isEmpty()) {
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
             model.setQueryMap(queryMap);
@@ -438,7 +458,7 @@ public class ProductService extends BaseService {
         /**
          * execute update
          */
-        if (bulkList.size() > 0) {
+        if (!bulkList.isEmpty()) {
 
 
             findModel.getPlatforms().forEach((s, platformInfo) -> {
@@ -456,7 +476,7 @@ public class ProductService extends BaseService {
          * 更新产品sku数据
          */
         List<CmsBtProductModel_Sku> skus = productModel.getCommon().getSkus();
-        if (skus != null && skus.size() > 0) {
+        if (skus != null && !skus.isEmpty()) {
 
             // 如果sku价格发生变化更新product/model的price
             ProductPriceBean model = new ProductPriceBean();
@@ -490,7 +510,7 @@ public class ProductService extends BaseService {
         if (productId != null) {
             CmsBtProductModel productModel = getProductById(channelId, productId);
             CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-            JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
+            logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
             logModel.set_id(null);
             cmsBtProductLogDao.insert(logModel);
         }
@@ -499,10 +519,12 @@ public class ProductService extends BaseService {
     // jeff 2016/04 change start
     public void insertSxWorkLoad(String channelId, CmsBtProductModel cmsProduct, String modifier) {
         List<Integer> carts = cmsProduct.getCartIdList();
-        if (carts != null && carts.size() > 0) {
+        if (carts != null && !carts.isEmpty()) {
             // 根据商品code获取其所有group信息(所有平台)
             List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getCommon().getFields().getCode() + "\"}", channelId);
-            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
+            Map<Integer, Long> platformsMap = new BaseMongoMap<>();
+            groups.forEach(g -> platformsMap.put(g.getCartId(), g.getGroupId()));
+//            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
 
             // 获取所有的可上新的平台group信息
             List<CmsBtSxWorkloadModel> models = new ArrayList<>();
@@ -544,147 +566,13 @@ public class ProductService extends BaseService {
             }
 
             // TODO: 16/5/13 如果sxworkload表已经同样的未上新的数据,是否就不需要再插入该条数据了
-            if (models.size() > 0) {
+            if (!models.isEmpty()) {
                 int rslt = cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
                 $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
             }
         }
     }
     // jeff 2016/04 change end
-
-    /**
-     * 添加数据到SxWorkLoad，使用批处理方式，<br>
-     * 先判断列表中产品状态是否Approved，不是则不处理该条产品数据，<br>
-     * 然后判断group是否存在，不存在则追加，<br>
-     * 最后批量添加数据
-     */
-    public void insertSxWorkLoad(String channelId, List<String> prodCodeList, List<Integer> cartIdList, String modifier) {
-        if (prodCodeList.isEmpty() || cartIdList.isEmpty()) {
-            $warn("insertSxWorkLoad: 参数为空");
-            return;
-        }
-        List<CmsBtProductGroupModel> newGroupList = new ArrayList<>();
-        // 获取所有的可上新的平台group信息
-        List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-
-        for (String prodCode : prodCodeList) {
-            // 根据商品code获取其所有group信息(所有平台)
-            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + prodCode + "\"}", channelId);
-            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
-
-            for (Integer cartId : cartIdList) {
-                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                model.setChannelId(channelId);
-                if (platformsMap.get(cartId) != null) {
-                    model.setGroupId(platformsMap.get(cartId));
-                } else {
-                    CmsBtProductGroupModel newGroup = groups.get(0);
-                    newGroup.set_id(null);
-                    newGroup.setChannelId(channelId);
-                    newGroup.setNumIId(null);
-                    newGroup.setCartId(cartId);
-                    newGroup.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
-                    newGroupList.add(newGroup);
-                    model.setGroupId(newGroup.getGroupId());
-                }
-                model.setCartId(cartId);
-                model.setPublishStatus(0);
-                model.setCreater(modifier);
-                model.setModifier(modifier);
-                models.add(model);
-            }
-        }
-
-        if (newGroupList.size() > 0) {
-            WriteResult rs = cmsBtProductGroupDao.insertWithList(newGroupList);
-            $debug("insertSxWorkLoad 新增group结果 " + rs.toString());
-        }
-
-        if (models.size() > 0) {
-            int rslt = cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
-            $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
-        }
-    }
-
-    /**
-     * confirm change category
-     */
-    public Map<String, Object> changeProductCategory(String channelId, String categoryId, String categoryPath, List<String> models, String modifier) {
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("common.catId", categoryId);
-        updateMap.put("common.catPath", categoryPath);
-        // bug CMS-30修正 edward 2016-05-24
-        if (!Channel.VOYAGEONE.getId().equals(channelId))
-            updateMap.put("batchField.switchCategory", 1);
-
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-
-        for (String modelCode : models) {
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("feed.orgAtts.modelCode", modelCode);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-        }
-
-        // 批量更新product表
-        BulkWriteResult result = null;
-        if (bulkList.size() > 0) {
-            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
-        }
-
-        // 批量更新feed表
-        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(channelId, models.toArray(new String[models.size()]));
-
-        // <更新 feed mapping 信息>
-
-        // 先获取所有 model 所在类目
-        List<CmsBtFeedInfoModel> feedInfoModels = cmsBtFeedInfoDao.selectCategoryByModel(models, channelId);
-
-        // 先去除类目重复
-        // 之后挨个对类目进行 mapping 更新
-        feedInfoModels
-                .stream()
-                .map(CmsBtFeedInfoModel::getCategory)
-                .distinct()
-                .forEach(path -> feedMappingService.setMapping(path, categoryPath, Channel.valueOfId(channelId), false));
-
-        // </更新 feed mapping 信息>
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("updFeedInfoCount", updateFeedInfoCount);
-        if (result != null) {
-            resultMap.put("updProductCount", result.getModifiedCount());
-            resultMap.put("modifiedCount", result.getModifiedCount() + updateFeedInfoCount);
-        } else {
-            resultMap.put("updProductCount", 0);
-            resultMap.put("modifiedCount", 0);
-        }
-
-        return resultMap;
-    }
-
-    /**
-     * 根据groupId批量更新产品的信息
-     *
-     * @param channelId String
-     * @param prodCode  String
-     * @param updateMap Map
-     * @param modifier  String
-     */
-    public void updateTranslation(String channelId, String prodCode, Map<String, Object> updateMap, String modifier) {
-        // 先根据产品code找到其model
-        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery("{\"fields.code\":\"" + prodCode + "\"},{\"fields.model\":1,\"_id\":0}", channelId);
-        String prodModel = prodObj.getCommon().getFields().getModel();
-
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("fields.model", prodModel);
-        HashMap<String, Object> optMap = new HashMap<>();
-        optMap.put("$set", updateMap);
-
-        cmsBtProductDao.update(channelId, queryMap, optMap);
-    }
 
     /**
      * get the product info from wms's request
@@ -705,6 +593,10 @@ public class ProductService extends BaseService {
             resultInfo = new ProductForWmsBean();
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            if(product == null) {
+                $error("该产品不存在:" + productSku  + "--" + channelId);
+                throw new BusinessException("该产品不存在:" + productSku);
+            }
             resultInfo.setChannelId(product.getChannelId());
             resultInfo.setCode(product.getCommon().getFields().getCode());
             resultInfo.setName(product.getCommon().getFields().getProductNameEn());
@@ -743,7 +635,7 @@ public class ProductService extends BaseService {
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setUrlKey("");
             String imagePath = "";
-            if (product.getCommon().getFields().getImages1().size() > 0) {
+            if (!product.getCommon().getFields().getImages1().isEmpty()) {
                 if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
                     imagePath = imageTemplateService.getImageUrl(product.getCommon().getFields().getImages1().get(0).getName());
             }
@@ -798,7 +690,7 @@ public class ProductService extends BaseService {
         if (!StringUtils.isEmpty(skuIncludes)) {
             sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
-        } else if (skuList != null && skuList.size() > 0) {
+        } else if (skuList != null && !skuList.isEmpty()) {
             sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuList.toArray(new String[skuList.size()])));
             sbQuery.append(",");
         }
@@ -824,7 +716,16 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(skuInfo -> {
+            List<BaseMongoMap<String, Object>> skus;
+            if(!StringUtils.isEmpty(skuIncludes)){
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
+            }else{
+                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                        .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+            }
+            if(skus == null || skus.size() == 0) return resultInfo;
+            skus.forEach(skuInfo -> {
                 ProductForOmsBean bean = new ProductForOmsBean();
                 // 设置商品的原始channelId
                 bean.setChannelId(product.getOrgChannelId());
@@ -839,9 +740,12 @@ public class ProductService extends BaseService {
                 param.put("channelId", product.getOrgChannelId());
                 param.put("sku", skuCode);
                 WmsBtInventoryCenterLogicModel skuInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
-                bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+
+                if(skuInventory != null) {
+                    bean.setInventory(String.valueOf(skuInventory.getQtyChina()));
+                }
                 String imagePath = "";
-                if (product.getCommon().getFields().getImages1().size() > 0) {
+                if (!product.getCommon().getFields().getImages1().isEmpty()) {
                     if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
                         imagePath = imageTemplateService.getImageUrl(product.getCommon().getFields().getImages1().get(0).getName());
                 }
@@ -868,88 +772,6 @@ public class ProductService extends BaseService {
         }
 
         return resultInfo;
-    }
-
-
-    /**
-     * distributeTranslation 分配翻译商品
-     */
-    public List<CmsBtProductModel> translateDistribute(String channelId, ProductTransDistrBean param) {
-        /**
-         * lock data
-         */
-        String nowStr = DateTimeUtil.getNow();
-        int getCount = param.getLimit();
-        String translator = param.getTranslator();
-        int translateTimeHDiff = param.getTranslateTimeHDiff();
-        int distributeRule = param.getDistributeRule();
-
-        String queryStrTmp;
-        switch (distributeRule) {
-            case 0:
-                // add translateTime condition
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
-                break;
-            case 1:
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"fields.isMasterMain\":1}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"fields.isMasterMain\":1}]}";
-                break;
-            default:
-                // add translateTime condition
-                queryStrTmp = "{\"$or\":" +
-                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
-                break;
-        }
-
-        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
-        String translateTimeStr = DateTimeUtil.format(date, null);
-
-        JomgoUpdate updateObject = new JomgoUpdate();
-        // create query string
-        String queryStr = String.format(queryStrTmp, translateTimeStr);
-        updateObject.setQuery(queryStr);
-
-        // create Projection
-        updateObject.setProjection(param.getProjectionArr());
-
-        // create sort String
-        updateObject.setSort(param.getSortStr());
-
-        // create Update string
-        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":\"0\", \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
-        String updateStr = String.format(strUpdateTmp, translator, nowStr);
-        updateObject.setUpdate(updateStr);
-
-        List<CmsBtProductModel> products = new ArrayList<>();
-        //update translator translateTime
-        for (int i = 0; i < getCount; i++) {
-            CmsBtProductModel productModel = cmsBtProductDao.findAndModify(updateObject, channelId);
-            if (productModel != null) {
-                products.add(productModel);
-            } else {
-                break;
-            }
-        }
-
-        return products;
-    }
-
-    public void updateTranslateStatus(String channelId, String prodCode, String translateStatus, String modifier) {
-        Map<String, String> paraMap = new HashMap<>(1);
-        paraMap.put("fields.code", prodCode);
-
-        Map<String, String> rsMap = new HashMap<>(3);
-        rsMap.put("fields.translateStatus", translateStatus);
-        rsMap.put("modifier", modifier);
-        rsMap.put("modified", DateTimeUtil.getNowTimeStamp());
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("$set", rsMap);
-
-        cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
 
     public void updateTags(String channelId, Long prodId, List<String> Tags, String modifier) {
@@ -998,7 +820,7 @@ public class ProductService extends BaseService {
 
         List<WmsBtInventoryCenterLogicModel> listLogicInventory = wmsBtInventoryCenterLogicDao.selectItemDetailBySkuList(channelId, skuList);
 
-        if (listLogicInventory != null && listLogicInventory.size() > 0) {
+        if (listLogicInventory != null && !listLogicInventory.isEmpty()) {
             for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
                 String sku = logicInventory.getSku();
                 Integer logicQty = logicInventory.getQtyChina();
@@ -1030,13 +852,7 @@ public class ProductService extends BaseService {
             }
         }
         platformModel.getSkus().forEach(sku -> {
-            String diffFlg = "1";
-            if(sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")){
-                diffFlg = "2";
-            }else if(sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")){
-                diffFlg = "3";
-            }
-            sku.setAttribute("priceDiffFlg",diffFlg);
+            sku.setAttribute("priceDiffFlg", productSkuService.getPriceDiffFlg(channelId, sku));
         });
 
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1053,9 +869,13 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
-            insertSxWorkLoad(channelId, new ArrayList<>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), new ArrayList<>(Arrays.asList(platformModel.getCartId())), modifier);
+            sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), platformModel.getCartId(), modifier);
         }
         insertProductHistory(channelId, prodId);
+
+        List<String> skus = new ArrayList<>();
+        platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, "页面编辑");
 
         return platformModel.getModified();
     }
@@ -1084,6 +904,19 @@ public class ProductService extends BaseService {
         common.setModified(DateTimeUtil.getNowTimeStamp());
         common.setModifier(modifier);
         common.getFields().setHsCodeStatus(StringUtil.isEmpty(common.getFields().getHsCodePrivate()) ? "0" : "1");
+        if(!common.getFields().getHsCodeStatus().equalsIgnoreCase(oldProduct.getCommon().getCatId())){
+            if(common.getFields().getHsCodeStatus().equalsIgnoreCase("1")){
+                common.getFields().setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
+                common.getFields().setHsCodeSetter(modifier);
+            }
+        }
+        common.getFields().setCategoryStatus(StringUtil.isEmpty(common.getCatId()) ? "0" : "1");
+        if(!common.getFields().getCategoryStatus().equalsIgnoreCase(oldProduct.getCommon().getCatId())){
+            if(common.getFields().getCategoryStatus().equalsIgnoreCase("1")){
+                common.getFields().setCategorySetTime(DateTimeUtil.getNowTimeStamp());
+                common.getFields().setCategorySetter(modifier);
+            }
+        }
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
@@ -1179,18 +1012,18 @@ public class ProductService extends BaseService {
                 updateMap.put("feed.catPath", feed.getCatPath());
             }
 
-            if (feed.getOrgAtts() != null && feed.getOrgAtts().size() > 0) {
+            if (feed.getOrgAtts() != null && !feed.getOrgAtts().isEmpty()) {
                 BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
                 updateMap.putAll(orgAttsObj);
             }
-            if (feed.getCnAtts() != null && feed.getCnAtts().size() > 0) {
+            if (feed.getCnAtts() != null && !feed.getCnAtts().isEmpty()) {
                 BasicDBObject cnAttsObj = feed.getCnAtts().toUpdateBasicDBObject("feed.cnAtts.");
                 updateMap.putAll(cnAttsObj);
             }
-            if (feed.getCustomIds() != null && feed.getCustomIds().size() > 0) {
+            if (feed.getCustomIds() != null && !feed.getCustomIds().isEmpty()) {
                 updateMap.put("feed.customIds", feed.getCustomIds());
             }
-            if (feed.getCustomIdsCn() != null && feed.getCustomIdsCn().size() > 0) {
+            if (feed.getCustomIdsCn() != null && !feed.getCustomIdsCn().isEmpty()) {
                 updateMap.put("feed.customIdsCn", feed.getCustomIdsCn());
             }
         }
@@ -1215,15 +1048,16 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.countByQuery(strQuery, channelId);
     }
 
+    public long countByQuery(final String strQuery, final Object[] parameters, String channelId) {
+        return cmsBtProductDao.countByQuery(strQuery, parameters, channelId);
+    }
+
     public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
         return cmsBtProductDao.aggregateToMap(channelId, aggregateList);
     }
 
     /**
      * 获取CustomProp
-     *
-     * @param product
-     * @return
      */
     public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
 
@@ -1236,28 +1070,29 @@ public class ProductService extends BaseService {
         List<CustomPropBean> props = new ArrayList<>();
 
         //读feed_info
-        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(channelId, fields.getCode());
+        CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
         Map<String, List<String>> feedAttr = feedInfo.getAttribute();
 
         //读cms_mt_feed_custom_prop
         List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, feedInfo.getCategory());
 
         //去除掉feedCustomPropList中的垃圾数据
-        if (feedCustomPropList != null && feedCustomPropList.size() > 0) {
-            feedCustomPropList = feedCustomPropList.stream().filter(w -> (!StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
-                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original()))).collect(Collectors.toList());
+        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
+            feedCustomPropList = feedCustomPropList.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) &&
+                    !StringUtils.isNullOrBlank2(w.getFeed_prop_original())).collect(Collectors.toList());
         } else {
             feedCustomPropList = new ArrayList<>();
         }
 
-        List<String>  customIds = product.getFeed().getCustomIds();
+        List<String> customIds = product.getFeed().getCustomIds();
 
         customIds = customIds == null ? new ArrayList<>() : customIds;
 
 
         //合并feedAttr和feedCustomPropList
-        for (String attrKey : feedAttr.keySet()) {
-            List<String> valueList = feedAttr.get(attrKey);
+        for (Map.Entry<String, List<String>> entry : feedAttr.entrySet()) {
+            String attrKey = entry.getKey();
+            List<String> valueList = entry.getValue();
             CustomPropBean prop = new CustomPropBean();
             prop.setFeedAttrEn(attrKey);
             String attrValue = Joiner.on(",").skipNulls().join(valueList);
@@ -1287,8 +1122,7 @@ public class ProductService extends BaseService {
 
                 }
 
-                if(customIds.stream().filter(w->w.equals(attrKey)).count() >0)
-                {
+                if (customIds.stream().filter(w -> w.equals(attrKey)).count() > 0) {
                     prop.setCustomPropActive(true);
                 }
             }
@@ -1314,8 +1148,7 @@ public class ProductService extends BaseService {
                     prop.setFeedAttrValueCn(cnAttrs.getStringAttribute(cnAttKey));
                 }
 
-                if(customIds.stream().filter(w->w.equals(feedKey)).count() >0)
-                {
+                if (customIds.stream().filter(w -> w.equals(feedKey)).count() > 0) {
                     prop.setCustomPropActive(true);
                 }
                 props.add(prop);
@@ -1325,19 +1158,17 @@ public class ProductService extends BaseService {
         return props;
     }
 
-    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier){
+    public String updateProductAtts(String channelId, Long prodId, List<CustomPropBean> cnProps, String modifier) {
 
-        Map<String,Object> queryMap = new HashMap<>();
-        queryMap.put("prodId",prodId);
-        Map<String,Object> rsMap = new HashMap<>();
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        Map<String, Object> rsMap = new HashMap<>();
         String modified = DateTimeUtil.getNowTimeStamp();
-        rsMap.put("modified",modified);
-        rsMap.put("modifier",modifier);
+        rsMap.put("modified", modified);
+        rsMap.put("modifier", modifier);
         if (cnProps != null) {
-                    rsMap.put("feed.customIds", cnProps.stream().filter(customPropBean -> customPropBean.isCustomPropActive()).map(CustomPropBean::getFeedAttrEn)
-                            .collect(Collectors.toList()));
-                    rsMap.put("feed.customIdsCn", cnProps.stream().filter(customPropBean -> customPropBean.isCustomPropActive()).map
-                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
+            rsMap.put("feed.customIds", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrEn).collect(Collectors.toList()));
+            rsMap.put("feed.customIdsCn", cnProps.stream().filter(CustomPropBean::isCustomPropActive).map(CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
             rsMap.put("feed.orgAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
             rsMap.put("feed.cnAtts", cnProps.stream().filter(customPropBean -> !StringUtil.isEmpty(customPropBean.getFeedAttrCn())).collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
         }
@@ -1346,7 +1177,8 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
-        insertSxWorkLoad(channelId,getProductById(channelId,prodId),modifier);
+        insertSxWorkLoad(channelId, getProductById(channelId, prodId), modifier);
+        insertProductHistory(channelId, prodId);
         return modified;
     }
 }

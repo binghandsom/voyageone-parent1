@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("feedSchema", function (productDetailService,notify) {
+    cms.directive("feedSchema", function (productDetailService,notify,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/feed.component.tpl.html",
@@ -19,8 +19,14 @@ define([
                  */
 
                 function updateFeedInfo(){
+                    if(scope.feedFrom.$invalid){
+                        return alert("保存失败，请查看已匹配属性是否填写正确！");
+                    }
+
                     productDetailService.updateProductAtts({prodId:scope.productInfo.productId,feedInfo:scope.productInfo.feedInfo}).then(function(){
                         notify.success("更新成功!");
+                    },function(){
+                        alert("更新失败！");
                     });
                 }
                 /**

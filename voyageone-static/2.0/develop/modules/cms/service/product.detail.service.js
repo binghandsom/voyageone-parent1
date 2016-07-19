@@ -28,6 +28,9 @@ define([
 		this.updateCommonProductInfo = updateCommonProductInfo;
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
+		this.checkCategory = checkCategory;
+		this.getChangeMastProductInfo = getChangeMastProductInfo;
+		this.setMastProduct = setMastProduct;
 
 		/**
 		 * 获取页面产品信息
@@ -333,6 +336,54 @@ define([
 				});
 			return defer.promise;
 		}
+
+		/**
+		 * @param { cartId:"",catpath:""} 平台id，类目path
+		 * 检查类目操作
+		 */
+		function checkCategory(req){
+			var defer = $q.defer();
+			$productDetailService.checkCategory(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 获取主商品信息
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"} 平台id，产品code
+         * @returns {*}
+         */
+		function getChangeMastProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getChangeMastProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 设置主商品
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"}  平台id，产品code
+         * @returns {*}
+         */
+		function setMastProduct(req){
+			var defer = $q.defer();
+			$productDetailService.setMastProduct(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
 	}
 
 

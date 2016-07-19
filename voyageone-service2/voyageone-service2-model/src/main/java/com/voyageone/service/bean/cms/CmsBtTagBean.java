@@ -45,7 +45,7 @@ public class CmsBtTagBean extends CmsBtTagModel {
 
     @Override
     public boolean equals(Object cbb) {
-        if (!(cbb instanceof CmsBtTagBean) || cbb == null) {
+        if (cbb == null || !(cbb instanceof CmsBtTagBean)) {
             return false;
         }
         if (this.id == null) {

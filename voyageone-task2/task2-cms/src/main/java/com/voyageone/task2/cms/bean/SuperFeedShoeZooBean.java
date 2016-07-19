@@ -36,15 +36,11 @@ public class SuperFeedShoeZooBean extends SuperFeedBean{
 
     private String condition;
 
-    private String buyItNowPrice;
-
     private String retailPrice;
 
     private String taxproductcode;
 
     private String relationshipName;
-
-    private String amzrepricerautoprice;
 
     private String categories;
 
@@ -55,14 +51,6 @@ public class SuperFeedShoeZooBean extends SuperFeedBean{
     private String colorname;
 
     private String departmentname;
-
-    private String ebaymaincolor;
-
-    private String ebaystorecategorytext;
-
-    private String externalproductid;
-
-    private String externalproductidtype;
 
     private String feedproducttype;
 
@@ -260,14 +248,6 @@ public class SuperFeedShoeZooBean extends SuperFeedBean{
         this.condition = condition == null ? null : condition.trim();
     }
 
-    public String getBuyItNowPrice() {
-        return buyItNowPrice;
-    }
-
-    public void setBuyItNowPrice(String buyItNowPrice) {
-        this.buyItNowPrice = buyItNowPrice == null ? null : buyItNowPrice.trim();
-    }
-
     public String getRetailPrice() {
         return retailPrice;
     }
@@ -290,14 +270,6 @@ public class SuperFeedShoeZooBean extends SuperFeedBean{
 
     public void setRelationshipName(String relationshipName) {
         this.relationshipName = relationshipName == null ? null : relationshipName.trim();
-    }
-
-    public String getAmzrepricerautoprice() {
-        return amzrepricerautoprice;
-    }
-
-    public void setAmzrepricerautoprice(String amzrepricerautoprice) {
-        this.amzrepricerautoprice = amzrepricerautoprice == null ? null : amzrepricerautoprice.trim();
     }
 
     public String getCategories() {
@@ -338,38 +310,6 @@ public class SuperFeedShoeZooBean extends SuperFeedBean{
 
     public void setDepartmentname(String departmentname) {
         this.departmentname = departmentname == null ? null : departmentname.trim();
-    }
-
-    public String getEbaymaincolor() {
-        return ebaymaincolor;
-    }
-
-    public void setEbaymaincolor(String ebaymaincolor) {
-        this.ebaymaincolor = ebaymaincolor == null ? null : ebaymaincolor.trim();
-    }
-
-    public String getEbaystorecategorytext() {
-        return ebaystorecategorytext;
-    }
-
-    public void setEbaystorecategorytext(String ebaystorecategorytext) {
-        this.ebaystorecategorytext = ebaystorecategorytext == null ? null : ebaystorecategorytext.trim();
-    }
-
-    public String getExternalproductid() {
-        return externalproductid;
-    }
-
-    public void setExternalproductid(String externalproductid) {
-        this.externalproductid = externalproductid == null ? null : externalproductid.trim();
-    }
-
-    public String getExternalproductidtype() {
-        return externalproductidtype;
-    }
-
-    public void setExternalproductidtype(String externalproductidtype) {
-        this.externalproductidtype = externalproductidtype == null ? null : externalproductidtype.trim();
     }
 
     public String getFeedproducttype() {

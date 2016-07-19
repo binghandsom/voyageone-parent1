@@ -65,7 +65,7 @@ define([
          * @param dictionaryInfo
          */
         function delDictItem (dictionaryInfo) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     $dictionaryService.delDict(dictionaryInfo)
                         .then(function () {

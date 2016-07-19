@@ -16,7 +16,7 @@ define([
         };
         $scope.categoryList = context.categoryList;
         $scope.valList = context.valueList;
-        $scope.vm.cat_path = context.from == '0' ? '共通属性' : context.from;
+        $scope.vm.cat_path = context.from == '0' || context.from == null ? '共通属性' : context.from;
         //if ($scope.vm.cat_path == '0') {
         //    $scope.vm.cat_path = '共通属性';
         //}
@@ -25,9 +25,9 @@ define([
          * 类目发生变化时,动态获取对应的属性值
          * @param catPath
          */
-        $scope.valueChange = function(catPath ){
+        $scope.valueChange = function(catPath){
             var catPathVal = catPath;
-            if (catPathVal == '共通属性') {
+            if (catPathVal == '共通属性' || catPathVal == null) {
                 catPathVal = '0';
             }
             attributeService.init({cat_path:catPathVal,unsplitFlg:1})
@@ -37,11 +37,12 @@ define([
                     //});
                     //$scope.valList = $filter(function (data) { console.log(data); return data.prop_translation != ''})(res.data.valList);
                     $scope.valList = res.data.valList;
+                }, function (res) {
+                    console.log("123123");
                 });
         };
 
         $scope.propTranslationNotEmpty = function (data) {
-            console.log(data);
             return data.prop_translation != '';
         };
 

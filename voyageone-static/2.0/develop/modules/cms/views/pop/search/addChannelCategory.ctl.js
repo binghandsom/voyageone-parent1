@@ -20,8 +20,7 @@ define([
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
-        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, notify, alert, $uibModalInstance) {
-            this.code = context.productIds;
+        function PopAddChannelCategoryCtrl(context, $rootScope, $addChannelCategoryService, notify, alert, $uibModalInstance,$translate) {
             this.cartName = '';
             this.channelCategoryList = null;
             this.isSelectCid = [];
@@ -36,9 +35,10 @@ define([
             this.notify = notify;
             this.checkedCountValid = false;
             this.cartIdValid = false;
-            this.context = context;
-            this.selAllFlg = context.isSelAll;
+            this._context = context;
             this.needSave = false;
+            this.translate = $translate;
+            this.alert = alert;
         }
 
         PopAddChannelCategoryCtrl.prototype = {
@@ -50,7 +50,7 @@ define([
                 if (self.cartId == null) {
                     self.cartId = 0;
                 }
-                self.addChannelCategoryService.init({"code": self.code, "cartId": self.cartId, "isSelAll": self.selAllFlg}).then(function (res) {
+                self.addChannelCategoryService.init({"code": self._context.productIds, "cartId": self.cartId, "isSelAll": self._context.isSelAll, 'isQuery':self._context.isQuery}).then(function (res) {
                     //默认对打钩的数目和店铺渠道选择的验证处于隐藏状态
                     self.checkedCountValid = false;
                     self.cartIdValid = false;
@@ -62,11 +62,11 @@ define([
                         self.channelCategoryList = null;
                         return;
                     }
-                    self.orgChkStsMap = res.data.orgChkStsMap;
+                    self.orgChkStsMap = self._context.plateSchema ? self._context.selectedIds :res.data.orgChkStsMap;
                     self.orgDispMap = res.data.orgDispMap;
                     self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
                     self._orgDispMap = angular.copy(res.data.orgDispMap);
-                    self.isSelectCid = self.context.plateSchema?self.context.selectedIds:res.data.isSelectCid;
+                    //self.isSelectCid = self._context.plateSchema ? self._context.selectedIds:res.data.isSelectCid;
                     self.channelCategoryList = res.data.channelCategoryList;
                 });
             },
@@ -76,8 +76,9 @@ define([
              */
             save: function () {
                 var self = this;
-                if (!self.needSave) {
-                    alert("店铺内分类没有改变，不需要保存");
+
+                if (!self._context.isQuery && !self.needSave) {
+                    self.alert("店铺内分类没有改变，不需要保存");
                     return;
                 }
 
@@ -91,7 +92,7 @@ define([
                 for (var key in self.orgDispMap) {
                     if (self.orgDispMap[key]) {
                         // 如果有半选状态，则提示
-                        alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
+                        self.alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
                         return;;
                     }
                 }
@@ -114,9 +115,10 @@ define([
                         category = category.parent;
                     }
                 });
-                //save保存时，如果类目打钩数目超过cnt的值，则显示警告：超过最大值了
+                //save保存时，如果类目打钩数目超过cnt的值，则显示警告：超过最大值了     可设置数应该小于等于10
+                self.cnt = 10;
                 if (fullCIds.length > self.cnt) {
-                    self.checkedCountValid = true;
+                    self.alert(self.translate.instant("MAX_SELLER_CAT_CNT") + self.cnt);
                     return;
                 }
 

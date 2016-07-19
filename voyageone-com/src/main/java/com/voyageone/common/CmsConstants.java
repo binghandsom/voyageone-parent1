@@ -5,6 +5,9 @@ public class CmsConstants {
     // 从上新的任务表中一次数据抽出最大件数
     public static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
 
+    // 有效销售平台cartId的最小值
+    public static final int ACTIVE_CARTID_MIN = 20;
+
     /**
      * 产品状态
      */
@@ -101,6 +104,13 @@ public class CmsConstants {
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
+
+        // App端启用开关(用于控制所有平台的)
+        String APP_SWITCH = "APP_SWITCH";
+
+        // 发货方式
+        String SHIPPING_TYPE = "SHIPPING_TYPE";
+
     }
 
     public interface DataAmount {

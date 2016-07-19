@@ -18,6 +18,8 @@ public interface CmsBtTaskTejiabaoDao {
 
     CmsBtTaskTejiabaoModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsBtTaskTejiabaoModel select(Integer id);
 
     int insert(CmsBtTaskTejiabaoModel record);

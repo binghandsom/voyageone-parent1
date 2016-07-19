@@ -215,7 +215,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<CmsBtPromotionCodesBean> promList = promotionCodeService.getPromotionCodeList(param);
 
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("{'batchField':1,'fields.code':1,'_id':0}");
+        queryObject.setProjection("{'batchField':1,'common.fields.code':1,'_id':0}");
 
         if (!CollectionUtils.isEmpty(promList)) {
             promList.forEach(map -> {

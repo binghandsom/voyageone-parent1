@@ -20,8 +20,11 @@ public interface CmsUrlConstants {
             String GET_CATE_TYPE = "getPlatformType";
 
             String SET_CATE_TYPE = "setPlatformType";
-        }
 
+            String GetHomeSumData="getHomeSumData";
+
+            String GET_CMS_CONFIG = "getCmsConfig";
+        }
     }
 
     interface JMPROMOTION {
@@ -135,6 +138,12 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/index";
                 String INIT = "init";
                 String InitByPromotionId="initByPromotionId";
+                String GetPage="getPage";
+                String GetCount="getCount";
+                String GetEditModel="getEditModel";
+                String SaveEditModel="saveEditModel";
+                String DeleteByPromotionId="deleteByPromotionId";
+                String SetPromotionStatus="setPromotionStatus";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
@@ -316,6 +325,7 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
             String UPDATE = "updateFeedStatus";
             String EXPORT = "export";
+            String REEXPORT = "reExport";
             String EXPORTSEARCH = "exportSearch";
             String DOWNLOAD = "download";
         }
@@ -471,11 +481,13 @@ public interface CmsUrlConstants {
             String ADD_TO_PROMOTION = "addToPromotion";
         }
 
-        interface PRICE {
+        interface PRICE_LOG {
 
-            String ROOT = "/cms/pop/history_price/";
+            String ROOT = "/cms/price/log";
 
-            String GET_PRICE_HISTORY = "getPriceHistory";
+            String PAGE = "page";
+
+            String EXPORT = "export";
         }
 
         interface PROMOTION {
@@ -502,7 +514,6 @@ public interface CmsUrlConstants {
     interface PRODUCT{
 
         interface DETAIL {
-
             String ROOT = "/cms/product/detail";
 
             String GET_PRODUCT_INFO = "getProductInfo";
@@ -533,9 +544,24 @@ public interface CmsUrlConstants {
 
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
+            String CHECK_CATEGORY = "checkCategory";
+            String GetChangeMastProductInfo="getChangeMastProductInfo";
+            String SetMastProduct="setMastProduct";
         }
 
+        interface HISTORY {
+            String ROOT = "/cms/product/history";
+            String GET_PUTONOFF_LOG_LIST = "getPutOnOffLogList";
+
+
+        }
+        interface StatusHistory {
+            String ROOT = "/cms/product/statushistory";
+            String GetPage = "getPage";
+            String GetCount="getCount";
+        }
     }
+
 
     // 商品编辑
     interface GROUP{

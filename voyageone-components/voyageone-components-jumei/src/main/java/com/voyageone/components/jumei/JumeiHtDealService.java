@@ -1,16 +1,11 @@
 package com.voyageone.components.jumei;
 
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
-import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateRequest;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -23,6 +18,7 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
     public HtDealCopyDealResponse copyDeal(ShopBean shopBean, HtDealCopyDealRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
@@ -31,6 +27,7 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
+
     public HtDealUpdateDealEndTimeResponse updateDealEndTime(ShopBean shopBean, HtDealUpdateDealEndTimeRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
@@ -39,11 +36,30 @@ public class JumeiHtDealService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
-    public HtDealUpdateDealPriceBatchResponse updateDealPriceBatch(ShopBean shopBean,HtDealUpdateDealPriceBatchRequest request) throws Exception {
+
+    public HtDealUpdateDealPriceBatchResponse updateDealPriceBatch(ShopBean shopBean, HtDealUpdateDealPriceBatchRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
         logger.info("批量更新Deal价格信息返回：" + reqResult);//
         HtDealUpdateDealPriceBatchResponse response = new HtDealUpdateDealPriceBatchResponse();
+        response.setBody(reqResult);
+        return response;
+    }
+
+    public HtDealUpdateDealStockBatchResponse updateDealStockBatch(ShopBean shopBean, HtDealUpdateDealStockBatchRequest request) throws Exception {
+        Map<String, Object> params = request.getParameter();
+        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        logger.info("批量同步deal库存返回：" + reqResult);//
+        HtDealUpdateDealStockBatchResponse response = new HtDealUpdateDealStockBatchResponse();
+        response.setBody(reqResult);
+        return response;
+    }
+
+    public HtDealGetDealByHashIDResponse getDealByHashID(ShopBean shopBean, HtDealGetDealByHashIDRequest request) throws Exception {
+        Map<String, Object> params = request.getParameter();
+        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        logger.info("获取Deal信息返回：" + reqResult);//
+        HtDealGetDealByHashIDResponse response = new HtDealGetDealByHashIDResponse();
         response.setBody(reqResult);
         return response;
     }

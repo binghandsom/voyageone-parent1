@@ -5,7 +5,7 @@
 define([
     'cms'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -19,7 +19,7 @@ define([
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"image1":[],"image2":[],"image3":[],"image4":[],"image5":[],"image6":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[]}
                 };
 
                 initialize();
@@ -32,32 +32,50 @@ define([
                  * 获取京东页面初始化数据
                  */
                 function initialize(){
-                    var productMonitor = scope.$watch("productInfo.productDetails",function(data){
-
-                        // 没有就继续等待
-                        if (!data){
-                            return;
-                        }
-                       scope.vm.productDetails = data.productInfo;
-                       scope.vm.inventoryList = data.inventoryList;
-                       if ($rootScope.imageUrl == undefined) {
-                         $rootScope.imageUrl = '';
-                       }
-                       scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productDetails.productImages.image1[0].image1);
-                       scope.vm.currentImage = data.defaultImage;
-
-                        productMonitor();
-                        productMonitor = null;
-                    });
-
                     productDetailService.getCommonProductInfo({cartId:"0",prodId:scope.productInfo.productId}).then(function(resp){
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
 
+                        var _fields = scope.vm.productComm.fields;
+                        /**通知子页面税号状态和翻译状态*/
+                        scope.productInfo.checkFlag = new Date().getTime();
+                        scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
+                        scope.productInfo.hsCodeStatus =  _fields.hsCodeStatus == null ? 0: +_fields.hsCodeStatus;
+
+                        constructSchema(scope, $compile);
+
+                        /**图片显示*/
+                        if ($rootScope.imageUrl == undefined) {
+                            $rootScope.imageUrl = '';
+                        }
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
+                        /**主商品提示*/
+                        if(!scope.vm.mastData.isMain){
+                            alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
+                        }
                     });
+                }
+
+                var schemaScope;
+
+                function constructSchema(parentScope, compile) {
+
+                    var element = $('#schemaContainer');
+
+                    if (schemaScope)
+                        schemaScope.$destroy();
+
+                    element.empty();
+
+                    element.append('<schema data="data"></schema>');
+                    schemaScope = parentScope.$new();
+                    schemaScope.data = parentScope.vm.productComm.schemaFields;
+
+                    compile(element)(schemaScope);
                 }
 
                 /**
@@ -67,8 +85,14 @@ define([
                  */
                 function masterCategoryMapping(popupNewCategory) {
                     systemCategoryService.getNewsCategoryList().then(function(res){
+                        if (!res.data || !res.data.length) {
+                            notify.danger("数据还未准备完毕");
+                            return;
+                        }
+
                         popupNewCategory({
-                            categories: res.data
+                            categories: res.data,
+                            from:scope.vm.productComm == null?"":scope.vm.productComm.catPath
                         }).then(function(context){
                             //判断类目是否改变
                             scope.vm.categoryMark = scope.vm.productComm.catPath == context.selected.catPath;
@@ -85,11 +109,30 @@ define([
                  */
                 function openProImageSetting(imageType,openImageSetting) {
                     openImageSetting({
-                        product:  scope.vm.productDetails,
+                        productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
-                        scope.vm.tempImage[context.imageType].push(context.base64);
-                        //scope.vm.productDetails = context.productInfo;
+                        if(context == null)
+                            return;
+
+                        if(context.length == 0)
+                            return;
+
+                        scope.vm.productComm.modified = context.modified;
+
+                        var imgType = null;
+                        angular.forEach(context,function(item){
+                            imgType = item.imageType;
+                            scope.vm.tempImage[item.imageType].push(item.base64);
+                        });
+
+                        _.map(scope.vm.productComm.schemaFields, function(item){
+                            if(item.id == imgType){
+                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
+                            }
+                        });
+
+                        constructSchema(scope, $compile);
                     });
                 }
 
@@ -110,7 +153,7 @@ define([
                         scope.productInfo.checkFlag = new Date().getTime();
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
-                        notify.success("更新成功!");
+                        notify.success("更 新 成 功 ");
                     },function(){
                         alert("更新失败","错误提示");
                     });

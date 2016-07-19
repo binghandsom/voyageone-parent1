@@ -1,6 +1,7 @@
 package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
 import java.util.Map;
@@ -91,8 +92,9 @@ public class HtSkuAddResponse extends BaseJMResponse {
                 this.setErrorMsg(this.body);
             }
         } catch (Exception ex) {
+            logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.body);
+            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 }

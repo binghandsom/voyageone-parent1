@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -121,7 +123,7 @@ public class FeedToCmsService extends BaseService {
                             insertLog = true;
                         } else {
                             // 改条数据已经需要跟新主数据了 后面价格也不需要比了
-                            if (insertLog == false) {
+                            if (!insertLog) {
                                 CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
                                 if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
                                         || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
@@ -137,10 +139,10 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
-                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1) && insertLog) {
+                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) && insertLog) {
                         product.setUpdFlg(0);
                     } else {
-                        product.setUpdFlg(befproduct.getUpdFlg());
+                        product.setUpdFlg(9);
                     }
                 } else {
                     insertLog = true;
@@ -155,6 +157,9 @@ public class FeedToCmsService extends BaseService {
                 product.setQty(qty);
 
                 product.setCatId(MD5.getMD5(product.getCategory()));
+                // 产品数据合法性检查
+                checkProduct(product);
+
                 feedInfoService.updateFeedInfo(product);
 
                 brandList.add(product.getBrand());
@@ -185,8 +190,8 @@ public class FeedToCmsService extends BaseService {
         }
 
         // 更新类目中属性
-        for (String key : attributeMtDatas.keySet()) {
-            updateFeedCategoryAttribute(channelId, attributeMtDatas.get(key), key);
+        for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
+            updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
         }
 
         //0:brand 1:sizeType 2:productType
@@ -200,16 +205,55 @@ public class FeedToCmsService extends BaseService {
         return response;
     }
 
+    public Boolean checkProduct(CmsBtFeedInfoModel product){
+        if(product.getImage() == null || product.getImage().size() == 0){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有图片");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }else if(product.getImage().stream().filter(str->!StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有图片");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+
+        if(product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+            product.setUpdMessage("没有品牌");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+
+        for(CmsBtFeedInfoModel_Sku sku : product.getSkus()){
+            if(StringUtil.isEmpty(sku.getBarcode())){
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("没有UPC");
+                $info(product.getCode() + "----" + product.getUpdMessage());
+                return false;
+            }
+
+            if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
+                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+                product.setUpdMessage("成本价为0");
+                $info(product.getCode() + "----" +product.getUpdMessage());
+                return false;
+            }
+        }
+        return true;
+    }
     private Map<String, List<String>> attributeMerge(Map<String, List<String>> attribute1, Map<String, List<String>> attribute2) {
 
-        for (String key : attribute1.keySet()) {
+        for (Map.Entry<String, List<String>> entry1 : attribute1.entrySet()) {
+            String key = entry1.getKey();
+            List<String> value = entry1.getValue();
             if (attribute2.containsKey(key)) {
-                attribute2.put(key, Stream.concat(attribute1.get(key).stream(), attribute2.get(key).stream())
+                attribute2.put(key, Stream.concat(value.stream(), attribute2.get(key).stream())
                         .map(String::trim)
                         .distinct()
                         .collect(toList()));
             } else {
-                attribute2.put(key, attribute1.get(key));
+                attribute2.put(key, value);
             }
         }
         return attribute2;
@@ -223,15 +267,18 @@ public class FeedToCmsService extends BaseService {
      */
     private void attributeMtDataMake(Map<String, List<String>> attributeMtData, CmsBtFeedInfoModel product) {
         Map<String, List<String>> map = product.getAttribute();
+
         if (map == null) return;
-        for (String key : map.keySet()) {
+
+        for (Map.Entry<String, List<String>> entry1 : map.entrySet()) {
+            String key = entry1.getKey();
             if (attributeMtData.containsKey(key)) {
                 List<String> value = attributeMtData.get(key);
-                value.addAll(map.get(key));
+                value.addAll(entry1.getValue());
                 attributeMtData.put(key, value.stream().distinct().collect(toList()));
             } else {
                 List<String> value = new ArrayList<>();
-                value.addAll(map.get(key));
+                value.addAll(entry1.getValue());
                 attributeMtData.put(key, value);
             }
         }
@@ -259,14 +306,15 @@ public class FeedToCmsService extends BaseService {
 
         Map<String, List<String>> oldAtt = cmsBtFeedCategoryAttribute.getAttribute();
 
-        for (String key : attribute.keySet()) {
+        for (Map.Entry<String, List<String>> entry1 : attribute.entrySet()) {
+            String key = entry1.getKey();
             if (oldAtt.containsKey(key)) {
-                oldAtt.put(key, Stream.concat(attribute.get(key).stream(), oldAtt.get(key).stream())
+                oldAtt.put(key, Stream.concat(entry1.getValue().stream(), oldAtt.get(key).stream())
                         .map(String::trim)
                         .distinct()
                         .collect(toList()));
             } else {
-                oldAtt.put(key, attribute.get(key));
+                oldAtt.put(key, entry1.getValue());
             }
         }
         feedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);

@@ -55,7 +55,7 @@ define([
         }
         
         $scope.updateAllStatus = function (synFlg) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":synFlg,"errMsg":"","taskType":0}).then(function (res) {
                         _.each($scope.vm.priceList,function(item){

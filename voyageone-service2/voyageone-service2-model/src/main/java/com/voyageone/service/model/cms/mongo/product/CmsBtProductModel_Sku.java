@@ -70,12 +70,20 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         setStringAttribute("sizeNick", sizeNick);
     }
 
+    //sizeSx
+    public String getSizeSx() {
+        return getStringAttribute("sizeSx");
+    }
+    public void setSizeSx(String sizeSx) {
+        setStringAttribute("sizeSx", sizeSx);
+    }
+
     //clientMsrpPrice
     public Double getClientMsrpPrice () {
         return getDoubleAttribute("clientMsrpPrice");
     }
     public void setClientMsrpPrice (Double clientMsrpPrice) {
-        setStringAttribute("clientMsrpPrice", clientMsrpPrice);
+        setAttribute("clientMsrpPrice", clientMsrpPrice == null ? 0.00 : clientMsrpPrice);
     }
 
     //clientRetailPrice
@@ -112,9 +120,25 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
 
     //qty
     public Integer getQty() {
-        return getAttribute("qty");
+        return getIntAttribute("qty");
     }
     public void setQty(Integer qty) {
         setAttribute("qty", qty == null ? 0 : qty);
+    }
+
+    //weight
+    public Double getWeight() {
+        return getDoubleAttribute("weight");
+    }
+    public void setWeight(Double weight) {
+        setAttribute("weight", weight == null ? 0 : weight);
+    }
+
+    //weightUnit
+    public String getWeightUnit() {
+        return getStringAttribute("weightUnit");
+    }
+    public void setWeightUnit(String weightUnit) {
+        setStringAttribute("weightUnit", weightUnit);
     }
 }

@@ -2,6 +2,7 @@ package com.voyageone.base.dao;
 
 import com.voyageone.common.Constants;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.MapUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,17 +93,6 @@ public abstract class BaseDao extends VOAbsLoggable {
      * @return Map
      */
     protected Map<String, Object> parameters(Object... parameters) {
-
-        if (parameters.length % 2 != 0) {
-            throw new IllegalArgumentException("参数数组长度错误！键值匹配的参数数组应该是偶数长度！");
-        }
-
-        Map<String, Object> map = new HashMap<>();
-
-        for (int k = 0, v = 1; k < parameters.length; k += 2, v += 2)
-
-            map.put(String.valueOf(parameters[k]), parameters[v]);
-
-        return map;
+        return MapUtil.toMap(parameters);
     }
 }

@@ -14,7 +14,8 @@ define([
             productList: [],
             productIds: [],
             //productPageOption: {curr: 1, total: 0, fetch: getProductList},
-            groupInfo: null
+            groupInfo: null,
+            productUrl: ""
         };
 
         $scope.initialize = initialize;
@@ -35,6 +36,7 @@ define([
                     //$scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productIds = res.data.productIds;
                     $scope.vm.groupInfo = res.data.groupInfo;
+                    $scope.vm.productUrl = res.data.productUrl
                 });
         }
 
@@ -43,7 +45,7 @@ define([
          */
         function setMainProduct (code) {
 
-            confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT'))
                 .then(function () {
                     groupDetailService.setMainProduct({groupId: $scope.vm.groupInfo.groupId, mainProductCode: code}).then(function () {
                         notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
@@ -81,7 +83,7 @@ define([
 
         function bindCategory (context) {
 
-            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                 .then(function () {
                     var productIds = [];
                     _.forEach($scope.vm.productIds, function (object) {

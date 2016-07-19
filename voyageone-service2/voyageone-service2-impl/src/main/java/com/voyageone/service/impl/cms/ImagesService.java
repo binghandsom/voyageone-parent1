@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -69,12 +68,22 @@ public class ImagesService extends BaseService {
      */
     public CmsBtImagesModel getImageIsExists(String channelId, String code, String originalUrl) {
 
+        // 图片比较rule(默认值为2:ORIGINAL_IAMGE_NAME)
+        String imgCompareRule = CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME;
+
         CmsChannelConfigBean imageCompareRule = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.IMAGE_COMPARE_RULE);
 
-        if (imageCompareRule == null)
-            throw new BusinessException(channelId + "该店铺对应的PRICE_RETAIL_CALC_FORMULA在cms_mt_channel_config表中不存在");
+        // update by desmond 2016/07/14 start
+//        if (imageCompareRule == null)
+//            throw new BusinessException(channelId + "该店铺对应的PRICE_RETAIL_CALC_FORMULA在cms_mt_channel_config表中不存在");
+//            throw new BusinessException(channelId + "该店铺对应的IMAGE_COMPARE_RULE在cms_mt_channel_config表中不存在");
+        if (imageCompareRule != null && CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_URL.equals(imageCompareRule.getConfigValue1())) {
+            // 只能设2个值，如果设成了默认值意外的另一个值，就修改一下
+            imgCompareRule = imageCompareRule.getConfigValue1();
+        }
+        // update by desmond 2016/07/14 end
 
-        if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME.equals(imageCompareRule.getConfigValue1())) {
+        if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_IAMGE_NAME.equals(imgCompareRule)) {
             String imageName = ImgUtils.getImageName(originalUrl);//originalUrl.substring(originalUrl.lastIndexOf("/") + 1).substring(0, originalUrl.substring(originalUrl.lastIndexOf("/") + 1).indexOf("?"));
 
 
@@ -84,10 +93,10 @@ public class ImagesService extends BaseService {
                     ImgUtils.getImageName(image.getOriginalUrl()).equals(imageName))
                     .collect(Collectors.toList());
 
-            if (findImages.size() > 0) {
+            if (!findImages.isEmpty()) {
                 return findImages.get(0);
             }
-        } else if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_URL.equals(imageCompareRule.getConfigValue1())) {
+        } else if (CmsConstants.IMAGE_COMPARE_RULE.ORIGINAL_URL.equals(imgCompareRule)) {
             return this.selectImagesByOriginalUrl(channelId, code, originalUrl);
         }
 

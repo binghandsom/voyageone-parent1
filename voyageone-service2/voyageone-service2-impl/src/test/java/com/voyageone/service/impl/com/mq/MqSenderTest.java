@@ -26,6 +26,21 @@ public class MqSenderTest extends TestCase {
     private int[] taskIds = {42965};
 
     @Test
+    public void testSendMessage1() throws Exception {
+//        for (int i=0;i<10;i++) {
+//            Map<String, Object> message = new HashMap<>();
+//            message.put("id", String.valueOf(i));
+//            sender.sendMessage("voyageone_mq_error_handle_testing", message);
+//        }
+
+        Map<String, Object> message = new HashMap<>();
+        message.put("id", String.valueOf(9));
+        message.put("aa", "中国");
+        message.put("bb", "上海");
+        sender.sendMessage("voyageone_mq_error_handle_testing", message);
+    }
+
+    @Test
     public void testSendMessage() throws Exception {
 //        for (int i=0;i<10;i++) {
 //            Map<String, Object> message = new HashMap<>();
@@ -39,7 +54,7 @@ public class MqSenderTest extends TestCase {
 //            sender.sendMessage(MqRoutingKey.CMS_BATCH_CmsMtImageCreateTaskJob, message);
 //        }
 
-        for (int i=0;i<1000;i++) {
+        for (int i = 0; i < 1000; i++) {
             Map<String, Object> message = new HashMap<>();
             message.put("id", 123);
             message.put("no", i);
@@ -51,16 +66,16 @@ public class MqSenderTest extends TestCase {
     @Test
     public void testStopMq() throws Exception {
         Map<String, Object> message = new HashMap<>();
-        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("mqService", "JingdongMqTestService");
         message.put("active", "stop");
-        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false, false);
     }
 
     @Test
     public void testStartMq() throws Exception {
         Map<String, Object> message = new HashMap<>();
-        message.put("mqService", "com.voyageone.task2.cms.service.imagecreate.CmsMtImageCreateTaskJobService");
+        message.put("mqService", "CmsFeedExportService");
         message.put("active", "start");
-        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, true, false, false);
+        sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false, false);
     }
 }

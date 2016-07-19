@@ -28,13 +28,7 @@ define([
             //默认选中店铺类分类
             channelTagService.init({tagTypeSelectValue: $scope.vm.tagTypeSelectValue}).then(function (res) {
                 $scope.source = $scope.vm.tagTree = res.data.tagTree;
-                if(res.data.tagTypeList) {
-                    for (var i = 0; i < res.data.tagTypeList.length; i++) {
-                        if (res.data.tagTypeList[i].value == "4") {
-                            $scope.vm.tagTypeList.push(res.data.tagTypeList[i]);
-                        }
-                    }
-                }
+                $scope.vm.tagTypeList = res.data.tagTypeList;
                 $scope.search(0);
             });
         };
@@ -120,7 +114,7 @@ define([
         $scope.delTag = function(tag) {
             $scope.vm.id = tag.id;
             $scope.vm.parentTagId = tag.parentTagId;
-            confirm('TXT_MSG_DO_DELETE').result.then(function () {
+            confirm('TXT_MSG_DO_DELETE').then(function () {
                 channelTagService.del($scope.vm).then(function (res) {
                     $scope.source = $scope.vm.tagTree = res.data.tagTree;
                     $scope.search(0);

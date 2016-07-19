@@ -87,6 +87,9 @@ public class SuperFeedOverStockBean extends SuperFeedBean{
     private String shipsvialtl;
 
     private String attribute1;
+    private String attributeColor;
+    private String attributeMetal;
+    private String attributeSize;
 
     private String image;
 
@@ -122,7 +125,9 @@ public class SuperFeedOverStockBean extends SuperFeedBean{
 
     private String salepoint;
 
-
+    public String getSku() {
+        return sku;
+    }
     public void setSku(String sku) {
         this.sku = sku == null ? null : sku.trim();
     }
@@ -598,4 +603,27 @@ public class SuperFeedOverStockBean extends SuperFeedBean{
         this.salepoint = salepoint == null ? null : salepoint.trim();
     }
 
+    public String getAttributeColor() {
+        return attributeColor;
+    }
+
+    public void setAttributeColor(String attributeColor) {
+        this.attributeColor = attributeColor;
+    }
+
+    public String getAttributeSize() {
+        return attributeSize;
+    }
+
+    public void setAttributeSize(String attributeSize) {
+        this.attributeSize = attributeSize;
+    }
+
+    public String getAttributeMetal() {
+        return attributeMetal;
+    }
+
+    public void setAttributeMetal(String attributeMetal) {
+        this.attributeMetal = attributeMetal;
+    }
 }

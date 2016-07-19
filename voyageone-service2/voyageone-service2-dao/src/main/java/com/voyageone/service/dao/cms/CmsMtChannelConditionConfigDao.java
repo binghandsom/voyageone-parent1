@@ -18,6 +18,8 @@ public interface CmsMtChannelConditionConfigDao {
 
     CmsMtChannelConditionConfigModel selectOne(Map<String, Object> map);
 
+    int selectCount(Map<String, Object> map);
+
     CmsMtChannelConditionConfigModel select(Integer id);
 
     int insert(CmsMtChannelConditionConfigModel record);

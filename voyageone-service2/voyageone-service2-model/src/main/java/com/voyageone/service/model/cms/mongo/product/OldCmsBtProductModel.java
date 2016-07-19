@@ -44,6 +44,8 @@ public class OldCmsBtProductModel extends ChannelPartitionModel {
     private Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
     //销售数据统计
     private OldCmsBtProductModel_Sales sales = new OldCmsBtProductModel_Sales();
+    //在售平台
+    private List<OldCmsBtProductModel_Carts> carts = new ArrayList<>();
 
     public OldCmsBtProductModel() {
     }
@@ -231,6 +233,27 @@ public class OldCmsBtProductModel extends ChannelPartitionModel {
 
     public void setSales(OldCmsBtProductModel_Sales sales) {
         this.sales = sales;
+    }
+
+    //carts
+    @Deprecated
+    public List<OldCmsBtProductModel_Carts> getCarts() {
+        return carts;
+    }
+    @Deprecated
+    public void setCarts(List<OldCmsBtProductModel_Carts> productCarts) {
+        this.carts = productCarts;
+    }
+
+    public OldCmsBtProductModel_Carts getCartById (Integer cartId) {
+        for (OldCmsBtProductModel_Carts cartInfo : carts) {
+            if (Objects.equals(cartInfo.getCartId(), cartId)){
+                return cartInfo;
+            }
+        }
+
+        return null;
+//        return this.carts.stream().filter(cartInfo -> Objects.equals(cartInfo.getCartId(), cartId)).findFirst().get();
     }
 
     /**

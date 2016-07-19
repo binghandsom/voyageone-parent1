@@ -7,14 +7,9 @@ import com.voyageone.common.util.UnicodeUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
-import com.voyageone.components.jumei.reponse.HtDealCopyDealResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealEndTimeResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
-import com.voyageone.components.jumei.reponse.HtDealUpdateResponse;
-import com.voyageone.components.jumei.request.HtDealCopyDealRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealEndTimeRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
-import com.voyageone.components.jumei.request.HtDealUpdateRequest;
+import com.voyageone.components.jumei.bean.HtDeal_UpdateDealStockBatch_UpdateData;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +45,40 @@ public class JumeiHtDealServiceTest {
         request.setUpdate_data(dealInfo);
         HtDealUpdateResponse response = htDealService.update(shopBean, request);
         //{"error_code":"505","reason":"error","response":"仓库[0]不存在或者未启用"}
+    }
+    @Test
+    public void  updateDealStockBatch() throws Exception {
+
+        //以下为聚美测试环境的入口聚美测试环境URL：a.new.jumeiglobal.jmrd.com:82user：aimee2ps：123456abc@补充（需要变更Host）hosts：a.new.jumeiglobal.jmrd.com182.138.102.82端口：82
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
+
+        HtDealUpdateDealStockBatchRequest request = new HtDealUpdateDealStockBatchRequest();
+        List<HtDeal_UpdateDealStockBatch_UpdateData> list=new ArrayList<>();
+        HtDeal_UpdateDealStockBatch_UpdateData updateData=new HtDeal_UpdateDealStockBatch_UpdateData();
+       // updateData.setJumei_hash_id("ht1466394293p800000031");
+        updateData.setJumei_sku_no("701506664");
+        updateData.setStock(10);
+        list.add(updateData);
+        request.setUpdate_data(list);
+        HtDealUpdateDealStockBatchResponse response = htDealService.updateDealStockBatch(shopBean, request);
+        System.out.println(JsonUtil.bean2Json(response));
+        //   {"error_code":"302","reason":"error","response":{"successCount":0,"errorList":[{"jumei_sku_no":"701506467","error_code":505,"error_message":"hash_id: ht1464949112p222551364, sku_no:701506467的修改价格申请还在审核，不能重复提交申请!"}]}}
+    }
+    @Test
+    public  void  getDealByHashID() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey(Client_id);
+        shopBean.setAppSecret(Sign);
+        shopBean.setSessionKey(Client_key);
+        shopBean.setApp_url(url);
+        HtDealGetDealByHashIDRequest request = new HtDealGetDealByHashIDRequest();
+        request.setJumei_hash_id("ht1464949112p222551364");
+        // dealInfo.setShipping_system_id(2813);
+        HtDealGetDealByHashIDResponse response = htDealService.getDealByHashID(shopBean, request);
     }
     @Test
     public void updateDealEndTime() throws Exception {
