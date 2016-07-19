@@ -49,21 +49,16 @@ import java.util.stream.Stream;
 @Service
 public class CmsImportCategoryTreeService extends BaseTaskService {
 
-    @Autowired
-    private CmsMtCategoryTreeAllDao cmsMtCategoryTreeAllDao;
-
-    @Autowired
-    private CategoryTreeAllService categoryTreeAllService;
-
-    @Autowired
-    private PlatformCategoryService platformCategoryService;
-
-    private Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> platformsCategoryTreeMap = new HashMap<>();
-
     private final static String CATEGORY_SHEET_NAME = "主数据类目层次";
     private final static String TMALL_MAPPING_SHEET_NAME = "天猫-Master";
     private final static String JD_MAPPING_SHEET_NAME = "京东-Master";
     private final static String JUMEI_MAPPING_SHEET_NAME = "聚美-Master";
+
+    private final CmsMtCategoryTreeAllDao cmsMtCategoryTreeAllDao;
+    private final CategoryTreeAllService categoryTreeAllService;
+    private final PlatformCategoryService platformCategoryService;
+
+    private Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> platformsCategoryTreeMap = new HashMap<>();
 
     // 主类目开始列
     private final static int CATEGORY_START_INDEX = 1;
@@ -73,6 +68,13 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
     private final static int CATEGORY_MAX_LEVEL = 10;
     // 平台类目开始列
     private final static int PLATFORM_CATEGORY_START_INDEX = 12;
+
+    @Autowired
+    public CmsImportCategoryTreeService(CmsMtCategoryTreeAllDao cmsMtCategoryTreeAllDao, CategoryTreeAllService categoryTreeAllService, PlatformCategoryService platformCategoryService) {
+        this.cmsMtCategoryTreeAllDao = cmsMtCategoryTreeAllDao;
+        this.platformCategoryService = platformCategoryService;
+        this.categoryTreeAllService = categoryTreeAllService;
+    }
 
     @Override
     public String getTaskName() {
@@ -86,18 +88,27 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
 
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 取得导入文件
-        String filePath = Properties.readValue("CmsImportCategoryTreeService_import_file_path");
+        String directoryPath = Properties.readValue("CmsImportCategoryTreeService_import_file_path");
 
-        if (StringUtils.isEmpty(filePath)) {
-            filePath = "/usr/category";
+        if (StringUtils.isEmpty(directoryPath)) {
+            directoryPath = "/usr/category";
         }
 
-        File allFiles = new File(filePath);
+        $debug("directoryPath: " + directoryPath);
 
-        File[] fileArray = allFiles.listFiles(((dir, name) -> name.toLowerCase().endsWith(".xlsx")));
+        File allFiles = new File(directoryPath);
 
-        if (fileArray == null || fileArray.length < 1)
+        File[] fileArray = allFiles.listFiles(((dir, name) -> {
+            $debug("allFiles.listFiles: " + name);
+            return name.toLowerCase().endsWith(".xlsx");
+        }));
+
+        if (fileArray == null || fileArray.length < 1) {
+            $debug("fileArray == null || fileArray.length < 1");
             return;
+        }
+
+        $debug("fileArray: " + fileArray.length);
 
         for (File file : fileArray) {
 
@@ -106,8 +117,8 @@ public class CmsImportCategoryTreeService extends BaseTaskService {
             importCategoryTree(file);
 
             // 移动文件到bak
-            FileUtils.mkdirPath(filePath + "/bak");
-            FileUtils.moveFile(file.getAbsolutePath(), filePath + "/bak/" + file.getName());
+            FileUtils.mkdirPath(directoryPath + "/bak");
+            FileUtils.moveFile(file.getAbsolutePath(), directoryPath + "/bak/" + file.getName());
         }
     }
 

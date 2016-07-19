@@ -33,7 +33,7 @@ public class ProductStatusHistoryServiceTest {
         pageQueryParameters.setPageRowCount(50);
         pageQueryParameters.put("channelId", "010");
         pageQueryParameters.put("cartId", "27");
-        pageQueryParameters.put("code", "b1301");
+        pageQueryParameters.put("code", "DIBRHCRST/RHGAR8.5");
         List<MapModel> list = service.getPage(pageQueryParameters);
         long count = service.getCount(pageQueryParameters);
     }
