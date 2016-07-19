@@ -13,8 +13,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-center">{{ctrl.summary.shipment.shipmentName}}</td>
-                        <td class="text-center">{{ctrl.summary.orderId}}</td>
+                        <td class="text-center">{{ctrl.shipmentDetails.shipment.shipmentName}}</td>
+                        <td class="text-center">{{ctrl.shipmentDetails.orderId}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -37,20 +37,20 @@
                             <th class="text-center">Containerizing User</th>
                         </tr>
                     </thead>
-                    <tbody ng-if="ctrl.skuList.length == 0">
+                    <tbody ng-if="ctrl.shipmentSkuList.length == 0">
                         <tr style="padding-left:0px">
                             <td colspan="6">
-                                <div if-no-rows="ctrl.skuList.length"></div>
+                                <div if-no-rows="ctrl.shipmentSkuList.length"></div>
                             </td>
                         </tr>
                     </tbody>
-                    <tbody ng-if="ctrl.skuList.length > 0">
-                        <tr ng-repeat="list in ctrl.skuList">
+                    <tbody ng-if="ctrl.shipmentSkuList.length > 0">
+                        <tr ng-repeat="list in ctrl.shipmentSkuList">
                             <td class="text-center">{{$index + 1}}</td>
                             <td class="text-center">{{list.barcode}}</td>
-                            <td class="text-center">{{list.client_sku}}</td>
+                            <td class="text-center">{{list.clientSku}}</td>
                             <td class="text-left">{{list.description}}</td>
-                            <td class="text-center">{{list.containerizing_time}}</td>
+                            <td class="text-center">{{list.containerizingTime}}</td>
                             <td class="text-center">{{list.containerizer}}</td>
                         </tr>
                     </tbody>
