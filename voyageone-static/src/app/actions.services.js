@@ -98,7 +98,7 @@ define(function (require) {
                 promise = deferred.promise;
                 this._c[hash] = promise;
 
-                switch(_cacheFlag) {
+                switch (_cacheFlag) {
                     case CacheFlag.SESSION:
                         result = session[hash];
                         break;
@@ -179,7 +179,8 @@ define(function (require) {
             submit: "submit"
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
-            init: "init"
+            init: "init",
+            checkBarcode: "checkBarcode"
         })
     }
 });
