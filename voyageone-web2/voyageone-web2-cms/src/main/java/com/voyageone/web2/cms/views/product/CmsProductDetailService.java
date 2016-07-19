@@ -1146,7 +1146,7 @@ public class CmsProductDetailService extends BaseAppService {
                 productInfo.put("quantity", product.getCommon().getFields().getQuantity());
                 CmsBtProductModel_Platform_Cart platForm = product.getPlatform(parameter.getCartId());
                 if (platForm != null) {
-                    productInfo.put("platForm", platForm.getStatus());
+                    productInfo.put("platFormStatus", platForm.getStatus());
                 }
                 productInfoList.add(productInfo);
             }
