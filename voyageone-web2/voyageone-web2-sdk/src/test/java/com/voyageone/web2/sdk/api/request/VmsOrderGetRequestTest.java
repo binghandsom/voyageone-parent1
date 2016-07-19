@@ -4,13 +4,18 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author Edward
@@ -63,6 +68,39 @@ public class VmsOrderGetRequestTest {
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
         VmsOrderCancelResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+
+    @Test
+    public void testGetOrderInfoByReservationId() {
+        VmsOrderInfoGetRequest request = new VmsOrderInfoGetRequest();
+        request.setChannelId("088");
+        request.setReservationId("101");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderInfoGetResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testGetOrderInfoByShipmentTime() throws ParseException {
+        VmsOrderInfoGetRequest request = new VmsOrderInfoGetRequest();
+        request.setChannelId("088");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2016-01-01 10:00:00";
+        Date date = sdf.parse(str);
+        request.setShipmentTimeFrom(date.getTime());
+        str="2016-03-01 10:00:00";
+        date = sdf.parse(str);
+        request.setShipmentTimeTo(date.getTime());
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderInfoGetResponse response = voApiDefaultClient.execute(request);
 
         System.out.println(response);
     }

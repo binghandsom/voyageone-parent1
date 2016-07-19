@@ -373,7 +373,7 @@
 
     <select id="selectListByShipmentTime" parameterType="HashMap" resultType="HashMap">
         select
-            channel_id,reservation_id,shipment_id,status,tracking_type,tracking_no
+        t1.channel_id,t1.reservation_id,t1.shipment_id,t1.status,t2.express_company,t2.tracking_no
         from vms_bt_order_detail t1
         left join vms_bt_shipment t2
         on t1.shipment_id = t2.id
@@ -388,7 +388,7 @@
                 and t1.shipment_time >= #{shipmentTimeFrom,jdbcType=TIMESTAMP}
             </if>
             <if test="shipmentTimeTo != null">
-                and #{shipmentTimeTo,jdbcType=TIMESTAMP} > t1.shipment_time
+                and #{shipmentTimeTo,jdbcType=TIMESTAMP} >= t1.shipment_time
             </if>
         </where>
     </select>
