@@ -2008,7 +2008,7 @@ public class SxProductService extends BaseService {
                             retMap.put(platformPropId, multiCheckField);
                         }
                     } else {
-                        final String sellerCategoryPropId = "seller_cids";
+//                        final String sellerCategoryPropId = "seller_cids";
 //                        String numIId = sxData.getPlatform().getNumIId();
 //                        if (!StringUtils.isEmpty(numIId)) {
                             // 更新
@@ -2045,11 +2045,11 @@ public class SxProductService extends BaseService {
 //                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
                                 MultiCheckField multiCheckField = (MultiCheckField) field;
                                 // modified by morse.lu 2016/07/06 end
-                                multiCheckField.setId(sellerCategoryPropId);
+//                                multiCheckField.setId(sellerCategoryPropId);
                                 for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
                                     multiCheckField.addValue(defaultValue.getcId());
                                 }
-                                retMap.put(sellerCategoryPropId, multiCheckField);
+                                retMap.put(platformPropId, multiCheckField);
                             }
                             // modified by morse.lu 2016/06/21 end
 //                        }
@@ -2079,7 +2079,7 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
-                // modified by morse.lu 2016/06/29 start
+                // added by morse.lu 2016/06/29 start
                 case ITEM_DESCRIPTION: {
                     Field field = processFields.get(0);
                     setDescriptionFieldValue(field, expressionParser, shopBean, user);
@@ -2099,7 +2099,42 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
-                // modified by morse.lu 2016/06/29 end
+                case FREIGHT: {
+                    RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+                    for (Field field : processFields) {
+                        String platformPropId = field.getId();
+                        List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
+                        String propValue = null;
+
+                        // 优先使用设定好的
+                        if (ListUtils.notNull(conditionPropValueModels)) {
+                            // 暂时只有singleCheck和input,所以找到第一条就好
+                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
+                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
+                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                                propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
+                                if (!StringUtils.isEmpty(propValue)) {
+                                    break;
+                                }
+                            }
+                        } else {
+                            // 画面填了啥就是啥
+                            propValue = getProductValueByMasterMapping(field, shopBean, expressionParser, user);
+                        }
+
+                        if (!StringUtils.isEmpty(propValue)) {
+                            // 暂时只有singleCheck和input，以后要是有别的再说
+                            if (field.getType() == FieldTypeEnum.INPUT) {
+                                ((InputField) field).setValue(propValue);
+                            } else if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+                                ((SingleCheckField) field).setValue(propValue);
+                            }
+                            retMap.put(field.getId(), field);
+                        }
+                    }
+                    break;
+                }
+                // added by morse.lu 2016/06/29 end
             }
         }
 
@@ -2334,7 +2369,7 @@ public class SxProductService extends BaseService {
 
             List<Field> subfields = complexField.getFields();
 
-            for (ImageProp imageProp : ImageProp.values()) {
+            for (CustomMappingType.ImageProp imageProp : CustomMappingType.ImageProp.values()) {
                 if (imageProp.getPropId().equals(field.getId())) {
                     hasSetting = true;
                     for (int index = 1; index <= subfields.size(); index++) {
@@ -2352,7 +2387,7 @@ public class SxProductService extends BaseService {
                 }
             }
         } else if (field.getType() == FieldTypeEnum.INPUT) {
-            for (ImageProp imageProp : ImageProp.values()) {
+            for (CustomMappingType.ImageProp imageProp : CustomMappingType.ImageProp.values()) {
                 if (imageProp.getPropId().equals(field.getId())) {
                     hasSetting = true;
                     // 第一张图
@@ -2951,30 +2986,6 @@ public class SxProductService extends BaseService {
 
         private int getSort() {
             return this.sort;
-        }
-    }
-
-    private enum ImageProp {
-        PRODUCT_IMAGES("product_images", "产品图片-"), // 产品图片
-        ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
-        VERTICAL_IMAGE("vertical_image", "竖图-"), // 商品竖图
-        ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
-        ;
-
-        private final String propId;
-        private final String baseDictName;
-
-        private ImageProp(String propId, String baseDictName) {
-            this.propId = propId;
-            this.baseDictName = baseDictName;
-        }
-
-        public String getPropId() {
-            return propId;
-        }
-
-        public String getBaseDictName() {
-            return baseDictName;
         }
     }
 
