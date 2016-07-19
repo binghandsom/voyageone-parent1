@@ -14,6 +14,140 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel" >
+        update cms_mt_channel_condition_config
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="platformPropId != null" >
+                `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR},
+            </if>
+            <if test="conditionExpression != null" >
+                `condition_expression` = #{conditionExpression,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_channel_condition_config
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_condition_config
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="conditionExpression != null" >
+                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_condition_config
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="conditionExpression != null" >
+                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_channel_condition_config
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="conditionExpression != null" >
+                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_channel_condition_config
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -77,139 +211,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel" >
-        update cms_mt_channel_condition_config
-        <set >
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="platformPropId != null" >
-                `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR},
-            </if>
-            <if test="conditionExpression != null" >
-                `condition_expression` = #{conditionExpression,jdbcType=VARCHAR},
-            </if>
-            <if test="comment != null" >
-                `comment` = #{comment,jdbcType=VARCHAR},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_mt_channel_condition_config
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_channel_condition_config
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="conditionExpression != null" >
-                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=VARCHAR}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_channel_condition_config
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="conditionExpression != null" >
-                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=VARCHAR}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_mt_channel_condition_config
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="conditionExpression != null" >
-                and `condition_expression` = #{conditionExpression,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=VARCHAR}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-        </where>
-    </select>
 
 </mapper>
