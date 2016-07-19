@@ -152,7 +152,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 }
 
                 final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+                runnableList2.add(() -> cmsSumGroupOrdersService.sumPerCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
             } while (getList.size() == PAGE_LIMIT);
             // 运行线程
             runWithThreadPool(runnableList2, taskControlList);
@@ -171,7 +171,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
                 }
 
                 final List<CmsBtProductGroupModel> finalGrpList = getList;
-                runnableList.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
+                runnableList3.add(() -> cmsSumGroupOrdersService.sumAllCartGroupOrders(finalGrpList, channelId, begDate1, begDate2, endDate, getTaskName()));
             } while (getList.size() == PAGE_LIMIT);
             // 运行线程
             runWithThreadPool(runnableList3, taskControlList);
