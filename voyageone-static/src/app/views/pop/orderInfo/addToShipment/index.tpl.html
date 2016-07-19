@@ -1,4 +1,4 @@
-<div class="modal-content modal-blue">
+<div class="modal-content modal-blue" ng-init="ctrl.init()">
     <div class="modal-header">
         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>Shipment List<i class="fa fa-close pull-right" ng-click="$dismiss()"></i></h4>
     </div>
@@ -37,18 +37,24 @@
                             <th class="text-center">Containerizing User</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-center">12312345234</td>
-                            <td class="text-center">XRG000730RCY75</td>
-                            <td class="text-left">Adidas Busenitz</td>
-                            <td class="text-center">2016-7-2 15:24:35</td>
-                            <td class="text-center">user001</td>
+                    <tbody ng-if="ctrl.skuList.length == 0">
+                        <tr style="padding-left:0px">
+                            <td colspan="6">
+                                <div if-no-rows="ctrl.skuList.length"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="ctrl.skuList.length > 0">
+                        <tr ng-repeat="list in ctrl.skuList">
+                            <td class="text-center">{{$index + 1}}</td>
+                            <td class="text-center">{{list.barcode}}</td>
+                            <td class="text-center">{{list.client_sku}}</td>
+                            <td class="text-left">{{list.description}}</td>
+                            <td class="text-center">{{list.containerizing_time}}</td>
+                            <td class="text-center">{{list.containerizer}}</td>
                         </tr>
                     </tbody>
                 </table>
-
                 <div class="col-sm-12 m-t-lg no-padding">
                     <vpagination config="ctrl.shipmentPageOption" total="ctrl.shipmentPageOption.total"></vpagination>
                 </div>

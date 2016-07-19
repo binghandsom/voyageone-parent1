@@ -184,8 +184,7 @@ define([
                 shipment: self.currentShipment,
                 orderId: item.orderId
             };
-            self.shipmentScanPopupService.init(items).then(function (res) {
-                console.log(res);
+            self.shipmentScanPopupService.init(items).then(function () {
                 self.popups.openAddShipment(items);
             });
 
