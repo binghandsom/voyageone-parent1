@@ -50,7 +50,7 @@
                             <td class="text-center">{{list.barcode}}</td>
                             <td class="text-center">{{list.clientSku}}</td>
                             <td class="text-left">{{list.description}}</td>
-                            <td class="text-center">{{list.containerizingTime}}</td>
+                            <td class="text-center">{{list.containerizingTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="text-center">{{list.containerizer}}</td>
                         </tr>
                     </tbody>
