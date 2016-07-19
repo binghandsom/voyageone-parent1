@@ -343,10 +343,10 @@ define([
                 }
 
                 function limitNumber(event,price){
-                    var patten = /[\d]/;
-                    console.log(price)
-                    if(!patten.test(event.key) || price > Math.pow(10,14))
-                        event.preventDefault();
+                    if(event.keyCode != 8){
+                        if((event.keyCode < 48 || event.keyCode > 57 ) || price > Math.pow(10,14))
+                            event.preventDefault();
+                    }
                 }
 
             }

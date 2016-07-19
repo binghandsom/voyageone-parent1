@@ -1146,7 +1146,7 @@ public class CmsProductDetailService extends BaseAppService {
                 productInfo.put("quantity", product.getCommon().getFields().getQuantity());
                 CmsBtProductModel_Platform_Cart platForm = product.getPlatform(parameter.getCartId());
                 if (platForm != null) {
-                    productInfo.put("platForm", platForm.getStatus());
+                    productInfo.put("platFormStatus", platForm.getStatus());
                 }
                 productInfoList.add(productInfo);
             }
@@ -1165,7 +1165,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
         CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
-        if(platForm.getStatus().equals("Approve")&&!newPlatForm.equals("Approve"))// 1.2.2.1.1 【status】= Approve时 productCode的状态必须也是Approve
+        if(!com.voyageone.common.util.StringUtils.isEmpty(platForm.getStatus())&&platForm.getStatus().equals("Approve")&&!newPlatForm.equals("Approve"))// 1.2.2.1.1 【status】= Approve时 productCode的状态必须也是Approve
         {
             result.setMsg("只能设置状态为Approve的商品");
             result.setResult(false);

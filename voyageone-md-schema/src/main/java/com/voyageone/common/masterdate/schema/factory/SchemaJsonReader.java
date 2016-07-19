@@ -534,8 +534,10 @@ public class SchemaJsonReader {
             Map<String, Object> valueMap = (Map<String, Object>)fieldMap.get("value");
             if(valueMap != null) {
                 Value value3 = new Value();
-                value3.setId((String)valueMap.get("id"));
-                value3.setValue((String)valueMap.get("value"));
+                value3.setId((String) valueMap.get("id"));
+                if(valueMap.get("value")!= null){
+                    value3.setValue(valueMap.get("value").toString());
+                }
                 singleCheckField.setValue(value3);
             }
 
