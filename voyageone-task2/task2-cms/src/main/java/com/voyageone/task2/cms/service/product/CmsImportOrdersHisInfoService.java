@@ -38,6 +38,10 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 从oms系统导入产品前90天订单信息
         Map<String, Set<String>> prodCodeChannelMap = cmsCopyOrdersInfoService.copyOrdersInfo(getTaskName());
+        if (prodCodeChannelMap.isEmpty()) {
+            $warn("CmsImportOrdersHisInfoService 从oms系统导入产品前90天订单信息为空");
+            return;
+        }
         // 统计销售数据
         cmsFindProdOrdersInfoService.onStartup(taskControlList, prodCodeChannelMap);
     }
