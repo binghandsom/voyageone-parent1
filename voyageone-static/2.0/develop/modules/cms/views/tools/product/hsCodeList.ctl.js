@@ -9,7 +9,7 @@ define([
         function HsCodeController(hsCodeInfoService, notify, popups, $feedSearchService) {
             this.hsCodeInfoService = hsCodeInfoService;
             this.$feedSearchService = $feedSearchService;
-            this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
+            this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)};
             this.hsCodeList = [];
             this.hsCodeValue = [];
             this.status = false;
@@ -53,7 +53,7 @@ define([
             },
             search: function (page) {
                 var self = this;
-                self.prodPageOption.curr = !page ? self.prodPageOption.curr : page;
+                self.searchInfo.curr = !page ? self.searchInfo.curr : page;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
                     self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsSettedData = res.data.taskSummary;
