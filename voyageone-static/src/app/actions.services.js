@@ -180,7 +180,7 @@ define(function (require) {
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",
-            checkBarcode: "checkBarcode"
+            scanBarcode: "scanBarcode"
         })
     }
 });
