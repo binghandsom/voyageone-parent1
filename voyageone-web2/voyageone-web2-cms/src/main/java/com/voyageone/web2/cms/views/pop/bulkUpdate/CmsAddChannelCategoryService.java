@@ -40,7 +40,6 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     private SxProductService sxProductService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
-    private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
 
     /**
      * 数据页面初始化(无产品信息)
@@ -264,18 +263,4 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         return cnt;
     }
 
-    /**
-     * 同一店铺不同渠道的叶子类目插入形式不同
-     *
-     * @param cartId int
-     * @return cnt
-     */
-    private String getSellerCatCategoryCid(int cartId) {
-        String cartIdStr = String.valueOf(cartId);
-        String cnt = Codes.getCodeName("SELLER_CATS_FULL_CIDS", cartIdStr);
-        if (StringUtils.isNullOrBlank2(cnt)) {
-            cnt = DEFAULT_SELLER_CATS_FULL_CIDS;
-        }
-        return cnt;
-    }
 }
