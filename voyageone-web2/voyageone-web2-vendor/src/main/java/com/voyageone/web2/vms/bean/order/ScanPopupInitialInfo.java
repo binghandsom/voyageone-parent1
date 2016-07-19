@@ -7,15 +7,15 @@ import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
  * Created by vantis on 16-7-19.
  */
 public class ScanPopupInitialInfo {
-    private ShipmentBean shipmentBean;
+    private ShipmentBean shipment;
     private String orderId;
 
-    public ShipmentBean getShipmentBean() {
-        return shipmentBean;
+    public ShipmentBean getShipment() {
+        return shipment;
     }
 
-    public void setShipmentBean(ShipmentBean shipmentBean) {
-        this.shipmentBean = shipmentBean;
+    public void setShipment(ShipmentBean shipment) {
+        this.shipment = shipment;
     }
 
     public String getOrderId() {

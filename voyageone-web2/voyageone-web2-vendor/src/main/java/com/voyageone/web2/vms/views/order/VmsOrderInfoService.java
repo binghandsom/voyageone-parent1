@@ -450,7 +450,7 @@ public class VmsOrderInfoService extends BaseService {
         long invalidSkuCount = orderDetailList.stream()
                 .filter(vmsBtOrderDetailModel ->
                         null != vmsBtOrderDetailModel.getShipmentId()
-                                && !vmsBtOrderDetailModel.getShipmentId().equals(shipmentBean.getId()))
+                                && !shipmentBean.getId().equals(vmsBtOrderDetailModel.getShipmentId()))
                 .count();
 
         //
