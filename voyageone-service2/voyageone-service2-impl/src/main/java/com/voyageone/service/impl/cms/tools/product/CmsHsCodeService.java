@@ -32,7 +32,7 @@ public class CmsHsCodeService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     //获取任务数量Id
-    private static int hsCodeTaskCntTypeId = 87;
+    private static int hsCodeTaskCntTypeId = 82;
     //获取任务数量名称
     private static String hsCodeTaskCntTypeName = "GetTheN0umberOfTasks";
     /**
@@ -83,7 +83,7 @@ public class CmsHsCodeService extends BaseService {
         //税号个人
         data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
         //获取任务数量
-        data.put("hsCodeTaskCnt", Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang));
+        data.put("hsCodeTaskCnt", Integer.parseInt(Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang)));
         //返回数据类型
         return data;
     }
