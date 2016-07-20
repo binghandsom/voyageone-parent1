@@ -420,7 +420,7 @@
         </choose>
     </update>
 
-    <update id="updateSkuShipmentStatus" parameterMap="HashMap">
+    <update id="updateSkuShipmentStatus" parameterType="HashMap">
         UPDATE vms_bt_order_detail
         SET `shipment_id`         = #{shipmentId, jdbcType=INTEGER},
             `containerizer`       = #{containerizer, jdbcType=VARCHAR},
