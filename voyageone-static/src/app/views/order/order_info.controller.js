@@ -85,11 +85,12 @@ define([
             self.orderInfoService.search(self.searchInfo).then(function (data) {
                 self.pageInfo.total = data.orderInfo.total;
                 self.data = data.orderInfo.orderList.map(function (item) {
-                        item.className = 'active';
-                        item.subClassName = '';
+                        item.className = 'bg-default';
+                        item.subClassName = 'bg-sub-default';
                         var date = new Date();
                         if (item.status == '7') {
-                            item.className = item.subClassName = 'bg-gainsboro';
+                            item.className = 'bg-gainsboro';
+                            item.subClassName = 'bg-sub-gainsboro';
                         }
                         else if (item.status == '1') {
                             if (self.channelConfigs.vendorOperateType == 'ORDER') {
@@ -100,9 +101,11 @@ define([
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }
                             if ((new Date().getTime() - date.getTime()) >= self.threeDay) {
-                                item.className = item.subClassName = 'bg-danger';
+                                item.className = 'bg-danger';
+                                item.subClassName = 'bg-sub-danger';
                             } else if ((new Date().getTime() - date.getTime()) >= self.twoDay) {
-                                item.className = item.subClassName = 'bg-warning';
+                                item.className = 'bg-warning';
+                                item.subClassName = 'bg-sub-warning';
                             }
                         }
                         return item;
@@ -183,13 +186,11 @@ define([
             };
             self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (shipmentDetails) {
                 shipmentDetails.ScanPopupInitialInfo = self.ScanPopupInitialInfo;
-                self.popups.openAddShipment(shipmentDetails).then(function (res) {
-                    if (res)
-                        self.init();
+                self.popups.openAddShipment(shipmentDetails).then(function () {
+                    self.init();
                 });
             });
         };
         return OrderInfoController;
-
     }()));
 });
