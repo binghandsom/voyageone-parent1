@@ -51,8 +51,11 @@ define([
                     self.hsCodeValue = res.data.hsCodeValue;
                 })
             },
-            search: function (page) {
+            search: function (page, flg) {
                 var self = this;
+                if (flg === 20)  self.searchInfo.size = 20;
+                if (flg === 50)  self.searchInfo.size = 50;
+                if (flg === 100)  self.searchInfo.size = 100;
                 self.searchInfo.curr = !page ? self.searchInfo.curr : page;
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
                     self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
