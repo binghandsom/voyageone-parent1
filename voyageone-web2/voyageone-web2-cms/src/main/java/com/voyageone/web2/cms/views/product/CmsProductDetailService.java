@@ -1166,7 +1166,7 @@ public class CmsProductDetailService extends BaseAppService {
 
         CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
         CmsBtProductModel_Platform_Cart newPlatForm = newCmsBtProductModel.getPlatform(parameter.getCartId());
-        if("Approve".equalsIgnoreCase(platForm.getStatus()) && !"Approve".equalsIgnoreCase(newPlatForm.getStatus()))
+        if(CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platForm.getStatus()) && !CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(newPlatForm.getStatus()))
         {
             throw new BusinessException("只能设置状态为Approve的商品");
         }
@@ -1184,7 +1184,6 @@ public class CmsProductDetailService extends BaseAppService {
 
         String newComment=String.format("设置为主商品");
         productStatusHistoryService.insert(parameter.getChannelId(),newCmsBtProductModel.getCommon().getFields().getCode(),newPlatForm.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,newComment,modifier);
-        return ;
 //        productService.updateProductPlatform()
 //        1.1 根据 cartId和productCode找到对应的group
 //        1.2 检查mainProduct和productCode是否一致
