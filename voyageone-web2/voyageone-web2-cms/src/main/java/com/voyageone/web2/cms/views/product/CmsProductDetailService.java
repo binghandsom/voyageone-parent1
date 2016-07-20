@@ -1216,7 +1216,7 @@ public class CmsProductDetailService extends BaseAppService {
         platForm.setpProductId("");
         platForm.setpNumIId("");
        // platForm.setpStatus(CmsConstants.PlatformStatus.);
-        platForm.setAttribute("pStatus","");
+        platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         String comment=parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
