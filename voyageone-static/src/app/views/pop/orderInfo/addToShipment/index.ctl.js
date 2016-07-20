@@ -19,7 +19,7 @@ define([
                 "orderId": self.shipmentDetails.orderId
             };
             self.barcode = null;
-            self.shipmentScanPopupService.checkBarcode(scanPopupCheckBarcodeInfo).then(function (res) {
+            self.shipmentScanPopupService.scanBarcode(scanPopupCheckBarcodeInfo).then(function (res) {
                 console.log(res)
             })
         };
