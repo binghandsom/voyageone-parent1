@@ -33,7 +33,7 @@ define([
                 total: this.pageInfo.total,
                 size: this.pageInfo.size,
                 status: "1",
-                orderId: "",
+                consolidationOrderId: "",
                 sku: "",
                 orderDateFrom: "",
                 orderDateTo: ""
@@ -182,13 +182,15 @@ define([
             var self = this;
             self.ScanPopupInitialInfo = {
                 "shipment": self.currentShipment,
-                "orderId": item.orderId
+                "consolidationOrderId": item.consolidationOrderId
             };
             self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (shipmentDetails) {
                 shipmentDetails.ScanPopupInitialInfo = self.ScanPopupInitialInfo;
-                self.popups.openAddShipment(shipmentDetails);
+                self.popups.openAddShipment(shipmentDetails).then(function (res) {
+                    if (res)
+                        self.init();
+                });
             });
-
         };
         return OrderInfoController;
 

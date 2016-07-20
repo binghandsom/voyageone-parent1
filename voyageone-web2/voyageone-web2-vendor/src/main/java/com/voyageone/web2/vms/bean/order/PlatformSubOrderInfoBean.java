@@ -10,18 +10,18 @@ import java.util.List;
  * Created by vantis on 16-7-6.
  */
 public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
-    private String orderId;
+    private String consolidationOrderId;
     private Date orderDateTime;
     private String status;
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private List<SubOrderInfoBean> orderInfoBeanList = new ArrayList<>();
 
-    public String getOrderId() {
-        return orderId;
+    public String getConsolidationOrderId() {
+        return consolidationOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setConsolidationOrderId(String consolidationOrderId) {
+        this.consolidationOrderId = consolidationOrderId;
     }
 
     public Date getOrderDateTime() {

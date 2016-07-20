@@ -123,7 +123,7 @@ public class VmsOrderInfoService extends BaseService {
         // 检查订单状态
         Map<String, Object> checkParam = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
-            put("consolidationOrderId", item.getOrderId());
+            put("consolidationOrderId", item.getConsolidationOrderId());
         }};
 
         List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
@@ -136,7 +136,7 @@ public class VmsOrderInfoService extends BaseService {
             throw new BusinessException("8000020");
 
         // 检测通过 进行状态变更
-        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getOrderId(), STATUS_VALUE
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getConsolidationOrderId(), STATUS_VALUE
                 .PRODUCT_STATUS.CANCEL, user.getUserName());
     }
 
@@ -339,7 +339,7 @@ public class VmsOrderInfoService extends BaseService {
 
                     // 按照第一个sku初始化平台订单id内容
                     PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
-                    platformOrderInfoBean.setOrderId(vmsBtOrderDetailModelList.get(0).getConsolidationOrderId());
+                    platformOrderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModelList.get(0).getConsolidationOrderId());
                     platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
                     platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
@@ -466,17 +466,17 @@ public class VmsOrderInfoService extends BaseService {
 
         ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
         String barcode = scanPopupCheckBarcodeInfo.getBarcode();
-        String orderId = scanPopupCheckBarcodeInfo.getOrderId();
+        String orderId = scanPopupCheckBarcodeInfo.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getOrderId());
+            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getConsolidationOrderId());
         }};
 
         long invalidCount = orderDetailService.select(checkParams).stream()
                 .filter(vmsBtOrderDetailModel -> (null != vmsBtOrderDetailModel.getShipmentId()
-                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId()))
+                        && !vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId()))
 
                         || (!vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN)))
                 .count();
@@ -491,14 +491,15 @@ public class VmsOrderInfoService extends BaseService {
                 barcode, orderId, shipment.getId());
     }
 
-    public boolean finishedOrderScan(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+    public boolean orderScanFinished(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
 
         ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
+        String orderId = scanPopupCheckBarcodeInfo.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getOrderId());
+            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getConsolidationOrderId());
         }};
 
         // 检查当前订单是否全部扫描完毕
@@ -509,6 +510,12 @@ public class VmsOrderInfoService extends BaseService {
                         && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .count();
 
-        return scannedCount == currentOrderInfo.size();
+        // 全部扫描完毕 则更新状态为packaged
+        if (scannedCount == currentOrderInfo.size()) {
+            orderDetailService.updateOrderStatus(user.getSelChannelId(), orderId, STATUS_VALUE.PRODUCT_STATUS
+                    .PACKAGE, user.getUserName());
+            return true;
+        }
+        return false;
     }
 }

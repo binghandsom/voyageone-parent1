@@ -5,22 +5,29 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
-        function AddToShipmentController(context, shipmentScanPopupService) {
+        function AddToShipmentController(context, notify, shipmentScanPopupService, $uibModalInstance) {
+            this.notify = notify;
             this.shipmentDetails = context.ScanPopupInitialInfo;
-            this.shipmentSkuList = context.scannedSkuList;
+            this.scannedSkuList = context.scannedSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
+            this.$uibModalInstance = $uibModalInstance;
         }
 
         AddToShipmentController.prototype.scan = function (barcode) {
             var self = this;
-            var scanPopupCheckBarcodeInfo = {
+            var req = {
                 "barcode": barcode,
                 "shipment": self.shipmentDetails.shipment,
-                "orderId": self.shipmentDetails.orderId
+                "consolidationOrderId": self.shipmentDetails.consolidationOrderId
             };
             self.barcode = null;
-            self.shipmentScanPopupService.scanBarcode(scanPopupCheckBarcodeInfo).then(function (res) {
-                console.log(res)
+            self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
+                if (data.success == 1) self.notify.success('TXT_SUCCESS');
+                else if (data.success == 0) self.notify.warning('TXT_ITEM_NOT_FOUND');
+                self.scannedSkuList = data.scannedSkuList;
+                if (data.finished) {
+                    self.$uibModalInstance.close(data.finished);
+                }
             })
         };
         return AddToShipmentController;

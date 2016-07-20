@@ -8,7 +8,7 @@ import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
  */
 public class ScanPopupInitialInfo {
     private ShipmentBean shipment;
-    private String orderId;
+    private String consolidationOrderId;
 
     public ShipmentBean getShipment() {
         return shipment;
@@ -18,12 +18,12 @@ public class ScanPopupInitialInfo {
         this.shipment = shipment;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getConsolidationOrderId() {
+        return consolidationOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setConsolidationOrderId(String consolidationOrderId) {
+        this.consolidationOrderId = consolidationOrderId;
     }
 
 }

@@ -2,7 +2,7 @@
 <div class="col-sm-12 form-inline">
     <div class="col-sm-3">
         <span class="col-sm-2" translate="TXT_SHOWING_NO"></span>
-        <input class="text-center col-sm-2 form-control" type="text" ng-model="curr.pageNo" style="padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px;">
+        <input class="text-center form-control" type="text" ng-model="curr.pageNo" style="padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px; max-height: 22px; max-width: 30px;">
         <span>/</span>
         <span>&nbsp;</span>
         <span ng-bind="totalPages"></span>
@@ -15,7 +15,7 @@
         <span translate="TXT_PAGER_SIZE"></span>
         <span>&nbsp;</span>
         <select class="form-control" ng-change="changePerPage(perpages.selectedOption)" ng-options="option for option in perpages.availableOptions"
-                ng-model="perpages.selectedOption" style="padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px;"></select>
+                ng-model="perpages.selectedOption" style="padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px; max-height: 22px; max-width: 60px;"></select>
         <span>&nbsp;</span>
         <span translate="TXT_SHOWING"></span>
         <span>&nbsp;</span>

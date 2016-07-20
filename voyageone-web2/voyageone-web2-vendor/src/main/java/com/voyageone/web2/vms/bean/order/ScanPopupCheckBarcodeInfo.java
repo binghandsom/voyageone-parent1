@@ -8,7 +8,7 @@ import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
  */
 public class ScanPopupCheckBarcodeInfo {
     private ShipmentBean shipment;
-    private String orderId;
+    private String consolidationOrderId;
     private String barcode;
 
     public ShipmentBean getShipment() {
@@ -19,12 +19,12 @@ public class ScanPopupCheckBarcodeInfo {
         this.shipment = shipment;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getConsolidationOrderId() {
+        return consolidationOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setConsolidationOrderId(String consolidationOrderId) {
+        this.consolidationOrderId = consolidationOrderId;
     }
 
     public String getBarcode() {

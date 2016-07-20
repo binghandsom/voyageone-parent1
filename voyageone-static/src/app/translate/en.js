@@ -58,6 +58,7 @@ define(function () {
         "TXT_UPLOAD_DATE": "Upload Date",
         "TXT_UPLOAD_USER": "Upload User",
         "TXT_SUCCESS": "Success",
+        "TXT_ITEM_NOT_FOUND": "Scanned item not found in this order.",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

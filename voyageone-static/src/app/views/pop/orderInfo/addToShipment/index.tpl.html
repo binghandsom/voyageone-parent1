@@ -14,7 +14,7 @@
                 <tbody>
                     <tr>
                         <td class="text-center">{{ctrl.shipmentDetails.shipment.shipmentName}}</td>
-                        <td class="text-center">{{ctrl.shipmentDetails.orderId}}</td>
+                        <td class="text-center">{{ctrl.shipmentDetails.consolidationOrderId}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -37,15 +37,8 @@
                             <th class="text-center">Containerizing User</th>
                         </tr>
                     </thead>
-                    <tbody ng-if="ctrl.shipmentSkuList.length == 0">
-                        <tr style="padding-left:0px">
-                            <td colspan="6">
-                                <div if-no-rows="ctrl.shipmentSkuList.length"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tbody ng-if="ctrl.shipmentSkuList.length > 0">
-                        <tr ng-repeat="list in ctrl.shipmentSkuList">
+                    <tbody>
+                        <tr ng-repeat="list in ctrl.scannedSkuList">
                             <td class="text-center">{{$index + 1}}</td>
                             <td class="text-center">{{list.barcode}}</td>
                             <td class="text-center">{{list.clientSku}}</td>

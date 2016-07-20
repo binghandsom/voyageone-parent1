@@ -6,7 +6,7 @@ define(function () {
                 "hash": "/home",
                 "templateUrl": "views/home/index.html",
                 "controllerUrl": "./views/home/index.controller",
-                "controller": "HomeController"
+                "controller": "HomeController as ctrl"
             },
             {
                 "hash": "/order/order_info",
