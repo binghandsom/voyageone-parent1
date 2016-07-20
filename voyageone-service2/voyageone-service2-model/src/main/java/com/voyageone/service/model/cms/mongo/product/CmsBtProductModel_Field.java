@@ -228,6 +228,9 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                 case HANG_TAG_IMAGE:
                     result = getImages8();
                     break;
+                case DURABILITY_TAG_IMAGE:
+                    result = getImages9();
+                    break;
             }
         }
         return result;
@@ -258,6 +261,9 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
                     break;
                 case HANG_TAG_IMAGE:
                     setImages8(images);
+                    break;
+                case DURABILITY_TAG_IMAGE:
+                    setImages9(images);
                     break;
             }
         }
@@ -349,6 +355,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
     public void setImages8(List<CmsBtProductModel_Field_Image> images8) {
         setAttribute("images8", images8);
+    }
+    public List<CmsBtProductModel_Field_Image> getImages9() {
+        if (!this.containsKey("images9") || getStringAttribute("images9") == null) {
+            setAttribute("images9", new ArrayList<CmsBtProductModel_Field_Image>());
+        }
+        return getAttribute("images9");
+    }
+    public void setImages9(List<CmsBtProductModel_Field_Image> images9) {
+        setAttribute("images9", images9);
     }
 
     //msrp价格区间

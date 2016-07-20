@@ -32,6 +32,7 @@ define([
                 initialize();
                 scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
+                scope.openSwitchMainPop = openSwitchMainPop;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
@@ -190,6 +191,14 @@ define([
                 }
 
                 /**
+                 *  切换主类目   cartInfo.value,vm.mastData.productCode
+                 */
+                function openSwitchMainPop(openSwitchMain){
+
+                }
+
+
+                /**
                  * 更新操作
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
@@ -343,10 +352,22 @@ define([
                 }
 
                 function limitNumber(event,price){
+                    var decimalReg = /^\d+\.{0,1}(\d{1,2})?$/;
+                    var flag = null;
                     if(event.keyCode != 8){
-                        if((event.keyCode < 48 || event.keyCode > 57 ) || price > Math.pow(10,14))
-                            event.preventDefault();
+                        if(event.keyCode < 48 || event.keyCode > 57){
+                            if(event.keyCode == 46){
+                                flag = decimalReg.test(price);
+                            }else{
+                                flag = false;
+                            }
+                        }else{
+                            flag = decimalReg.test(price) && price < Math.pow(10,14);
+                        }
                     }
+
+                    if(!flag)
+                        event.preventDefault();
                 }
 
             }

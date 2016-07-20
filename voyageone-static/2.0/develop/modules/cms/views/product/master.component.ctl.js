@@ -19,7 +19,7 @@ define([
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]}
                 };
 
                 initialize();
