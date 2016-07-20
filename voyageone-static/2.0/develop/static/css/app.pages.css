@@ -429,6 +429,13 @@ s-field textarea.s-html {
     }
 }
 
+.product-shema-detail .panel-body li{
+    float: left;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    list-style: none;
+}
+
 .product-shema-detail .btn-nav {
     width: 100%;
     height: 27px;
@@ -777,4 +784,38 @@ s-field textarea.s-html {
 .img-upload .fix-progress{
     width: 125px;
     margin: 0px auto;
+}
+
+/**切换主商品样式*/
+
+.switch-main span a {
+    color: #e67e22;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.switch-main .middle{
+    margin: 20px 20px;
+    padding: 10px 10px;
+    border: 1px solid #e67e22;
+    max-height: 365px;
+    overflow-y: scroll;
+}
+
+.switch-main .fix-img{
+    width: auto;
+    height: auto;
+    max-width: 125px;
+    max-height: 125px;
+    margin: 15px auto;
+}
+
+.switch-main .status{
+    position: absolute;
+}
+
+.switch-main .product-info {
+    text-align: center;
+    margin: 0px auto;
+    width: 95%;
 }

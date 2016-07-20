@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="ctrl.init()">
+<div class="vo_modal switch-main" ng-init="ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
@@ -10,8 +10,8 @@
 
         <div class="container-fluid">
             <div class="row form-horizontal">
-                <div class="col-md-8">
-                    <label class="col-md-2"><strong>店铺渠道名称:</strong></label>
+                <div class="col-md-7">
+                    <label class="col-md-2 control-label"><strong>店铺渠道名称:</strong></label>
                     <div class="col-md-3">
                         <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -27,16 +27,31 @@
             </div>
         </div>
 
-        <div class="container-fluid">
+        <div class="container-fluid middle">
             <div class="row form-group">
-                <div class="col-sm-2 smacot ng-scope" ng-repeat="item in ctrl.uploader.queue">
-                    <img  flow-img="file" class="img-thumbnail img-thumbnails center-block fix-img" ng-thumb="{ file: item._file, height: 100 }" title="{{item._file.size/1024/1024 | number:4}}M">
-                    <div class="progress fix-progress">
-                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }" style="width: 0%;" ng-if="!item.uploaded"></div>
-                        <div class="progress-bar" role="progressbar" style="width: 100%;" ng-if="item.uploaded"></div>
+                <div class="col-md-3" ng-repeat="product in ctrl.data.productInList">
+                    <a href="javascript:void(0)" class="thumbnail fix-img">
+                        <strong class="status">
+                            <span class="label" ng-class="{'label-default':product.platForm == 'Pending',
+                                                           'label-warning':product.platForm == 'Ready',
+                                                           'label-success':product.platForm == 'Approved'}">&nbsp;{{product.platForm}}&nbsp;</span>
+                        </strong>
+                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
+                    </a>
+                    <div class="row product-info">
+                        <div class="col-md-12">
+                            <strong class="col-md-4"><strong>Code:</strong></strong>
+                            <label class="col-md-8">
+                                <span ng-if="product.productCode.length > 15"><popover-text content="product.productCode" direct="top" size="15"></popover-text></span>
+                                <span ng-if="product.productCode.length <= 15">{{product.productCode}}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode"><span class="fa fa-check"></span> 主商品
+                            </label>
+                        </div>
                     </div>
-                    <p class="error-msg" ng-if="item.message">{{item.message}}</p>
-                    <button class="btn btn-dangerdel btn-xs imagepopup" ng-click="item.remove()"><i class="fa fa-trash-o "></i></button>
                 </div>
             </div>
         </div>

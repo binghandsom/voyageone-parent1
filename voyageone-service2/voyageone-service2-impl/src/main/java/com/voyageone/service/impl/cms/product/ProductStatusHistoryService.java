@@ -40,11 +40,11 @@ public class ProductStatusHistoryService extends BaseService {
         return daoExt.selectCount(parameters.getSqlMapParameter());
     }
     @VOTransactional
-    public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
+    public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType,String comment, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory = null;
         for (String code : codes) {
-            productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, modifier);
+            productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, comment,modifier);
             list.add(productStatusHistory);
         }
         List<List<CmsBtProductStatusHistoryModel>> pageList = ListUtils.getPageList(list, 100);//分隔数据源 每页100
@@ -52,11 +52,11 @@ public class ProductStatusHistoryService extends BaseService {
             daoExt.insertList(page);
         }
     }
-    public void insert(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
-        CmsBtProductStatusHistoryModel productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, modifier);
+    public void insert(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String Comment,String modifier) {
+        CmsBtProductStatusHistoryModel productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, Comment,modifier);
         dao.insert(productStatusHistory);
     }
-    private CmsBtProductStatusHistoryModel get(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType, String modifier) {
+    private CmsBtProductStatusHistoryModel get(String channelId, String code, String status, int cartId, EnumProductOperationType enumProductOperationType,String comment, String modifier) {
         CmsBtProductStatusHistoryModel productStatusHistory = new CmsBtProductStatusHistoryModel();
         productStatusHistory.setChannelId(channelId);
         productStatusHistory.setCode(code);
@@ -66,7 +66,7 @@ public class ProductStatusHistoryService extends BaseService {
         productStatusHistory.setModifier(modifier);
         productStatusHistory.setCreater(modifier);
         productStatusHistory.setCreated(new Date());
-        productStatusHistory.setComment("");
+        productStatusHistory.setComment(comment);
         return productStatusHistory;
     }
 }

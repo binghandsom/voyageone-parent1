@@ -29,9 +29,11 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -74,6 +76,9 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     @Autowired
     private TbItemService tbItemService;
+
+    @Autowired
+    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
 
     @Override
@@ -194,14 +199,21 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
+            final boolean[] hasPublishSku = {false, false}; // 第一个表示是否是sku级的，第二个表示本code是否有sku上新过
             fieldMap.forEach((s1, o) -> {
                 // added by morse.lu 2016/07/18 start
                 if ("sku".equals(s1)) {
+                    hasPublishSku[0] = true;
                     List<Map<String, Object>> upValSku = new ArrayList<>();
                     List<Map<String, Object>> listVal = (List) o;
                     listVal.forEach(skuVal -> {
                         if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
                             upValSku.add(skuVal);
+                            hasPublishSku[1] = true;
+                            {
+                                // TODO:size 和 price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
+
+                            }
                         }
                     });
                     updateMap.put("platforms.P23.fields." + s1, upValSku);
@@ -210,6 +222,34 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                     updateMap.put("platforms.P23.fields." + s1, o);
                 }
             });
+            // added by morse.lu 2016/07/18 start
+            String catId = (String) fieldMap.get("cat_id"); // 类目ID
+            updateMap.put("platforms.P23.pCatId", catId);
+            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
+            if (cmsMtPlatformCategorySchemaModel != null) {
+                updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
+            } else {
+                updateMap.put("platforms.P23.pCatPath", "");
+            }
+
+            updateMap.put("platforms.P23.pProductId", cmsBtProductGroup.getPlatformPid());
+            updateMap.put("platforms.P23.pNumIId", cmsBtProductGroup.getNumIId());
+            if (!hasPublishSku[0] || hasPublishSku[1]) {
+                // product级 或者 本code有sku上新过
+                String item_status = (String) fieldMap.get("item_status"); // 商品状态
+                if ("0".equals(item_status)) {
+                    // 出售中
+                    updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.OnSale.name());
+                } else {
+                    // 仓库中
+                    updateMap.put("platforms.P23.pStatus", CmsConstants.PlatformStatus.InStock.name());
+                }
+            }
+            {
+                // TODO: 货号，回写进主商品common.fields.model
+
+            }
+            // added by morse.lu 2016/07/18 end
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
             model.setQueryMap(queryMap);
