@@ -101,7 +101,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                                                     sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                     sxData.getMainProduct().getCommon().getFields().getSizeType(),
                                                     cmsBtProductModelFieldImage.getName());
-                    if (StringUtils.isEmpty(parseResult)) {
+                    if (StringUtils.isEmpty(completeImageUrl)) {
                         $warn("商品详情图url未在图片管理模板表里设定!" +
                                 ",BrandName= " + sxData.getMainProduct().getCommon().getFields().getBrand() +
                                 ",ProductType= " + sxData.getMainProduct().getCommon().getFields().getProductType() +
