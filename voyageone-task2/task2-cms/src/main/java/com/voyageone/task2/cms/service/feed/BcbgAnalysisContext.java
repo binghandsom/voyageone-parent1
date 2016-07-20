@@ -98,7 +98,9 @@ class BcbgAnalysisContext {
         CmsBtFeedInfoModel feedInfoModel;
         String code = bcbgBean.getStyleBean().getStyleID();
         String name = bcbgBean.getMAKTX();
-        name = name.substring(0, name.indexOf(","));
+        int indexOfComma = name.indexOf(",");
+        if (indexOfComma > 0)
+            name = name.substring(0, indexOfComma);
 
         if (codeMap.containsKey(code)) {
             feedInfoModel = codeMap.get(code);
