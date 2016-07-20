@@ -98,16 +98,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private boolean isReconnect = false;
 
-    private String split = "";
     private String splitDir = "";
-
-    public String getSplit() {
-        return split;
-    }
-
-    public void setSplit(String split) {
-        this.split = split;
-    }
 
     public String getSplitDir() {
         return splitDir;
