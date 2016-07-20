@@ -14,13 +14,13 @@
                     <label class="col-md-2 control-label"><strong>店铺渠道名称:</strong></label>
                     <div class="col-md-3">
                         <select class="form-control" ng-model="ctrl.data.selected" ng-change="ctrl.init()" ng-options="plateform.value as plateform.name for plateform in ctrl.data.platformTypes">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                         </select>
                     </div>
                     <label class="col-md-2 control-label"><strong>NumIid:</strong></label>
-                    <label class="col-md-3">
+                    <label class="col-md-3" ng-if="ctrl.data.numIId">
                            <span class="v-middle">
-                                 <a ng-href="{{ctrl.data.cart.pUrl}}{{ctrl.context.numIId}}" target="_blank">{{ctrl.context.numIId}}</a>
+                                 <a ng-href="{{ctrl.data.cart.pUrl}}{{ctrl.data.numIId}}" target="_blank">{{ctrl.data.numIId}}</a>
                            </span>
                     </label>
                 </div>
@@ -53,7 +53,7 @@
                             </label>
                         </div>
                         <div class="col-md-12">
-                            <label class="checkbox-inline c-radio">
+                            <label class="checkbox-inline c-radio" ng-class="{'gray':!product.isMain && ctrl.data.mainProduct.platFormStatus == 'Approved' && product.platFormStatus != 'Approved'}">
                                 <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode" ng-disabled="!product.isMain && ctrl.data.mainProduct.platFormStatus == 'Approved' && product.platFormStatus != 'Approved'"
                                        ng-click="ctrl.transferMain(product.productCode)"><span class="fa fa-check"></span> 主商品
                             </label>

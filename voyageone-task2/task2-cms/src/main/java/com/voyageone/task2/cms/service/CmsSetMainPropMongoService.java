@@ -2404,6 +2404,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 根据公式计算价格
             try {
+                // 价格说明：
+                // priceClientMsrp:美金专柜价
+                // priceClientRetail:美金指导价
+                // priceNet:美金成本价
+                // priceMsrp:人民币专柜价
+                // priceCurrent:人民币指导价
                 ExpressionParser parser = new SpelExpressionParser();
                 formula = formula.replaceAll("\\[priceClientMsrp\\]", String.valueOf(priceClientMsrp))
                         .replaceAll("\\[priceClientRetail\\]", String.valueOf(priceClientRetail))
@@ -3356,6 +3362,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         paramsEnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
         paramsEnMap.put("langId", strLangIdEn);
 
+        // 如果有2个或以上重复的英文品牌数据(品牌mapping采用英文品牌)，则报异常，中止feed导入
+        // cms_mt_channel_config表中当有2条及以上addName1不为空，而name为空的数据的时候，用下面的逻辑抛出异常
+        int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
+        if (brandEnCount > 1) {
+            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的英文品牌mapping数据 " +
+                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
+                    brandEnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdEn, feed.getModel());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
         ComMtValueChannelModel brandEnModel = comMtValueChannelDao.selectOne(paramsEnMap);
         if (brandEnModel != null) {
             // 说明该条英文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
@@ -3384,6 +3401,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         paramsCnMap.put("channelId", channelId);
         paramsCnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
         paramsCnMap.put("langId", strLangIdCn);
+
+        // 如果有2个或以上重复的中文品牌数据，则报出警告信息，但不中止feed导入
+        // 因为品牌mappping以英文品牌为主，中文品牌数据即使有错也没关系
+        int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
+        if (brandCnCount > 1) {
+            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的中文品牌mapping数据 " +
+                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
+                    brandCnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdCn, feed.getModel());
+            $warn(errMsg);
+            return;
+        }
 
         ComMtValueChannelModel brandCnModel = comMtValueChannelDao.selectOne(paramsCnMap);
         if (brandCnModel != null) {

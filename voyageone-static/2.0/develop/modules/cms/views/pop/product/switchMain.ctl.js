@@ -26,6 +26,7 @@ define([
                 mainProduct:null,
                 mainCode:null,
                 cart:null,
+                numIId:null,
                 selected:null
             }
         }
@@ -42,6 +43,8 @@ define([
                           return product.isMain;
                       });
 
+                      /**一个group中的上心过的商品的numIId是一样的*/
+                      self.data.numIId = self.data.productInList[0].numIId;
                       self.data.mainCode = angular.copy(self.data.mainProduct).productCode;
                       self.data.initMainCode = angular.copy(self.data.mainCode);
                       self.data.curMainCode = angular.copy(self.data.mainCode);
@@ -57,7 +60,7 @@ define([
               });
 
               self.data.cart = _.find(carts,function(cart){
-                 return cart.id == self.context.cartId;
+                 return cart.id == self.data.selected;
               });
 
           },
@@ -75,11 +78,13 @@ define([
           setMastProduct:function(){
               var self = this;
               self.confirm("您确定要执行切换主商品操作吗？").then(function(){
-                  self.productDetailService.setMastProduct({cartId:self.context.cartId,productCode:self.data.mainCode}).then(function(){
+                  self.productDetailService.setMastProduct({cartId:self.data.selected,productCode:self.data.mainCode}).then(function(){
                       self.uibModalInstance.close();
                   },function(res){
                       if(res.code == 5)
                         self.alert("更新失败！");
+
+                      self.data.mainCode = self.data.initMainCode;
                   });
               });
           }
