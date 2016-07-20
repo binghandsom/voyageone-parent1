@@ -153,7 +153,8 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
             int eventAttemptCounter = 0;
             Event event = channel.take();
             if (event != null) {
-                String projectFile = event.getHeaders().get("projectFile");
+                Map<String, String> headerMap = event.getHeaders();
+                String projectFile = headerMap.get("projectFile");
                 if (projectFile != null && !"".equals(projectFile.trim())) {
                     if (!logFileBeanMap.containsKey(projectFile)) {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
@@ -171,6 +172,28 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     logFileBean.serializer.flush();
                     logFileBean.outputStream.flush();
                 }
+
+                String taskName = headerMap.get("taskName");
+                if (taskName != null && taskName.trim().length() > 0) {
+                    String taskLogFile = headerMap.get("splitDir") + taskName + ".log";
+
+                    if (!logFileBeanMap.containsKey(taskLogFile)) {
+                        logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
+                    }
+                    LogFileBean logFileBean = logFileBeanMap.get(taskLogFile);
+                    if (!logFileBean.currentFile.exists()) {
+                        logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
+                        logFileBeanMap.get(taskLogFile);
+                    }
+
+                    sinkCounter.incrementEventDrainAttemptCount();
+                    eventAttemptCounter++;
+                    logFileBean.serializer.write(event);
+
+                    logFileBean.serializer.flush();
+                    logFileBean.outputStream.flush();
+                }
+
             } else {
                 // No events found, request back-off semantics from runner
                 result = Status.BACKOFF;

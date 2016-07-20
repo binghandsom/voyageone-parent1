@@ -98,6 +98,25 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private boolean isReconnect = false;
 
+    private String split = "";
+    private String splitDir = "";
+
+    public String getSplit() {
+        return split;
+    }
+
+    public void setSplit(String split) {
+        this.split = split;
+    }
+
+    public String getSplitDir() {
+        return splitDir;
+    }
+
+    public void setSplitDir(String splitDir) {
+        this.splitDir = splitDir;
+    }
+
     /**
      * If this constructor is used programmatically rather than from a log4j conf
      * you must set the <tt>port</tt> and <tt>hostname</tt> and then call
@@ -175,6 +194,8 @@ public class VoLog4jAppender extends AppenderSkeleton {
         //Log4jAvroHeaders.LOG_LEVEL.toString()))
         hdrs.put(Log4jAvroHeaders.LOG_LEVEL.toString(),
                 String.valueOf(event.getLevel().toInt()));
+        // getTaskName
+        String taskName = event.getNDC();
 
         Event flumeEvent;
         Object message = event.getMessage();
@@ -196,6 +217,10 @@ public class VoLog4jAppender extends AppenderSkeleton {
             flumeEvent = EventBuilder.withBody(msg, Charset.forName("UTF8"), hdrs);
             // liang add projectFile
             flumeEvent.getHeaders().put("projectFile", projectFile);
+            if (taskName != null && taskName.trim().length() > 0) {
+                flumeEvent.getHeaders().put("taskName", taskName);
+                flumeEvent.getHeaders().put("splitDir", this.splitDir);
+            }
         }
 
         try {

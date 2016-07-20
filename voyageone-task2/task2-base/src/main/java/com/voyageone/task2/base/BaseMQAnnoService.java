@@ -13,6 +13,7 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.NDC;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -58,12 +59,14 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
     @RabbitHandler
     protected void onMessage(byte[] message, @Headers Map<String, Object> headers) throws Exception {
+        NDC.push(getTaskName());
         SimpleAmqpHeaderMapper headerMapper = new SimpleAmqpHeaderMapper();
         MessageHeaders messageHeaders = new MessageHeaders(headers);
         MessageProperties messageProperties = new MessageProperties();
         headerMapper.fromHeaders(messageHeaders, messageProperties);
 
         onMessage(new Message(message, messageProperties));
+        NDC.remove();
     }
 
     // 先获取配置
