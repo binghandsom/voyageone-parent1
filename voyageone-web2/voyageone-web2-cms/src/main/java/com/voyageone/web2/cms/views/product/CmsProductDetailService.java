@@ -1162,6 +1162,9 @@ public class CmsProductDetailService extends BaseAppService {
 //        CallResult result=new CallResult();
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(parameter.getChannelId(), parameter.getProductCode(), parameter.getCartId());
         if (cmsBtProductGroup.getMainProductCode().equals(parameter.getProductCode())) return;
+
+        List<String>codes = cmsBtProductGroup.getProductCodes().stream().filter(code->!code.equalsIgnoreCase(cmsBtProductGroup.getMainProductCode()) && !code.equalsIgnoreCase(parameter.getProductCode())).collect(Collectors.toList());
+
         CmsBtProductModel cmsBtProductModel=productService.getProductByCode(parameter.getChannelId(),cmsBtProductGroup.getMainProductCode());
         CmsBtProductModel newCmsBtProductModel=productService.getProductByCode(parameter.getChannelId(),parameter.getProductCode());
 
@@ -1172,18 +1175,32 @@ public class CmsProductDetailService extends BaseAppService {
             throw new BusinessException("只能设置状态为Approve的商品");
         }
         platForm.setpIsMain(0);// 把mainProduct的所对应的product表中对应的平台的pIsMain设0
+        platForm.setMainProductCode(parameter.getProductCode());
         newPlatForm.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
+        newPlatForm.setMainProductCode(parameter.getProductCode());
         cmsBtProductGroup.setMainProductCode(parameter.getProductCode());//把group表中的mainProduct替换成productCode
         cmsBtProductGroup.setModifier(modifier);
         cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
         productService.updateProductPlatform(parameter.getChannelId(),cmsBtProductModel.getProdId(),platForm,modifier);
         productService.updateProductPlatform(parameter.getChannelId(),newCmsBtProductModel.getProdId(),newPlatForm,modifier);
-        productGroupService.update(cmsBtProductGroup);
 
-        String comment=String.format("取消主商品");
+        codes.forEach(code->{
+            CmsBtProductModel product = productService.getProductByCode(parameter.getChannelId(),code);
+            CmsBtProductModel_Platform_Cart pform = product.getPlatform(parameter.getCartId());
+            pform.setMainProductCode(parameter.getProductCode());
+            productService.updateProductPlatform(parameter.getChannelId(),product.getProdId(),pform,modifier);
+            String comment = "主商品发生变化 主商品："+parameter.getProductCode();
+            productStatusHistoryService.insert(parameter.getChannelId(),product.getCommon().getFields().getCode(),pform.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,comment,modifier);
+
+        });
+
+
+
+        productGroupService.update(cmsBtProductGroup);
+        String comment = "取消主商品 主商品："+parameter.getProductCode();
         productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,comment,modifier);
 
-        String newComment=String.format("设置为主商品");
+        String newComment = "设置为主商品 主商品："+parameter.getProductCode();
         productStatusHistoryService.insert(parameter.getChannelId(),newCmsBtProductModel.getCommon().getFields().getCode(),newPlatForm.getStatus(),parameter.getCartId(), EnumProductOperationType.ChangeMastProduct,newComment,modifier);
 //        productService.updateProductPlatform()
 //        1.1 根据 cartId和productCode找到对应的group
