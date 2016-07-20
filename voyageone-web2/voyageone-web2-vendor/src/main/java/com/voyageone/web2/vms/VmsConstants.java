@@ -15,6 +15,7 @@ public class VmsConstants {
 
     public final static String ORDER_TIME = "order_time";
     public final static String CONSOLIDATION_ORDER_TIME = "consolidation_order_time";
+
     /**
      * Feed文件导入状态
      */
@@ -65,6 +66,7 @@ public class VmsConstants {
             String CANCEL = "7";
         }
 
+        // shipment状态
         interface SHIPMENT_STATUS {
             String OPEN = "1";
             String SHIPPED = "3";
@@ -73,13 +75,18 @@ public class VmsConstants {
             String RECEIVE_WITH_ERROR = "6";
         }
 
-
+        // 操作级别
         interface VENDOR_OPERATE_TYPE {
 
             String SKU = "SKU";
             String ORDER = "ORDER";
         }
 
+        // 是否显示中国售价
+        interface SALE_PRICE_SHOW {
+            String SHOW = "1";
+            String HIDE = "0";
+        }
     }
 
     public interface PICKING_LIST_ORDER_TYPE {
@@ -97,6 +104,8 @@ public class VmsConstants {
 
         // 是订单级别的操作还是SKU级别的操作
         String VENDOR_OPERATE_TYPE = "VENDOR_OPERATE_TYPE";
+        // 是否显示RetailPrice
+        String SALE_PRICE_SHOW = "SALE_PRICE_SHOW";
         // CSV分隔符
         String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
         // CSV文件编码

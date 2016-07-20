@@ -24,10 +24,12 @@ import static com.voyageone.web2.vms.VmsUrlConstants.POPUP;
 public class VmsShipmentPopupController extends BaseController {
 
     private VmsShipmentService shipmentService;
+    private VmsOrderInfoService vmsOrderInfoService;
 
     @Autowired
-    public VmsShipmentPopupController(VmsShipmentService shipmentService) {
+    public VmsShipmentPopupController(VmsShipmentService shipmentService, VmsOrderInfoService vmsOrderInfoService) {
         this.shipmentService = shipmentService;
+        this.vmsOrderInfoService = vmsOrderInfoService;
     }
 
     @RequestMapping(POPUP.SHIPMENT.INIT)
@@ -59,6 +61,14 @@ public class VmsShipmentPopupController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("success", shipmentService.create(this.getUser(), shipmentBean));
         result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
+        return success(result);
+    }
+
+    @RequestMapping(POPUP.SHIPMENT.CONFIRM)
+    public AjaxResponse confirm(@RequestBody ShipmentBean shipmentBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("invalidOrderList", vmsOrderInfoService.confirmShipment(this.getUser(), shipmentBean));
+        // TODO: 16-7-20 未完成 vantis
         return success(result);
     }
 }

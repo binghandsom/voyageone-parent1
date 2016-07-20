@@ -43,6 +43,8 @@ public interface VmsUrlConstants {
             String SUBMIT = "submit";
             String CREATE = "create";
             String GET = "get";
+            String CONFIRM = "confirm";
+            String END = "end";
         }
 
         interface SCAN {

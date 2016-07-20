@@ -59,6 +59,8 @@ define(function () {
         "TXT_UPLOAD_USER": "Upload User",
         "TXT_SUCCESS": "Success",
         "TXT_ITEM_NOT_FOUND": "Scanned item not found in this order.",
+        "TXT_VO_PRICE": "VoPrice",
+        "TXT_SALE_PRICE": "SalePrice",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

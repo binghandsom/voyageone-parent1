@@ -13,7 +13,8 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String consolidationOrderId;
     private Date orderDateTime;
     private String status;
-    private BigDecimal totalPrice = BigDecimal.ZERO;
+    private BigDecimal totalVoPrice = BigDecimal.ZERO;
+    private BigDecimal totalRetailPrice = BigDecimal.ZERO;
     private List<SubOrderInfoBean> orderInfoBeanList = new ArrayList<>();
 
     public String getConsolidationOrderId() {
@@ -40,12 +41,20 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.orderDateTime = orderDateTime;
     }
 
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
+    public BigDecimal getTotalVoPrice() {
+        return totalVoPrice;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotalVoPrice(BigDecimal totalVoPrice) {
+        this.totalVoPrice = totalVoPrice;
+    }
+
+    public BigDecimal getTotalRetailPrice() {
+        return totalRetailPrice;
+    }
+
+    public void setTotalRetailPrice(BigDecimal totalRetailPrice) {
+        this.totalRetailPrice = totalRetailPrice;
     }
 
     public List<SubOrderInfoBean> getOrderInfoBeanList() {
@@ -73,7 +82,8 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
 
         if (null == this.status) this.status = orderInfoBean.getStatus();
         else if (!orderInfoBean.getStatus().equals(this.status)) this.status = "-";
-        this.totalPrice = totalPrice.add(orderInfoBean.getPrice());
+        this.totalVoPrice = totalVoPrice.add(orderInfoBean.getVoPrice());
+        this.totalRetailPrice = totalRetailPrice.add(orderInfoBean.getRetailPrice());
         this.orderInfoBeanList.add(orderInfoBean);
         return true;
     }

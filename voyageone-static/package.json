@@ -33,6 +33,7 @@
     "through2": ""
   },
   "dependencies": {
+    "angular-chart.js": "^1.0.0",
     "chart.js": "^2.1.4"
   }
 }
