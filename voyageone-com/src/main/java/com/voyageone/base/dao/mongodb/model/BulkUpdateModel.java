@@ -1,5 +1,7 @@
 package com.voyageone.base.dao.mongodb.model;
 
+import com.voyageone.common.util.JsonUtil;
+
 import java.util.Map;
 
 /**
@@ -26,5 +28,10 @@ public class BulkUpdateModel {
 
     public void setQueryMap(Map<String, Object> queryMap) {
         this.queryMap = queryMap;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
     }
 }

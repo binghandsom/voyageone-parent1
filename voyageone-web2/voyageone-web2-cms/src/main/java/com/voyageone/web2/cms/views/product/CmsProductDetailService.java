@@ -1215,20 +1215,24 @@ public class CmsProductDetailService extends BaseAppService {
         platForm.setStatus("Ready");
         platForm.setpProductId("");
         platForm.setpNumIId("");
-        platForm.setpStatus(null);
+       // platForm.setpStatus(CmsConstants.PlatformStatus.);
+        platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         String comment=parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
         ImsBtProductModel imsBtProductModel= imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(),parameter.getCartId(),parameter.getProductCode());
-        imsBtProductModel.setNumIid("");
-        imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel,modifier);
-    }
-//    2	单一商品下线
+        if(imsBtProductModel!=null) {
+            imsBtProductModel.setNumIid("");
+            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+        }
+        //    2	单一商品下线
 //    2.1	根据 cartId和productCode检查该商品是否是主商品
 //    2.1.1	是主商品的场合  抛出BusinessException  【该商品是主商品不能单一产品下线请切换主商品或者点击【平台商品删除】按钮
 //    2.1.2	不是主商品的场合 把该商品所在的平台状态【status】=Ready  【pProductId】【pNumIId】【pStatus】清空
 //    2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
 //    2.1.4	调用插入workload表的共同方法
+    }
+
 }
