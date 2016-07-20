@@ -69,6 +69,7 @@ public class RefreshJMSkuServiceTest {
                     e.printStackTrace();
                 }
             });
+
 //            for (CmsBtProductModel model : list) {
 //                try {
 //                    String hashId = model.getPlatform(27).getpNumIId();

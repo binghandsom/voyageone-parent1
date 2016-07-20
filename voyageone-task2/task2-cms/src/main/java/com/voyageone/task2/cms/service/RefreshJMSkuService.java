@@ -57,7 +57,6 @@ public class RefreshJMSkuService extends BaseTaskService {
             throw new BusinessException("Bad hashId");
         }
 
-
         JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmProductId);
         Thread.sleep(1000);
         List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
