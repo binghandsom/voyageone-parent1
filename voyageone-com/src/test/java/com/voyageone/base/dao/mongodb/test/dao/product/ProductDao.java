@@ -22,9 +22,9 @@ public class ProductDao {
         CommandResult result = mongoTemplate.executeCommand(cmd);
     }
 
-    public boolean testCollectionExists() {
-        return mongoTemplate.collectionExists(Product.getCollectionName("013"));
-    }
+//    public boolean testCollectionExists() {
+//        return mongoTemplate.collectionExists(Product.getCollectionName("013"));
+//    }
 
     public void createCollection() {
         mongoTemplate.createCollection(Product.getCollectionName("015"));
