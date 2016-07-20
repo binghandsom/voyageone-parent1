@@ -27,7 +27,8 @@ define(function (require) {
         'vms.menu',
         'vms.topbar',
         'vms.popups',
-        'angularFileUpload'
+        'angularFileUpload',
+        'chart.js'
     ]).config(function ($routeProvider, $translateProvider) {
 
         $translateProvider.translations('zh', zh);

@@ -15,10 +15,9 @@
                         <h3>Today‘s New Order<span>Update everyday</span></h3>
                     </div>
                     <ul class="list-unstyled" style="margin-top:-10px;">
-                        <li> New Order Number <span class="pull-right">10</span> </li>
+                        <li> New Order Number <span class="pull-right">10</span></li>
                         <li> Sku Number <span class="pull-right">10</span></li>
-                        <li> </li>
-                        <li> </li>
+                        <li></li>
                     </ul>
                 </div>
             </div>
@@ -28,13 +27,51 @@
                         <h3>Receive with Error<span>Last 10 days</span></h3>
                     </div>
                     <ul class="list-unstyled" style="margin-top:-10px;">
-                        <li> Shippent Number <span class="pull-right">10</span> </li>
-                        <li> </li>
-                        <li> </li>
-                        <li> </li>
+                        <li> Shippent Number <span class="pull-right">10</span></li>
+                        <li></li>
+                        <li></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-sm-4 col-sm-offset-2 m-t-md">
+        <div class="home_data hover-effect media-body">
+            <div class="panel ">
+                <div class="panel-heading">
+                    <div class="home_data-head text-center">
+                        <h3>Today‘s New Order<span>Update everyday</span></h3>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <canvas class="chart chart-bar"
+                            chart-data="ctrl.todayData.data"
+                            chart-labels="ctrl.todayData.labels"
+                            chart-series="ctrl.todayData.series"
+                            chart-colors="ctrl.todayData.colors">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 m-t-md">
+        <div class="home_data hover-effect media-body">
+            <div class="panel ">
+                <div class="panel-heading">
+                    <div class="home_data-head text-center">
+                        <h3>Receive with Error<span>Last 10 days</span></h3>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <canvas class="chart chart-bar"
+                            chart-data="ctrl.errorData.data"
+                            chart-labels="ctrl.errorData.labels"
+                            chart-series="ctrl.errorData.series"
+                            chart-colors="ctrl.errorData.colors">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
