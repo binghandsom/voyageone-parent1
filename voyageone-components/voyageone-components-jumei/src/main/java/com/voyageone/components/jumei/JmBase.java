@@ -102,8 +102,15 @@ public class JmBase extends ComponentBase {
         }
 
 
-        String result = HttpUtils.post(post_url.toString(), parm_url.toString());
-        logger.info("result：" + result);
+        String result="";
+        int retry = 3;
+        while((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway"))  && retry > 0) {
+            result = HttpUtils.post(post_url.toString(), parm_url.toString());
+            retry --;
+            logger.info("result：" + result);
+        }
+
+
 //        result = " {\"error\":{\"code\":\"501\"}}";
 //
 //        if (result.contains("审核")) {
@@ -155,10 +162,12 @@ public class JmBase extends ComponentBase {
 
         JMErrorResult res;
         try {
-            res = JsonUtil.jsonToBean(result, JMErrorResult.class);
-            if (res.getCode() != null) {
-                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
-            }
+
+                res = JsonUtil.jsonToBean(result, JMErrorResult.class);
+                if (res.getCode() != null) {
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                }
+
         } catch (JsonSyntaxException ignored) {
         }
 
