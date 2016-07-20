@@ -236,6 +236,7 @@ public class OrderDetailService extends BaseService {
 
         Map<String, Object> sortedParams = MySqlPageHelper.build(params)
                 .addSort("created", Order.Direction.ASC)
+                .limit(1)
                 .toMap();
 
         return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(sortedParams);
