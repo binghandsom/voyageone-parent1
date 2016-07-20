@@ -13,14 +13,12 @@
                 <div class="col-md-7">
                     <label class="col-md-2 control-label"><strong>店铺渠道名称:</strong></label>
                     <div class="col-md-3">
-                        <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                        </select>
+                        <label class="control-label">{{ctrl.data.cart.desc}}</label>
                     </div>
                     <label class="col-md-2 control-label"><strong>NumIid:</strong></label>
-                    <label class="col-md-3">
+                    <label class="col-md-3" ng-if="ctrl.data.numIId">
                            <span class="v-middle">
-                                 <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank">121212121212</a>
+                                 <a ng-href="{{ctrl.data.cart.pUrl}}{{ctrl.data.numIId}}" target="_blank">{{ctrl.data.numIId}}</a>
                            </span>
                     </label>
                 </div>
@@ -32,9 +30,9 @@
                 <div class="col-md-3" ng-repeat="product in ctrl.data.productInList">
                     <a href="javascript:void(0)" class="thumbnail fix-img">
                         <strong class="status">
-                            <span class="label" ng-class="{'label-default':product.platForm == 'Pending',
-                                                           'label-warning':product.platForm == 'Ready',
-                                                           'label-success':product.platForm == 'Approved'}">&nbsp;{{product.platForm}}&nbsp;</span>
+                            <span class="label" ng-class="{'label-default':product.platFormStatus == 'Pending',
+                                                           'label-warning':product.platFormStatus == 'Ready',
+                                                           'label-success':product.platFormStatus == 'Approved'}">&nbsp;{{product.platFormStatus}}&nbsp;</span>
                         </strong>
                         <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
                     </a>
@@ -47,8 +45,15 @@
                             </label>
                         </div>
                         <div class="col-md-12">
-                            <label class="checkbox-inline c-radio">
-                                <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode"><span class="fa fa-check"></span> 主商品
+                            <strong class="col-md-4"><strong>库存:</strong></strong>
+                            <label class="col-md-8">
+                                <span class="label label-warning"><i class="icon fa  fa-inbox"></i>&emsp;{{product.quantity}}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="checkbox-inline c-radio" ng-class="{'gray':!product.isMain && ctrl.data.mainProduct.platFormStatus == 'Approved' && product.platFormStatus != 'Approved'}">
+                                <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode" ng-disabled="!product.isMain && ctrl.data.mainProduct.platFormStatus == 'Approved' && product.platFormStatus != 'Approved'"
+                                       ng-click="ctrl.transferMain(product.productCode)"><span class="fa fa-check"></span> 主商品
                             </label>
                         </div>
                     </div>
@@ -60,6 +65,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
+        <button class="btn btn-vo" ng-click="ctrl.setMastProduct()" ng-disabled=" ctrl.data.initMainCode == ctrl.data.mainCode" ><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
     </div>
 </div>

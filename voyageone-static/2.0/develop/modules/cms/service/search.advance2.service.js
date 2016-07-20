@@ -224,7 +224,12 @@ define([
 
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
-                    var itemVal = groupInfo.common.fields[data.propId];
+                    var itemVal = '';
+                    if ("comment" == data.propId) {
+                        itemVal = groupInfo.common.comment;
+                    } else {
+                        itemVal = groupInfo.common.fields[data.propId];
+                    }
                     // 原始主商品的转换
                     if (data.propId == 'isMasterMain') {
                         if (itemVal == 1) {
@@ -299,7 +304,12 @@ define([
             _.forEach(data.productList, function (productInfo, index) {
                 var commArr = [];
                 _.forEach(commonProps, function (data) {
-                    var itemVal = productInfo.common.fields[data.propId];
+                    var itemVal = '';
+                    if ("comment" == data.propId) {
+                        itemVal = productInfo.common.comment;
+                    } else {
+                        itemVal = productInfo.common.fields[data.propId];
+                    }
                     // 原始主商品的转换
                     if (data.propId == 'isMasterMain') {
                         if (itemVal == 1) {

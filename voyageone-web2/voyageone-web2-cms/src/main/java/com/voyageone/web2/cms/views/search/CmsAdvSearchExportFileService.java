@@ -489,8 +489,13 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     if (ArrayUtils.contains(_prodCol, propId)) {
                         continue;
                     }
-                    Object value = fields.getAttribute(propId);
-                    FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    if ("comment".equals(propId)) {
+                        Object value = item.getCommon().getComment();
+                        FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    } else {
+                        Object value = fields.getAttribute(propId);
+                        FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    }
                 }
             }
 

@@ -802,6 +802,10 @@ s-field textarea.s-html {
     overflow-y: scroll;
 }
 
+.switch-main .gray{
+    color: #bfbebe;
+}
+
 .switch-main .fix-img{
     width: auto;
     height: auto;

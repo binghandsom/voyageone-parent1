@@ -104,7 +104,8 @@ define(function () {
                     "updateProductAtts":"updateProductAtts",
                     "checkCategory":"checkCategory",
                     getChangeMastProductInfo:"getChangeMastProductInfo",
-                    setMastProduct:"setMastProduct"
+                    setMastProduct:"setMastProduct",
+                    delisting:"delisting"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

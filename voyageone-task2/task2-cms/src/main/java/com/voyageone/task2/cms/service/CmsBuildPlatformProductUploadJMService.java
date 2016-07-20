@@ -651,7 +651,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
                     sxData.setErrorMessage(e.getStackTrace()[0].toString());
-                    e.printStackTrace();
                 }
                 else
                 {
@@ -1003,7 +1002,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String result = sxProductService.resolveDict(dictName, expressionParser, shopProp, getTaskName(), null);
         if(StringUtils.isNullOrBlank2(result))
         {
-            String errorMsg = String.format("字典解析器说:图片解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没上传成功到聚美平台 或 scene7上URL对应的图片不存在 或 未能成功上传到聚美平台? ) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
+            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没上传成功到平台? ) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
             throw new BusinessException(errorMsg);
         }
         return  result;
@@ -1022,11 +1021,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String channelId =  product.getChannelId();
         CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
-        // delete by desmond 2016/07/13 start
-//        String brandName = fields.getBrand();
-//        String productType = fields.getProductType();
-//        String sizeType = fields.getSizeType();
-        // delete by desmond 2016/07/13 end
+        String brandName = fields.getBrand();
+        String productType = fields.getProductType();
+        String sizeType = fields.getSizeType();
 
         if(list == null)
         {
