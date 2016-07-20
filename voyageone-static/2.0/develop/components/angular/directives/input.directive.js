@@ -1,11 +1,10 @@
 angular.module("voyageone.angular.directives").directive("input", function () {
     return {
         restrict: "E",
-        require: ['?ngModel'],
-        link: function (scope, element, attr, ctrls) {
+        require: ['ngModel'],
+        link: function (scope, element, attr) {
 
             var type = attr.type;
-            var ngModelController = ctrls[0];
 
             if (!type)
                 return;
@@ -15,12 +14,32 @@ angular.module("voyageone.angular.directives").directive("input", function () {
             if (type !== 'number')
                 return;
 
-            ngModelController.$parsers.unshift(function (value) {
-                if (!value) {
-                    element.val(ngModelController.$modelValue);
-                    return ngModelController.$modelValue;
+            element.on('keypress', function (event) {
+
+                var charCode = event.charCode;
+                var lastInputIsPoint = element.data('lastInputIsPoint');
+
+                console.log(
+                    'lastInputIsPoint', lastInputIsPoint,
+                    'charCode', charCode,
+                    'this.value', this.value);
+
+                if (charCode !== 0 && charCode !== 46 && (charCode < 48 || charCode > 57)) {
+                    event.preventDefault();
+                    return;
                 }
-                return value;
+
+                if (charCode === 46) {
+
+                    if (lastInputIsPoint || this.value.indexOf('.') > -1) {
+                        event.preventDefault();
+                        return;
+                    }
+                    element.data('lastInputIsPoint', true);
+                    return;
+                }
+
+                element.data('lastInputIsPoint', false);
             });
         }
     };
