@@ -4,6 +4,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +16,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 
 /**
@@ -48,11 +47,11 @@ public class RefreshJMSkuServiceTest {
 
         ShopBean shop = Shops.getShop("023", 27);
 
-        String queryStr ="{'platforms.P27.pNumIId': {'$ne': ''}}";
+        String queryStr = "{'platforms.P27.pNumIId': {'$ne': ''}}";
 
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryStr, "023");
 
-        list =list.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getPlatform(27).getpNumIId())).collect(Collectors.toList());
+        list = list.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getPlatform(27).getpNumIId())).collect(Collectors.toList());
 
         System.out.println("共计:" + list.size());
         while (finished.size() < list.size()) {
@@ -87,9 +86,6 @@ public class RefreshJMSkuServiceTest {
             System.out.println("------------------------------------------------");
             System.out.println("本轮完成数:" + finished.size());
         }
-
-
-
 
 
     }

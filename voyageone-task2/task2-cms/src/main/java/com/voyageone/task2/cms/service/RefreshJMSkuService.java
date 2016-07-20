@@ -23,7 +23,6 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class RefreshJMSkuService extends BaseTaskService {
     JumeiService jumeiService;
 
 
-    public String  changeSkuCode(ShopBean shop, CmsBtProductModel product) throws Exception {
+    public String changeSkuCode(ShopBean shop, CmsBtProductModel product) throws Exception {
 
         $info("product:%s", product.getProdId());
 
@@ -54,31 +53,27 @@ public class RefreshJMSkuService extends BaseTaskService {
         $info("jmProductId:%s", jmProductId);
         String hashId = product.getPlatform(27).getpNumIId();
         $info("hashId:%s", hashId);
-        if(StringUtils.isNullOrBlank2(hashId))
-        {
-            throw  new BusinessException("Bad hashId");
+        if (StringUtils.isNullOrBlank2(hashId)) {
+            throw new BusinessException("Bad hashId");
         }
 
 
-        JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmProductId );
+        JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmProductId);
         Thread.sleep(1000);
-        List<JmGetProductInfo_Spus> spus  = jmGetProductInfoRes.getSpus();
+        List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
         List<BaseMongoMap<String, Object>> localSkus = product.getPlatform(27).getSkus();
 
 
-        for (JmGetProductInfo_Spus spu : spus)
-        {
+        for (JmGetProductInfo_Spus spu : spus) {
             //仅仅在JM后台有这个spu, 在本地数据库没有了
             $info("spu.getSpu_no():%s", spu.getSpu_no());
-            if(localSkus.stream().filter(w-> spu.getSpu_no().equals(w.getStringAttribute("jmSpuNo"))).count() ==0) {
+            if (localSkus.stream().filter(w -> spu.getSpu_no().equals(w.getStringAttribute("jmSpuNo"))).count() == 0) {
                 HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                 htSpuUpdateRequest.setJumei_spu_no(spu.getSpu_no());
 
-                if(!spu.getUpc_code().startsWith("ERROR_")) {
+                if (!spu.getUpc_code().startsWith("ERROR_")) {
                     htSpuUpdateRequest.setUpc_code("ERROR_" + spu.getUpc_code());
-                }
-                else
-                {
+                } else {
                     htSpuUpdateRequest.setUpc_code(spu.getUpc_code());
                 }
 
@@ -89,38 +84,35 @@ public class RefreshJMSkuService extends BaseTaskService {
                     $info("更新Spu成功！[JmSpuNo:%s]", spu.getSpu_no());
                 }
                 //更新Spu失败
-                else
-                {
+                else {
                     String msg = String.format("更新Spu失败！[JmSpuNo:%s]", spu.getSpu_no());
                     $error(msg);
-                    throw  new BusinessException(msg);
+                    throw new BusinessException(msg);
                 }
             }
 
-            List<JmGetProductInfo_Spus_Sku>  skus = spu.getSku_list();
-            for (JmGetProductInfo_Spus_Sku sku :skus)
-            {
+            List<JmGetProductInfo_Spus_Sku> skus = spu.getSku_list();
+            for (JmGetProductInfo_Spus_Sku sku : skus) {
 
                 //仅仅在JM后台有这个sku, 在本地数据库没有了
                 $info("sku.getSku_no():%s", spu.getSpu_no());
-                if(localSkus.stream().filter(w-> sku.getSku_no().equals(w.getStringAttribute("jmSkuNo"))).count() ==0) {
+                if (localSkus.stream().filter(w -> sku.getSku_no().equals(w.getStringAttribute("jmSkuNo"))).count() == 0) {
                     HtSkuUpdateRequest htSkuUpdateRequest = new HtSkuUpdateRequest();
                     htSkuUpdateRequest.setJumei_sku_no(sku.getSku_no());
                     htSkuUpdateRequest.setJumei_hash_id(hashId);
                     String oldSkuCode = sku.getBusinessman_code();
                     //先修改库存为0
-                    StockSyncReq  stockSyncReq =  new StockSyncReq();
+                    StockSyncReq stockSyncReq = new StockSyncReq();
                     stockSyncReq.setBusinessman_code(oldSkuCode);
                     stockSyncReq.setEnable_num("0");
-                    String  stockSyncResponse =jumeiService.stockSync(shop, stockSyncReq);
+                    String stockSyncResponse = jumeiService.stockSync(shop, stockSyncReq);
                     $info("同步库存:%s", stockSyncResponse);
                     Thread.sleep(1000);
 
 
-                    if(!oldSkuCode.startsWith("ERROR_")) {
+                    if (!oldSkuCode.startsWith("ERROR_")) {
                         htSkuUpdateRequest.setBusinessman_num("ERROR_" + oldSkuCode);
-                    }
-                    else{
+                    } else {
                         htSkuUpdateRequest.setBusinessman_num(oldSkuCode);
                     }
 
@@ -142,14 +134,10 @@ public class RefreshJMSkuService extends BaseTaskService {
         }
 
 
-
-
-
-        for (JmGetProductInfo_Spus spu : spus)
-        {
+        for (JmGetProductInfo_Spus spu : spus) {
             //仅仅在JM后台有这个spu, 在本地数据库没有了
             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
-            if(localSkus.stream().filter(w-> spu.getSpu_no().equals(w.getStringAttribute("jmSpuNo"))).count() >0) {
+            if (localSkus.stream().filter(w -> spu.getSpu_no().equals(w.getStringAttribute("jmSpuNo"))).count() > 0) {
 
                 BaseMongoMap<String, Object> skuMap = localSkus.stream().filter(w -> w.getStringAttribute("jmSpuNo").equals(spu.getSpu_no())).findFirst().get();
                 htSpuUpdateRequest.setJumei_spu_no(spu.getSpu_no());
@@ -172,8 +160,8 @@ public class RefreshJMSkuService extends BaseTaskService {
             }
 
 
-            List<JmGetProductInfo_Spus_Sku>  skus = spu.getSku_list();
-            for (JmGetProductInfo_Spus_Sku sku :skus) {
+            List<JmGetProductInfo_Spus_Sku> skus = spu.getSku_list();
+            for (JmGetProductInfo_Spus_Sku sku : skus) {
                 HtSkuUpdateRequest htSkuUpdateRequest = new HtSkuUpdateRequest();
                 htSkuUpdateRequest.setJumei_sku_no(sku.getSku_no());
                 htSkuUpdateRequest.setJumei_hash_id(hashId);
@@ -205,7 +193,7 @@ public class RefreshJMSkuService extends BaseTaskService {
         return hashId;
     }
 
-    private String addVoToBarcode (String barcode, String channelId) {
+    private String addVoToBarcode(String barcode, String channelId) {
         if (StringUtils.isEmpty(barcode))
             return "";
         return barcode + "vo" + channelId;
