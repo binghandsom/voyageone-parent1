@@ -22,30 +22,30 @@ public class BcbgSuperFeedDao extends BaseDao {
      */
     @Override
     protected String namespace() {
-        return Constants.getDaoNameSpace(SubSystem.CMS);
+        return Constants.getDaoNameSpace(SubSystem.CMS) + ".BcbgSuperFeedDao";
     }
 
     public int insertWorkTables(List<SuperFeedBcbgBean> bcbgBeans) {
-        return insert("cms_zz_worktable_bcbg_superfeed_insertWorkTables", parameters("bcbgBeans", bcbgBeans));
+        return insert("insertWorkTables", parameters("bcbgBeans", bcbgBeans));
     }
 
     public int delete() {
-        return delete("cms_zz_worktable_bcbg_superfeed_delete", null);
+        return delete("delete", null);
     }
 
     public int insertStyles(List<BcbgStyleBean> bcbgStyles) {
-        return insert("cms_zz_worktable_bcbg_styles_insertStyles", parameters("bcbgStyles", bcbgStyles));
+        return insert("insertStyles", parameters("bcbgStyles", bcbgStyles));
     }
 
     public int deleteStyles() {
-        return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
+        return delete("deleteStyles", null);
     }
 
     public List<SuperFeedBcbgBean> selectUnsaved() {
-        return selectList("cms_zz_worktable_bcbg_superfeed_selectUnsaved", parameters("unsaved", 0));
+        return selectList("selectUnsaved", parameters("unsaved", 0));
     }
 
     public int updateSucceed(List<CmsBtFeedInfoModel> succeed) {
-        return update("cms_zz_worktable_bcbg_superfeed_full_updateSucceed", parameters("succeed", succeed));
+        return update("updateSucceed", parameters("succeed", succeed));
     }
 }
