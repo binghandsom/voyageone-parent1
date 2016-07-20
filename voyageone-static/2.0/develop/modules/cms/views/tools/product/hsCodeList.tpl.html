@@ -65,7 +65,7 @@
                         <div class="form-group">
                             <label for="getTaskInfo_hsCodeTaskCnt" class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                             <div class="col-sm-4">
-                                <input id="getTaskInfo_hsCodeTaskCnt" type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2">
+                                <input id="getTaskInfo_hsCodeTaskCnt" type="number" name="taskCount" class="form-control" ng-model="ctrl.hsCodeTaskCnt" min="1" max="ctrl.hsCodeTaskCnt" maxlength="2">
                             </div>
                             <div class="col-sm-2">
                                 <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>

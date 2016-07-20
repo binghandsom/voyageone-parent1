@@ -490,7 +490,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             {
                                 //需要增加SKU
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                htSkuAddRequest.setCustoms_product_number(" ");
                                 htSkuAddRequest.setSale_on_this_deal("1");
                                 htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                                 htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
@@ -540,7 +541,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 skuMap.setStringAttribute("jmSpuNo", htSpuAddResponse.getJumei_spu_no());
 
                                 HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                htSkuAddRequest.setCustoms_product_number(" ");
                                 htSkuAddRequest.setSale_on_this_deal("1");
                                 htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
                                 htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
@@ -965,7 +967,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             JmProductBean_Spus_Sku jmSpuSku = new JmProductBean_Spus_Sku();
             jmSpuSku.setPartner_sku_no(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setSale_on_this_deal("1");
-            jmSpuSku.setCustoms_product_number(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//            jmSpuSku.setCustoms_product_number(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+            jmSpuSku.setCustoms_product_number(" ");
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
             Integer stock = skuLogicQtyMap.get(jmSku.getStringAttribute("skuCode"));
             jmSpuSku.setStocks(String.valueOf(stock));
