@@ -45,9 +45,10 @@ define([
                 var self = this;
                 if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
                 if (self.hsCodeTaskCnt > self.max) return;
-                if (!self.hsCodeTaskCnt && !self.getTaskInfo.code)return;
+                if (!self.hsCodeTaskCnt && !self.getTaskInfo.code) return;
                 else {
-                    self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
+                    if (!self.hsCodeTaskCnt)self.getTaskInfo.hsCodeTaskCnt = null;
+                    else self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
                     self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                         self.hsSettedData = res.data.taskSummary;
                         self.hsCodeList = res.data.hsCodeList;
