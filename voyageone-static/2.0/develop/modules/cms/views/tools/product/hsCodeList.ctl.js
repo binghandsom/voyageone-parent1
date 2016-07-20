@@ -47,7 +47,7 @@ define([
                 if (self.hsCodeTaskCnt > self.max) return;
                 if (!self.hsCodeTaskCnt && !self.getTaskInfo.code) return;
                 else {
-                    if (!self.hsCodeTaskCnt)self.getTaskInfo.hsCodeTaskCnt = "";
+                    if (!self.hsCodeTaskCnt)self.getTaskInfo.hsCodeTaskCnt = "1";
                     else self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
                     self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                         self.hsSettedData = res.data.taskSummary;
