@@ -14,8 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author jeff.duan
@@ -34,20 +33,24 @@ public class VmsOrderGetRequestTest {
         long now =  DateTimeUtil.getNowTimeStampLong();
 
         VmsOrderAddRequest request = new VmsOrderAddRequest();
-        request.setChannelId("088");
-        request.setReservationId("10001");
-        request.setConsolidationOrderId("cons_order_10001");
-        request.setOrderId("order_10001");
-        request.setClientSku("sku10001");
-        request.setBarcode("barcode10001");
-        request.setConsolidationOrderTime(now);
-        request.setDescription("description10001");
-        request.setOrderTime(now);
-        request.setCartId(23);
-        request.setClientMsrp(70.00);
-        request.setClientNetPrice(70.00);
-        request.setClientRetailPrice(70.00);
-        request.setRetailPrice(70.00);
+        Map<String, Object> item = new HashMap<>();
+        item.put("channelId", "088");
+        item.put("reservationId","10001");
+        item.put("consolidationOrderId","cons_order_10001");
+        item.put("orderId", "order_10001");
+        item.put("clientSku", "sku10001");
+        item.put("barcode","barcode10001");
+        item.put("consolidationOrderTime", now);
+        item.put("description", "description10001");
+        item.put("orderTime", now);
+        item.put("cartId",23);
+        item.put("clientMsrp",70.00);
+        item.put("clientNetPrice",70.00);
+        item.put("clientRetailPrice",70.00);
+        item.put("retailPrice", 70.00);
+        List<Map<String, Object>> itemList = new ArrayList<>();
+        itemList.add(item);
+        request.setItemList(itemList);
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
