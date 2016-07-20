@@ -1145,6 +1145,7 @@ public class CmsProductDetailService extends BaseAppService {
                 productInfo.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 productInfo.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));//common.fields.quantity   platforms.pXX.status
                 productInfo.put("quantity", product.getCommon().getFields().getQuantity());
+                productInfo.put("numIId",cmsBtProductGroup.getNumIId());
                 CmsBtProductModel_Platform_Cart platForm = product.getPlatform(parameter.getCartId());
                 if (platForm != null) {
                     productInfo.put("platFormStatus", platForm.getStatus());
@@ -1190,8 +1191,8 @@ public class CmsProductDetailService extends BaseAppService {
 //        1.2.1 一致的场合 return
 //                1.2.2 不一致的场合
 //        1.2.2.1 判断 mainProduct的状态【status】
-//        1.2.2.1.1 【status】= Approve时 productCode的状态必须也是Approve
-//        1.2.2.1.2 【status】 != Approve时 productCode的状态不受限制
+//        1.2.2.1.1 【status】= Approved时 productCode的状态必须也是Approved
+//        1.2.2.1.2 【status】 != Approved时 productCode的状态不受限制
 //        1.2.2.2 把mainProduct的所对应的product表中对应的平台的pIsMain设0 把productCode的所对应的product表中对应的平台的pIsMain设1
 //        1.2.3 把group表中的mainProduct替换成productCode
 //        1.2.4 调用插入workload表的共同方法
@@ -1211,7 +1212,7 @@ public class CmsProductDetailService extends BaseAppService {
         }
 
         //  2.1.2	不是主商品的场合 把该商品所在的平台状态【status】=Ready  【pProductId】【pNumIId】【pStatus】清空
-        platForm.setStatus("Ready");
+        platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
         platForm.setpProductId("");
         platForm.setpNumIId("");
        // platForm.setpStatus(CmsConstants.PlatformStatus.);
