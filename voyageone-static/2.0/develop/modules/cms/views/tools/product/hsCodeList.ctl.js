@@ -44,12 +44,16 @@ define([
             get: function () {
                 var self = this;
                 if (!self.getTaskInfo.qty) self.getTaskInfo.order = "";
-                self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
-                self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
-                    self.hsSettedData = res.data.taskSummary;
-                    self.hsCodeList = res.data.hsCodeList;
-                    self.hsCodeValue = res.data.hsCodeValue;
-                })
+                if (self.hsCodeTaskCnt > self.max) return;
+                if (!self.hsCodeTaskCnt && !self.getTaskInfo.code)return;
+                else {
+                    self.getTaskInfo.hsCodeTaskCnt = self.hsCodeTaskCnt;
+                    self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
+                        self.hsSettedData = res.data.taskSummary;
+                        self.hsCodeList = res.data.hsCodeList;
+                        self.hsCodeValue = res.data.hsCodeValue;
+                    })
+                }
             },
             search: function (page, flg) {
                 var self = this;
@@ -58,13 +62,14 @@ define([
                 if (flg === 50)  self.searchInfo.size = 50;
                 if (flg === 100)  self.searchInfo.size = 100;
                 self.searchInfo.curr = !page ? self.searchInfo.curr : page;
+
                 self.hsCodeInfoService.search(self.searchInfo).then(function (res) {
-                    self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
+                    self.max = self.hsCodeTaskCnt = res.data.hsCodeTaskCnt;
                     self.hsSettedData = res.data.taskSummary;
                     self.hsCodeList = res.data.hsCodeList;
                     self.prodPageOption.total = res.data.total;
                     self.hsCodeValue = res.data.hsCodeValue;
-                })
+                });
             },
             clear: function () {
                 var self = this;
