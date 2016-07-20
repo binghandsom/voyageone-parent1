@@ -53,6 +53,9 @@ public class CmsProductDetailServiceTest {
         parameter.setChannelId("010");
         parameter.setCartId(27);
         parameter.setComment("说明");
+       System.out.println(JacksonUtil.bean2Json(parameter));
         cmsProductDetailService.delisting(parameter,"syste");
+
+
     }
 }
