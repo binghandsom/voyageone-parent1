@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * InventoryCenterLogicService
  *
  * @author gjl 2016/6/7
  * @version 2.0.0
@@ -27,12 +27,14 @@ import java.util.*;
 public class CmsHsCodeService extends BaseService {
 
     private static final int EXPIRE_HOURS = -48;
-
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-
+    //获取任务数量Id
+    private static int hsCodeTaskCntTypeId = 82;
+    //获取任务数量名称
+    private static String hsCodeTaskCntTypeName = "GetTheN0umberOfTasks";
     /**
      * 设定返回值.
      */
@@ -50,21 +52,22 @@ public class CmsHsCodeService extends BaseService {
             "common.fields.hsCodeStatus",
             "common.fields.hsCodeSetter",
             "common.fields.hsCodeSetTime",
+            "common.fields.quantity",
     };
-
     /**
      * HsCode信息检索
+     *
+     * @param lang
+     * @param channelId
+     * @param userName
+     * @param param
+     * @return data
      */
     public Map<String, Object> searchHsCodeInfo(String lang, String channelId, String userName, Map param) {
         //返回数据类型
         Map<String, Object> data = new HashMap<>();
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
-        /**
-         *个人设置税号成果搜索
-         * hsCodeStatus(0未设置 1已设置)
-         * searchCondition(模糊查询(ProductCode，商品名称))
-         */
         //税号设置状态
         String hsCodeStatus = (String) param.get("hsCodeStatus");
         //模糊查询(ProductCode，商品名称)
@@ -79,34 +82,66 @@ public class CmsHsCodeService extends BaseService {
         data.put("total", countByQuery(channelId, userName, hsCodeStatus, condition));
         //税号个人
         data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
+        //获取任务数量
+        data.put("hsCodeTaskCnt", Integer.parseInt(Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang)));
         //返回数据类型
         return data;
     }
 
     /**
      * 设置税一览的信息
+     *
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param condition
+     * @param curr
+     * @param size
+     * @param retFields
+     * @return getTotalHsCodeList
      */
     private Object getTotalHsCodeList(String channelId, String userName, String hsCodeStatus, String condition, int curr, int size, String[] retFields) {
-        String parameter = getSearchQuery(channelId, userName, hsCodeStatus, "1", condition);
+        //已经翻译的标志位
+        String translateStatus = "1";
+        //检索条件
+        String parameter = getSearchQuery(channelId, userName, hsCodeStatus, translateStatus, condition);
         JomgoQuery queryObject = new JomgoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
+        //设定返回值
         queryObject.setProjectionExt(retFields);
+        //每页检索个数
         queryObject.setLimit(size);
+        //翻页检索
         queryObject.setSkip((curr - 1) * size);
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
     /**
      * 取得总页数
+     *
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param condition
+     * @return countByQuery
      */
     private long countByQuery(String channelId, String userName, String hsCodeStatus, String condition) {
-        String parameter = getSearchQuery(channelId, userName, hsCodeStatus, "1", condition);
+        //已经翻译的标志位
+        String translateStatus = "1";
+        //检索条件
+        String parameter = getSearchQuery(channelId, userName, hsCodeStatus, translateStatus, condition);
         return cmsBtProductDao.countByQuery(parameter, channelId);
     }
 
     /**
      * 获取任务
+     *
+     * @param lang
+     * @param channelId
+     * @param userName
+     * @param param
+     * @return data
      */
     public Map<String, Object> getHsCodeInfo(String lang, String channelId, String userName, Map param) {
         //返回数据类型
@@ -123,10 +158,18 @@ public class CmsHsCodeService extends BaseService {
         int size = (Integer) param.get("size");
         //主数据
         int cartId = 1;
+        //hsCodeStatus
+        String hsCodeStatus = "0";
+        //用户名称
+        String noUserName = "";
+        //税号/品名/单位
+        String hsCodePrivate = "";
+        //模糊查询
+        String condition = "";
         //HsCodeCheck
-        checkHsCode(hsCodeTaskCnt, lang);
+        checkHsCode(hsCodeTaskCnt, lang, userName, channelId);
         //根据获取任务数去取得对应的code
-        List<CmsBtProductModel> hsCodeList = getHsCodeInfo(channelId, "0", "", hsCodeTaskCnt, RET_FIELDS, qtyOrder, code);
+        List<CmsBtProductModel> hsCodeList = getHsCodeInfo(channelId, hsCodeStatus, noUserName, hsCodeTaskCnt, RET_FIELDS, qtyOrder, code);
         //取得codeList结果集
         List<String> codeList = new ArrayList<>();
         //取得获取任务的信息
@@ -141,30 +184,42 @@ public class CmsHsCodeService extends BaseService {
         String hsCodeSetTime = DateTimeUtil.getNowTimeStamp();
         //更新cms_bt_product表的hsCodeInfo
         if (!allCodeList.isEmpty()) {
-            updateHsCodeInfo(channelId, allCodeList, userName, "0", "", hsCodeSetTime);
+            updateHsCodeInfo(channelId, allCodeList, userName, hsCodeStatus, hsCodePrivate, hsCodeSetTime);
         }
         //商品税号设置状态
         data.put("taskSummary", getTaskSummary(channelId, userName));
         //税号个人
         data.put("hsCodeValue", TypeChannels.getTypeWithLang("hsCodePrivate", channelId, lang));
         //等待设置税一览
-        data.put("hsCodeList", getTotalHsCodeList(channelId, userName, "0", "", curr, size, RET_FIELDS));
+        data.put("hsCodeList", getTotalHsCodeList(channelId, userName, hsCodeStatus, condition, curr, size, RET_FIELDS));
         //返回数据类型
         return data;
     }
 
     /**
      * 获取任务
+     *
+     * @param channelId
+     * @param hsCodeStatus
+     * @param userName
+     * @param hsCodeTaskCnt
+     * @param retFields
+     * @param qtyOrder
+     * @param code
+     * @return 获取任务
      */
     private List<CmsBtProductModel> getHsCodeInfo(String channelId, String hsCodeStatus, String userName
             , int hsCodeTaskCnt, String[] retFields, String qtyOrder, String code) {
         String parameter = getSearchQuery(channelId, userName, hsCodeStatus, "1", code);
-        String qtyOrderValue = "{common.fields.quantity:" + qtyOrder + "}";
         JomgoQuery queryObject = new JomgoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
         if (!StringUtils.isEmpty(qtyOrder)) {
-            queryObject.setSort(qtyOrderValue);
+            if (qtyOrder.equals("1")) {
+                queryObject.setSort("{'common.fields.quantity' : 1}");
+            } else {
+                queryObject.setSort("{'common.fields.quantity' : -1}");
+            }
         }
         queryObject.setProjectionExt(retFields);
         queryObject.setLimit(hsCodeTaskCnt);
@@ -173,6 +228,13 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 获取任务更新
+     *
+     * @param channelId
+     * @param allCodeList
+     * @param userName
+     * @param hsCodeStatus
+     * @param hsCodePrivate
+     * @param hsCodeSetTime
      */
     private void updateHsCodeInfo(String channelId, List<String> allCodeList, String userName, String hsCodeStatus, String hsCodePrivate, String hsCodeSetTime) {
 
@@ -194,18 +256,39 @@ public class CmsHsCodeService extends BaseService {
     }
 
     /**
-     * 获取任务最好是加上最大值check，默认为10，最大不能超过50
+     * 获取任务check
+     *
+     * @param hsCodeTaskCnt
+     * @param lang
+     * @param userName
+     * @param channelId
      */
-    private void checkHsCode(int hsCodeTaskCnt, String lang) {
-        //选择个数判断
-        if (hsCodeTaskCnt > 50) {
-            // 类目选择check
-            throw new BusinessException("获取任务最好是加上最大值check，默认为10，最大不能超过50", 50);
+    private void checkHsCode(int hsCodeTaskCnt, String lang, String userName, String channelId) {
+        //个人完成税号商品数
+        String queryStr = String.format("{'common.fields.isMasterMain':1," +
+                "'common.fields.hsCodeStatus':'0'," +
+                "'common.fields.translateStatus':'1'," +
+                "'common.fields.hsCodeSetter':'%s'}", userName);
+        Long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
+        if (cnt > 0) {
+            // 商品税号任务已存在不能获取
+            throw new BusinessException("7000091");
+        }
+        //获取任务
+        String maxCnt = Types.getValue(hsCodeTaskCntTypeId, hsCodeTaskCntTypeName,lang);
+        if (hsCodeTaskCnt > Integer.parseInt(maxCnt)) {
+            // 获取任务数量不能超过maxCnt
+            throw new BusinessException("7000092", maxCnt);
         }
     }
 
     /**
      * 根据codeList取得cms_bt_product_group相关的code
+     *
+     * @param codeList
+     * @param channelId
+     * @param cartId
+     * @return allCodeList
      */
     private List<String> getAllCodeList(List<String> codeList, String channelId, int cartId) {
         List<String> allCodeList = new ArrayList<>();
@@ -219,13 +302,17 @@ public class CmsHsCodeService extends BaseService {
                     allCodeList.add(code);
                 }
             }
-
         }
         return allCodeList;
     }
 
     /**
-     * 保存任务
+     * HsCode信息保存
+     *
+     * @param channelId
+     * @param userName
+     * @param param
+     * @return data
      */
     public Map<String, Object> saveHsCodeInfo(String channelId, String userName, Map param) {
         //返回数据类型
@@ -250,27 +337,24 @@ public class CmsHsCodeService extends BaseService {
 
     /**
      * 商品税号设置状态
+     *
+     * @param channelId
+     * @param userName
+     * @return taskSummary
      */
     private Map<String, Object> getTaskSummary(String channelId, String userName) {
-        /**
-         * 商品税号设置状态,传入的参数
-         * channelId(当前用户信息)
-         * hsCodePrivate(userName)
-         * hsCodeStatus(0未设置 1已设置)
-         * translateStatus(0未设置 1已设置)
-         * hsCodeSetter(null未设置 notNull已设置)
-         */
         Map<String, Object> taskSummary = new HashMap<>();
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String hsCodeTimeStr = DateTimeUtil.format(date, null);
         //未分配的任务
-        String queryStr = String.format("{'common.fields.translateStatus':'1'," +
+        String queryStr = String.format("{'$and':[ {'common.fields.translateStatus':'1'," +
                 "'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'0'," +
-                " '$or': [{'common.fields.hsCodeSetter':''} ,  " +
-                "{'common.fields.hsCodeSetTime':{'$lte':'%s'}} , " +
-                "{'common.fields.hsCodePrivate':{'$exists' : false}}, " +
-                "{'common.fields.hsCodeSetTime':{'$exists' : false}}]}", hsCodeTimeStr);
+                " '$or': [{'common.fields.hsCodeSetter':''}," +
+                "{'common.fields.hsCodeSetter':null}," +
+                "{'common.fields.hsCodeSetTime':{'$lte':'%s'}}," +
+                "{'common.fields.hsCodeSetTime':''}," +
+                "{'common.fields.hsCodeSetTime':null}]}]}", hsCodeTimeStr);
         //未设置总数:等待设置税号的商品总数（包含 未分配+已分配但是已过期）
         taskSummary.put("notAssignedTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
 
@@ -278,8 +362,7 @@ public class CmsHsCodeService extends BaseService {
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'1'," +
                 "'common.fields.hsCodeStatus':'0'," +
-                "'common.fields.hsCodeSetTime':{'$exists' : true}," +
-                "'common.fields.hsCodePrivate':{'$ne' : ''}," +
+                "'common.fields.hsCodeSetter':{'$ne' : ''}," +
                 "'common.fields.hsCodeSetTime':{'$gt':'%s'}}", hsCodeTimeStr);
         //已分配但未完成总数:已经被分配，但是未过期（无法释放）的商品总数
         taskSummary.put("alreadyAssignedTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
@@ -295,7 +378,7 @@ public class CmsHsCodeService extends BaseService {
         queryStr = String.format("{'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'1'," +
                 "'common.fields.translateStatus':'1'," +
-                "'common.fields.hsCodePrivate':'%s'}", userName);
+                "'common.fields.hsCodeSetter':'%s'}", userName);
         //个人设置税号商品译数:当前用户税号设置总数
         taskSummary.put("setPersonalTotalHsCodeCnt", cmsBtProductDao.countByQuery(queryStr, channelId));
 
@@ -303,14 +386,21 @@ public class CmsHsCodeService extends BaseService {
     }
 
     /**
-     * getSearchQuery
+     * 查询条件
+     *
+     * @param channelId
+     * @param userName
+     * @param hsCodeStatus
+     * @param translateStatus
+     * @param condition
+     * @return 返回拼接的查询条件
      */
     private String getSearchQuery(String channelId, String userName, String hsCodeStatus
             , String translateStatus, String condition) {
         StringBuilder sbQuery = new StringBuilder();
         //hsCodePrivate
         if (!StringUtils.isEmpty(userName)) {
-            sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodePrivate", userName));
+            sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", userName));
             sbQuery.append(",");
         }
         //hsCodeStatus
