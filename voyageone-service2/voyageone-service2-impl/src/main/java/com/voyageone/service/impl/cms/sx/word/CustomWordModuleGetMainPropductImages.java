@@ -154,7 +154,9 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
                 // modified by morse.lu 2016/07/18 start
                 // 吊牌图和耐久性标签padding直接写死空白图片的url
 //            if(imageTemplate != null){
-                if(imageType != CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE && imageTemplate != null){
+                if(imageType != CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE
+                        && imageType != CmsBtProductConstants.FieldImageType.DURABILITY_TAG_IMAGE
+                        && imageTemplate != null) {
                     // modified by morse.lu 2016/07/18 end
                     // 20160513 tom 图片服务器切换 START
                     paddingImage = String.format(imageTemplate, paddingImageKey.trim());
