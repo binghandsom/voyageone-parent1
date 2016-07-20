@@ -197,6 +197,9 @@ define([
                     openSwitchMain({
                         cartId:scope.cartInfo.value,
                         productCode:scope.vm.mastData.productCode
+                    }).then(function(){
+                        //刷新子页面
+                        getplatformData();
                     });
                 }
 

@@ -13,9 +13,7 @@
                 <div class="col-md-7">
                     <label class="col-md-2 control-label"><strong>店铺渠道名称:</strong></label>
                     <div class="col-md-3">
-                        <select class="form-control" ng-model="ctrl.data.selected" ng-change="ctrl.init()" ng-options="plateform.value as plateform.name for plateform in ctrl.data.platformTypes">
-                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-                        </select>
+                        <label class="control-label">{{ctrl.data.cart.desc}}</label>
                     </div>
                     <label class="col-md-2 control-label"><strong>NumIid:</strong></label>
                     <label class="col-md-3" ng-if="ctrl.data.numIId">
