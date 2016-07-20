@@ -58,16 +58,15 @@ angular.module("voyageone.angular.directives").directive("input", function () {
             //默认为2位
             var scale = attr.scale ? +attr.scale : 2;
 
-            ngModelController.$parsers.push(function (value) {
-
-                var stringValue = value.toString();
+            element.on('keyup', function () {
 
                 var regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
 
-                if (regex.test(stringValue))
-                    return value;
+                if (regex.test(this.value))
+                    return;
 
-                return ngModelController.$modelValue;
+                ngModelController.$setViewValue(this.value.substr(0, this.value.length - 1));
+                ngModelController.$render();
             });
         }
     };
