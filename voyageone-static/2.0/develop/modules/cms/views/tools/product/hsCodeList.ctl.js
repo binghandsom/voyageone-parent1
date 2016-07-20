@@ -53,6 +53,7 @@ define([
             },
             search: function (page, flg) {
                 var self = this;
+                if (flg === 10)  self.searchInfo.size = 10;
                 if (flg === 20)  self.searchInfo.size = 20;
                 if (flg === 50)  self.searchInfo.size = 50;
                 if (flg === 100)  self.searchInfo.size = 100;
