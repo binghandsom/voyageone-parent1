@@ -31,6 +31,7 @@ import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -56,6 +57,7 @@ import com.voyageone.service.model.cms.mongo.feed.mapping.Mapping;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.com.ComMtValueChannelModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -97,6 +99,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
 //    @Autowired
 //    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+    @Autowired
+    private ComMtValueChannelDao comMtValueChannelDao;    // DAO:Synship.com_mt_value_channel
     @Autowired
     private ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
     @Autowired
@@ -249,8 +253,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                                         && !StringUtils.isEmpty(typeChannelBean.getName())
                                         && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
                                 ) {
-                            // key忽略大小写(feed进来的brand不区分大小写)
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase(), typeChannelBean.getName());
+                            // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+                            mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
                         }
                     }
                 }
@@ -971,14 +975,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                }
 //            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getBrand()) || "1".equals(feed.getIsFeedReImport())) {
-                if (mapBrandMapping.containsKey(feed.getBrand().toLowerCase())) {
-                    productCommonField.setBrand(mapBrandMapping.get(feed.getBrand().toLowerCase()));
+                // 插入的品牌名称为feed中的品牌名称的小写值
+                String feedBrandLowerCase = feed.getBrand().toLowerCase().trim();
+                if (mapBrandMapping.containsKey(feedBrandLowerCase)) {
+                    productCommonField.setBrand(mapBrandMapping.get(feedBrandLowerCase));
                 } else {
+                    // add by desmond 2016/07/18 start
+                    // 碰到没有品牌Mapping的商品时，自动向Synship.com_mt_value_channel表中增加品牌Mapping数据
+                    // 设为feed品牌名的小写值(统一都用小写品牌名，画面展示也用小写品牌)
+                    productCommonField.setBrand(feedBrandLowerCase);
+                    // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中
+                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
+                    // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
+                    mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
+                    // add by desmond 2016/07/18 end
+
                     // update desmond 2016/07/04 start
-                    String strAddUpdate = newFlg ? "新增" : "更新";
-                    String errMsg = "feed->master导入:" + strAddUpdate +"出错:" + feed.getChannelId() + ":" + feed.getCode() + ":feed->main的品牌mapping没做 (feed brand:" + feed.getBrand() + ")";
-                    $error(errMsg);
-                    throw new BusinessException(errMsg);
+//                    String strAddUpdate = newFlg ? "新增" : "更新";
+//                    String errMsg = "feed->master导入:" + strAddUpdate +"出错:" + feed.getChannelId() + ":" + feed.getCode() + ":feed->main的品牌mapping没做 (feed brand:" + feed.getBrand() + ")";
+//                    $error(errMsg);
+//                    throw new BusinessException(errMsg);
 
 //                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
@@ -2388,6 +2404,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 根据公式计算价格
             try {
+                // 价格说明：
+                // priceClientMsrp:美金专柜价
+                // priceClientRetail:美金指导价
+                // priceNet:美金成本价
+                // priceMsrp:人民币专柜价
+                // priceCurrent:人民币指导价
                 ExpressionParser parser = new SpelExpressionParser();
                 formula = formula.replaceAll("\\[priceClientMsrp\\]", String.valueOf(priceClientMsrp))
                         .replaceAll("\\[priceClientRetail\\]", String.valueOf(priceClientRetail))
@@ -3319,6 +3341,99 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         $error(errMsg);
         throw new BusinessException(errMsg);
+    }
+
+    /**
+     * 没有找到品牌mapping信息时，将该品牌的中英文mapping信息插入到Synship.com_mt_value_channel表中
+     *
+     * @param channelId String 渠道id
+     * @param feed CmsBtFeedInfoModel feed信息
+     * @param feedBrandLowerCase String feed中品牌的小写值
+     */
+    private void insertBrandMappingInfo(String channelId, CmsBtFeedInfoModel feed, String feedBrandLowerCase) {
+        int intTypeId_41 = 41;      // 41:品牌mapping信息
+        String strLangIdEn = "en";
+        String strLangIdCn = "cn";
+
+        // 英文品牌mapping数据如果没找到，则分别插入
+        Map<String, Object> paramsEnMap = new HashMap<>();
+        paramsEnMap.put("typeId", intTypeId_41);
+        paramsEnMap.put("channelId", channelId);
+        paramsEnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
+        paramsEnMap.put("langId", strLangIdEn);
+
+        // 如果有2个或以上重复的英文品牌数据(品牌mapping采用英文品牌)，则报异常，中止feed导入
+        // cms_mt_channel_config表中当有2条及以上addName1不为空，而name为空的数据的时候，用下面的逻辑抛出异常
+        int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
+        if (brandEnCount > 1) {
+            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的英文品牌mapping数据 " +
+                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
+                    brandEnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdEn, feed.getModel());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
+        ComMtValueChannelModel brandEnModel = comMtValueChannelDao.selectOne(paramsEnMap);
+        if (brandEnModel != null) {
+            // 说明该条英文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
+            brandEnModel.setValue(feedBrandLowerCase);
+            brandEnModel.setName(feedBrandLowerCase);
+            brandEnModel.setModifier(getTaskName());
+            brandEnModel.setModified(DateTimeUtil.getDate());
+            comMtValueChannelDao.update(brandEnModel);
+        } else {
+            // 没有英文版品牌mapping信息则插入
+            ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
+            brandEnValueChannelModel.setTypeId(intTypeId_41);
+            brandEnValueChannelModel.setChannelId(channelId);
+            brandEnValueChannelModel.setValue(feedBrandLowerCase);
+            brandEnValueChannelModel.setName(feedBrandLowerCase);
+            brandEnValueChannelModel.setAddName1(feedBrandLowerCase);
+            brandEnValueChannelModel.setLangId(strLangIdEn);
+            brandEnValueChannelModel.setCreater(getTaskName());
+            brandEnValueChannelModel.setModifier(getTaskName());
+            comMtValueChannelDao.insert(brandEnValueChannelModel);
+        }
+
+        // 中文品牌mapping数据如果没找到，则分别插入
+        Map<String, Object> paramsCnMap = new HashMap<>();
+        paramsCnMap.put("typeId", intTypeId_41);
+        paramsCnMap.put("channelId", channelId);
+        paramsCnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
+        paramsCnMap.put("langId", strLangIdCn);
+
+        // 如果有2个或以上重复的中文品牌数据，则报出警告信息，但不中止feed导入
+        // 因为品牌mappping以英文品牌为主，中文品牌数据即使有错也没关系
+        int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
+        if (brandCnCount > 1) {
+            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的中文品牌mapping数据 " +
+                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
+                    brandCnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdCn, feed.getModel());
+            $warn(errMsg);
+            return;
+        }
+
+        ComMtValueChannelModel brandCnModel = comMtValueChannelDao.selectOne(paramsCnMap);
+        if (brandCnModel != null) {
+            // 说明该条中文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
+            brandCnModel.setValue(feedBrandLowerCase);
+            brandCnModel.setName(feedBrandLowerCase);
+            brandCnModel.setModifier(getTaskName());
+            brandCnModel.setModified(DateTimeUtil.getDate());
+            comMtValueChannelDao.update(brandCnModel);
+        } else {
+            // 没有中文版品牌mapping信息则插入
+            ComMtValueChannelModel brandCnValueChannelModel = new ComMtValueChannelModel();
+            brandCnValueChannelModel.setTypeId(intTypeId_41);
+            brandCnValueChannelModel.setChannelId(channelId);
+            brandCnValueChannelModel.setValue(feedBrandLowerCase);
+            brandCnValueChannelModel.setName(feedBrandLowerCase);
+            brandCnValueChannelModel.setAddName1(feedBrandLowerCase);
+            brandCnValueChannelModel.setLangId(strLangIdCn);
+            brandCnValueChannelModel.setCreater(getTaskName());
+            brandCnValueChannelModel.setModifier(getTaskName());
+            comMtValueChannelDao.insert(brandCnValueChannelModel);
+        }
     }
 
 }

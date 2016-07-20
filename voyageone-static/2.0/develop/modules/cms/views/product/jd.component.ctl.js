@@ -194,7 +194,13 @@ define([
                  *  切换主类目   cartInfo.value,vm.mastData.productCode
                  */
                 function openSwitchMainPop(openSwitchMain){
-
+                    openSwitchMain({
+                        cartId:scope.cartInfo.value,
+                        productCode:scope.vm.mastData.productCode
+                    }).then(function(){
+                        //刷新子页面
+                        getplatformData();
+                    });
                 }
 
 
