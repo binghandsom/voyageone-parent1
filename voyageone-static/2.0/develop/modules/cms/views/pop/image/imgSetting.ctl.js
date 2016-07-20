@@ -40,6 +40,8 @@ define([
 						self.files.push(response.data);
 					}else{
 						fileItem.message =  "可能由于网络原因上传异常，请再试";
+						fileItem.progress = 0;
+						self.blockUI.stop();
 						fileItem.uploaded = true;
 					}
 

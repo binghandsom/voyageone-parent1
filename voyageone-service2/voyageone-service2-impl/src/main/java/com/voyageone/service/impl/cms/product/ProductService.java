@@ -687,12 +687,22 @@ public class ProductService extends BaseService {
 
         StringBuilder sbQuery = new StringBuilder();
 
-        if (!StringUtils.isEmpty(skuIncludes)) {
-            sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuIncludes, "$regex"));
-            sbQuery.append(",");
-        } else if (skuList != null && !skuList.isEmpty()) {
-            sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuList.toArray(new String[skuList.size()])));
-            sbQuery.append(",");
+        if("0".equalsIgnoreCase(cartId)){
+            if (!StringUtils.isEmpty(skuIncludes)) {
+                sbQuery.append(MongoUtils.splicingValue("common.skus.skuCode", skuIncludes, "$regex"));
+                sbQuery.append(",");
+            } else if (skuList != null && !skuList.isEmpty()) {
+                sbQuery.append(MongoUtils.splicingValue("common.skus.skuCode", skuList.toArray(new String[skuList.size()])));
+                sbQuery.append(",");
+            }
+        }else {
+            if (!StringUtils.isEmpty(skuIncludes)) {
+                sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuIncludes, "$regex"));
+                sbQuery.append(",");
+            } else if (skuList != null && !skuList.isEmpty()) {
+                sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuList.toArray(new String[skuList.size()])));
+                sbQuery.append(",");
+            }
         }
 
         // 设定name的模糊查询
@@ -716,13 +726,20 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            List<BaseMongoMap<String, Object>> skus;
-            if(!StringUtils.isEmpty(skuIncludes)){
-                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
-                        .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-            }else{
-                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
-                        .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+            List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
+            if("0".equalsIgnoreCase(cartId)){
+                List<CmsBtProductModel_Sku> skus1 = product.getCommon().getSkus();
+                for(CmsBtProductModel_Sku s:skus1) {
+                    skus.add(s);
+                }
+            }else {
+                if (!StringUtils.isEmpty(skuIncludes)) {
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                            .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
+                } else {
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                            .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+                }
             }
             if(skus == null || skus.size() == 0) return resultInfo;
             skus.forEach(skuInfo -> {
@@ -733,7 +750,12 @@ public class ProductService extends BaseService {
                 bean.setSku(skuCode);
                 bean.setProduct(product.getCommon().getFields().getProductNameEn());
                 bean.setDescription(product.getCommon().getFields().getLongDesEn());
-                Double priceSale = skuInfo.getDoubleAttribute("priceSale");
+                Double priceSale;
+                if("0".equalsIgnoreCase(cartId)){
+                    priceSale = skuInfo.getDoubleAttribute("priceRetail");
+                }else{
+                    priceSale = skuInfo.getDoubleAttribute("priceSale");
+                }
                 bean.setPricePerUnit(String.valueOf(priceSale));
                 // TODO 目前无法取得库存值
                 Map<String, Object> param = new HashMap<>();
