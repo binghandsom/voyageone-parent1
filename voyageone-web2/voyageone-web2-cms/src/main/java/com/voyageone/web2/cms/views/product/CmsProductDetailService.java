@@ -25,10 +25,8 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
-import com.voyageone.service.bean.cms.product.EnumProductOperationType;
-import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
-import com.voyageone.service.bean.cms.product.SetMastProductParameter;
+import com.voyageone.service.bean.cms.product.*;
+import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
@@ -44,6 +42,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -90,6 +89,8 @@ public class CmsProductDetailService extends BaseAppService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
+    @Autowired
+    private ImsBtProductDao imsBtProductDao;
     /**
      * 获取类目以及类目属性信息.
      * 1.检查数据已经准备完成，batchField.switchCategory = 1时返回并告知运营正在准备数据，否则正常显示.
@@ -1201,4 +1202,33 @@ public class CmsProductDetailService extends BaseAppService {
 //        platforms.pXX.status
 
     }
+
+    //单品下架
+    public void   delisting(DelistingParameter parameter,String modifier) {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(parameter.getChannelId(), parameter.getProductCode());
+        CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(parameter.getCartId());
+        if (platForm.getpIsMain() == 1) { //	是主商品的场合  抛出BusinessException  【该商品是主商品不能单一产品下线请切换主商品或者点击【平台商品删除】按钮
+            new BusinessException("该商品是主商品不能单一产品下线请切换主商品或者点击【平台商品删除】按钮");
+        }
+
+        //  2.1.2	不是主商品的场合 把该商品所在的平台状态【status】=Ready  【pProductId】【pNumIId】【pStatus】清空
+        platForm.setStatus("Ready");
+        platForm.setpProductId("");
+        platForm.setpNumIId("");
+        platForm.setpStatus(null);
+        productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+        String comment=parameter.getComment();
+        productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
+
+        //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
+        ImsBtProductModel imsBtProductModel= imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(),parameter.getCartId(),parameter.getProductCode());
+        imsBtProductModel.setNumIid("");
+        imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel,modifier);
+    }
+//    2	单一商品下线
+//    2.1	根据 cartId和productCode检查该商品是否是主商品
+//    2.1.1	是主商品的场合  抛出BusinessException  【该商品是主商品不能单一产品下线请切换主商品或者点击【平台商品删除】按钮
+//    2.1.2	不是主商品的场合 把该商品所在的平台状态【status】=Ready  【pProductId】【pNumIId】【pStatus】清空
+//    2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
+//    2.1.4	调用插入workload表的共同方法
 }
