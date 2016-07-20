@@ -117,6 +117,8 @@ public class VmsBtOrderDetailModel extends BaseModel {
 
     protected BigDecimal clientPromotionPrice;
 
+    protected BigDecimal retailPrice;
+
     public String getReservationId() {
         return reservationId;
     }
@@ -283,5 +285,13 @@ public class VmsBtOrderDetailModel extends BaseModel {
 
     public void setClientPromotionPrice(BigDecimal clientPromotionPrice) {
         this.clientPromotionPrice = clientPromotionPrice;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
     }
 }

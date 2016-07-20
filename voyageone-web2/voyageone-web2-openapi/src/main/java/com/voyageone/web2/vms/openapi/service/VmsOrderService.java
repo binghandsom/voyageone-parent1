@@ -11,9 +11,11 @@ import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.VmsOrderAddRequest;
 import com.voyageone.web2.sdk.api.request.VmsOrderCancelRequest;
 import com.voyageone.web2.sdk.api.request.VmsOrderInfoGetRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderStatusUpdateRequest;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderStatusUpdateResponse;
 import com.voyageone.web2.vms.openapi.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      */
     public VmsOrderAddResponse addOrderInfo(VmsOrderAddRequest request) {
         VmsOrderAddResponse response = new VmsOrderAddResponse();
-
+        response.setResult(false);
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
@@ -80,10 +82,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         // 是否成功
         if (count == 1) {
             response.setResult(true);
-        } else {
-            throw new ApiException("99", "Fail to Insert Order Info.");
         }
-
         return response;
     }
 
@@ -180,12 +179,12 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         return response;
     }
 
-        /**
-         * 取得OrderInfo信息
-         * @param request VmsOrderAddRequest
-         * @return VmsOrderAddResponse
-         *
-         */
+    /**
+     * 取得OrderInfo信息
+     * @param request VmsOrderAddRequest
+     * @return VmsOrderAddResponse
+     *
+     */
     public VmsOrderInfoGetResponse getOrderInfo(VmsOrderInfoGetRequest request) {
         VmsOrderInfoGetResponse response = new VmsOrderInfoGetResponse();
         List<Map<String, Object>> itemList = new ArrayList<>();
@@ -237,6 +236,40 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 itemList.add(newItem);
             }
         }
+        return response;
+    }
+
+
+    /**
+     * 更新某个物品的状态为5：Received；或者 6：Receive with Error
+     * @param request VmsOrderStatusUpdateRequest
+     * @return VmsOrderStatusUpdateResponse
+     *
+     */
+    public VmsOrderStatusUpdateResponse updateOrderStatus(VmsOrderStatusUpdateRequest request) {
+        VmsOrderStatusUpdateResponse response = new VmsOrderStatusUpdateResponse();
+        response.setResult(false);
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        String reservationId = request.getReservationId();
+        String status = request.getStatus();
+        Long receivedTime = request.getReceivedTime();
+        String receiver = request.getReceiver();
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("reservationId", reservationId);
+        if(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
+
+        }
+
+
+
         return response;
     }
 }

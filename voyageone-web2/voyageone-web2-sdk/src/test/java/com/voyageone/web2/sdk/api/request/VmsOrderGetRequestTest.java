@@ -91,10 +91,10 @@ public class VmsOrderGetRequestTest {
         VmsOrderInfoGetRequest request = new VmsOrderInfoGetRequest();
         request.setChannelId("088");
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
-        String str="2016-01-01 10:00:00";
+        String str="2015-01-01 10:00:00";
         Date date = sdf.parse(str);
         request.setShipmentTimeFrom(date.getTime());
-        str="2016-03-01 10:00:00";
+        str="2016-12-01 10:00:00";
         date = sdf.parse(str);
         request.setShipmentTimeTo(date.getTime());
 

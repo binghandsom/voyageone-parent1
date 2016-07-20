@@ -23,7 +23,7 @@ public class VmsOrderCancelRequest extends VoApiRequest<VmsOrderCancelResponse> 
 	}
 
 	/**
-	 * channelId
+	 * channelId(必须)
 	 */
 	private String channelId;
 
