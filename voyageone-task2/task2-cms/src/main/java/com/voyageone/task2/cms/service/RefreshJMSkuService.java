@@ -63,7 +63,6 @@ public class RefreshJMSkuService extends BaseTaskService {
         List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
         List<BaseMongoMap<String, Object>> localSkus = product.getPlatform(27).getSkus();
 
-
         for (JmGetProductInfo_Spus spu : spus) {
             //仅仅在JM后台有这个spu, 在本地数据库没有了
             $info("spu.getSpu_no():%s", spu.getSpu_no());

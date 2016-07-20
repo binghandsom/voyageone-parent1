@@ -100,8 +100,6 @@ public class JmBase extends ComponentBase {
         if (parm_url.length() != 0) {
             parm_url.delete(0, 1);
         }
-
-
         String result = "";
         int retry = 3;
         while ((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway")) && retry > 0) {

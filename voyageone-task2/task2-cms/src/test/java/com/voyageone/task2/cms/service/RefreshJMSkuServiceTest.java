@@ -68,7 +68,6 @@ public class RefreshJMSkuServiceTest {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             });
 //            for (CmsBtProductModel model : list) {
 //                try {
