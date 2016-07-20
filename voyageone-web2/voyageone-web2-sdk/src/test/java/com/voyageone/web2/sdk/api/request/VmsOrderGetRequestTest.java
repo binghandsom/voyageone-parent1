@@ -48,9 +48,7 @@ public class VmsOrderGetRequestTest {
         request.setClientMsrp(70.00);
         request.setClientNetPrice(70.00);
         request.setClientRetailPrice(70.00);
-        request.setMsrp(70.00);
         request.setRetailPrice(70.00);
-        request.setSalePrice(70.00);
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);

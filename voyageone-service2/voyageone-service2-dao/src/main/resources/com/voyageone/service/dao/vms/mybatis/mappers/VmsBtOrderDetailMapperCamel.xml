@@ -5,9 +5,9 @@
     <sql id="Base_Column_List" >
         `id`, `reservation_id`, `channel_id`, `consolidation_order_id`, `consolidation_order_time`, 
         `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `description`, `status`, 
-        `shipment_id`, `shipment_time`, `containerizing_time`, `containerizer`, `received_time`, 
-        `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`, `client_promotion_price`, 
-        `retail_price`, `created`, `creater`, `modified`, `modifier`
+        `shipment_id`, `shipment_time`, `containerizing_time`, `containerizer`, `cancel_time`, 
+        `canceler`, `received_time`, `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`, 
+        `client_promotion_price`, `retail_price`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -64,6 +64,12 @@
             </if>
             <if test="containerizer != null" >
                 `containerizer`,
+            </if>
+            <if test="cancelTime != null" >
+                `cancel_time`,
+            </if>
+            <if test="canceler != null" >
+                `canceler`,
             </if>
             <if test="receivedTime != null" >
                 `received_time`,
@@ -143,6 +149,12 @@
             </if>
             <if test="containerizer != null" >
                 #{containerizer,jdbcType=VARCHAR},
+            </if>
+            <if test="cancelTime != null" >
+                #{cancelTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="canceler != null" >
+                #{canceler,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
                 #{receivedTime,jdbcType=TIMESTAMP},
@@ -236,6 +248,12 @@
             </if>
             <if test="containerizer != null" >
                 `containerizer` = #{containerizer,jdbcType=VARCHAR},
+            </if>
+            <if test="cancelTime != null" >
+                `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="canceler != null" >
+                `canceler` = #{canceler,jdbcType=VARCHAR},
             </if>
             <if test="receivedTime != null" >
                 `received_time` = #{receivedTime,jdbcType=TIMESTAMP},
@@ -332,6 +350,12 @@
             <if test="containerizer != null" >
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
+            <if test="cancelTime != null" >
+                and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="canceler != null" >
+                and `canceler` = #{canceler,jdbcType=VARCHAR}
+            </if>
             <if test="receivedTime != null" >
                 and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
@@ -419,6 +443,12 @@
             <if test="containerizer != null" >
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
+            <if test="cancelTime != null" >
+                and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="canceler != null" >
+                and `canceler` = #{canceler,jdbcType=VARCHAR}
+            </if>
             <if test="receivedTime != null" >
                 and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
             </if>
@@ -502,6 +532,12 @@
             </if>
             <if test="containerizer != null" >
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelTime != null" >
+                and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="canceler != null" >
+                and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null" >
                 and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}

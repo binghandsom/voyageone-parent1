@@ -50,6 +50,7 @@ public class VmsOrderStatusUpdateRequest extends VoApiRequest<VmsOrderStatusUpda
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" reservationId", reservationId);
+		RequestUtils.checkNotEmpty(" status", status);
 	}
 
 	public String getChannelId() {

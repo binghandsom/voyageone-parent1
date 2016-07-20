@@ -86,19 +86,9 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 	private Double clientRetailPrice;
 
 	/**
-	 * msrp(必须)
-	 */
-	private Double msrp;
-
-	/**
 	 * retailPrice(必须)
 	 */
 	private Double retailPrice;
-
-	/**
-	 * salePrice(必须)
-	 */
-	private Double salePrice;
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
@@ -115,9 +105,7 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 		RequestUtils.checkNotEmpty(" clientMsrp", clientMsrp);
 		RequestUtils.checkNotEmpty(" clientNetPrice", clientNetPrice);
 		RequestUtils.checkNotEmpty(" clientRetailPrice", clientRetailPrice);
-		RequestUtils.checkNotEmpty(" msrp", msrp);
 		RequestUtils.checkNotEmpty(" retailPrice", retailPrice);
-		RequestUtils.checkNotEmpty(" salePrice", salePrice);
 	}
 
 	public String getChannelId() {
@@ -224,14 +212,6 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 		this.clientRetailPrice = clientRetailPrice;
 	}
 
-	public Double getMsrp() {
-		return msrp;
-	}
-
-	public void setMsrp(Double msrp) {
-		this.msrp = msrp;
-	}
-
 	public Double getRetailPrice() {
 		return retailPrice;
 	}
@@ -240,11 +220,4 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 		this.retailPrice = retailPrice;
 	}
 
-	public Double getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(Double salePrice) {
-		this.salePrice = salePrice;
-	}
 }

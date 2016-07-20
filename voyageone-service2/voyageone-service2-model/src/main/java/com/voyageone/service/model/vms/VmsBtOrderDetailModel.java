@@ -66,7 +66,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     protected String description;
 
     /**
-     * 1:Open；2：Package；3：Shipped；5：Recevied；6：Receive with Error；7：Cancel 
+     * 1:Open；2：Package；3：Shipped；5：Received；6：Receive with Error；7：Cancel 
      */
     protected String status;
 
@@ -89,6 +89,16 @@ public class VmsBtOrderDetailModel extends BaseModel {
      * 装箱者
      */
     protected String containerizer;
+
+    /**
+     * 取消时间
+     */
+    protected Date cancelTime;
+
+    /**
+     * 装箱者
+     */
+    protected String canceler;
 
     /**
      * VoyageOne确认收货时间
@@ -237,6 +247,22 @@ public class VmsBtOrderDetailModel extends BaseModel {
 
     public void setContainerizer(String containerizer) {
         this.containerizer = containerizer == null ? null : containerizer.trim();
+    }
+
+    public Date getCancelTime() {
+        return cancelTime;
+    }
+
+    public void setCancelTime(Date cancelTime) {
+        this.cancelTime = cancelTime;
+    }
+
+    public String getCanceler() {
+        return canceler;
+    }
+
+    public void setCanceler(String canceler) {
+        this.canceler = canceler == null ? null : canceler.trim();
     }
 
     public Date getReceivedTime() {

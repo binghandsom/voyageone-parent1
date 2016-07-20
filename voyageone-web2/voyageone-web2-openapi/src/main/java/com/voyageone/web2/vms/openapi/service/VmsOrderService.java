@@ -5,17 +5,13 @@ import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
+import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
+import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.cms.openapi.OpenApiCmsBaseService;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.VmsOrderAddRequest;
-import com.voyageone.web2.sdk.api.request.VmsOrderCancelRequest;
-import com.voyageone.web2.sdk.api.request.VmsOrderInfoGetRequest;
-import com.voyageone.web2.sdk.api.request.VmsOrderStatusUpdateRequest;
-import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
-import com.voyageone.web2.sdk.api.response.VmsOrderStatusUpdateResponse;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import com.voyageone.web2.vms.openapi.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +31,8 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
     @Autowired
     private OrderDetailService orderDetailService;
+    @Autowired
+    private ShipmentService shipmentService;
 
     public String getClassName() {
         return "VmsOrderService";
@@ -271,8 +269,8 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                     VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR, getClassName());
         } else if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(status)) {
             // 更新为5：Received的情况
-            count = orderDetailService.updateReservationStatusWithReceived(channelId, reservationId,
-                    new Date(receivedTime), receiver, getClassName());
+            count = orderDetailService.updateOrderStatus(channelId, reservationId,
+                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED, getClassName(), new Date(receivedTime), receiver);
         } else {
             throw new ApiException("99", "This Status is not allowed to be update.");
         }
@@ -282,4 +280,43 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         }
         return response;
     }
+
+
+    /**
+     * 更新某个Shipment的状态为4：Arrived；5：Received；6：Receive with Error
+     * @param request VmsShipmentStatusUpdateRequest
+     * @return VmsShipmentStatusUpdateResponse
+     *
+     */
+    public VmsShipmentStatusUpdateResponse updateShipmentStatus(VmsShipmentStatusUpdateRequest request) {
+        VmsShipmentStatusUpdateResponse response = new VmsShipmentStatusUpdateResponse();
+        response.setResult(false);
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        Integer shipmentId = request.getShipmentId();
+        String status = request.getStatus();
+        int count = 0;
+        if(VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.ARRIVED.equals(status)
+                || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(status)
+                || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
+            VmsBtShipmentModel model = new VmsBtShipmentModel();
+            model.setChannelId(channelId);
+            model.setId(shipmentId);
+            model.setStatus(status);
+            count = shipmentService.save(model);
+        } else {
+            throw new ApiException("99", "This Status is not allowed to be update.");
+        }
+
+        if (count > 0) {
+            response.setResult(true);
+        }
+        return response;
+    }
+
 }

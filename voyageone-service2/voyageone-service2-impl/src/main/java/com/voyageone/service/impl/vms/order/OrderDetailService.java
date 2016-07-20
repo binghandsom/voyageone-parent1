@@ -25,6 +25,7 @@ import java.util.Date;
 @VOTransactional
 public class OrderDetailService extends BaseService {
 
+    public final static String STATUS_SHIPPED = "3";
     public final static String STATUS_RECEIVED = "5";
     public final static String STATUS_CANCEL = "7";
 
@@ -101,6 +102,21 @@ public class OrderDetailService extends BaseService {
      */
     @VOTransactional
     public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier) {
+        return updateOrderStatus(channelId, consolidationOrderId, status, modifier, new Date(), modifier);
+    }
+
+    /**
+     * 更新订单状态
+     *
+     * @param channelId            channelId
+     * @param consolidationOrderId 订单号
+     * @param status               待更新状态
+     * @param operateTime 操作时间
+     * @param operater 操作着
+     * @return 更新涉及条数
+     */
+    @VOTransactional
+    public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier, Date operateTime, String operater) {
 
         Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
             // 更新条件
@@ -113,40 +129,14 @@ public class OrderDetailService extends BaseService {
                 put("containerizingTimeNull", "1");
                 put("containerizerNull", "1");
                 put("shipmentIdNull", "1");
+                put("cancelTime", operateTime);
+                put("canceler", operater);
+            } else if (STATUS_SHIPPED.equals(status)) {
+                put("shipmentTime", operateTime);
+            } else if (STATUS_RECEIVED.equals(status)) {
+                put("receivedTime", operateTime);
+                put("receiver", operater);
             }
-        }};
-
-        int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
-
-        // 记录订单变更状态
-        if (count > 0) {
-            this.logOrderDetails(changeStatusParams);
-        }
-
-        return count;
-    }
-
-    /**
-     * 更新订单状态为5：Received
-     *
-     * @param channelId channelId
-     * @param reservationId 物品id
-     * @param receivedTime 接收时间
-     * @param receiver 接收者
-     * @return 更新涉及条数
-     */
-    @VOTransactional
-    public int updateReservationStatusWithReceived(String channelId, String reservationId, Date receivedTime, String receiver, String modifier) {
-
-        Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
-            // 更新条件
-            put("channelId", channelId);
-            put("reservationId", reservationId);
-            // 更新内容
-            put("receivedTime", receivedTime);
-            put("receiver", receiver);
-            put("status", STATUS_RECEIVED);
-            put("modifier", modifier);
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
