@@ -845,7 +845,12 @@ public class SxProductService extends BaseService {
 //                    List<CmsBtProductModel_Sku> productModelSku = productModel.getSkus();
                     List<CmsBtProductModel_Sku> productModelSku = productModel.getCommon().getSkus();
                     // modified by morse.lu 2016/06/24 end
-                    productModelSku.forEach(sku -> mapProductModelSku.put(sku.getSkuCode(), sku));
+                    productModelSku.forEach(sku -> {
+                        CmsBtProductModel_Sku copySku = new CmsBtProductModel_Sku();
+                        copySku.putAll(sku);
+//                        BeanUtils.copyProperties(sku, copySku);
+                        mapProductModelSku.put(sku.getSkuCode(), copySku);
+                    });
                     // added by morse.lu 2016/06/15 end
                     List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
                     List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
@@ -2896,7 +2901,6 @@ public class SxProductService extends BaseService {
             }
             if (matchModels.size() == 1) {
                 $info("找到image_template记录!");
-//                retUrl = getImageByTemplateId(channelId, String.valueOf(matchModels.get(0).getImageTemplateId()), imageParam);
                 retUrl = String.format(matchModels.get(0).getImageTemplateContent(), imageParam);
                 break;
             }

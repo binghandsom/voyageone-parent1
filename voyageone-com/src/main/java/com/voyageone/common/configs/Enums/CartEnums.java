@@ -65,13 +65,22 @@ public class CartEnums {
 		TMM("30"),
 
 		/**
+		 * USJOI测试
+		 */
+		JGT("98"),
+
+		/**
 		 * US匠心界
 		 */
 		USJGJ("928"),
 		/**
 		 * US悦境
 		 */
-		USJGY("929");
+		USJGY("929"),
+		/**
+		 * USJOI测试
+		 */
+		USJGT("998");
 
     	private String id;
 
