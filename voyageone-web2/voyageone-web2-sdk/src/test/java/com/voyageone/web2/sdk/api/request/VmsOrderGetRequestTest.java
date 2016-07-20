@@ -15,12 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @author Edward
- * @version 2.0.0, 16/2/3
+ * @author jeff.duan
+ * @version 1.0.0, 16/7/20
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)

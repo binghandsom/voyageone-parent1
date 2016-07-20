@@ -5,6 +5,9 @@ import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * /vms/order/AddOrderInfo
@@ -20,204 +23,54 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 		return "/vms/order/addOrderInfo";
 	}
 
-	/**
-	 * channelId(必须)
-	 */
-	private String channelId;
 
 	/**
-	 * reservationId(必须)
+	 * 返回物品列表
+	 * Map包含以下内容
+	 * "channelId", String型
+	 * "reservationId", String型
+	 * "consolidationOrderId", String型
+	 * "orderId", String型
+	 * "clientSku", String型
+	 * "barcode", String型
+	 * "description", String型
+	 * "consolidationOrderTime", Long型(时间戳)
+	 * "orderTime", Long型(时间戳)
+	 * "cartId", Integer型
+	 * "clientMsrp", Double型
+	 * "clientNetPrice", Double型
+	 * "clientRetailPrice", Double型
+	 * "retailPrice", Double型
 	 */
-	private String reservationId;
-
-	/**
-	 * consolidationOrderId(必须)
-	 */
-	private String consolidationOrderId;
-
-	/**
-	 * orderId(必须)
-	 */
-	private String orderId;
-
-	/**
-	 * clientSku(必须)
-	 */
-	private String clientSku;
-
-	/**
-	 * barcode(必须)
-	 */
-	private String barcode;
-
-	/**
-	 * description(必须)
-	 */
-	private String description;
-
-	/**
-	 * consolidationOrderTime(必须)
-	 */
-	private Long consolidationOrderTime;
-
-	/**
-	 * orderTime(必须)
-	 */
-	private Long orderTime;
-
-	/**
-	 * cartId(必须)
-	 */
-	private Integer cartId;
-
-	/**
-	 * clientMsrp(必须)
-	 */
-	private Double clientMsrp;
-
-	/**
-	 * clientNetPrice(必须)
-	 */
-	private Double clientNetPrice;
-
-	/**
-	 * clientRetailPrice(必须)
-	 */
-	private Double clientRetailPrice;
-
-	/**
-	 * retailPrice(必须)
-	 */
-	private Double retailPrice;
+	private List<Map<String, Object>> itemList;
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
-		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" reservationId", reservationId);
-		RequestUtils.checkNotEmpty(" consolidationOrderId", consolidationOrderId);
-		RequestUtils.checkNotEmpty(" consolidationOrderTime", consolidationOrderTime);
-		RequestUtils.checkNotEmpty(" orderId", orderId);
-		RequestUtils.checkNotEmpty(" orderTime", orderTime);
-		RequestUtils.checkNotEmpty(" cartId", cartId);
-		RequestUtils.checkNotEmpty(" clientSku", clientSku);
-		RequestUtils.checkNotEmpty(" barcode", barcode);
-		RequestUtils.checkNotEmpty(" cartId", cartId);
-		RequestUtils.checkNotEmpty(" clientMsrp", clientMsrp);
-		RequestUtils.checkNotEmpty(" clientNetPrice", clientNetPrice);
-		RequestUtils.checkNotEmpty(" clientRetailPrice", clientRetailPrice);
-		RequestUtils.checkNotEmpty(" retailPrice", retailPrice);
+		if (itemList != null) {
+			for (Map<String, Object> item : itemList) {
+				RequestUtils.checkNotEmpty("channelId", item.get("channelId"));
+				RequestUtils.checkNotEmpty("reservationId", item.get("reservationId"));
+				RequestUtils.checkNotEmpty("consolidationOrderId", item.get("consolidationOrderId"));
+				RequestUtils.checkNotEmpty("consolidationOrderTime", item.get("consolidationOrderTime"));
+				RequestUtils.checkNotEmpty("orderId", item.get("orderId"));
+				RequestUtils.checkNotEmpty("orderTime", item.get("orderTime"));
+				RequestUtils.checkNotEmpty("cartId", item.get("cartId"));
+				RequestUtils.checkNotEmpty("clientSku", item.get("clientSku"));
+				RequestUtils.checkNotEmpty("barcode", item.get("barcode"));
+				RequestUtils.checkNotEmpty("cartId", item.get("cartId"));
+				RequestUtils.checkNotEmpty("clientMsrp", item.get("clientMsrp"));
+				RequestUtils.checkNotEmpty("clientNetPrice", item.get("clientNetPrice"));
+				RequestUtils.checkNotEmpty("clientRetailPrice", item.get("clientRetailPrice"));
+				RequestUtils.checkNotEmpty("retailPrice", item.get("retailPrice"));
+			}
+		}
 	}
 
-	public String getChannelId() {
-		return channelId;
+	public List<Map<String, Object>> getItemList() {
+		return itemList;
 	}
 
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
+	public void setItemList(List<Map<String, Object>> itemList) {
+		this.itemList = itemList;
 	}
-
-	public String getReservationId() {
-		return reservationId;
-	}
-
-	public void setReservationId(String reservationId) {
-		this.reservationId = reservationId;
-	}
-
-	public String getConsolidationOrderId() {
-		return consolidationOrderId;
-	}
-
-	public void setConsolidationOrderId(String consolidationOrderId) {
-		this.consolidationOrderId = consolidationOrderId;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-
-	public String getClientSku() {
-		return clientSku;
-	}
-
-	public void setClientSku(String clientSku) {
-		this.clientSku = clientSku;
-	}
-
-	public String getBarcode() {
-		return barcode;
-	}
-
-	public void setBarcode(String barcode) {
-		this.barcode = barcode;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Long getConsolidationOrderTime() {
-		return consolidationOrderTime;
-	}
-
-	public void setConsolidationOrderTime(Long consolidationOrderTime) {
-		this.consolidationOrderTime = consolidationOrderTime;
-	}
-
-	public Long getOrderTime() {
-		return orderTime;
-	}
-
-	public void setOrderTime(Long orderTime) {
-		this.orderTime = orderTime;
-	}
-
-	public Integer getCartId() {
-		return cartId;
-	}
-
-	public void setCartId(Integer cartId) {
-		this.cartId = cartId;
-	}
-
-	public Double getClientMsrp() {
-		return clientMsrp;
-	}
-
-	public void setClientMsrp(Double clientMsrp) {
-		this.clientMsrp = clientMsrp;
-	}
-
-	public Double getClientNetPrice() {
-		return clientNetPrice;
-	}
-
-	public void setClientNetPrice(Double clientNetPrice) {
-		this.clientNetPrice = clientNetPrice;
-	}
-
-	public Double getClientRetailPrice() {
-		return clientRetailPrice;
-	}
-
-	public void setClientRetailPrice(Double clientRetailPrice) {
-		this.clientRetailPrice = clientRetailPrice;
-	}
-
-	public Double getRetailPrice() {
-		return retailPrice;
-	}
-
-	public void setRetailPrice(Double retailPrice) {
-		this.retailPrice = retailPrice;
-	}
-
 }

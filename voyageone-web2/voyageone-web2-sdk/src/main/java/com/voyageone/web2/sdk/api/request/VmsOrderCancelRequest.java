@@ -34,7 +34,7 @@ public class VmsOrderCancelRequest extends VoApiRequest<VmsOrderCancelResponse> 
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
-		RequestUtils.checkNotEmpty(" channelId", channelId);
+		RequestUtils.checkNotEmpty("channelId", channelId);
 	}
 
 	public String getChannelId() {
