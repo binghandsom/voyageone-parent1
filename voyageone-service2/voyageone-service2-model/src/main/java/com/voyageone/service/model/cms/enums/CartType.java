@@ -27,11 +27,15 @@ public enum CartType {
 
     USJOI_JGY("US Joi JGY", "US Joi悦境(JG)", "JGY", 29, 2),
 
+    USJOI_JGT("US Joi JGT", "US Joi测试(TG)", "JGY", 98, 1),
+
     TMALL_MINIMALL("Tmall MiniMall", "Tmall MiniMall(JG)", "JGY", 30, 1),
 
-    USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "JGJ", 928, 2),
+    USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "USJGJ", 928, 2),
 
-    USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "JGY", 929, 2),
+    USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "USJGY", 929, 2),
+
+    USJOI_JGT_998("USJOI匠心界", "USJOI测试", "USJGT", 998, 2),
 
     MASTER("Master", "主数据", "MT", 0, 0),
 

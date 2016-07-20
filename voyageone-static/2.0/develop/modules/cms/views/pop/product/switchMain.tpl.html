@@ -29,17 +29,28 @@
 
         <div class="container-fluid middle">
             <div class="row form-group">
-                <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.data.productInList">
-                    <a href="javascript:void(0)" class="thumbnail">
-                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                <div class="col-md-3" ng-repeat="product in ctrl.data.productInList">
+                    <a href="javascript:void(0)" class="thumbnail fix-img">
+                        <strong class="status">
+                            <span class="label" ng-class="{'label-default':product.platForm == 'Pending',
+                                                           'label-warning':product.platForm == 'Ready',
+                                                           'label-success':product.platForm == 'Approved'}">&nbsp;{{product.platForm}}&nbsp;</span>
+                        </strong>
+                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
                     </a>
                     <div class="row product-info">
-                        <label class="col-md-12">1212121212</label>
-                        <label class="col-md-12">已审批</label>
-                        <!--<label class="col-md-12"><input type="radio" name="mProduct">主商品</label>-->
-                        <label class="col-md-12 checkbox-inline c-radio">
-                            <input name="priceType" type="radio" value="9" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
-                        </label>
+                        <div class="col-md-12">
+                            <strong class="col-md-4"><strong>Code:</strong></strong>
+                            <label class="col-md-8">
+                                <span ng-if="product.productCode.length > 15"><popover-text content="product.productCode" direct="top" size="15"></popover-text></span>
+                                <span ng-if="product.productCode.length <= 15">{{product.productCode}}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode"><span class="fa fa-check"></span> 主商品
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

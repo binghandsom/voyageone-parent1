@@ -61,7 +61,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // platform 品牌名
         if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
-            if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+            if(cartId != CartEnums.Cart.USJGJ.getValue()
+                    && cartId != CartEnums.Cart.USJGY.getValue()
+                    && cartId != CartEnums.Cart.USJGT.getValue()) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
@@ -77,7 +79,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         }
 
-        if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+        if(cartId != CartEnums.Cart.USJGJ.getValue()
+                && cartId != CartEnums.Cart.USJGY.getValue()
+                && cartId != CartEnums.Cart.USJGT.getValue()) {
             // 非主商品的平台类目跟这个主商品走
             if(platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()){
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(),cartId);

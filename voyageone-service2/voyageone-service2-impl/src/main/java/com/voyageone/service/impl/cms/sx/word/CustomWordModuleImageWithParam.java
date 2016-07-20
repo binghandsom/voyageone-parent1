@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -92,6 +93,13 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
                                                             sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                             sxData.getMainProduct().getCommon().getFields().getSizeType(),
                                                             imageParams.toArray(new String[imageParams.size()]));
+            if (StringUtils.isEmpty(parseResult)) {
+                $warn("参数图url未在图片管理模板表里设定!" +
+                        ",BrandName= " + sxData.getMainProduct().getCommon().getFields().getBrand() +
+                        ",ProductType= " + sxData.getMainProduct().getCommon().getFields().getProductType() +
+                        ",SizeType=" + sxData.getMainProduct().getCommon().getFields().getSizeType());
+                return "";
+            }
         } else {
             parseResult = String.format(imageTemplate, imageParams.toArray());
         }

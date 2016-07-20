@@ -2,10 +2,9 @@ angular.module("voyageone.angular.directives").directive("input", function () {
     return {
         restrict: "E",
         require: ['?ngModel'],
-        link: function (scope, element, attr, ctrls) {
+        link: function (scope, element, attr) {
 
             var type = attr.type;
-            var ngModelController = ctrls[0];
 
             if (!type)
                 return;
@@ -15,12 +14,27 @@ angular.module("voyageone.angular.directives").directive("input", function () {
             if (type !== 'number')
                 return;
 
-            ngModelController.$parsers.unshift(function (value) {
-                if (!value) {
-                    element.val(ngModelController.$modelValue);
-                    return ngModelController.$modelValue;
+            element.on('keypress', function (event) {
+
+                var charCode = event.charCode;
+                var lastInputIsPoint = element.data('lastInputIsPoint');
+
+                if (charCode !== 0 && charCode !== 46 && (charCode < 48 || charCode > 57)) {
+                    event.preventDefault();
+                    return;
                 }
-                return value;
+
+                if (charCode === 46) {
+
+                    if (lastInputIsPoint || this.value.indexOf('.') > -1) {
+                        event.preventDefault();
+                        return;
+                    }
+                    element.data('lastInputIsPoint', true);
+                    return;
+                }
+
+                element.data('lastInputIsPoint', false);
             });
         }
     };
@@ -44,16 +58,15 @@ angular.module("voyageone.angular.directives").directive("input", function () {
             //默认为2位
             var scale = attr.scale ? +attr.scale : 2;
 
-            ngModelController.$parsers.push(function (value) {
-
-                var stringValue = value.toString();
+            element.on('keyup', function () {
 
                 var regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
 
-                if (regex.test(stringValue))
-                    return value;
+                if (regex.test(this.value))
+                    return;
 
-                return ngModelController.$modelValue;
+                ngModelController.$setViewValue(this.value.substr(0, this.value.length - 1));
+                ngModelController.$render();
             });
         }
     };
