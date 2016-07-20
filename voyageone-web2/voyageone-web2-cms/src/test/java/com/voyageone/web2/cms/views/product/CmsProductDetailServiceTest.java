@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import org.junit.Test;
@@ -39,9 +40,19 @@ public class CmsProductDetailServiceTest {
     public void  testSetMastProduct()
     {
         SetMastProductParameter parameter=new SetMastProductParameter();
-        parameter.setProductCode("DIBRHCRST/RHGAR8.5");
+        parameter.setProductCode("DIBRHCRST/RHGAR7.5");
         parameter.setChannelId("010");
         parameter.setCartId(27);
         cmsProductDetailService.setMastProduct(parameter,"syste");
+    }
+
+    @Test
+    public void testDelisting() throws Exception {
+        DelistingParameter parameter=new DelistingParameter();
+        parameter.setProductCode("DIBRHCRST/RHGAR8.5");
+        parameter.setChannelId("010");
+        parameter.setCartId(27);
+        parameter.setComment("说明");
+        cmsProductDetailService.delisting(parameter,"syste");
     }
 }
