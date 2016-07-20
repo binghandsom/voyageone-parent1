@@ -7,7 +7,7 @@ import java.util.Map;
 
 
 /**
- * /vms/order/AddOrderInfo
+ * /vms/order/getOrderInfo
  *
  * Created on 16/07/18.
  * @author jeff.duan

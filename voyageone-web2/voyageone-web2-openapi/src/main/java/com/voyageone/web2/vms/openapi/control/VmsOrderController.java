@@ -4,9 +4,11 @@ import com.voyageone.web2.cms.openapi.OpenAipCmsBaseController;
 import com.voyageone.web2.sdk.api.request.VmsOrderAddRequest;
 import com.voyageone.web2.sdk.api.request.VmsOrderCancelRequest;
 import com.voyageone.web2.sdk.api.request.VmsOrderInfoGetRequest;
+import com.voyageone.web2.sdk.api.request.VmsOrderStatusUpdateRequest;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderStatusUpdateResponse;
 import com.voyageone.web2.vms.openapi.service.VmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,5 +47,10 @@ public class VmsOrderController extends OpenAipCmsBaseController {
     @RequestMapping("getOrderInfo")
     public VmsOrderInfoGetResponse getOrderInfo(@RequestBody VmsOrderInfoGetRequest request) {
         return vmsOrderService.getOrderInfo(request);
+    }
+
+    @RequestMapping("updateOrderStatus")
+    public VmsOrderStatusUpdateResponse getOrderInfo(@RequestBody VmsOrderStatusUpdateRequest request) {
+        return vmsOrderService.updateOrderStatus(request);
     }
 }

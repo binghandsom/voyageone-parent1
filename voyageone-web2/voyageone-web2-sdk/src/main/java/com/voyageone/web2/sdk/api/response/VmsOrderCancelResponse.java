@@ -6,7 +6,7 @@ import java.util.List;
 
 
 /**
- * /vms/order/AddOrderInfo
+ * /vms/order/cancelOrder
  *
  * Created on 16/07/18.
  * @author jeff.duan

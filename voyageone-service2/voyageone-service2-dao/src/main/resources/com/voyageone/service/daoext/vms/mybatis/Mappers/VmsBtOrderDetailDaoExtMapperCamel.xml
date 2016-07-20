@@ -7,7 +7,7 @@
         `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `description`, `status`,
         `shipment_id`, `shipment_time`, `containerizing_time`, `containerizer`, `received_time`,
         `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`, `client_promotion_price`,
-        `created`, `creater`, `modified`, `modifier`
+        `retail_price`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <!-- select -->
@@ -84,6 +84,9 @@
             </if>
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -174,6 +177,9 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -262,6 +268,9 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -349,6 +358,9 @@
             </if>
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}

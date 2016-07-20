@@ -21,82 +21,82 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 	}
 
 	/**
-	 * channelId
+	 * channelId(必须)
 	 */
 	private String channelId;
 
 	/**
-	 * reservationId
+	 * reservationId(必须)
 	 */
 	private String reservationId;
 
 	/**
-	 * consolidationOrderId
+	 * consolidationOrderId(必须)
 	 */
 	private String consolidationOrderId;
 
 	/**
-	 * orderId
+	 * orderId(必须)
 	 */
 	private String orderId;
 
 	/**
-	 * clientSku
+	 * clientSku(必须)
 	 */
 	private String clientSku;
 
 	/**
-	 * barcode
+	 * barcode(必须)
 	 */
 	private String barcode;
 
 	/**
-	 * description
+	 * description(必须)
 	 */
 	private String description;
 
 	/**
-	 * consolidationOrderTime
+	 * consolidationOrderTime(必须)
 	 */
 	private Long consolidationOrderTime;
 
 	/**
-	 * orderTime
+	 * orderTime(必须)
 	 */
 	private Long orderTime;
 
 	/**
-	 * cartId
+	 * cartId(必须)
 	 */
 	private Integer cartId;
 
 	/**
-	 * clientMsrp
+	 * clientMsrp(必须)
 	 */
 	private Double clientMsrp;
 
 	/**
-	 * clientNetPrice
+	 * clientNetPrice(必须)
 	 */
 	private Double clientNetPrice;
 
 	/**
-	 * clientRetailPrice
+	 * clientRetailPrice(必须)
 	 */
 	private Double clientRetailPrice;
 
 	/**
-	 * msrp
+	 * msrp(必须)
 	 */
 	private Double msrp;
 
 	/**
-	 * retailPrice
+	 * retailPrice(必须)
 	 */
 	private Double retailPrice;
 
 	/**
-	 * salePrice
+	 * salePrice(必须)
 	 */
 	private Double salePrice;
 
