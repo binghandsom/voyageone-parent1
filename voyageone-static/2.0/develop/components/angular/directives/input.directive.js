@@ -19,11 +19,6 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 var charCode = event.charCode;
                 var lastInputIsPoint = element.data('lastInputIsPoint');
 
-                console.log(
-                    'lastInputIsPoint', lastInputIsPoint,
-                    'charCode', charCode,
-                    'this.value', this.value);
-
                 if (charCode !== 0 && charCode !== 46 && (charCode < 48 || charCode > 57)) {
                     event.preventDefault();
                     return;
