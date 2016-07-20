@@ -96,4 +96,9 @@ public class CacheHelper {
         if (StringUtil.isEmpty(cacheKey)|| MapUtils.isEmpty(mapData)) return;
         getHashOperation().putAll(cacheKey, mapData);
     }
+
+    @SuppressWarnings("unchecked")
+    public static <HK, HV> Map<HK, HV> getMapByKey(String cacheKey) {
+        return getHashOperation().entries(cacheKey);
+    }
 }
