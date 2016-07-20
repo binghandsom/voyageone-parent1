@@ -20,7 +20,6 @@ require.config({
         'ngStorage': '../assets/js/ngstorage/0.3.10/ngStorage',
         'angular-file-upload': '../assets/js/angular-file-upload/2.2.0/angular-file-upload',
         'md5': '../assets/js/angular-md5/0.1.8/angular-md5',
-
         'chart': '../assets/js/chart/Chart',
         'angular-chart': '../assets/js/angular-chart/angular-chart',
         'vms': 'vms.module'

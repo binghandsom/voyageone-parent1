@@ -6,6 +6,7 @@ package com.voyageone.web2.vms.bean;
  */
 public class VmsChannelSettings {
     private String vendorOperateType;
+    private String salePriceShow = "0";
 
     public String getVendorOperateType() {
         return vendorOperateType;
@@ -13,5 +14,13 @@ public class VmsChannelSettings {
 
     public void setVendorOperateType(String vendorOperateType) {
         this.vendorOperateType = vendorOperateType;
+    }
+
+    public String getSalePriceShow() {
+        return salePriceShow;
+    }
+
+    public void setSalePriceShow(String salePriceShow) {
+        this.salePriceShow = salePriceShow;
     }
 }

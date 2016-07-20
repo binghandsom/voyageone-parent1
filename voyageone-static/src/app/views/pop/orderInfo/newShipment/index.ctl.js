@@ -73,6 +73,54 @@ define([
             });
         };
 
+        NewShipmentController.prototype.end = function () {
+            var self = this;
+            var req = angular.copy(self.shipment);
+            var tempShipment = {};
+            // 先判断是否有其他人改了当前的shipment
+            self.shipmentPopupService.get().then(function (data) {
+                tempShipment = data.currentShipment;
+                if (!_.isEqual(self.originalShipment, tempShipment)) {
+                    self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
+                    self.$uibModalInstance.close(tempShipment);
+                    return;
+                }
+
+                if (req.shippedDate) {
+                    req.shippedDateTimestamp = req.shippedDate.getTime();
+                    req.shippedDate = undefined;
+                }
+
+                self.shipmentPopupService.confirm(req).then(function (data) {
+                    if (data.ready) {
+                        self.shipmentPopupService.end(req).then(function (data) {
+                            self.shipment = data.currentShipment;
+                            if (self.shipment) {
+                                self.shipmentExisted = true;
+                                if (self.shipment.shippedDateTimestamp)
+                                    self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
+                            }
+                            self.notify.success("TXT_SUCCESS");
+                            self.$uibModalInstance.close(self.shipment);
+                        });
+                    } else {
+                        self.confirm('blah blah blah').then(function () {
+                            self.shipmentPopupService.end(req).then(function (data) {
+                                self.shipment = data.currentShipment;
+                                if (self.shipment) {
+                                    self.shipmentExisted = true;
+                                    if (self.shipment.shippedDateTimestamp)
+                                        self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
+                                }
+                                self.notify.success("TXT_SUCCESS");
+                                self.$uibModalInstance.close(self.shipment);
+                            });
+                        })
+                    }
+                });
+            });
+        };
+
         return NewShipmentController;
     })());
 });

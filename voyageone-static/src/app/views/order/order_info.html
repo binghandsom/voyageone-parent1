@@ -88,31 +88,31 @@
                 <table class="table table-vo">
                     <thead>
                     <tr>
-                        <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>
+                        <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()"><i ng-class="{'fa fa-plus': ctrl.collapse, 'fa fa-minus':!ctrl.collapse}"></i></th>
                         <th class="td-2" translate="TXT_ORDER_ID"></th>
                         <th class="td-2" translate="TXT_ORDER_DATE"></th>
                         <th class="td-1" translate="TXT_SKU"></th>
                         <th class="td-2" translate="TXT_DESCRIPTION"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
-                        <th class="td-1" translate="TXT_PRICE"></th>
-                        <th style="width: 200px" translate="TXT_ACTION"></th>
+                        <th class="td-1" translate="TXT_VO_PRICE"></th>
+                        <th class="td-1" ng-show="ctrl.channelConfigs.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
+                        <th style="min-width: 300px" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
-                        <td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>
+                        <td class="text-right" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
-
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalPrice}}</strong></td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
+                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong></td>
                         <td>
                             <button class="btn btn-xs btn-warning" ng-show="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
                             <button class="btn btn-xs btn-success" ng-show="item.status == 1" ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment"
-                                    translate="BTN_ADD_TO_SHIPMENT">
-                            </button>
+                                    translate="BTN_ADD_TO_SHIPMENT"></button>
                         </td>
                     </tr>
                     <tr ng-show="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList"
@@ -123,9 +123,9 @@
                         <td>{{detail.sku}}</td>
                         <td>{{detail.desc}}</td>
                         <td>{{ctrl.getStatusName(detail.status)}}</td>
-                        <td>${{detail.price}}</td>
-                        <td>
-                        </td>
+                        <td>${{detail.voPrice}}</td>
+                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'">¥{{detail.retailPrice}}</td>
+                        <td></td>
                     </tr>
                     </tbody>
                 </table>

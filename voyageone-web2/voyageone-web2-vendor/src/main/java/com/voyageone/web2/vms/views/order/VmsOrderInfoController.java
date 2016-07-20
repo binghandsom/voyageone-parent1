@@ -59,9 +59,7 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.CANCEL_ORDER)
     public AjaxResponse cancelOrder(@RequestBody PlatformSubOrderInfoBean item) {
         Map<String, Object> result = new HashMap<>();
-
         result.put("success", vmsOrderInfoService.cancelOrder(this.getUser(), item));
-
         return success(result);
     }
 

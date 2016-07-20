@@ -14,7 +14,8 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String sku;
     private String desc;
     private String status;
-    private BigDecimal price = BigDecimal.ZERO;
+    private BigDecimal voPrice = BigDecimal.ZERO;
+    private BigDecimal retailPrice = BigDecimal.ZERO;
 
     public String getReservationId() {
         return reservationId;
@@ -68,12 +69,20 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.status = status;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getVoPrice() {
+        return voPrice;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setVoPrice(BigDecimal voPrice) {
+        this.voPrice = voPrice;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
     }
 
     // TODO: 16-7-7 暂未想好后续处理 未做订单信息验证 vantis

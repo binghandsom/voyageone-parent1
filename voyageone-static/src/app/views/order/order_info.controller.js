@@ -89,8 +89,7 @@ define([
                         item.subClassName = '';
                         var date = new Date();
                         if (item.status == '7') {
-                            item.className = 'bg-gainsboro';
-                            item.subClassName = 'bg-gainsboro';
+                            item.className = item.subClassName = 'bg-gainsboro';
                         }
                         else if (item.status == '1') {
                             if (self.channelConfigs.vendorOperateType == 'ORDER') {
@@ -101,11 +100,9 @@ define([
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }
                             if ((new Date().getTime() - date.getTime()) >= self.threeDay) {
-                                item.className = 'bg-danger';
-                                item.subClassName = 'bg-danger';
+                                item.className = item.subClassName = 'bg-danger';
                             } else if ((new Date().getTime() - date.getTime()) >= self.twoDay) {
-                                item.className = 'bg-warning';
-                                item.subClassName = 'bg-warning';
+                                item.className = item.subClassName = 'bg-warning';
                             }
                         }
                         return item;
