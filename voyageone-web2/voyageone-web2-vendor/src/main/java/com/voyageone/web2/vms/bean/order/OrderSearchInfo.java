@@ -14,7 +14,7 @@ import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
  */
 public class OrderSearchInfo {
     private String status = VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN;
-    private String orderId;
+    private String consolidationOrderId;
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;
     private int curr = 1;
@@ -33,13 +33,13 @@ public class OrderSearchInfo {
         this.status = status;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getConsolidationOrderId() {
+        return consolidationOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        if (StringUtil.isEmpty(orderId)) this.orderId = null;
-        else this.orderId = orderId;
+    public void setConsolidationOrderId(String consolidationOrderId) {
+        if (StringUtil.isEmpty(consolidationOrderId)) this.consolidationOrderId = null;
+        else this.consolidationOrderId = consolidationOrderId;
     }
 
     public String getSku() {

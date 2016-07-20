@@ -425,7 +425,9 @@
         SET `shipment_id`         = #{shipmentId, jdbcType=INTEGER},
             `containerizer`       = #{containerizer, jdbcType=VARCHAR},
             `containerizing_time` = now()
-        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR} AND `barcode` = #{barcode, jdbcType=VARCHAR} AND
-              `order_id` = #{orderId, jdbcType=VARCHAR} AND `status` = #{status, jdbcType=INTEGER}
+        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+              AND `barcode` = #{barcode, jdbcType=VARCHAR}
+              AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
+              AND `status` = #{status, jdbcType=INTEGER}
     </update>
 </mapper>

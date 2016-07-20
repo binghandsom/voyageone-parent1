@@ -60,10 +60,10 @@ define([
                 return open(popups.orderInfo.newShipment, searchOrderStatus);
             },
             openAddShipment: function (item) {
-                open(popups.orderInfo.addShipment,item);
+                return open(popups.orderInfo.addShipment,item);
             },
             openImagePreview: function (context) {
-                open(popups.feed.imagePreview,context);
+                return open(popups.feed.imagePreview,context);
             }
             // 在这里增加你的打开函数
         };

@@ -33,7 +33,7 @@ public class VmsScanPopupController extends BaseController {
     public AjaxResponse init(@RequestBody ScanPopupInitialInfo scanPopupInitialInfo) {
         Map<String, Object> result = new HashMap<>();
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
-                scanPopupInitialInfo.getShipment(), scanPopupInitialInfo.getOrderId()));
+                scanPopupInitialInfo.getShipment(), scanPopupInitialInfo.getConsolidationOrderId()));
 
         return success(result);
     }
@@ -43,8 +43,8 @@ public class VmsScanPopupController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("success", vmsOrderInfoService.scanBarcodeInOrder(this.getUser(), scanPopupCheckBarcodeInfo));
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
-                scanPopupCheckBarcodeInfo.getShipment(), scanPopupCheckBarcodeInfo.getOrderId()));
-        result.put("finished", vmsOrderInfoService.finishedOrderScan(this.getUser(), scanPopupCheckBarcodeInfo));
+                scanPopupCheckBarcodeInfo.getShipment(), scanPopupCheckBarcodeInfo.getConsolidationOrderId()));
+        result.put("finished", vmsOrderInfoService.orderScanFinished(this.getUser(), scanPopupCheckBarcodeInfo));
 
         return success(result);
     }
