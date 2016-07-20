@@ -199,16 +199,17 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P23.modified", DateTimeUtil.getNowTimeStamp());
             updateMap.put("platforms.P23.sellerCats", sellerCats);
-            final boolean[] hasPublishSku = {false};
+            final boolean[] hasPublishSku = {false, false}; // 第一个表示是否是sku级的，第二个表示本code是否有sku上新过
             fieldMap.forEach((s1, o) -> {
                 // added by morse.lu 2016/07/18 start
                 if ("sku".equals(s1)) {
+                    hasPublishSku[0] = true;
                     List<Map<String, Object>> upValSku = new ArrayList<>();
                     List<Map<String, Object>> listVal = (List) o;
                     listVal.forEach(skuVal -> {
                         if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
                             upValSku.add(skuVal);
-                            hasPublishSku[0] = true;
+                            hasPublishSku[1] = true;
                             {
                                 // TODO:size 和 price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
 
@@ -233,7 +234,8 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
             updateMap.put("platforms.P23.pProductId", cmsBtProductGroup.getPlatformPid());
             updateMap.put("platforms.P23.pNumIId", cmsBtProductGroup.getNumIId());
-            if (hasPublishSku[0]) {
+            if (!hasPublishSku[0] || hasPublishSku[1]) {
+                // product级 或者 本code有sku上新过
                 String item_status = (String) fieldMap.get("item_status"); // 商品状态
                 if ("0".equals(item_status)) {
                     // 出售中
