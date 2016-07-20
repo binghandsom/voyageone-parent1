@@ -32,6 +32,7 @@ define([
                 initialize();
                 scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
+                scope.openSwitchMainPop = openSwitchMainPop;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
@@ -188,6 +189,14 @@ define([
                             scope.vm.sellerCats = context.sellerCats;
                     });
                 }
+
+                /**
+                 *  切换主类目   cartInfo.value,vm.mastData.productCode
+                 */
+                function openSwitchMainPop(openSwitchMain){
+
+                }
+
 
                 /**
                  * 更新操作
