@@ -417,6 +417,12 @@
         <if test="containerizerNull != null">
             , `containerizer` = null
         </if>
+        <if test="receivedTime != null" >
+            ,`received_time` = #{receivedTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="receiver != null" >
+            ,`receiver` = #{receiver,jdbcType=VARCHAR}
+        </if>
         <if test="modifier != null">
             , `modifier` = #{modifier, jdbcType=VARCHAR}
         </if>

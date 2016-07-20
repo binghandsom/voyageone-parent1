@@ -261,15 +261,25 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         Long receivedTime = request.getReceivedTime();
         String receiver = request.getReceiver();
 
+        int count = 0;
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
         param.put("reservationId", reservationId);
+        // 更新为6：Receive with Error的情况
         if(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
-
+            count = orderDetailService.updateReservationStatus(channelId, reservationId,
+                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR, getClassName());
+        } else if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(status)) {
+            // 更新为5：Received的情况
+            count = orderDetailService.updateReservationStatusWithReceived(channelId, reservationId,
+                    new Date(receivedTime), receiver, getClassName());
+        } else {
+            throw new ApiException("99", "This Status is not allowed to be update.");
         }
 
-
-
+        if (count > 0) {
+            response.setResult(true);
+        }
         return response;
     }
 }

@@ -5,6 +5,7 @@ import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.VmsOrderAddResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderCancelResponse;
 import com.voyageone.web2.sdk.api.response.VmsOrderInfoGetResponse;
+import com.voyageone.web2.sdk.api.response.VmsOrderStatusUpdateResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +102,39 @@ public class VmsOrderGetRequestTest {
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);
         VmsOrderInfoGetResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testUpdateOrderStatusWithReceived() throws ParseException {
+        VmsOrderStatusUpdateRequest request = new VmsOrderStatusUpdateRequest();
+        request.setChannelId("088");
+        request.setReservationId("101");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2016-01-01 10:00:00";
+        Date date = sdf.parse(str);
+        request.setReceivedTime(date.getTime());
+        request.setReceiver("djs");
+        request.setStatus("5");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderStatusUpdateResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testUpdateOrderStatusWithReceivedError() throws ParseException {
+        VmsOrderStatusUpdateRequest request = new VmsOrderStatusUpdateRequest();
+        request.setChannelId("088");
+        request.setReservationId("101");
+        request.setStatus("6");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderStatusUpdateResponse response = voApiDefaultClient.execute(request);
 
         System.out.println(response);
     }
