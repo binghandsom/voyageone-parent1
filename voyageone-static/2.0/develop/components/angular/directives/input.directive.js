@@ -1,7 +1,7 @@
 angular.module("voyageone.angular.directives").directive("input", function () {
     return {
         restrict: "E",
-        require: ['ngModel'],
+        require: ['?ngModel'],
         link: function (scope, element, attr) {
 
             var type = attr.type;
