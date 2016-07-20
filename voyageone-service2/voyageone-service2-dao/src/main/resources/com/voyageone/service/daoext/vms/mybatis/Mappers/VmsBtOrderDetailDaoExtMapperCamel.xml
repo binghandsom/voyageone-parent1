@@ -429,5 +429,8 @@
               AND `barcode` = #{barcode, jdbcType=VARCHAR}
               AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
               AND `status` = #{status, jdbcType=INTEGER}
+              AND `shipment_id` IS NULL
+        ORDER BY `consolidation_order_time` ASC
+        LIMIT 1
     </update>
 </mapper>

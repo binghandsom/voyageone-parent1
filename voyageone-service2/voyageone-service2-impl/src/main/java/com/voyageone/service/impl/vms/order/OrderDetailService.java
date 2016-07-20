@@ -234,11 +234,6 @@ public class OrderDetailService extends BaseService {
             put("shipmentId", shipmentId);
         }};
 
-        Map<String, Object> sortedParams = MySqlPageHelper.build(params)
-                .addSort("created", Order.Direction.ASC)
-                .limit(1)
-                .toMap();
-
-        return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(sortedParams);
+        return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(params);
     }
 }
