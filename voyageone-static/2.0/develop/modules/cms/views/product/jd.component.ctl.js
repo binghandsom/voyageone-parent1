@@ -196,8 +196,7 @@ define([
                 function openSwitchMainPop(openSwitchMain){
                     openSwitchMain({
                         cartId:scope.cartInfo.value,
-                        productCode:scope.vm.mastData.productCode,
-                        numIId:scope.vm.platform.pNumIId
+                        productCode:scope.vm.mastData.productCode
                     });
                 }
 
