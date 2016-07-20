@@ -360,7 +360,7 @@ public class VmsOrderInfoService extends BaseService {
                                 setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                                 setDesc(vmsBtOrderDetailModel.getDescription());
                                 setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
-                                if (SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
+                                if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                                     setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
                                 setSku(vmsBtOrderDetailModel.getClientSku());
                                 setStatus(vmsBtOrderDetailModel.getStatus());
@@ -393,7 +393,7 @@ public class VmsOrderInfoService extends BaseService {
                     orderInfoBean.setDesc(vmsBtOrderDetailModel.getDescription());
                     orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
                     orderInfoBean.setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
-                    if (SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
+                    if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                         orderInfoBean.setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
                     orderInfoBean.setStatus(vmsBtOrderDetailModel.getStatus());
                     return orderInfoBean;
