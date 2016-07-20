@@ -110,8 +110,10 @@
                         <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
                         <td ng-show="ctrl.channelConfigs.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong></td>
                         <td>
-                            <button class="btn btn-xs btn-warning" ng-show="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
-                            <button class="btn btn-xs btn-success" ng-show="item.status == 1" ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment"
+                            <button class="btn btn-xs btn-danger" ng-show="item.status == 1"
+                                    ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
+                            <button class="btn btn-xs btn-info" ng-show="item.status == 1"
+                                    ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment"
                                     translate="BTN_ADD_TO_SHIPMENT"></button>
                         </td>
                     </tr>
@@ -138,7 +140,7 @@
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
-                <table class="table table-fixed table-vo table-hover">
+                <table class="table table-fixed table-vo">
                     <thead>
                     <tr>
                         <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->

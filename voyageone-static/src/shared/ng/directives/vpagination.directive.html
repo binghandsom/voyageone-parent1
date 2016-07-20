@@ -1,8 +1,9 @@
 <!-- 此内容仅供备份, 便于后期变更外观使用, 修改 js 内的 html 时, 请同步修改这里 -->
-<div class="col-sm-12 form-inline">
+<div class="col-sm-12 form-inline" style="line-height: 34px;">
     <div class="col-sm-3">
         <span class="col-sm-2" translate="TXT_SHOWING_NO"></span>
         <input class="text-center form-control" type="text" ng-model="curr.pageNo" style="padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px; max-height: 22px; max-width: 30px;">
+        <span>&nbsp;</span>
         <span>/</span>
         <span>&nbsp;</span>
         <span ng-bind="totalPages"></span>
@@ -31,8 +32,8 @@
         <span>&nbsp;</span>
         <span translate="TXT_ITEMS"></span>
     </form>
-    <div class="col-sm-5 text-right">
-        <ul class="pagination" style="margin: 0">
+    <div class="col-sm-5">
+        <ul class="pagination pull-right" style="margin: 0">
             <li ng-class="{disabled: curr.isFirst}">
                 <a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a>
             </li>
