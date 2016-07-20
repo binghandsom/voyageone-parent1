@@ -44,43 +44,43 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      * @return VmsOrderAddResponse
      *
      */
+    @VOTransactional
     public VmsOrderAddResponse addOrderInfo(VmsOrderAddRequest request) {
         VmsOrderAddResponse response = new VmsOrderAddResponse();
         response.setResult(false);
         checkCommRequest(request);
-        //ChannelId
-        String channelId = request.getChannelId();
-        checkRequestChannelId(channelId);
-
         request.check();
 
-        // 建立Model
-        VmsBtOrderDetailModel model = new VmsBtOrderDetailModel();
-        model.setReservationId(request.getReservationId());
-        model.setChannelId(request.getChannelId());
-        model.setConsolidationOrderId(request.getConsolidationOrderId());
-        model.setConsolidationOrderTime(new Date(request.getConsolidationOrderTime()));
-        model.setOrderId(request.getOrderId());
-        model.setOrderTime(new Date(request.getOrderTime()));
-        model.setCartId(request.getCartId());
-        model.setClientSku(request.getClientSku());
-        model.setBarcode(request.getBarcode());
-        model.setDescription(request.getDescription());
-        model.setClientMsrp(new BigDecimal(request.getClientMsrp()));
-        model.setClientNetPrice(new BigDecimal(request.getClientNetPrice()));
-        model.setClientRetailPrice(new BigDecimal(request.getRetailPrice()));
-//        model.setMsrp(new BigDecimal(request.getMsrp()));
-//        model.setRetailPrice(new BigDecimal(request.getRetailPrice()));
-//        model.setSalePrice（new BigDecimal(request.getSalePrice()));
-        model.setStatus(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
-        model.setCreater(getClassName());
-        model.setModifier(getClassName());
+        List<Map<String, Object>> itemList = request.getItemList();
 
-        int count = orderDetailService.insertOrderInfo(model);
-        // 是否成功
-        if (count == 1) {
-            response.setResult(true);
+        if (itemList != null && itemList.size() > 0) {
+            for (Map<String, Object> item : itemList) {
+                // 建立Model
+                VmsBtOrderDetailModel model = new VmsBtOrderDetailModel();
+                model.setReservationId((String) item.get("reservationId"));
+                model.setChannelId((String) item.get("channelId"));
+                model.setConsolidationOrderId((String) item.get("consolidationOrderId"));
+                model.setConsolidationOrderTime(new Date((Long) item.get("consolidationOrderTime")));
+                model.setOrderId((String) item.get("orderId"));
+                model.setOrderTime(new Date((Long) item.get("orderTime")));
+                model.setCartId((Integer) item.get("cartId"));
+                model.setClientSku((String) item.get("clientSku"));
+                model.setBarcode((String) item.get("barcode"));
+                model.setDescription((String) item.get("description"));
+                model.setClientMsrp(new BigDecimal((Double) item.get("clientMsrp")));
+                model.setClientNetPrice(new BigDecimal((Double) item.get("clientNetPrice")));
+                model.setClientRetailPrice(new BigDecimal((Double) item.get("clientRetailPrice")));
+                model.setRetailPrice(new BigDecimal((Double) item.get("retailPrice")));
+                model.setStatus(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
+                model.setCreater(getClassName());
+                model.setModifier(getClassName());
+                orderDetailService.insertOrderInfo(model);
+            }
         }
+
+        // 是否成功
+        response.setResult(true);
+
         return response;
     }
 
