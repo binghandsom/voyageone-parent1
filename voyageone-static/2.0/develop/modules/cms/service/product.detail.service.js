@@ -390,7 +390,7 @@ define([
 		 * @param req {cartId:27,productCode:"CRBT0003SP-"}  平台id，产品code
 		 * @returns {*}
 		 */
-		function delisting(){
+		function delisting(req){
 			var defer = $q.defer();
 			$productDetailService.delisting(req)
 				.then (function (res) {

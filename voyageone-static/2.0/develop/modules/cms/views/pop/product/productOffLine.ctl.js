@@ -24,7 +24,8 @@ define([
                 mainProduct: null,
                 mainCode: null,
                 cart: null,
-                numIId: null
+                numIId: null,
+                comment:""
             }
         }
 
@@ -54,20 +55,24 @@ define([
               });
 
               self.data.cart = _.find(carts,function(cart){
-                 return cart.id == self.data.selected;
+                 return cart.id == self.context.cartId;
               });
 
           },
           delisting:function(){
               var self = this;
-              confirm("确定下线店铺渠道:[" +self.data.cart.desc+"]的主商品为[" + self.context.productCode + "]吗？").then(function(){
-                  self.productDetailService.delisting({cartId:self.context.cartId , productCode:self.context.productCode}).then(function(){
+              self.confirm("确定下线店铺渠道:[" +self.data.cart.desc+"]的商品为[" + self.context.productCode + "]吗？").then(function(){
+                  self.productDetailService.delisting({cartId:self.context.cartId ,
+                                                  productCode:self.context.productCode,
+                                                      comment:self.data.comment
+                  }).then(function(){
                       self.uibModalInstance.close();
                   },function(res){
                       if(res.code == 5)
                           self.alert("更新失败！");
-                  });
               });
+              });
+
           }
         };
 
