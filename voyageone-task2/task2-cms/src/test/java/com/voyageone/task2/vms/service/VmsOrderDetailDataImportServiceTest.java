@@ -21,7 +21,7 @@ public class VmsOrderDetailDataImportServiceTest {
     private VmsOrderDetailDataImportService vmsOrderDetailDataImportService;
     @Test
     public void testOnStartup() throws Exception {
-//        vmsOrderDetailDataImportService.main("090", "ORDER");
-        vmsOrderDetailDataImportService.main("091", "SKU");
+        vmsOrderDetailDataImportService.main("088", "ORDER");
+//        vmsOrderDetailDataImportService.main("091", "SKU");
     }
 }

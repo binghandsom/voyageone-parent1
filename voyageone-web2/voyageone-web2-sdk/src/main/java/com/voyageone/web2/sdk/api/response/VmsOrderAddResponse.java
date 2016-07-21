@@ -12,15 +12,4 @@ import com.voyageone.web2.sdk.api.VoApiResponse;
  * @version 1.0
  */
 public class VmsOrderAddResponse extends VoApiResponse {
-
-	// true/false
-	private boolean result;
-
-	public boolean getResult() {
-		return result;
-	}
-
-	public void setResult(boolean result) {
-		this.result = result;
-	}
 }

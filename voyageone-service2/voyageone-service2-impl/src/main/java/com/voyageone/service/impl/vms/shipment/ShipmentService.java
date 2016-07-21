@@ -35,6 +35,10 @@ public class ShipmentService {
         return vmsBtShipmentDao.selectList(shipmentSelectParams);
     }
 
+    public List<VmsBtShipmentModel> selectList(Map<String, Object> shipmentSelectParams) {
+        return vmsBtShipmentDao.selectList(shipmentSelectParams);
+    }
+
     public int save(VmsBtShipmentModel vmsBtShipmentModel) {
         return vmsBtShipmentDaoExt.update(vmsBtShipmentModel);
     }
