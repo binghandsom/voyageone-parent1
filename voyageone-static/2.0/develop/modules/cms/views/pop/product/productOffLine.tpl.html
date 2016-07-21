@@ -62,10 +62,11 @@
 
         <div class="container-fluid">
             <div class="row">
-                <ng-form name="offLineForm" novalidate>
+                <ng-form name="ctrl.offLineForm" novalidate>
                     <label class="col-md-1 control-label vo_reqfield"><strong>备注:</strong></label>
                     <div class="col-md-5">
-                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="parentModel.comment" required></textarea>
+                        <textarea type="text" name="comment" rows="4" class="form-control no-resize" ng-model="ctrl.data.comment" required></textarea>
+                        <vo-message target="ctrl.offLineForm.comment"></vo-message>
                     </div>
                 </ng-form>
             </div>
@@ -75,6 +76,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.delisting()" ><i class="glyphicon glyphicon-floppy-disk"></i> 下线</button>
+        <button class="btn btn-vo" ng-click="ctrl.delisting()" ng-disabled="ctrl.offLineForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> 下线</button>
     </div>
 </div>
