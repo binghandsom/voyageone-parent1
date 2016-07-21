@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String consolidationOrderId;
-    private Date orderDateTime;
+    private Date consolidationOrderTime;
     private String status;
     private BigDecimal totalVoPrice = BigDecimal.ZERO;
     private BigDecimal totalRetailPrice = BigDecimal.ZERO;
@@ -25,20 +25,20 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.consolidationOrderId = consolidationOrderId;
     }
 
-    public Date getOrderDateTime() {
-        return orderDateTime;
+    public Date getConsolidationOrderTime() {
+        return consolidationOrderTime;
     }
 
-    public long getOrderDateTimestamp() {
-        return orderDateTime.getTime();
+    public long getConsolidationOrderTimestamp() {
+        return consolidationOrderTime.getTime();
     }
 
-    public void setOrderDateTimestamp(long orderDateTimestamp) {
-        this.orderDateTime = new Date(orderDateTimestamp);
+    public void setConsolidationOrderTimestamp(long consolidationOrderTimestamp) {
+        this.consolidationOrderTime = new Date(consolidationOrderTimestamp);
     }
 
-    public void setOrderDateTime(Date orderDateTime) {
-        this.orderDateTime = orderDateTime;
+    public void setConsolidationOrderTime(Date consolidationOrderTime) {
+        this.consolidationOrderTime = consolidationOrderTime;
     }
 
     public BigDecimal getTotalVoPrice() {

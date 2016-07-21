@@ -106,7 +106,7 @@ public class VmsShipmentService {
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
         }};
         List<VmsBtShipmentModel> vmsBtShipmentModelList = shipmentService.select(shipmentSearchParams);
-        if (null == vmsBtShipmentModelList) return null;
+        if (null == vmsBtShipmentModelList || vmsBtShipmentModelList.size() == 0) return null;
         return ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
     }
 

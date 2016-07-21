@@ -9,8 +9,8 @@ import java.util.Date;
  */
 public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String reservationId;
-    private String orderId;
-    private Date orderDateTime;
+    private String consolidationOrderId;
+    private Date consolidationOrderTime;
     private String sku;
     private String desc;
     private String status;
@@ -25,24 +25,24 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.reservationId = reservationId;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getConsolidationOrderId() {
+        return consolidationOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setConsolidationOrderId(String consolidationOrderId) {
+        this.consolidationOrderId = consolidationOrderId;
     }
 
-    public long getOrderDateTimestamp() {
-        return orderDateTime.getTime();
+    public long getconsolidationOrderTimestamp() {
+        return consolidationOrderTime.getTime();
     }
 
-    public void setOrderDateTimestamp(long orderDateTimestamp) {
-        this.orderDateTime = new Date(orderDateTimestamp);
+    public void setconsolidationOrderTimestamp(long consolidationOrderTimestamp) {
+        this.consolidationOrderTime = new Date(consolidationOrderTimestamp);
     }
 
-    public void setOrderDateTime(Date orderDateTime) {
-        this.orderDateTime = orderDateTime;
+    public void setConsolidationOrderTime(Date consolidationOrderTime) {
+        this.consolidationOrderTime = consolidationOrderTime;
     }
 
     public String getSku() {

@@ -11,7 +11,6 @@ define([
             this.scannedSkuList = context.scannedSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.$uibModalInstance = $uibModalInstance;
-            this.warningSound.preload = 'auto';
         }
 
         AddToShipmentController.prototype.scan = function (barcode) {

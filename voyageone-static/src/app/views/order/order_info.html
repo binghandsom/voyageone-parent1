@@ -103,7 +103,7 @@
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
                         <td class="text-right" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
+                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
@@ -121,7 +121,7 @@
                         ng-repeat-end>
                         <td></td>
                         <td></td>
-                        <td>{{detail.orderDate}}</td>
+                        <td>{{detail.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td>{{detail.sku}}</td>
                         <td>{{detail.desc}}</td>
                         <td>{{ctrl.getStatusName(detail.status)}}</td>
@@ -149,7 +149,7 @@
                         <th class="td-1" translate="TXT_SKU"></th>
                         <th class="td-2" translate="TXT_DESCRIPTION"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
-                        <th class="td-1" translate="TXT_PRICE"></th>
+                        <th class="td-1" translate="TXT_VO_PRICE"></th>
                         <th style="width: 150px" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -157,7 +157,7 @@
                     <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
                         <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
                         <td>{{item.consolidationOrderId}}</td>
-                        <td>{{item.orderDateTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td>{{item.sku}}</td>
                         <td>{{item.desc}}</td>
                         <td>{{ctrl.getStatusName(item.status)}}</td>

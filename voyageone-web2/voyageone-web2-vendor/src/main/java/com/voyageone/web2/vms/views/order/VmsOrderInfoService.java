@@ -302,7 +302,7 @@ public class VmsOrderInfoService extends BaseService {
             sortParam) {
 
         List<AbstractSubOrderInfoBean> orderList = new ArrayList<>();
-        Map<String, Object> orderSearchParamsWithLimitAndSort = organizeOrderSearchParams(user, orderSearchInfo,
+        Map<String, Object> orderSearchParamsWithLimitAndSort = this.organizeOrderSearchParams(user, orderSearchInfo,
                 sortParam);
         /*
          * 根据渠道配置设置
@@ -348,7 +348,7 @@ public class VmsOrderInfoService extends BaseService {
                     // 按照第一个sku初始化平台订单id内容
                     PlatformSubOrderInfoBean platformOrderInfoBean = new PlatformSubOrderInfoBean();
                     platformOrderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModelList.get(0).getConsolidationOrderId());
-                    platformOrderInfoBean.setOrderDateTime(vmsBtOrderDetailModelList.get(0).getOrderTime());
+                    platformOrderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModelList.get(0).getConsolidationOrderTime());
                     platformOrderInfoBean.setStatus(vmsBtOrderDetailModelList.get(0).getStatus());
 
                     // 将订单下的sku信息录入
@@ -357,8 +357,8 @@ public class VmsOrderInfoService extends BaseService {
 
                                 // 整理格式
                                 setReservationId(vmsBtOrderDetailModel.getReservationId());
-                                setOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
-                                setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
+                                setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
+                                setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
                                 setDesc(vmsBtOrderDetailModel.getDescription());
                                 setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                                 if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
@@ -389,10 +389,10 @@ public class VmsOrderInfoService extends BaseService {
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
                     orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
-                    orderInfoBean.setOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
+                    orderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
                     orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
                     orderInfoBean.setDesc(vmsBtOrderDetailModel.getDescription());
-                    orderInfoBean.setOrderDateTime(vmsBtOrderDetailModel.getOrderTime());
+                    orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
                     orderInfoBean.setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                     if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                         orderInfoBean.setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
