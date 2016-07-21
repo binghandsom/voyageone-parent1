@@ -210,10 +210,6 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                         if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
                             upValSku.add(skuVal);
                             hasPublishSku[1] = true;
-                            {
-                                // TODO:size 和 price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
-
-                            }
                         }
                     });
                     updateMap.put("platforms.P23.fields." + s1, upValSku);
@@ -232,10 +228,10 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                 updateMap.put("platforms.P23.pCatPath", "");
             }
 
-            updateMap.put("platforms.P23.pProductId", cmsBtProductGroup.getPlatformPid());
-            updateMap.put("platforms.P23.pNumIId", cmsBtProductGroup.getNumIId());
             if (!hasPublishSku[0] || hasPublishSku[1]) {
                 // product级 或者 本code有sku上新过
+                updateMap.put("platforms.P23.pProductId", cmsBtProductGroup.getPlatformPid());
+                updateMap.put("platforms.P23.pNumIId", cmsBtProductGroup.getNumIId());
                 String item_status = (String) fieldMap.get("item_status"); // 商品状态
                 if ("0".equals(item_status)) {
                     // 出售中
@@ -257,6 +253,11 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
         });
 
         cmsBtProductDao.bulkUpdateWithMap(cmsBtProductGroup.getChannelId(), bulkList, getTaskName(), "$set");
+
+        {
+            // TODO:size 和 price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
+
+        }
 
         // added by morse.lu 2016/07/18 start
         String item_status = (String) fieldMap.get("item_status"); // 商品状态

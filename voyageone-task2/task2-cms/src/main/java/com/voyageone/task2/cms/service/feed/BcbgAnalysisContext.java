@@ -40,6 +40,7 @@ class BcbgAnalysisContext {
         sku.setSize(bcbgBean.getSIZE1());
         sku.setBarcode(bcbgBean.getEAN11());
         sku.setClientSku(bcbgBean.getMATNR());
+        sku.setImage(bcbgBean.getStyleBean().getProductImgURLs());
         setPrices(bcbgBean, sku);
 
         CmsBtFeedInfoModel code = getProduct(bcbgBean);
@@ -98,7 +99,9 @@ class BcbgAnalysisContext {
         CmsBtFeedInfoModel feedInfoModel;
         String code = bcbgBean.getStyleBean().getStyleID();
         String name = bcbgBean.getMAKTX();
-        name = name.substring(0, name.indexOf(","));
+        int indexOfComma = name.indexOf(",");
+        if (indexOfComma > 0)
+            name = name.substring(0, indexOfComma);
 
         if (codeMap.containsKey(code)) {
             feedInfoModel = codeMap.get(code);

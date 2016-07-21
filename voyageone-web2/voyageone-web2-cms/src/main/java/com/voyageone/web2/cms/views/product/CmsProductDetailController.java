@@ -178,8 +178,9 @@ public class CmsProductDetailController extends CmsController {
     }
     //单品下架
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.Delisting)
-    public void delisting(DelistingParameter parameter) {
+    public AjaxResponse delisting(@RequestBody DelistingParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
         productPropsEditService.delisting(parameter, getUser().getUserName());
+        return success(null);
     }
 }
