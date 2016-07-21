@@ -43,7 +43,7 @@ public class VmsOrderInfoController extends BaseController {
         Map<String, Object> initialInfo = new HashMap<>();
         initialInfo.put("channelConfigs", vmsOrderInfoService.getChannelConfigs(this.getUser()));
         initialInfo.put("searchOrderStatus", vmsOrderInfoService.getAllOrderStatusesList());
-        //initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
+        initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(initialInfo);
     }
 
