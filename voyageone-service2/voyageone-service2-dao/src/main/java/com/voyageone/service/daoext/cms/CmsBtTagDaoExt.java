@@ -49,10 +49,6 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
         return selectList("select_list_by_parent_tag_id", parentTagId);
     }
 
-    public List<CmsBtTagModel> selectListByChannelId(String channelId) {
-        return selectList("select_list_by_channel_id", channelId);
-    }
-
     public List<CmsBtTagModel> selectListByParentTagId(String channelId, int parentTagId, String tagName) {
         HashMap<String, Object> paraIn = new HashMap<>();
         paraIn.put("channelId", channelId);
@@ -64,6 +60,10 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
 
     public List<CmsBtTagBean> selectListByChannelIdAndTagType(Map<String, Object> params) {
         return selectList("select_list_by_channel_id_and_tag_type", params);
+    }
+
+    public List<CmsBtTagBean> selectListByChannelId4AdvSearch(Map<String, Object> params) {
+        return selectList("select_list_by_channel_id_4AdvSearch", params);
     }
 
     public List<CmsBtTagBean> selectListByChannelIdAndTagType2(Map<String, Object> params) {

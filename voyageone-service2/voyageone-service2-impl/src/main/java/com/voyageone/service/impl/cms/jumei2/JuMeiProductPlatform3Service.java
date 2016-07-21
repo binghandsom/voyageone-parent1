@@ -66,7 +66,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新begin");
                 updateJm(modelCmsBtJmPromotion, model, shopBean);
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
