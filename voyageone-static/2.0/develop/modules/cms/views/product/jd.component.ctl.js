@@ -39,7 +39,7 @@ define([
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
-                scope.limitNumber = limitNumber;
+
                 /**
                  * 获取京东页面初始化数据
                  */
