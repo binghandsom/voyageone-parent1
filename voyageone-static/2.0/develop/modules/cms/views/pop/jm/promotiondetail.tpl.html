@@ -91,17 +91,19 @@
 
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">预热开始时间</label>
-                <div class="col-sm-9 form-inline">
-                    <div class="row input-group">
-                        <input  type="datetime-local" class="form-control"
-                                datepicker-popup ng-readonly="vm.isBegin"
-                                ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
-                                max-date="editModel.model.prePeriodEnd"
-                                date-model-format="yyyy-MM-dd HH:mm:ss"
-                                is-open="datePicker3" ng-required="true" close-text="Close" />
-                        <span class="input-group-btn" >
-                            <button type="button" class="btn btn-default"  ng-disabled="vm.isBegin" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
+                <div class="col-sm-9">
+                    <div class="row form-inline">
+                        <div class="col-sm-5 input-group">
+                            <input  type="datetime-local" class="form-control"
+                                    datepicker-popup ng-readonly="vm.isBegin"
+                                    ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
+                                    max-date="editModel.model.prePeriodEnd"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss"
+                                    is-open="datePicker3" ng-required="true" close-text="Close" />
+                            <span class="input-group-btn" >
+                                <button type="button" class="btn btn-default"  ng-disabled="vm.isBegin" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -126,27 +128,30 @@
                 </div>
             </div>
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_PC_ID" ></label>
-                <div class="col-sm-8">
-                    <input required name="promotionPcId" type="number" class="form-control"  maxlength="10" ng-model="editModel.model.activityPcId" >
+                <div class="col-sm-1"></div>
+                <div class="col-sm-5 m-l-md">
+                    <label class="col-sm-4 control-label vo_reqfield" translate="TXT_PROMOTION_PC_ID"></label>
+                    <div class="col-sm-8">
+                        <input required="" name="promotionPcId" type="number" class="form-control ng-pristine ng-untouched ng-valid-maxlength ng-not-empty ng-valid ng-valid-required" maxlength="10" ng-model="editModel.model.activityPcId">
+                    </div>
+                </div>
+                <div class="col-sm-5 m-l-sm">
+                    <label class="col-sm-4 control-label vo_reqfield" translate="TXT_PROMOTION_APP_ID"></label>
+                    <div class="col-sm-7">
+                        <input required="" name="promotionAppId" type="number" class="form-control ng-pristine ng-untouched ng-valid-maxlength ng-not-empty ng-valid ng-valid-required" maxlength="10" ng-model="editModel.model.activityAppId">
+                    </div>
                 </div>
             </div>
             <div class="row form-group">
-                <div class="col-sm-7 col-sm-offset-3">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-5">
                     <vo-message target="promotionForm.promotionPcId" class="vo-message-success"></vo-message>
                 </div>
-            </div>
-            <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_APP_ID" ></label>
-                <div class="col-sm-8">
-                    <input required name="promotionAppId" type="number" class="form-control"  maxlength="10"  ng-model="editModel.model.activityAppId" maxlength="20">
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-7 col-sm-offset-3">
+                <div class="col-sm-4">
                     <vo-message target="promotionForm.promotionAppId" class="vo-message-success"></vo-message>
                 </div>
             </div>
+
             <div class="row form-group">
                 <label class="col-sm-3 control-label">专场涉及品类</label>
                 <div class="col-sm-8">
@@ -156,13 +161,13 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label">专场涉及品牌</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control no-resize" rows="8"   ng-model="editModel.model.category" disabled></textarea>
+                    <textarea class="form-control no-resize" rows="4" ng-model="editModel.model.category" disabled></textarea>
                 </div>
             </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label">活动备注</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control no-resize" rows="4"   ng-model="editModel.model.comment"></textarea>
+                    <textarea class="form-control no-resize" rows="2" ng-model="editModel.model.comment"></textarea>
                 </div>
             </div>
         </form>
