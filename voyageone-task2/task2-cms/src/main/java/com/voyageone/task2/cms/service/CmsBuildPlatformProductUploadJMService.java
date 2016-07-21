@@ -443,7 +443,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String jmSpuNo = oldSku.getSpu_no();
                             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                             htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
-                            htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
+                            DecimalFormat dformat = new DecimalFormat(".00");
+                            String priceStr = dformat.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                            htSpuUpdateRequest.setAbroad_price(Double.valueOf(priceStr));
                             htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                             htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                             // update by desmond 2016/07/08 start
@@ -531,8 +533,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                             htSpuAddRequest.setSize(sizeStr);
                             // update by desmond 2016/07/08 end
-                            DecimalFormat format  =   new DecimalFormat(".00");
-                            String priceStr = format.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                            DecimalFormat dformat = new DecimalFormat(".00");
+                            String priceStr = dformat.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
                             htSpuAddRequest.setAbroad_price(priceStr);
                             htSpuAddRequest.setArea_code("19");//TODO
                             htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
@@ -1180,7 +1182,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmSkuModel.setJmSize(sizeStr);
 
 
-        cmsBtJmSkuModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")).setScale(0, BigDecimal.ROUND_CEILING));
+        cmsBtJmSkuModel.setMsrpUsd(new BigDecimal(jmSku.getStringAttribute("clientMsrpPrice")));
         cmsBtJmSkuModel.setMsrpRmb(new BigDecimal(jmSku.getStringAttribute("priceMsrp")));
         cmsBtJmSkuModel.setSalePrice(new BigDecimal(jmSku.getStringAttribute("priceSale")));
         cmsBtJmSkuModel.setRetailPrice(new BigDecimal(jmSku.getStringAttribute("priceRetail")));
